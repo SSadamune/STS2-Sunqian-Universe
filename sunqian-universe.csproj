@@ -15,4 +15,7 @@
       <Private>false</Private>
     </Reference>
   </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="STS2.RitsuLib" Version="0.4.27" />
+  </ItemGroup>
 </Project>
