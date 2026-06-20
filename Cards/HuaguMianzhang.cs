@@ -22,7 +22,7 @@ public sealed class HuaguMianzhang : ModCardTemplate
 {
 	protected override IEnumerable<DynamicVar> CanonicalVars =>
 	[
-		new DamageVar(12m, ValueProp.Move),
+		new DamageVar(15m, ValueProp.Move),
 	];
 
 	protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
@@ -34,7 +34,7 @@ public sealed class HuaguMianzhang : ModCardTemplate
 		PortraitPath: "res://images/cards/HuaguMianzhang.png");
 
 	public HuaguMianzhang()
-		: base(2, CardType.Attack, CardRarity.Rare, TargetType.AnyEnemy)
+		: base(3, CardType.Attack, CardRarity.Rare, TargetType.AnyEnemy)
 	{
 	}
 
@@ -66,6 +66,6 @@ public sealed class HuaguMianzhang : ModCardTemplate
 
 	protected override void OnUpgrade()
 	{
-		DynamicVars.Damage.UpgradeValueBy(4m);
+		DynamicVars.Damage.UpgradeValueBy(5m);
 	}
 }

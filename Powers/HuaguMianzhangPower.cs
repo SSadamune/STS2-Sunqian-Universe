@@ -51,7 +51,5 @@ public sealed class HuaguMianzhangPower : ModPowerTemplate
 			Amount,
 			Applier,
 			null);
-
-		await PowerCmd.Remove(this);
 	}
 }
