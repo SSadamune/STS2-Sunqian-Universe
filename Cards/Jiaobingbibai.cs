@@ -15,29 +15,29 @@ using STS2RitsuLib.Scaffolding.Content;
 namespace Squ.Cards;
 
 [RegisterCard(typeof(ColorlessCardPool))]
-public sealed class Aibingbisheng : ModCardTemplate
+public sealed class Jiaobingbibai : ModCardTemplate
 {
 	protected override IEnumerable<DynamicVar> CanonicalVars =>
 	[
-		new PowerVar<StrengthPower>(-7),
-		new PowerVar<RitualPower>(3),
+		new PowerVar<VigorPower>(7),
+		new PowerVar<VulnerablePower>(3),
 	];
 
 	protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
 	[
-		HoverTipFactory.FromPower<StrengthPower>(),
-		HoverTipFactory.FromPower<RitualPower>(),
+		HoverTipFactory.FromPower<VigorPower>(),
+		HoverTipFactory.FromPower<VulnerablePower>(),
 	];
 
 	public override CardAssetProfile AssetProfile => new(
-		PortraitPath: "res://images/cards/Aibingbisheng.png");
+		PortraitPath: "res://images/cards/Jiaobingbibai.png");
 
 	public override IEnumerable<CardKeyword> CanonicalKeywords =>
 	[
 		CardKeyword.Exhaust,
 	];
 
-	public Aibingbisheng()
+	public Jiaobingbibai()
 		: base(1, CardType.Skill, CardRarity.Common, CustomTargetType.Anyone)
 	{
 	}
@@ -46,24 +46,25 @@ public sealed class Aibingbisheng : ModCardTemplate
 	{
 		ArgumentNullException.ThrowIfNull(cardPlay.Target, "cardPlay.Target");
 
-		await PowerCmd.Apply<StrengthPower>(
+		await PowerCmd.Apply<VigorPower>(
 			choiceContext,
 			cardPlay.Target,
-			DynamicVars[nameof(StrengthPower)].BaseValue,
+			DynamicVars[nameof(VigorPower)].BaseValue,
 			Owner.Creature,
 			this);
 
-		await PowerCmd.Apply<RitualPower>(
+		await PowerCmd.Apply<VulnerablePower>(
 			choiceContext,
 			cardPlay.Target,
-			DynamicVars[nameof(RitualPower)].BaseValue,
+			DynamicVars[nameof(VulnerablePower)].BaseValue,
 			Owner.Creature,
 			this);
 	}
 
 	protected override void OnUpgrade()
 	{
+		// EnergyCost.UpgradeBy(-1)
 		AddKeyword(CardKeyword.Retain);
-        AddKeyword(CardKeyword.Innate);
+        RemoveKeyword(CardKeyword.Exhaust);
 	}
 }
