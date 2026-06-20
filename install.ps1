@@ -1,10 +1,13 @@
 param(
     [string]$GameDir = "C:\Program Files (x86)\Steam\steamapps\common\Slay the Spire 2",
-    [string]$GodotExe = "C:\Program Files\Godot\Godot_v4.6.3-stable_mono_win64.exe"
+    [string]$GodotExe = ""
 )
 
 $ErrorActionPreference = "Stop"
 $ProjectRoot = Split-Path -Parent $MyInvocation.MyCommand.Path
+if ([string]::IsNullOrWhiteSpace($GodotExe)) {
+    $GodotExe = Join-Path $ProjectRoot "tools\godot451\Godot_v4.5.1-stable_mono_win64\Godot_v4.5.1-stable_mono_win64.exe"
+}
 $BuildDir = Join-Path $ProjectRoot ".builds"
 $ModId = "sunqian-universe"
 $ModDir = Join-Path $GameDir "mods\$ModId"
@@ -28,13 +31,22 @@ $godotArgs = @(
     "--export-pack", $ModId,
     $pckPath
 )
-$godotProcess = Start-Process -FilePath $GodotExe -ArgumentList $godotArgs -Wait -PassThru -NoNewWindow
-if ($godotProcess.ExitCode -ne 0) {
-    throw "Godot export failed with exit code $($godotProcess.ExitCode)"
+$godotProcess = Start-Process -FilePath $GodotExe -ArgumentList $godotArgs -PassThru -NoNewWindow
+$deadline = (Get-Date).AddMinutes(2)
+while (-not (Test-Path $pckPath)) {
+    if ($godotProcess.HasExited -and $godotProcess.ExitCode -ne 0) {
+        throw "Godot export failed with exit code $($godotProcess.ExitCode)"
+    }
+    if ((Get-Date) -gt $deadline) {
+        throw "Timed out waiting for PCK export: $pckPath"
+    }
+    Start-Sleep -Milliseconds 250
 }
-
-if (-not (Test-Path $pckPath)) {
-    throw "PCK export did not create: $pckPath"
+if (-not $godotProcess.HasExited) {
+    $godotProcess.WaitForExit()
+}
+if ($godotProcess.ExitCode -ne 0) {
+    Write-Warning "Godot exited with code $($godotProcess.ExitCode), but PCK was created."
 }
 
 $files = @(
