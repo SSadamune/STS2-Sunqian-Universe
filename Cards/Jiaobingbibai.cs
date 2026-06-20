@@ -34,11 +34,11 @@ public sealed class Jiaobingbibai : ModCardTemplate
 
 	public override IEnumerable<CardKeyword> CanonicalKeywords =>
 	[
-		CardKeyword.Exhaust,
+		CardKeyword.Retain,
 	];
 
 	public Jiaobingbibai()
-		: base(1, CardType.Skill, CardRarity.Common, CustomTargetType.Anyone)
+		: base(1, CardType.Skill, CardRarity.Uncommon, CustomTargetType.Anyone)
 	{
 	}
 
@@ -63,8 +63,6 @@ public sealed class Jiaobingbibai : ModCardTemplate
 
 	protected override void OnUpgrade()
 	{
-		// EnergyCost.UpgradeBy(-1)
-		AddKeyword(CardKeyword.Retain);
-        RemoveKeyword(CardKeyword.Exhaust);
+		EnergyCost.UpgradeBy(-1);
 	}
 }

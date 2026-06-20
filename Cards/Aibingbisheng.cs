@@ -38,7 +38,7 @@ public sealed class Aibingbisheng : ModCardTemplate
 	];
 
 	public Aibingbisheng()
-		: base(1, CardType.Skill, CardRarity.Common, CustomTargetType.Anyone)
+		: base(1, CardType.Skill, CardRarity.Uncommon, CustomTargetType.Anyone)
 	{
 	}
 
@@ -63,7 +63,6 @@ public sealed class Aibingbisheng : ModCardTemplate
 
 	protected override void OnUpgrade()
 	{
-		AddKeyword(CardKeyword.Retain);
         AddKeyword(CardKeyword.Innate);
 	}
 }
