@@ -29,11 +29,6 @@ public sealed class TableFlip : ModCardTemplate
 		HoverTipFactory.FromPower<WeakPower>(),
 	];
 
-	public override IEnumerable<CardKeyword> CanonicalKeywords =>
-	[
-		CardKeyword.Exhaust,
-	];
-
 	public override CardAssetProfile AssetProfile => new(
 		PortraitPath: "res://images/cards/TableFlip.png");
 
@@ -58,6 +53,11 @@ public sealed class TableFlip : ModCardTemplate
 			.TargetingAllOpponents(CombatState!)
 			.WithHitFx("vfx/vfx_attack_blunt")
 			.Execute(choiceContext);
+
+		if ((cardPlay.Target.GetPower<WeakPower>()?.Amount ?? 0) <= 0)
+		{
+			return;
+		}
 
 		await TroubleAgainPower.ApplyTrackingAsync(
 			choiceContext,
