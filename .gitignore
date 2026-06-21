@@ -5,3 +5,4 @@
 lib/sts2.dll
 .export/
 tools/
+.sts2probe/
