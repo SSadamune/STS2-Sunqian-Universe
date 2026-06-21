@@ -1,0 +1,18 @@
+{
+  "NEOW.talk.SUNQIAN_UNIVERSE_CHARACTER_SUNQIAN_CHARACTER.0-0.char": "你又把我从沉默里捞起来……这次，要我去哪里？",
+  "NEOW.talk.SUNQIAN_UNIVERSE_CHARACTER_SUNQIAN_CHARACTER.0-0.next": "继续",
+  "NEOW.talk.SUNQIAN_UNIVERSE_CHARACTER_SUNQIAN_CHARACTER.0-1.ancient": "[sine]...去... 塔里... ..继续... 行走.....[/sine]",
+  "NEOW.talk.SUNQIAN_UNIVERSE_CHARACTER_SUNQIAN_CHARACTER.1-0r.ancient": "[sine]...我听见了... ..你的脚步..... \n...言语... ..也是武器.....[/sine]",
+  "NEOW.talk.SUNQIAN_UNIVERSE_CHARACTER_SUNQIAN_CHARACTER.2-0.ancient": "[sine]...你.. 还缺... ..什么...？[/sine]",
+  "NEOW.talk.SUNQIAN_UNIVERSE_CHARACTER_SUNQIAN_CHARACTER.2-0.next": "祈求",
+  "NEOW.talk.SUNQIAN_UNIVERSE_CHARACTER_SUNQIAN_CHARACTER.2-1.char": "若你赐我什么……请赐我一张能说服命运的牌。",
+  "NEOW.talk.SUNQIAN_UNIVERSE_CHARACTER_SUNQIAN_CHARACTER.2-1.next": "继续",
+  "NEOW.talk.SUNQIAN_UNIVERSE_CHARACTER_SUNQIAN_CHARACTER.2-2.ancient": "[sine]...去吧... \n..宇宙... 会为你... ..让路.....[/sine]",
+
+  "THE_ARCHITECT.talk.SUNQIAN_UNIVERSE_CHARACTER_SUNQIAN_CHARACTER.0-0r.ancient": "说客，你站在这里，是要说服塔，还是说服自己？",
+  "THE_ARCHITECT.talk.SUNQIAN_UNIVERSE_CHARACTER_SUNQIAN_CHARACTER.0-0r.next": "回答",
+  "THE_ARCHITECT.talk.SUNQIAN_UNIVERSE_CHARACTER_SUNQIAN_CHARACTER.0-1r.char": "……若两者只能选一，我选先说服自己。",
+  "THE_ARCHITECT.talk.SUNQIAN_UNIVERSE_CHARACTER_SUNQIAN_CHARACTER.0-1r.next": "继续",
+  "THE_ARCHITECT.talk.SUNQIAN_UNIVERSE_CHARACTER_SUNQIAN_CHARACTER.0-2r.ancient": "那就继续走吧。塔不会为你的辞令让路。",
+  "THE_ARCHITECT.talk.SUNQIAN_UNIVERSE_CHARACTER.0-attack": "Both"
+}

@@ -1,0 +1,17 @@
+{
+  "SUNQIAN_UNIVERSE_CHARACTER_SUNQIAN_CHARACTER.aromaPrinciple": "[sine][blue]……宇宙在呼吸……[/blue][/sine]",
+  "SUNQIAN_UNIVERSE_CHARACTER_SUNQIAN_CHARACTER.banter.alive.endTurnPing": "还没结束。",
+  "SUNQIAN_UNIVERSE_CHARACTER_SUNQIAN_CHARACTER.banter.dead.endTurnPing": "……",
+  "SUNQIAN_UNIVERSE_CHARACTER_SUNQIAN_CHARACTER.cardsModifierDescription": "孙乾的卡牌现在会出现在奖励和商店中。",
+  "SUNQIAN_UNIVERSE_CHARACTER_SUNQIAN_CHARACTER.cardsModifierTitle": "孙乾卡牌",
+  "SUNQIAN_UNIVERSE_CHARACTER_SUNQIAN_CHARACTER.description": "游走于诸天之间的说客。\n在[gold]孙乾宇宙[/gold]里，言语与卡牌同样锋利。",
+  "SUNQIAN_UNIVERSE_CHARACTER_SUNQIAN_CHARACTER.eventDeathPrevention": "我还不能在此止步……",
+  "SUNQIAN_UNIVERSE_CHARACTER_SUNQIAN_CHARACTER.goldMonologue": "[sine]这些金币……或许能换一条新的去路。[/sine]",
+  "SUNQIAN_UNIVERSE_CHARACTER_SUNQIAN_CHARACTER.possessiveAdjective": "他的",
+  "SUNQIAN_UNIVERSE_CHARACTER_SUNQIAN_CHARACTER.pronounObject": "他",
+  "SUNQIAN_UNIVERSE_CHARACTER_SUNQIAN_CHARACTER.pronounPossessive": "他的",
+  "SUNQIAN_UNIVERSE_CHARACTER_SUNQIAN_CHARACTER.pronounSubject": "他",
+  "SUNQIAN_UNIVERSE_CHARACTER_SUNQIAN_CHARACTER.title": "孙乾",
+  "SUNQIAN_UNIVERSE_CHARACTER_SUNQIAN_CHARACTER.titleObject": "孙乾",
+  "SUNQIAN_UNIVERSE_CHARACTER_SUNQIAN_CHARACTER.unlockText": "用[pink]{Prerequisite}[/pink]进行一局游戏来解锁这个角色。"
+}

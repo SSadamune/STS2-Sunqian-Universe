@@ -9,13 +9,14 @@ using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.Models.CardPools;
 using MegaCrit.Sts2.Core.Models.Powers;
 using MegaCrit.Sts2.Core.ValueProps;
+using Squ.Character;
 using Squ.Powers;
 using STS2RitsuLib.Interop.AutoRegistration;
 using STS2RitsuLib.Scaffolding.Content;
 
 namespace Squ.Cards;
 
-[RegisterCard(typeof(ColorlessCardPool), StableEntryStem = "table_flip")]
+[RegisterCard(typeof(SunqianCardPool), StableEntryStem = "table_flip")]
 public sealed class TableFlip : ModCardTemplate
 {
 	protected override IEnumerable<DynamicVar> CanonicalVars =>

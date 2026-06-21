@@ -18,6 +18,7 @@ public static class SquMod
 		var assembly = Assembly.GetExecutingAssembly();
 
 		Logger = RitsuLibFramework.CreateLogger(ModId);
+		RitsuLibFramework.EnsureGodotScriptsRegistered(assembly, Logger);
 		ModTypeDiscoveryHub.RegisterModAssembly(ModId, assembly);
 
 		Logger.Info("sunqian-universe (SQU) mod loaded!");
