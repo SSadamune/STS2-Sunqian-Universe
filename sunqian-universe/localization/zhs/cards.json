@@ -8,5 +8,5 @@
   "SUNQIAN_UNIVERSE_CARD_HUJIN_HUYUAN.title": "忽近忽远",
   "SUNQIAN_UNIVERSE_CARD_HUJIN_HUYUAN.description": "在本回合和此后的每回合获得随机的{MinDex}~{MaxDex:diff()}点[gold]敏捷[/gold]。",
   "SUNQIAN_UNIVERSE_CARD_JINGRAN_BUXU.title": "竟然不许！",
-  "SUNQIAN_UNIVERSE_CARD_JINGRAN_BUXU.description": "造成{Damage:diff()}点伤害。给与{VulnerablePower:diff()}[gold]易伤[/gold]。若你本回合未使用过此牌，当你造成的伤害或负面状态被[gold]阻止[/gold]时，将这张牌放入你的手牌。"
+  "SUNQIAN_UNIVERSE_CARD_JINGRAN_BUXU.description": "给与{WeakPower:diff()}[gold]虚弱[/gold]。给与{VulnerablePower:diff()}[gold]易伤[/gold]。当你造成的负面状态被[gold]人工制品[/gold]抵消后，将此牌放入你的手牌。"
 }
