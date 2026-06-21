@@ -1,4 +1,6 @@
 {
   "SUNQIAN_UNIVERSE_POWER_HUAGU_MIANZHANG_POWER.title": "化骨绵掌",
-  "SUNQIAN_UNIVERSE_POWER_HUAGU_MIANZHANG_POWER.description": "回合开始时获得{Amount}[gold]灾厄[/gold]。"
+  "SUNQIAN_UNIVERSE_POWER_HUAGU_MIANZHANG_POWER.description": "回合开始时获得{Amount}[gold]灾厄[/gold]。",
+  "SUNQIAN_UNIVERSE_POWER_HUJIN_HUYUAN_POWER.title": "忽近忽远",
+  "SUNQIAN_UNIVERSE_POWER_HUJIN_HUYUAN_POWER.description": "每回合开始时，在本回合获得随机的0~{Amount}点[gold]敏捷[/gold]。"
 }
