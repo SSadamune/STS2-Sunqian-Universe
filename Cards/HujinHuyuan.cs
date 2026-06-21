@@ -37,18 +37,15 @@ public sealed class HujinHuyuan : ModCardTemplate
 
 	protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
 	{
-		// int maxDexterity = (int)DynamicVars[nameof(HujinHuyuanPower)].BaseValue;
-		// int dexterity = HujinHuyuanPower.RollTemporaryDexterity(Owner, maxDexterity);
-		int dexterity = HujinHuyuanPower.DebugFixedTempDexterity;
+		int maxDexterity = (int)DynamicVars[nameof(HujinHuyuanPower)].BaseValue;
+		int dexterity = HujinHuyuanPower.RollTemporaryDexterity(Owner, maxDexterity);
 
 		await HujinHuyuanPower.ApplyTemporaryDexterityAsync(
 			choiceContext,
 			Owner.Creature,
 			Owner.Creature,
-			null,
+			this,
 			dexterity);
-
-		int maxDexterity = (int)DynamicVars[nameof(HujinHuyuanPower)].BaseValue;
 
 		await PowerCmd.Apply<HujinHuyuanPower>(
 			choiceContext,

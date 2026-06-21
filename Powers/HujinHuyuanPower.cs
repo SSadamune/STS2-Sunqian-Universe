@@ -21,7 +21,6 @@ public sealed class HujinHuyuanPower : ModPowerTemplate
 {
 	public const int BaseMaxDexterity = 3;
 	public const int UpgradedMaxDexterity = 5;
-	public const int DebugFixedTempDexterity = 2;
 
 	public override PowerType Type => PowerType.Buff;
 
@@ -48,13 +47,12 @@ public sealed class HujinHuyuanPower : ModPowerTemplate
 			return;
 		}
 
-		// int maxDexterity = (int)Amount;
-		// int dexterity = RollTemporaryDexterity(Owner.Player, maxDexterity);
-		// if (dexterity <= 0)
-		// {
-		// 	return;
-		// }
-		int dexterity = DebugFixedTempDexterity;
+		int maxDexterity = (int)Amount;
+		int dexterity = RollTemporaryDexterity(Owner.Player, maxDexterity);
+		if (dexterity <= 0)
+		{
+			return;
+		}
 
 		Flash();
 
@@ -66,22 +64,29 @@ public sealed class HujinHuyuanPower : ModPowerTemplate
 			dexterity);
 	}
 
-	// public static int RollTemporaryDexterity(Player player, int maxInclusive) =>
-	// 	player.RunState.Rng.CombatTargets.NextInt(0, maxInclusive + 1);
+	public static int RollTemporaryDexterity(Player player, int maxInclusive) =>
+		player.RunState.Rng.CombatTargets.NextInt(0, maxInclusive + 1);
 
 	/// <summary>
-	/// Applies mod temp-dex wrapper with a fixed display title and no source-card hover tip.
+	/// Applies mod temp-dex wrapper. Card source is required when played from a card; pass null from power hooks.
 	/// </summary>
 	public static Task ApplyTemporaryDexterityAsync(
 		PlayerChoiceContext choiceContext,
 		Creature target,
 		Creature applier,
 		CardModel card,
-		int amount) =>
-		PowerCmd.Apply<HujinHuyuanTempDexPower>(
+		int amount)
+	{
+		if (amount <= 0)
+		{
+			return Task.CompletedTask;
+		}
+
+		return PowerCmd.Apply<HujinHuyuanTempDexPower>(
 			choiceContext,
 			target,
 			amount,
 			applier,
 			card);
+	}
 }

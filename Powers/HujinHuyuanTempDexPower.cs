@@ -16,7 +16,7 @@ public sealed class HujinHuyuanTempDexPower : ModTemporaryPowerTemplate
 		IconPath: "res://images/powers/HujinHuyuanPower.png",
 		BigIconPath: "res://images/powers/HujinHuyuanPower.png");
 
-	public override AbstractModel OriginModel => ModelDb.Power<HujinHuyuanTempDexPower>();
+	public override AbstractModel OriginModel => ModelDb.Power<HujinHuyuanPower>();
 
 	public override PowerModel InternallyAppliedPower => ModelDb.Power<DexterityPower>();
 
