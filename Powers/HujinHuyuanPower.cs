@@ -9,8 +9,10 @@ using MegaCrit.Sts2.Core.Entities.Powers;
 using MegaCrit.Sts2.Core.Entities.Players;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.HoverTips;
+using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.Powers;
+using Squ.Cards;
 using STS2RitsuLib.Interop.AutoRegistration;
 using STS2RitsuLib.Scaffolding.Content;
 
@@ -19,9 +21,6 @@ namespace Squ.Powers;
 [RegisterPower]
 public sealed class HujinHuyuanPower : ModPowerTemplate
 {
-	public const int BaseMaxDexterity = 3;
-	public const int UpgradedMaxDexterity = 5;
-
 	public override PowerType Type => PowerType.Buff;
 
 	public override PowerStackType StackType => PowerStackType.None;
@@ -32,10 +31,29 @@ public sealed class HujinHuyuanPower : ModPowerTemplate
 		IconPath: "res://images/powers/HujinHuyuanPower.png",
 		BigIconPath: "res://images/powers/HujinHuyuanPower.png");
 
+	protected override IEnumerable<DynamicVar> CanonicalVars =>
+	[
+		new DynamicVar(HujinHuyuan.MinDexVarName, 0),
+		new DynamicVar(HujinHuyuan.MaxDexVarName, 0),
+	];
+
 	protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
 	[
 		HoverTipFactory.FromPower<DexterityPower>(),
 	];
+
+	public int MinBound => (int)DynamicVars[HujinHuyuan.MinDexVarName].BaseValue;
+
+	public int MaxBound => (int)DynamicVars[HujinHuyuan.MaxDexVarName].BaseValue;
+
+	public void SetBounds(int min, int max)
+	{
+		DynamicVars[HujinHuyuan.MinDexVarName].BaseValue = min;
+		DynamicVars[HujinHuyuan.MaxDexVarName].BaseValue = max;
+	}
+
+	public void AddBounds(int minDelta, int maxDelta) =>
+		SetBounds(MinBound + minDelta, MaxBound + maxDelta);
 
 	public override async Task AfterSideTurnStart(
 		CombatSide side,
@@ -47,12 +65,7 @@ public sealed class HujinHuyuanPower : ModPowerTemplate
 			return;
 		}
 
-		int maxDexterity = (int)Amount;
-		int dexterity = RollTemporaryDexterity(Owner.Player, maxDexterity);
-		if (dexterity <= 0)
-		{
-			return;
-		}
+		int dexterity = RollTemporaryDexterity(Owner.Player, MinBound, MaxBound);
 
 		Flash();
 
@@ -64,8 +77,33 @@ public sealed class HujinHuyuanPower : ModPowerTemplate
 			dexterity);
 	}
 
-	public static int RollTemporaryDexterity(Player player, int maxInclusive) =>
-		player.RunState.Rng.CombatTargets.NextInt(0, maxInclusive + 1);
+	public static int RollTemporaryDexterity(Player player, int minInclusive, int maxInclusive) =>
+		player.RunState.Rng.CombatTargets.NextInt(minInclusive, maxInclusive + 1);
+
+	public static async Task AddOrStackBoundsAsync(
+		PlayerChoiceContext choiceContext,
+		Creature target,
+		int minContribution,
+		int maxContribution,
+		Creature applier,
+		CardModel card)
+	{
+		HujinHuyuanPower existing = target.GetPower<HujinHuyuanPower>();
+		if (existing == null)
+		{
+			await PowerCmd.Apply<HujinHuyuanPower>(
+				choiceContext,
+				target,
+				1,
+				applier,
+				card);
+
+			target.GetPower<HujinHuyuanPower>()!.SetBounds(minContribution, maxContribution);
+			return;
+		}
+
+		existing.AddBounds(minContribution, maxContribution);
+	}
 
 	/// <summary>
 	/// Applies mod temp-dex wrapper. Card source is required when played from a card; pass null from power hooks.

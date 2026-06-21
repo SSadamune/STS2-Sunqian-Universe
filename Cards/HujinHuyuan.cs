@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.HoverTips;
@@ -16,15 +15,22 @@ namespace Squ.Cards;
 [RegisterCard(typeof(ColorlessCardPool))]
 public sealed class HujinHuyuan : ModCardTemplate
 {
+	public const string MinDexVarName = "MinDex";
+	public const string MaxDexVarName = "MaxDex";
+
+	public const int BaseMinDexterity = 1;
+	public const int BaseMaxDexterity = 2;
+	public const int UpgradedMaxDexterity = 4;
+
 	protected override IEnumerable<DynamicVar> CanonicalVars =>
 	[
-		new PowerVar<HujinHuyuanPower>(HujinHuyuanPower.BaseMaxDexterity),
+		new DynamicVar(MinDexVarName, BaseMinDexterity),
+		new DynamicVar(MaxDexVarName, BaseMaxDexterity),
 	];
 
 	protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
 	[
 		HoverTipFactory.FromPower<DexterityPower>(),
-		HoverTipFactory.FromPower<HujinHuyuanPower>(),
 	];
 
 	public override CardAssetProfile AssetProfile => new(
@@ -37,8 +43,9 @@ public sealed class HujinHuyuan : ModCardTemplate
 
 	protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
 	{
-		int maxDexterity = (int)DynamicVars[nameof(HujinHuyuanPower)].BaseValue;
-		int dexterity = HujinHuyuanPower.RollTemporaryDexterity(Owner, maxDexterity);
+		int minDexterity = (int)DynamicVars[MinDexVarName].BaseValue;
+		int maxDexterity = (int)DynamicVars[MaxDexVarName].BaseValue;
+		int dexterity = HujinHuyuanPower.RollTemporaryDexterity(Owner, minDexterity, maxDexterity);
 
 		await HujinHuyuanPower.ApplyTemporaryDexterityAsync(
 			choiceContext,
@@ -47,9 +54,10 @@ public sealed class HujinHuyuan : ModCardTemplate
 			this,
 			dexterity);
 
-		await PowerCmd.Apply<HujinHuyuanPower>(
+		await HujinHuyuanPower.AddOrStackBoundsAsync(
 			choiceContext,
 			Owner.Creature,
+			minDexterity,
 			maxDexterity,
 			Owner.Creature,
 			this);
@@ -57,7 +65,6 @@ public sealed class HujinHuyuan : ModCardTemplate
 
 	protected override void OnUpgrade()
 	{
-		DynamicVars[nameof(HujinHuyuanPower)].UpgradeValueBy(
-			HujinHuyuanPower.UpgradedMaxDexterity - HujinHuyuanPower.BaseMaxDexterity);
+		DynamicVars[MaxDexVarName].UpgradeValueBy(UpgradedMaxDexterity - BaseMaxDexterity);
 	}
 }
