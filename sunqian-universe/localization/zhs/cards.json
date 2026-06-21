@@ -6,5 +6,5 @@
   "SUNQIAN_UNIVERSE_CARD_HUAGU_MIANZHANG.title": "化骨绵掌",
   "SUNQIAN_UNIVERSE_CARD_HUAGU_MIANZHANG.description": "造成{Damage:diff()}点伤害。根据所造成伤害，该敌人的每个回合开始时获得等量的[gold]灾厄[/gold]。",
   "SUNQIAN_UNIVERSE_CARD_HUJIN_HUYUAN.title": "忽近忽远",
-  "SUNQIAN_UNIVERSE_CARD_HUJIN_HUYUAN.description": "在本回合获得随机的0~{HujinHuyuanPower:diff()}点[gold]敏捷[/gold]。获得{HujinHuyuanPower}。"
+  "SUNQIAN_UNIVERSE_CARD_HUJIN_HUYUAN.description": "在本回合和此后的每回合获得随机的0~{HujinHuyuanPower:diff()}点[gold]敏捷[/gold]。"
 }

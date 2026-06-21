@@ -24,7 +24,6 @@ public sealed class HujinHuyuan : ModCardTemplate
 	protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
 	[
 		HoverTipFactory.FromPower<DexterityPower>(),
-		HoverTipFactory.FromPower<AnticipatePower>(),
 		HoverTipFactory.FromPower<HujinHuyuanPower>(),
 	];
 
@@ -42,11 +41,11 @@ public sealed class HujinHuyuan : ModCardTemplate
 		// int dexterity = HujinHuyuanPower.RollTemporaryDexterity(Owner, maxDexterity);
 		int dexterity = HujinHuyuanPower.DebugFixedTempDexterity;
 
-		await HujinHuyuanPower.ApplyTemporaryDexterityLikeAnticipateAsync(
+		await HujinHuyuanPower.ApplyTemporaryDexterityAsync(
 			choiceContext,
 			Owner.Creature,
 			Owner.Creature,
-			this,
+			null,
 			dexterity);
 
 		int maxDexterity = (int)DynamicVars[nameof(HujinHuyuanPower)].BaseValue;

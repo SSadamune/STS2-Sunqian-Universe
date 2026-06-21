@@ -58,7 +58,7 @@ public sealed class HujinHuyuanPower : ModPowerTemplate
 
 		Flash();
 
-		await ApplyTemporaryDexterityLikeAnticipateAsync(
+		await ApplyTemporaryDexterityAsync(
 			new ThrowingPlayerChoiceContext(),
 			Owner,
 			Applier,
@@ -70,15 +70,15 @@ public sealed class HujinHuyuanPower : ModPowerTemplate
 	// 	player.RunState.Rng.CombatTargets.NextInt(0, maxInclusive + 1);
 
 	/// <summary>
-	/// Matches vanilla Anticipate: applies AnticipatePower, which grants Dexterity until end of turn.
+	/// Applies mod temp-dex wrapper with a fixed display title and no source-card hover tip.
 	/// </summary>
-	public static Task ApplyTemporaryDexterityLikeAnticipateAsync(
+	public static Task ApplyTemporaryDexterityAsync(
 		PlayerChoiceContext choiceContext,
 		Creature target,
 		Creature applier,
 		CardModel card,
 		int amount) =>
-		PowerCmd.Apply<AnticipatePower>(
+		PowerCmd.Apply<HujinHuyuanTempDexPower>(
 			choiceContext,
 			target,
 			amount,
