@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://bi4e87ihxk6rx"
-path="res://.godot/imported/Jiaobingbibai.png-6278ed92d2ab13aeb53a48517f07249c.ctex"
+uid="uid://bc0t8ps8rcirs"
+path="res://.godot/imported/JingranBuxu.png-472fca8489653a197788d245ea43dbf1.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://images/cards/Jiaobingbibai.png"
-dest_files=["res://.godot/imported/Jiaobingbibai.png-6278ed92d2ab13aeb53a48517f07249c.ctex"]
+source_file="res://images/cards/JingranBuxu.png"
+dest_files=["res://.godot/imported/JingranBuxu.png-472fca8489653a197788d245ea43dbf1.ctex"]
 
 [params]
 
