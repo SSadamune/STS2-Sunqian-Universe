@@ -1,8 +1,7 @@
-using System;
+#nullable enable
 using System.Collections.Generic;
 using Godot;
 using MegaCrit.Sts2.Core.Entities.Characters;
-using MegaCrit.Sts2.Core.Models.Relics;
 using MegaCrit.Sts2.Core.Nodes.Combat;
 using STS2RitsuLib.Data.Models;
 using STS2RitsuLib.Interop.AutoRegistration;
@@ -52,11 +51,6 @@ public sealed class SunqianCharacter : ModCharacterTemplate<SunqianCardPool, Sun
 
 	protected override NCreatureVisuals? TryCreateCreatureVisuals() =>
 		RitsuGodotNodeFactories.CreateFromScenePath<NCreatureVisuals>(AssetProfile.Scenes!.VisualsPath!);
-
-	protected override IEnumerable<Type> StartingRelicTypes =>
-	[
-		typeof(Akabeko),
-	];
 
 	public override List<string> GetArchitectAttackVfx() =>
 	[

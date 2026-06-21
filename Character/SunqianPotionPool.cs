@@ -1,3 +1,4 @@
+#nullable enable
 using STS2RitsuLib.Scaffolding.Content;
 
 namespace Squ.Character;
