@@ -14,6 +14,8 @@ using MegaCrit.Sts2.Core.Models.Powers;
 using STS2RitsuLib.Interop.AutoRegistration;
 using STS2RitsuLib.Scaffolding.Content;
 
+#nullable enable
+
 namespace Squ.Cards;
 
 /// <summary>
