@@ -4,5 +4,7 @@
   "SUNQIAN_UNIVERSE_POWER_HUJIN_HUYUAN_POWER.title": "忽近忽远",
   "SUNQIAN_UNIVERSE_POWER_HUJIN_HUYUAN_POWER.smartDescription": "每回合开始时，在本回合获得随机的{MinDex}~{MaxDex}点[gold]敏捷[/gold]。",
   "SUNQIAN_UNIVERSE_POWER_HUJIN_HUYUAN_TEMP_DEX_POWER.title": "临时敏捷",
-  "SUNQIAN_UNIVERSE_POWER_HUJIN_HUYUAN_TEMP_DEX_POWER.description": "在本回合获得{Amount}点[gold]敏捷[/gold]。"
+  "SUNQIAN_UNIVERSE_POWER_HUJIN_HUYUAN_TEMP_DEX_POWER.description": "在本回合获得{Amount}点[gold]敏捷[/gold]。",
+  "SUNQIAN_UNIVERSE_POWER_TROUBLE_AGAIN_POWER.title": "再来撒野",
+  "SUNQIAN_UNIVERSE_POWER_TROUBLE_AGAIN_POWER.smartDescription": "当[green]{TargetName}[/green]的[gold]虚弱[/gold]结束后，将[gold]怒掀帅案[/gold]放入你的手牌。"
 }
