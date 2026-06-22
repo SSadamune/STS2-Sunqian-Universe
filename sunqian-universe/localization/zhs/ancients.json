@@ -15,7 +15,7 @@
   "NEOW.talk.SUNQIAN_UNIVERSE_CHARACTER_SUNQIAN_CHARACTER.1-0r.ancient": "[sine]...你又... ..开机了..... \n...这一遍... ..和上一遍... ..不一样.....[/sine]",
   "NEOW.talk.SUNQIAN_UNIVERSE_CHARACTER_SUNQIAN_CHARACTER.2-0.ancient": "[sine]...还缺... ..什么...？[/sine]",
   "NEOW.talk.SUNQIAN_UNIVERSE_CHARACTER_SUNQIAN_CHARACTER.2-0.next": "祈求",
-  "NEOW.talk.SUNQIAN_UNIVERSE_CHARACTER_SUNQIAN_CHARACTER.2-1.char": "若你一定要把东西写进剧本……请让我分得清，哪些记忆属于龙套演员，哪些只是借来的角色。",
+  "NEOW.talk.SUNQIAN_UNIVERSE_CHARACTER_SUNQIAN_CHARACTER.2-1.char": "若你一定要把东西写进剧本……请让我分得清，哪些记忆属于演员，哪些属于角色。",
   "NEOW.talk.SUNQIAN_UNIVERSE_CHARACTER_SUNQIAN_CHARACTER.2-1.next": "继续",
   "NEOW.talk.SUNQIAN_UNIVERSE_CHARACTER_SUNQIAN_CHARACTER.2-2.ancient": "[sine]...去吧... \n..塔顶... ..有写剧本的..... \n..东西.....[/sine]",
 
@@ -88,7 +88,7 @@
 
   "THE_ARCHITECT.talk.SUNQIAN_UNIVERSE_CHARACTER_SUNQIAN_CHARACTER.1-0r.ancient": "你又站在这里。是补拍，还是天意对上一版结局不满意？",
   "THE_ARCHITECT.talk.SUNQIAN_UNIVERSE_CHARACTER_SUNQIAN_CHARACTER.1-0r.next": "继续",
-  "THE_ARCHITECT.talk.SUNQIAN_UNIVERSE_CHARACTER_SUNQIAN_CHARACTER.1-1r.char": "同一场戏，第二次拍。我体内的将军还在和奸臣抢位置——场记却还没来。",
+  "THE_ARCHITECT.talk.SUNQIAN_UNIVERSE_CHARACTER_SUNQIAN_CHARACTER.1-1r.char": "同一场戏，第二次拍。我体内的上将军还在和小公公抢位置——场记却还没来。",
   "THE_ARCHITECT.talk.SUNQIAN_UNIVERSE_CHARACTER_SUNQIAN_CHARACTER.1-1r.next": "继续",
   "THE_ARCHITECT.talk.SUNQIAN_UNIVERSE_CHARACTER_SUNQIAN_CHARACTER.1-2r.ancient": "那就继续演。只要塔还在，就没有真正杀青这回事。",
   "THE_ARCHITECT.talk.SUNQIAN_CHARACTER.1-attack": "Both",
