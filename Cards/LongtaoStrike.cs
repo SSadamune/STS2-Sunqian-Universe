@@ -3,11 +3,8 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
-using MegaCrit.Sts2.Core.Entities.Players;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
-using MegaCrit.Sts2.Core.Models;
-using MegaCrit.Sts2.Core.Models.CardPools;
 using MegaCrit.Sts2.Core.ValueProps;
 using Squ.Character;
 using STS2RitsuLib.Interop.AutoRegistration;
@@ -15,12 +12,9 @@ using STS2RitsuLib.Scaffolding.Content;
 
 namespace Squ.Cards;
 
-/// <summary>
-/// 回合结束时若在手牌中，自动打出并攻击随机敌人（参考 Stampede / I Am Invincible 的
-/// <see cref="CardModel.AfterAutoPostPlayPhaseEntered" /> + <see cref="CardCmd.AutoPlay" /> 模式）。
-/// </summary>
-[RegisterCard(typeof(SunqianCardPool), StableEntryStem = "starry_night_strike")]
-public sealed class StarryNightStrike : ModCardTemplate
+[RegisterCard(typeof(SunqianCardPool), StableEntryStem = "strike")]
+[RegisterCharacterStarterCard(typeof(SunqianCharacter), 4)]
+public sealed class LongtaoStrike : ModCardTemplate
 {
 	protected override IEnumerable<DynamicVar> CanonicalVars =>
 	[
@@ -30,10 +24,10 @@ public sealed class StarryNightStrike : ModCardTemplate
 	protected override HashSet<CardTag> CanonicalTags => [CardTag.Strike];
 
 	public override CardAssetProfile AssetProfile => new(
-		PortraitPath: "res://images/cards/StarryNightStrike.png");
+		PortraitPath: "res://images/cards/LongtaoStrike.png");
 
-	public StarryNightStrike()
-		: base(1, CardType.Attack, CardRarity.Common, TargetType.AnyEnemy)
+	public LongtaoStrike()
+		: base(1, CardType.Attack, CardRarity.Basic, TargetType.AnyEnemy, false)
 	{
 	}
 
@@ -46,16 +40,6 @@ public sealed class StarryNightStrike : ModCardTemplate
 			.Targeting(cardPlay.Target)
 			.WithHitFx("vfx/vfx_attack_slash")
 			.Execute(choiceContext);
-	}
-
-	public override async Task AfterAutoPostPlayPhaseEntered(PlayerChoiceContext choiceContext, Player player)
-	{
-		if (player != Owner || Pile?.Type != PileType.Hand || Keywords.Contains(CardKeyword.Unplayable))
-		{
-			return;
-		}
-
-		await CardCmd.AutoPlay(choiceContext, this, null);
 	}
 
 	protected override void OnUpgrade()

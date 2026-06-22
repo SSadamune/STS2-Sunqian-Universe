@@ -19,7 +19,6 @@ using STS2RitsuLib.Scaffolding.Content;
 namespace Squ.Cards;
 
 [RegisterCard(typeof(SunqianCardPool))]
-[RegisterCharacterStarterCard(typeof(SunqianCharacter), 1)]
 public sealed class HuaguMianzhang : ModCardTemplate
 {
 	protected override IEnumerable<DynamicVar> CanonicalVars =>
