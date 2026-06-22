@@ -16,5 +16,9 @@
   "SUNQIAN_UNIVERSE_CARD_STARRY_NIGHT_STRIKE.title": "星夜打击",
   "SUNQIAN_UNIVERSE_CARD_STARRY_NIGHT_STRIKE.description": "造成{Damage:diff()}点伤害。在你的回合结束时，从手牌中打出这张牌攻击随机敌人。",
   "SUNQIAN_UNIVERSE_CARD_TABLE_FLIP.title": "怒掀帅案",
-  "SUNQIAN_UNIVERSE_CARD_TABLE_FLIP.description": "给予{WeakPower:diff()}层[gold]虚弱[/gold]。对所有敌人造成{Damage:diff()}点伤害。在该敌人的[gold]虚弱[/gold]结束后，这张牌回到你的手牌。"
+  "SUNQIAN_UNIVERSE_CARD_TABLE_FLIP.description": "给予{WeakPower:diff()}层[gold]虚弱[/gold]。对所有敌人造成{Damage:diff()}点伤害。在该敌人的[gold]虚弱[/gold]结束后，这张牌回到你的手牌。",
+  "SUNQIAN_UNIVERSE_CARD_THROW_HIM_OUT.title": "叉出去",
+  "SUNQIAN_UNIVERSE_CARD_THROW_HIM_OUT.description": "获得{Block:diff()}点[gold]格挡[/gold]。",
+  "SUNQIAN_UNIVERSE_CARD_SERVANT_SCRIPT.title": "家丁剧本",
+  "SUNQIAN_UNIVERSE_CARD_SERVANT_SCRIPT.description": "获得{Block:diff()}点[gold]格挡[/gold]。[gold]剧本：[/gold]每回合开始时获得{GeneratedCard}。"
 }
