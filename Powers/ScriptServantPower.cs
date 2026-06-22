@@ -30,7 +30,7 @@ public sealed class ScriptServantPower : ScriptPowerTemplate
 
 	public override PowerAssetProfile AssetProfile => new(
 		IconPath: "res://images/powers/ScriptServantPower.png",
-		BigIconPath: "res://images/powers/ScriptServantPower.png");
+		BigIconPath: "res://images/powers/ScriptServantPowerBig.png");
 
 	protected override IEnumerable<DynamicVar> CanonicalVars =>
 	[

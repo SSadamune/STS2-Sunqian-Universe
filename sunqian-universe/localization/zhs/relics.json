@@ -1,5 +1,5 @@
 {
   "SEA_GLASS.SUNQIAN_UNIVERSE_CHARACTER_SUNQIAN_CHARACTER.title": "群演海玻璃",
   "SUNQIAN_UNIVERSE_RELIC_BOX_LUNCH.title": "盒饭",
-  "SUNQIAN_UNIVERSE_RELIC_BOX_LUNCH.description": "每场战斗开始时，获得[gold]剧本：哨兵[/gold]。你每回合第一次[gold]解除剧本[/gold]时，获得[gold]1[/gold]点能量。"
+  "SUNQIAN_UNIVERSE_RELIC_BOX_LUNCH.description": "你每回合第一次有[gold]剧本[/gold]失效后，获得[gold]1[/gold]点能量。每场战斗开始时，获得[gold]剧本：哨兵[/gold]。"
 }

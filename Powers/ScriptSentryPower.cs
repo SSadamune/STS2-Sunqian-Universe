@@ -14,7 +14,7 @@ public sealed class ScriptSentryPower : ScriptPowerTemplate
 {
 	public override PowerAssetProfile AssetProfile => new(
 		IconPath: "res://images/powers/ScriptSentryPower.png",
-		BigIconPath: "res://images/powers/ScriptSentryPower.png");
+		BigIconPath: "res://images/powers/ScriptSentryPowerBig.png");
 
 	public override decimal ModifyDamageAdditive(
 		Creature? target,

@@ -1,6 +1,6 @@
 {
   "SUNQIAN_UNIVERSE_CARDTAG_SCRIPT.title": "剧本",
-  "SUNQIAN_UNIVERSE_CARDTAG_SCRIPT.description": "打出时，若你已有剧本能力，则先[gold]解除剧本[/gold]（移除该能力）。",
+  "SUNQIAN_UNIVERSE_CARDTAG_SCRIPT.description": "获得剧本状态（若你已有剧本，则会令之前的剧本失效）。",
   "SUNQIAN_UNIVERSE_KEYWORD_SCRIPT.title": "剧本",
-  "SUNQIAN_UNIVERSE_KEYWORD_SCRIPT.description": "带有[gold]剧本[/gold]的卡牌在打出时，若你已有剧本能力，则先[gold]解除剧本[/gold]（移除该能力），再执行这张牌的效果。同一时间只能拥有一种剧本能力；再次打出剧本卡会替换当前的剧本能力。"
+  "SUNQIAN_UNIVERSE_KEYWORD_SCRIPT.description": "一类特殊的状态；在有剧本状态时，再次获得剧本会令之前的剧本失效。"
 }

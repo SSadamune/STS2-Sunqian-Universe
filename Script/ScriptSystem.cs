@@ -12,27 +12,31 @@ namespace Squ.Script;
 
 public static class ScriptSystem
 {
+	internal static bool SuppressLiftNotification { get; set; }
+
 	/// <summary>
-	/// 若角色身上存在剧本能力，则移除并通知盒饭等遗物（遗物加能效果不受解除影响）。
+	/// 移除角色身上所有剧本能力（例如事件强制结束剧本）。
 	/// </summary>
-	public static async Task<bool> TryLiftScriptAsync(PlayerChoiceContext choiceContext, Creature creature)
+	public static async Task InvalidateScriptsAsync(Creature creature)
 	{
-		ScriptPowerTemplate? active = creature.Powers
-			.OfType<ScriptPowerTemplate>()
-			.FirstOrDefault();
-
-		if (active is null)
+		foreach (ScriptPowerTemplate active in creature.Powers.OfType<ScriptPowerTemplate>().ToList())
 		{
-			return false;
+			await RemoveScriptPowerAsync(active);
 		}
+	}
 
-		await PowerCmd.Remove(active);
+	public static async Task RemoveScriptPowerAsync(ScriptPowerTemplate power, bool notifyLift = true)
+	{
+		SuppressLiftNotification = !notifyLift;
+		await PowerCmd.Remove(power);
+		SuppressLiftNotification = false;
+	}
 
+	internal static async Task NotifyScriptLiftedAsync(Creature creature, PlayerChoiceContext choiceContext)
+	{
 		if (creature.Player?.GetRelic<BoxLunchRelic>() is { } boxLunch)
 		{
 			await boxLunch.OnScriptLiftedAsync(choiceContext);
 		}
-
-		return true;
 	}
 }

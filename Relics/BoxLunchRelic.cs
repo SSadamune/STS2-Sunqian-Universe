@@ -32,7 +32,7 @@ public sealed class BoxLunchRelic : ScriptRelicTemplate
 
 	public override RelicAssetProfile AssetProfile => new(
 		IconPath: "res://images/relics/BoxLunchRelic.png",
-		BigIconPath: "res://images/relics/BoxLunchRelic.png");
+		BigIconPath: "res://images/relics/BoxLunchRelicBig.png");
 
 	public override async Task AfterSideTurnStart(
 		CombatSide side,
@@ -61,7 +61,7 @@ public sealed class BoxLunchRelic : ScriptRelicTemplate
 	}
 
 	/// <summary>
-	/// 遗物效果：解除剧本时获得能量（与剧本能力本身无关，移除剧本不会取消此效果）。
+	/// 遗物效果：剧本失效时获得能量（含被新剧本替换）。
 	/// </summary>
 	public async Task OnScriptLiftedAsync(PlayerChoiceContext choiceContext)
 	{
