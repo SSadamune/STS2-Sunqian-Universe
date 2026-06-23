@@ -22,5 +22,5 @@
   "SUNQIAN_UNIVERSE_CARD_THROW_HIM_OUT.title": "叉出去",
   "SUNQIAN_UNIVERSE_CARD_THROW_HIM_OUT.description": "获得{Block:diff()}点[gold]格挡[/gold]。",
   "SUNQIAN_UNIVERSE_CARD_SERVANT_SCRIPT.title": "家丁剧本",
-  "SUNQIAN_UNIVERSE_CARD_SERVANT_SCRIPT.description": "[gold]剧本：[/gold]每回合开始时获得1张[gold]{IfUpgraded:show:叉出去+|叉出去}[/gold]。"
+  "SUNQIAN_UNIVERSE_CARD_SERVANT_SCRIPT.description": "获得{Block:diff()}点[gold]格挡[/gold]。[gold]剧本：[/gold]每回合开始时获得1张[gold]{IfUpgraded:show:叉出去+|叉出去}[/gold]。"
 }
