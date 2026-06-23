@@ -1,0 +1,17 @@
+{
+  "SUNQIAN_UNIVERSE_CHARACTER_SUNQIAN_CHARACTER.aromaPrinciple": "[sine][blue]这句话……不像我想说的。是剧本在替我说。[/blue][/sine]",
+  "SUNQIAN_UNIVERSE_CHARACTER_SUNQIAN_CHARACTER.banter.alive.endTurnPing": "这一场还没喊杀青。",
+  "SUNQIAN_UNIVERSE_CHARACTER_SUNQIAN_CHARACTER.banter.dead.endTurnPing": "……有人喊停吗？",
+  "SUNQIAN_UNIVERSE_CHARACTER_SUNQIAN_CHARACTER.cardsModifierDescription": "龙套演员的卡牌现在会出现在奖励和商店中。",
+  "SUNQIAN_UNIVERSE_CHARACTER_SUNQIAN_CHARACTER.cardsModifierTitle": "龙套卡牌",
+  "SUNQIAN_UNIVERSE_CHARACTER_SUNQIAN_CHARACTER.description": "曾是某古装连续剧的群众演员，扮演了很多角色。\n来到高塔寻找何为[gold]天意[/gold]，以及真实的自己。",
+  "SUNQIAN_UNIVERSE_CHARACTER_SUNQIAN_CHARACTER.eventDeathPrevention": "别让别人接我的角色。",
+  "SUNQIAN_UNIVERSE_CHARACTER_SUNQIAN_CHARACTER.goldMonologue": "[sine]这些金币……要是还能租一套戏服，也许还能再撑一场。[/sine]",
+  "SUNQIAN_UNIVERSE_CHARACTER_SUNQIAN_CHARACTER.possessiveAdjective": "他的",
+  "SUNQIAN_UNIVERSE_CHARACTER_SUNQIAN_CHARACTER.pronounObject": "他",
+  "SUNQIAN_UNIVERSE_CHARACTER_SUNQIAN_CHARACTER.pronounPossessive": "他的",
+  "SUNQIAN_UNIVERSE_CHARACTER_SUNQIAN_CHARACTER.pronounSubject": "他",
+  "SUNQIAN_UNIVERSE_CHARACTER_SUNQIAN_CHARACTER.title": "龙套演员",
+  "SUNQIAN_UNIVERSE_CHARACTER_SUNQIAN_CHARACTER.titleObject": "龙套演员",
+  "SUNQIAN_UNIVERSE_CHARACTER_SUNQIAN_CHARACTER.unlockText": "用[pink]{Prerequisite}[/pink]进行一局游戏来解锁这个角色。"
+}
