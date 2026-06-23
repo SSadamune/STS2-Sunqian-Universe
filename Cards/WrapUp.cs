@@ -21,17 +21,12 @@ public sealed class WrapUp : ModCardTemplate
 {
 	protected override IEnumerable<DynamicVar> CanonicalVars =>
 	[
-		new PowerVar<VigorPower>(4m),
+		new PowerVar<VigorPower>(3m),
 	];
 
 	protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
 	[
 		HoverTipFactory.FromPower<VigorPower>(),
-	];
-
-	public override IEnumerable<CardKeyword> CanonicalKeywords =>
-	[
-		CardKeyword.Exhaust,
 	];
 
 	public override CardAssetProfile AssetProfile => new(

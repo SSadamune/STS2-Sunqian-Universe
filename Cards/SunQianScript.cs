@@ -6,6 +6,7 @@ using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.Models.Powers;
+using Squ;
 using Squ.Character;
 using Squ.Powers;
 using STS2RitsuLib.Interop.AutoRegistration;
@@ -32,6 +33,11 @@ public sealed class SunQianScript : ScriptCardTemplate
 		HoverTipFactory.FromPower<ScriptSunQianPower>(),
 	];
 
+	public override IEnumerable<CardKeyword> CanonicalKeywords =>
+	[
+		SquKeywords.Script,
+	];
+
 	public override CardAssetProfile AssetProfile => new(
 		PortraitPath: "res://images/cards/SunqianScript.png");
 
@@ -42,12 +48,12 @@ public sealed class SunQianScript : ScriptCardTemplate
 
 	protected override async Task PlayScriptAsync(PlayerChoiceContext choiceContext, CardPlay cardPlay)
 	{
-		await PowerCmd.Apply<AnticipatePower>(
+		await HujinHuyuanPower.ApplyTemporaryDexterityAsync(
 			choiceContext,
 			Owner.Creature,
-			DexterityAmount,
 			Owner.Creature,
-			this);
+			this,
+			(int)DexterityAmount);
 
 		await PowerCmd.Apply<ScriptSunQianPower>(
 			choiceContext,
