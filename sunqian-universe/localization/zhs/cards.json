@@ -24,5 +24,7 @@
   "SUNQIAN_UNIVERSE_CARD_THROW_HIM_OUT.title": "叉出去",
   "SUNQIAN_UNIVERSE_CARD_THROW_HIM_OUT.description": "获得{Block:diff()}点[gold]格挡[/gold]。",
   "SUNQIAN_UNIVERSE_CARD_SERVANT_SCRIPT.title": "家丁剧本",
-  "SUNQIAN_UNIVERSE_CARD_SERVANT_SCRIPT.description": "获得{Block:diff()}点[gold]格挡[/gold]。[gold]剧本：[/gold]每回合开始时将1张[gold]{IfUpgraded:show:叉出去+|叉出去}[/gold]加入你的手牌。"
+  "SUNQIAN_UNIVERSE_CARD_SERVANT_SCRIPT.description": "获得{Block:diff()}点[gold]格挡[/gold]。[gold]剧本：[/gold]每回合开始时将1张[gold]{IfUpgraded:show:叉出去+|叉出去}[/gold]加入你的手牌。",
+  "SUNQIAN_UNIVERSE_CARD_TWO_WORD_POET_SCRIPT.title": "二言诗人剧本",
+  "SUNQIAN_UNIVERSE_CARD_TWO_WORD_POET_SCRIPT.description": "{IfUpgraded:show:对所有敌人|对一名敌人}造成{Damage:diff()}点伤害{Repeat:diff()}次。[gold]剧本：[/gold]每回合开始时，{IfUpgraded:show:对所有敌人|随机对敌人}造成{Damage:diff()}点伤害{Repeat:diff()}次。"
 }
