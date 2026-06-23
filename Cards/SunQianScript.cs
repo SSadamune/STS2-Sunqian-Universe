@@ -7,7 +7,7 @@ using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.Models.Powers;
 using Squ.Character;
-using Squ.Script;
+using Squ.Powers;
 using STS2RitsuLib.Interop.AutoRegistration;
 using STS2RitsuLib.Scaffolding.Content;
 
@@ -15,47 +15,45 @@ using STS2RitsuLib.Scaffolding.Content;
 
 namespace Squ.Cards;
 
-[RegisterCard(typeof(SunqianCardPool), StableEntryStem = "wrap_up")]
+[RegisterCard(typeof(SunqianCardPool), StableEntryStem = "sun_qian_script")]
 [RegisterCharacterStarterCard(typeof(SunqianCharacter), 1)]
-public sealed class WrapUp : ModCardTemplate
+public sealed class SunQianScript : ScriptCardTemplate
 {
+	private const decimal DexterityAmount = 2m;
+
 	protected override IEnumerable<DynamicVar> CanonicalVars =>
 	[
-		new PowerVar<VigorPower>(4m),
+		new PowerVar<DexterityPower>(DexterityAmount),
 	];
 
 	protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
 	[
-		HoverTipFactory.FromPower<VigorPower>(),
-	];
-
-	public override IEnumerable<CardKeyword> CanonicalKeywords =>
-	[
-		CardKeyword.Exhaust,
+		HoverTipFactory.FromPower<DexterityPower>(),
+		HoverTipFactory.FromPower<ScriptSunQianPower>(),
 	];
 
 	public override CardAssetProfile AssetProfile => new(
-		PortraitPath: "res://images/cards/WrapUp.png");
+		PortraitPath: "res://images/cards/SunqianScript.png");
 
-	public WrapUp()
-		: base(0, CardType.Skill, CardRarity.Basic, TargetType.Self, false)
+	public SunQianScript()
+		: base(1, CardType.Skill, CardRarity.Basic, TargetType.Self, false)
 	{
 	}
 
-	protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
+	protected override async Task PlayScriptAsync(PlayerChoiceContext choiceContext, CardPlay cardPlay)
 	{
-		await ScriptSystem.InvalidateScriptsAsync(Owner.Creature);
-
-		await PowerCmd.Apply<VigorPower>(
+		await PowerCmd.Apply<AnticipatePower>(
 			choiceContext,
 			Owner.Creature,
-			DynamicVars[nameof(VigorPower)].BaseValue,
+			DexterityAmount,
 			Owner.Creature,
 			this);
-	}
 
-	protected override void OnUpgrade()
-	{
-		DynamicVars[nameof(VigorPower)].UpgradeValueBy(2m);
+		await PowerCmd.Apply<ScriptSunQianPower>(
+			choiceContext,
+			Owner.Creature,
+			1m,
+			Owner.Creature,
+			this);
 	}
 }

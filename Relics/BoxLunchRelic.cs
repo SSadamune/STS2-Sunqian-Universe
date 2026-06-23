@@ -32,6 +32,7 @@ public sealed class BoxLunchRelic : ScriptRelicTemplate
 
 	public override RelicAssetProfile AssetProfile => new(
 		IconPath: "res://images/relics/BoxLunchRelic.png",
+		IconOutlinePath: "res://images/relics/BoxLunchRelicOutline.png",
 		BigIconPath: "res://images/relics/BoxLunchRelicBig.png");
 
 	public override async Task AfterSideTurnStart(
