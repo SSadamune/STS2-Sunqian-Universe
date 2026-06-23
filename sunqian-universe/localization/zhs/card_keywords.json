@@ -1,0 +1,6 @@
+{
+  "SUNQIAN_UNIVERSE_CARDTAG_SCRIPT.title": "剧本",
+  "SUNQIAN_UNIVERSE_CARDTAG_SCRIPT.description": "获得剧本状态（若你已有剧本，则会令之前的剧本失效）。",
+  "SUNQIAN_UNIVERSE_KEYWORD_SCRIPT.title": "剧本",
+  "SUNQIAN_UNIVERSE_KEYWORD_SCRIPT.description": "一类特殊的状态；若你在剧本状态下再次获得剧本，则会令之前的剧本失效。"
+}

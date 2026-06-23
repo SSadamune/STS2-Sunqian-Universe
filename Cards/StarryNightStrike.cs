@@ -9,6 +9,7 @@ using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.CardPools;
 using MegaCrit.Sts2.Core.ValueProps;
+using Squ.Character;
 using STS2RitsuLib.Interop.AutoRegistration;
 using STS2RitsuLib.Scaffolding.Content;
 
@@ -18,7 +19,7 @@ namespace Squ.Cards;
 /// 回合结束时若在手牌中，自动打出并攻击随机敌人（参考 Stampede / I Am Invincible 的
 /// <see cref="CardModel.AfterAutoPostPlayPhaseEntered" /> + <see cref="CardCmd.AutoPlay" /> 模式）。
 /// </summary>
-[RegisterCard(typeof(ColorlessCardPool), StableEntryStem = "starry_night_strike")]
+[RegisterCard(typeof(SunqianCardPool), StableEntryStem = "starry_night_strike")]
 public sealed class StarryNightStrike : ModCardTemplate
 {
 	protected override IEnumerable<DynamicVar> CanonicalVars =>

@@ -120,11 +120,11 @@ public sealed class HujinHuyuanPower : ModPowerTemplate
 			return Task.CompletedTask;
 		}
 
-		return PowerCmd.Apply<HujinHuyuanTempDexPower>(
+		return TempDexPower.ApplyAsync(
 			choiceContext,
 			target,
-			amount,
 			applier,
-			card);
+			card,
+			amount);
 	}
 }

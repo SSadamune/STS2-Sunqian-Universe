@@ -11,6 +11,7 @@ using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.CardPools;
 using MegaCrit.Sts2.Core.Models.Powers;
+using Squ.Character;
 using STS2RitsuLib.Interop.AutoRegistration;
 using STS2RitsuLib.Scaffolding.Content;
 
@@ -22,7 +23,7 @@ namespace Squ.Cards;
 /// 被动回手：当本牌位于抽牌堆/弃牌堆/消耗堆时，若玩家通过其他来源施加的 debuff
 /// 被人工制品抵消，则将此牌移入手牌（参考 Regent「Make It So」的 CardPileCmd.Add 模式）。
 /// </summary>
-[RegisterCard(typeof(ColorlessCardPool))]
+[RegisterCard(typeof(SunqianCardPool))]
 public sealed class JingranBuxu : ModCardTemplate
 {
 	/// <summary>打出本牌施加 debuff 时为 true，避免触发自身的被动回手。</summary>

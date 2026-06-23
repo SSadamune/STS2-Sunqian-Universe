@@ -6,13 +6,14 @@ using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.Models.CardPools;
 using MegaCrit.Sts2.Core.Models.Powers;
+using Squ.Character;
 using Squ.Powers;
 using STS2RitsuLib.Interop.AutoRegistration;
 using STS2RitsuLib.Scaffolding.Content;
 
 namespace Squ.Cards;
 
-[RegisterCard(typeof(ColorlessCardPool))]
+[RegisterCard(typeof(SunqianCardPool))]
 public sealed class HujinHuyuan : ModCardTemplate
 {
 	public const string MinDexVarName = "MinDex";
