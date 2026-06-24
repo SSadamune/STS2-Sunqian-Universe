@@ -32,7 +32,9 @@
   "SUNQIAN_UNIVERSE_CARD_ZHAXI.zeroEnergyHoverTip": "剩余{energyPrefix:energyIcons(0)}时打出此牌[red]无法[/red]获得能力牌；剩余{energyPrefix:energyIcons(4)}以上时打出此牌将从{energyPrefix:energyIcons(3)}的能力牌中选择。",
   "SUNQIAN_UNIVERSE_CARD_ZHAXI.selectionScreenPrompt": "选择一张牌。",
   "SUNQIAN_UNIVERSE_CARD_WHAT_TO_EAT.title": "吃什么",
-  "SUNQIAN_UNIVERSE_CARD_WHAT_TO_EAT.description": "抽{Cards:diff()}张牌。消耗2张牌。\n若为多人模式，将1张[gold]{IfUpgraded:show:是啊，吃什么+|是啊，吃什么}[/gold]加入每名其他玩家的手牌。",
+  "SUNQIAN_UNIVERSE_CARD_WHAT_TO_EAT.description": "抽{Cards:diff()}张牌。消耗2张牌。",
+  "SUNQIAN_UNIVERSE_CARD_WHAT_TO_EAT_MULTI.title": "吃什么",
+  "SUNQIAN_UNIVERSE_CARD_WHAT_TO_EAT_MULTI.description": "抽{Cards:diff()}张牌。消耗2张牌。\n将1张[gold]{IfUpgraded:show:是啊，吃什么+|是啊，吃什么}[/gold]加入每名其他玩家的手牌。",
   "SUNQIAN_UNIVERSE_CARD_EXACTLY_WHAT_TO_EAT.title": "是啊，吃什么",
   "SUNQIAN_UNIVERSE_CARD_EXACTLY_WHAT_TO_EAT.description": "抽{Cards:diff()}张牌。消耗1张牌。"
 }

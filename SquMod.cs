@@ -1,4 +1,5 @@
 using System.Reflection;
+using HarmonyLib;
 using MegaCrit.Sts2.Core.Logging;
 using MegaCrit.Sts2.Core.Modding;
 using Squ.Character;
@@ -27,6 +28,8 @@ public static class SquMod
 			.CharacterStarterRelic<SunqianCharacter, BoxLunchRelic>(1)
 			.CardKeywordOwnedByLocNamespace("script")
 			.Apply();
+
+		new Harmony($"{ModId}.patches").PatchAll(assembly);
 
 		Logger.Info("sunqian-universe (SQU) mod loaded!");
 	}
