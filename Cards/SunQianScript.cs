@@ -30,7 +30,6 @@ public sealed class SunQianScript : ScriptCardTemplate
 	protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
 	[
 		HoverTipFactory.FromPower<DexterityPower>(),
-		HoverTipFactory.FromPower<ScriptSunQianPower>(),
 	];
 
 	public override IEnumerable<CardKeyword> CanonicalKeywords =>

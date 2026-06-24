@@ -5,7 +5,6 @@ using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Commands.Builders;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
-using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.ValueProps;
 using Squ;
@@ -25,11 +24,6 @@ public sealed class TwoWordPoetScript : ScriptCardTemplate
 	[
 		new DamageVar(2m, ValueProp.Move),
 		new RepeatVar(2),
-	];
-
-	protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
-	[
-		HoverTipFactory.FromPower<ScriptTwoWordPoetPower>(),
 	];
 
 	public override IEnumerable<CardKeyword> CanonicalKeywords =>
