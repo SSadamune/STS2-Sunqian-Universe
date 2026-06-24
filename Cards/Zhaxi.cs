@@ -7,9 +7,11 @@ using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.Factories;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.HoverTips;
+using MegaCrit.Sts2.Core.Helpers;
 using MegaCrit.Sts2.Core.Localization;
 using MegaCrit.Sts2.Core.Models;
 using Squ.Character;
+using Squ.Script;
 using STS2RitsuLib.Interop.AutoRegistration;
 using STS2RitsuLib.Scaffolding.Content;
 
@@ -26,52 +28,44 @@ public sealed class Zhaxi : ModCardTemplate
 	public override CardAssetProfile AssetProfile => new(
 		PortraitPath: "res://images/cards/Zhaxi.png");
 
-	public override IEnumerable<CardKeyword> CanonicalKeywords =>
-	[
-		CardKeyword.Exhaust,
-	];
-
 	protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
 	[
 		HoverTipFactory.ForEnergy(this),
+		CreateZeroEnergyHoverTip(),
 	];
 
+	private IHoverTip CreateZeroEnergyHoverTip()
+	{
+		LocString description = new("cards", "SUNQIAN_UNIVERSE_CARD_ZHAXI.zeroEnergyHoverTip");
+		description.Add("energyPrefix", EnergyIconHelper.GetPrefix(this));
+		return new HoverTip(description);
+	}
+
 	public Zhaxi()
-		: base(0, CardType.Skill, CardRarity.Uncommon, TargetType.Self, false)
+		: base(0, CardType.Skill, CardRarity.Uncommon, TargetType.Self)
 	{
 	}
 
 	protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
 	{
 		int remainingEnergy = Owner.PlayerCombatState?.Energy ?? 0;
-		int powerCost = ResolvePowerCostFromRemainingEnergy(remainingEnergy);
 
-		List<CardModel> candidatePool = GetOtherCharacterPowersAtCost(powerCost).ToList();
-		if (candidatePool.Count == 0)
+		if (remainingEnergy > 0)
 		{
-			return;
+			int powerCost = ResolvePowerCostFromRemainingEnergy(remainingEnergy);
+			List<CardModel> candidatePool = GetOtherCharacterPowersAtCost(powerCost).ToList();
+			if (candidatePool.Count > 0)
+			{
+				CardModel? selected = await SelectPowerAsync(choiceContext, candidatePool);
+				if (selected is not null)
+				{
+					await CardPileCmd.AddGeneratedCardToCombat(selected, PileType.Hand, Owner);
+				}
+			}
 		}
 
-		CardModel? selected = IsUpgraded
-			? await SelectPowerAsync(choiceContext, candidatePool)
-			: RollRandomPower(candidatePool);
-
-		if (selected is null)
-		{
-			return;
-		}
-
-		await CardPileCmd.AddGeneratedCardToCombat(selected, PileType.Hand, Owner);
+		await ScriptSystem.InvalidateScriptsAsync(Owner.Creature);
 	}
-
-	private CardModel? RollRandomPower(IReadOnlyList<CardModel> candidatePool) =>
-		CardFactory
-			.GetDistinctForCombat(
-				Owner,
-				candidatePool,
-				1,
-				Owner.RunState.Rng.CombatCardGeneration)
-			.FirstOrDefault();
 
 	private async Task<CardModel?> SelectPowerAsync(
 		PlayerChoiceContext choiceContext,
@@ -89,6 +83,15 @@ public sealed class Zhaxi : ModCardTemplate
 		if (choices.Count == 0)
 		{
 			return null;
+		}
+
+		if (IsUpgraded)
+		{
+			foreach (CardModel choice in choices)
+			{
+				choice.UpgradeInternal();
+				choice.FinalizeUpgradeInternal();
+			}
 		}
 
 		return await CardSelectCmd.FromChooseACardScreen(
@@ -111,7 +114,7 @@ public sealed class Zhaxi : ModCardTemplate
 	}
 
 	private static int ResolvePowerCostFromRemainingEnergy(int remainingEnergy) =>
-		remainingEnergy <= 0 ? 1 : Math.Min(remainingEnergy, 3);
+		Math.Min(remainingEnergy, 3);
 
 	private static bool MatchesPowerCost(CardModel card, int powerCost) =>
 		card.Type == CardType.Power

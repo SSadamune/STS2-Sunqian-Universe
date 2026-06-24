@@ -42,7 +42,7 @@ public sealed class SunQianScript : ScriptCardTemplate
 		PortraitPath: "res://images/cards/SunqianScript.png");
 
 	public SunQianScript()
-		: base(1, CardType.Skill, CardRarity.Basic, TargetType.Self, false)
+		: base(1, CardType.Skill, CardRarity.Basic, TargetType.Self, true)
 	{
 	}
 

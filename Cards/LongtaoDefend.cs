@@ -26,7 +26,7 @@ public sealed class LongtaoDefend : ModCardTemplate
 		PortraitPath: "res://images/cards/LongtaoDefend.png");
 
 	public LongtaoDefend()
-		: base(1, CardType.Skill, CardRarity.Basic, TargetType.Self, false)
+		: base(1, CardType.Skill, CardRarity.Basic, TargetType.Self)
 	{
 	}
 

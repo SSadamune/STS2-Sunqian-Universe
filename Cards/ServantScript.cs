@@ -40,7 +40,7 @@ public sealed class ServantScript : ScriptCardTemplate
 		PortraitPath: "res://images/cards/ServantScript.png");
 
 	public ServantScript()
-		: base(2, CardType.Skill, CardRarity.Common, TargetType.Self, false)
+		: base(2, CardType.Skill, CardRarity.Common, TargetType.Self, true)
 	{
 	}
 

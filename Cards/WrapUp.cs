@@ -33,7 +33,7 @@ public sealed class WrapUp : ModCardTemplate
 		PortraitPath: "res://images/cards/WrapUp.png");
 
 	public WrapUp()
-		: base(0, CardType.Skill, CardRarity.Basic, TargetType.Self, false)
+		: base(0, CardType.Skill, CardRarity.Basic, TargetType.Self)
 	{
 	}
 

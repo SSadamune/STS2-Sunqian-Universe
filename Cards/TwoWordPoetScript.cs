@@ -45,7 +45,7 @@ public sealed class TwoWordPoetScript : ScriptCardTemplate
 		IsUpgraded ? TargetType.AllEnemies : TargetType.AnyEnemy;
 
 	public TwoWordPoetScript()
-		: base(1, CardType.Attack, CardRarity.Common, TargetType.AnyEnemy, false)
+		: base(1, CardType.Attack, CardRarity.Common, TargetType.AnyEnemy, true)
 	{
 	}
 

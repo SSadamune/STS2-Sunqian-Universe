@@ -27,7 +27,7 @@ public sealed class LongtaoStrike : ModCardTemplate
 		PortraitPath: "res://images/cards/LongtaoStrike.png");
 
 	public LongtaoStrike()
-		: base(1, CardType.Attack, CardRarity.Basic, TargetType.AnyEnemy, false)
+		: base(1, CardType.Attack, CardRarity.Basic, TargetType.AnyEnemy)
 	{
 	}
 
