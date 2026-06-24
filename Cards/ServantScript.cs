@@ -24,6 +24,8 @@ public sealed class ServantScript : ScriptCardTemplate
 		new BlockVar(9m, ValueProp.Move),
 	];
 
+	public override bool GainsBlock => true;
+
 	// 对齐 BEGONE：悬停预览实际生成的卡牌（含升级态）。
 	protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
 	[

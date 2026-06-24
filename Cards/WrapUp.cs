@@ -6,6 +6,7 @@ using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.Models.Powers;
+using Squ;
 using Squ.Character;
 using Squ.Script;
 using STS2RitsuLib.Interop.AutoRegistration;
@@ -27,6 +28,7 @@ public sealed class WrapUp : ModCardTemplate
 	protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
 	[
 		HoverTipFactory.FromPower<VigorPower>(),
+		HoverTipFactory.FromKeyword(SquKeywords.Script),
 	];
 
 	public override CardAssetProfile AssetProfile => new(

@@ -5,6 +5,7 @@ using MegaCrit.Sts2.Core.CardSelection;
 using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
+using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Localization;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.Models;
@@ -29,12 +30,19 @@ public sealed class VoiceChange : ModCardTemplate
 		new BlockVar(5m, ValueProp.Move),
 	];
 
+	public override bool GainsBlock => true;
+
 	public override CardAssetProfile AssetProfile => new(
 		PortraitPath: "res://images/cards/VoiceChange.png");
 
 	public override IEnumerable<CardKeyword> CanonicalKeywords =>
 	[
 		CardKeyword.Exhaust,
+	];
+
+	protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
+	[
+		HoverTipFactory.FromKeyword(SquKeywords.Script),
 	];
 
 	public VoiceChange()

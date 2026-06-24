@@ -10,6 +10,7 @@ using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Helpers;
 using MegaCrit.Sts2.Core.Localization;
 using MegaCrit.Sts2.Core.Models;
+using Squ;
 using Squ.Character;
 using Squ.Script;
 using STS2RitsuLib.Interop.AutoRegistration;
@@ -32,6 +33,7 @@ public sealed class Zhaxi : ModCardTemplate
 	[
 		HoverTipFactory.ForEnergy(this),
 		CreateZeroEnergyHoverTip(),
+		HoverTipFactory.FromKeyword(SquKeywords.Script),
 	];
 
 	private IHoverTip CreateZeroEnergyHoverTip()

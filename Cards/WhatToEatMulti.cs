@@ -20,6 +20,7 @@ public sealed class WhatToEatMulti : WhatToEatCardBase
 
 	protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
 	[
+		HoverTipFactory.FromKeyword(CardKeyword.Exhaust),
 		HoverTipFactory.FromCard<ExactlyWhatToEat>(IsUpgraded),
 	];
 
