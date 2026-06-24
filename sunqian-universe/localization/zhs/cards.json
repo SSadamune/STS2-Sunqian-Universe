@@ -26,5 +26,8 @@
   "SUNQIAN_UNIVERSE_CARD_SERVANT_SCRIPT.title": "家丁剧本",
   "SUNQIAN_UNIVERSE_CARD_SERVANT_SCRIPT.description": "获得{Block:diff()}点[gold]格挡[/gold]。[gold]剧本：[/gold]每回合开始时将1张[gold]{IfUpgraded:show:叉出去+|叉出去}[/gold]加入你的手牌。",
   "SUNQIAN_UNIVERSE_CARD_TWO_WORD_POET_SCRIPT.title": "二言诗人剧本",
-  "SUNQIAN_UNIVERSE_CARD_TWO_WORD_POET_SCRIPT.description": "{IfUpgraded:show:对所有敌人|对一名敌人}造成{Damage:diff()}点伤害{Repeat:diff()}次。[gold]剧本：[/gold]每回合开始时，{IfUpgraded:show:对所有敌人|随机对敌人}造成{Damage:diff()}点伤害{Repeat:diff()}次。"
+  "SUNQIAN_UNIVERSE_CARD_TWO_WORD_POET_SCRIPT.description": "{IfUpgraded:show:对所有敌人|对一名敌人}造成{Damage:diff()}点伤害{Repeat:diff()}次。[gold]剧本：[/gold]每回合开始时，{IfUpgraded:show:对所有敌人|随机对敌人}造成{Damage:diff()}点伤害{Repeat:diff()}次。",
+  "SUNQIAN_UNIVERSE_CARD_ZHAXI.title": "轧戏",
+  "SUNQIAN_UNIVERSE_CARD_ZHAXI.description": "根据当前剩余{energyPrefix:energyIcons(1)}，{IfUpgraded:show:从3张|将随机一张}消耗为等量值（最少为1，最多为3）的其他角色的[gold]能力[/gold]牌{IfUpgraded:show:中选择1张|}加入你的手牌。",
+  "SUNQIAN_UNIVERSE_CARD_ZHAXI.selectionScreenPrompt": "选择一张牌。"
 }
