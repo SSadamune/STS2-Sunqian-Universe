@@ -1,0 +1,8 @@
+{
+  "SUNQIAN_UNIVERSE_CARD_AIBINGBISHENG.title": "哀兵必胜",
+  "SUNQIAN_UNIVERSE_CARD_AIBINGBISHENG.description": "令一名角色获得{StrengthPower:diff()}[gold]力量[/gold]和{RitualPower:diff()}[gold]仪式[/gold]。",
+  "SUNQIAN_UNIVERSE_CARD_JIAOBINGBIBAI.title": "骄兵必败",
+  "SUNQIAN_UNIVERSE_CARD_JIAOBINGBIBAI.description": "令一名角色获得{VigorPower:diff()}[gold]活力[/gold]和{VulnerablePower:diff()}[gold]易伤[/gold]。",
+  "SUNQIAN_UNIVERSE_CARD_HUAGU_MIANZHANG.title": "化骨绵掌",
+  "SUNQIAN_UNIVERSE_CARD_HUAGU_MIANZHANG.description": "造成{Damage:diff()}点伤害。根据所造成伤害，该敌人的每个回合开始时获得等量的[gold]灾厄[/gold]。"
+}

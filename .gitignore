@@ -1,0 +1,7 @@
+# Godot 4+ specific ignores
+.godot/
+/android/
+.builds/
+lib/sts2.dll
+.export/
+tools/
