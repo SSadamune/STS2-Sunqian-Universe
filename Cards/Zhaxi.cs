@@ -29,19 +29,19 @@ public sealed class Zhaxi : ModCardTemplate
 	public override CardAssetProfile AssetProfile => new(
 		PortraitPath: "res://images/cards/Zhaxi.png");
 
+	private IHoverTip CreateZeroEnergyHoverTip()
+	{
+		LocString description = new("cards", "SUNQIAN_UNIVERSE_CARD_ZHAXI.zeroEnergyHoverTip");
+		description.Add("energyPrefix", EnergyIconHelper.GetPrefix(this));
+		return new HoverTip(SquCommonL10n.AnnotationTitle(), description);
+	}
+
 	protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
 	[
 		HoverTipFactory.ForEnergy(this),
 		CreateZeroEnergyHoverTip(),
 		HoverTipFactory.FromKeyword(SquKeywords.Script),
 	];
-
-	private IHoverTip CreateZeroEnergyHoverTip()
-	{
-		LocString description = new("cards", "SUNQIAN_UNIVERSE_CARD_ZHAXI.zeroEnergyHoverTip");
-		description.Add("energyPrefix", EnergyIconHelper.GetPrefix(this));
-		return new HoverTip(description);
-	}
 
 	public Zhaxi()
 		: base(0, CardType.Skill, CardRarity.Uncommon, TargetType.Self)

@@ -16,6 +16,6 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="STS2.RitsuLib" Version="0.4.27" />
+    <PackageReference Include="STS2.RitsuLib" Version="0.4.36" />
   </ItemGroup>
 </Project>

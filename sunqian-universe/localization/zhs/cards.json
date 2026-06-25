@@ -44,6 +44,7 @@
   "SUNQIAN_UNIVERSE_CARD_VOICE_CHANGE.selectionScreenPrompt": "选择一张[gold]剧本[/gold]牌。",
   "SUNQIAN_UNIVERSE_CARD_THE_CAT_DIED.title": "生死不明",
   "SUNQIAN_UNIVERSE_CARD_THE_CAT_DIED.description": "造成随机的{MinDamage:diff()}~{MaxDamage:diff()}点伤害。若该敌人的生命不大于此伤害上限，直接击杀。",
+  "SUNQIAN_UNIVERSE_CARD_THE_CAT_DIED.doomKillSupplement.description": "以此法直接击杀将视为[gold]灾厄[/gold]击杀。",
   "SUNQIAN_UNIVERSE_CARD_SUNQIAN_UNIVERSE.title": "孙乾宇宙",
   "SUNQIAN_UNIVERSE_CARD_SUNQIAN_UNIVERSE.description": "获得{DexterityPower:diff()}点[gold]敏捷[/gold]。你每回合第一次有[gold]剧本[/gold]失效后，抽{Cards:diff()}张牌。"
 }
