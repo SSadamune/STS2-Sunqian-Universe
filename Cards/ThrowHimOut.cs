@@ -21,6 +21,8 @@ public sealed class ThrowHimOut : ModCardTemplate
 		new BlockVar(4m, ValueProp.Move),
 	];
 
+	public override bool GainsBlock => true;
+
 	public override CardAssetProfile AssetProfile => new(
 		PortraitPath: "res://images/cards/ThrowHimOut.png");
 
@@ -30,7 +32,7 @@ public sealed class ThrowHimOut : ModCardTemplate
 	];
 
 	public ThrowHimOut()
-		: base(0, CardType.Skill, CardRarity.Common, TargetType.Self, false)
+		: base(0, CardType.Skill, CardRarity.Common, TargetType.Self)
 	{
 	}
 

@@ -1,6 +1,8 @@
 using System.Reflection;
+using HarmonyLib;
 using MegaCrit.Sts2.Core.Logging;
 using MegaCrit.Sts2.Core.Modding;
+using Squ.Cards;
 using Squ.Character;
 using Squ.Relics;
 using STS2RitsuLib;
@@ -26,7 +28,10 @@ public static class SquMod
 		RitsuLibFramework.CreateContentPack(ModId)
 			.CharacterStarterRelic<SunqianCharacter, BoxLunchRelic>(1)
 			.CardKeywordOwnedByLocNamespace("script")
+			.ArchaicToothTranscendence<SunQianScript, SunqianUniverse>()
 			.Apply();
+
+		new Harmony($"{ModId}.patches").PatchAll(assembly);
 
 		Logger.Info("sunqian-universe (SQU) mod loaded!");
 	}

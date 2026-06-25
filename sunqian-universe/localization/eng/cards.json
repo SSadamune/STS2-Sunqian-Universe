@@ -1,0 +1,6 @@
+{
+  "SUNQIAN_UNIVERSE_CARD_THE_CAT_DIED.title": "The Cat Died",
+  "SUNQIAN_UNIVERSE_CARD_THE_CAT_DIED.description": "Deal {MinDamage:diff()}-{MaxDamage:diff()} damage at random. If that enemy has no more HP than the upper limit, kill it outright.",
+  "SUNQIAN_UNIVERSE_CARD_SUNQIAN_UNIVERSE.title": "Sunqian Universe",
+  "SUNQIAN_UNIVERSE_CARD_SUNQIAN_UNIVERSE.description": "Gain {DexterityPower:diff()} [gold]Dexterity[/gold]. The first time a [gold]Script[/gold] ends each turn, draw {Cards:diff()} card."
+}

@@ -22,11 +22,13 @@ public sealed class LongtaoDefend : ModCardTemplate
 
 	protected override HashSet<CardTag> CanonicalTags => [CardTag.Defend];
 
+	public override bool GainsBlock => true;
+
 	public override CardAssetProfile AssetProfile => new(
 		PortraitPath: "res://images/cards/LongtaoDefend.png");
 
 	public LongtaoDefend()
-		: base(1, CardType.Skill, CardRarity.Basic, TargetType.Self, false)
+		: base(1, CardType.Skill, CardRarity.Basic, TargetType.Self)
 	{
 	}
 
