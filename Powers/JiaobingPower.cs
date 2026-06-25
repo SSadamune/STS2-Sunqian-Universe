@@ -32,8 +32,8 @@ public sealed class JiaobingPower : ModPowerTemplate
 	public override Color AmountLabelColor => PowerModel._normalAmountLabelColor;
 
 	public override PowerAssetProfile AssetProfile => new(
-		IconPath: "res://images/cards/Jiaobing.png",
-		BigIconPath: "res://images/cards/JiaobingBig.png");
+		IconPath: "res://images/cards/JiaobingPower.png",
+		BigIconPath: "res://images/cards/JiaobingPowerBig.png");
 
 	protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
 	[
