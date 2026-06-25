@@ -9,6 +9,8 @@
   "SUNQIAN_UNIVERSE_POWER_TROUBLE_AGAIN_POWER.smartDescription": "当[green]{TargetName}[/green]的[gold]虚弱[/gold]结束后，将[gold]怒掀帅案[/gold]放入你的手牌。",
   "SUNQIAN_UNIVERSE_POWER_SCRIPT_SERVANT_POWER.title": "剧本：家丁",
   "SUNQIAN_UNIVERSE_POWER_SCRIPT_SERVANT_POWER.smartDescription": "每回合开始时，将一张{GeneratedCard}加入你的手牌。",
+  "SUNQIAN_UNIVERSE_POWER_SCRIPT_NEUTRAL_AMBUSH_POWER.title": "剧本：中立伏兵",
+  "SUNQIAN_UNIVERSE_POWER_SCRIPT_NEUTRAL_AMBUSH_POWER.smartDescription": "每当你抽到[gold]巨石[/gold]时，对一名随机敌人打出。",
   "SUNQIAN_UNIVERSE_POWER_SCRIPT_SENTRY_POWER.title": "剧本：哨兵",
   "SUNQIAN_UNIVERSE_POWER_SCRIPT_SENTRY_POWER.description": "名字中含有「打击」的卡牌造成1点额外伤害。",
   "SUNQIAN_UNIVERSE_POWER_SCRIPT_SUN_QIAN_POWER.title": "剧本：孙乾",

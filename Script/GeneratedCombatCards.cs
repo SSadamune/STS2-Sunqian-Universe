@@ -41,6 +41,25 @@ public static class GeneratedCombatCards
 		await CardPileCmd.AddGeneratedCardToCombat(card, PileType.Hand, creator ?? player);
 	}
 
+	public static async Task AddToDrawPileInCombat<T>(
+		ICombatState combatState,
+		Player player,
+		int count,
+		bool upgraded,
+		Player? creator = null)
+		where T : CardModel
+	{
+		for (int i = 0; i < count; i++)
+		{
+			CardModel card = CreateInCombat<T>(combatState, player, upgraded);
+			await CardPileCmd.AddGeneratedCardToCombat(
+				card,
+				PileType.Draw,
+				creator ?? player,
+				CardPilePosition.Random);
+		}
+	}
+
 	/// <summary>
 	/// 获取本地化后的卡牌标题（含升级后的「+」后缀）。
 	/// </summary>
