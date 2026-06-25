@@ -38,5 +38,10 @@ public static class ScriptSystem
 		{
 			await boxLunch.OnScriptLiftedAsync(choiceContext);
 		}
+
+		if (creature.GetPower<SunqianUniversePower>() is { } sunqianUniversePower)
+		{
+			await sunqianUniversePower.OnScriptLiftedAsync(choiceContext);
+		}
 	}
 }
