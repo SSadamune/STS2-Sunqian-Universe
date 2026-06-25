@@ -39,5 +39,7 @@
   "SUNQIAN_UNIVERSE_CARD_EXACTLY_WHAT_TO_EAT.description": "抽{Cards:diff()}张牌。[gold]消耗[/gold]1张牌。",
   "SUNQIAN_UNIVERSE_CARD_VOICE_CHANGE.title": "变声期",
   "SUNQIAN_UNIVERSE_CARD_VOICE_CHANGE.description": "获得{Block:diff()}点[gold]格挡[/gold]。将[gold]消耗牌堆[/gold]中的一张[gold]剧本[/gold]牌放入你的[gold]手牌[/gold]。",
-  "SUNQIAN_UNIVERSE_CARD_VOICE_CHANGE.selectionScreenPrompt": "选择一张[gold]剧本[/gold]牌。"
+  "SUNQIAN_UNIVERSE_CARD_VOICE_CHANGE.selectionScreenPrompt": "选择一张[gold]剧本[/gold]牌。",
+  "SUNQIAN_UNIVERSE_CARD_THE_CAT_DIED.title": "生死不明",
+  "SUNQIAN_UNIVERSE_CARD_THE_CAT_DIED.description": "造成随机的{MinDamage:diff()}~{MaxDamage:diff()}点伤害。若该敌人的生命不大于此伤害上限，直接击杀。"
 }
