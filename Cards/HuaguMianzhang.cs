@@ -23,7 +23,7 @@ public sealed class HuaguMianzhang : ModCardTemplate
 {
 	protected override IEnumerable<DynamicVar> CanonicalVars =>
 	[
-		new DamageVar(15m, ValueProp.Move),
+		new DamageVar(14m, ValueProp.Move),
 	];
 
 	protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
@@ -67,6 +67,6 @@ public sealed class HuaguMianzhang : ModCardTemplate
 
 	protected override void OnUpgrade()
 	{
-		DynamicVars.Damage.UpgradeValueBy(5m);
+		DynamicVars.Damage.UpgradeValueBy(4m);
 	}
 }

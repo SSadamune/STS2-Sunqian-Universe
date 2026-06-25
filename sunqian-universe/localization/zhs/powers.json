@@ -17,5 +17,7 @@
   "SUNQIAN_UNIVERSE_POWER_SCRIPT_TWO_WORD_POET_POWER.title": "剧本：二言诗人",
   "SUNQIAN_UNIVERSE_POWER_SCRIPT_TWO_WORD_POET_POWER.smartDescription": "每回合开始时，{TargetingDescription}造成{SnapshotDamage:diff()}点伤害{Repeat:diff()}次。",
   "SUNQIAN_UNIVERSE_POWER_SUNQIAN_UNIVERSE_POWER.title": "孙乾宇宙",
-  "SUNQIAN_UNIVERSE_POWER_SUNQIAN_UNIVERSE_POWER.smartDescription": "你每回合第一次有[gold]剧本[/gold]失效后，抽{Amount}张牌。"
+  "SUNQIAN_UNIVERSE_POWER_SUNQIAN_UNIVERSE_POWER.smartDescription": "你每回合第一次有[gold]剧本[/gold]失效后，抽{Amount}张牌。",
+  "SUNQIAN_UNIVERSE_POWER_JIAOBING_POWER.title": "已成骄兵",
+  "SUNQIAN_UNIVERSE_POWER_JIAOBING_POWER.description": "在下个回合开始时获得{Amount}层[gold]虚弱[/gold]和[gold]易伤[/gold]。"
 }

@@ -8,14 +8,13 @@ using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.Models.CardPools;
 using MegaCrit.Sts2.Core.Models.Powers;
-using Squ.Character;
 using STS2RitsuLib.Combat.CardTargeting;
 using STS2RitsuLib.Interop.AutoRegistration;
 using STS2RitsuLib.Scaffolding.Content;
 
 namespace Squ.Cards;
 
-[RegisterCard(typeof(SunqianCardPool))]
+[RegisterCard(typeof(ColorlessCardPool))]
 public sealed class Aibingbisheng : ModCardTemplate
 {
 	protected override IEnumerable<DynamicVar> CanonicalVars =>
@@ -33,13 +32,8 @@ public sealed class Aibingbisheng : ModCardTemplate
 	public override CardAssetProfile AssetProfile => new(
 		PortraitPath: "res://images/cards/Aibingbisheng.png");
 
-	public override IEnumerable<CardKeyword> CanonicalKeywords =>
-	[
-		CardKeyword.Exhaust,
-	];
-
 	public Aibingbisheng()
-		: base(1, CardType.Skill, CardRarity.Uncommon, CustomTargetType.Anyone)
+		: base(0, CardType.Power, CardRarity.Common, CustomTargetType.Anyone)
 	{
 	}
 
@@ -64,6 +58,6 @@ public sealed class Aibingbisheng : ModCardTemplate
 
 	protected override void OnUpgrade()
 	{
-        AddKeyword(CardKeyword.Innate);
+		AddKeyword(CardKeyword.Innate);
 	}
 }
