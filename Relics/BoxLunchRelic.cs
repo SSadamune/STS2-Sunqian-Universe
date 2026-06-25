@@ -9,6 +9,7 @@ using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.HoverTips;
 using Squ.Character;
 using Squ.Powers;
+using Squ.Script;
 using STS2RitsuLib.Interop.AutoRegistration;
 using STS2RitsuLib.Scaffolding.Content;
 
@@ -17,10 +18,8 @@ using STS2RitsuLib.Scaffolding.Content;
 namespace Squ.Relics;
 
 [RegisterRelic(typeof(SunqianRelicPool), StableEntryStem = "box_lunch")]
-public sealed class BoxLunchRelic : ScriptRelicTemplate
+public sealed class BoxLunchRelic : ScriptRelicTemplate, IScriptLiftHandler
 {
-	private bool _gainedEnergyThisTurn;
-
 	public override RelicRarity Rarity => RelicRarity.Common;
 
 	protected override bool IncludeEnergyHoverTip => true;
@@ -45,8 +44,6 @@ public sealed class BoxLunchRelic : ScriptRelicTemplate
 			return;
 		}
 
-		_gainedEnergyThisTurn = false;
-
 		if (Owner.PlayerCombatState?.TurnNumber > 1)
 		{
 			return;
@@ -61,17 +58,13 @@ public sealed class BoxLunchRelic : ScriptRelicTemplate
 			null);
 	}
 
-	/// <summary>
-	/// 遗物效果：剧本失效时获得能量（含被新剧本替换）。
-	/// </summary>
-	public async Task OnScriptLiftedAsync(PlayerChoiceContext choiceContext)
+	public async Task OnScriptLiftAsync(ScriptLiftContext context)
 	{
-		if (_gainedEnergyThisTurn)
+		if (!context.IsFirstLiftOfTurn)
 		{
 			return;
 		}
 
-		_gainedEnergyThisTurn = true;
 		Flash();
 		await PlayerCmd.GainEnergy(1m, Owner);
 	}

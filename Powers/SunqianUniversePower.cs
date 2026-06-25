@@ -1,8 +1,6 @@
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using Godot;
-using MegaCrit.Sts2.Core.Combat;
 using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Creatures;
 using MegaCrit.Sts2.Core.Entities.Players;
@@ -11,6 +9,7 @@ using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Models;
 using Squ;
+using Squ.Script;
 using STS2RitsuLib.Interop.AutoRegistration;
 using STS2RitsuLib.Scaffolding.Content;
 
@@ -19,10 +18,8 @@ using STS2RitsuLib.Scaffolding.Content;
 namespace Squ.Powers;
 
 [RegisterPower]
-public sealed class SunqianUniversePower : ModPowerTemplate
+public sealed class SunqianUniversePower : ModPowerTemplate, IScriptLiftHandler
 {
-	private bool _drewFromScriptLiftThisTurn;
-
 	public override PowerType Type => PowerType.Buff;
 
 	public override PowerStackType StackType => PowerStackType.Counter;
@@ -38,23 +35,9 @@ public sealed class SunqianUniversePower : ModPowerTemplate
 		HoverTipFactory.FromKeyword(SquKeywords.Script),
 	];
 
-	public override Task AfterSideTurnStart(
-		CombatSide side,
-		IReadOnlyList<Creature> participants,
-		ICombatState combatState)
+	public async Task OnScriptLiftAsync(ScriptLiftContext context)
 	{
-		if (side != Owner.Side || !participants.Contains(Owner))
-		{
-			return Task.CompletedTask;
-		}
-
-		_drewFromScriptLiftThisTurn = false;
-		return Task.CompletedTask;
-	}
-
-	public async Task OnScriptLiftedAsync(PlayerChoiceContext choiceContext)
-	{
-		if (_drewFromScriptLiftThisTurn)
+		if (!context.IsFirstLiftOfTurn)
 		{
 			return;
 		}
@@ -66,8 +49,7 @@ public sealed class SunqianUniversePower : ModPowerTemplate
 			return;
 		}
 
-		_drewFromScriptLiftThisTurn = true;
 		Flash();
-		await CardPileCmd.Draw(choiceContext, drawCount, player);
+		await CardPileCmd.Draw(context.ChoiceContext, drawCount, player);
 	}
 }
