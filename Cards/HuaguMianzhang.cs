@@ -10,6 +10,7 @@ using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.Models.CardPools;
+using MegaCrit.Sts2.Core.Models.Powers;
 using MegaCrit.Sts2.Core.ValueProps;
 using Squ.Character;
 using Squ.Powers;
@@ -28,7 +29,7 @@ public sealed class HuaguMianzhang : ModCardTemplate
 
 	protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
 	[
-		HoverTipFactory.FromPower<HuaguMianzhangPower>(),
+		HoverTipFactory.FromPower<DoomPower>(),
 	];
 
 	public override CardAssetProfile AssetProfile => new(
