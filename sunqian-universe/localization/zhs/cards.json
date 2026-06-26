@@ -1,6 +1,8 @@
 {
   "SUNQIAN_UNIVERSE_CARD_STRIKE.title": "打击",
   "SUNQIAN_UNIVERSE_CARD_STRIKE.description": "造成{Damage:diff()}点伤害。",
+  "SUNQIAN_UNIVERSE_CARD_FLAME_STRIKE.title": "烈焰打击",
+  "SUNQIAN_UNIVERSE_CARD_FLAME_STRIKE.description": "造成{Damage:diff()}点伤害。给与{BurningPower:diff()}层[gold]灼烧[/gold]。",
   "SUNQIAN_UNIVERSE_CARD_DEFEND.title": "防御",
   "SUNQIAN_UNIVERSE_CARD_DEFEND.description": "获得{Block:diff()}点[gold]格挡[/gold]。",
   "SUNQIAN_UNIVERSE_CARD_WRAP_UP.title": "收工",
