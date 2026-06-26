@@ -1,0 +1,7 @@
+{
+  "SUNQIAN_UNIVERSE_POWER_BURNING_POWER.title": "Burning",
+  "SUNQIAN_UNIVERSE_POWER_BURNING_POWER.description": "Burning creatures lose HP at the start of their turn. Each turn, Burning has a {ClearChance}% chance to be cleared. If not cleared, this chance increases by 25%.",
+  "SUNQIAN_UNIVERSE_POWER_BURNING_POWER.smartDescription": "At the start of {OnPlayer:your turn, lose|its turn, loses} [blue]{Amount}[/blue] HP, then [gold]Burning[/gold] has a {ClearChance}% chance to be cleared. If not cleared, this chance increases by 25%.",
+  "SUNQIAN_UNIVERSE_POWER_SUNQIAN_UNIVERSE_POWER.title": "Sunqian Universe",
+  "SUNQIAN_UNIVERSE_POWER_SUNQIAN_UNIVERSE_POWER.smartDescription": "Whenever your [gold]Script[/gold] ends, draw {Amount} card."
+}

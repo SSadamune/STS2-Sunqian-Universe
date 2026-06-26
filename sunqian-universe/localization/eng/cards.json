@@ -3,5 +3,7 @@
   "SUNQIAN_UNIVERSE_CARD_THE_CAT_DIED.description": "Deal {MinDamage:diff()}-{MaxDamage:diff()} damage at random. If that enemy has no more HP than the upper limit, kill it outright.",
   "SUNQIAN_UNIVERSE_CARD_THE_CAT_DIED.doomKillSupplement.description": "Kills this way count as Doom kills.",
   "SUNQIAN_UNIVERSE_CARD_SUNQIAN_UNIVERSE.title": "Sunqian Universe",
-  "SUNQIAN_UNIVERSE_CARD_SUNQIAN_UNIVERSE.description": "Gain {DexterityPower:diff()} [gold]Dexterity[/gold]. The first time a [gold]Script[/gold] ends each turn, draw {Cards:diff()} card."
+  "SUNQIAN_UNIVERSE_CARD_SUNQIAN_UNIVERSE.description": "Gain {DexterityPower:diff()} [gold]Dexterity[/gold]. Whenever your [gold]Script[/gold] ends, draw {Cards:diff()} card.",
+  "SUNQIAN_UNIVERSE_CARD_FIRE_NOVA.title": "Fire Nova",
+  "SUNQIAN_UNIVERSE_CARD_FIRE_NOVA.description": "Deal {Damage:diff()} damage. {IfUpgraded:show:Play an [gold]Exhaust[/gold] [gold]Fire Nova[/gold] on ALL enemies.|Apply {BurningPower:diff()} [gold]Burning[/gold] to ALL enemies.}"
 }

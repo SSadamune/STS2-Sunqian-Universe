@@ -37,11 +37,6 @@ public sealed class SunqianUniversePower : ModPowerTemplate, IScriptLiftHandler
 
 	public async Task OnScriptLiftAsync(ScriptLiftContext context)
 	{
-		if (!context.IsFirstLiftOfTurn)
-		{
-			return;
-		}
-
 		int drawCount = Amount;
 		Player? player = Owner.Player;
 		if (drawCount <= 0 || player is null)
