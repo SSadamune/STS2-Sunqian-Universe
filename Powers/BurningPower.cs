@@ -16,6 +16,7 @@ using MegaCrit.Sts2.Core.Nodes.Rooms;
 using MegaCrit.Sts2.Core.Nodes.Vfx;
 using MegaCrit.Sts2.Core.Random;
 using MegaCrit.Sts2.Core.ValueProps;
+using STS2RitsuLib.Combat.HealthBars;
 using STS2RitsuLib.Interop.AutoRegistration;
 using STS2RitsuLib.Scaffolding.Content;
 
@@ -28,8 +29,9 @@ namespace Squ.Powers;
 /// then may clear itself with an escalating chance.
 /// </summary>
 [RegisterPower]
-public sealed class BurningPower : ModPowerTemplate
+public sealed class BurningPower : ModPowerTemplate, IHealthBarForecastSource
 {
+	private static readonly Color BurningLethalColor = new("FFB733");
 	public const string ClearChanceVarName = "ClearChance";
 
 	public const float InitialClearChance = 0.25f;
@@ -123,6 +125,12 @@ public sealed class BurningPower : ModPowerTemplate
 		float clearChance = GetInternalData<Data>().ClearChance;
 		DynamicVars[ClearChanceVarName].BaseValue = (decimal)Math.Round(clearChance * 100f);
 	}
+
+	public IEnumerable<HealthBarForecastSegment> GetHealthBarForecastSegments(HealthBarForecastContext context) =>
+		HealthBarForecasts.Single(
+			Amount,
+			BurningLethalColor,
+			HealthBarForecastGrowthDirection.FromRight);
 
 	private static void PlayFiendFireDamageVfx(Creature target)
 	{

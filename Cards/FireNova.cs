@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using MegaCrit.Sts2.Core.Combat;
 using MegaCrit.Sts2.Core.Commands;
@@ -9,6 +10,7 @@ using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.Models;
+using MegaCrit.Sts2.Core.Random;
 using MegaCrit.Sts2.Core.ValueProps;
 using Squ.Character;
 using Squ.Powers;
@@ -20,18 +22,16 @@ using STS2RitsuLib.Scaffolding.Content;
 namespace Squ.Cards;
 
 /// <summary>
-/// Fire Nova: attack that applies Burning to all enemies; when upgraded, also plays an Exhausting
-/// unupgraded combat copy on each enemy.
+/// Fire Nova: deals damage and applies Burning to all enemies; when upgraded, becomes X-cost and
+/// repeats that effect on X random enemies including the target.
 /// </summary>
 [RegisterCard(typeof(SunqianCardPool), StableEntryStem = "fire_nova")]
 public sealed class FireNova : ModCardTemplate
 {
-	public const int DamageAmount = 8;
-	public const int BurningStacks = 3;
+	public const int DamageAmount = 3;
+	public const int BurningStacks = 5;
 
-	private bool _isUnupgradablePlusSpawnedCopy;
-
-	public override int MaxUpgradeLevel => _isUnupgradablePlusSpawnedCopy ? 0 : 1;
+	protected override bool HasEnergyCostX => IsUpgraded;
 
 	protected override IEnumerable<DynamicVar> CanonicalVars =>
 	[
@@ -62,35 +62,82 @@ public sealed class FireNova : ModCardTemplate
 			return;
 		}
 
-		await DealDamage(choiceContext, cardPlay.Target);
-
-		if (IsUpgraded && !_isUnupgradablePlusSpawnedCopy)
+		if (IsUpgraded)
 		{
-			foreach (Creature target in combatState.HittableEnemies)
+			int playCount = ResolveEnergyXValue();
+			if (playCount <= 0)
 			{
-				if (!target.IsAlive)
-				{
-					continue;
-				}
+				return;
+			}
 
-				CardModel copy = CreateExhaustingCombatCopy(combatState);
-				await CardCmd.AutoPlay(choiceContext, copy, target);
+			foreach (Creature target in PickRandomEnemiesIncluding(
+				combatState,
+				cardPlay.Target,
+				playCount,
+				combatState.RunState.Rng.CombatTargets))
+			{
+				await ExecuteBaseEffect(choiceContext, combatState, target);
 			}
 		}
 		else
 		{
-			await ApplyBurningToAllEnemies(choiceContext, combatState);
+			await ExecuteBaseEffect(choiceContext, combatState, cardPlay.Target);
 		}
 	}
 
 	protected override void OnUpgrade()
 	{
-		if (_isUnupgradablePlusSpawnedCopy)
+		MockSetEnergyCost(new CardEnergyCost(this, 0, costsX: true));
+		InvokeEnergyCostChanged();
+	}
+
+	private async Task ExecuteBaseEffect(
+		PlayerChoiceContext choiceContext,
+		ICombatState combatState,
+		Creature damageTarget)
+	{
+		await DealDamage(choiceContext, damageTarget);
+		await ApplyBurningToAllEnemies(choiceContext, combatState);
+	}
+
+	private static IEnumerable<Creature> PickRandomEnemiesIncluding(
+		ICombatState combatState,
+		Creature mustInclude,
+		int count,
+		Rng rng)
+	{
+		if (count <= 0)
 		{
-			return;
+			yield break;
 		}
 
-		EnergyCost.UpgradeBy(1);
+		List<Creature> alive = combatState.HittableEnemies
+			.Where(creature => creature.IsAlive)
+			.ToList();
+		if (alive.Count == 0 || !mustInclude.IsAlive || !alive.Contains(mustInclude))
+		{
+			yield break;
+		}
+
+		int pickCount = Math.Min(count, alive.Count);
+		HashSet<Creature> selected = [mustInclude];
+		List<Creature> pool = alive.Where(creature => creature != mustInclude).ToList();
+
+		for (int i = pool.Count - 1; i > 0; i--)
+		{
+			int swapIndex = rng.NextInt(0, i + 1);
+			(pool[i], pool[swapIndex]) = (pool[swapIndex], pool[i]);
+		}
+
+		foreach (Creature creature in pool.Take(pickCount - 1))
+		{
+			selected.Add(creature);
+		}
+
+		foreach (Creature creature in selected)
+		{
+			yield return creature;
+		}
 	}
 
 	private async Task ApplyBurningToAllEnemies(PlayerChoiceContext choiceContext, ICombatState combatState)
@@ -109,19 +156,6 @@ public sealed class FireNova : ModCardTemplate
 				Owner.Creature,
 				this);
 		}
-	}
-
-	private CardModel CreateExhaustingCombatCopy(ICombatState combatState)
-	{
-		FireNova copy = combatState.CreateCard<FireNova>(Owner);
-		copy.MarkAsUnupgradablePlusSpawnedCopy();
-		copy.AddKeyword(CardKeyword.Exhaust);
-		return copy;
-	}
-
-	private void MarkAsUnupgradablePlusSpawnedCopy()
-	{
-		_isUnupgradablePlusSpawnedCopy = true;
 	}
 
 	private async Task DealDamage(PlayerChoiceContext choiceContext, Creature target)

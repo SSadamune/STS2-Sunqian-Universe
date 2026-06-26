@@ -48,5 +48,5 @@
   "SUNQIAN_UNIVERSE_CARD_SUNQIAN_UNIVERSE.title": "孙乾宇宙",
   "SUNQIAN_UNIVERSE_CARD_SUNQIAN_UNIVERSE.description": "获得{DexterityPower:diff()}点[gold]敏捷[/gold]。每当你的[gold]剧本[/gold]失效后，抽{Cards:diff()}张牌。",
   "SUNQIAN_UNIVERSE_CARD_FIRE_NOVA.title": "飞火流星",
-  "SUNQIAN_UNIVERSE_CARD_FIRE_NOVA.description": "造成{Damage:diff()}点伤害。{IfUpgraded:show:对所有敌人打出有[gold]消耗[/gold]的[gold]飞火流星[/gold]。|给与所有敌人{BurningPower:diff()}层[gold]灼烧[/gold]。}"
+  "SUNQIAN_UNIVERSE_CARD_FIRE_NOVA.description": "{IfUpgraded:show:对包括目标在内的X名随机敌人分别执行：「|}造成{Damage:diff()}点伤害。给与所有敌人{BurningPower:diff()}层[gold]灼烧[/gold]{IfUpgraded:show:」|}。"
 }

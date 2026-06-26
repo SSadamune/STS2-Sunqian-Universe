@@ -5,5 +5,5 @@
   "SUNQIAN_UNIVERSE_CARD_SUNQIAN_UNIVERSE.title": "Sunqian Universe",
   "SUNQIAN_UNIVERSE_CARD_SUNQIAN_UNIVERSE.description": "Gain {DexterityPower:diff()} [gold]Dexterity[/gold]. Whenever your [gold]Script[/gold] ends, draw {Cards:diff()} card.",
   "SUNQIAN_UNIVERSE_CARD_FIRE_NOVA.title": "Fire Nova",
-  "SUNQIAN_UNIVERSE_CARD_FIRE_NOVA.description": "Deal {Damage:diff()} damage. {IfUpgraded:show:Play an [gold]Exhaust[/gold] [gold]Fire Nova[/gold] on ALL enemies.|Apply {BurningPower:diff()} [gold]Burning[/gold] to ALL enemies.}"
+  "SUNQIAN_UNIVERSE_CARD_FIRE_NOVA.description": "{IfUpgraded:show:On X random enemies including the target, respectively: \"|}Deal {Damage:diff()} damage. Apply {BurningPower:diff()} [gold]Burning[/gold] to ALL enemies.{IfUpgraded:show:\"|}"
 }
