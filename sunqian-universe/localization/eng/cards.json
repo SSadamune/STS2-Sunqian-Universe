@@ -7,5 +7,11 @@
   "SUNQIAN_UNIVERSE_CARD_FIRE_NOVA.title": "Fire Nova",
   "SUNQIAN_UNIVERSE_CARD_FIRE_NOVA.description": "{IfUpgraded:show:On X random enemies including the target, respectively: \"|}Deal {Damage:diff()} damage. Apply {BurningPower:diff()} [gold]Burning[/gold] to ALL enemies.{IfUpgraded:show:\"|}",
   "SUNQIAN_UNIVERSE_CARD_FLAME_STRIKE.title": "Flame Strike",
-  "SUNQIAN_UNIVERSE_CARD_FLAME_STRIKE.description": "Deal {Damage:diff()} damage. Apply {BurningPower:diff()} [gold]Burning[/gold]."
+  "SUNQIAN_UNIVERSE_CARD_FLAME_STRIKE.description": "Deal {Damage:diff()} damage. Apply {BurningPower:diff()} [gold]Burning[/gold].",
+  "SUNQIAN_UNIVERSE_CARD_YILING_BATTLE_SCRIPT.title": "Battle of Yiling Script",
+  "SUNQIAN_UNIVERSE_CARD_YILING_BATTLE_SCRIPT.description": "Gain {FuelAbundantPower:diff()} [gold]Fuel Abundant[/gold]. \n[gold]Script[/gold]: When this Script ends, add [gold]Shangfanggu's Sigh[/gold] into your [gold]Draw Pile[/gold].",
+  "SUNQIAN_UNIVERSE_CARD_SHANGFANGGU_SIGH.title": "Shangfanggu's Sigh",
+  "SUNQIAN_UNIVERSE_CARD_SHANGFANGGU_SIGH.description": "Increase [gold]Burning[/gold] you apply by 1.",
+  "SUNQIAN_UNIVERSE_CARD_CYBERTRON_STRENGTH.title": "Cybertron Strength",
+  "SUNQIAN_UNIVERSE_CARD_CYBERTRON_STRENGTH.description": "Gain [gold]Block[/gold] equal to [gold]Burning[/gold] on ALL enemies."
 }

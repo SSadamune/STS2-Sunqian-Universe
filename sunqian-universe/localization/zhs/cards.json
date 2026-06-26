@@ -28,7 +28,7 @@
   "SUNQIAN_UNIVERSE_CARD_SERVANT_SCRIPT.title": "家丁剧本",
   "SUNQIAN_UNIVERSE_CARD_SERVANT_SCRIPT.description": "获得{Block:diff()}点[gold]格挡[/gold]。\n[gold]剧本[/gold]：每回合开始时将1张[gold]{IfUpgraded:show:叉出去+|叉出去}[/gold]加入你的[gold]手牌[/gold]。",
   "SUNQIAN_UNIVERSE_CARD_NEUTRAL_AMBUSH_SCRIPT.title": "中立伏兵剧本",
-  "SUNQIAN_UNIVERSE_CARD_NEUTRAL_AMBUSH_SCRIPT.description": "将{Cards:diff()}张[gold]{IfUpgraded:show:巨石+|巨石}[/gold]加入你的[gold]抽牌堆[/gold]{IfUpgraded:show:，下个回合抽1张牌|}。\n[gold]剧本[/gold]：每当你抽到[gold]巨石[/gold]时，对一名随机敌人打出。",
+  "SUNQIAN_UNIVERSE_CARD_NEUTRAL_AMBUSH_SCRIPT.description": "将{Cards:diff()}张[gold]{IfUpgraded:show:巨石+|巨石}[/gold]加入[gold]抽牌堆[/gold]{IfUpgraded:show:，下个回合抽1张牌|}。\n[gold]剧本[/gold]：每当你抽到[gold]巨石[/gold]时，对一名随机敌人打出。",
   "SUNQIAN_UNIVERSE_CARD_TWO_WORD_POET_SCRIPT.title": "二言诗人剧本",
   "SUNQIAN_UNIVERSE_CARD_TWO_WORD_POET_SCRIPT.description": "{IfUpgraded:show:对所有敌人|对一名敌人}造成{Damage:diff()}点伤害{Repeat:diff()}次。\n[gold]剧本[/gold]：每回合开始时，{IfUpgraded:show:对所有敌人|随机对敌人}造成{Damage:diff()}点伤害{Repeat:diff()}次。",
   "SUNQIAN_UNIVERSE_CARD_ZHAXI.title": "轧戏",
@@ -50,5 +50,11 @@
   "SUNQIAN_UNIVERSE_CARD_SUNQIAN_UNIVERSE.title": "孙乾宇宙",
   "SUNQIAN_UNIVERSE_CARD_SUNQIAN_UNIVERSE.description": "获得{DexterityPower:diff()}点[gold]敏捷[/gold]。每当你的[gold]剧本[/gold]失效后，抽{Cards:diff()}张牌。",
   "SUNQIAN_UNIVERSE_CARD_FIRE_NOVA.title": "飞火流星",
-  "SUNQIAN_UNIVERSE_CARD_FIRE_NOVA.description": "{IfUpgraded:show:对包括目标在内的X名随机敌人分别执行：「|}造成{Damage:diff()}点伤害。给与所有敌人{BurningPower:diff()}层[gold]灼烧[/gold]{IfUpgraded:show:」|}。"
+  "SUNQIAN_UNIVERSE_CARD_FIRE_NOVA.description": "{IfUpgraded:show:对包括目标在内的X名随机敌人分别执行：「|}造成{Damage:diff()}点伤害。给与所有敌人{BurningPower:diff()}层[gold]灼烧[/gold]{IfUpgraded:show:」|}。",
+  "SUNQIAN_UNIVERSE_CARD_YILING_BATTLE_SCRIPT.title": "夷陵之战剧本",
+  "SUNQIAN_UNIVERSE_CARD_YILING_BATTLE_SCRIPT.description": "获得{FuelAbundantPower:diff()}层[gold]燃料充足[/gold]。\n[gold]剧本[/gold]：失效时，将一张[gold]上方谷之叹[/gold]加入[gold]抽牌堆[/gold]。",
+  "SUNQIAN_UNIVERSE_CARD_SHANGFANGGU_SIGH.title": "上方谷之叹",
+  "SUNQIAN_UNIVERSE_CARD_SHANGFANGGU_SIGH.description": "你给予的[gold]灼烧[/gold]层数增加1倍。",
+  "SUNQIAN_UNIVERSE_CARD_CYBERTRON_STRENGTH.title": "赛博坦之力",
+  "SUNQIAN_UNIVERSE_CARD_CYBERTRON_STRENGTH.description": "获得等同于所有敌人[gold]灼烧[/gold]层数的[gold]格挡[/gold]。"
 }

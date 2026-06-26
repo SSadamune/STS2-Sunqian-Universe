@@ -24,5 +24,12 @@
   "SUNQIAN_UNIVERSE_POWER_JIAOBING_POWER.description": "At the start of your next turn, gain [blue]{Amount}[/blue] [gold]Weak[/gold] and [gold]Vulnerable[/gold].",
   "SUNQIAN_UNIVERSE_POWER_BURNING_POWER.title": "Burning",
   "SUNQIAN_UNIVERSE_POWER_BURNING_POWER.description": "Burning creatures take damage at the start of their turn. Each turn, Burning has a [blue]{ClearChance}%[/blue] chance to be cleared. If not cleared, this chance increases by [blue]25%[/blue].",
-  "SUNQIAN_UNIVERSE_POWER_BURNING_POWER.smartDescription": "At the start of {OnPlayer:your turn, take|its turn, takes} [blue]{Amount}[/blue] damage, then [gold]Burning[/gold] has a [blue]{ClearChance}%[/blue] chance to be cleared. If not cleared, this chance increases by [blue]25%[/blue]."
+  "SUNQIAN_UNIVERSE_POWER_BURNING_POWER.smartDescription": "At the start of {OnPlayer:your turn, take|its turn, takes} [blue]{Amount}[/blue] damage, then [gold]Burning[/gold] has a [blue]{ClearChance}%[/blue] chance to be cleared. If not cleared, this chance increases by [blue]25%[/blue].",
+  "SUNQIAN_UNIVERSE_POWER_FUEL_ABUNDANT_POWER.title": "Fuel Abundant",
+  "SUNQIAN_UNIVERSE_POWER_FUEL_ABUNDANT_POWER.description": "Fuel Abundant increases [gold]Burning[/gold] you apply this turn.",
+  "SUNQIAN_UNIVERSE_POWER_FUEL_ABUNDANT_POWER.smartDescription": "This turn, you apply [blue]{Amount}[/blue] additional [gold]Burning[/gold].",
+  "SUNQIAN_UNIVERSE_POWER_SCRIPT_YILING_BATTLE_POWER.title": "Script: Battle of Yiling",
+  "SUNQIAN_UNIVERSE_POWER_SCRIPT_YILING_BATTLE_POWER.smartDescription": "When this Script ends, add {GeneratedCard} into your [gold]Draw Pile[/gold].",
+  "SUNQIAN_UNIVERSE_POWER_SHANGFANGGU_SIGH_POWER.title": "Shangfanggu's Sigh",
+  "SUNQIAN_UNIVERSE_POWER_SHANGFANGGU_SIGH_POWER.smartDescription": "[gold]Burning[/gold] you apply is increased by [blue]{Amount}[/blue] times."
 }
