@@ -15,12 +15,12 @@ using STS2RitsuLib.Scaffolding.Content;
 
 namespace Squ.Cards;
 
-[RegisterCard(typeof(SunqianCardPool), StableEntryStem = "yiling_battle_script")]
-public sealed class YilingBattleScript : ScriptCardTemplate
+[RegisterCard(typeof(SunqianCardPool), StableEntryStem = "huoshao_lianying_script")]
+public sealed class HuoshaoLianyingScript : ScriptCardTemplate
 {
-	public const decimal FuelAbundantStacks = 3m;
+	public const decimal FuelAbundantStacks = 5m;
 
-	public const decimal UpgradedFuelAbundantStacks = 5m;
+	public const decimal UpgradedFuelAbundantStacks = 8m;
 
 	protected override IEnumerable<DynamicVar> CanonicalVars =>
 	[
@@ -42,9 +42,9 @@ public sealed class YilingBattleScript : ScriptCardTemplate
 	];
 
 	public override CardAssetProfile AssetProfile => new(
-		PortraitPath: "res://images/cards/YilingBattleScript.png");
+		PortraitPath: "res://images/cards/HuoshaoLianyingScript.png");
 
-	public YilingBattleScript()
+	public HuoshaoLianyingScript()
 		: base(1, CardType.Skill, CardRarity.Rare, TargetType.Self, false)
 	{
 	}
@@ -59,7 +59,7 @@ public sealed class YilingBattleScript : ScriptCardTemplate
 			Owner.Creature,
 			this);
 
-		await PowerCmd.Apply<ScriptYilingBattlePower>(
+		await PowerCmd.Apply<ScriptHuoshaoLianyingPower>(
 			choiceContext,
 			Owner.Creature,
 			1m,

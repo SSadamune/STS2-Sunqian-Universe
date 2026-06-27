@@ -18,13 +18,13 @@ using STS2RitsuLib.Scaffolding.Content;
 namespace Squ.Powers;
 
 [RegisterPower]
-public sealed class ScriptYilingBattlePower : ScriptPowerTemplate
+public sealed class ScriptHuoshaoLianyingPower : ScriptPowerTemplate
 {
 	public const string GeneratedCardVarName = "GeneratedCard";
 
 	public override PowerAssetProfile AssetProfile => new(
-		IconPath: "res://images/powers/ScriptYilingBattlePower.png",
-		BigIconPath: "res://images/powers/ScriptYilingBattlePowerBig.png");
+		IconPath: "res://images/powers/ScriptHuoshaoLianyingPower.png",
+		BigIconPath: "res://images/powers/ScriptHuoshaoLianyingPowerBig.png");
 
 	protected override IEnumerable<DynamicVar> CanonicalVars =>
 	[

@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://b6ae1tdb3jpjj"
-path="res://.godot/imported/YilingBattleScript.png-a9cfbc2c296e9175c8ebc29e15862980.ctex"
+path="res://.godot/imported/HuoshaoLianyingScript.png-2a97ca351b8b7ac534bef5905dc590a1.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://images/cards/YilingBattleScript.png"
-dest_files=["res://.godot/imported/YilingBattleScript.png-a9cfbc2c296e9175c8ebc29e15862980.ctex"]
+source_file="res://images/cards/HuoshaoLianyingScript.png"
+dest_files=["res://.godot/imported/HuoshaoLianyingScript.png-2a97ca351b8b7ac534bef5905dc590a1.ctex"]
 
 [params]
 
