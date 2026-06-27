@@ -7,6 +7,7 @@ using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.Entities.Creatures;
 using MegaCrit.Sts2.Core.Entities.Powers;
+using MegaCrit.Sts2.Core.Entities.Players;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Models;
@@ -21,7 +22,7 @@ namespace Squ.Powers;
 
 /// <summary>
 /// 「怒掀帅案」打出后授予玩家：记录本张卡牌；
-/// 玩家回合开始时，若场上没有敌人处于虚弱，则将卡牌移回手牌并移除本能力。
+/// 玩家回合抽牌前，若场上没有敌人处于虚弱，则将卡牌移回手牌并移除本能力。
 /// 同一牌实例（<see cref="ResolveCardIdentity"/>）只会对应一个「再来撒野」。
 /// </summary>
 [RegisterPower]
@@ -87,12 +88,15 @@ public sealed class TroubleAgainPower : ModPowerTemplate
 		data.TrackedCardIdentity = ResolveCardIdentity(card);
 	}
 
-	public override async Task AfterSideTurnStart(
-		CombatSide side,
-		IReadOnlyList<Creature> participants,
+	/// <summary>
+	/// 在抽牌前回手，与 Thrumming Hatchet / Bolas 相同时机，确保 <see cref="CardPileCmd.Add"/> 飞牌动画正常播放。
+	/// </summary>
+	public override async Task BeforeHandDraw(
+		Player player,
+		PlayerChoiceContext choiceContext,
 		ICombatState combatState)
 	{
-		if (side != Owner.Side || !participants.Contains(Owner) || Owner.IsDead)
+		if (player != Owner.Player || Owner.IsDead)
 		{
 			return;
 		}
@@ -102,7 +106,8 @@ public sealed class TroubleAgainPower : ModPowerTemplate
 			return;
 		}
 
-		await ReturnTrackedCardAndRemoveAsync(new ThrowingPlayerChoiceContext());
+		Flash();
+		await ReturnTrackedCardAndRemoveAsync(choiceContext);
 	}
 
 	private async Task ReturnTrackedCardAndRemoveAsync(PlayerChoiceContext choiceContext)

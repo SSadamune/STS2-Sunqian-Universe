@@ -21,7 +21,7 @@ namespace Squ.Cards;
 
 /// <summary>
 /// 被动回手：当本牌位于抽牌堆/弃牌堆/消耗堆时，若玩家通过其他来源施加的 debuff
-/// 被人工制品抵消，则将此牌移入手牌（参考 Regent「Make It So」的 CardPileCmd.Add 模式）。
+/// 被人工制品抵消，则将此牌移入手牌（参考 Make It So / Right Hand Hand 的 CardPileCmd.Add 与 AfterCardPlayedLate 时机）。
 /// </summary>
 [RegisterCard(typeof(SunqianCardPool), StableEntryStem = "denied")]
 public sealed class Denied : ModCardTemplate
@@ -31,6 +31,9 @@ public sealed class Denied : ModCardTemplate
 
 	/// <summary>正在观察的一次 debuff 施加：记录施加前层数，供事后对比结果。</summary>
 	private PendingDebuffApplication? _pendingDebuffApplication;
+
+	/// <summary>已确认应回手，等待 <see cref="AfterCardPlayedLate"/> 再执行（对齐 Make It So 时机）。</summary>
+	private bool _returnToHandReady;
 
 	protected override IEnumerable<DynamicVar> CanonicalVars =>
 	[
@@ -155,6 +158,7 @@ public sealed class Denied : ModCardTemplate
 	public override async Task AfterCardPlayedLate(PlayerChoiceContext choiceContext, CardPlay cardPlay)
 	{
 		await TryReturnToHandIfPendingDebuffFailedAsync();
+		await TryExecuteReturnToHandAsync();
 	}
 
 	protected override void OnUpgrade()
@@ -202,6 +206,17 @@ public sealed class Denied : ModCardTemplate
 		}
 
 		_pendingDebuffApplication = null;
+		_returnToHandReady = true;
+	}
+
+	private async Task TryExecuteReturnToHandAsync()
+	{
+		if (!_returnToHandReady || !CanReturnToHand())
+		{
+			return;
+		}
+
+		_returnToHandReady = false;
 		await CardPileCmd.Add(this, PileType.Hand);
 	}
 
