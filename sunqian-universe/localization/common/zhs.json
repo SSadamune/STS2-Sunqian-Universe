@@ -1,0 +1,5 @@
+{
+  "SUNQIAN_UNIVERSE_COMMON.ANNOTATION.title": "注释",
+  "SUNQIAN_UNIVERSE_COMMON.STACKABLE_SCRIPT.title": "可叠层",
+  "SUNQIAN_UNIVERSE_COMMON.STACKABLE_SCRIPT.annotation": "再次获得同名的[gold]剧本[/gold]能力时，不会使当前[gold]剧本[/gold]失效，改为层数叠加（保留升级效果）。"
+}

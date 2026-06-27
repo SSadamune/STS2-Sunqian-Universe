@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Godot;
 using MegaCrit.Sts2.Core.Combat;
 using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Commands.Builders;
@@ -20,18 +21,16 @@ using STS2RitsuLib.Scaffolding.Content;
 namespace Squ.Powers;
 
 [RegisterPower]
-public sealed class ScriptTwoWordPoetPower : ScriptPowerTemplate
+public sealed class ScriptTwoWordPoetPower : StackableScriptPowerTemplate
 {
 	public const string SnapshotDamageVarName = "SnapshotDamage";
 
 	public const string TargetingDescriptionVarName = "TargetingDescription";
 
+	public const int TurnStartHitCount = 2;
+
 	private sealed class Data
 	{
-		public decimal SnapshotDamagePerHit;
-
-		public int HitCount;
-
 		public bool TargetsAllEnemies;
 
 		public CardModel? SourceCard;
@@ -44,7 +43,7 @@ public sealed class ScriptTwoWordPoetPower : ScriptPowerTemplate
 	protected override IEnumerable<DynamicVar> CanonicalVars =>
 	[
 		new DamageVar(SnapshotDamageVarName, 0m, ValueProp.Move),
-		new RepeatVar(2),
+		new RepeatVar(TurnStartHitCount),
 		new StringVar(TargetingDescriptionVarName, "随机对敌人"),
 	];
 
@@ -66,21 +65,17 @@ public sealed class ScriptTwoWordPoetPower : ScriptPowerTemplate
 			out _);
 	}
 
-	public override Task AfterApplied(Creature? applier, CardModel? cardSource)
+	protected override void OnStackedFrom(CardModel? cardSource)
 	{
-		Data data = GetInternalData<Data>();
-		data.SnapshotDamagePerHit = Amount;
-		data.HitCount = cardSource is TwoWordPoetScript script
-			? script.DynamicVars.Repeat.IntValue
-			: 2;
-		data.TargetsAllEnemies = cardSource is TwoWordPoetScript { IsUpgraded: true };
-		data.SourceCard = cardSource;
+		if (cardSource is not TwoWordPoetScript script)
+		{
+			return;
+		}
 
-		DynamicVars[SnapshotDamageVarName].BaseValue = data.SnapshotDamagePerHit;
-		DynamicVars.Repeat.BaseValue = data.HitCount;
-		((StringVar)DynamicVars[TargetingDescriptionVarName]).StringValue =
-			data.TargetsAllEnemies ? "对所有敌人" : "随机对敌人";
-		return Task.CompletedTask;
+		Data data = GetInternalData<Data>();
+		MergeUpgradedFlag(ref data.TargetsAllEnemies, script);
+		data.SourceCard = PreferUpgradedSourceCard(data.SourceCard, cardSource);
+		SyncDisplayVars(data);
 	}
 
 	public override async Task AfterSideTurnStart(
@@ -94,16 +89,16 @@ public sealed class ScriptTwoWordPoetPower : ScriptPowerTemplate
 		}
 
 		Data data = GetInternalData<Data>();
-		if (data.SnapshotDamagePerHit <= 0m || data.SourceCard is not CardModel sourceCard)
+		if (Amount <= 0m || data.SourceCard is not CardModel sourceCard)
 		{
 			return;
 		}
 
 		Flash();
 
-		AttackCommand attack = DamageCmd.Attack(data.SnapshotDamagePerHit)
+		AttackCommand attack = DamageCmd.Attack(Amount)
 			.Unpowered()
-			.WithHitCount(data.HitCount)
+			.WithHitCount(TurnStartHitCount)
 			.FromCard(sourceCard)
 			.WithHitFx("vfx/vfx_attack_slash");
 
@@ -117,5 +112,13 @@ public sealed class ScriptTwoWordPoetPower : ScriptPowerTemplate
 			await attack.TargetingRandomOpponents(combatState)
 				.Execute(new ThrowingPlayerChoiceContext());
 		}
+	}
+
+	private void SyncDisplayVars(Data data)
+	{
+		DynamicVars[SnapshotDamageVarName].BaseValue = Amount;
+		DynamicVars.Repeat.BaseValue = TurnStartHitCount;
+		((StringVar)DynamicVars[TargetingDescriptionVarName]).StringValue =
+			data.TargetsAllEnemies ? "对所有敌人" : "随机对敌人";
 	}
 }

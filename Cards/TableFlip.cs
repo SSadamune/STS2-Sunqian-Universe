@@ -2,17 +2,21 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using MegaCrit.Sts2.Core.Commands;
+using MegaCrit.Sts2.Core.Combat;
 using MegaCrit.Sts2.Core.Entities.Cards;
+using MegaCrit.Sts2.Core.Entities.Creatures;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
-using MegaCrit.Sts2.Core.Models.CardPools;
+using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.Powers;
 using MegaCrit.Sts2.Core.ValueProps;
 using Squ.Character;
 using Squ.Powers;
 using STS2RitsuLib.Interop.AutoRegistration;
 using STS2RitsuLib.Scaffolding.Content;
+
+#nullable enable
 
 namespace Squ.Cards;
 
@@ -22,7 +26,7 @@ public sealed class TableFlip : ModCardTemplate
 	protected override IEnumerable<DynamicVar> CanonicalVars =>
 	[
 		new PowerVar<WeakPower>(2),
-		new DamageVar(18m, ValueProp.Move),
+		new DamageVar(16m, ValueProp.Move),
 	];
 
 	protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
@@ -34,41 +38,43 @@ public sealed class TableFlip : ModCardTemplate
 		PortraitPath: "res://images/cards/TableFlip.png");
 
 	public TableFlip()
-		: base(3, CardType.Attack, CardRarity.Uncommon, TargetType.AnyEnemy)
+		: base(3, CardType.Attack, CardRarity.Uncommon, TargetType.AllEnemies)
 	{
 	}
 
 	protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
 	{
-		ArgumentNullException.ThrowIfNull(cardPlay.Target, "cardPlay.Target");
+		ICombatState? combatState = CombatState;
+		ArgumentNullException.ThrowIfNull(combatState, nameof(combatState));
 
-		await PowerCmd.Apply<WeakPower>(
-			choiceContext,
-			cardPlay.Target,
-			DynamicVars[nameof(WeakPower)].BaseValue,
-			Owner.Creature,
-			this);
+		decimal weakAmount = DynamicVars[nameof(WeakPower)].BaseValue;
+		foreach (Creature target in combatState.HittableEnemies)
+		{
+			if (!target.IsAlive)
+			{
+				continue;
+			}
+
+			await PowerCmd.Apply<WeakPower>(
+				choiceContext,
+				target,
+				weakAmount,
+				Owner.Creature,
+				this);
+		}
 
 		await DamageCmd.Attack(DynamicVars.Damage.BaseValue)
 			.FromCard(this)
-			.TargetingAllOpponents(CombatState!)
+			.TargetingAllOpponents(combatState)
 			.WithHitFx("vfx/vfx_attack_blunt")
 			.Execute(choiceContext);
 
-		if ((cardPlay.Target.GetPower<WeakPower>()?.Amount ?? 0) <= 0)
-		{
-			return;
-		}
-
-		await TroubleAgainPower.ApplyTrackingAsync(
-			choiceContext,
-			Owner.Creature,
-			this,
-			cardPlay.Target);
+		await TroubleAgainPower.ApplyTrackingAsync(choiceContext, Owner.Creature, this);
 	}
 
 	protected override void OnUpgrade()
 	{
-		DynamicVars.Damage.UpgradeValueBy(6m);
+		MockSetEnergyCost(new CardEnergyCost(this, 2, costsX: false));
+		InvokeEnergyCostChanged();
 	}
 }

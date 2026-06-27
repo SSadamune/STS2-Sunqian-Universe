@@ -25,6 +25,7 @@ public sealed class WrapUp : ModCardTemplate
 		new PowerVar<VigorPower>(3m),
 	];
 
+
 	protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
 	[
 		HoverTipFactory.FromPower<VigorPower>(),

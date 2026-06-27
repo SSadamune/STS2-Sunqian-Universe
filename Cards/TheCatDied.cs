@@ -6,8 +6,11 @@ using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.Entities.Creatures;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.Hooks;
+using MegaCrit.Sts2.Core.HoverTips;
+using MegaCrit.Sts2.Core.Localization;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.Models;
+using MegaCrit.Sts2.Core.Models.Powers;
 using MegaCrit.Sts2.Core.ValueProps;
 using Squ.Character;
 using STS2RitsuLib.Cards.DynamicVars;
@@ -47,6 +50,12 @@ public sealed class TheCatDied : ModCardTemplate
 	public override CardAssetProfile AssetProfile => new(
 		PortraitPath: "res://images/cards/TheCatDied.png");
 
+	protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
+	[
+		CreateDoomKillSupplementHoverTip(),
+		HoverTipFactory.FromPower<DoomPower>(),
+	];
+
 	public TheCatDied()
 		: base(1, CardType.Attack, CardRarity.Uncommon, TargetType.AnyEnemy)
 	{
@@ -61,8 +70,7 @@ public sealed class TheCatDied : ModCardTemplate
 		if (target.CurrentHp <= damageCeiling)
 		{
 			// 不走 DamageCmd / CreatureCmd.Damage，避免对已算入修正的上限再套一层 ModifyDamage。
-			// 与灾厄相同，经 CreatureCmd.Kill 直接清空生命并触发死亡流程。
-			await CreatureCmd.Kill(target);
+			await DoomPower.DoomKill([target]);
 			return;
 		}
 
@@ -84,6 +92,11 @@ public sealed class TheCatDied : ModCardTemplate
 
 	private int GetMaxRoll() =>
 		(int)DynamicVars[MaxDamageVarName].BaseValue;
+
+	private static IHoverTip CreateDoomKillSupplementHoverTip() =>
+		new HoverTip(
+			SquCommonL10n.AnnotationTitle(),
+			new LocString("cards", "SUNQIAN_UNIVERSE_CARD_THE_CAT_DIED.doomKillSupplement.description"));
 
 	public static decimal CalculateDamageCeiling(CardModel card, Creature target)
 	{

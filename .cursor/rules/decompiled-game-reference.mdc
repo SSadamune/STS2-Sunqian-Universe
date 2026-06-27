@@ -1,0 +1,16 @@
+---
+description: 查询原版 StS2 游戏逻辑时优先使用本地反编译结果
+alwaysApply: true
+---
+
+# 反编译代码参考
+
+本项目包含从 `lib/sts2.dll` 用 ILSpy (`ilspycmd`) 反编译的 C# 源码，位于 `.decompile/`（已 gitignore，仅本地存在）。
+
+查询原版游戏（`MegaCrit.Sts2.*`）或 Mod 框架（`STS2RitsuLib.*`）逻辑时：
+
+1. **优先**在 `.decompile/*.decompiled.cs` 中搜索对应类型/方法
+2. 文件名格式：`{完整类型名}.decompiled.cs`（如 `MegaCrit.Sts2.Core.Models.CardModel.decompiled.cs`）
+3. 若目标类型不在 `.decompile/` 中，再参考 `lib/sts2.dll` 或按需反编译补充
+
+当前已反编译 41 个文件，覆盖核心模型（CardModel、PowerModel）、命令（CardCmd、PowerCmd 等）、战斗状态、本地化变量，以及部分原版卡牌/遗物/能力示例。

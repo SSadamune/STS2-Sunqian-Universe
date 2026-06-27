@@ -1,5 +1,7 @@
 # Godot 4+ specific ignores
-.cursor/
+.cursor/*
+!.cursor/rules/
+!.cursor/rules/**
 .godot/
 /android/
 .builds/
@@ -8,3 +10,7 @@ lib/sts2.dll
 .export/
 tools/
 .sts2probe/
+
+# Godot auto-generated metadata (recreated by editor on import)
+**/*.cs.uid
+**/*.import

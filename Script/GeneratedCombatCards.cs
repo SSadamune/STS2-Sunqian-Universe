@@ -41,6 +41,32 @@ public static class GeneratedCombatCards
 		await CardPileCmd.AddGeneratedCardToCombat(card, PileType.Hand, creator ?? player);
 	}
 
+	public static async Task AddToDrawPileInCombat<T>(
+		ICombatState combatState,
+		Player player,
+		int count,
+		bool upgraded,
+		Player? creator = null)
+		where T : CardModel
+	{
+		CardPile drawPile = PileType.Draw.GetPile(player);
+		for (int i = 0; i < count; i++)
+		{
+			CardModel card = CreateInCombat<T>(combatState, player, upgraded);
+			CardPileAddResult result = await CardPileCmd.AddGeneratedCardToCombat(
+				card,
+				PileType.Draw,
+				creator ?? player,
+				CardPilePosition.Random);
+
+			// 生成牌入抽牌堆（oldPile == null）时原版不会触发 CardAddFinished，抽牌堆按钮计数不刷新。
+			if (result.success)
+			{
+				drawPile.InvokeCardAddFinished();
+			}
+		}
+	}
+
 	/// <summary>
 	/// 获取本地化后的卡牌标题（含升级后的「+」后缀）。
 	/// </summary>

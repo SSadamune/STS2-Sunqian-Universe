@@ -23,7 +23,7 @@ public static class ScriptSystem
 		PlayerScriptLiftTracker.GetLiftsThisTurn(player);
 
 	/// <summary>
-	/// 移除角色身上所有剧本能力（例如事件强制结束剧本）。
+	/// 移除生物身上所有剧本能力（例如事件强制结束剧本）。
 	/// </summary>
 	public static async Task InvalidateScriptsAsync(Creature creature)
 	{

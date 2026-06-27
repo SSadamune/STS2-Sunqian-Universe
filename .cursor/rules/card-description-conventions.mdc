@@ -1,0 +1,45 @@
+---
+description: 卡牌本地化与悬停提示写法约定（关键词、能力牌描述）
+globs: Cards/**/*.cs,sunqian-universe/localization/**/cards.json
+alwaysApply: false
+---
+
+# 卡牌描述与悬停提示
+
+## 1. 不要在描述中重复卡牌关键词
+
+`CanonicalKeywords` 中的关键词（如 **保留**、**消耗**、**虚无**、**剧本** 等）会由 UI 自动展示，卡面 `description` 里不要再写一遍。
+
+```json
+// ❌ 卡牌已无 Exhaust，或 Retain 已在 CanonicalKeywords
+"[gold]消耗[/gold]。"
+"[gold]保留[/gold]。"
+
+// ✅ 只写机制本身
+"造成{Damage:diff()}点伤害。"
+```
+
+「消耗 N 张牌」若指打出效果（从手牌移入消耗堆），而不是 `CardKeyword.Exhaust`，可以保留。
+
+## 2. 能力牌与剧本能力牌
+
+适用于 `CardType.Power`，以及打出后授予剧本能力（`Script*Power`）的剧本牌。
+
+- **卡面写效果，不写「获得 XX 能力」**；把能力本身的机制直接写进 `cards.json` 的 `description`（可参考 `powers.json` 的 `smartDescription`）。
+- **不要**在 `AdditionalHoverTips` 里绑定与这张牌授予的**同名**能力（例如「上方谷之叹」牌不要再挂 `GoodFirePower` 悬停）。
+
+```csharp
+// ❌ 能力牌 ShangfangguSigh 打出即给予 GoodFirePower
+HoverTipFactory.FromPower<GoodFirePower>();
+
+// ✅ 效果已写在卡面；如需解释其他系统（如 Burning）可保留
+HoverTipFactory.FromPower<BurningPower>();
+```
+
+```json
+// ❌
+"获得大声密谋能力。"
+
+// ✅（与 LOUD_SECRET_PLOT_POWER 效果一致）
+"当场上仅有一名敌人时，你打出的以[gold]所有敌人[/gold]或[gold]随机多名敌人[/gold]为目标的攻击牌或技能牌额外结算一次。"
+```

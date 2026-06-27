@@ -5,6 +5,7 @@ using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Commands.Builders;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
+using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.ValueProps;
 using Squ;
@@ -30,6 +31,13 @@ public sealed class TwoWordPoetScript : ScriptCardTemplate
 	[
 		SquKeywords.Script,
 		CardKeyword.Exhaust,
+	];
+
+	protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
+	[
+		new HoverTip(
+			SquCommonL10n.StackableScriptTitle(),
+			SquCommonL10n.StackableScriptAnnotation()),
 	];
 
 	public override CardAssetProfile AssetProfile => new(
