@@ -23,10 +23,10 @@ namespace Squ.Cards;
 
 /// <summary>
 /// Fire Nova: deals damage and applies Burning to all enemies; when upgraded, becomes X-cost and
-/// repeats that effect on X random enemies including the target.
+/// executes that effect once each on up to X distinct random enemies.
 /// </summary>
 [RegisterCard(typeof(SunqianCardPool), StableEntryStem = "fire_nova")]
-public sealed class FireNova : ModCardTemplate
+public sealed class FireNova : ModCardTemplate, ISoloMultitargetReplayOptIn
 {
 	public const int DamageAmount = 3;
 	public const int BurningStacks = 5;
@@ -47,15 +47,19 @@ public sealed class FireNova : ModCardTemplate
 	public override CardAssetProfile AssetProfile => new(
 		PortraitPath: "res://images/cards/FireNova.png");
 
+	public override TargetType TargetType =>
+		IsUpgraded ? TargetType.RandomEnemy : TargetType.AnyEnemy;
+
 	public FireNova()
 		: base(1, CardType.Attack, CardRarity.Uncommon, TargetType.AnyEnemy)
 	{
 	}
 
+	public bool QualifiesForSoloMultitargetReplay() =>
+		IsUpgraded && ResolveEnergyXValue() > 1;
+
 	protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
 	{
-		ArgumentNullException.ThrowIfNull(cardPlay.Target, nameof(cardPlay.Target));
-
 		ICombatState? combatState = CombatState;
 		if (combatState == null)
 		{
@@ -70,19 +74,19 @@ public sealed class FireNova : ModCardTemplate
 				return;
 			}
 
-			foreach (Creature target in PickRandomEnemiesIncluding(
+			foreach (Creature target in PickRandomEnemiesUnique(
 				combatState,
-				cardPlay.Target,
 				playCount,
 				combatState.RunState.Rng.CombatTargets))
 			{
 				await ExecuteBaseEffect(choiceContext, combatState, target);
 			}
+
+			return;
 		}
-		else
-		{
-			await ExecuteBaseEffect(choiceContext, combatState, cardPlay.Target);
-		}
+
+		ArgumentNullException.ThrowIfNull(cardPlay.Target, nameof(cardPlay.Target));
+		await ExecuteBaseEffect(choiceContext, combatState, cardPlay.Target);
 	}
 
 	protected override void OnUpgrade()
@@ -100,9 +104,8 @@ public sealed class FireNova : ModCardTemplate
 		await ApplyBurningToAllEnemies(choiceContext, combatState);
 	}
 
-	private static IEnumerable<Creature> PickRandomEnemiesIncluding(
+	private static IEnumerable<Creature> PickRandomEnemiesUnique(
 		ICombatState combatState,
-		Creature mustInclude,
 		int count,
 		Rng rng)
 	{
@@ -114,14 +117,13 @@ public sealed class FireNova : ModCardTemplate
 		List<Creature> alive = combatState.HittableEnemies
 			.Where(creature => creature.IsAlive)
 			.ToList();
-		if (alive.Count == 0 || !mustInclude.IsAlive || !alive.Contains(mustInclude))
+		if (alive.Count == 0)
 		{
 			yield break;
 		}
 
 		int pickCount = Math.Min(count, alive.Count);
-		HashSet<Creature> selected = [mustInclude];
-		List<Creature> pool = alive.Where(creature => creature != mustInclude).ToList();
+		List<Creature> pool = alive.ToList();
 
 		for (int i = pool.Count - 1; i > 0; i--)
 		{
@@ -129,12 +131,7 @@ public sealed class FireNova : ModCardTemplate
 			(pool[i], pool[swapIndex]) = (pool[swapIndex], pool[i]);
 		}
 
-		foreach (Creature creature in pool.Take(pickCount - 1))
-		{
-			selected.Add(creature);
-		}
-
-		foreach (Creature creature in selected)
+		foreach (Creature creature in pool.Take(pickCount))
 		{
 			yield return creature;
 		}

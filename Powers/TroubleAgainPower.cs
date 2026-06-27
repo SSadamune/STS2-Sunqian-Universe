@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Godot;
+using MegaCrit.Sts2.Core.Combat;
 using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.Entities.Creatures;
@@ -19,8 +20,9 @@ using STS2RitsuLib.Scaffolding.Content;
 namespace Squ.Powers;
 
 /// <summary>
-/// 「怒掀帅案」打出后授予玩家：记录被施加虚弱的敌人与本张卡牌；
-/// 实时监测目标死亡或虚弱消失，满足条件时移回卡牌并移除本能力。
+/// 「怒掀帅案」打出后授予玩家：记录本张卡牌；
+/// 玩家回合开始时，若场上没有敌人处于虚弱，则将卡牌移回手牌并移除本能力。
+/// 同一牌实例（<see cref="ResolveCardIdentity"/>）只会对应一个「再来撒野」。
 /// </summary>
 [RegisterPower]
 public sealed class TroubleAgainPower : ModPowerTemplate
@@ -29,7 +31,7 @@ public sealed class TroubleAgainPower : ModPowerTemplate
 	{
 		public CardModel? TrackedCard;
 
-		public Creature? WeakTarget;
+		public CardModel? TrackedCardIdentity;
 	}
 
 	public override PowerType Type => PowerType.Buff;
@@ -54,8 +56,7 @@ public sealed class TroubleAgainPower : ModPowerTemplate
 	public static async Task ApplyTrackingAsync(
 		PlayerChoiceContext choiceContext,
 		Creature owner,
-		TableFlip card,
-		Creature weakTarget)
+		TableFlip card)
 	{
 		if (HasActiveTrackingForCard(owner, card))
 		{
@@ -69,55 +70,39 @@ public sealed class TroubleAgainPower : ModPowerTemplate
 			owner,
 			card);
 
-		power?.SetTracking(card, weakTarget);
+		power?.SetTracking(card);
 	}
 
 	public static bool HasActiveTrackingForCard(Creature owner, CardModel card) =>
-		owner.GetPowerInstances<TroubleAgainPower>().Any(p => p.TracksCard(card));
+		owner.GetPowerInstances<TroubleAgainPower>()
+			.Any(p => p.TracksCardIdentity(ResolveCardIdentity(card)));
 
-	public bool TracksCard(CardModel card) =>
-		GetInternalData<Data>().TrackedCard == card;
+	public bool TracksCardIdentity(CardModel cardIdentity) =>
+		GetInternalData<Data>().TrackedCardIdentity == cardIdentity;
 
-	public void SetTracking(CardModel card, Creature weakTarget)
+	public void SetTracking(CardModel card)
 	{
 		Data data = GetInternalData<Data>();
 		data.TrackedCard = card;
-		data.WeakTarget = weakTarget;
-		Target = weakTarget;
+		data.TrackedCardIdentity = ResolveCardIdentity(card);
 	}
 
-	public override async Task AfterDeath(
-		PlayerChoiceContext choiceContext,
-		Creature creature,
-		bool wasRemovalPrevented,
-		float deathAnimLength)
+	public override async Task AfterSideTurnStart(
+		CombatSide side,
+		IReadOnlyList<Creature> participants,
+		ICombatState combatState)
 	{
-		if (wasRemovalPrevented || creature != GetInternalData<Data>().WeakTarget)
+		if (side != Owner.Side || !participants.Contains(Owner) || Owner.IsDead)
 		{
 			return;
 		}
 
-		await PowerCmd.Remove(this);
-	}
-
-	public override async Task AfterPowerAmountChanged(
-		PlayerChoiceContext choiceContext,
-		PowerModel power,
-		decimal amount,
-		Creature? applier,
-		CardModel? cardSource)
-	{
-		if (power is not WeakPower || power.Owner != GetInternalData<Data>().WeakTarget)
+		if (AnyEnemyHasWeak(combatState))
 		{
 			return;
 		}
 
-		if (GetWeakAmount(power.Owner) > 0)
-		{
-			return;
-		}
-
-		await ReturnTrackedCardAndRemoveAsync(choiceContext);
+		await ReturnTrackedCardAndRemoveAsync(new ThrowingPlayerChoiceContext());
 	}
 
 	private async Task ReturnTrackedCardAndRemoveAsync(PlayerChoiceContext choiceContext)
@@ -130,6 +115,13 @@ public sealed class TroubleAgainPower : ModPowerTemplate
 
 		await PowerCmd.Remove(this);
 	}
+
+	private static CardModel ResolveCardIdentity(CardModel card) =>
+		card.DeckVersion ?? card;
+
+	private static bool AnyEnemyHasWeak(ICombatState combatState) =>
+		combatState.HittableEnemies.Any(creature =>
+			creature.IsAlive && GetWeakAmount(creature) > 0);
 
 	private static int GetWeakAmount(Creature creature) =>
 		creature.GetPower<WeakPower>()?.Amount ?? 0;

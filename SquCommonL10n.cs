@@ -10,8 +10,18 @@ public static class SquCommonL10n
 {
 	public const string AnnotationTitleKey = "SUNQIAN_UNIVERSE_COMMON.ANNOTATION.title";
 
+	public const string StackableScriptAnnotationKey =
+		"SUNQIAN_UNIVERSE_COMMON.STACKABLE_SCRIPT.annotation";
+
+	public const string StackableScriptTitleKey =
+		"SUNQIAN_UNIVERSE_COMMON.STACKABLE_SCRIPT.title";
+
 	public static string Table =>
 		RitsuLibFramework.GetI18NLocTableId(SquMod.ModId, SquMod.CommonL10nStem);
 
 	public static LocString AnnotationTitle() => new(Table, AnnotationTitleKey);
+
+	public static LocString StackableScriptTitle() => new(Table, StackableScriptTitleKey);
+
+	public static LocString StackableScriptAnnotation() => new(Table, StackableScriptAnnotationKey);
 }

@@ -5,7 +5,7 @@
   "SUNQIAN_UNIVERSE_CARD_SUNQIAN_UNIVERSE.title": "Sunqian Universe",
   "SUNQIAN_UNIVERSE_CARD_SUNQIAN_UNIVERSE.description": "Gain {DexterityPower:diff()} [gold]Dexterity[/gold]. Whenever your [gold]Script[/gold] ends, draw {Cards:diff()} card.",
   "SUNQIAN_UNIVERSE_CARD_FIRE_NOVA.title": "Fire Nova",
-  "SUNQIAN_UNIVERSE_CARD_FIRE_NOVA.description": "{IfUpgraded:show:On X random enemies including the target, respectively: \"|}Deal {Damage:diff()} damage. Apply {BurningPower:diff()} [gold]Burning[/gold] to ALL enemies.{IfUpgraded:show:\"|}",
+  "SUNQIAN_UNIVERSE_CARD_FIRE_NOVA.description": "{IfUpgraded:show:On X random enemies, respectively: \"|}Deal {Damage:diff()} damage. Apply {BurningPower:diff()} [gold]Burning[/gold] to ALL enemies.{IfUpgraded:show:\"|}",
   "SUNQIAN_UNIVERSE_CARD_FLAME_STRIKE.title": "Flame Strike",
   "SUNQIAN_UNIVERSE_CARD_FLAME_STRIKE.description": "Deal {Damage:diff()} damage. Apply {BurningPower:diff()} [gold]Burning[/gold].",
   "SUNQIAN_UNIVERSE_CARD_THE_GRIEVING_PREVAIL.title": "The grieving prevail",
@@ -18,6 +18,8 @@
   "SUNQIAN_UNIVERSE_CARD_PHASING.description": "Gain a random {MinDex}-{MaxDex:diff()} [gold]Dexterity[/gold] this turn and at the start of each turn.",
   "SUNQIAN_UNIVERSE_CARD_BURNING_LINKED_CAMPS_SCRIPT.title": "Burning Linked Camps Script",
   "SUNQIAN_UNIVERSE_CARD_BURNING_LINKED_CAMPS_SCRIPT.description": "Gain {FuelAbundantPower:diff()} [gold]Fuel Abundant[/gold]. \n[gold]Script[/gold]: When this Script ends, add [gold]Shangfanggu's Sigh[/gold] into your [gold]Draw Pile[/gold].",
+  "SUNQIAN_UNIVERSE_CARD_TWO_WORD_POET_SCRIPT.title": "Two-Word Poet Script",
+  "SUNQIAN_UNIVERSE_CARD_TWO_WORD_POET_SCRIPT.description": "Deal {Damage:diff()} damage {Repeat:diff()} times to {IfUpgraded:show:ALL enemies|an enemy}.\n[gold]Stackable Script[/gold]: At the start of each turn, {IfUpgraded:show:deal {Damage:diff()} damage {Repeat:diff()} times to ALL enemies|deal {Damage:diff()} damage {Repeat:diff()} times to a random enemy}.",
   "SUNQIAN_UNIVERSE_CARD_SHANGFANGGU_SIGH.title": "Shangfanggu's Sigh",
   "SUNQIAN_UNIVERSE_CARD_SHANGFANGGU_SIGH.description": "Increase [gold]Burning[/gold] you apply by 1.",
   "SUNQIAN_UNIVERSE_CARD_CYBERTRON_STRENGTH.title": "Cybertron Strength",
@@ -27,5 +29,9 @@
   "SUNQIAN_UNIVERSE_CARD_DENIED.title": "Denied?!",
   "SUNQIAN_UNIVERSE_CARD_DENIED.description": "Apply {WeakPower:diff()} [gold]Weak[/gold]. Apply {VulnerablePower:diff()} [gold]Vulnerable[/gold]. When a debuff you apply is blocked by [gold]Artifact[/gold], return this to your [gold]Hand[/gold].",
   "SUNQIAN_UNIVERSE_CARD_WATER_FIRE_INVINCIBLE.title": "Water-Fire Invincible",
-  "SUNQIAN_UNIVERSE_CARD_WATER_FIRE_INVINCIBLE.description": "Deal {Damage:diff()} damage. Apply [gold]Burning[/gold] equal to damage dealt. Gain [gold]Block[/gold] equal to [gold]Burning[/gold] applied."
+  "SUNQIAN_UNIVERSE_CARD_WATER_FIRE_INVINCIBLE.description": "Deal {Damage:diff()} damage. Apply [gold]Burning[/gold] equal to damage dealt. Gain [gold]Block[/gold] equal to [gold]Burning[/gold] applied.",
+  "SUNQIAN_UNIVERSE_CARD_TABLE_FLIP.title": "Table Flip",
+  "SUNQIAN_UNIVERSE_CARD_TABLE_FLIP.description": "Apply {WeakPower:diff()} [gold]Weak[/gold] to ALL enemies. Deal {Damage:diff()} damage to ALL enemies. At the start of your turn, if no enemy has [gold]Weak[/gold], return this to your [gold]Hand[/gold].",
+  "SUNQIAN_UNIVERSE_CARD_LOUD_SECRET_PLOT.title": "Loud Secret Plot",
+  "SUNQIAN_UNIVERSE_CARD_LOUD_SECRET_PLOT.description": "Whenever you play an Attack or Skill that targets ALL enemies or multiple random enemies, while only one enemy can be targeted, that card resolves an additional time."
 }
