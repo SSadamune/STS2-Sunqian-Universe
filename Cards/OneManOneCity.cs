@@ -16,20 +16,22 @@ using STS2RitsuLib.Scaffolding.Content;
 
 namespace Squ.Cards;
 
-[RegisterCard(typeof(SunqianCardPool), StableEntryStem = "sun_qian_script")]
-[RegisterCharacterStarterCard(typeof(SunqianCharacter), 1)]
-public sealed class SunQianScript : ScriptCardTemplate
+[RegisterCard(typeof(SunqianCardPool), StableEntryStem = "one_man_one_city")]
+public sealed class OneManOneCity : ScriptCardTemplate
 {
-	private const decimal DexterityAmount = 2m;
+	public const decimal PlatingStacks = 6m;
+
+	public const decimal UpgradedPlatingStacks = 9m;
 
 	protected override IEnumerable<DynamicVar> CanonicalVars =>
 	[
-		new PowerVar<DexterityPower>(DexterityAmount),
+		new PowerVar<PlatingPower>(PlatingStacks),
 	];
 
 	protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
 	[
-		HoverTipFactory.FromPower<DexterityPower>(),
+		..HoverTipFactory.FromPowerWithPowerHoverTips<PlatingPower>(
+			(int)DynamicVars[nameof(PlatingPower)].BaseValue),
 	];
 
 	public override IEnumerable<CardKeyword> CanonicalKeywords =>
@@ -38,27 +40,32 @@ public sealed class SunQianScript : ScriptCardTemplate
 	];
 
 	public override CardAssetProfile AssetProfile => new(
-		PortraitPath: "res://images/cards/SunqianScript.png");
+		PortraitPath: "res://images/cards/OneManOneCity.png");
 
-	public SunQianScript()
-		: base(1, CardType.Skill, CardRarity.Basic, TargetType.Self, true)
+	public OneManOneCity()
+		: base(2, CardType.Power, CardRarity.Uncommon, TargetType.Self, false)
 	{
 	}
 
 	protected override async Task PlayScriptAsync(PlayerChoiceContext choiceContext, CardPlay cardPlay)
 	{
-		await PhasingPower.ApplyTemporaryDexterityAsync(
+		await PowerCmd.Apply<PlatingPower>(
 			choiceContext,
 			Owner.Creature,
+			DynamicVars[nameof(PlatingPower)].BaseValue,
 			Owner.Creature,
-			this,
-			(int)DexterityAmount);
+			this);
 
-		await PowerCmd.Apply<ScriptSunQianPower>(
+		await PowerCmd.Apply<ScriptOneManOneCityPower>(
 			choiceContext,
 			Owner.Creature,
 			1m,
 			Owner.Creature,
 			this);
+	}
+
+	protected override void OnUpgrade()
+	{
+		DynamicVars[nameof(PlatingPower)].UpgradeValueBy(UpgradedPlatingStacks - PlatingStacks);
 	}
 }

@@ -1,0 +1,125 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using MegaCrit.Sts2.Core.Commands;
+using MegaCrit.Sts2.Core.Entities.Cards;
+using MegaCrit.Sts2.Core.Factories;
+using MegaCrit.Sts2.Core.GameActions.Multiplayer;
+using MegaCrit.Sts2.Core.HoverTips;
+using MegaCrit.Sts2.Core.Helpers;
+using MegaCrit.Sts2.Core.Localization;
+using MegaCrit.Sts2.Core.Models;
+using Squ;
+using Squ.Character;
+using Squ.Script;
+using STS2RitsuLib.Interop.AutoRegistration;
+using STS2RitsuLib.Scaffolding.Content;
+
+#nullable enable
+
+namespace Squ.Cards;
+
+[RegisterCard(typeof(SunqianCardPool), StableEntryStem = "juggle_multiple_shoots")]
+public sealed class JuggleMultipleShoots : ModCardTemplate
+{
+	private static readonly LocString SelectionPrompt =
+		new("cards", "SUNQIAN_UNIVERSE_CARD_JUGGLE_MULTIPLE_SHOOTS.selectionScreenPrompt");
+
+	public override CardAssetProfile AssetProfile => new(
+		PortraitPath: "res://images/cards/JuggleMultipleShoots.png");
+
+	private IHoverTip CreateZeroEnergyHoverTip()
+	{
+		LocString description = new("cards", "SUNQIAN_UNIVERSE_CARD_JUGGLE_MULTIPLE_SHOOTS.zeroEnergyHoverTip");
+		description.Add("energyPrefix", EnergyIconHelper.GetPrefix(this));
+		return new HoverTip(SquCommonL10n.AnnotationTitle(), description);
+	}
+
+	protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
+	[
+		HoverTipFactory.ForEnergy(this),
+		CreateZeroEnergyHoverTip(),
+		HoverTipFactory.FromKeyword(SquKeywords.Script),
+	];
+
+	public JuggleMultipleShoots()
+		: base(0, CardType.Skill, CardRarity.Uncommon, TargetType.Self)
+	{
+	}
+
+	protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
+	{
+		int remainingEnergy = Owner.PlayerCombatState?.Energy ?? 0;
+
+		if (remainingEnergy > 0)
+		{
+			int powerCost = ResolvePowerCostFromRemainingEnergy(remainingEnergy);
+			List<CardModel> candidatePool = GetOtherCharacterPowersAtCost(powerCost).ToList();
+			if (candidatePool.Count > 0)
+			{
+				CardModel? selected = await SelectPowerAsync(choiceContext, candidatePool);
+				if (selected is not null)
+				{
+					await CardPileCmd.AddGeneratedCardToCombat(selected, PileType.Hand, Owner);
+				}
+			}
+		}
+
+		await ScriptSystem.InvalidateScriptsAsync(Owner.Creature);
+	}
+
+	private async Task<CardModel?> SelectPowerAsync(
+		PlayerChoiceContext choiceContext,
+		IReadOnlyList<CardModel> candidatePool)
+	{
+		int choiceCount = Math.Min(3, candidatePool.Count);
+		List<CardModel> choices = CardFactory
+			.GetDistinctForCombat(
+				Owner,
+				candidatePool,
+				choiceCount,
+				Owner.RunState.Rng.CombatCardGeneration)
+			.ToList();
+
+		if (choices.Count == 0)
+		{
+			return null;
+		}
+
+		if (IsUpgraded)
+		{
+			foreach (CardModel choice in choices)
+			{
+				choice.UpgradeInternal();
+				choice.FinalizeUpgradeInternal();
+			}
+		}
+
+		return await CardSelectCmd.FromChooseACardScreen(
+			choiceContext,
+			choices,
+			Owner,
+			canSkip: true);
+	}
+
+	private IEnumerable<CardModel> GetOtherCharacterPowersAtCost(int powerCost)
+	{
+		List<CardPoolModel> pools = Owner.UnlockState.CharacterCardPools.ToList();
+		pools.Remove(Owner.Character.CardPool);
+
+		return pools
+			.SelectMany(pool => pool.GetUnlockedCards(
+				Owner.UnlockState,
+				Owner.RunState.CardMultiplayerConstraint))
+			.Where(card => MatchesPowerCost(card, powerCost));
+	}
+
+	private static int ResolvePowerCostFromRemainingEnergy(int remainingEnergy) =>
+		Math.Min(remainingEnergy, 3);
+
+	private static bool MatchesPowerCost(CardModel card, int powerCost) =>
+		card.Type == CardType.Power
+		&& !card.EnergyCost.CostsX
+		&& card.EnergyCost.Canonical == powerCost;
+}

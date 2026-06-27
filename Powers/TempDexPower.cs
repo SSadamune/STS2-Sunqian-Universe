@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Creatures;
@@ -22,7 +22,7 @@ public sealed class TempDexPower : ModTemporaryPowerTemplate
 		IconPath: "res://images/powers/TempDexPower.png",
 		BigIconPath: "res://images/powers/TempDexPowerBig.png");
 
-	public override AbstractModel OriginModel => ModelDb.Power<HujinHuyuanPower>();
+	public override AbstractModel OriginModel => ModelDb.Power<PhasingPower>();
 
 	public override PowerModel InternallyAppliedPower => ModelDb.Power<DexterityPower>();
 

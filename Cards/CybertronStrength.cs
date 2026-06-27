@@ -58,6 +58,6 @@ public sealed class CybertronStrength : ModCardTemplate
 
 	protected override void OnUpgrade()
 	{
-		EnergyCost.UpgradeBy(-1);
+		AddKeyword(CardKeyword.Retain);
 	}
 }

@@ -42,7 +42,7 @@ public sealed class TroubleAgainPower : ModPowerTemplate
 
 	public override PowerAssetProfile AssetProfile => new(
 		IconPath: "res://images/powers/TroubleAgainPower.png",
-		BigIconPath: "res://images/powers/TroubleAgainPower.png");
+		BigIconPath: "res://images/powers/TroubleAgainPowerBig.png");
 
 	protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
 	[
