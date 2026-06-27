@@ -30,6 +30,9 @@
   "SUNQIAN_UNIVERSE_POWER_FUEL_ABUNDANT_POWER.smartDescription": "The next time you apply [gold]Burning[/gold], apply [blue]{Amount}[/blue] additional [gold]Burning[/gold]. Then this power is removed.",
   "SUNQIAN_UNIVERSE_POWER_SCRIPT_HUOSHAO_LIANYING_POWER.title": "Script: Burning Linked Camps",
   "SUNQIAN_UNIVERSE_POWER_SCRIPT_HUOSHAO_LIANYING_POWER.smartDescription": "When this Script ends, add {GeneratedCard} into your [gold]Draw Pile[/gold].",
-  "SUNQIAN_UNIVERSE_POWER_SHANGFANGGU_SIGH_POWER.title": "Shangfanggu's Sigh",
-  "SUNQIAN_UNIVERSE_POWER_SHANGFANGGU_SIGH_POWER.smartDescription": "[gold]Burning[/gold] you apply is increased by [blue]{Amount}[/blue] times."
+  "SUNQIAN_UNIVERSE_POWER_SCRIPT_YI_REN_YI_CHENG_POWER.title": "Script: One Person, One City",
+  "SUNQIAN_UNIVERSE_POWER_SCRIPT_YI_REN_YI_CHENG_POWER.description": "After your [gold]Plating[/gold] triggers, lose [blue]1[/blue] [gold]Plating[/gold] and trigger it 1 additional time.",
+  "SUNQIAN_UNIVERSE_POWER_SCRIPT_YI_REN_YI_CHENG_POWER.smartDescription": "After your [gold]Plating[/gold] triggers, lose [blue]1[/blue] [gold]Plating[/gold] and trigger it [blue]1[/blue] additional time.",
+  "SUNQIAN_UNIVERSE_POWER_GOOD_FIRE_POWER.title": "Good Fire!",
+  "SUNQIAN_UNIVERSE_POWER_GOOD_FIRE_POWER.smartDescription": "[gold]Burning[/gold] you apply is increased by [blue]{Amount}[/blue] times."
 }

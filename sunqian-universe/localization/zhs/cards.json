@@ -56,5 +56,7 @@
   "SUNQIAN_UNIVERSE_CARD_SHANGFANGGU_SIGH.title": "上方谷之叹",
   "SUNQIAN_UNIVERSE_CARD_SHANGFANGGU_SIGH.description": "你给予的[gold]灼烧[/gold]层数增加1倍。",
   "SUNQIAN_UNIVERSE_CARD_CYBERTRON_STRENGTH.title": "赛博坦之力",
-  "SUNQIAN_UNIVERSE_CARD_CYBERTRON_STRENGTH.description": "获得等同于所有敌人[gold]灼烧[/gold]层数的[gold]格挡[/gold]。"
+  "SUNQIAN_UNIVERSE_CARD_CYBERTRON_STRENGTH.description": "获得等同于所有敌人[gold]灼烧[/gold]层数的[gold]格挡[/gold]。",
+  "SUNQIAN_UNIVERSE_CARD_YI_REN_YI_CHENG.title": "一人一城",
+  "SUNQIAN_UNIVERSE_CARD_YI_REN_YI_CHENG.description": "获得{PlatingPower:diff()}层[gold]覆甲[/gold]。\n[gold]剧本[/gold]：你的[gold]覆甲[/gold]触发后，损失1层并额外触发1次。"
 }

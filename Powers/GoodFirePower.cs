@@ -15,10 +15,11 @@ using STS2RitsuLib.Scaffolding.Content;
 namespace Squ.Powers;
 
 /// <summary>
-/// 灼烧层数修改顺序由原版 <c>Hook.ModifyPowerAmountGiven</c> 保证：先加算（<see cref="ModifyPowerAmountGivenAdditive"/>），再乘算（<see cref="ModifyPowerAmountGivenMultiplicative"/>）。
+/// 「好火！」：你给予的灼烧层数按层数倍增。
+/// 灼烧层数修改顺序由原版 <c>Hook.ModifyPowerAmountGiven</c> 保证：先加算，再乘算。
 /// </summary>
 [RegisterPower]
-public sealed class ShangfangguSighPower : ModPowerTemplate
+public sealed class GoodFirePower : ModPowerTemplate
 {
 	public const string MultiplierVarName = "Multiplier";
 
@@ -29,8 +30,8 @@ public sealed class ShangfangguSighPower : ModPowerTemplate
 	public override Color AmountLabelColor => PowerModel._normalAmountLabelColor;
 
 	public override PowerAssetProfile AssetProfile => new(
-		IconPath: "res://images/powers/ShangfangguSighPower.png",
-		BigIconPath: "res://images/powers/ShangfangguSighPowerBig.png");
+		IconPath: "res://images/powers/GoodFirePower.png",
+		BigIconPath: "res://images/powers/GoodFirePowerBig.png");
 
 	protected override IEnumerable<DynamicVar> CanonicalVars =>
 	[

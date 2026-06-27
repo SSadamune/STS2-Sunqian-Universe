@@ -19,8 +19,8 @@ public abstract class ScriptCardTemplate : ModCardTemplate
 		CardType type,
 		CardRarity rarity,
 		TargetType targetType,
-		bool isMultiTarget)
-		: base(cost, type, rarity, targetType, isMultiTarget)
+		bool _)
+		: base(cost, type, rarity, targetType, showInCardLibrary: true)
 	{
 	}
 

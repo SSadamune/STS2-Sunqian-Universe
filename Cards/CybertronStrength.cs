@@ -58,7 +58,6 @@ public sealed class CybertronStrength : ModCardTemplate
 
 	protected override void OnUpgrade()
 	{
-		MockSetEnergyCost(new CardEnergyCost(this, 0, costsX: false));
-		InvokeEnergyCostChanged();
+		EnergyCost.UpgradeBy(-1);
 	}
 }

@@ -18,6 +18,7 @@ public sealed class ShangfangguSigh : ModCardTemplate
 {
 	protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
 	[
+		HoverTipFactory.FromPower<GoodFirePower>(),
 		HoverTipFactory.FromPower<BurningPower>(),
 	];
 
@@ -31,7 +32,7 @@ public sealed class ShangfangguSigh : ModCardTemplate
 
 	protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
 	{
-		await PowerCmd.Apply<ShangfangguSighPower>(
+		await PowerCmd.Apply<GoodFirePower>(
 			choiceContext,
 			Owner.Creature,
 			1m,
