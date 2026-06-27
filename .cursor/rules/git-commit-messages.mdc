@@ -1,0 +1,12 @@
+---
+description: Write git commit messages in concise English when the user asks for a commit
+alwaysApply: true
+---
+
+# Git commit messages
+
+When the user asks to create a git commit:
+
+- Write the **subject and body in English**, using clear and appropriate wording.
+- Keep messages **concise** — state the why/purpose in 1–2 sentences; avoid long or overly detailed explanations.
+- Follow the repository's existing commit message style when present.

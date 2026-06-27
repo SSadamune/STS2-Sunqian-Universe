@@ -1,5 +1,7 @@
 # Godot 4+ specific ignores
-.cursor/
+.cursor/*
+!.cursor/rules/
+!.cursor/rules/**
 .godot/
 /android/
 .builds/

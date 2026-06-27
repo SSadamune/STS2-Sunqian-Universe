@@ -1,0 +1,56 @@
+---
+description: 查询原版 StS2 本地化文案时的路径与约定
+alwaysApply: true
+---
+
+# 原版本地化参考
+
+查询原版游戏（卡牌/能力/遗物等）的 `title`、`description`、`smartDescription` 时：
+
+## 文案不在 DLL 里
+
+`lib/sts2.dll` **不包含**本地化字符串。不要从 DLL 扫 `POISON_POWER` 等键名。
+
+文案在 Godot PCK 的 JSON 中，游戏内路径：
+
+```
+res://localization/{语言}/{表名}.json
+```
+
+常见表：`powers.json`、`cards.json`、`relics.json`、`potions.json`、`monsters.json`
+
+## 离线参考源（本机未装游戏时优先）
+
+[ProjectSpire](https://github.com/NicholasClooney/ProjectSpire) 仓库跟踪了从原版 PCK 提取的本地化：
+
+| 语言 | 路径 |
+|------|------|
+| 英文 | `Lab/resources/localization/eng/{表名}.json` |
+| 简中 | `Lab/resources/localization/zhs/{表名}.json` |
+
+Raw 直链示例（能力）：
+
+- eng: `https://raw.githubusercontent.com/NicholasClooney/ProjectSpire/main/Lab/resources/localization/eng/powers.json`
+- zhs: `https://raw.githubusercontent.com/NicholasClooney/ProjectSpire/main/Lab/resources/localization/zhs/powers.json`
+
+## 本机已装游戏时
+
+从 Steam 目录的 `Slay the Spire 2.pck` 解包后，本地化在 `localization/` 下（可用 gdretools 等工具，见 ProjectSpire `Lab/scripts/recover-sts2-pck.py`）。
+
+## 键名与战斗内描述
+
+- 能力注册键示例：`POISON_POWER`（类名 `PoisonPower` → `ModelDb` 的 `Id.Entry`）
+- 百科/卡牌悬停：`POISON_POWER.description`
+- **战斗底栏悬停能力图标**：`POISON_POWER.smartDescription`（`PowerModel.HoverTips` 在 `IsMutable` 时读取，并注入 `{Amount}`、`{OnPlayer}` 等）
+
+中毒 `smartDescription` 原文（对照 Mod 写法）：
+
+```json
+"POISON_POWER.smartDescription": "At the start of {OnPlayer:your turn, lose|its turn, loses} [blue]{Amount}[/blue] HP, then reduce [gold]Poison[/gold] by [blue]1[/blue]."
+```
+
+```json
+"POISON_POWER.smartDescription": "在{OnPlayer:你的回合|其回合}开始时失去[blue]{Amount}[/blue]点生命，然后将[gold]中毒[/gold]层数减少[blue]1[/blue]。"
+```
+
+相关代码逻辑在 `sts2.dll` 的 `MegaCrit.Sts2.Core.Models.PowerModel`（`SmartDescription`、`HoverTips`）与 `MegaCrit.Sts2.Core.Nodes.Combat.NPower`（悬停时调用 `Model.HoverTips`）。

@@ -6,7 +6,7 @@
   "SUNQIAN_UNIVERSE_CARD_DEFEND.title": "防御",
   "SUNQIAN_UNIVERSE_CARD_DEFEND.description": "获得{Block:diff()}点[gold]格挡[/gold]。",
   "SUNQIAN_UNIVERSE_CARD_WRAP_UP.title": "收工",
-  "SUNQIAN_UNIVERSE_CARD_WRAP_UP.description": "令当前[gold]剧本[/gold]失效。获得{VigorPower:diff()}点[gold]活力[/gold]。[gold]消耗[/gold]。",
+  "SUNQIAN_UNIVERSE_CARD_WRAP_UP.description": "令当前[gold]剧本[/gold]失效。获得{VigorPower:diff()}点[gold]活力[/gold]。",
   "SUNQIAN_UNIVERSE_CARD_SUN_QIAN_SCRIPT.title": "孙乾剧本",
   "SUNQIAN_UNIVERSE_CARD_SUN_QIAN_SCRIPT.description": "在本回合获得2点[gold]敏捷[/gold]。\n[gold]剧本[/gold]：失效时，抽{IfUpgraded:show:2|1}张牌。",
   "SUNQIAN_UNIVERSE_CARD_THE_GRIEVING_PREVAIL.title": "哀兵必胜",
