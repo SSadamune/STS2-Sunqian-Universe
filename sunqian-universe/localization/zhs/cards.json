@@ -62,5 +62,7 @@
   "SUNQIAN_UNIVERSE_CARD_WATER_FIRE_INVINCIBLE.title": "水火无敌",
   "SUNQIAN_UNIVERSE_CARD_WATER_FIRE_INVINCIBLE.description": "造成{Damage:diff()}点伤害。给与等量于所造成伤害的[gold]灼烧[/gold]。获得等量于所造成[gold]灼烧[/gold]的[gold]格挡[/gold]。",
   "SUNQIAN_UNIVERSE_CARD_LOUD_SECRET_PLOT.title": "大声密谋",
-  "SUNQIAN_UNIVERSE_CARD_LOUD_SECRET_PLOT.description": "当场上仅有一名敌人时，你打出的以[gold]所有敌人[/gold]或[gold]随机多名敌人[/gold]为目标的攻击牌或技能牌额外结算一次。"
+  "SUNQIAN_UNIVERSE_CARD_LOUD_SECRET_PLOT.description": "当场上仅有一名敌人时，你打出的以[gold]所有敌人[/gold]或[gold]随机多名敌人[/gold]为目标的攻击牌或技能牌额外结算一次。",
+  "SUNQIAN_UNIVERSE_CARD_FINGER_SNAP_STRIKE.title": "弹指打击",
+  "SUNQIAN_UNIVERSE_CARD_FINGER_SNAP_STRIKE.description": "造成{Damage:diff()}点伤害。每回合开始时，这张牌的耗能在[blue]{MinCost}[/blue]到[blue]{MaxCost}[/blue]之间随机变化。"
 }

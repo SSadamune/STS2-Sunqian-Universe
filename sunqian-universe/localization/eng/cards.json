@@ -33,5 +33,7 @@
   "SUNQIAN_UNIVERSE_CARD_TABLE_FLIP.title": "Table Flip",
   "SUNQIAN_UNIVERSE_CARD_TABLE_FLIP.description": "Apply {WeakPower:diff()} [gold]Weak[/gold] to ALL enemies. Deal {Damage:diff()} damage to ALL enemies. At the start of your turn, if no enemy has [gold]Weak[/gold], return this to your [gold]Hand[/gold].",
   "SUNQIAN_UNIVERSE_CARD_LOUD_SECRET_PLOT.title": "Loud Secret Plot",
-  "SUNQIAN_UNIVERSE_CARD_LOUD_SECRET_PLOT.description": "Whenever you play an Attack or Skill that targets ALL enemies or multiple random enemies, while only one enemy can be targeted, that card resolves an additional time."
+  "SUNQIAN_UNIVERSE_CARD_LOUD_SECRET_PLOT.description": "Whenever you play an Attack or Skill that targets ALL enemies or multiple random enemies, while only one enemy can be targeted, that card resolves an additional time.",
+  "SUNQIAN_UNIVERSE_CARD_FINGER_SNAP_STRIKE.title": "Finger Snap Strike",
+  "SUNQIAN_UNIVERSE_CARD_FINGER_SNAP_STRIKE.description": "Deal {Damage:diff()} damage. At the start of each turn, randomize this card's Energy cost between {MinCost} and {MaxCost}."
 }
