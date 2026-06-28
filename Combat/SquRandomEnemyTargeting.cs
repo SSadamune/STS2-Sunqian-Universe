@@ -1,9 +1,12 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using MegaCrit.Sts2.Core.Combat;
+using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.Entities.Creatures;
+using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Random;
 using Squ.Powers;
@@ -91,5 +94,49 @@ public static class SquRandomEnemyTargeting
 			combatState,
 			GetRandomEnemyTargetCount(card),
 			card.Owner.RunState.Rng.CombatTargets).ToList();
+	}
+
+	public static int GetEffectiveRandomEnemyHitCount(ICombatState combatState, int requestedHitCount)
+	{
+		if (requestedHitCount <= 0)
+		{
+			return 0;
+		}
+
+		int aliveCount = combatState.HittableEnemies.Count(creature => creature.IsAlive);
+		return Math.Min(requestedHitCount, aliveCount);
+	}
+
+	/// <summary>
+	/// One <see cref="AttackCommand"/> with distinct random targets per hit so card-sourced
+	/// bonuses (e.g. Vigor) apply to every hit before <c>AfterAttack</c> consumes them.
+	/// </summary>
+	public static async Task<int> ExecuteDistinctRandomEnemyDamage(
+		CardModel card,
+		PlayerChoiceContext choiceContext,
+		int requestedHitCount,
+		decimal? damagePerHit = null,
+		string hitFx = "vfx/vfx_attack_slash")
+	{
+		ICombatState? combatState = card.CombatState;
+		if (combatState == null || requestedHitCount <= 0)
+		{
+			return 0;
+		}
+
+		int hitCount = GetEffectiveRandomEnemyHitCount(combatState, requestedHitCount);
+		if (hitCount <= 0)
+		{
+			return 0;
+		}
+
+		await DamageCmd.Attack(damagePerHit ?? card.DynamicVars.Damage.BaseValue)
+			.FromCard(card)
+			.TargetingRandomOpponents(combatState, allowDuplicates: false)
+			.WithHitCount(hitCount)
+			.WithHitFx(hitFx)
+			.Execute(choiceContext);
+
+		return hitCount;
 	}
 }

@@ -7,6 +7,7 @@ using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.ValueProps;
+using Squ;
 using Squ.Character;
 using Squ.Powers;
 using STS2RitsuLib.Interop.AutoRegistration;
@@ -19,7 +20,7 @@ namespace Squ.Cards;
 [RegisterCard(typeof(SunqianCardPool), StableEntryStem = "flame_strike")]
 public sealed class FlameStrike : ModCardTemplate
 {
-	public const decimal BaseDamage = 5m;
+	public const decimal BaseDamage = 6m;
 	public const decimal BaseBurning = 3m;
 
 	protected override IEnumerable<DynamicVar> CanonicalVars =>
@@ -28,7 +29,7 @@ public sealed class FlameStrike : ModCardTemplate
 		new PowerVar<BurningPower>(BaseBurning),
 	];
 
-	protected override HashSet<CardTag> CanonicalTags => [CardTag.Strike];
+	protected override HashSet<CardTag> CanonicalTags => [CardTag.Strike, SquCardTags.Burning];
 
 	protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
 	[

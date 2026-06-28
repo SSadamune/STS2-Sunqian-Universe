@@ -45,19 +45,10 @@ public sealed class ChickenFootCheese : ModCardTemplate, IRandomEnemyTargetCount
 
 	protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
 	{
-		foreach (Creature target in SquRandomEnemyTargeting.GetTargets(this, cardPlay.Target))
-		{
-			if (!target.IsAlive)
-			{
-				continue;
-			}
-
-			await DamageCmd.Attack(DynamicVars.Damage.BaseValue)
-				.FromCard(this)
-				.Targeting(target)
-				.WithHitFx("vfx/vfx_attack_slash")
-				.Execute(choiceContext);
-		}
+		await SquRandomEnemyTargeting.ExecuteDistinctRandomEnemyDamage(
+			this,
+			choiceContext,
+			RandomEnemyTargetCount);
 
 		await PowerCmd.Apply<ChickenFootCheeseStrikePower>(
 			choiceContext,

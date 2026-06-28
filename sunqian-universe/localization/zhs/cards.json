@@ -50,7 +50,7 @@
   "SUNQIAN_UNIVERSE_CARD_SUNQIAN_UNIVERSE.title": "孙乾宇宙",
   "SUNQIAN_UNIVERSE_CARD_SUNQIAN_UNIVERSE.description": "获得{DexterityPower:diff()}点[gold]敏捷[/gold]。每当你的[gold]剧本[/gold]失效后，抽{Cards:diff()}张牌。",
   "SUNQIAN_UNIVERSE_CARD_FIRE_NOVA.title": "飞火流星",
-  "SUNQIAN_UNIVERSE_CARD_FIRE_NOVA.description": "{IfUpgraded:show:对随机的X名敌人分别执行：「|}造成{Damage:diff()}点伤害。给与所有敌人{BurningPower:diff()}层[gold]灼烧[/gold]{IfUpgraded:show:」|}。",
+  "SUNQIAN_UNIVERSE_CARD_FIRE_NOVA.description": "{IfUpgraded:show:对随机的X名敌人|}造成{Damage:diff()}点伤害。{IfUpgraded:show:每造成一次，|}给与所有敌人{BurningPower:diff()}层[gold]灼烧[/gold]。",
   "SUNQIAN_UNIVERSE_CARD_BURNING_LINKED_CAMPS_SCRIPT.title": "火烧连营剧本",
   "SUNQIAN_UNIVERSE_CARD_BURNING_LINKED_CAMPS_SCRIPT.description": "获得{FuelAbundantPower:diff()}层[gold]燃料充足[/gold]。\n[gold]剧本[/gold]：失效时，将一张[gold]上方谷之叹[/gold]加入[gold]抽牌堆[/gold]。",
   "SUNQIAN_UNIVERSE_CARD_SHANGFANGGU_SIGH.title": "上方谷之叹",

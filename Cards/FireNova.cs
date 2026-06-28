@@ -13,6 +13,7 @@ using MegaCrit.Sts2.Core.ValueProps;
 using Squ.Character;
 using Squ.Combat;
 using Squ.Powers;
+using Squ;
 using STS2RitsuLib.Interop.AutoRegistration;
 using STS2RitsuLib.Scaffolding.Content;
 
@@ -28,7 +29,7 @@ namespace Squ.Cards;
 public sealed class FireNova : ModCardTemplate, IRandomEnemyTargetCount
 {
 	public const int DamageAmount = 3;
-	public const int BurningStacks = 5;
+	public const int BurningStacks = 6;
 
 	protected override bool HasEnergyCostX => IsUpgraded;
 
@@ -42,6 +43,8 @@ public sealed class FireNova : ModCardTemplate, IRandomEnemyTargetCount
 	[
 		HoverTipFactory.FromPower<BurningPower>(),
 	];
+
+	protected override HashSet<CardTag> CanonicalTags => [SquCardTags.Burning];
 
 	public override CardAssetProfile AssetProfile => new(
 		PortraitPath: "res://images/cards/FireNova.png");
@@ -66,14 +69,20 @@ public sealed class FireNova : ModCardTemplate, IRandomEnemyTargetCount
 
 		if (IsUpgraded)
 		{
-			if (GetRandomEnemyTargetCount() <= 0)
+			int hitCount = GetRandomEnemyTargetCount();
+			if (hitCount <= 0)
 			{
 				return;
 			}
 
-			foreach (Creature target in SquRandomEnemyTargeting.GetTargets(this, cardPlay.Target))
+			int damageHits = await SquRandomEnemyTargeting.ExecuteDistinctRandomEnemyDamage(
+				this,
+				choiceContext,
+				hitCount);
+
+			for (int i = 0; i < damageHits; i++)
 			{
-				await ExecuteBaseEffect(choiceContext, combatState, target);
+				await ApplyBurningToAllEnemies(choiceContext, combatState);
 			}
 
 			return;
