@@ -37,5 +37,7 @@
   "SUNQIAN_UNIVERSE_POWER_SCRIPT_ONE_MAN_ONE_CITY_POWER.description": "After your [gold]Plating[/gold] triggers, lose [blue]1[/blue] [gold]Plating[/gold] and trigger it 1 additional time.",
   "SUNQIAN_UNIVERSE_POWER_SCRIPT_ONE_MAN_ONE_CITY_POWER.smartDescription": "After your [gold]Plating[/gold] triggers, lose [blue]1[/blue] [gold]Plating[/gold] and trigger it [blue]1[/blue] additional time.",
   "SUNQIAN_UNIVERSE_POWER_GOOD_FIRE_POWER.title": "What a fire…",
-  "SUNQIAN_UNIVERSE_POWER_GOOD_FIRE_POWER.smartDescription": "[gold]Burning[/gold] you apply is increased by [blue]{Amount}[/blue] times."
+  "SUNQIAN_UNIVERSE_POWER_GOOD_FIRE_POWER.smartDescription": "[gold]Burning[/gold] you apply is increased by [blue]{Amount}[/blue] times.",
+  "SUNQIAN_UNIVERSE_POWER_CHICKEN_FOOT_CHEESE_STRIKE_POWER.title": "Chicken Foot Cheese",
+  "SUNQIAN_UNIVERSE_POWER_CHICKEN_FOOT_CHEESE_STRIKE_POWER.smartDescription": "For {Amount} {Amount:plural:turn|turns}, [gold]Strike[/gold] cards you play target 2 random enemies instead."
 }

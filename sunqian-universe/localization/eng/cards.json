@@ -35,5 +35,7 @@
   "SUNQIAN_UNIVERSE_CARD_LOUD_SECRET_PLOT.title": "Loud Secret Plot",
   "SUNQIAN_UNIVERSE_CARD_LOUD_SECRET_PLOT.description": "Whenever you play an Attack or Skill that targets ALL enemies or multiple random enemies, while only one enemy can be targeted, that card resolves an additional time.",
   "SUNQIAN_UNIVERSE_CARD_FINGER_SNAP_STRIKE.title": "Finger Snap Strike",
-  "SUNQIAN_UNIVERSE_CARD_FINGER_SNAP_STRIKE.description": "Deal {Damage:diff()} damage. At the start of each turn, randomize this card's Energy cost between {MinCost} and {MaxCost}."
+  "SUNQIAN_UNIVERSE_CARD_FINGER_SNAP_STRIKE.description": "Deal {Damage:diff()} damage. At the start of each turn, randomize this card's Energy cost between {MinCost} and {MaxCost}.",
+  "SUNQIAN_UNIVERSE_CARD_CHICKEN_FOOT_CHEESE.title": "Chicken Foot Cheese",
+  "SUNQIAN_UNIVERSE_CARD_CHICKEN_FOOT_CHEESE.description": "Deal {Damage:diff()} damage to 2 random enemies. For {ChickenFootCheeseStrikePower:diff()} {ChickenFootCheeseStrikePower:plural:turn|turns}, [gold]Strike[/gold] cards you play target 2 random enemies instead."
 }

@@ -12,7 +12,7 @@
   "SUNQIAN_UNIVERSE_POWER_SCRIPT_NEUTRAL_AMBUSH_POWER.title": "剧本：中立伏兵",
   "SUNQIAN_UNIVERSE_POWER_SCRIPT_NEUTRAL_AMBUSH_POWER.smartDescription": "每当你抽到[gold]巨石[/gold]时，对一名随机敌人打出。",
   "SUNQIAN_UNIVERSE_POWER_SCRIPT_SENTRY_POWER.title": "剧本：哨兵",
-  "SUNQIAN_UNIVERSE_POWER_SCRIPT_SENTRY_POWER.description": "名字中含有「打击」的卡牌造成[blue]1[/blue]点额外伤害。",
+  "SUNQIAN_UNIVERSE_POWER_SCRIPT_SENTRY_POWER.description": "名字中有「打击」的卡牌造成[blue]1[/blue]点额外伤害。",
   "SUNQIAN_UNIVERSE_POWER_SCRIPT_SUN_QIAN_POWER.title": "剧本：孙乾",
   "SUNQIAN_UNIVERSE_POWER_SCRIPT_SUN_QIAN_POWER.description": "此剧本失效时，抽[blue]1[/blue]张牌。",
   "SUNQIAN_UNIVERSE_POWER_SCRIPT_SUN_QIAN_POWER.smartDescription": "此剧本结束时，抽[blue]{Cards:diff()}[/blue]张牌。",
@@ -37,5 +37,7 @@
   "SUNQIAN_UNIVERSE_POWER_THE_ARROGANT_FALL_POWER.description": "在下个回合开始时获得[blue]{Amount}[/blue]层[gold]虚弱[/gold]和[gold]易伤[/gold]。",
   "SUNQIAN_UNIVERSE_POWER_BURNING_POWER.title": "灼烧",
   "SUNQIAN_UNIVERSE_POWER_BURNING_POWER.description": "灼烧的生物会在自身回合开始时受到伤害。灼烧层数每回合有[blue]{ClearChance}%[/blue]的概率清空；若未清空，则此概率提升[blue]25%[/blue]。",
-  "SUNQIAN_UNIVERSE_POWER_BURNING_POWER.smartDescription": "在{OnPlayer:你的回合|其回合}开始时受到[blue]{Amount}[/blue]点伤害，然后[gold]灼烧[/gold]层数有[blue]{ClearChance}%[/blue]的概率清空；若未清空，则此概率提升[blue]25%[/blue]。"
+  "SUNQIAN_UNIVERSE_POWER_BURNING_POWER.smartDescription": "在{OnPlayer:你的回合|其回合}开始时受到[blue]{Amount}[/blue]点伤害，然后[gold]灼烧[/gold]层数有[blue]{ClearChance}%[/blue]的概率清空；若未清空，则此概率提升[blue]25%[/blue]。",
+  "SUNQIAN_UNIVERSE_POWER_CHICKEN_FOOT_CHEESE_STRIKE_POWER.title": "鸡脚芝士",
+  "SUNQIAN_UNIVERSE_POWER_CHICKEN_FOOT_CHEESE_STRIKE_POWER.smartDescription": "[blue]{Amount}[/blue]回合内，你使用[gold]打击[/gold]的目标修改为「随机两名敌人」。"
 }

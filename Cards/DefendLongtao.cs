@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using MegaCrit.Sts2.Core.Commands;
@@ -12,38 +11,34 @@ using STS2RitsuLib.Scaffolding.Content;
 
 namespace Squ.Cards;
 
-[RegisterCard(typeof(SunqianCardPool), StableEntryStem = "strike")]
+[RegisterCard(typeof(SunqianCardPool), StableEntryStem = "defend")]
 [RegisterCharacterStarterCard(typeof(SunqianCharacter), 4)]
-public sealed class LongtaoStrike : ModCardTemplate
+public sealed class DefendLongtao : ModCardTemplate
 {
 	protected override IEnumerable<DynamicVar> CanonicalVars =>
 	[
-		new DamageVar(6m, ValueProp.Move),
+		new BlockVar(5m, ValueProp.Move),
 	];
 
-	protected override HashSet<CardTag> CanonicalTags => [CardTag.Strike];
+	protected override HashSet<CardTag> CanonicalTags => [CardTag.Defend];
+
+	public override bool GainsBlock => true;
 
 	public override CardAssetProfile AssetProfile => new(
-		PortraitPath: "res://images/cards/LongtaoStrike.png");
+		PortraitPath: "res://images/cards/DefendLongtao.png");
 
-	public LongtaoStrike()
-		: base(1, CardType.Attack, CardRarity.Basic, TargetType.AnyEnemy)
+	public DefendLongtao()
+		: base(1, CardType.Skill, CardRarity.Basic, TargetType.Self)
 	{
 	}
 
 	protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
 	{
-		ArgumentNullException.ThrowIfNull(cardPlay.Target, "cardPlay.Target");
-
-		await DamageCmd.Attack(DynamicVars.Damage.BaseValue)
-			.FromCard(this)
-			.Targeting(cardPlay.Target)
-			.WithHitFx("vfx/vfx_attack_slash")
-			.Execute(choiceContext);
+		await CreatureCmd.GainBlock(Owner.Creature, DynamicVars.Block, cardPlay);
 	}
 
 	protected override void OnUpgrade()
 	{
-		DynamicVars.Damage.UpgradeValueBy(3m);
+		DynamicVars.Block.UpgradeValueBy(3m);
 	}
 }
