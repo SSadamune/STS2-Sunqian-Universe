@@ -13,7 +13,7 @@
   "SUNQIAN_UNIVERSE_CARD_THE_ARROGANT_FALL.title": "The arrogant fall",
   "SUNQIAN_UNIVERSE_CARD_THE_ARROGANT_FALL.description": "Give an [gold]ANYONE[/gold] {VigorPower:diff()} [gold]Vigor[/gold] and {Block:diff()} [gold]Block[/gold]. At the start of its next turn, it gains {WeakPower:diff()} [gold]Weak[/gold] and {VulnerablePower:diff()} [gold]Vulnerable[/gold].",
   "SUNQIAN_UNIVERSE_CARD_JUGGLE_MULTIPLE_SHOOTS.title": "Juggle Multiple Shoots",
-  "SUNQIAN_UNIVERSE_CARD_JUGGLE_MULTIPLE_SHOOTS.description": "End your current [gold]Script[/gold]. Choose 1 of 3 {IfUpgraded:show:Upgraded |}[gold]Power[/gold] cards from other [gold]Characters[/gold] costing no more than your remaining {energyPrefix:energyIcons(1)} to add into your [gold]Hand[/gold].",
+  "SUNQIAN_UNIVERSE_CARD_JUGGLE_MULTIPLE_SHOOTS.description": "If you have a [gold]Script[/gold], end it. Choose 1 of 3 {IfUpgraded:show:Upgraded |}[gold]Power[/gold] cards from other [gold]Characters[/gold] costing no more than your remaining {energyPrefix:energyIcons(1)} to add into your [gold]Hand[/gold].",
   "SUNQIAN_UNIVERSE_CARD_JUGGLE_MULTIPLE_SHOOTS.zeroEnergyHoverTip": "If you have {energyPrefix:energyIcons(0)} remaining, choices are drawn from {energyPrefix:energyIcons(1)} [gold]Power[/gold] cards.",
   "SUNQIAN_UNIVERSE_CARD_JUGGLE_MULTIPLE_SHOOTS.selectionScreenPrompt": "Choose a card.",
   "SUNQIAN_UNIVERSE_CARD_PHASING.title": "Phasing",

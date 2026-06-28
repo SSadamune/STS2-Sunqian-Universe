@@ -22,6 +22,9 @@ public static class ScriptSystem
 	public static int GetScriptLiftsThisTurn(Player player) =>
 		PlayerScriptLiftTracker.GetLiftsThisTurn(player);
 
+	public static bool HasActiveScript(Creature creature) =>
+		creature.Powers.OfType<ScriptPowerTemplate>().Any();
+
 	/// <summary>
 	/// 移除生物身上所有剧本能力（例如事件强制结束剧本）。
 	/// </summary>

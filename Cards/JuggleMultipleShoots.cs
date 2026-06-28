@@ -51,8 +51,16 @@ public sealed class JuggleMultipleShoots : ModCardTemplate
 	{
 	}
 
+	protected override bool ShouldGlowGoldInternal =>
+		Pile?.Type == PileType.Hand && ScriptSystem.HasActiveScript(Owner.Creature);
+
 	protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
 	{
+		if (!ScriptSystem.HasActiveScript(Owner.Creature))
+		{
+			return;
+		}
+
 		await ScriptSystem.InvalidateScriptsAsync(Owner.Creature);
 
 		int remainingEnergy = Owner.PlayerCombatState?.Energy ?? 0;
@@ -209,6 +217,8 @@ public sealed class JuggleMultipleShoots : ModCardTemplate
 
 	private static bool IsEligiblePower(CardModel card, int maxCost) =>
 		card.Type == CardType.Power
+		&& card.CanBeGeneratedInCombat
+		&& card.Rarity is not CardRarity.Basic and not CardRarity.Ancient and not CardRarity.Event
 		&& !card.EnergyCost.CostsX
 		&& GetCanonicalEnergyCost(card) <= maxCost;
 
