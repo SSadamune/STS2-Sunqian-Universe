@@ -66,5 +66,7 @@
   "SUNQIAN_UNIVERSE_CARD_FINGER_SNAP_STRIKE.title": "弹指打击",
   "SUNQIAN_UNIVERSE_CARD_FINGER_SNAP_STRIKE.description": "造成{Damage:diff()}点伤害。每回合开始时，这张牌的耗能在[blue]{MinCost}[/blue]到[blue]{MaxCost}[/blue]之间随机变化。",
   "SUNQIAN_UNIVERSE_CARD_CHICKEN_FOOT_CHEESE.title": "鸡脚芝士",
-  "SUNQIAN_UNIVERSE_CARD_CHICKEN_FOOT_CHEESE.description": "对随机两名敌人各造成{Damage:diff()}点伤害。{ChickenFootCheeseStrikePower:diff()}回合内，你使用[gold]打击[/gold]的目标修改为「随机两名敌人」。"
+  "SUNQIAN_UNIVERSE_CARD_CHICKEN_FOOT_CHEESE.description": "对随机两名敌人各造成{Damage:diff()}点伤害。{ChickenFootCheeseStrikePower:diff()}回合内，你使用[gold]打击[/gold]的目标修改为「随机两名敌人」。",
+  "SUNQIAN_UNIVERSE_CARD_SUPERNATURALLY_WISE.title": "多智近妖",
+  "SUNQIAN_UNIVERSE_CARD_SUPERNATURALLY_WISE.description": "如果你本回合打出过[gold]消耗[/gold]牌，下回合开始时抽{Cards:diff()}张牌。"
 }
