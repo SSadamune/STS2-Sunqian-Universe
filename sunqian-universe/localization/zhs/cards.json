@@ -57,7 +57,7 @@
   "SUNQIAN_UNIVERSE_CARD_SHANGFANGGU_SIGH.description": "你给予的[gold]灼烧[/gold]层数增加1倍。",
   "SUNQIAN_UNIVERSE_CARD_CYBERTRON_STRENGTH.title": "赛博坦之力",
   "SUNQIAN_UNIVERSE_CARD_CYBERTRON_STRENGTH.description": "获得等同于所有敌人[gold]灼烧[/gold]层数的[gold]格挡[/gold]。",
-  "SUNQIAN_UNIVERSE_CARD_ONE_MAN_ONE_CITY.title": "一人一城",
+  "SUNQIAN_UNIVERSE_CARD_ONE_MAN_ONE_CITY.title": "独守空城剧本",
   "SUNQIAN_UNIVERSE_CARD_ONE_MAN_ONE_CITY.description": "获得{PlatingPower:diff()}层[gold]覆甲[/gold]。\n[gold]剧本[/gold]：你的[gold]覆甲[/gold]触发后，损失1层并额外触发1次。",
   "SUNQIAN_UNIVERSE_CARD_WATER_FIRE_INVINCIBLE.title": "水火无敌",
   "SUNQIAN_UNIVERSE_CARD_WATER_FIRE_INVINCIBLE.description": "造成{Damage:diff()}点伤害。给与等量于所造成伤害的[gold]灼烧[/gold]。获得等量于所造成[gold]灼烧[/gold]的[gold]格挡[/gold]。",
@@ -68,5 +68,7 @@
   "SUNQIAN_UNIVERSE_CARD_CHICKEN_FOOT_CHEESE.title": "鸡脚芝士",
   "SUNQIAN_UNIVERSE_CARD_CHICKEN_FOOT_CHEESE.description": "对随机两名敌人各造成{Damage:diff()}点伤害。{ChickenFootCheeseStrikePower:diff()}回合内，你使用[gold]打击[/gold]的目标修改为「随机两名敌人」。",
   "SUNQIAN_UNIVERSE_CARD_SUPERNATURALLY_WISE.title": "多智近妖",
-  "SUNQIAN_UNIVERSE_CARD_SUPERNATURALLY_WISE.description": "如果你本回合打出过[gold]消耗[/gold]牌，下回合开始时抽{Cards:diff()}张牌。"
+  "SUNQIAN_UNIVERSE_CARD_SUPERNATURALLY_WISE.description": "如果你本回合打出过[gold]消耗[/gold]牌，下回合开始时抽{Cards:diff()}张牌。",
+  "SUNQIAN_UNIVERSE_CARD_AUDITION.title": "试镜",
+  "SUNQIAN_UNIVERSE_CARD_AUDITION.description": "将3张随机{IfUpgraded:show:升级过的|}[gold]剧本[/gold]牌加入你的[gold]手牌[/gold]。"
 }

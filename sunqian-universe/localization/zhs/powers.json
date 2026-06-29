@@ -26,7 +26,7 @@
   "SUNQIAN_UNIVERSE_POWER_FUEL_ABUNDANT_POWER.smartDescription": "你下一张能造成[gold]灼烧[/gold]的牌额外给予[blue]{Amount}[/blue]层[gold]灼烧[/gold]。",
   "SUNQIAN_UNIVERSE_POWER_SCRIPT_BURNING_LINKED_CAMPS_POWER.title": "剧本：火烧连营",
   "SUNQIAN_UNIVERSE_POWER_SCRIPT_BURNING_LINKED_CAMPS_POWER.smartDescription": "此剧本失效时，将一张{GeneratedCard}加入你的[gold]抽牌堆[/gold]。",
-  "SUNQIAN_UNIVERSE_POWER_SCRIPT_ONE_MAN_ONE_CITY_POWER.title": "剧本：一人一城",
+  "SUNQIAN_UNIVERSE_POWER_SCRIPT_ONE_MAN_ONE_CITY_POWER.title": "剧本：独守空城",
   "SUNQIAN_UNIVERSE_POWER_SCRIPT_ONE_MAN_ONE_CITY_POWER.description": "你的[gold]覆甲[/gold]触发后，损失1层并额外触发1次。",
   "SUNQIAN_UNIVERSE_POWER_SCRIPT_ONE_MAN_ONE_CITY_POWER.smartDescription": "你的[gold]覆甲[/gold]触发后，损失[blue]1[/blue]层并额外触发[blue]1[/blue]次。",
   "SUNQIAN_UNIVERSE_POWER_GOOD_FIRE_POWER.title": "好火啊…",

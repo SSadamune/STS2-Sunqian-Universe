@@ -41,5 +41,7 @@
   "SUNQIAN_UNIVERSE_CARD_CHICKEN_FOOT_CHEESE.title": "Chicken Foot Cheese",
   "SUNQIAN_UNIVERSE_CARD_CHICKEN_FOOT_CHEESE.description": "Deal {Damage:diff()} damage to 2 random enemies. For {ChickenFootCheeseStrikePower:diff()} {ChickenFootCheeseStrikePower:plural:turn|turns}, [gold]Strike[/gold] cards you play target 2 random enemies instead.",
   "SUNQIAN_UNIVERSE_CARD_SUPERNATURALLY_WISE.title": "Supernaturally Wise",
-  "SUNQIAN_UNIVERSE_CARD_SUPERNATURALLY_WISE.description": "If you play an [gold]Exhaust[/gold] card this turn, draw {Cards:diff()} {Cards:plural:card|cards} at the start of your next turn."
+  "SUNQIAN_UNIVERSE_CARD_SUPERNATURALLY_WISE.description": "If you play an [gold]Exhaust[/gold] card this turn, draw {Cards:diff()} {Cards:plural:card|cards} at the start of your next turn.",
+  "SUNQIAN_UNIVERSE_CARD_AUDITION.title": "Audition",
+  "SUNQIAN_UNIVERSE_CARD_AUDITION.description": "Add 3 random {IfUpgraded:show:Upgraded |}[gold]Script[/gold] cards to your [gold]Hand[/gold]."
 }
