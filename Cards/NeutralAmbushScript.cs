@@ -8,7 +8,7 @@ using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.Models.Cards;
-using MegaCrit.Sts2.Core.Models.Powers;
+using Squ;
 using Squ.Character;
 using Squ.Powers;
 using Squ.Script;
@@ -27,20 +27,18 @@ public sealed class NeutralAmbushScript : ScriptCardTemplate
 {
 	public const int BoulderCount = 3;
 
-	private const int NextTurnDrawAmount = 0;
-
-	private const int UpgradedNextTurnDrawAmount = 1;
-
 	protected override IEnumerable<DynamicVar> CanonicalVars =>
 	[
 		new CardsVar(BoulderCount),
-		new PowerVar<DrawCardsNextTurnPower>(NextTurnDrawAmount),
 	];
 
 	// 对齐家丁剧本：悬停预览实际生成的 GIANT_ROCK（含升级态）。
 	protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
 	[
 		..HoverTipFactory.FromCardWithCardHoverTips<GiantRock>(IsUpgraded),
+		new HoverTip(
+			SquCommonL10n.StackableScriptTitle(),
+			SquCommonL10n.StackableScriptAnnotation()),
 	];
 
 	public override IEnumerable<CardKeyword> CanonicalKeywords =>
@@ -70,24 +68,11 @@ public sealed class NeutralAmbushScript : ScriptCardTemplate
 			IsUpgraded,
 			player);
 
-		int nextTurnDraw = IsUpgraded ? UpgradedNextTurnDrawAmount : NextTurnDrawAmount;
-		await PowerCmd.Apply<DrawCardsNextTurnPower>(
-			choiceContext,
-			player.Creature,
-			nextTurnDraw,
-			player.Creature,
-			this);
-
 		await PowerCmd.Apply<ScriptNeutralAmbushPower>(
 			choiceContext,
 			player.Creature,
 			1m,
 			player.Creature,
 			this);
-	}
-
-	protected override void OnUpgrade()
-	{
-		DynamicVars[nameof(DrawCardsNextTurnPower)].UpgradeValueBy(1m);
 	}
 }
