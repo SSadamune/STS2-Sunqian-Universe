@@ -70,5 +70,7 @@
   "SUNQIAN_UNIVERSE_CARD_SUPERNATURALLY_WISE.title": "多智近妖",
   "SUNQIAN_UNIVERSE_CARD_SUPERNATURALLY_WISE.description": "如果你本回合打出过[gold]消耗[/gold]牌，下回合开始时抽{Cards:diff()}张牌。",
   "SUNQIAN_UNIVERSE_CARD_AUDITION.title": "试镜",
-  "SUNQIAN_UNIVERSE_CARD_AUDITION.description": "将3张随机{IfUpgraded:show:升级过的|}[gold]剧本[/gold]牌加入你的[gold]手牌[/gold]。"
+  "SUNQIAN_UNIVERSE_CARD_AUDITION.description": "将3张随机{IfUpgraded:show:升级过的|}[gold]剧本[/gold]牌加入你的[gold]手牌[/gold]。",
+  "SUNQIAN_UNIVERSE_CARD_HUMAN_TRANSMUTATION.title": "人体炼成",
+  "SUNQIAN_UNIVERSE_CARD_HUMAN_TRANSMUTATION.description": "抽{Cards:diff()}张牌。消耗至多3张牌，从等量张稀有度相同的随机{IfUpgraded:show:升级过的|}[gold]攻击[/gold]牌中选择一张加入[gold]手牌[/gold]。"
 }

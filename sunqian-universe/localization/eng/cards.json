@@ -33,7 +33,7 @@
   "SUNQIAN_UNIVERSE_CARD_WATER_FIRE_INVINCIBLE.title": "Water-Fire Invincible",
   "SUNQIAN_UNIVERSE_CARD_WATER_FIRE_INVINCIBLE.description": "Deal {Damage:diff()} damage. Apply [gold]Burning[/gold] equal to damage dealt. Gain [gold]Block[/gold] equal to [gold]Burning[/gold] applied.",
   "SUNQIAN_UNIVERSE_CARD_TABLE_FLIP.title": "Table Flip",
-  "SUNQIAN_UNIVERSE_CARD_TABLE_FLIP.description": "Apply {WeakPower:diff()} [gold]Weak[/gold] to ALL enemies. Deal {Damage:diff()} damage to ALL enemies. At the start of your turn, if no enemy has [gold]Weak[/gold], return this to your [gold]Hand[/gold].",
+  "SUNQIAN_UNIVERSE_CARD_TABLE_FLIP.description": "Deal {Damage:diff()} damage to ALL enemies. Apply {WeakPower:diff()} [gold]Weak[/gold] to ALL enemies. At the start of your turn, if no enemy has [gold]Weak[/gold], return this to your [gold]Hand[/gold].",
   "SUNQIAN_UNIVERSE_CARD_LOUD_SECRET_PLOT.title": "Loud Secret Plot",
   "SUNQIAN_UNIVERSE_CARD_LOUD_SECRET_PLOT.description": "Whenever you play an Attack or Skill that targets ALL enemies or multiple random enemies, while only one enemy can be targeted, that card resolves an additional time.",
   "SUNQIAN_UNIVERSE_CARD_FINGER_SNAP_STRIKE.title": "Finger Snap Strike",
@@ -43,5 +43,7 @@
   "SUNQIAN_UNIVERSE_CARD_SUPERNATURALLY_WISE.title": "Supernaturally Wise",
   "SUNQIAN_UNIVERSE_CARD_SUPERNATURALLY_WISE.description": "If you play an [gold]Exhaust[/gold] card this turn, draw {Cards:diff()} {Cards:plural:card|cards} at the start of your next turn.",
   "SUNQIAN_UNIVERSE_CARD_AUDITION.title": "Audition",
-  "SUNQIAN_UNIVERSE_CARD_AUDITION.description": "Add 3 random {IfUpgraded:show:Upgraded |}[gold]Script[/gold] cards to your [gold]Hand[/gold]."
+  "SUNQIAN_UNIVERSE_CARD_AUDITION.description": "Add 3 random {IfUpgraded:show:Upgraded |}[gold]Script[/gold] cards to your [gold]Hand[/gold].",
+  "SUNQIAN_UNIVERSE_CARD_HUMAN_TRANSMUTATION.title": "Human Transmutation",
+  "SUNQIAN_UNIVERSE_CARD_HUMAN_TRANSMUTATION.description": "Draw {Cards:diff()} card. Exhaust up to 3 cards. Choose 1 of that many random {IfUpgraded:show:Upgraded |}[gold]Attacks[/gold] with matching rarities to add into your [gold]Hand[/gold]."
 }

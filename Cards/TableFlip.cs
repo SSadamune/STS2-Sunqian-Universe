@@ -48,6 +48,13 @@ public sealed class TableFlip : ModCardTemplate
 		ArgumentNullException.ThrowIfNull(combatState, nameof(combatState));
 
 		decimal weakAmount = DynamicVars[nameof(WeakPower)].BaseValue;
+
+		await DamageCmd.Attack(DynamicVars.Damage.BaseValue)
+			.FromCard(this)
+			.TargetingAllOpponents(combatState)
+			.WithHitFx("vfx/vfx_attack_blunt")
+			.Execute(choiceContext);
+
 		foreach (Creature target in combatState.HittableEnemies)
 		{
 			if (!target.IsAlive)
@@ -62,12 +69,6 @@ public sealed class TableFlip : ModCardTemplate
 				Owner.Creature,
 				this);
 		}
-
-		await DamageCmd.Attack(DynamicVars.Damage.BaseValue)
-			.FromCard(this)
-			.TargetingAllOpponents(combatState)
-			.WithHitFx("vfx/vfx_attack_blunt")
-			.Execute(choiceContext);
 
 		await TroubleAgainPower.ApplyTrackingAsync(choiceContext, Owner.Creature, this);
 	}
