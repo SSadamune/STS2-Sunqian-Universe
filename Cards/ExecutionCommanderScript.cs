@@ -6,7 +6,6 @@ using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.Entities.Players;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.HoverTips;
-using MegaCrit.Sts2.Core.Models.Cards;
 using Squ;
 using Squ.Character;
 using Squ.Powers;
@@ -18,19 +17,11 @@ using STS2RitsuLib.Scaffolding.Content;
 
 namespace Squ.Cards;
 
-/// <summary>
-/// 将原版 <see cref="GiantRock"/> 与 <see cref="SalvoStrike"/> 洗入抽牌堆，
-/// 并在剧本存续期间于抽到二者之一时自动对随机目标打出。
-/// </summary>
-[RegisterCard(typeof(SunqianCardPool), StableEntryStem = "neutral_ambush_script")]
-public sealed class NeutralAmbushScript : ScriptCardTemplate
+[RegisterCard(typeof(SunqianCardPool), StableEntryStem = "execution_commander_script")]
+public sealed class ExecutionCommanderScript : ScriptCardTemplate
 {
-	public const int BoulderCount = 1;
-	public const int SalvoStrikeCount = 2;
-
 	protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
 	[
-		..HoverTipFactory.FromCardWithCardHoverTips<GiantRock>(IsUpgraded),
 		..HoverTipFactory.FromCardWithCardHoverTips<SalvoStrike>(IsUpgraded),
 	];
 
@@ -41,10 +32,10 @@ public sealed class NeutralAmbushScript : ScriptCardTemplate
 	];
 
 	public override CardAssetProfile AssetProfile => new(
-		PortraitPath: "res://images/cards/NeutralAmbushScript.png");
+		PortraitPath: "res://images/cards/ExecutionCommanderScript.png");
 
-	public NeutralAmbushScript()
-		: base(1, CardType.Skill, CardRarity.Common, TargetType.Self, false)
+	public ExecutionCommanderScript()
+		: base(1, CardType.Skill, CardRarity.Uncommon, TargetType.Self, false)
 	{
 	}
 
@@ -52,23 +43,15 @@ public sealed class NeutralAmbushScript : ScriptCardTemplate
 	{
 		Player player = Owner;
 		ICombatState combatState = player.Creature.CombatState
-			?? throw new System.InvalidOperationException("NeutralAmbushScript requires an active combat.");
+			?? throw new System.InvalidOperationException("ExecutionCommanderScript requires an active combat.");
 
-		await GeneratedCombatCards.AddToDrawPileInCombat<GiantRock>(
+		await GeneratedCombatCards.AddToHandInCombat<SalvoStrike>(
 			combatState,
 			player,
-			BoulderCount,
 			IsUpgraded,
 			player);
 
-		await GeneratedCombatCards.AddToDrawPileInCombat<SalvoStrike>(
-			combatState,
-			player,
-			SalvoStrikeCount,
-			IsUpgraded,
-			player);
-
-		await PowerCmd.Apply<ScriptNeutralAmbushPower>(
+		await PowerCmd.Apply<ScriptExecutionCommanderPower>(
 			choiceContext,
 			player.Creature,
 			1m,

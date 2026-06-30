@@ -18,7 +18,7 @@ public sealed class ThrowHimOut : ModCardTemplate
 {
 	protected override IEnumerable<DynamicVar> CanonicalVars =>
 	[
-		new BlockVar(4m, ValueProp.Move),
+		new BlockVar(5m, ValueProp.Move),
 	];
 
 	public override bool GainsBlock => true;

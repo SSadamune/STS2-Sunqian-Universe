@@ -5,6 +5,7 @@ using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.Entities.Creatures;
 using MegaCrit.Sts2.Core.Entities.Powers;
 using MegaCrit.Sts2.Core.Models;
+using Squ.Combat;
 using STS2RitsuLib.Interop.AutoRegistration;
 using STS2RitsuLib.Scaffolding.Content;
 
@@ -63,18 +64,6 @@ public sealed class LoudSecretPlotPower : ModPowerTemplate
 	private static bool IsQualifyingCardType(CardModel card) =>
 		card.Type is CardType.Attack or CardType.Skill;
 
-	private static bool HasMultiTargetIntent(CardModel card)
-	{
-		if (card.TargetType == TargetType.AllEnemies)
-		{
-			return true;
-		}
-
-		if (card is ISoloMultitargetReplayOptIn optIn)
-		{
-			return optIn.QualifiesForSoloMultitargetReplay();
-		}
-
-		return false;
-	}
+	private static bool HasMultiTargetIntent(CardModel card) =>
+		MultiTargetCardIntent.HasMultiTargetIntent(card);
 }

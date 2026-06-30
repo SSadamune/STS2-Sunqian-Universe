@@ -16,9 +16,9 @@ using STS2RitsuLib.Scaffolding.Content;
 
 namespace Squ.Cards;
 
-[RegisterCard(typeof(SunqianCardPool), StableEntryStem = "sun_qian_script")]
+[RegisterCard(typeof(SunqianCardPool), StableEntryStem = "sunqian_script")]
 [RegisterCharacterStarterCard(typeof(SunqianCharacter), 1)]
-public sealed class SunQianScript : ScriptCardTemplate
+public sealed class SunqianScript : ScriptCardTemplate
 {
 	private const decimal DexterityAmount = 2m;
 
@@ -40,7 +40,7 @@ public sealed class SunQianScript : ScriptCardTemplate
 	public override CardAssetProfile AssetProfile => new(
 		PortraitPath: "res://images/cards/SunqianScript.png");
 
-	public SunQianScript()
+	public SunqianScript()
 		: base(1, CardType.Skill, CardRarity.Basic, TargetType.Self, true)
 	{
 	}
@@ -54,7 +54,7 @@ public sealed class SunQianScript : ScriptCardTemplate
 			this,
 			(int)DexterityAmount);
 
-		await PowerCmd.Apply<ScriptSunQianPower>(
+		await PowerCmd.Apply<ScriptSunqianPower>(
 			choiceContext,
 			Owner.Creature,
 			1m,

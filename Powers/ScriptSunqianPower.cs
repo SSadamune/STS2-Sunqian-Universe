@@ -16,7 +16,7 @@ using STS2RitsuLib.Scaffolding.Content;
 namespace Squ.Powers;
 
 [RegisterPower]
-public sealed class ScriptSunQianPower : ScriptPowerTemplate
+public sealed class ScriptSunqianPower : ScriptPowerTemplate
 {
 	private sealed class Data
 	{
@@ -36,7 +36,7 @@ public sealed class ScriptSunQianPower : ScriptPowerTemplate
 
 	public override Task AfterApplied(Creature? applier, CardModel? cardSource)
 	{
-		int drawOnLift = cardSource is SunQianScript { IsUpgraded: true } ? 2 : 1;
+		int drawOnLift = cardSource is SunqianScript { IsUpgraded: true } ? 2 : 1;
 		GetInternalData<Data>().DrawOnLift = drawOnLift;
 		DynamicVars.Cards.BaseValue = drawOnLift;
 		return Task.CompletedTask;

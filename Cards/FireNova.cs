@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using MegaCrit.Sts2.Core.Combat;
 using MegaCrit.Sts2.Core.Commands;
@@ -10,10 +9,11 @@ using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.Models;
-using MegaCrit.Sts2.Core.Random;
 using MegaCrit.Sts2.Core.ValueProps;
 using Squ.Character;
+using Squ.Combat;
 using Squ.Powers;
+using Squ;
 using STS2RitsuLib.Interop.AutoRegistration;
 using STS2RitsuLib.Scaffolding.Content;
 
@@ -26,10 +26,10 @@ namespace Squ.Cards;
 /// executes that effect once each on up to X distinct random enemies.
 /// </summary>
 [RegisterCard(typeof(SunqianCardPool), StableEntryStem = "fire_nova")]
-public sealed class FireNova : ModCardTemplate, ISoloMultitargetReplayOptIn
+public sealed class FireNova : ModCardTemplate, IRandomEnemyTargetCount
 {
 	public const int DamageAmount = 3;
-	public const int BurningStacks = 5;
+	public const int BurningStacks = 6;
 
 	protected override bool HasEnergyCostX => IsUpgraded;
 
@@ -44,19 +44,20 @@ public sealed class FireNova : ModCardTemplate, ISoloMultitargetReplayOptIn
 		HoverTipFactory.FromPower<BurningPower>(),
 	];
 
+	protected override HashSet<CardTag> CanonicalTags => [SquCardTags.Burning];
+
 	public override CardAssetProfile AssetProfile => new(
 		PortraitPath: "res://images/cards/FireNova.png");
 
 	public override TargetType TargetType =>
-		IsUpgraded ? TargetType.RandomEnemy : TargetType.AnyEnemy;
+		IsUpgraded ? SquTargetTypes.RandomEnemies : TargetType.AnyEnemy;
 
 	public FireNova()
 		: base(1, CardType.Attack, CardRarity.Uncommon, TargetType.AnyEnemy)
 	{
 	}
 
-	public bool QualifiesForSoloMultitargetReplay() =>
-		IsUpgraded && ResolveEnergyXValue() > 1;
+	public int GetRandomEnemyTargetCount() => ResolveEnergyXValue();
 
 	protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
 	{
@@ -68,18 +69,20 @@ public sealed class FireNova : ModCardTemplate, ISoloMultitargetReplayOptIn
 
 		if (IsUpgraded)
 		{
-			int playCount = ResolveEnergyXValue();
-			if (playCount <= 0)
+			int hitCount = GetRandomEnemyTargetCount();
+			if (hitCount <= 0)
 			{
 				return;
 			}
 
-			foreach (Creature target in PickRandomEnemiesUnique(
-				combatState,
-				playCount,
-				combatState.RunState.Rng.CombatTargets))
+			int damageHits = await SquRandomEnemyTargeting.ExecuteDistinctRandomEnemyDamage(
+				this,
+				choiceContext,
+				hitCount);
+
+			for (int i = 0; i < damageHits; i++)
 			{
-				await ExecuteBaseEffect(choiceContext, combatState, target);
+				await ApplyBurningToAllEnemies(choiceContext, combatState);
 			}
 
 			return;
@@ -102,39 +105,6 @@ public sealed class FireNova : ModCardTemplate, ISoloMultitargetReplayOptIn
 	{
 		await DealDamage(choiceContext, damageTarget);
 		await ApplyBurningToAllEnemies(choiceContext, combatState);
-	}
-
-	private static IEnumerable<Creature> PickRandomEnemiesUnique(
-		ICombatState combatState,
-		int count,
-		Rng rng)
-	{
-		if (count <= 0)
-		{
-			yield break;
-		}
-
-		List<Creature> alive = combatState.HittableEnemies
-			.Where(creature => creature.IsAlive)
-			.ToList();
-		if (alive.Count == 0)
-		{
-			yield break;
-		}
-
-		int pickCount = Math.Min(count, alive.Count);
-		List<Creature> pool = alive.ToList();
-
-		for (int i = pool.Count - 1; i > 0; i--)
-		{
-			int swapIndex = rng.NextInt(0, i + 1);
-			(pool[i], pool[swapIndex]) = (pool[swapIndex], pool[i]);
-		}
-
-		foreach (Creature creature in pool.Take(pickCount))
-		{
-			yield return creature;
-		}
 	}
 
 	private async Task ApplyBurningToAllEnemies(PlayerChoiceContext choiceContext, ICombatState combatState)

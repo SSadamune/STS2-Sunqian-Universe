@@ -10,6 +10,7 @@ using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.ValueProps;
+using Squ;
 using Squ.Character;
 using Squ.Powers;
 using STS2RitsuLib.Interop.AutoRegistration;
@@ -40,6 +41,8 @@ public sealed class WaterFireInvincible : ModCardTemplate
 	[
 		HoverTipFactory.FromPower<BurningPower>(),
 	];
+
+	protected override HashSet<CardTag> CanonicalTags => [SquCardTags.Burning];
 
 	public override CardAssetProfile AssetProfile => new(
 		PortraitPath: "res://images/cards/WaterFireInvincible.png");
