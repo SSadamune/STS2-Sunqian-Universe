@@ -1,4 +1,4 @@
-﻿{
+{
   "SUNQIAN_UNIVERSE_POWER_HUAGU_MIANZHANG_POWER.title": "化骨绵掌",
   "SUNQIAN_UNIVERSE_POWER_HUAGU_MIANZHANG_POWER.description": "回合开始时获得[blue]{Amount}[/blue][gold]灾厄[/gold]。",
   "SUNQIAN_UNIVERSE_POWER_PHASING_POWER.title": "忽近忽远",
@@ -44,5 +44,7 @@
   "SUNQIAN_UNIVERSE_POWER_CHICKEN_FOOT_CHEESE_STRIKE_POWER.title": "鸡脚芝士",
   "SUNQIAN_UNIVERSE_POWER_CHICKEN_FOOT_CHEESE_STRIKE_POWER.smartDescription": "[blue]{Amount}[/blue]回合内，你使用[gold]打击[/gold]的目标修改为「随机两名敌人」。",
   "SUNQIAN_UNIVERSE_POWER_SCRIPT_EXECUTION_COMMANDER_POWER.title": "剧本：行刑指挥官",
-  "SUNQIAN_UNIVERSE_POWER_SCRIPT_EXECUTION_COMMANDER_POWER.smartDescription": "当场上仅有一名敌人时，你打出的以[gold]所有敌人[/gold]或[gold]随机多名敌人[/gold]为目标的攻击牌伤害增加[blue]50%[/blue]。"
+  "SUNQIAN_UNIVERSE_POWER_SCRIPT_EXECUTION_COMMANDER_POWER.smartDescription": "当场上仅有一名敌人时，你打出的以[gold]所有敌人[/gold]或[gold]随机多名敌人[/gold]为目标的攻击牌伤害增加[blue]50%[/blue]。",
+  "SUNQIAN_UNIVERSE_POWER_GOOD_BROTHER_TANG_XIAOHU_POWER.title": "好兄弟唐小虎",
+  "SUNQIAN_UNIVERSE_POWER_GOOD_BROTHER_TANG_XIAOHU_POWER.smartDescription": "当你打出[gold]剧本[/gold]牌后，获得[blue]{Block:diff()}[/blue]点[gold]格挡[/gold]。此数值受到[gold]敏捷[/gold]影响。"
 }

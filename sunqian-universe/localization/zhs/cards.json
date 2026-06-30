@@ -1,4 +1,4 @@
-﻿{
+{
   "SUNQIAN_UNIVERSE_CARD_STRIKE.title": "打击",
   "SUNQIAN_UNIVERSE_CARD_STRIKE.description": "造成{Damage:diff()}点伤害。",
   "SUNQIAN_UNIVERSE_CARD_FLAME_STRIKE.title": "烈焰打击",
@@ -33,7 +33,7 @@
   "SUNQIAN_UNIVERSE_CARD_TWO_WORD_POET_SCRIPT.description": "{IfUpgraded:show:对所有敌人|对一名敌人}造成{Damage:diff()}点伤害{Repeat:diff()}次。\n[gold]可叠层剧本[/gold]：每回合开始时，{IfUpgraded:show:对所有敌人|随机对敌人}造成{Damage:diff()}点伤害{Repeat:diff()}次。",
   "SUNQIAN_UNIVERSE_CARD_JUGGLE_MULTIPLE_SHOOTS.title": "轧戏",
   "SUNQIAN_UNIVERSE_CARD_JUGGLE_MULTIPLE_SHOOTS.description": "若你有[gold]剧本[/gold]状态，则令其失效，然后从3张消耗不大于你剩余{energyPrefix:energyIcons(1)}的其他角色的{IfUpgraded:show:升级后的|}[gold]能力[/gold]牌中选择1张加入你的[gold]手牌[/gold]。",
-  "SUNQIAN_UNIVERSE_CARD_JUGGLE_MULTIPLE_SHOOTS.zeroEnergyHoverTip": "剩余{energyPrefix:energyIcons(0)}时将从消耗不大于{energyPrefix:energyIcons(1)}的能力牌中选择。",
+  "SUNQIAN_UNIVERSE_CARD_JUGGLE_MULTIPLE_SHOOTS.zeroEnergyHoverTip": "剩余{energyPrefix:energyIcons(0)}时将从消耗不大于1{energyPrefix:energyIcons(1)}的能力牌中选择。",
   "SUNQIAN_UNIVERSE_CARD_JUGGLE_MULTIPLE_SHOOTS.selectionScreenPrompt": "选择一张牌。",
   "SUNQIAN_UNIVERSE_CARD_WHAT_TO_EAT.title": "吃什么",
   "SUNQIAN_UNIVERSE_CARD_WHAT_TO_EAT.description": "抽{Cards:diff()}张牌。[gold]消耗[/gold]2张牌。",
@@ -76,5 +76,10 @@
   "SUNQIAN_UNIVERSE_CARD_EXECUTION_COMMANDER_SCRIPT.title": "行刑指挥官剧本",
   "SUNQIAN_UNIVERSE_CARD_EXECUTION_COMMANDER_SCRIPT.description": "将一张[gold]{IfUpgraded:show:箭幕打击+|箭幕打击}[/gold]加入[gold]手牌[/gold]。\n[gold]剧本[/gold]：当场上仅有一名敌人时，你打出的以[gold]所有敌人[/gold]或[gold]随机多名敌人[/gold]为目标的攻击牌伤害+50%。",
   "SUNQIAN_UNIVERSE_CARD_SALVO_STRIKE.title": "箭幕打击",
-  "SUNQIAN_UNIVERSE_CARD_SALVO_STRIKE.description": "对随机三名敌人各造成{Damage:diff()}点伤害。"
+  "SUNQIAN_UNIVERSE_CARD_SALVO_STRIKE.description": "对随机三名敌人各造成{Damage:diff()}点伤害。",
+  "SUNQIAN_UNIVERSE_CARD_GOLDEN_UPRISING.title": "黄金起义",
+  "SUNQIAN_UNIVERSE_CARD_GOLDEN_UPRISING.description": "花费{Gold:diff()}[gold]金币[/gold]，将你[gold]抽牌堆[/gold]中的{Cards:diff()}张牌放入你的[gold]手牌[/gold]。{IfUpgraded:show:\n在本场战斗中这张牌花费的金币+5。|}",
+  "SUNQIAN_UNIVERSE_CARD_GOLDEN_UPRISING.selectionScreenPrompt": "选择{Amount}张牌放入你的手牌。",
+  "SUNQIAN_UNIVERSE_CARD_GOOD_BROTHER_TANG_XIAOHU.title": "好兄弟唐小虎",
+  "SUNQIAN_UNIVERSE_CARD_GOOD_BROTHER_TANG_XIAOHU.description": "当你打出[gold]剧本[/gold]牌后，获得{Block:diff()}点[gold]格挡[/gold]。此数值受到[gold]敏捷[/gold]影响。"
 }

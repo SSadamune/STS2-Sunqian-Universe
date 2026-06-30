@@ -49,5 +49,10 @@
   "SUNQIAN_UNIVERSE_CARD_EXECUTION_COMMANDER_SCRIPT.title": "Execution Commander Script",
   "SUNQIAN_UNIVERSE_CARD_EXECUTION_COMMANDER_SCRIPT.description": "Add [gold]{IfUpgraded:show:Salvo Strike+|Salvo Strike}[/gold] into your [gold]Hand[/gold].\n[gold]Script[/gold]: While only one enemy can be targeted, [gold]Attacks[/gold] you play that target ALL enemies or multiple random enemies deal [blue]50%[/blue] more damage.",
   "SUNQIAN_UNIVERSE_CARD_SALVO_STRIKE.title": "Salvo Strike",
-  "SUNQIAN_UNIVERSE_CARD_SALVO_STRIKE.description": "Deal {Damage:diff()} damage to 3 random enemies."
+  "SUNQIAN_UNIVERSE_CARD_SALVO_STRIKE.description": "Deal {Damage:diff()} damage to 3 random enemies.",
+  "SUNQIAN_UNIVERSE_CARD_GOLDEN_UPRISING.title": "Golden Uprising",
+  "SUNQIAN_UNIVERSE_CARD_GOLDEN_UPRISING.description": "Spend {Gold:diff()} [gold]Gold[/gold]. Put {Cards:diff()} cards from your [gold]Draw Pile[/gold] into your [gold]Hand[/gold].{IfUpgraded:show:\nThis combat, this card's Gold cost increases by [blue]5[/blue].|}",
+  "SUNQIAN_UNIVERSE_CARD_GOLDEN_UPRISING.selectionScreenPrompt": "Choose {Amount} cards to put into your Hand.",
+  "SUNQIAN_UNIVERSE_CARD_GOOD_BROTHER_TANG_XIAOHU.title": "Good Brother Tang Xiaohu",
+  "SUNQIAN_UNIVERSE_CARD_GOOD_BROTHER_TANG_XIAOHU.description": "After you play a [gold]Script[/gold] card, gain {Block:diff()} [gold]Block[/gold]. This value is affected by [gold]Dexterity[/gold]."
 }

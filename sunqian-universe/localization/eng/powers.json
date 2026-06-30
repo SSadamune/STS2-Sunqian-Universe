@@ -1,4 +1,4 @@
-﻿{
+{
   "SUNQIAN_UNIVERSE_POWER_HUAGU_MIANZHANG_POWER.title": "Huagu Mianzhang",
   "SUNQIAN_UNIVERSE_POWER_HUAGU_MIANZHANG_POWER.description": "At the start of each turn, gain [blue]{Amount}[/blue] [gold]Doom[/gold].",
   "SUNQIAN_UNIVERSE_POWER_PHASING_POWER.title": "Phasing",
@@ -44,5 +44,7 @@
   "SUNQIAN_UNIVERSE_POWER_CHICKEN_FOOT_CHEESE_STRIKE_POWER.title": "Chicken Foot Cheese",
   "SUNQIAN_UNIVERSE_POWER_CHICKEN_FOOT_CHEESE_STRIKE_POWER.smartDescription": "For {Amount} {Amount:plural:turn|turns}, [gold]Strike[/gold] cards you play target 2 random enemies instead.",
   "SUNQIAN_UNIVERSE_POWER_SCRIPT_EXECUTION_COMMANDER_POWER.title": "Script: Execution Commander",
-  "SUNQIAN_UNIVERSE_POWER_SCRIPT_EXECUTION_COMMANDER_POWER.smartDescription": "While only one enemy can be targeted, [gold]Attacks[/gold] you play that target ALL enemies or multiple random enemies deal [blue]50%[/blue] more damage."
+  "SUNQIAN_UNIVERSE_POWER_SCRIPT_EXECUTION_COMMANDER_POWER.smartDescription": "While only one enemy can be targeted, [gold]Attacks[/gold] you play that target ALL enemies or multiple random enemies deal [blue]50%[/blue] more damage.",
+  "SUNQIAN_UNIVERSE_POWER_GOOD_BROTHER_TANG_XIAOHU_POWER.title": "Good Brother Tang Xiaohu",
+  "SUNQIAN_UNIVERSE_POWER_GOOD_BROTHER_TANG_XIAOHU_POWER.smartDescription": "After you play a [gold]Script[/gold] card, gain [blue]{Block:diff()}[/blue] [gold]Block[/gold]. This value is affected by [gold]Dexterity[/gold]."
 }
