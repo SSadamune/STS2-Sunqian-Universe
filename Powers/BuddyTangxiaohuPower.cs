@@ -23,7 +23,7 @@ using STS2RitsuLib.Scaffolding.Content;
 namespace Squ.Powers;
 
 [RegisterPower]
-public sealed class GoodBrotherTangXiaohuPower : ModPowerTemplate
+public sealed class BuddyTangxiaohuPower : ModPowerTemplate
 {
 	public override PowerType Type => PowerType.Buff;
 
@@ -32,8 +32,8 @@ public sealed class GoodBrotherTangXiaohuPower : ModPowerTemplate
 	public override Color AmountLabelColor => PowerModel._normalAmountLabelColor;
 
 	public override PowerAssetProfile AssetProfile => new(
-		IconPath: "res://images/powers/GoodBrotherTangXiaohuPower.png",
-		BigIconPath: "res://images/powers/GoodBrotherTangXiaohuPowerBig.png");
+		IconPath: "res://images/powers/BuddyTangxiaohuPower.png",
+		BigIconPath: "res://images/powers/BuddyTangxiaohuPowerBig.png");
 
 	protected override IEnumerable<DynamicVar> CanonicalVars =>
 	[

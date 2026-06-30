@@ -53,6 +53,8 @@
   "SUNQIAN_UNIVERSE_CARD_GOLDEN_UPRISING.title": "Golden Uprising",
   "SUNQIAN_UNIVERSE_CARD_GOLDEN_UPRISING.description": "Spend {Gold:diff()} [gold]Gold[/gold]. Put {Cards:diff()} cards from your [gold]Draw Pile[/gold] into your [gold]Hand[/gold].{IfUpgraded:show:\nThis combat, this card's Gold cost increases by [blue]5[/blue].|}",
   "SUNQIAN_UNIVERSE_CARD_GOLDEN_UPRISING.selectionScreenPrompt": "Choose {Amount} cards to put into your Hand.",
-  "SUNQIAN_UNIVERSE_CARD_GOOD_BROTHER_TANG_XIAOHU.title": "Good Brother Tang Xiaohu",
-  "SUNQIAN_UNIVERSE_CARD_GOOD_BROTHER_TANG_XIAOHU.description": "After you play a [gold]Script[/gold] card, gain {Block:diff()} [gold]Block[/gold]. This value is affected by [gold]Dexterity[/gold]."
+  "SUNQIAN_UNIVERSE_CARD_SUNQIAN_SCRIPT.title": "Sunqian Script",
+  "SUNQIAN_UNIVERSE_CARD_SUNQIAN_SCRIPT.description": "Gain 2 [gold]Dexterity[/gold] this turn.\n[gold]Script[/gold]: When this [gold]Script[/gold] ends, draw {IfUpgraded:show:2|1} {IfUpgraded:show:cards|card}.",
+  "SUNQIAN_UNIVERSE_CARD_BUDDY_TANGXIAOHU.title": "Buddy Tangxiaohu",
+  "SUNQIAN_UNIVERSE_CARD_BUDDY_TANGXIAOHU.description": "After you play a [gold]Script[/gold] card, gain {Block:diff()} [gold]Block[/gold]. This value is affected by [gold]Dexterity[/gold]."
 }

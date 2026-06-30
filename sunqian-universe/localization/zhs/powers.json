@@ -13,9 +13,9 @@
   "SUNQIAN_UNIVERSE_POWER_SCRIPT_NEUTRAL_AMBUSH_POWER.smartDescription": "当你抽到[gold]巨石[/gold]或[gold]箭幕打击[/gold]时，对随机目标打出。",
   "SUNQIAN_UNIVERSE_POWER_SCRIPT_SENTRY_POWER.title": "剧本：哨兵",
   "SUNQIAN_UNIVERSE_POWER_SCRIPT_SENTRY_POWER.description": "名字中有「打击」的卡牌造成[blue]1[/blue]点额外伤害。",
-  "SUNQIAN_UNIVERSE_POWER_SCRIPT_SUN_QIAN_POWER.title": "剧本：孙乾",
-  "SUNQIAN_UNIVERSE_POWER_SCRIPT_SUN_QIAN_POWER.description": "此剧本失效时，抽[blue]1[/blue]张牌。",
-  "SUNQIAN_UNIVERSE_POWER_SCRIPT_SUN_QIAN_POWER.smartDescription": "此剧本结束时，抽[blue]{Cards:diff()}[/blue]张牌。",
+  "SUNQIAN_UNIVERSE_POWER_SCRIPT_SUNQIAN_POWER.title": "剧本：孙乾",
+  "SUNQIAN_UNIVERSE_POWER_SCRIPT_SUNQIAN_POWER.description": "此剧本失效时，抽[blue]1[/blue]张牌。",
+  "SUNQIAN_UNIVERSE_POWER_SCRIPT_SUNQIAN_POWER.smartDescription": "此剧本结束时，抽[blue]{Cards:diff()}[/blue]张牌。",
   "SUNQIAN_UNIVERSE_POWER_SCRIPT_TWO_WORD_POET_POWER.title": "可叠层剧本：二言诗人",
   "SUNQIAN_UNIVERSE_POWER_SCRIPT_TWO_WORD_POET_POWER.smartDescription": "每回合开始时，{TargetingDescription}造成[blue]{SnapshotDamage:diff()}[/blue]点伤害[blue]{Repeat:diff()}[/blue]次。",
   "SUNQIAN_UNIVERSE_POWER_LOUD_SECRET_PLOT_POWER.title": "大声密谋",
@@ -45,6 +45,6 @@
   "SUNQIAN_UNIVERSE_POWER_CHICKEN_FOOT_CHEESE_STRIKE_POWER.smartDescription": "[blue]{Amount}[/blue]回合内，你使用[gold]打击[/gold]的目标修改为「随机两名敌人」。",
   "SUNQIAN_UNIVERSE_POWER_SCRIPT_EXECUTION_COMMANDER_POWER.title": "剧本：行刑指挥官",
   "SUNQIAN_UNIVERSE_POWER_SCRIPT_EXECUTION_COMMANDER_POWER.smartDescription": "当场上仅有一名敌人时，你打出的以[gold]所有敌人[/gold]或[gold]随机多名敌人[/gold]为目标的攻击牌伤害增加[blue]50%[/blue]。",
-  "SUNQIAN_UNIVERSE_POWER_GOOD_BROTHER_TANG_XIAOHU_POWER.title": "好兄弟唐小虎",
-  "SUNQIAN_UNIVERSE_POWER_GOOD_BROTHER_TANG_XIAOHU_POWER.smartDescription": "当你打出[gold]剧本[/gold]牌后，获得[blue]{Block:diff()}[/blue]点[gold]格挡[/gold]。此数值受到[gold]敏捷[/gold]影响。"
+  "SUNQIAN_UNIVERSE_POWER_BUDDY_TANGXIAOHU_POWER.title": "好兄弟唐小虎",
+  "SUNQIAN_UNIVERSE_POWER_BUDDY_TANGXIAOHU_POWER.smartDescription": "当你打出[gold]剧本[/gold]牌后，获得[blue]{Block:diff()}[/blue]点[gold]格挡[/gold]。此数值受到[gold]敏捷[/gold]影响。"
 }

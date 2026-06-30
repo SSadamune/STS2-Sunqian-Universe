@@ -37,7 +37,7 @@ public static class SquMod
 		RitsuLibFramework.CreateContentPack(ModId)
 			.CharacterStarterRelic<SunqianCharacter, BoxLunchRelic>(1)
 			.CardKeywordOwnedByLocNamespace("script")
-			.ArchaicToothTranscendence<SunQianScript, SunqianUniverse>()
+			.ArchaicToothTranscendence<SunqianScript, SunqianUniverse>()
 			.Apply();
 
 		var harmony = new Harmony($"{ModId}.patches");

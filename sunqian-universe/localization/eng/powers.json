@@ -13,9 +13,9 @@
   "SUNQIAN_UNIVERSE_POWER_SCRIPT_NEUTRAL_AMBUSH_POWER.smartDescription": "When you draw [gold]Giant Rock[/gold] or [gold]Salvo Strike[/gold], play it on a random target.",
   "SUNQIAN_UNIVERSE_POWER_SCRIPT_SENTRY_POWER.title": "Script: Sentry",
   "SUNQIAN_UNIVERSE_POWER_SCRIPT_SENTRY_POWER.description": "Cards with \"Strike\" in their name deal [blue]1[/blue] additional damage.",
-  "SUNQIAN_UNIVERSE_POWER_SCRIPT_SUN_QIAN_POWER.title": "Script: Sun Qian",
-  "SUNQIAN_UNIVERSE_POWER_SCRIPT_SUN_QIAN_POWER.description": "When this [gold]Script[/gold] ends, draw [blue]1[/blue] card.",
-  "SUNQIAN_UNIVERSE_POWER_SCRIPT_SUN_QIAN_POWER.smartDescription": "When this [gold]Script[/gold] ends, draw [blue]{Cards:diff()}[/blue] {Cards:plural:card|cards}.",
+  "SUNQIAN_UNIVERSE_POWER_SCRIPT_SUNQIAN_POWER.title": "Script: Sunqian",
+  "SUNQIAN_UNIVERSE_POWER_SCRIPT_SUNQIAN_POWER.description": "When this [gold]Script[/gold] ends, draw [blue]1[/blue] card.",
+  "SUNQIAN_UNIVERSE_POWER_SCRIPT_SUNQIAN_POWER.smartDescription": "When this [gold]Script[/gold] ends, draw [blue]{Cards:diff()}[/blue] {Cards:plural:card|cards}.",
   "SUNQIAN_UNIVERSE_POWER_SCRIPT_TWO_WORD_POET_POWER.title": "Stackable Script: Two-Word Poet",
   "SUNQIAN_UNIVERSE_POWER_SCRIPT_TWO_WORD_POET_POWER.smartDescription": "At the start of each turn, {TargetingDescription} deal [blue]{SnapshotDamage:diff()}[/blue] damage [blue]{Repeat:diff()}[/blue] times.",
   "SUNQIAN_UNIVERSE_POWER_LOUD_SECRET_PLOT_POWER.title": "Loud Secret Plot",
@@ -45,6 +45,6 @@
   "SUNQIAN_UNIVERSE_POWER_CHICKEN_FOOT_CHEESE_STRIKE_POWER.smartDescription": "For {Amount} {Amount:plural:turn|turns}, [gold]Strike[/gold] cards you play target 2 random enemies instead.",
   "SUNQIAN_UNIVERSE_POWER_SCRIPT_EXECUTION_COMMANDER_POWER.title": "Script: Execution Commander",
   "SUNQIAN_UNIVERSE_POWER_SCRIPT_EXECUTION_COMMANDER_POWER.smartDescription": "While only one enemy can be targeted, [gold]Attacks[/gold] you play that target ALL enemies or multiple random enemies deal [blue]50%[/blue] more damage.",
-  "SUNQIAN_UNIVERSE_POWER_GOOD_BROTHER_TANG_XIAOHU_POWER.title": "Good Brother Tang Xiaohu",
-  "SUNQIAN_UNIVERSE_POWER_GOOD_BROTHER_TANG_XIAOHU_POWER.smartDescription": "After you play a [gold]Script[/gold] card, gain [blue]{Block:diff()}[/blue] [gold]Block[/gold]. This value is affected by [gold]Dexterity[/gold]."
+  "SUNQIAN_UNIVERSE_POWER_BUDDY_TANGXIAOHU_POWER.title": "Buddy Tangxiaohu",
+  "SUNQIAN_UNIVERSE_POWER_BUDDY_TANGXIAOHU_POWER.smartDescription": "After you play a [gold]Script[/gold] card, gain [blue]{Block:diff()}[/blue] [gold]Block[/gold]. This value is affected by [gold]Dexterity[/gold]."
 }

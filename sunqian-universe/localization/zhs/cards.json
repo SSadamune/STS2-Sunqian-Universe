@@ -7,8 +7,8 @@
   "SUNQIAN_UNIVERSE_CARD_DEFEND.description": "获得{Block:diff()}点[gold]格挡[/gold]。",
   "SUNQIAN_UNIVERSE_CARD_WRAP_UP.title": "收工",
   "SUNQIAN_UNIVERSE_CARD_WRAP_UP.description": "令当前[gold]剧本[/gold]失效。获得{VigorPower:diff()}点[gold]活力[/gold]。",
-  "SUNQIAN_UNIVERSE_CARD_SUN_QIAN_SCRIPT.title": "孙乾剧本",
-  "SUNQIAN_UNIVERSE_CARD_SUN_QIAN_SCRIPT.description": "在本回合获得2点[gold]敏捷[/gold]。\n[gold]剧本[/gold]：失效时，抽{IfUpgraded:show:2|1}张牌。",
+  "SUNQIAN_UNIVERSE_CARD_SUNQIAN_SCRIPT.title": "孙乾剧本",
+  "SUNQIAN_UNIVERSE_CARD_SUNQIAN_SCRIPT.description": "在本回合获得2点[gold]敏捷[/gold]。\n[gold]剧本[/gold]：失效时，抽{IfUpgraded:show:2|1}张牌。",
   "SUNQIAN_UNIVERSE_CARD_THE_GRIEVING_PREVAIL.title": "哀兵必胜",
   "SUNQIAN_UNIVERSE_CARD_THE_GRIEVING_PREVAIL.description": "令一名生物获得{StrengthPower:diff()}点[gold]力量[/gold]和{RitualPower:diff()}层[gold]仪式[/gold]。",
   "SUNQIAN_UNIVERSE_CARD_THE_ARROGANT_FALL.title": "骄兵必败",
@@ -80,6 +80,6 @@
   "SUNQIAN_UNIVERSE_CARD_GOLDEN_UPRISING.title": "黄金起义",
   "SUNQIAN_UNIVERSE_CARD_GOLDEN_UPRISING.description": "花费{Gold:diff()}[gold]金币[/gold]，将你[gold]抽牌堆[/gold]中的{Cards:diff()}张牌放入你的[gold]手牌[/gold]。{IfUpgraded:show:\n在本场战斗中这张牌花费的金币+5。|}",
   "SUNQIAN_UNIVERSE_CARD_GOLDEN_UPRISING.selectionScreenPrompt": "选择{Amount}张牌放入你的手牌。",
-  "SUNQIAN_UNIVERSE_CARD_GOOD_BROTHER_TANG_XIAOHU.title": "好兄弟唐小虎",
-  "SUNQIAN_UNIVERSE_CARD_GOOD_BROTHER_TANG_XIAOHU.description": "当你打出[gold]剧本[/gold]牌后，获得{Block:diff()}点[gold]格挡[/gold]。此数值受到[gold]敏捷[/gold]影响。"
+  "SUNQIAN_UNIVERSE_CARD_BUDDY_TANGXIAOHU.title": "好兄弟唐小虎",
+  "SUNQIAN_UNIVERSE_CARD_BUDDY_TANGXIAOHU.description": "当你打出[gold]剧本[/gold]牌后，获得{Block:diff()}点[gold]格挡[/gold]。此数值受到[gold]敏捷[/gold]影响。"
 }

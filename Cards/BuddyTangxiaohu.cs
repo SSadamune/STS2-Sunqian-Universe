@@ -16,8 +16,8 @@ using STS2RitsuLib.Scaffolding.Content;
 
 namespace Squ.Cards;
 
-[RegisterCard(typeof(SunqianCardPool), StableEntryStem = "good_brother_tang_xiaohu")]
-public sealed class GoodBrotherTangXiaohu : ModCardTemplate
+[RegisterCard(typeof(SunqianCardPool), StableEntryStem = "buddy_tangxiaohu")]
+public sealed class BuddyTangxiaohu : ModCardTemplate
 {
 	public const int BaseBlock = 5;
 	public const int UpgradedBlock = 8;
@@ -36,16 +36,16 @@ public sealed class GoodBrotherTangXiaohu : ModCardTemplate
 	];
 
 	public override CardAssetProfile AssetProfile => new(
-		PortraitPath: "res://images/cards/GoodBrotherTangXiaohu.png");
+		PortraitPath: "res://images/cards/BuddyTangxiaohu.png");
 
-	public GoodBrotherTangXiaohu()
+	public BuddyTangxiaohu()
 		: base(1, CardType.Power, CardRarity.Uncommon, TargetType.Self)
 	{
 	}
 
 	protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
 	{
-		await PowerCmd.Apply<GoodBrotherTangXiaohuPower>(
+		await PowerCmd.Apply<BuddyTangxiaohuPower>(
 			choiceContext,
 			Owner.Creature,
 			DynamicVars.Block.BaseValue,
