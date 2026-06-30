@@ -9,8 +9,8 @@
   "SUNQIAN_UNIVERSE_POWER_TROUBLE_AGAIN_POWER.smartDescription": "At the start of your turn, if no enemy has [gold]Weak[/gold], add [gold]Table Flip[/gold] to your hand.",
   "SUNQIAN_UNIVERSE_POWER_SCRIPT_SERVANT_POWER.title": "Script: Servant",
   "SUNQIAN_UNIVERSE_POWER_SCRIPT_SERVANT_POWER.smartDescription": "At the start of each turn, add {GeneratedCard} to your hand.",
-  "SUNQIAN_UNIVERSE_POWER_SCRIPT_NEUTRAL_AMBUSH_POWER.title": "Stackable Script: Neutral Ambush",
-  "SUNQIAN_UNIVERSE_POWER_SCRIPT_NEUTRAL_AMBUSH_POWER.smartDescription": "[blue]{Amount}[/blue] {Amount:plural:time|times} each turn, when you draw [gold]Giant Rock[/gold], play it on a random enemy and draw [blue]1[/blue] card.",
+  "SUNQIAN_UNIVERSE_POWER_SCRIPT_NEUTRAL_AMBUSH_POWER.title": "Script: Neutral Ambush",
+  "SUNQIAN_UNIVERSE_POWER_SCRIPT_NEUTRAL_AMBUSH_POWER.smartDescription": "When you draw [gold]Giant Rock[/gold] or [gold]Salvo Strike[/gold], play it on a random target.",
   "SUNQIAN_UNIVERSE_POWER_SCRIPT_SENTRY_POWER.title": "Script: Sentry",
   "SUNQIAN_UNIVERSE_POWER_SCRIPT_SENTRY_POWER.description": "Cards with \"Strike\" in their name deal [blue]1[/blue] additional damage.",
   "SUNQIAN_UNIVERSE_POWER_SCRIPT_SUN_QIAN_POWER.title": "Script: Sun Qian",
@@ -42,5 +42,7 @@
   "SUNQIAN_UNIVERSE_POWER_SUPERNATURALLY_WISE_POWER.description": "If you play an [gold]Exhaust[/gold] card in a turn, draw additional cards at the start of your next turn.",
   "SUNQIAN_UNIVERSE_POWER_SUPERNATURALLY_WISE_POWER.smartDescription": "If you play an [gold]Exhaust[/gold] card in a turn, draw [blue]{Amount}[/blue] additional {Amount:plural:card|cards} at the start of your next turn.",
   "SUNQIAN_UNIVERSE_POWER_CHICKEN_FOOT_CHEESE_STRIKE_POWER.title": "Chicken Foot Cheese",
-  "SUNQIAN_UNIVERSE_POWER_CHICKEN_FOOT_CHEESE_STRIKE_POWER.smartDescription": "For {Amount} {Amount:plural:turn|turns}, [gold]Strike[/gold] cards you play target 2 random enemies instead."
+  "SUNQIAN_UNIVERSE_POWER_CHICKEN_FOOT_CHEESE_STRIKE_POWER.smartDescription": "For {Amount} {Amount:plural:turn|turns}, [gold]Strike[/gold] cards you play target 2 random enemies instead.",
+  "SUNQIAN_UNIVERSE_POWER_SCRIPT_EXECUTION_COMMANDER_POWER.title": "Script: Execution Commander",
+  "SUNQIAN_UNIVERSE_POWER_SCRIPT_EXECUTION_COMMANDER_POWER.smartDescription": "While only one enemy can be targeted, [gold]Attacks[/gold] you play that target ALL enemies or multiple random enemies deal [blue]50%[/blue] more damage."
 }

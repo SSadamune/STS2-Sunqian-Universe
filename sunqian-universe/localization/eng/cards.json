@@ -45,5 +45,9 @@
   "SUNQIAN_UNIVERSE_CARD_AUDITION.title": "Audition",
   "SUNQIAN_UNIVERSE_CARD_AUDITION.description": "Add 3 random {IfUpgraded:show:Upgraded |}[gold]Script[/gold] cards to your [gold]Hand[/gold].",
   "SUNQIAN_UNIVERSE_CARD_HUMAN_TRANSMUTATION.title": "Human Transmutation",
-  "SUNQIAN_UNIVERSE_CARD_HUMAN_TRANSMUTATION.description": "Draw {Cards:diff()} card. Exhaust up to 3 cards. Choose 1 of that many random {IfUpgraded:show:Upgraded |}[gold]Attacks[/gold] with matching rarities to add into your [gold]Hand[/gold]."
+  "SUNQIAN_UNIVERSE_CARD_HUMAN_TRANSMUTATION.description": "Draw {Cards:diff()} card. Exhaust up to 3 cards. Choose 1 of that many random {IfUpgraded:show:Upgraded |}[gold]Attacks[/gold] with matching rarities to add into your [gold]Hand[/gold].",
+  "SUNQIAN_UNIVERSE_CARD_EXECUTION_COMMANDER_SCRIPT.title": "Execution Commander Script",
+  "SUNQIAN_UNIVERSE_CARD_EXECUTION_COMMANDER_SCRIPT.description": "Add [gold]{IfUpgraded:show:Salvo Strike+|Salvo Strike}[/gold] into your [gold]Hand[/gold].\n[gold]Script[/gold]: While only one enemy can be targeted, [gold]Attacks[/gold] you play that target ALL enemies or multiple random enemies deal [blue]50%[/blue] more damage.",
+  "SUNQIAN_UNIVERSE_CARD_SALVO_STRIKE.title": "Salvo Strike",
+  "SUNQIAN_UNIVERSE_CARD_SALVO_STRIKE.description": "Deal {Damage:diff()} damage to 3 random enemies."
 }

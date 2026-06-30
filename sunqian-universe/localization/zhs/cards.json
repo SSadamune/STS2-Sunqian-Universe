@@ -28,7 +28,7 @@
   "SUNQIAN_UNIVERSE_CARD_SERVANT_SCRIPT.title": "家丁剧本",
   "SUNQIAN_UNIVERSE_CARD_SERVANT_SCRIPT.description": "获得{Block:diff()}点[gold]格挡[/gold]。\n[gold]剧本[/gold]：每回合开始时将1张[gold]{IfUpgraded:show:叉出去+|叉出去}[/gold]加入你的[gold]手牌[/gold]。",
   "SUNQIAN_UNIVERSE_CARD_NEUTRAL_AMBUSH_SCRIPT.title": "中立伏兵剧本",
-  "SUNQIAN_UNIVERSE_CARD_NEUTRAL_AMBUSH_SCRIPT.description": "将{Cards:diff()}张[gold]{IfUpgraded:show:巨石+|巨石}[/gold]加入[gold]抽牌堆[/gold]。\n[gold]剧本[/gold]：每回合一次，你抽到[gold]巨石[/gold]时，对一名随机敌人打出并抽1张牌。",
+  "SUNQIAN_UNIVERSE_CARD_NEUTRAL_AMBUSH_SCRIPT.description": "将1张[gold]{IfUpgraded:show:巨石+|巨石}[/gold]和2张[gold]{IfUpgraded:show:箭幕打击+|箭幕打击}[/gold]加入[gold]抽牌堆[/gold]。\n[gold]剧本[/gold]：当你抽到[gold]巨石[/gold]或[gold]箭幕打击[/gold]时，对随机目标打出。",
   "SUNQIAN_UNIVERSE_CARD_TWO_WORD_POET_SCRIPT.title": "二言诗人剧本",
   "SUNQIAN_UNIVERSE_CARD_TWO_WORD_POET_SCRIPT.description": "{IfUpgraded:show:对所有敌人|对一名敌人}造成{Damage:diff()}点伤害{Repeat:diff()}次。\n[gold]可叠层剧本[/gold]：每回合开始时，{IfUpgraded:show:对所有敌人|随机对敌人}造成{Damage:diff()}点伤害{Repeat:diff()}次。",
   "SUNQIAN_UNIVERSE_CARD_JUGGLE_MULTIPLE_SHOOTS.title": "轧戏",
@@ -72,5 +72,9 @@
   "SUNQIAN_UNIVERSE_CARD_AUDITION.title": "试镜",
   "SUNQIAN_UNIVERSE_CARD_AUDITION.description": "将3张随机{IfUpgraded:show:升级过的|}[gold]剧本[/gold]牌加入你的[gold]手牌[/gold]。",
   "SUNQIAN_UNIVERSE_CARD_HUMAN_TRANSMUTATION.title": "人体炼成",
-  "SUNQIAN_UNIVERSE_CARD_HUMAN_TRANSMUTATION.description": "抽{Cards:diff()}张牌。消耗至多3张牌，从等量张稀有度相同的随机{IfUpgraded:show:升级过的|}[gold]攻击[/gold]牌中选择一张加入[gold]手牌[/gold]。"
+  "SUNQIAN_UNIVERSE_CARD_HUMAN_TRANSMUTATION.description": "抽{Cards:diff()}张牌。消耗至多3张牌，从等量张稀有度相同的随机{IfUpgraded:show:升级过的|}[gold]攻击[/gold]牌中选择一张加入[gold]手牌[/gold]。",
+  "SUNQIAN_UNIVERSE_CARD_EXECUTION_COMMANDER_SCRIPT.title": "行刑指挥官剧本",
+  "SUNQIAN_UNIVERSE_CARD_EXECUTION_COMMANDER_SCRIPT.description": "将一张[gold]{IfUpgraded:show:箭幕打击+|箭幕打击}[/gold]加入[gold]手牌[/gold]。\n[gold]剧本[/gold]：当场上仅有一名敌人时，你打出的以[gold]所有敌人[/gold]或[gold]随机多名敌人[/gold]为目标的攻击牌伤害+50%。",
+  "SUNQIAN_UNIVERSE_CARD_SALVO_STRIKE.title": "箭幕打击",
+  "SUNQIAN_UNIVERSE_CARD_SALVO_STRIKE.description": "对随机三名敌人各造成{Damage:diff()}点伤害。"
 }
