@@ -56,5 +56,7 @@
   "SUNQIAN_UNIVERSE_CARD_SUNQIAN_SCRIPT.title": "Sunqian Script",
   "SUNQIAN_UNIVERSE_CARD_SUNQIAN_SCRIPT.description": "Gain 2 [gold]Dexterity[/gold] this turn.\n[gold]Script[/gold]: When this [gold]Script[/gold] ends, draw {IfUpgraded:show:2|1} {IfUpgraded:show:cards|card}.",
   "SUNQIAN_UNIVERSE_CARD_BUDDY_TANGXIAOHU.title": "Buddy Tangxiaohu",
-  "SUNQIAN_UNIVERSE_CARD_BUDDY_TANGXIAOHU.description": "After you play a [gold]Script[/gold] card, gain {Block:diff()} [gold]Block[/gold]. This value is affected by [gold]Dexterity[/gold]."
+  "SUNQIAN_UNIVERSE_CARD_BUDDY_TANGXIAOHU.description": "After you play a [gold]Script[/gold] card, gain {Block:diff()} [gold]Block[/gold]. This value is affected by [gold]Dexterity[/gold].",
+  "SUNQIAN_UNIVERSE_CARD_TRANSPARENT_HOLE.title": "Transparent Hole",
+  "SUNQIAN_UNIVERSE_CARD_TRANSPARENT_HOLE.description": "Deal {Damage:diff()} damage to X random enemies. Then, if there are fewer enemies than X, play a [gold]Transparent Hole[/gold] with cost X minus 1 that [gold]Exhausts[/gold]."
 }

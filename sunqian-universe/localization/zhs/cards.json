@@ -81,5 +81,7 @@
   "SUNQIAN_UNIVERSE_CARD_GOLDEN_UPRISING.description": "花费{Gold:diff()}[gold]金币[/gold]，将你[gold]抽牌堆[/gold]中的{Cards:diff()}张牌放入你的[gold]手牌[/gold]。{IfUpgraded:show:\n在本场战斗中这张牌花费的金币+5。|}",
   "SUNQIAN_UNIVERSE_CARD_GOLDEN_UPRISING.selectionScreenPrompt": "选择{Amount}张牌放入你的手牌。",
   "SUNQIAN_UNIVERSE_CARD_BUDDY_TANGXIAOHU.title": "好兄弟唐小虎",
-  "SUNQIAN_UNIVERSE_CARD_BUDDY_TANGXIAOHU.description": "当你打出[gold]剧本[/gold]牌后，获得{Block:diff()}点[gold]格挡[/gold]。此数值受到[gold]敏捷[/gold]影响。"
+  "SUNQIAN_UNIVERSE_CARD_BUDDY_TANGXIAOHU.description": "当你打出[gold]剧本[/gold]牌后，获得{Block:diff()}点[gold]格挡[/gold]。此数值受到[gold]敏捷[/gold]影响。",
+  "SUNQIAN_UNIVERSE_CARD_TRANSPARENT_HOLE.title": "透明窟窿",
+  "SUNQIAN_UNIVERSE_CARD_TRANSPARENT_HOLE.description": "对随机X名敌人各造成{Damage:diff()}点伤害。然后若敌人数量小于X，打出一张X-1且打出后[gold]消耗[/gold]的[gold]透明窟窿[/gold]。"
 }

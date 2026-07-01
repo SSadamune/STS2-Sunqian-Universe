@@ -29,9 +29,9 @@ public sealed class TheCatDied : ModCardTemplate
 	public const string MinDamageVarName = "MinDamage";
 	public const string MaxDamageVarName = "MaxDamage";
 
-	public const int BaseMinDamage = 6;
+	public const int BaseMinDamage = 7;
 	public const int BaseMaxDamage = 14;
-	public const int UpgradedMaxDamage = 20;
+	public const int UpgradedMaxDamage = 21;
 
 	protected override IEnumerable<DynamicVar> CanonicalVars =>
 	[
