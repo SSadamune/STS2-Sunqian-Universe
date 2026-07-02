@@ -35,7 +35,7 @@
   "SUNQIAN_UNIVERSE_CARD_TABLE_FLIP.title": "Table Flip",
   "SUNQIAN_UNIVERSE_CARD_TABLE_FLIP.description": "Deal {Damage:diff()} damage to ALL enemies. Apply {WeakPower:diff()} [gold]Weak[/gold] to ALL enemies. At the start of your turn, if no enemy has [gold]Weak[/gold], return this to your [gold]Hand[/gold].",
   "SUNQIAN_UNIVERSE_CARD_LOUD_SECRET_PLOT.title": "Loud Secret Plot",
-  "SUNQIAN_UNIVERSE_CARD_LOUD_SECRET_PLOT.description": "Whenever you play an Attack or Skill that targets ALL enemies or multiple random enemies, while only one enemy can be targeted, that card resolves an additional time.",
+  "SUNQIAN_UNIVERSE_CARD_LOUD_SECRET_PLOT.description": "While only one enemy is on the field, Attack or Skill cards you play that target ALL enemies or multiple random enemies play an additional time.",
   "SUNQIAN_UNIVERSE_CARD_FINGER_SNAP_STRIKE.title": "Finger Snap Strike",
   "SUNQIAN_UNIVERSE_CARD_FINGER_SNAP_STRIKE.description": "Deal {Damage:diff()} damage. At the start of each turn, randomize this card's Energy cost between {MinCost} and {MaxCost}.",
   "SUNQIAN_UNIVERSE_CARD_CHICKEN_FOOT_CHEESE.title": "Chicken Foot Cheese",
@@ -58,5 +58,5 @@
   "SUNQIAN_UNIVERSE_CARD_BUDDY_TANGXIAOHU.title": "Buddy Tangxiaohu",
   "SUNQIAN_UNIVERSE_CARD_BUDDY_TANGXIAOHU.description": "After you play a [gold]Script[/gold] card, gain {Block:diff()} [gold]Block[/gold]. This value is affected by [gold]Dexterity[/gold].",
   "SUNQIAN_UNIVERSE_CARD_TRANSPARENT_HOLE.title": "Transparent Hole",
-  "SUNQIAN_UNIVERSE_CARD_TRANSPARENT_HOLE.description": "Deal {Damage:diff()} damage to X random enemies. Then, if there are fewer enemies than X, play a [gold]Transparent Hole[/gold] with cost X minus 1 that [gold]Exhausts[/gold]."
+  "SUNQIAN_UNIVERSE_CARD_TRANSPARENT_HOLE.description": "Deal {Damage:diff()} damage to X random enemies. Then, if there are fewer enemies than this target count, perform this effect again at target count minus 1."
 }

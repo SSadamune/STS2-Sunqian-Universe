@@ -2,7 +2,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using MegaCrit.Sts2.Core.Combat;
-using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
@@ -37,7 +36,7 @@ public sealed class TransparentHole : ModCardTemplate, IRandomEnemyTargetCount
 	public override TargetType TargetType => SquTargetTypes.RandomEnemies;
 
 	public TransparentHole()
-		: base(0, CardType.Attack, CardRarity.Rare, TargetType.AnyEnemy)
+		: base(0, CardType.Attack, CardRarity.Uncommon, TargetType.AnyEnemy)
 	{
 	}
 
@@ -51,46 +50,40 @@ public sealed class TransparentHole : ModCardTemplate, IRandomEnemyTargetCount
 			return;
 		}
 
-		int xValue = ResolveEnergyXValue();
-		if (xValue <= 0)
+		int targetCount = ResolveEnergyXValue();
+		if (targetCount <= 0)
 		{
 			return;
 		}
 
-		await SquRandomEnemyTargeting.ExecuteDistinctRandomEnemyDamage(
-			this,
-			choiceContext,
-			xValue);
+		int vigorAtPlay = SquVigorSnapshot.GetAmount(Owner.Creature);
+		bool isFirstWave = true;
 
-		int aliveEnemyCount = combatState.HittableEnemies.Count(creature => creature.IsAlive);
-		if (aliveEnemyCount >= xValue)
+		while (targetCount > 0)
 		{
-			return;
-		}
+			int hits = await SquRandomEnemyTargeting.ExecuteDistinctRandomEnemyDamage(
+				this,
+				choiceContext,
+				targetCount,
+				damagePerHit: SquVigorSnapshot.DamagePerHitWithSnapshot(this, vigorAtPlay, !isFirstWave));
+			isFirstWave = false;
+			if (hits <= 0)
+			{
+				break;
+			}
 
-		await AutoPlayFollowUp(choiceContext, combatState, xValue);
+			int aliveEnemyCount = combatState.HittableEnemies.Count(creature => creature.IsAlive);
+			if (aliveEnemyCount >= targetCount)
+			{
+				break;
+			}
+
+			targetCount--;
+		}
 	}
 
 	protected override void OnUpgrade()
 	{
 		DynamicVars.Damage.UpgradeValueBy(UpgradedDamage - BaseDamage);
-	}
-
-	private async Task AutoPlayFollowUp(
-		PlayerChoiceContext choiceContext,
-		ICombatState combatState,
-		int xValue)
-	{
-		int followUpX = xValue - 1;
-		if (followUpX < 0)
-		{
-			return;
-		}
-
-		CardModel followUp = GeneratedCombatCards.CreateInCombat<TransparentHole>(combatState, Owner, IsUpgraded);
-		followUp.EnergyCost.CapturedXValue = followUpX;
-		followUp.AddKeyword(CardKeyword.Exhaust);
-
-		await CardCmd.AutoPlay(choiceContext, followUp, null, skipXCapture: true);
 	}
 }

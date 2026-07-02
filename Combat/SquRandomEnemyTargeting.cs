@@ -110,6 +110,8 @@ public static class SquRandomEnemyTargeting
 	/// <summary>
 	/// One <see cref="AttackCommand"/> with distinct random targets per hit so card-sourced
 	/// bonuses (e.g. Vigor) apply to every hit before <c>AfterAttack</c> consumes them.
+	/// Multi-wave cards should snapshot vigor for follow-up <see cref="AttackCommand"/>s
+	/// (see <see cref="SquVigorSnapshot"/>).
 	/// </summary>
 	public static async Task<int> ExecuteDistinctRandomEnemyDamage(
 		CardModel card,
