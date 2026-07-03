@@ -83,5 +83,7 @@
   "SUNQIAN_UNIVERSE_CARD_BUDDY_TANGXIAOHU.title": "好兄弟唐小虎",
   "SUNQIAN_UNIVERSE_CARD_BUDDY_TANGXIAOHU.description": "当你打出[gold]剧本[/gold]牌后，获得{Block:diff()}点[gold]格挡[/gold]。此数值受到[gold]敏捷[/gold]影响。",
   "SUNQIAN_UNIVERSE_CARD_TRANSPARENT_HOLE.title": "透明窟窿",
-  "SUNQIAN_UNIVERSE_CARD_TRANSPARENT_HOLE.description": "对随机X名敌人各造成{Damage:diff()}点伤害。然后若敌人数量小于目标上限，再执行一次目标上限-1的此效果。"
+  "SUNQIAN_UNIVERSE_CARD_TRANSPARENT_HOLE.description": "对随机X名敌人各造成{Damage:diff()}点伤害。然后若敌人数量小于目标上限，再执行一次目标上限-1的此效果。",
+  "SUNQIAN_UNIVERSE_CARD_XILIANG_SAVAGE_SCRIPT.title": "西凉野人剧本",
+  "SUNQIAN_UNIVERSE_CARD_XILIANG_SAVAGE_SCRIPT.description": "获得{Block:diff()}点[gold]格挡[/gold]。获得{VigorPower:diff()}点[gold]活力[/gold]。\n[gold]剧本[/gold]：你的攻击牌会保留因活力而增加的伤害。"
 }

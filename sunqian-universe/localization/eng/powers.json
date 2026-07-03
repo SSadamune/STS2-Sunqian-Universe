@@ -46,5 +46,7 @@
   "SUNQIAN_UNIVERSE_POWER_SCRIPT_EXECUTION_COMMANDER_POWER.title": "Script: Execution Commander",
   "SUNQIAN_UNIVERSE_POWER_SCRIPT_EXECUTION_COMMANDER_POWER.smartDescription": "While only one enemy can be targeted, [gold]Attacks[/gold] you play that target ALL enemies or multiple random enemies deal [blue]50%[/blue] more damage.",
   "SUNQIAN_UNIVERSE_POWER_BUDDY_TANGXIAOHU_POWER.title": "Buddy Tangxiaohu",
-  "SUNQIAN_UNIVERSE_POWER_BUDDY_TANGXIAOHU_POWER.smartDescription": "After you play a [gold]Script[/gold] card, gain [blue]{Block:diff()}[/blue] [gold]Block[/gold]. This value is affected by [gold]Dexterity[/gold]."
+  "SUNQIAN_UNIVERSE_POWER_BUDDY_TANGXIAOHU_POWER.smartDescription": "After you play a [gold]Script[/gold] card, gain [blue]{Block:diff()}[/blue] [gold]Block[/gold]. This value is affected by [gold]Dexterity[/gold].",
+  "SUNQIAN_UNIVERSE_POWER_SCRIPT_XILIANG_SAVAGE_POWER.title": "Script: Xiliang Savage",
+  "SUNQIAN_UNIVERSE_POWER_SCRIPT_XILIANG_SAVAGE_POWER.smartDescription": "Your [gold]Attacks[/gold] permanently gain the damage added from spent [gold]Vigor[/gold]."
 }
