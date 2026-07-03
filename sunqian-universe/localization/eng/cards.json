@@ -1,6 +1,8 @@
 {
-  "SUNQIAN_UNIVERSE_CARD_THE_CAT_DIED.title": "The Cat Died",
-  "SUNQIAN_UNIVERSE_CARD_THE_CAT_DIED.description": "Apply {MinDamage:diff()}-{MaxDamage:diff()} [gold]Doom[/gold] at random. When you play this card, if that enemy's [gold]Doom kill threshold[/gold] is no greater than {MaxDamage:diff()}, kill it outright instead.",
+  "SUNQIAN_UNIVERSE_CARD_CAT_IN_THE_BOX.title": "Cat in the Box",
+  "SUNQIAN_UNIVERSE_CARD_CAT_IN_THE_BOX.description": "Apply {MinDamage:diff()}-{MaxDamage:diff()} [gold]Doom[/gold] at random. {KillText}",
+  "SUNQIAN_UNIVERSE_CARD_CAT_IN_THE_BOX.killCondition": "When you play this card, if that enemy's [gold]Doom kill threshold[/gold] is no greater than {MaxDamage:diff()}, kill it outright instead.",
+  "SUNQIAN_UNIVERSE_CARD_CAT_IN_THE_BOX.killConfirm": "\n[red]\"It's dead!\"[/red]",
   "SUNQIAN_UNIVERSE_CARD_SUNQIAN_UNIVERSE.title": "Sunqian Universe",
   "SUNQIAN_UNIVERSE_CARD_SUNQIAN_UNIVERSE.description": "Gain {DexterityPower:diff()} [gold]Dexterity[/gold]. Whenever your [gold]Script[/gold] ends, draw {Cards:diff()} card.",
   "SUNQIAN_UNIVERSE_CARD_FIRE_NOVA.title": "Fire Nova",
