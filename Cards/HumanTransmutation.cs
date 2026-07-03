@@ -7,9 +7,11 @@ using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.Factories;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.HoverTips;
+using MegaCrit.Sts2.Core.Localization;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Random;
+using Squ;
 using Squ.Character;
 using STS2RitsuLib.Interop.AutoRegistration;
 using STS2RitsuLib.Scaffolding.Content;
@@ -33,6 +35,9 @@ public sealed class HumanTransmutation : ModCardTemplate
 	protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
 	[
 		HoverTipFactory.FromKeyword(CardKeyword.Exhaust),
+		new HoverTip(
+			SquCommonL10n.AnnotationTitle(),
+			new LocString("cards", Id.Entry + ".rarityNote")),
 	];
 
 	public override CardAssetProfile AssetProfile => new(
@@ -107,13 +112,25 @@ public sealed class HumanTransmutation : ModCardTemplate
 
 	private CardModel? PickRandomAttackForRarity(CardRarity rarity, Rng rng)
 	{
-		IEnumerable<CardModel> pool = Owner.Character.CardPool.GetUnlockedCards(
+		List<CardPoolModel> allPools = Owner.UnlockState.CharacterCardPools.ToList();
+		if (allPools.Count == 0)
+		{
+			return null;
+		}
+
+		CardPoolModel? chosenPool = rng.NextItem(allPools);
+		if (chosenPool is null)
+		{
+			return null;
+		}
+
+		IEnumerable<CardModel> poolCards = chosenPool.GetUnlockedCards(
 			Owner.UnlockState,
 			Owner.RunState.CardMultiplayerConstraint);
 
 		return CardFactory.GetDistinctForCombat(
 				Owner,
-				pool.Where(card => card.Type == CardType.Attack && card.Rarity == rarity),
+				poolCards.Where(card => card.Type == CardType.Attack && card.Rarity == rarity),
 				1,
 				rng)
 			.FirstOrDefault();
