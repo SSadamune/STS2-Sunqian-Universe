@@ -37,6 +37,7 @@ public static class SquMod
 		RitsuLibFramework.CreateContentPack(ModId)
 			.CharacterStarterRelic<SunqianCharacter, BoxLunchRelic>(1)
 			.CardKeywordOwnedByLocNamespace("script")
+			.CardKeywordOwnedByLocNamespace("doom_kill_threshold")
 			.ArchaicToothTranscendence<SunqianScript, SunqianUniverse>()
 			.Apply();
 

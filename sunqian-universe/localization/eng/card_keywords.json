@@ -1,0 +1,6 @@
+{
+  "SUNQIAN_UNIVERSE_KEYWORD_SCRIPT.title": "Script",
+  "SUNQIAN_UNIVERSE_KEYWORD_SCRIPT.description": "A special ongoing effect. Gaining another Script while you already have one ends the previous Script.",
+  "SUNQIAN_UNIVERSE_KEYWORD_DOOM_KILL_THRESHOLD.title": "Doom kill threshold",
+  "SUNQIAN_UNIVERSE_KEYWORD_DOOM_KILL_THRESHOLD.description": "That enemy's HP minus its Poison, Burning, and Doom."
+}
