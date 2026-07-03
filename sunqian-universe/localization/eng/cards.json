@@ -64,5 +64,7 @@
   "SUNQIAN_UNIVERSE_CARD_VOICE_CHANGE.description": "Gain {Block:diff()} [gold]Block[/gold]. Put a [gold]Script[/gold] card from your [gold]Exhaust[/gold] pile on top of your [gold]Draw Pile[/gold].",
   "SUNQIAN_UNIVERSE_CARD_VOICE_CHANGE.selectionScreenPrompt": "Choose a [gold]Script[/gold] card.",
   "SUNQIAN_UNIVERSE_CARD_LENS_RESHOOT.title": "Lens Reshoot",
-  "SUNQIAN_UNIVERSE_CARD_LENS_RESHOOT.description": "Put a random [gold]Script[/gold] card from your [gold]Discard Pile[/gold] into your [gold]Hand[/gold]. It costs 0 {energyPrefix:energyIcons(1)} this turn."
+  "SUNQIAN_UNIVERSE_CARD_LENS_RESHOOT.description": "Put a random [gold]Script[/gold] card from your [gold]Discard Pile[/gold] into your [gold]Hand[/gold]. It costs 0 {energyPrefix:energyIcons(1)} this turn.",
+  "SUNQIAN_UNIVERSE_CARD_BOMBARD_CHIBI_SCRIPT.title": "Bombard Chibi Script",
+  "SUNQIAN_UNIVERSE_CARD_BOMBARD_CHIBI_SCRIPT.description": "Gain {Block:diff()} [gold]Block[/gold].\nApply {BurningPower:diff()} [gold]Burning[/gold] to ALL enemies.\n[gold]Script[/gold]: When this Script ends, ALL enemies lose {BurningPower:diff()} [gold]Strength[/gold] this turn."
 }

@@ -86,5 +86,7 @@
   "SUNQIAN_UNIVERSE_CARD_XILIANG_SAVAGE_SCRIPT.title": "西凉野人剧本",
   "SUNQIAN_UNIVERSE_CARD_XILIANG_SAVAGE_SCRIPT.description": "获得{Block:diff()}点[gold]格挡[/gold]。获得{VigorPower:diff()}点[gold]活力[/gold]。\n[gold]剧本[/gold]：你的攻击牌会保留因活力而增加的伤害。",
   "SUNQIAN_UNIVERSE_CARD_LENS_RESHOOT.title": "镜头补拍",
-  "SUNQIAN_UNIVERSE_CARD_LENS_RESHOOT.description": "将[gold]弃牌堆[/gold]中的一张随机[gold]剧本[/gold]牌放入你的[gold]手牌[/gold]。这张牌在本回合可以免费打出。"
+  "SUNQIAN_UNIVERSE_CARD_LENS_RESHOOT.description": "将[gold]弃牌堆[/gold]中的一张随机[gold]剧本[/gold]牌放入你的[gold]手牌[/gold]。这张牌在本回合可以免费打出。",
+  "SUNQIAN_UNIVERSE_CARD_BOMBARD_CHIBI_SCRIPT.title": "炮轰赤壁剧本",
+  "SUNQIAN_UNIVERSE_CARD_BOMBARD_CHIBI_SCRIPT.description": "获得{Block:diff()}点[gold]格挡[/gold]。\n给予所有敌人{BurningPower:diff()}层[gold]灼烧[/gold]。\n[gold]剧本[/gold]：失效时，所有敌人本回合失去{BurningPower:diff()}点[gold]力量[/gold]。"
 }

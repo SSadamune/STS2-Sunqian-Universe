@@ -48,5 +48,7 @@
   "SUNQIAN_UNIVERSE_POWER_BUDDY_TANGXIAOHU_POWER.title": "Buddy Tangxiaohu",
   "SUNQIAN_UNIVERSE_POWER_BUDDY_TANGXIAOHU_POWER.smartDescription": "After you play a [gold]Script[/gold] card, gain [blue]{Block:diff()}[/blue] [gold]Block[/gold]. This value is affected by [gold]Dexterity[/gold].",
   "SUNQIAN_UNIVERSE_POWER_SCRIPT_XILIANG_SAVAGE_POWER.title": "Script: Xiliang Savage",
-  "SUNQIAN_UNIVERSE_POWER_SCRIPT_XILIANG_SAVAGE_POWER.smartDescription": "Your [gold]Attacks[/gold] permanently gain the damage added from spent [gold]Vigor[/gold]."
+  "SUNQIAN_UNIVERSE_POWER_SCRIPT_XILIANG_SAVAGE_POWER.smartDescription": "Your [gold]Attacks[/gold] permanently gain the damage added from spent [gold]Vigor[/gold].",
+  "SUNQIAN_UNIVERSE_POWER_SCRIPT_BOMBARD_CHIBI_POWER.title": "Script: Bombard Chibi",
+  "SUNQIAN_UNIVERSE_POWER_SCRIPT_BOMBARD_CHIBI_POWER.smartDescription": "When this Script ends, ALL enemies lose [blue]{BurningPower:diff()}[/blue] [gold]Strength[/gold] this turn."
 }
