@@ -47,7 +47,8 @@ public sealed class SalvoStrike : ModCardTemplate, IRandomEnemyTargetCount
 		await SquRandomEnemyTargeting.ExecuteDistinctRandomEnemyDamage(
 			this,
 			choiceContext,
-			RandomEnemyTargetCount);
+			RandomEnemyTargetCount,
+			cardPlay: cardPlay);
 	}
 
 	protected override void OnUpgrade()

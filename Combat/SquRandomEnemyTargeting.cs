@@ -118,7 +118,8 @@ public static class SquRandomEnemyTargeting
 		PlayerChoiceContext choiceContext,
 		int requestedHitCount,
 		decimal? damagePerHit = null,
-		string hitFx = "vfx/vfx_attack_slash")
+		string hitFx = "vfx/vfx_attack_slash",
+		CardPlay? cardPlay = null)
 	{
 		ICombatState? combatState = card.CombatState;
 		if (combatState == null || requestedHitCount <= 0)
@@ -133,7 +134,7 @@ public static class SquRandomEnemyTargeting
 		}
 
 		await DamageCmd.Attack(damagePerHit ?? card.DynamicVars.Damage.BaseValue)
-			.FromCard(card)
+			.FromCard(card, cardPlay)
 			.TargetingRandomOpponents(combatState, allowDuplicates: false)
 			.WithHitCount(hitCount)
 			.WithHitFx(hitFx)

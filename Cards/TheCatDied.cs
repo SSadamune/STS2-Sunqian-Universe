@@ -76,7 +76,7 @@ public sealed class TheCatDied : ModCardTemplate
 
 		int rolled = Owner.RunState.Rng.CombatTargets.NextInt(GetMinRoll(), GetMaxRoll() + 1);
 		await DamageCmd.Attack(rolled)
-			.FromCard(this)
+			.FromCard(this, cardPlay)
 			.Targeting(target)
 			.WithHitFx("vfx/vfx_attack_slash")
 			.Execute(choiceContext);
@@ -112,6 +112,7 @@ public sealed class TheCatDied : ModCardTemplate
 			maxRoll,
 			ValueProp.Move,
 			card,
+			null,
 			ModifyDamageHookType.All,
 			CardPreviewMode.None,
 			out _);

@@ -79,7 +79,7 @@ internal static class BasicStrikeRedirectOnPlayPatch
 			return true;
 		}
 
-		__result = SquBasicStrikeRedirect.ExecuteRedirectedBasicStrikeDamage(__instance, choiceContext);
+		__result = SquBasicStrikeRedirect.ExecuteRedirectedBasicStrikeDamage(__instance, choiceContext, cardPlay);
 		return false;
 	}
 }

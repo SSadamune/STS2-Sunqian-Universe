@@ -50,7 +50,7 @@ public sealed class TableFlip : ModCardTemplate
 		decimal weakAmount = DynamicVars[nameof(WeakPower)].BaseValue;
 
 		await DamageCmd.Attack(DynamicVars.Damage.BaseValue)
-			.FromCard(this)
+			.FromCard(this, cardPlay)
 			.TargetingAllOpponents(combatState)
 			.WithHitFx("vfx/vfx_attack_blunt")
 			.Execute(choiceContext);

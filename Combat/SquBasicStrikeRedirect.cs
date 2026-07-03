@@ -1,4 +1,5 @@
 using System.Threading.Tasks;
+using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.Models;
 using Squ.Powers;
@@ -17,9 +18,11 @@ public static class SquBasicStrikeRedirect
 
 	public static Task ExecuteRedirectedBasicStrikeDamage(
 		CardModel card,
-		PlayerChoiceContext choiceContext) =>
+		PlayerChoiceContext choiceContext,
+		CardPlay? cardPlay = null) =>
 		SquRandomEnemyTargeting.ExecuteDistinctRandomEnemyDamage(
 			card,
 			choiceContext,
-			ChickenFootCheeseStrikePower.RedirectRandomEnemyCount);
+			ChickenFootCheeseStrikePower.RedirectRandomEnemyCount,
+			cardPlay: cardPlay);
 }

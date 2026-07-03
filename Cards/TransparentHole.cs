@@ -65,7 +65,8 @@ public sealed class TransparentHole : ModCardTemplate, IRandomEnemyTargetCount
 				this,
 				choiceContext,
 				targetCount,
-				damagePerHit: SquVigorSnapshot.DamagePerHitWithSnapshot(this, vigorAtPlay, !isFirstWave));
+				damagePerHit: SquVigorSnapshot.DamagePerHitWithSnapshot(this, vigorAtPlay, !isFirstWave),
+				cardPlay: cardPlay);
 			isFirstWave = false;
 			if (hits <= 0)
 			{

@@ -78,7 +78,8 @@ public sealed class FireNova : ModCardTemplate, IRandomEnemyTargetCount
 			int damageHits = await SquRandomEnemyTargeting.ExecuteDistinctRandomEnemyDamage(
 				this,
 				choiceContext,
-				hitCount);
+				hitCount,
+				cardPlay: cardPlay);
 
 			for (int i = 0; i < damageHits; i++)
 			{
@@ -89,7 +90,7 @@ public sealed class FireNova : ModCardTemplate, IRandomEnemyTargetCount
 		}
 
 		ArgumentNullException.ThrowIfNull(cardPlay.Target, nameof(cardPlay.Target));
-		await ExecuteBaseEffect(choiceContext, combatState, cardPlay.Target);
+		await ExecuteBaseEffect(choiceContext, combatState, cardPlay.Target, cardPlay);
 	}
 
 	protected override void OnUpgrade()
@@ -101,9 +102,10 @@ public sealed class FireNova : ModCardTemplate, IRandomEnemyTargetCount
 	private async Task ExecuteBaseEffect(
 		PlayerChoiceContext choiceContext,
 		ICombatState combatState,
-		Creature damageTarget)
+		Creature damageTarget,
+		CardPlay cardPlay)
 	{
-		await DealDamage(choiceContext, damageTarget);
+		await DealDamage(choiceContext, damageTarget, cardPlay);
 		await ApplyBurningToAllEnemies(choiceContext, combatState);
 	}
 
@@ -125,10 +127,13 @@ public sealed class FireNova : ModCardTemplate, IRandomEnemyTargetCount
 		}
 	}
 
-	private async Task DealDamage(PlayerChoiceContext choiceContext, Creature target)
+	private async Task DealDamage(
+		PlayerChoiceContext choiceContext,
+		Creature target,
+		CardPlay cardPlay)
 	{
 		await DamageCmd.Attack(DynamicVars.Damage.BaseValue)
-			.FromCard(this)
+			.FromCard(this, cardPlay)
 			.Targeting(target)
 			.WithHitFx("vfx/vfx_attack_slash")
 			.Execute(choiceContext);

@@ -28,7 +28,8 @@ public sealed class ScriptExecutionCommanderPower : ScriptPowerTemplate
 		decimal amount,
 		ValueProp props,
 		Creature? dealer,
-		CardModel? card)
+		CardModel? card,
+		CardPlay? cardPlay)
 	{
 		if (!ShouldBoost(card, dealer) || !props.IsPoweredAttack())
 		{

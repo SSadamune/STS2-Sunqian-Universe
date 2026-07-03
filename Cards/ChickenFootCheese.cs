@@ -48,7 +48,8 @@ public sealed class ChickenFootCheese : ModCardTemplate, IRandomEnemyTargetCount
 		await SquRandomEnemyTargeting.ExecuteDistinctRandomEnemyDamage(
 			this,
 			choiceContext,
-			RandomEnemyTargetCount);
+			RandomEnemyTargetCount,
+			cardPlay: cardPlay);
 
 		await PowerCmd.Apply<ChickenFootCheeseStrikePower>(
 			choiceContext,

@@ -21,7 +21,8 @@ public sealed class ScriptSentryPower : ScriptPowerTemplate
 		decimal amount,
 		ValueProp props,
 		Creature? dealer,
-		CardModel? card)
+		CardModel? card,
+		CardPlay? cardPlay)
 	{
 		if (Owner != dealer || card is null || !props.IsPoweredAttack())
 		{
