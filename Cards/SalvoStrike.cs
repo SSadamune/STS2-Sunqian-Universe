@@ -16,8 +16,8 @@ namespace Squ.Cards;
 [RegisterCard(typeof(SunqianCardPool), StableEntryStem = "salvo_strike")]
 public sealed class SalvoStrike : ModCardTemplate, IRandomEnemyTargetCount
 {
-	public const int BaseDamage = 9;
-	public const int UpgradedDamage = 12;
+	public const int BaseDamage = 10;
+	public const int UpgradedDamage = 14;
 	public const int RandomEnemyTargetCount = 3;
 
 	protected override IEnumerable<DynamicVar> CanonicalVars =>

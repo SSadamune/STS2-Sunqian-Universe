@@ -99,7 +99,9 @@ public sealed class BurningPower : ModPowerTemplate, IHealthBarForecastSource
 			Owner,
 			Amount,
 			ValueProp.Unblockable | ValueProp.Unpowered,
-			Applier);
+			Applier,
+			null,
+			null);
 
 		if (!Owner.IsAlive)
 		{

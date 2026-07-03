@@ -42,7 +42,7 @@
   "SUNQIAN_UNIVERSE_CARD_EXACTLY_WHAT_TO_EAT.title": "是啊，吃什么",
   "SUNQIAN_UNIVERSE_CARD_EXACTLY_WHAT_TO_EAT.description": "抽{Cards:diff()}张牌。[gold]消耗[/gold]1张牌。",
   "SUNQIAN_UNIVERSE_CARD_VOICE_CHANGE.title": "变声期",
-  "SUNQIAN_UNIVERSE_CARD_VOICE_CHANGE.description": "获得{Block:diff()}点[gold]格挡[/gold]。将[gold]消耗牌堆[/gold]中的一张[gold]剧本[/gold]牌放入你的[gold]手牌[/gold]。",
+  "SUNQIAN_UNIVERSE_CARD_VOICE_CHANGE.description": "获得{Block:diff()}点[gold]格挡[/gold]。将[gold]消耗牌堆[/gold]中的一张[gold]剧本[/gold]牌放到你的[gold]抽牌堆[/gold]顶部。",
   "SUNQIAN_UNIVERSE_CARD_VOICE_CHANGE.selectionScreenPrompt": "选择一张[gold]剧本[/gold]牌。",
   "SUNQIAN_UNIVERSE_CARD_THE_CAT_DIED.title": "生死不明",
   "SUNQIAN_UNIVERSE_CARD_THE_CAT_DIED.description": "造成随机的{MinDamage:diff()}~{MaxDamage:diff()}点伤害。若该敌人的生命不大于此伤害上限，直接击杀。",
@@ -85,5 +85,7 @@
   "SUNQIAN_UNIVERSE_CARD_TRANSPARENT_HOLE.title": "透明窟窿",
   "SUNQIAN_UNIVERSE_CARD_TRANSPARENT_HOLE.description": "对随机X名敌人各造成{Damage:diff()}点伤害。然后若敌人数量小于目标上限，再执行一次目标上限-1的此效果。",
   "SUNQIAN_UNIVERSE_CARD_XILIANG_SAVAGE_SCRIPT.title": "西凉野人剧本",
-  "SUNQIAN_UNIVERSE_CARD_XILIANG_SAVAGE_SCRIPT.description": "获得{Block:diff()}点[gold]格挡[/gold]。获得{VigorPower:diff()}点[gold]活力[/gold]。\n[gold]剧本[/gold]：你的攻击牌会保留因活力而增加的伤害。"
+  "SUNQIAN_UNIVERSE_CARD_XILIANG_SAVAGE_SCRIPT.description": "获得{Block:diff()}点[gold]格挡[/gold]。获得{VigorPower:diff()}点[gold]活力[/gold]。\n[gold]剧本[/gold]：你的攻击牌会保留因活力而增加的伤害。",
+  "SUNQIAN_UNIVERSE_CARD_LENS_RESHOOT.title": "镜头补拍",
+  "SUNQIAN_UNIVERSE_CARD_LENS_RESHOOT.description": "将[gold]弃牌堆[/gold]中的一张随机[gold]剧本[/gold]牌放入你的[gold]手牌[/gold]。这张牌在本回合可以免费打出。"
 }
