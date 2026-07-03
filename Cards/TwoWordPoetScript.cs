@@ -35,9 +35,7 @@ public sealed class TwoWordPoetScript : ScriptCardTemplate
 
 	protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
 	[
-		new HoverTip(
-			SquCommonL10n.StackableScriptTitle(),
-			SquCommonL10n.StackableScriptAnnotation()),
+		HoverTipFactory.FromKeyword(SquKeywords.StackableScript),
 	];
 
 	public override CardAssetProfile AssetProfile => new(

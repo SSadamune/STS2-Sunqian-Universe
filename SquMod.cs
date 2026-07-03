@@ -38,6 +38,7 @@ public static class SquMod
 			.CharacterStarterRelic<SunqianCharacter, BoxLunchRelic>(1)
 			.CardKeywordOwnedByLocNamespace("script")
 			.CardKeywordOwnedByLocNamespace("doom_kill_threshold")
+			.CardKeywordOwnedByLocNamespace("stackable_script")
 			.ArchaicToothTranscendence<SunqianScript, SunqianUniverse>()
 			.Apply();
 
