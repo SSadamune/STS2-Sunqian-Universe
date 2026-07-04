@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Godot;
@@ -67,14 +67,14 @@ public sealed class PhasingPower : ModPowerTemplate
 			return;
 		}
 
-		int dexterity = RollTemporaryDexterity(Owner.Player, MinBound, MaxBound);
+		int dexterity = RollTemporaryDexterity(Owner.Player!, MinBound, MaxBound);
 
 		Flash();
 
 		await ApplyTemporaryDexterityAsync(
 			new ThrowingPlayerChoiceContext(),
 			Owner,
-			Applier,
+			Applier!,
 			null,
 			dexterity);
 	}
@@ -90,7 +90,7 @@ public sealed class PhasingPower : ModPowerTemplate
 		Creature applier,
 		CardModel card)
 	{
-		PhasingPower existing = target.GetPower<PhasingPower>();
+		PhasingPower? existing = target.GetPower<PhasingPower>();
 		if (existing == null)
 		{
 			await PowerCmd.Apply<PhasingPower>(

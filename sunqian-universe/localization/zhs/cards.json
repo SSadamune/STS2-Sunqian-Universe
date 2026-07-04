@@ -47,7 +47,7 @@
   "SUNQIAN_UNIVERSE_CARD_CAT_IN_THE_BOX.title": "生死不明",
   "SUNQIAN_UNIVERSE_CARD_CAT_IN_THE_BOX.description": "给予随机的{MinDamage:diff()}~{MaxDamage:diff()}点[gold]灾厄[/gold]。{KillText}",
   "SUNQIAN_UNIVERSE_CARD_CAT_IN_THE_BOX.killCondition": "打出此牌时若该敌人的[gold]灾厄斩杀线[/gold]不大于{MaxDamage:diff()}，改为直接击杀。",
-  "SUNQIAN_UNIVERSE_CARD_CAT_IN_THE_BOX.killConfirm": "\n[red]\u201c那就是死了！\u201d[/red]",
+  "SUNQIAN_UNIVERSE_CARD_CAT_IN_THE_BOX.killConfirm": "\n[red]“那就是死了！”[/red]",
   "SUNQIAN_UNIVERSE_CARD_SUNQIAN_UNIVERSE.title": "孙乾宇宙",
   "SUNQIAN_UNIVERSE_CARD_SUNQIAN_UNIVERSE.description": "获得{DexterityPower:diff()}点[gold]敏捷[/gold]。每当你的[gold]剧本[/gold]失效后，抽{Cards:diff()}张牌。",
   "SUNQIAN_UNIVERSE_CARD_FIRE_NOVA.title": "飞火流星",
@@ -101,7 +101,9 @@
   "SUNQIAN_UNIVERSE_CARD_OPEN_DEFECATION.title": "魏武挥鞭",
   "SUNQIAN_UNIVERSE_CARD_OPEN_DEFECATION.description": "消耗所有不能打出的[gold]手牌[/gold]。若消耗了至少{Threshold}张，将一张带有[gold]消耗[/gold]的[gold]{IfUpgraded:show:飞溅+|飞溅}[/gold]加入[gold]手牌[/gold]。",
   "SUNQIAN_UNIVERSE_CARD_RESPECT_ELDERS.title": "尊老爱幼",
-  "SUNQIAN_UNIVERSE_CARD_RESPECT_ELDERS.description": "造成{Damage:diff()}点伤害。\n若该敌人的生命值不大于3/4且不小于1/4，则攻击{HitCount:diff()}次。",
+  "SUNQIAN_UNIVERSE_CARD_RESPECT_ELDERS.description": "造成{Damage:diff()}点伤害。\n{HitText}",
+  "SUNQIAN_UNIVERSE_CARD_RESPECT_ELDERS.hitCondition": "若该敌人的生命值不大于3/4且不小于1/4，则攻击{HitCount:diff()}次。",
+  "SUNQIAN_UNIVERSE_CARD_RESPECT_ELDERS.noHitCondition": "[color=gray]某的大刀不斩老幼[/color]",
   "SUNQIAN_UNIVERSE_CARD_GUAN_DI_FORM.title": "关帝形态",
   "SUNQIAN_UNIVERSE_CARD_GUAN_DI_FORM.description": "当你使用技能牌后，本回合获得{DexterityPower:diff()}点[gold]敏捷[/gold]。当你使用攻击牌后，本回合获得{StrengthPower:diff()}点[gold]力量[/gold]。"
 }

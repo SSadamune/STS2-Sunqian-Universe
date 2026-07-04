@@ -35,7 +35,7 @@ public sealed class CatInTheBox : ModCardTemplate
 
 	public const int BaseMinDamage = 7;
 	public const int BaseMaxDamage = 14;
-	public const int UpgradedMaxDamage = 21;
+	public const int UpgradedMaxDamage = 28;
 
 	protected override IEnumerable<DynamicVar> CanonicalVars =>
 	[

@@ -32,6 +32,10 @@ alwaysApply: true
    - `rg` 旧名（类名、stem、键名、图片名）应为零结果
    - `dotnet build` 通过
 
+## 卡牌名称引用
+
+整理或展示卡牌列表时，**必须**从 `localization/zhs/cards.json`（或对应语言的本地化文件）读取 `.title` 值作为中文牌名，**禁止**自行翻译英文类名/Stem。
+
 ## 命名约定速查
 
 | 用途 | 示例 |
