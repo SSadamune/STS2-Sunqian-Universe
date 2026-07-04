@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
@@ -47,12 +47,12 @@ public sealed class SunqianScript : ScriptCardTemplate
 
 	protected override async Task PlayScriptAsync(PlayerChoiceContext choiceContext, CardPlay cardPlay)
 	{
-		await PhasingPower.ApplyTemporaryDexterityAsync(
+		await PowerCmd.Apply<TempDexFromSunqianScriptPower>(
 			choiceContext,
 			Owner.Creature,
+			DexterityAmount,
 			Owner.Creature,
-			this,
-			(int)DexterityAmount);
+			this);
 
 		await PowerCmd.Apply<ScriptSunqianPower>(
 			choiceContext,

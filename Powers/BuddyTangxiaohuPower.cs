@@ -37,7 +37,7 @@ public sealed class BuddyTangxiaohuPower : ModPowerTemplate
 
 	protected override IEnumerable<DynamicVar> CanonicalVars =>
 	[
-		new OwnerBlockVar(5m, ValueProp.Move),
+		new OwnerBlockVar(4m, ValueProp.Move),
 	];
 
 	public new IEnumerable<IHoverTip> HoverTips

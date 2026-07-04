@@ -3,7 +3,6 @@
   "SUNQIAN_UNIVERSE_POWER_HUAGU_MIANZHANG_POWER.description": "At the start of each turn, gain [blue]{Amount}[/blue] [gold]Doom[/gold].",
   "SUNQIAN_UNIVERSE_POWER_PHASING_POWER.title": "Phasing",
   "SUNQIAN_UNIVERSE_POWER_PHASING_POWER.smartDescription": "At the start of each turn, gain a random [blue]{MinDex}[/blue]-[blue]{MaxDex}[/blue] [gold]Dexterity[/gold] this turn.",
-  "SUNQIAN_UNIVERSE_POWER_TEMP_DEX_POWER.title": "Temporary Dexterity",
   "SUNQIAN_UNIVERSE_POWER_TEMP_DEX_POWER.description": "Gain [blue]{Amount}[/blue] [gold]Dexterity[/gold] this turn.",
   "SUNQIAN_UNIVERSE_POWER_TROUBLE_AGAIN_POWER.title": "Trouble Again",
   "SUNQIAN_UNIVERSE_POWER_TROUBLE_AGAIN_POWER.smartDescription": "At the start of your turn, if no enemy has [gold]Weak[/gold], add [gold]Table Flip[/gold] to your hand.",

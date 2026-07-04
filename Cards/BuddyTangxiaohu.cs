@@ -19,8 +19,8 @@ namespace Squ.Cards;
 [RegisterCard(typeof(SunqianCardPool), StableEntryStem = "buddy_tangxiaohu")]
 public sealed class BuddyTangxiaohu : ModCardTemplate
 {
-	public const int BaseBlock = 5;
-	public const int UpgradedBlock = 8;
+	public const int BaseBlock = 4;
+	public const int UpgradedBlock = 6;
 
 	protected override IEnumerable<DynamicVar> CanonicalVars =>
 	[

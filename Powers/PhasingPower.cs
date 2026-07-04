@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Godot;
@@ -15,6 +15,8 @@ using MegaCrit.Sts2.Core.Models.Powers;
 using Squ.Cards;
 using STS2RitsuLib.Interop.AutoRegistration;
 using STS2RitsuLib.Scaffolding.Content;
+
+#nullable enable
 
 namespace Squ.Powers;
 
@@ -105,14 +107,11 @@ public sealed class PhasingPower : ModPowerTemplate
 		existing.AddBounds(minContribution, maxContribution);
 	}
 
-	/// <summary>
-	/// Applies mod temp-dex wrapper. Card source is required when played from a card; pass null from power hooks.
-	/// </summary>
 	public static Task ApplyTemporaryDexterityAsync(
 		PlayerChoiceContext choiceContext,
 		Creature target,
 		Creature applier,
-		CardModel card,
+		CardModel? card,
 		int amount)
 	{
 		if (amount <= 0)
@@ -120,11 +119,11 @@ public sealed class PhasingPower : ModPowerTemplate
 			return Task.CompletedTask;
 		}
 
-		return TempDexPower.ApplyAsync(
+		return PowerCmd.Apply<TempDexFromPhasingPower>(
 			choiceContext,
 			target,
+			amount,
 			applier,
-			card,
-			amount);
+			card);
 	}
 }
