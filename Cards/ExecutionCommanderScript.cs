@@ -23,6 +23,7 @@ public sealed class ExecutionCommanderScript : ScriptCardTemplate
 	protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
 	[
 		..HoverTipFactory.FromCardWithCardHoverTips<SalvoStrike>(IsUpgraded),
+		HoverTipFactory.FromKeyword(SquKeywords.MultiTarget),
 	];
 
 	public override IEnumerable<CardKeyword> CanonicalKeywords =>

@@ -25,4 +25,9 @@ public static class SquKeywords
 		.GetQualifiedKeywordId(SquMod.ModId, "stackable_script");
 
 	public static readonly CardKeyword StackableScript = StackableScriptId.GetModCardKeyword();
+
+	public static readonly string MultiTargetId = ModContentRegistry
+		.GetQualifiedKeywordId(SquMod.ModId, "multi_target");
+
+	public static readonly CardKeyword MultiTarget = MultiTargetId.GetModCardKeyword();
 }

@@ -2,7 +2,9 @@
   "SUNQIAN_UNIVERSE_KEYWORD_SCRIPT.title": "Script",
   "SUNQIAN_UNIVERSE_KEYWORD_SCRIPT.description": "A special ongoing effect. Gaining another Script while you already have one ends the previous Script.",
   "SUNQIAN_UNIVERSE_KEYWORD_DOOM_KILL_THRESHOLD.title": "Doom kill threshold",
-  "SUNQIAN_UNIVERSE_KEYWORD_DOOM_KILL_THRESHOLD.description": "That enemy's HP minus its Poison, Burning, and Doom.",
+  "SUNQIAN_UNIVERSE_KEYWORD_DOOM_KILL_THRESHOLD.description": "That enemy's HP minus its [gold]Poison[/gold], [gold]Burning[/gold], and [gold]Doom[/gold].",
   "SUNQIAN_UNIVERSE_KEYWORD_STACKABLE_SCRIPT.title": "Stackable",
-  "SUNQIAN_UNIVERSE_KEYWORD_STACKABLE_SCRIPT.description": "When you gain the same [gold]Script[/gold] again, it does not end the current [gold]Script[/gold]; stacks are added instead (upgraded effects are retained)."
+  "SUNQIAN_UNIVERSE_KEYWORD_STACKABLE_SCRIPT.description": "When you gain the same [gold]Script[/gold] again, it does not end the current [gold]Script[/gold]; stacks are added instead (upgraded effects are retained).",
+  "SUNQIAN_UNIVERSE_KEYWORD_MULTI_TARGET.title": "Multi-target",
+  "SUNQIAN_UNIVERSE_KEYWORD_MULTI_TARGET.description": "A card that targets ALL enemies or multiple random enemies is called a Multi-target card."
 }

@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
+using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Models;
 using Squ.Character;
 using Squ.Powers;
@@ -16,6 +17,11 @@ namespace Squ.Cards;
 [RegisterCard(typeof(SunqianCardPool), StableEntryStem = "loud_secret_plot")]
 public sealed class LoudSecretPlot : ModCardTemplate
 {
+	protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
+	[
+		HoverTipFactory.FromKeyword(SquKeywords.MultiTarget),
+	];
+
 	public override IEnumerable<CardKeyword> CanonicalKeywords =>
 	[
 		CardKeyword.Ethereal,
