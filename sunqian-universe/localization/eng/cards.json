@@ -75,5 +75,7 @@
   "SUNQIAN_UNIVERSE_CARD_GRAND_GOBLET.title": "Grand Goblet",
   "SUNQIAN_UNIVERSE_CARD_GRAND_GOBLET.description": "At the start of your turn, gain {Energy:energyIcons()} and {VigorPower:diff()} [gold]Vigor[/gold].",
   "SUNQIAN_UNIVERSE_CARD_BUDDY_HU.title": "Buddy Hu",
-  "SUNQIAN_UNIVERSE_CARD_BUDDY_HU.description": "Whenever you gain [gold]Vigor[/gold], gain [blue]1[/blue] less. Gain [blue]1[/blue] [gold]Strength[/gold] instead."
+  "SUNQIAN_UNIVERSE_CARD_BUDDY_HU.description": "Whenever you gain [gold]Vigor[/gold], gain [blue]1[/blue] less. Gain [blue]1[/blue] [gold]Strength[/gold] instead.",
+  "SUNQIAN_UNIVERSE_CARD_OPEN_DEFECATION.title": "Open Defecation",
+  "SUNQIAN_UNIVERSE_CARD_OPEN_DEFECATION.description": "Exhaust all unplayable cards in your [gold]Hand[/gold]. If at least {Threshold} were exhausted, add a [gold]{IfUpgraded:show:Splash+|Splash}[/gold] with [gold]Exhaust[/gold] into your [gold]Hand[/gold]."
 }
