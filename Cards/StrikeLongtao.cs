@@ -7,6 +7,7 @@ using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.ValueProps;
 using Squ.Character;
+using Squ.Combat;
 using STS2RitsuLib.Interop.AutoRegistration;
 using STS2RitsuLib.Scaffolding.Content;
 
@@ -14,7 +15,7 @@ namespace Squ.Cards;
 
 [RegisterCard(typeof(SunqianCardPool), StableEntryStem = "strike")]
 [RegisterCharacterStarterCard(typeof(SunqianCharacter), 4)]
-public sealed class LongtaoStrike : ModCardTemplate
+public sealed class StrikeLongtao : ModCardTemplate
 {
 	protected override IEnumerable<DynamicVar> CanonicalVars =>
 	[
@@ -24,19 +25,25 @@ public sealed class LongtaoStrike : ModCardTemplate
 	protected override HashSet<CardTag> CanonicalTags => [CardTag.Strike];
 
 	public override CardAssetProfile AssetProfile => new(
-		PortraitPath: "res://images/cards/LongtaoStrike.png");
+		PortraitPath: "res://images/cards/StrikeLongtao.png");
 
-	public LongtaoStrike()
+	public StrikeLongtao()
 		: base(1, CardType.Attack, CardRarity.Basic, TargetType.AnyEnemy)
 	{
 	}
 
 	protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
 	{
-		ArgumentNullException.ThrowIfNull(cardPlay.Target, "cardPlay.Target");
+		if (SquBasicStrikeRedirect.ShouldHandleInOnPlay(this))
+		{
+			await SquBasicStrikeRedirect.ExecuteRedirectedBasicStrikeDamage(this, choiceContext);
+			return;
+		}
+
+		ArgumentNullException.ThrowIfNull(cardPlay.Target, nameof(cardPlay.Target));
 
 		await DamageCmd.Attack(DynamicVars.Damage.BaseValue)
-			.FromCard(this)
+			.FromCard(this, cardPlay)
 			.Targeting(cardPlay.Target)
 			.WithHitFx("vfx/vfx_attack_slash")
 			.Execute(choiceContext);

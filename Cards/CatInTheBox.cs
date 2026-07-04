@@ -1,0 +1,130 @@
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using MegaCrit.Sts2.Core.Combat;
+using MegaCrit.Sts2.Core.Commands;
+using MegaCrit.Sts2.Core.Entities.Cards;
+using MegaCrit.Sts2.Core.Entities.Creatures;
+using MegaCrit.Sts2.Core.GameActions.Multiplayer;
+using MegaCrit.Sts2.Core.HoverTips;
+using MegaCrit.Sts2.Core.Localization;
+using MegaCrit.Sts2.Core.Localization.DynamicVars;
+using MegaCrit.Sts2.Core.Models;
+using MegaCrit.Sts2.Core.Models.Powers;
+using Squ;
+using Squ.Character;
+using Squ.Combat;
+using STS2RitsuLib.Cards.DynamicVars;
+using STS2RitsuLib.Interop.AutoRegistration;
+using STS2RitsuLib.Scaffolding.Content;
+
+#nullable enable
+
+namespace Squ.Cards;
+
+/// <summary>
+/// 生死不明（The Cat Died）：随机施加灾厄的技能牌。
+/// 若目标灾厄斩杀线（血条绿色部分）不大于伤害上限，则直接击杀。
+/// </summary>
+[RegisterCard(typeof(SunqianCardPool), StableEntryStem = "cat_in_the_box")]
+public sealed class CatInTheBox : ModCardTemplate
+{
+	public const string MinDamageVarName = "MinDamage";
+	public const string MaxDamageVarName = "MaxDamage";
+	private const string CanKillVarName = "CanKill";
+
+	public const int BaseMinDamage = 7;
+	public const int BaseMaxDamage = 14;
+	public const int UpgradedMaxDamage = 28;
+
+	protected override IEnumerable<DynamicVar> CanonicalVars =>
+	[
+		ModCardVars.Int(MinDamageVarName, BaseMinDamage),
+		ModCardVars.Int(MaxDamageVarName, BaseMaxDamage),
+		ModCardVars.Computed(CanKillVarName, 0,
+			(CardModel? card, Creature? target) =>
+				card is CatInTheBox s && target != null &&
+				SquDoomKillThreshold.GetEffectiveGreenHp(target) <= s.GetMaxRoll() ? 1 : 0),
+	];
+
+	public override CardAssetProfile AssetProfile => new(
+		PortraitPath: "res://images/cards/CatInTheBox.png");
+
+	protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
+	[
+		HoverTipFactory.FromKeyword(SquKeywords.DoomKillThreshold),
+		HoverTipFactory.FromPower<DoomPower>(),
+	];
+
+	protected override bool ShouldGlowGoldInternal
+	{
+		get
+		{
+			ICombatState? combatState = CombatState;
+			if (combatState == null)
+			{
+				return false;
+			}
+
+			int maxRoll = GetMaxRoll();
+			foreach (Creature enemy in combatState.HittableEnemies)
+			{
+				if (enemy.IsAlive && SquDoomKillThreshold.GetEffectiveGreenHp(enemy) <= maxRoll)
+				{
+					return true;
+				}
+			}
+
+			return false;
+		}
+	}
+
+	public CatInTheBox()
+		: base(1, CardType.Skill, CardRarity.Uncommon, TargetType.AnyEnemy)
+	{
+	}
+
+	protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
+	{
+		ArgumentNullException.ThrowIfNull(cardPlay.Target, "cardPlay.Target");
+		Creature target = cardPlay.Target;
+
+		int maxRoll = GetMaxRoll();
+		if (SquDoomKillThreshold.GetEffectiveGreenHp(target) <= maxRoll)
+		{
+			await DoomPower.DoomKill([target]);
+			return;
+		}
+
+		int rolled = Owner.RunState.Rng.CombatTargets.NextInt(GetMinRoll(), maxRoll + 1);
+		await PowerCmd.Apply<DoomPower>(
+			choiceContext,
+			target,
+			rolled,
+			Owner.Creature,
+			this);
+	}
+
+	protected override void OnUpgrade()
+	{
+		DynamicVars[MaxDamageVarName].UpgradeValueBy(UpgradedMaxDamage - BaseMaxDamage);
+	}
+
+	protected override void AddExtraArgsToDescription(LocString description)
+	{
+		bool canKill = DynamicVars[CanKillVarName].PreviewValue > 0;
+		string locKey = Id.Entry + (canKill ? ".killConfirm" : ".killCondition");
+		var killText = new LocString("cards", locKey);
+		if (!canKill)
+		{
+			killText.Add(DynamicVars[MaxDamageVarName]);
+		}
+		description.Add("KillText", killText);
+	}
+
+	private int GetMinRoll() =>
+		(int)DynamicVars[MinDamageVarName].BaseValue;
+
+	private int GetMaxRoll() =>
+		(int)DynamicVars[MaxDamageVarName].BaseValue;
+}

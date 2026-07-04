@@ -35,9 +35,7 @@ public sealed class TwoWordPoetScript : ScriptCardTemplate
 
 	protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
 	[
-		new HoverTip(
-			SquCommonL10n.StackableScriptTitle(),
-			SquCommonL10n.StackableScriptAnnotation()),
+		HoverTipFactory.FromKeyword(SquKeywords.StackableScript),
 	];
 
 	public override CardAssetProfile AssetProfile => new(
@@ -59,7 +57,7 @@ public sealed class TwoWordPoetScript : ScriptCardTemplate
 
 		AttackCommand attack = DamageCmd.Attack(DynamicVars.Damage.BaseValue)
 			.WithHitCount(DynamicVars.Repeat.IntValue)
-			.FromCard(this)
+			.FromCard(this, cardPlay)
 			.WithHitFx("vfx/vfx_attack_slash");
 
 		if (IsUpgraded)

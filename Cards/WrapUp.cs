@@ -22,9 +22,13 @@ public sealed class WrapUp : ModCardTemplate
 {
 	protected override IEnumerable<DynamicVar> CanonicalVars =>
 	[
-		new PowerVar<VigorPower>(3m),
+		new PowerVar<VigorPower>(4m),
 	];
 
+	public override IEnumerable<CardKeyword> CanonicalKeywords =>
+	[
+		CardKeyword.Exhaust,
+	];
 
 	protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
 	[
@@ -55,5 +59,6 @@ public sealed class WrapUp : ModCardTemplate
 	protected override void OnUpgrade()
 	{
 		DynamicVars[nameof(VigorPower)].UpgradeValueBy(2m);
+		RemoveKeyword(CardKeyword.Exhaust);
 	}
 }

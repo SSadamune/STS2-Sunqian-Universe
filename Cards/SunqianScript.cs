@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
@@ -16,9 +16,9 @@ using STS2RitsuLib.Scaffolding.Content;
 
 namespace Squ.Cards;
 
-[RegisterCard(typeof(SunqianCardPool), StableEntryStem = "sun_qian_script")]
+[RegisterCard(typeof(SunqianCardPool), StableEntryStem = "sunqian_script")]
 [RegisterCharacterStarterCard(typeof(SunqianCharacter), 1)]
-public sealed class SunQianScript : ScriptCardTemplate
+public sealed class SunqianScript : ScriptCardTemplate
 {
 	private const decimal DexterityAmount = 2m;
 
@@ -40,21 +40,21 @@ public sealed class SunQianScript : ScriptCardTemplate
 	public override CardAssetProfile AssetProfile => new(
 		PortraitPath: "res://images/cards/SunqianScript.png");
 
-	public SunQianScript()
+	public SunqianScript()
 		: base(1, CardType.Skill, CardRarity.Basic, TargetType.Self, true)
 	{
 	}
 
 	protected override async Task PlayScriptAsync(PlayerChoiceContext choiceContext, CardPlay cardPlay)
 	{
-		await PhasingPower.ApplyTemporaryDexterityAsync(
+		await PowerCmd.Apply<TempDexFromSunqianScriptPower>(
 			choiceContext,
 			Owner.Creature,
+			DexterityAmount,
 			Owner.Creature,
-			this,
-			(int)DexterityAmount);
+			this);
 
-		await PowerCmd.Apply<ScriptSunQianPower>(
+		await PowerCmd.Apply<ScriptSunqianPower>(
 			choiceContext,
 			Owner.Creature,
 			1m,

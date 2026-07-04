@@ -15,4 +15,19 @@ public static class SquKeywords
 		.GetQualifiedKeywordId(SquMod.ModId, "script");
 
 	public static readonly CardKeyword Script = ScriptId.GetModCardKeyword();
+
+	public static readonly string DoomKillThresholdId = ModContentRegistry
+		.GetQualifiedKeywordId(SquMod.ModId, "doom_kill_threshold");
+
+	public static readonly CardKeyword DoomKillThreshold = DoomKillThresholdId.GetModCardKeyword();
+
+	public static readonly string StackableScriptId = ModContentRegistry
+		.GetQualifiedKeywordId(SquMod.ModId, "stackable_script");
+
+	public static readonly CardKeyword StackableScript = StackableScriptId.GetModCardKeyword();
+
+	public static readonly string MultiTargetId = ModContentRegistry
+		.GetQualifiedKeywordId(SquMod.ModId, "multi_target");
+
+	public static readonly CardKeyword MultiTarget = MultiTargetId.GetModCardKeyword();
 }

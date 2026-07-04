@@ -13,7 +13,7 @@ namespace Squ.Cards;
 
 [RegisterCard(typeof(SunqianCardPool), StableEntryStem = "defend")]
 [RegisterCharacterStarterCard(typeof(SunqianCharacter), 4)]
-public sealed class LongtaoDefend : ModCardTemplate
+public sealed class DefendLongtao : ModCardTemplate
 {
 	protected override IEnumerable<DynamicVar> CanonicalVars =>
 	[
@@ -25,9 +25,9 @@ public sealed class LongtaoDefend : ModCardTemplate
 	public override bool GainsBlock => true;
 
 	public override CardAssetProfile AssetProfile => new(
-		PortraitPath: "res://images/cards/LongtaoDefend.png");
+		PortraitPath: "res://images/cards/DefendLongtao.png");
 
-	public LongtaoDefend()
+	public DefendLongtao()
 		: base(1, CardType.Skill, CardRarity.Basic, TargetType.Self)
 	{
 	}

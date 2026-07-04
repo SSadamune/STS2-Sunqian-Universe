@@ -16,6 +16,8 @@ using Squ.Cards;
 using STS2RitsuLib.Interop.AutoRegistration;
 using STS2RitsuLib.Scaffolding.Content;
 
+#nullable enable
+
 namespace Squ.Powers;
 
 [RegisterPower]
@@ -65,14 +67,14 @@ public sealed class PhasingPower : ModPowerTemplate
 			return;
 		}
 
-		int dexterity = RollTemporaryDexterity(Owner.Player, MinBound, MaxBound);
+		int dexterity = RollTemporaryDexterity(Owner.Player!, MinBound, MaxBound);
 
 		Flash();
 
 		await ApplyTemporaryDexterityAsync(
 			new ThrowingPlayerChoiceContext(),
 			Owner,
-			Applier,
+			Applier!,
 			null,
 			dexterity);
 	}
@@ -88,7 +90,7 @@ public sealed class PhasingPower : ModPowerTemplate
 		Creature applier,
 		CardModel card)
 	{
-		PhasingPower existing = target.GetPower<PhasingPower>();
+		PhasingPower? existing = target.GetPower<PhasingPower>();
 		if (existing == null)
 		{
 			await PowerCmd.Apply<PhasingPower>(
@@ -105,14 +107,11 @@ public sealed class PhasingPower : ModPowerTemplate
 		existing.AddBounds(minContribution, maxContribution);
 	}
 
-	/// <summary>
-	/// Applies mod temp-dex wrapper. Card source is required when played from a card; pass null from power hooks.
-	/// </summary>
 	public static Task ApplyTemporaryDexterityAsync(
 		PlayerChoiceContext choiceContext,
 		Creature target,
 		Creature applier,
-		CardModel card,
+		CardModel? card,
 		int amount)
 	{
 		if (amount <= 0)
@@ -120,11 +119,11 @@ public sealed class PhasingPower : ModPowerTemplate
 			return Task.CompletedTask;
 		}
 
-		return TempDexPower.ApplyAsync(
+		return PowerCmd.Apply<TempDexFromPhasingPower>(
 			choiceContext,
 			target,
+			amount,
 			applier,
-			card,
-			amount);
+			card);
 	}
 }
