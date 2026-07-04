@@ -39,6 +39,11 @@ public sealed class ChickenFootCheeseStrikePower : ModPowerTemplate
 
 	public static bool ShouldRedirectBasicStrike(CardModel card)
 	{
+		if (!card.IsMutable)
+		{
+			return false;
+		}
+
 		if (card.Owner?.Creature?.GetPower<ChickenFootCheeseStrikePower>() is not { Amount: > 0 })
 		{
 			return false;
