@@ -77,5 +77,9 @@
   "SUNQIAN_UNIVERSE_CARD_BUDDY_HU.title": "Buddy Hu",
   "SUNQIAN_UNIVERSE_CARD_BUDDY_HU.description": "Whenever you gain [gold]Vigor[/gold], gain [blue]1[/blue] less. Gain [blue]1[/blue] [gold]Strength[/gold] instead.",
   "SUNQIAN_UNIVERSE_CARD_OPEN_DEFECATION.title": "Open Defecation",
-  "SUNQIAN_UNIVERSE_CARD_OPEN_DEFECATION.description": "Exhaust all unplayable cards in your [gold]Hand[/gold]. If at least {Threshold} were exhausted, add a [gold]{IfUpgraded:show:Splash+|Splash}[/gold] with [gold]Exhaust[/gold] into your [gold]Hand[/gold]."
+  "SUNQIAN_UNIVERSE_CARD_OPEN_DEFECATION.description": "Exhaust all unplayable cards in your [gold]Hand[/gold]. If at least {Threshold} were exhausted, add a [gold]{IfUpgraded:show:Splash+|Splash}[/gold] with [gold]Exhaust[/gold] into your [gold]Hand[/gold].",
+  "SUNQIAN_UNIVERSE_CARD_RESPECT_ELDERS.title": "Respect Elders",
+  "SUNQIAN_UNIVERSE_CARD_RESPECT_ELDERS.description": "Deal {Damage:diff()} damage.\nIf the target's HP is between 1/4 and 3/4 of its max, hit {HitCount:diff()} times.",
+  "SUNQIAN_UNIVERSE_CARD_GUAN_DI_FORM.title": "Guan Di Form",
+  "SUNQIAN_UNIVERSE_CARD_GUAN_DI_FORM.description": "After you play a Skill, gain {DexterityPower:diff()} [gold]Dexterity[/gold] this turn. After you play an Attack, gain {StrengthPower:diff()} [gold]Strength[/gold] this turn."
 }

@@ -36,6 +36,7 @@ public sealed class OpenDefecation : ModCardTemplate
 	protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
 	[
 		HoverTipFactory.FromKeyword(CardKeyword.Exhaust),
+		HoverTipFactory.FromCard<Splash>(IsUpgraded),
 	];
 
 	public override CardAssetProfile AssetProfile => new(

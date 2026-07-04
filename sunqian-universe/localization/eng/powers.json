@@ -55,5 +55,9 @@
   "SUNQIAN_UNIVERSE_POWER_GRAND_GOBLET_POWER.smartDescription": "At the start of your turn, gain {Energy:energyIcons()} and [blue]{Amount}[/blue] [gold]Vigor[/gold].",
   "SUNQIAN_UNIVERSE_POWER_BUDDY_HU_POWER.title": "Buddy Hu",
   "SUNQIAN_UNIVERSE_POWER_BUDDY_HU_POWER.description": "Whenever you gain [gold]Vigor[/gold], gain [blue]{Amount}[/blue] less. Gain [blue]{Amount}[/blue] [gold]Strength[/gold] instead.",
-  "SUNQIAN_UNIVERSE_POWER_BUDDY_HU_POWER.smartDescription": "Whenever you gain [gold]Vigor[/gold], gain [blue]{Amount}[/blue] less. Gain [blue]{Amount}[/blue] [gold]Strength[/gold] instead."
+  "SUNQIAN_UNIVERSE_POWER_BUDDY_HU_POWER.smartDescription": "Whenever you gain [gold]Vigor[/gold], gain [blue]{Amount}[/blue] less. Gain [blue]{Amount}[/blue] [gold]Strength[/gold] instead.",
+  "SUNQIAN_UNIVERSE_POWER_GUAN_DI_FORM_POWER.title": "Guan Di Form",
+  "SUNQIAN_UNIVERSE_POWER_GUAN_DI_FORM_POWER.description": "After you play a Skill, gain [blue]{Amount}[/blue] [gold]Dexterity[/gold] this turn. After you play an Attack, gain [blue]{Amount}[/blue] [gold]Strength[/gold] this turn.",
+  "SUNQIAN_UNIVERSE_POWER_GUAN_DI_FORM_POWER.smartDescription": "After you play a Skill, gain [blue]{Amount}[/blue] [gold]Dexterity[/gold] this turn. After you play an Attack, gain [blue]{Amount}[/blue] [gold]Strength[/gold] this turn.",
+  "SUNQIAN_UNIVERSE_POWER_TEMP_STR_FROM_GUAN_DI_FORM_POWER.description": "Gain [blue]{Amount}[/blue] [gold]Strength[/gold] this turn."
 }
