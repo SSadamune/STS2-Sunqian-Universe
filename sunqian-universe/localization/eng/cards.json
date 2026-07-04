@@ -69,5 +69,11 @@
   "SUNQIAN_UNIVERSE_CARD_LENS_RESHOOT.title": "Lens Reshoot",
   "SUNQIAN_UNIVERSE_CARD_LENS_RESHOOT.description": "Put a random [gold]Script[/gold] card from your [gold]Discard Pile[/gold] into your [gold]Hand[/gold]. It costs 0 {energyPrefix:energyIcons(1)} this turn.",
   "SUNQIAN_UNIVERSE_CARD_BOMBARD_CHIBI_SCRIPT.title": "Bombard Chibi Script",
-  "SUNQIAN_UNIVERSE_CARD_BOMBARD_CHIBI_SCRIPT.description": "Gain {Block:diff()} [gold]Block[/gold].\nApply {BurningPower:diff()} [gold]Burning[/gold] to ALL enemies.\n[gold]Script[/gold]: When this Script ends, ALL enemies lose {BurningPower:diff()} [gold]Strength[/gold] this turn."
+  "SUNQIAN_UNIVERSE_CARD_BOMBARD_CHIBI_SCRIPT.description": "Gain {Block:diff()} [gold]Block[/gold].\nApply {BurningPower:diff()} [gold]Burning[/gold] to ALL enemies.\n[gold]Script[/gold]: When this Script ends, ALL enemies lose {BurningPower:diff()} [gold]Strength[/gold] this turn.",
+  "SUNQIAN_UNIVERSE_CARD_STANDARD_BASE_VEHICLE.title": "Standard Base Vehicle",
+  "SUNQIAN_UNIVERSE_CARD_STANDARD_BASE_VEHICLE.description": "Gain {Block:diff()} [gold]Block[/gold].\nAfter your [gold]Draw Pile[/gold] is shuffled, put this card into your [gold]Hand[/gold].",
+  "SUNQIAN_UNIVERSE_CARD_GRAND_GOBLET.title": "Grand Goblet",
+  "SUNQIAN_UNIVERSE_CARD_GRAND_GOBLET.description": "At the start of your turn, gain {Energy:energyIcons()} and {VigorPower:diff()} [gold]Vigor[/gold].",
+  "SUNQIAN_UNIVERSE_CARD_BUDDY_HU.title": "Buddy Hu",
+  "SUNQIAN_UNIVERSE_CARD_BUDDY_HU.description": "Whenever you gain [gold]Vigor[/gold], gain [blue]1[/blue] less. Gain [blue]1[/blue] [gold]Strength[/gold] instead."
 }

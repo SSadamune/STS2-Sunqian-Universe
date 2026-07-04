@@ -91,5 +91,11 @@
   "SUNQIAN_UNIVERSE_CARD_LENS_RESHOOT.title": "镜头补拍",
   "SUNQIAN_UNIVERSE_CARD_LENS_RESHOOT.description": "将[gold]弃牌堆[/gold]中的一张随机[gold]剧本[/gold]牌放入你的[gold]手牌[/gold]。这张牌在本回合可以免费打出。",
   "SUNQIAN_UNIVERSE_CARD_BOMBARD_CHIBI_SCRIPT.title": "炮轰赤壁剧本",
-  "SUNQIAN_UNIVERSE_CARD_BOMBARD_CHIBI_SCRIPT.description": "获得{Block:diff()}点[gold]格挡[/gold]。\n给予所有敌人{BurningPower:diff()}层[gold]灼烧[/gold]。\n[gold]剧本[/gold]：失效时，所有敌人本回合失去{BurningPower:diff()}点[gold]力量[/gold]。"
+  "SUNQIAN_UNIVERSE_CARD_BOMBARD_CHIBI_SCRIPT.description": "获得{Block:diff()}点[gold]格挡[/gold]。\n给予所有敌人{BurningPower:diff()}层[gold]灼烧[/gold]。\n[gold]剧本[/gold]：失效时，所有敌人本回合失去{BurningPower:diff()}点[gold]力量[/gold]。",
+  "SUNQIAN_UNIVERSE_CARD_STANDARD_BASE_VEHICLE.title": "制式基地车",
+  "SUNQIAN_UNIVERSE_CARD_STANDARD_BASE_VEHICLE.description": "获得{Block:diff()}点[gold]格挡[/gold]。\n当你的抽牌堆打乱洗牌后，将这张牌放入你的[gold]手牌[/gold]。",
+  "SUNQIAN_UNIVERSE_CARD_GRAND_GOBLET.title": "换大盏",
+  "SUNQIAN_UNIVERSE_CARD_GRAND_GOBLET.description": "在你的回合开始时，获得{Energy:energyIcons()}和{VigorPower:diff()}点[gold]活力[/gold]。",
+  "SUNQIAN_UNIVERSE_CARD_BUDDY_HU.title": "好哥们胡兄",
+  "SUNQIAN_UNIVERSE_CARD_BUDDY_HU.description": "你每次获得[gold]活力[/gold]时少获得[blue]1[/blue]点，改为获得[blue]1[/blue]点[gold]力量[/gold]。"
 }

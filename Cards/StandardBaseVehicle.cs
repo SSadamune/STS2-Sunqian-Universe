@@ -1,0 +1,65 @@
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using MegaCrit.Sts2.Core.Commands;
+using MegaCrit.Sts2.Core.Entities.Cards;
+using MegaCrit.Sts2.Core.Entities.Players;
+using MegaCrit.Sts2.Core.GameActions.Multiplayer;
+using MegaCrit.Sts2.Core.Localization.DynamicVars;
+using MegaCrit.Sts2.Core.Models;
+using MegaCrit.Sts2.Core.ValueProps;
+using Squ.Character;
+using STS2RitsuLib.Interop.AutoRegistration;
+using STS2RitsuLib.Scaffolding.Content;
+
+#nullable enable
+
+namespace Squ.Cards;
+
+[RegisterCard(typeof(SunqianCardPool), StableEntryStem = "standard_base_vehicle")]
+public sealed class StandardBaseVehicle : ModCardTemplate
+{
+	public const int BaseBlock = 9;
+	public const int UpgradedBlock = 12;
+
+	protected override IEnumerable<DynamicVar> CanonicalVars =>
+	[
+		new BlockVar(BaseBlock, ValueProp.Move),
+	];
+
+	public override bool GainsBlock => true;
+
+	public override IEnumerable<CardKeyword> CanonicalKeywords =>
+	[
+		CardKeyword.Innate,
+		CardKeyword.Exhaust,
+	];
+
+	public override CardAssetProfile AssetProfile => new(
+		PortraitPath: "res://images/cards/StandardBaseVehicle.png");
+
+	public StandardBaseVehicle()
+		: base(0, CardType.Skill, CardRarity.Uncommon, TargetType.Self)
+	{
+	}
+
+	protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
+	{
+		await CreatureCmd.TriggerAnim(Owner.Creature, "Cast", Owner.Character.CastAnimDelay);
+		await CreatureCmd.GainBlock(Owner.Creature, DynamicVars.Block, cardPlay);
+	}
+
+	public override async Task AfterShuffle(PlayerChoiceContext choiceContext, Player shuffler)
+	{
+		if (shuffler != Owner || Pile == null || Pile.Type == PileType.Hand)
+		{
+			return;
+		}
+
+		await CardPileCmd.Add(this, PileType.Hand);
+	}
+
+	protected override void OnUpgrade()
+	{
+		DynamicVars.Block.UpgradeValueBy(UpgradedBlock - BaseBlock);
+	}
+}

@@ -50,5 +50,11 @@
   "SUNQIAN_UNIVERSE_POWER_SCRIPT_XILIANG_SAVAGE_POWER.title": "Script: Xiliang Savage",
   "SUNQIAN_UNIVERSE_POWER_SCRIPT_XILIANG_SAVAGE_POWER.smartDescription": "Your [gold]Attacks[/gold] permanently gain the damage added from spent [gold]Vigor[/gold].",
   "SUNQIAN_UNIVERSE_POWER_SCRIPT_BOMBARD_CHIBI_POWER.title": "Script: Bombard Chibi",
-  "SUNQIAN_UNIVERSE_POWER_SCRIPT_BOMBARD_CHIBI_POWER.smartDescription": "When this Script ends, ALL enemies lose [blue]{BurningPower:diff()}[/blue] [gold]Strength[/gold] this turn."
+  "SUNQIAN_UNIVERSE_POWER_SCRIPT_BOMBARD_CHIBI_POWER.smartDescription": "When this Script ends, ALL enemies lose [blue]{BurningPower:diff()}[/blue] [gold]Strength[/gold] this turn.",
+  "SUNQIAN_UNIVERSE_POWER_GRAND_GOBLET_POWER.title": "Grand Goblet",
+  "SUNQIAN_UNIVERSE_POWER_GRAND_GOBLET_POWER.description": "At the start of your turn, gain {energyPrefix:energyIcons(1)} and [blue]{Amount}[/blue] [gold]Vigor[/gold].",
+  "SUNQIAN_UNIVERSE_POWER_GRAND_GOBLET_POWER.smartDescription": "At the start of your turn, gain {Energy:energyIcons()} and [blue]{Amount}[/blue] [gold]Vigor[/gold].",
+  "SUNQIAN_UNIVERSE_POWER_BUDDY_HU_POWER.title": "Buddy Hu",
+  "SUNQIAN_UNIVERSE_POWER_BUDDY_HU_POWER.description": "Whenever you gain [gold]Vigor[/gold], gain [blue]{Amount}[/blue] less. Gain [blue]{Amount}[/blue] [gold]Strength[/gold] instead.",
+  "SUNQIAN_UNIVERSE_POWER_BUDDY_HU_POWER.smartDescription": "Whenever you gain [gold]Vigor[/gold], gain [blue]{Amount}[/blue] less. Gain [blue]{Amount}[/blue] [gold]Strength[/gold] instead."
 }

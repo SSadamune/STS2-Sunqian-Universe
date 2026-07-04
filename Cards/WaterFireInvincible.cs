@@ -26,9 +26,9 @@ namespace Squ.Cards;
 [RegisterCard(typeof(SunqianCardPool), StableEntryStem = "water_fire_invincible")]
 public sealed class WaterFireInvincible : ModCardTemplate
 {
-	public const decimal BaseDamage = 5m;
+	public const decimal BaseDamage = 8m;
 
-	public const decimal UpgradedDamage = 8m;
+	public const decimal UpgradedDamage = 12m;
 
 	public override bool GainsBlock => true;
 
@@ -48,7 +48,7 @@ public sealed class WaterFireInvincible : ModCardTemplate
 		PortraitPath: "res://images/cards/WaterFireInvincible.png");
 
 	public WaterFireInvincible()
-		: base(2, CardType.Attack, CardRarity.Uncommon, TargetType.AnyEnemy)
+		: base(2, CardType.Attack, CardRarity.Rare, TargetType.AnyEnemy)
 	{
 	}
 
