@@ -33,3 +33,6 @@ public sealed class TempDexFromPhasingPower : TempDexPower<PhasingPower> { }
 
 [RegisterPower]
 public sealed class TempDexFromSunqianScriptPower : TempDexPower<SunqianScript> { }
+
+[RegisterPower]
+public sealed class TempDexFromArmInjuryWindmillPower : TempDexPower<ArmInjuryWindmill> { }

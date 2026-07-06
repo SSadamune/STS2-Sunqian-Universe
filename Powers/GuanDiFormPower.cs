@@ -6,14 +6,13 @@ using MegaCrit.Sts2.Core.Entities.Creatures;
 using MegaCrit.Sts2.Core.Entities.Powers;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.HoverTips;
-using MegaCrit.Sts2.Core.Localization;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.Powers;
 using Squ.Cards;
-using STS2RitsuLib.Combat.Powers;
 using STS2RitsuLib.Interop.AutoRegistration;
 using STS2RitsuLib.Scaffolding.Content;
+using STS2RitsuLib.Scaffolding.Content.Patches;
 
 #nullable enable
 
@@ -64,16 +63,17 @@ public sealed class GuanDiFormPower : ModPowerTemplate
 public sealed class TempDexFromGuanDiFormPower : TempDexPower<GuanDiFormPower> { }
 
 [RegisterPower]
-public sealed class TempStrFromGuanDiFormPower : ModTemporaryAppliedPowerTemplate<GuanDiFormPower, StrengthPower>
+public sealed class TempStrFromGuanDiFormPower : TemporaryStrengthPower, IModPowerAssetOverrides
 {
-	public override PowerAssetProfile AssetProfile => new(
-		IconPath: "res://images/powers/GuanDiFormPower.png",
-		BigIconPath: "res://images/powers/GuanDiFormPowerBig.png");
+	private static readonly PowerModel SetupStrikePowerTemplate = ModelDb.Power<SetupStrikePower>();
 
-	public override LocString Description => new("powers", "SUNQIAN_UNIVERSE_POWER_TEMP_STR_FROM_GUAN_DI_FORM_POWER.description");
+	public override AbstractModel OriginModel => ModelDb.Card<GuanDiForm>();
 
-	protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
-	[
-		HoverTipFactory.FromPower<StrengthPower>(),
-	];
+	public PowerAssetProfile AssetProfile => new(
+		IconPath: SetupStrikePowerTemplate.PackedIconPath,
+		BigIconPath: SetupStrikePowerTemplate.ResolvedBigIconPath);
+
+	public string? CustomIconPath => AssetProfile.IconPath;
+
+	public string? CustomBigIconPath => AssetProfile.BigIconPath;
 }

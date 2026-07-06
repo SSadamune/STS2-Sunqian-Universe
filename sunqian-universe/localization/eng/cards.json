@@ -64,7 +64,7 @@
   "SUNQIAN_UNIVERSE_CARD_XILIANG_SAVAGE_SCRIPT.title": "Xiliang Savage Script",
   "SUNQIAN_UNIVERSE_CARD_XILIANG_SAVAGE_SCRIPT.description": "Gain {Block:diff()} [gold]Block[/gold]. Gain {VigorPower:diff()} [gold]Vigor[/gold].\n[gold]Script[/gold]: Your [gold]Attacks[/gold] permanently gain the damage added from spent [gold]Vigor[/gold].",
   "SUNQIAN_UNIVERSE_CARD_VOICE_CHANGE.title": "Voice Change",
-  "SUNQIAN_UNIVERSE_CARD_VOICE_CHANGE.description": "Gain {Block:diff()} [gold]Block[/gold]. Put a [gold]Script[/gold] card from your [gold]Exhaust[/gold] pile on top of your [gold]Draw Pile[/gold].",
+  "SUNQIAN_UNIVERSE_CARD_VOICE_CHANGE.description": "Gain {Block:diff()} [gold]Block[/gold]. [gold]Upgrade[/gold] a [gold]Script[/gold] card from your [gold]Exhaust[/gold] pile and put it on top of your [gold]Draw Pile[/gold].",
   "SUNQIAN_UNIVERSE_CARD_VOICE_CHANGE.selectionScreenPrompt": "Choose a [gold]Script[/gold] card.",
   "SUNQIAN_UNIVERSE_CARD_LENS_RESHOOT.title": "Lens Reshoot",
   "SUNQIAN_UNIVERSE_CARD_LENS_RESHOOT.description": "Put a random [gold]Script[/gold] card from your [gold]Discard Pile[/gold] into your [gold]Hand[/gold]. It costs 0 {energyPrefix:energyIcons(1)} this turn.",
@@ -83,5 +83,15 @@
   "SUNQIAN_UNIVERSE_CARD_RESPECT_ELDERS.hitCondition": "If the target's HP is between 1/4 and 3/4 of its max, hit {HitCount:diff()} times.",
   "SUNQIAN_UNIVERSE_CARD_RESPECT_ELDERS.noHitCondition": "[color=gray]My blade spares neither old nor young.[/color]",
   "SUNQIAN_UNIVERSE_CARD_GUAN_DI_FORM.title": "Guan Di Form",
-  "SUNQIAN_UNIVERSE_CARD_GUAN_DI_FORM.description": "After you play a Skill, gain {DexterityPower:diff()} [gold]Dexterity[/gold] this turn. After you play an Attack, gain {StrengthPower:diff()} [gold]Strength[/gold] this turn."
+  "SUNQIAN_UNIVERSE_CARD_GUAN_DI_FORM.description": "After you play a Skill, gain {DexterityPower:diff()} [gold]Dexterity[/gold] this turn. After you play an Attack, gain {StrengthPower:diff()} [gold]Strength[/gold] this turn.",
+  "SUNQIAN_UNIVERSE_CARD_WINE.title": "Wine",
+  "SUNQIAN_UNIVERSE_CARD_WINE.description": "Gain {Energy:energyIcons()} and {VigorPower:diff()} [gold]Vigor[/gold].\nAdd a [gold]Dazed[/gold] into your [gold]Draw Pile[/gold].",
+  "SUNQIAN_UNIVERSE_CARD_ARM_INJURY_WINDMILL.title": "Arm Injury Windmill",
+  "SUNQIAN_UNIVERSE_CARD_ARM_INJURY_WINDMILL.description": "Draw {Cards:diff()} {Cards:plural:card|cards}.\nGain 2 [gold]Dexterity[/gold] and 2 [gold]Strength[/gold] this turn.\nAdd a [gold]Wound[/gold] into your [gold]Draw Pile[/gold].",
+  "SUNQIAN_UNIVERSE_CARD_ALL_IN.title": "All In",
+  "SUNQIAN_UNIVERSE_CARD_ALL_IN.description": "When you play your last card in [gold]Hand[/gold], if it is an [gold]Attack[/gold] or [gold]Skill[/gold], it deals double damage and gains double [gold]Block[/gold].",
+  "SUNQIAN_UNIVERSE_CARD_SELF_DECAPITATION_ASCENSION.title": "Self Decapitation, Return to Heaven!",
+  "SUNQIAN_UNIVERSE_CARD_SELF_DECAPITATION_ASCENSION.description": "Lose {HpLoss:diff()} HP. Gain {IntangiblePower:diff()} [gold]Intangible[/gold].",
+  "SUNQIAN_UNIVERSE_CARD_BENEVOLENCE_RIGHTEOUSNESS_DUAL_SWORDS.title": "Benevolence & Righteousness Dual Swords",
+  "SUNQIAN_UNIVERSE_CARD_BENEVOLENCE_RIGHTEOUSNESS_DUAL_SWORDS.description": "Cards with \"Strike\" in their name are played an additional {IfUpgraded:show:2|1} {IfUpgraded:show:times|time}."
 }

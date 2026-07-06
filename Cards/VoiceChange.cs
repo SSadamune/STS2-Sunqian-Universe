@@ -69,6 +69,11 @@ public sealed class VoiceChange : ModCardTemplate
 		CardModel? scriptCard = selected.FirstOrDefault();
 		if (scriptCard?.Pile?.Type == PileType.Exhaust)
 		{
+			if (scriptCard.IsUpgradable)
+			{
+				CardCmd.Upgrade(scriptCard);
+			}
+
 			await CardPileCmd.Add(scriptCard, PileType.Draw, CardPilePosition.Top);
 		}
 	}
