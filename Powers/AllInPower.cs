@@ -14,23 +14,20 @@ using STS2RitsuLib.Scaffolding.Content;
 namespace Squ.Powers;
 
 /// <summary>
-/// 倾巢而出（All In）：打出时若手牌中仅剩该攻击/技能牌，其造成的伤害与获得的格挡翻倍。
-/// <para>
-/// 原版在 <c>OnPlay</c> 之前会调用 <c>CardPileCmd.AddDuringManualCardPlay</c> 将牌移出手牌，
-/// 故打出时无法在手牌中见到该牌；「打出前手牌仅余此牌」等价于
-/// <c>BeforeCardPlayed</c> 首次结算时手牌为空。
-/// </para>
+/// 倾巢而出（All In）：打出时若手牌中仅剩该攻击/技能牌，其造成的伤害与获得的格挡增加 <see cref="Amount"/>%。
+/// 层数叠加时 <see cref="Amount"/> 为各层加成百分比之和。
 /// </summary>
 [RegisterPower]
 public sealed class AllInPower : ModPowerTemplate
 {
-	public const decimal Multiplier = 2m;
+	public const decimal BaseBonusPercent = 50m;
+	public const decimal UpgradedBonusPercent = 75m;
 
 	private CardModel? _boostedCard;
 
 	public override PowerType Type => PowerType.Buff;
 
-	public override PowerStackType StackType => PowerStackType.Single;
+	public override PowerStackType StackType => PowerStackType.Counter;
 
 	public override Color AmountLabelColor => PowerModel._normalAmountLabelColor;
 
@@ -40,6 +37,12 @@ public sealed class AllInPower : ModPowerTemplate
 
 	public override Task BeforeCardPlayed(CardPlay cardPlay)
 	{
+		// 新一轮出牌（含上一次多段出牌被战斗中断后的残留标记）。
+		if (cardPlay.PlayIndex == 0)
+		{
+			_boostedCard = null;
+		}
+
 		if (cardPlay.Card.Owner.Creature != Owner
 			|| cardPlay.PlayIndex != 0
 			|| !IsQualifyingCard(cardPlay.Card))
@@ -58,7 +61,7 @@ public sealed class AllInPower : ModPowerTemplate
 
 	public override Task AfterCardPlayedLate(PlayerChoiceContext choiceContext, CardPlay cardPlay)
 	{
-		if (cardPlay.Card == _boostedCard)
+		if (cardPlay.Card == _boostedCard && IsFinalPlayIteration(cardPlay))
 		{
 			_boostedCard = null;
 		}
@@ -74,13 +77,13 @@ public sealed class AllInPower : ModPowerTemplate
 		CardModel? card,
 		CardPlay? cardPlay)
 	{
-		if (!ShouldDouble(card, dealer))
+		if (!ShouldBoost(card, dealer))
 		{
 			return 1m;
 		}
 
 		Flash();
-		return Multiplier;
+		return 1m + Amount / 100m;
 	}
 
 	public override decimal ModifyBlockMultiplicative(
@@ -90,21 +93,47 @@ public sealed class AllInPower : ModPowerTemplate
 		CardModel? cardSource,
 		CardPlay? cardPlay)
 	{
-		if (!ShouldDouble(cardSource, target))
+		if (!ShouldBoost(cardSource, target))
 		{
 			return 1m;
 		}
 
 		Flash();
-		return Multiplier;
+		return 1m + Amount / 100m;
 	}
 
-	private bool ShouldDouble(CardModel? card, Creature? actor) =>
-		card is not null
-		&& actor == Owner
-		&& card == _boostedCard
-		&& IsQualifyingCard(card);
+	private bool ShouldBoost(CardModel? card, Creature? actor)
+	{
+		if (card is null || actor != Owner || card.Owner != Owner.Player || !IsQualifyingCard(card))
+		{
+			return false;
+		}
+
+		// 打出结算：BeforeCardPlayed 已标记。
+		if (card == _boostedCard)
+		{
+			return true;
+		}
+
+		// 手牌预览：最后一张仍在手牌中。
+		CardPile hand = PileType.Hand.GetPile(card.Owner);
+		return hand.Cards.Count == 1 && hand.Cards[0] == card;
+	}
 
 	private static bool IsQualifyingCard(CardModel card) =>
 		card.Type is CardType.Attack or CardType.Skill;
+
+	/// <summary>
+	/// 仅在整次出牌（含仁义双剑等多段结算）的最后一击后清除加成标记。
+	/// <see cref="CardPlay.PlayCount"/> 异常为 0 时按单次出牌处理，避免标记泄漏。
+	/// </summary>
+	private static bool IsFinalPlayIteration(CardPlay cardPlay)
+	{
+		if (cardPlay.PlayCount <= 1)
+		{
+			return true;
+		}
+
+		return cardPlay.PlayIndex >= cardPlay.PlayCount - 1;
+	}
 }

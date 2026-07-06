@@ -60,7 +60,8 @@
   "SUNQIAN_UNIVERSE_POWER_GUAN_DI_FORM_POWER.description": "After you play a Skill, gain [blue]{Amount}[/blue] [gold]Dexterity[/gold] this turn. After you play an Attack, gain [blue]{Amount}[/blue] [gold]Strength[/gold] this turn.",
   "SUNQIAN_UNIVERSE_POWER_GUAN_DI_FORM_POWER.smartDescription": "After you play a Skill, gain [blue]{Amount}[/blue] [gold]Dexterity[/gold] this turn. After you play an Attack, gain [blue]{Amount}[/blue] [gold]Strength[/gold] this turn.",
   "SUNQIAN_UNIVERSE_POWER_ALL_IN_POWER.title": "All In",
-  "SUNQIAN_UNIVERSE_POWER_ALL_IN_POWER.description": "When you play your last card in [gold]Hand[/gold], if it is an [gold]Attack[/gold] or [gold]Skill[/gold], it deals double damage and gains double [gold]Block[/gold].",
+  "SUNQIAN_UNIVERSE_POWER_ALL_IN_POWER.description": "When you play your last card in [gold]Hand[/gold], if it is an [gold]Attack[/gold] or [gold]Skill[/gold], it deals [blue]{Amount}[/blue]% more damage and gains [blue]{Amount}[/blue]% more [gold]Block[/gold].",
+  "SUNQIAN_UNIVERSE_POWER_ALL_IN_POWER.smartDescription": "When you play your last card in [gold]Hand[/gold], if it is an [gold]Attack[/gold] or [gold]Skill[/gold], it deals [blue]{Amount}[/blue]% more damage and gains [blue]{Amount}[/blue]% more [gold]Block[/gold].",
   "SUNQIAN_UNIVERSE_POWER_BENEVOLENCE_RIGHTEOUSNESS_DUAL_SWORDS_POWER.title": "Benevolence & Righteousness Dual Swords",
   "SUNQIAN_UNIVERSE_POWER_BENEVOLENCE_RIGHTEOUSNESS_DUAL_SWORDS_POWER.description": "Cards with \"Strike\" in their name are played an additional [blue]{Amount}[/blue] {Amount:plural:time|times}.",
   "SUNQIAN_UNIVERSE_POWER_BENEVOLENCE_RIGHTEOUSNESS_DUAL_SWORDS_POWER.smartDescription": "Cards with \"Strike\" in their name are played an additional [blue]{Amount}[/blue] {Amount:plural:time|times}."

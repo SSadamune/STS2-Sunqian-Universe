@@ -25,6 +25,8 @@ public sealed class SalvoStrike : ModCardTemplate, IRandomEnemyTargetCount
 		new DamageVar(BaseDamage, ValueProp.Move),
 	];
 
+	protected override HashSet<CardTag> CanonicalTags => [CardTag.Strike];
+
 	public override IEnumerable<CardKeyword> CanonicalKeywords =>
 	[
 		CardKeyword.Exhaust,

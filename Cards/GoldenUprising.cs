@@ -24,7 +24,7 @@ namespace Squ.Cards;
 [RegisterCard(typeof(SunqianCardPool), StableEntryStem = "golden_uprising")]
 public sealed class GoldenUprising : ModCardTemplate
 {
-	public const int BaseGoldCost = 5;
+	public const int BaseGoldCost = 10;
 	public const int GoldEscalationPerPlay = 5;
 	public const int CardPickCount = 2;
 

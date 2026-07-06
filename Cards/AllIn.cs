@@ -25,17 +25,12 @@ public sealed class AllIn : ModCardTemplate
 
 	protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
 	{
+		decimal bonusPercent = IsUpgraded ? AllInPower.UpgradedBonusPercent : AllInPower.BaseBonusPercent;
 		await PowerCmd.Apply<AllInPower>(
 			choiceContext,
 			Owner.Creature,
-			1m,
+			bonusPercent,
 			Owner.Creature,
 			this);
-	}
-
-	protected override void OnUpgrade()
-	{
-		MockSetEnergyCost(new CardEnergyCost(this, 0, costsX: false));
-		InvokeEnergyCostChanged();
 	}
 }
