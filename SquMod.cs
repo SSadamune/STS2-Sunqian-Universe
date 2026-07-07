@@ -40,6 +40,7 @@ public static class SquMod
 			.CardKeywordOwnedByLocNamespace("doom_kill_threshold")
 			.CardKeywordOwnedByLocNamespace("stackable_script")
 			.CardKeywordOwnedByLocNamespace("multi_target")
+			.CardKeywordOwnedByLocNamespace("environmental")
 			.ArchaicToothTranscendence<SunqianScript, SunqianUniverse>()
 			.Apply();
 

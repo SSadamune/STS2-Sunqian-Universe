@@ -8,5 +8,7 @@
   "SUNQIAN_UNIVERSE_KEYWORD_STACKABLE_SCRIPT.title": "可叠层",
   "SUNQIAN_UNIVERSE_KEYWORD_STACKABLE_SCRIPT.description": "再次获得同名的[gold]剧本[/gold]能力时，不会使当前[gold]剧本[/gold]失效，改为层数叠加（保留升级效果）。",
   "SUNQIAN_UNIVERSE_KEYWORD_MULTI_TARGET.title": "群体目标",
-  "SUNQIAN_UNIVERSE_KEYWORD_MULTI_TARGET.description": "以[gold]所有敌人[/gold]为目标或以[gold]随机多名敌人[/gold]为目标的牌，称为群体目标牌。"
+  "SUNQIAN_UNIVERSE_KEYWORD_MULTI_TARGET.description": "以[gold]所有敌人[/gold]为目标或以[gold]随机多名敌人[/gold]为目标的牌，称为群体目标牌。",
+  "SUNQIAN_UNIVERSE_KEYWORD_ENVIRONMENTAL.title": "环境伤害",
+  "SUNQIAN_UNIVERSE_KEYWORD_ENVIRONMENTAL.description": "此伤害没有来源且伤害值固定。"
 }
