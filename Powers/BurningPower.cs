@@ -26,7 +26,7 @@ namespace Squ.Powers;
 
 /// <summary>
 /// Burning: stackable debuff that deals damage equal to its stacks at turn start,
-/// then may clear itself with an escalating chance.
+/// then may clear itself with an escalating chance. Applying more Burning resets the clear chance.
 /// </summary>
 [RegisterPower]
 public sealed class BurningPower : ModPowerTemplate, IHealthBarForecastSource
@@ -76,7 +76,22 @@ public sealed class BurningPower : ModPowerTemplate, IHealthBarForecastSource
 
 	public override Task AfterApplied(Creature? applier, CardModel? cardSource)
 	{
-		SyncClearChanceVar();
+		ResetClearChance();
+		return Task.CompletedTask;
+	}
+
+	public override Task AfterPowerAmountChanged(
+		PlayerChoiceContext choiceContext,
+		PowerModel power,
+		decimal amount,
+		Creature? applier,
+		CardModel? cardSource)
+	{
+		if (amount > 0m)
+		{
+			ResetClearChance();
+		}
+
 		return Task.CompletedTask;
 	}
 
@@ -118,6 +133,12 @@ public sealed class BurningPower : ModPowerTemplate, IHealthBarForecastSource
 		}
 
 		data.ClearChance = Math.Min(data.ClearChance + ClearChanceIncrement, 1f);
+		SyncClearChanceVar();
+	}
+
+	private void ResetClearChance()
+	{
+		GetInternalData<Data>().ClearChance = InitialClearChance;
 		SyncClearChanceVar();
 	}
 
