@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using MegaCrit.Sts2.Core.Combat;
 using MegaCrit.Sts2.Core.Commands;
@@ -27,6 +26,7 @@ public sealed class WatchFireFromShore : ModCardTemplate, IRandomEnemyTargetCoun
 	public const int UpgradedBlock = 9;
 	public const int BaseBurning = 2;
 	public const int UpgradedBurning = 3;
+	public const int RandomEnemyTargetCount = 2;
 
 	protected override IEnumerable<DynamicVar> CanonicalVars =>
 	[
@@ -53,7 +53,7 @@ public sealed class WatchFireFromShore : ModCardTemplate, IRandomEnemyTargetCoun
 	{
 	}
 
-	public int GetRandomEnemyTargetCount() => 1;
+	public int GetRandomEnemyTargetCount() => RandomEnemyTargetCount;
 
 	protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
 	{
@@ -65,20 +65,24 @@ public sealed class WatchFireFromShore : ModCardTemplate, IRandomEnemyTargetCoun
 			return;
 		}
 
-		Creature? target = SquRandomEnemyTargeting
-			.PickRandomEnemiesUnique(combatState, 1, Owner.RunState.Rng.CombatTargets)
-			.FirstOrDefault();
-		if (target is not { IsAlive: true })
+		decimal burningStacks = DynamicVars[nameof(BurningPower)].BaseValue;
+		foreach (Creature target in SquRandomEnemyTargeting.PickRandomEnemiesUnique(
+			combatState,
+			RandomEnemyTargetCount,
+			Owner.RunState.Rng.CombatTargets))
 		{
-			return;
-		}
+			if (!target.IsAlive)
+			{
+				continue;
+			}
 
-		await PowerCmd.Apply<BurningPower>(
-			choiceContext,
-			target,
-			DynamicVars[nameof(BurningPower)].BaseValue,
-			Owner.Creature,
-			this);
+			await PowerCmd.Apply<BurningPower>(
+				choiceContext,
+				target,
+				burningStacks,
+				Owner.Creature,
+				this);
+		}
 	}
 
 	protected override void OnUpgrade()

@@ -119,7 +119,7 @@
   "SUNQIAN_UNIVERSE_CARD_RUTHLESS_STRIKE.title": "无情打击",
   "SUNQIAN_UNIVERSE_CARD_RUTHLESS_STRIKE.description": "造成{Damage:diff()}点无视格挡的伤害。",
   "SUNQIAN_UNIVERSE_CARD_WATCH_FIRE_FROM_SHORE.title": "隔岸观火",
-  "SUNQIAN_UNIVERSE_CARD_WATCH_FIRE_FROM_SHORE.description": "获得{Block:diff()}点[gold]格挡[/gold]。给予随机一名敌人{BurningPower:diff()}层[gold]灼烧[/gold]。",
+  "SUNQIAN_UNIVERSE_CARD_WATCH_FIRE_FROM_SHORE.description": "获得{Block:diff()}点[gold]格挡[/gold]。给予随机两名敌人各{BurningPower:diff()}层[gold]灼烧[/gold]。",
   "SUNQIAN_UNIVERSE_CARD_CHAOS_HARMED_YOU.title": "乱世害了你",
   "SUNQIAN_UNIVERSE_CARD_CHAOS_HARMED_YOU.description": "造成{Damage:diff()}点[gold]环境伤害[/gold]。\n如果此牌击杀了敌人，则抽{Cards:diff()}张牌。"
 }

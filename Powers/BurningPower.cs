@@ -87,7 +87,8 @@ public sealed class BurningPower : ModPowerTemplate, IHealthBarForecastSource
 		Creature? applier,
 		CardModel? cardSource)
 	{
-		if (amount > 0m)
+		// Hook broadcasts to every combat listener; only react to our own stacks being increased.
+		if (power == this && amount > 0m)
 		{
 			ResetClearChance();
 		}

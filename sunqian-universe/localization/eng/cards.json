@@ -97,7 +97,7 @@
   "SUNQIAN_UNIVERSE_CARD_RUTHLESS_STRIKE.title": "Ruthless Strike",
   "SUNQIAN_UNIVERSE_CARD_RUTHLESS_STRIKE.description": "Deal {Damage:diff()} damage. Ignores [gold]Block[/gold].",
   "SUNQIAN_UNIVERSE_CARD_WATCH_FIRE_FROM_SHORE.title": "Watch Fire from Afar",
-  "SUNQIAN_UNIVERSE_CARD_WATCH_FIRE_FROM_SHORE.description": "Gain {Block:diff()} [gold]Block[/gold]. Apply {BurningPower:diff()} [gold]Burning[/gold] to a random enemy.",
+  "SUNQIAN_UNIVERSE_CARD_WATCH_FIRE_FROM_SHORE.description": "Gain {Block:diff()} [gold]Block[/gold]. Apply {BurningPower:diff()} [gold]Burning[/gold] to 2 random enemies.",
   "SUNQIAN_UNIVERSE_CARD_CHAOS_HARMED_YOU.title": "Chaos Wronged You",
   "SUNQIAN_UNIVERSE_CARD_CHAOS_HARMED_YOU.description": "Deal {Damage:diff()} [gold]Environmental[/gold] damage.\nIf this card kills an enemy, draw {Cards:diff()} {Cards:plural:card|cards}."
 }
