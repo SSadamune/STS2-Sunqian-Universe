@@ -1,12 +1,13 @@
-[gd_scene load_steps=2 format=3]
+[gd_scene load_steps=2 format=3 uid="uid://bhsnajxwggvyr"]
 
-[ext_resource type="Texture2D" uid="uid://bh5fjxxj7jr10" path="res://icon.svg" id="1_hxav6"]
+[ext_resource type="Texture2D" uid="uid://dwx3g61ljr1ok" path="res://images/character/Longtao.png" id="1_hxav6"]
 
 [node name="SunqianCharacter" type="Node2D"]
 
 [node name="Visuals" type="Sprite2D" parent="."]
 unique_name_in_owner = true
-position = Vector2(0, -73)
+position = Vector2(0, -143)
+scale = Vector2(0.28, 0.28)
 texture = ExtResource("1_hxav6")
 
 [node name="Bounds" type="Control" parent="."]
