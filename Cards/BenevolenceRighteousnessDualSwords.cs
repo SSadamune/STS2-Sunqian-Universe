@@ -15,29 +15,29 @@ namespace Squ.Cards;
 [RegisterCard(typeof(SunqianCardPool), StableEntryStem = "benevolence_righteousness_dual_swords")]
 public sealed class BenevolenceRighteousnessDualSwords : ModCardTemplate
 {
-	private const decimal BaseExtraPlays = 1m;
-	private const decimal UpgradedExtraPlays = 2m;
+	public const decimal ExtraPlaysPerCard = 1m;
 
 	public override CardAssetProfile AssetProfile => new(
 		PortraitPath: "res://images/cards/BenevolenceRighteousnessDualSwords.png");
 
 	public BenevolenceRighteousnessDualSwords()
-		: base(1, CardType.Power, CardRarity.Rare, TargetType.Self)
+		: base(2, CardType.Power, CardRarity.Rare, TargetType.Self)
 	{
 	}
 
 	protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
 	{
-		decimal extraPlays = IsUpgraded ? UpgradedExtraPlays : BaseExtraPlays;
 		await PowerCmd.Apply<BenevolenceRighteousnessDualSwordsPower>(
 			choiceContext,
 			Owner.Creature,
-			extraPlays,
+			ExtraPlaysPerCard,
 			Owner.Creature,
 			this);
 	}
 
 	protected override void OnUpgrade()
 	{
+		MockSetEnergyCost(new CardEnergyCost(this, 1, costsX: false));
+		InvokeEnergyCostChanged();
 	}
 }
