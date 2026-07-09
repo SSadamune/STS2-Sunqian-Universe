@@ -26,7 +26,7 @@
   "SUNQIAN_UNIVERSE_CARD_SHANGFANGGU_SIGH.title": "Shangfanggu's Sigh",
   "SUNQIAN_UNIVERSE_CARD_SHANGFANGGU_SIGH.description": "Increase [gold]Burning[/gold] you apply by 1.",
   "SUNQIAN_UNIVERSE_CARD_CYBERTRON_STRENGTH.title": "Cybertron Strength",
-  "SUNQIAN_UNIVERSE_CARD_CYBERTRON_STRENGTH.description": "Gain [gold]Block[/gold] equal to [gold]Burning[/gold] on ALL enemies.",
+  "SUNQIAN_UNIVERSE_CARD_CYBERTRON_STRENGTH.description": "Gain {Block:diff()} [gold]Block[/gold]. Gain Block an additional time for every 10 total [gold]Burning[/gold] on enemies.",
   "SUNQIAN_UNIVERSE_CARD_ONE_MAN_ONE_CITY.title": "One Man, One City",
   "SUNQIAN_UNIVERSE_CARD_ONE_MAN_ONE_CITY.description": "Gain {PlatingPower:diff()} [gold]Plating[/gold].\n[gold]Script[/gold]: After your [gold]Plating[/gold] triggers, lose 1 [gold]Plating[/gold] and trigger it 1 additional time.",
   "SUNQIAN_UNIVERSE_CARD_DENIED.title": "Denied?!",
