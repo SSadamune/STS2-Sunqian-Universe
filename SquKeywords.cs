@@ -30,4 +30,9 @@ public static class SquKeywords
 		.GetQualifiedKeywordId(SquMod.ModId, "multi_target");
 
 	public static readonly CardKeyword MultiTarget = MultiTargetId.GetModCardKeyword();
+
+	public static readonly string EnvironmentalId = ModContentRegistry
+		.GetQualifiedKeywordId(SquMod.ModId, "environmental");
+
+	public static readonly CardKeyword Environmental = EnvironmentalId.GetModCardKeyword();
 }

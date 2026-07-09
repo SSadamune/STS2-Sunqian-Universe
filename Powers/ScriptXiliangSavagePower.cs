@@ -75,8 +75,12 @@ public sealed class ScriptXiliangSavagePower : ScriptPowerTemplate
 
 		data.Pending = null;
 
-		int vigorNow = Owner.GetPower<VigorPower>()?.Amount ?? 0;
-		int consumed = pending.VigorBefore - vigorNow;
+		// Do not measure consumed vigor by reading stacks after the attack:
+		// Hook.AfterAttack listener order is not guaranteed. If this power runs
+		// before VigorPower, the difference is still 0 even though vigor will be spent.
+		// Vigor always removes its full pre-attack amount on powered attacks, so
+		// retain that snapshot (mirrors VigorPower.amountWhenAttackStarted).
+		int consumed = pending.VigorBefore;
 		if (consumed <= 0)
 		{
 			return Task.CompletedTask;

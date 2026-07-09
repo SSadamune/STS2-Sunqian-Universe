@@ -20,7 +20,7 @@ namespace Squ.Relics;
 [RegisterRelic(typeof(SunqianRelicPool), StableEntryStem = "box_lunch")]
 public sealed class BoxLunchRelic : ScriptRelicTemplate, IScriptLiftHandler
 {
-	public override RelicRarity Rarity => RelicRarity.Common;
+	public override RelicRarity Rarity => RelicRarity.Starter;
 
 	protected override bool IncludeEnergyHoverTip => true;
 

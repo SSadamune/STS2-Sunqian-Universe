@@ -1,0 +1,35 @@
+---
+description: 「打击」判定与 Strike 标签约定
+alwaysApply: true
+---
+
+# 「打击」= `CardTag.Strike`
+
+用户或文案中说「名称中含有『打击』的牌」「名字中带有打击」时，**实现上不得用 `Title`/`Contains("打击")` 判断**，一律用：
+
+```csharp
+card.Tags.Contains(CardTag.Strike)
+```
+
+玩家可见文案仍可写成「名字中有『打击』」（与原版表述一致）；代码只认标签。
+
+## 创建卡牌时
+
+牌名（任何语言的 `title`）含「打击」或英文 `Strike` 时，在 `CanonicalTags` 中**必须**包含 `CardTag.Strike`：
+
+```csharp
+protected override HashSet<CardTag> CanonicalTags => [CardTag.Strike];
+// 可与其它标签并存，例如：
+// protected override HashSet<CardTag> CanonicalTags => [CardTag.Strike, SquCardTags.Burning];
+```
+
+## 反例
+
+```csharp
+// ❌ BAD
+card.Title.Contains("打击")
+card.Title.Contains("Strike", StringComparison.OrdinalIgnoreCase)
+
+// ✅ GOOD
+card.Tags.Contains(CardTag.Strike)
+```

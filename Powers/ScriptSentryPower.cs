@@ -1,3 +1,4 @@
+using System.Linq;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.Entities.Creatures;
 using MegaCrit.Sts2.Core.Models;
@@ -29,7 +30,7 @@ public sealed class ScriptSentryPower : ScriptPowerTemplate
 			return 0m;
 		}
 
-		if (!card.Title.Contains("打击"))
+		if (!card.Tags.Contains(CardTag.Strike))
 		{
 			return 0m;
 		}

@@ -2,11 +2,14 @@
 using System.Collections.Generic;
 using Godot;
 using MegaCrit.Sts2.Core.Entities.Characters;
+using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Nodes.Combat;
 using STS2RitsuLib.Data.Models;
 using STS2RitsuLib.Interop.AutoRegistration;
 using STS2RitsuLib.Scaffolding.Characters;
 using STS2RitsuLib.Scaffolding.Godot;
+using STS2RitsuLib.Scaffolding.Visuals;
+using STS2RitsuLib.Scaffolding.Visuals.StateMachine;
 
 namespace Squ.Character;
 
@@ -41,7 +44,15 @@ public sealed class SunqianCharacter : ModCharacterTemplate<SunqianCardPool, Sun
 			),
 			Audio: new(
 				CharacterTransitionSfx: "event:/sfx/ui/wipe_ironclad"
-			)
+			),
+			VisualCues: ModVisualCues.CueSet()
+				.Single("idle", "res://images/character/Longtao.png")
+				.Single("hit", "res://images/character/Longtao.png", 0.5f)
+				.Single("attack", "res://images/character/Longtao.png", 0.5f)
+				.Single("cast", "res://images/character/Longtao.png", 0.5f)
+				.Single("dead", "res://images/character/Longtao.png")
+				.Single("relaxed", "res://images/character/Longtao.png")
+				.Build()
 		));
 
 	public override float AttackAnimDelay => 0f;
@@ -51,6 +62,19 @@ public sealed class SunqianCharacter : ModCharacterTemplate<SunqianCardPool, Sun
 
 	protected override NCreatureVisuals? TryCreateCreatureVisuals() =>
 		RitsuGodotNodeFactories.CreateFromScenePath<NCreatureVisuals>(AssetProfile.Scenes!.VisualsPath!);
+
+	protected override ModAnimStateMachine? SetupCustomCombatAnimationStateMachine(
+		Node visualsRoot,
+		CharacterModel character) =>
+		ModAnimStateMachines.StandardCue(
+			visualsRoot,
+			character,
+			idleName: "idle",
+			deadName: "dead",
+			hitName: "hit",
+			attackName: "attack",
+			castName: "cast",
+			relaxedName: "relaxed");
 
 	public override List<string> GetArchitectAttackVfx() =>
 	[

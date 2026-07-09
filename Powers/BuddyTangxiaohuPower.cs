@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Godot;
-using MegaCrit.Sts2.Core.Combat;
 using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.Entities.Creatures;
@@ -25,6 +24,8 @@ namespace Squ.Powers;
 [RegisterPower]
 public sealed class BuddyTangxiaohuPower : ModPowerTemplate
 {
+	private static readonly ValueProp BlockProps = ValueProp.Move;
+
 	public override PowerType Type => PowerType.Buff;
 
 	public override PowerStackType StackType => PowerStackType.Counter;
@@ -37,17 +38,8 @@ public sealed class BuddyTangxiaohuPower : ModPowerTemplate
 
 	protected override IEnumerable<DynamicVar> CanonicalVars =>
 	[
-		new OwnerBlockVar(4m, ValueProp.Move),
+		new BlockVar(4m, BlockProps),
 	];
-
-	public new IEnumerable<IHoverTip> HoverTips
-	{
-		get
-		{
-			RefreshBlockPreview();
-			return base.HoverTips;
-		}
-	}
 
 	protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
 	[
@@ -55,9 +47,10 @@ public sealed class BuddyTangxiaohuPower : ModPowerTemplate
 		HoverTipFactory.Static(StaticHoverTip.Block),
 	];
 
+	internal void RefreshBlockPreviewForHover() => RefreshBlockPreview();
+
 	public override Task AfterApplied(Creature? applier, CardModel? cardSource)
 	{
-		DynamicVars.Block.BaseValue = Amount;
 		RefreshBlockPreview();
 		return Task.CompletedTask;
 	}
@@ -69,22 +62,34 @@ public sealed class BuddyTangxiaohuPower : ModPowerTemplate
 		Creature? applier,
 		CardModel? cardSource)
 	{
-		if (power != this)
+		if (power != this && power.Owner != Owner)
 		{
 			return Task.CompletedTask;
 		}
 
-		DynamicVars.Block.BaseValue = Amount;
 		RefreshBlockPreview();
 		return Task.CompletedTask;
 	}
 
 	private void RefreshBlockPreview()
 	{
-		if (DynamicVars.Block is OwnerBlockVar ownerBlock)
+		decimal baseBlock = Amount;
+		DynamicVars.Block.BaseValue = baseBlock;
+
+		decimal preview = baseBlock;
+		if (Owner.CombatState != null)
 		{
-			ownerBlock.RefreshPreview(Owner, CombatState);
+			preview = Hook.ModifyBlock(
+				Owner.CombatState,
+				Owner,
+				baseBlock,
+				BlockProps,
+				cardSource: null,
+				cardPlay: null,
+				out _);
 		}
+
+		DynamicVars.Block.PreviewValue = Math.Max(preview, 0m);
 	}
 
 	public override async Task AfterCardPlayed(PlayerChoiceContext choiceContext, CardPlay cardPlay)
@@ -97,34 +102,5 @@ public sealed class BuddyTangxiaohuPower : ModPowerTemplate
 
 		Flash();
 		await CreatureCmd.GainBlock(Owner, DynamicVars.Block, cardPlay: null);
-	}
-
-	/// <summary>
-	/// 能力悬停不走 CardModel.UpdateDynamicVarPreview，需自行用 Hook.ModifyBlock 刷新敏捷等修正后的预览。
-	/// </summary>
-	private sealed class OwnerBlockVar : BlockVar
-	{
-		public OwnerBlockVar(decimal block, ValueProp props)
-			: base(block, props)
-		{
-		}
-
-		public void RefreshPreview(Creature owner, ICombatState? combatState)
-		{
-			decimal amount = BaseValue;
-			if (combatState != null)
-			{
-				amount = Hook.ModifyBlock(
-					combatState,
-					owner,
-					amount,
-					Props,
-					cardSource: null,
-					cardPlay: null,
-					out _);
-			}
-
-			PreviewValue = Math.Max(amount, 0m);
-		}
 	}
 }

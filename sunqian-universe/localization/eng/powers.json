@@ -25,8 +25,8 @@
   "SUNQIAN_UNIVERSE_POWER_THE_ARROGANT_FALL_POWER.title": "The arrogant fall",
   "SUNQIAN_UNIVERSE_POWER_THE_ARROGANT_FALL_POWER.description": "At the start of your next turn, gain [blue]{Amount}[/blue] [gold]Weak[/gold] and [gold]Vulnerable[/gold].",
   "SUNQIAN_UNIVERSE_POWER_BURNING_POWER.title": "Burning",
-  "SUNQIAN_UNIVERSE_POWER_BURNING_POWER.description": "Burning creatures take damage at the start of their turn. Each turn, Burning has a [blue]{ClearChance}%[/blue] chance to be cleared. If not cleared, this chance increases by [blue]25%[/blue].",
-  "SUNQIAN_UNIVERSE_POWER_BURNING_POWER.smartDescription": "At the start of {OnPlayer:your turn, take|its turn, takes} [blue]{Amount}[/blue] damage, then [gold]Burning[/gold] has a [blue]{ClearChance}%[/blue] chance to be cleared. If not cleared, this chance increases by [blue]25%[/blue].",
+  "SUNQIAN_UNIVERSE_POWER_BURNING_POWER.description": "Burning creatures take damage at the start of their turn, then [gold]Burning[/gold] has a [blue]25%[/blue] chance to clear to 0. If not cleared, this chance increases by [blue]25%[/blue].\nApplying Burning again to a Burning creature resets this chance to [blue]25%[/blue].",
+  "SUNQIAN_UNIVERSE_POWER_BURNING_POWER.smartDescription": "At the start of {OnPlayer:your turn, take|its turn, takes} [blue]{Amount}[/blue] damage, then [gold]Burning[/gold] has a [blue]{ClearChance}%[/blue] chance to clear to 0. If not cleared, this chance increases by [blue]25%[/blue]. Applying [gold]Burning[/gold] again resets this chance to [blue]25%[/blue].",
   "SUNQIAN_UNIVERSE_POWER_FUEL_ABUNDANT_POWER.title": "Fuel Abundant",
   "SUNQIAN_UNIVERSE_POWER_FUEL_ABUNDANT_POWER.description": "Increase the [gold]Burning[/gold] applied by your next card that applies [gold]Burning[/gold].",
   "SUNQIAN_UNIVERSE_POWER_FUEL_ABUNDANT_POWER.smartDescription": "Your next card that applies [gold]Burning[/gold] applies [blue]{Amount}[/blue] additional [gold]Burning[/gold]. Then this power is removed.",
@@ -44,6 +44,8 @@
   "SUNQIAN_UNIVERSE_POWER_CHICKEN_FOOT_CHEESE_STRIKE_POWER.smartDescription": "For {Amount} {Amount:plural:turn|turns}, [gold]Strike[/gold] cards you play target 2 random enemies instead.",
   "SUNQIAN_UNIVERSE_POWER_SCRIPT_EXECUTION_COMMANDER_POWER.title": "Script: Execution Commander",
   "SUNQIAN_UNIVERSE_POWER_SCRIPT_EXECUTION_COMMANDER_POWER.smartDescription": "While only one enemy remains, your [gold]Multi-target[/gold] Attacks deal [blue]50%[/blue] more damage.",
+  "SUNQIAN_UNIVERSE_POWER_SCRIPT_NIGHT_RAID_WUCHAO_POWER.title": "Stackable Script: Night Raid on Wuchao",
+  "SUNQIAN_UNIVERSE_POWER_SCRIPT_NIGHT_RAID_WUCHAO_POWER.smartDescription": "Cards with \"Strike\" in their name apply [blue]{Amount}[/blue] additional [gold]Burning[/gold].",
   "SUNQIAN_UNIVERSE_POWER_BUDDY_TANGXIAOHU_POWER.title": "Buddy Tangxiaohu",
   "SUNQIAN_UNIVERSE_POWER_BUDDY_TANGXIAOHU_POWER.smartDescription": "After you play a [gold]Script[/gold] card, gain [blue]{Block:diff()}[/blue] [gold]Block[/gold]. This value is affected by [gold]Dexterity[/gold].",
   "SUNQIAN_UNIVERSE_POWER_SCRIPT_XILIANG_SAVAGE_POWER.title": "Script: Xiliang Savage",
@@ -59,5 +61,10 @@
   "SUNQIAN_UNIVERSE_POWER_GUAN_DI_FORM_POWER.title": "Guan Di Form",
   "SUNQIAN_UNIVERSE_POWER_GUAN_DI_FORM_POWER.description": "After you play a Skill, gain [blue]{Amount}[/blue] [gold]Dexterity[/gold] this turn. After you play an Attack, gain [blue]{Amount}[/blue] [gold]Strength[/gold] this turn.",
   "SUNQIAN_UNIVERSE_POWER_GUAN_DI_FORM_POWER.smartDescription": "After you play a Skill, gain [blue]{Amount}[/blue] [gold]Dexterity[/gold] this turn. After you play an Attack, gain [blue]{Amount}[/blue] [gold]Strength[/gold] this turn.",
-  "SUNQIAN_UNIVERSE_POWER_TEMP_STR_FROM_GUAN_DI_FORM_POWER.description": "Gain [blue]{Amount}[/blue] [gold]Strength[/gold] this turn."
+  "SUNQIAN_UNIVERSE_POWER_ALL_IN_POWER.title": "All In",
+  "SUNQIAN_UNIVERSE_POWER_ALL_IN_POWER.description": "When you play your last card in [gold]Hand[/gold], if it is an [gold]Attack[/gold] or [gold]Skill[/gold], it deals [blue]{Amount}[/blue]% more damage and gains [blue]{Amount}[/blue]% more [gold]Block[/gold].",
+  "SUNQIAN_UNIVERSE_POWER_ALL_IN_POWER.smartDescription": "When you play your last card in [gold]Hand[/gold], if it is an [gold]Attack[/gold] or [gold]Skill[/gold], it deals [blue]{Amount}[/blue]% more damage and gains [blue]{Amount}[/blue]% more [gold]Block[/gold].",
+  "SUNQIAN_UNIVERSE_POWER_BENEVOLENCE_RIGHTEOUSNESS_DUAL_SWORDS_POWER.title": "Benevolence & Righteousness Dual Swords",
+  "SUNQIAN_UNIVERSE_POWER_BENEVOLENCE_RIGHTEOUSNESS_DUAL_SWORDS_POWER.description": "Cards with \"Strike\" in their name are played an additional [blue]{Amount}[/blue] {Amount:plural:time|times}.",
+  "SUNQIAN_UNIVERSE_POWER_BENEVOLENCE_RIGHTEOUSNESS_DUAL_SWORDS_POWER.smartDescription": "Cards with \"Strike\" in their name are played an additional [blue]{Amount}[/blue] {Amount:plural:time|times}."
 }

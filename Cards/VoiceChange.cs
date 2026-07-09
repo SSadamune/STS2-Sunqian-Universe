@@ -25,8 +25,8 @@ public sealed class VoiceChange : ModCardTemplate
 	private static readonly LocString SelectionPrompt =
 		new("cards", "SUNQIAN_UNIVERSE_CARD_VOICE_CHANGE.selectionScreenPrompt");
 
-	public const decimal BaseBlock = 8m;
-	public const decimal UpgradedBlock = 10m;
+	public const decimal BaseBlock = 7m;
+	public const decimal UpgradedBlock = 9m;
 
 	protected override IEnumerable<DynamicVar> CanonicalVars =>
 	[
@@ -69,6 +69,11 @@ public sealed class VoiceChange : ModCardTemplate
 		CardModel? scriptCard = selected.FirstOrDefault();
 		if (scriptCard?.Pile?.Type == PileType.Exhaust)
 		{
+			if (scriptCard.IsUpgradable)
+			{
+				CardCmd.Upgrade(scriptCard);
+			}
+
 			await CardPileCmd.Add(scriptCard, PileType.Draw, CardPilePosition.Top);
 		}
 	}
