@@ -16,9 +16,9 @@ namespace Squ.Character;
 [RegisterCharacter]
 public sealed class SunqianCharacter : ModCharacterTemplate<SunqianCardPool, SunqianRelicPool, SunqianPotionPool>
 {
-	public override Color NameColor => new(0.55f, 0.35f, 0.95f);
-	public override Color EnergyLabelOutlineColor => new(0.55f, 0.35f, 0.95f);
-	public override Color MapDrawingColor => new(0.55f, 0.35f, 0.95f);
+	public override Color NameColor => new("6B3FA0");
+	public override Color EnergyLabelOutlineColor => new("3F2568");
+	public override Color MapDrawingColor => new("3F2568");
 
 	public override CharacterGender Gender => CharacterGender.Masculine;
 
