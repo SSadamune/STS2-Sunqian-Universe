@@ -10,5 +10,7 @@
   "SUNQIAN_UNIVERSE_KEYWORD_MULTI_TARGET.title": "群体目标",
   "SUNQIAN_UNIVERSE_KEYWORD_MULTI_TARGET.description": "以[gold]所有敌人[/gold]为目标或以[gold]随机多名敌人[/gold]为目标的牌，称为群体目标牌。",
   "SUNQIAN_UNIVERSE_KEYWORD_ENVIRONMENTAL.title": "环境伤害",
-  "SUNQIAN_UNIVERSE_KEYWORD_ENVIRONMENTAL.description": "此伤害没有来源且伤害值固定。"
+  "SUNQIAN_UNIVERSE_KEYWORD_ENVIRONMENTAL.description": "此伤害没有来源且伤害值固定。",
+  "SUNQIAN_UNIVERSE_KEYWORD_SCRY.title": "预见",
+  "SUNQIAN_UNIVERSE_KEYWORD_SCRY.description": "查看你抽牌堆顶部的若干张牌，然后可将其中任意数量的牌置入弃牌堆。"
 }

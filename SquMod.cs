@@ -41,6 +41,7 @@ public static class SquMod
 			.CardKeywordOwnedByLocNamespace("stackable_script")
 			.CardKeywordOwnedByLocNamespace("multi_target")
 			.CardKeywordOwnedByLocNamespace("environmental")
+			.CardKeywordOwnedByLocNamespace("scry")
 			.ArchaicToothTranscendence<SunqianScript, SunqianUniverse>()
 			.TouchOfOrobasRefinement<BoxLunchRelic, AbundantBoxLunchRelic>()
 			.Apply();

@@ -1,4 +1,5 @@
 using MegaCrit.Sts2.Core.Entities.Cards;
+using MegaCrit.Sts2.Core.Models;
 using STS2RitsuLib.Content;
 using STS2RitsuLib.Keywords;
 
@@ -35,4 +36,12 @@ public static class SquKeywords
 		.GetQualifiedKeywordId(SquMod.ModId, "environmental");
 
 	public static readonly CardKeyword Environmental = EnvironmentalId.GetModCardKeyword();
+
+	public static readonly string ScryId = ModContentRegistry
+		.GetQualifiedKeywordId(SquMod.ModId, "scry");
+
+	public static readonly CardKeyword Scry = ScryId.GetModCardKeyword();
+
+	/// <summary>名字/关键词中带有[gold]预见[/gold]的牌。</summary>
+	public static bool IsScry(this CardModel card) => card.Keywords.Contains(Scry);
 }
