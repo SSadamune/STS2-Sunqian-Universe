@@ -1,0 +1,9 @@
+{
+  "SEA_GLASS.SUNQIAN_UNIVERSE_CHARACTER_SUNQIAN_CHARACTER.title": "Extra Sea Glass",
+  "SUNQIAN_UNIVERSE_RELIC_BOX_LUNCH.title": "Box Lunch",
+  "SUNQIAN_UNIVERSE_RELIC_BOX_LUNCH.description": "The first time a [gold]Script[/gold] ends each turn, gain {energyPrefix:energyIcons(1)}.\nAt the start of each combat, gain [gold]Script: Sentry[/gold].",
+  "SUNQIAN_UNIVERSE_RELIC_BOX_LUNCH.flavor": "What do we eat when the lunch boxes are gone?",
+  "SUNQIAN_UNIVERSE_RELIC_ABUNDANT_BOX_LUNCH.title": "Abundant Box Lunch",
+  "SUNQIAN_UNIVERSE_RELIC_ABUNDANT_BOX_LUNCH.description": "The first three times a [gold]Script[/gold] ends each turn, gain {energyPrefix:energyIcons(1)}.\nAt the start of each combat, gain [gold]Script: Vice General[/gold].",
+  "SUNQIAN_UNIVERSE_RELIC_ABUNDANT_BOX_LUNCH.flavor": "Upgraded lunch. Still a lunch box."
+}

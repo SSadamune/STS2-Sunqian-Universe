@@ -42,6 +42,7 @@ public static class SquMod
 			.CardKeywordOwnedByLocNamespace("multi_target")
 			.CardKeywordOwnedByLocNamespace("environmental")
 			.ArchaicToothTranscendence<SunqianScript, SunqianUniverse>()
+			.TouchOfOrobasRefinement<BoxLunchRelic, AbundantBoxLunchRelic>()
 			.Apply();
 
 		var harmony = new Harmony($"{ModId}.patches");

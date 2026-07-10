@@ -12,6 +12,8 @@
   "SUNQIAN_UNIVERSE_POWER_SCRIPT_NEUTRAL_AMBUSH_POWER.smartDescription": "当你抽到[gold]巨石[/gold]或[gold]箭幕打击[/gold]时，对随机目标打出。",
   "SUNQIAN_UNIVERSE_POWER_SCRIPT_SENTRY_POWER.title": "剧本：哨兵",
   "SUNQIAN_UNIVERSE_POWER_SCRIPT_SENTRY_POWER.description": "名字中有「打击」的牌造成[blue]1[/blue]点额外伤害。",
+  "SUNQIAN_UNIVERSE_POWER_SCRIPT_VICE_GENERAL_POWER.title": "剧本：副将",
+  "SUNQIAN_UNIVERSE_POWER_SCRIPT_VICE_GENERAL_POWER.description": "名字中有「打击」的牌造成[blue]2[/blue]点额外伤害。\n从名字中有「防御」的牌中获得[blue]1[/blue]点额外格挡。",
   "SUNQIAN_UNIVERSE_POWER_SCRIPT_SUNQIAN_POWER.title": "剧本：孙乾",
   "SUNQIAN_UNIVERSE_POWER_SCRIPT_SUNQIAN_POWER.description": "此剧本失效时，抽[blue]1[/blue]张牌。",
   "SUNQIAN_UNIVERSE_POWER_SCRIPT_SUNQIAN_POWER.smartDescription": "此剧本结束时，抽[blue]{Cards:diff()}[/blue]张牌。",
