@@ -17,6 +17,8 @@ namespace Squ.Cards;
 [RegisterCard(typeof(SunqianCardPool), StableEntryStem = "link_to_heaven")]
 public sealed class LinkToHeaven : ModCardTemplate
 {
+	private const decimal ScryStacksPerPlay = 3m;
+
 	public override CardAssetProfile AssetProfile => new(
 		PortraitPath: "res://images/cards/LinkToHeaven.png");
 
@@ -30,6 +32,7 @@ public sealed class LinkToHeaven : ModCardTemplate
 		HoverTipFactory.FromKeyword(CardKeyword.Exhaust),
 		HoverTipFactory.FromPower<StrengthPower>(),
 		HoverTipFactory.FromPower<DexterityPower>(),
+		HoverTipFactory.ForEnergy(this),
 	];
 
 	public LinkToHeaven()
@@ -42,7 +45,7 @@ public sealed class LinkToHeaven : ModCardTemplate
 		await PowerCmd.Apply<LinkToHeavenPower>(
 			choiceContext,
 			Owner.Creature,
-			1m,
+			ScryStacksPerPlay,
 			Owner.Creature,
 			this);
 	}

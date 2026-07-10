@@ -5,6 +5,7 @@ using MegaCrit.Sts2.Core.Combat;
 using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.Entities.Creatures;
+using MegaCrit.Sts2.Core.Entities.Players;
 using MegaCrit.Sts2.Core.Entities.Powers;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.HoverTips;
@@ -22,14 +23,17 @@ using STS2RitsuLib.Scaffolding.Content.Patches;
 namespace Squ.Powers;
 
 /// <summary>
-/// 「天意连接」的持续能力：每回合开始时[gold]预见[/gold] <see cref="ScryAmount"/>，
-/// 未被保留的牌改为[gold]消耗[/gold]；每因此消耗一张[gold]攻击[/gold]/[gold]技能[/gold]/[gold]能力[/gold]牌，
-/// 本回合获得固定的[gold]力量[/gold]/[gold]敏捷[/gold]，或立即获得固定数量的能量。
+/// 「天意连接」的持续能力：每回合抽牌前[gold]预见[/gold] <see cref="Amount"/>（层数即预见张数，
+/// 每次打出「天意连接」增加[blue]3[/blue]层），未被保留的牌改为[gold]消耗[/gold]；
+/// 每因此消耗一张[gold]攻击[/gold]/[gold]技能[/gold]/[gold]能力[/gold]牌，
+/// 本回合获得固定的[gold]力量[/gold]/[gold]敏捷[/gold]，或立即获得固定数量的能量
+/// （此三项数值不受层数影响）。
+/// 挂在 <see cref="BeforeHandDrawLate"/>（而非 <see cref="BeforeSideTurnStart"/>）上，
+/// 确保预见流程在回合开始的正常抽牌之前完成，被消耗的牌不会被抽到手上。
 /// </summary>
 [RegisterPower]
 public sealed class LinkToHeavenPower : ModPowerTemplate
 {
-	private const decimal ScryAmount = 3m;
 	private const decimal StrengthGain = 3m;
 	private const decimal DexterityGain = 2m;
 	private const int EnergyGain = 1;
@@ -48,21 +52,21 @@ public sealed class LinkToHeavenPower : ModPowerTemplate
 		HoverTipFactory.FromKeyword(CardKeyword.Exhaust),
 		HoverTipFactory.FromPower<StrengthPower>(),
 		HoverTipFactory.FromPower<DexterityPower>(),
+		HoverTipFactory.ForEnergy(this),
 	];
 
-	public override async Task BeforeSideTurnStart(
+	public override async Task BeforeHandDrawLate(
+		Player player,
 		PlayerChoiceContext choiceContext,
-		CombatSide side,
-		IReadOnlyList<Creature> participants,
 		ICombatState combatState)
 	{
-		if (!participants.Contains(Owner) || Owner.IsDead || Owner.Player is not { } player)
+		if (player != Owner.Player || Owner.IsDead)
 		{
 			return;
 		}
 
 		Flash();
-		await ScryCmd.Execute(choiceContext, player, (int)ScryAmount, HandleChosenCard);
+		await ScryCmd.Execute(choiceContext, player, (int)Amount, HandleChosenCard);
 	}
 
 	private async Task HandleChosenCard(PlayerChoiceContext choiceContext, CardModel card)
