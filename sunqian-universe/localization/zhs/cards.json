@@ -123,5 +123,7 @@
   "SUNQIAN_UNIVERSE_CARD_CHAOS_HARMED_YOU.title": "乱世害了你",
   "SUNQIAN_UNIVERSE_CARD_CHAOS_HARMED_YOU.description": "造成{Damage:diff()}点[gold]环境伤害[/gold]。\n如果此牌击杀了敌人，则抽{Cards:diff()}张牌。",
   "SUNQIAN_UNIVERSE_CARD_NIGHT_RAID_WUCHAO_SCRIPT.title": "夜袭乌巢剧本",
-  "SUNQIAN_UNIVERSE_CARD_NIGHT_RAID_WUCHAO_SCRIPT.description": "将两张打出后[gold]消耗[/gold]的[gold]{IfUpgraded:show:星夜打击+|星夜打击}[/gold]加入[gold]手牌[/gold]。\n[gold]可叠层剧本[/gold]：名字中有「打击」的牌额外给予{BurningPower:diff()}点[gold]灼烧[/gold]。"
+  "SUNQIAN_UNIVERSE_CARD_NIGHT_RAID_WUCHAO_SCRIPT.description": "将两张打出后[gold]消耗[/gold]的[gold]{IfUpgraded:show:星夜打击+|星夜打击}[/gold]加入[gold]手牌[/gold]。\n[gold]可叠层剧本[/gold]：名字中有「打击」的牌额外给予{BurningPower:diff()}点[gold]灼烧[/gold]。",
+  "SUNQIAN_UNIVERSE_CARD_PORTAL.title": "传送门",
+  "SUNQIAN_UNIVERSE_CARD_PORTAL.description": "[gold]预见[/gold]{Scry}，抽1张牌。若抽到的是[gold]攻击[/gold]牌，对随机目标打出{IfUpgraded:show:并再抽1张牌|}。"
 }

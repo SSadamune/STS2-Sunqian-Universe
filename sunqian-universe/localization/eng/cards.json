@@ -103,5 +103,7 @@
   "SUNQIAN_UNIVERSE_CARD_STARRY_NIGHT_STRIKE.title": "Starry Night Strike",
   "SUNQIAN_UNIVERSE_CARD_STARRY_NIGHT_STRIKE.description": "Deal {Damage:diff()} damage. At the end of your turn, play this card from your [gold]Hand[/gold] on a random enemy.",
   "SUNQIAN_UNIVERSE_CARD_NIGHT_RAID_WUCHAO_SCRIPT.title": "Night Raid on Wuchao Script",
-  "SUNQIAN_UNIVERSE_CARD_NIGHT_RAID_WUCHAO_SCRIPT.description": "Add 2 [gold]{IfUpgraded:show:Starry Night Strike+|Starry Night Strike}[/gold] that [gold]Exhaust[/gold] when played into your [gold]Hand[/gold].\n[gold]Stackable Script[/gold]: Cards with \"Strike\" in their name apply {BurningPower:diff()} additional [gold]Burning[/gold]."
+  "SUNQIAN_UNIVERSE_CARD_NIGHT_RAID_WUCHAO_SCRIPT.description": "Add 2 [gold]{IfUpgraded:show:Starry Night Strike+|Starry Night Strike}[/gold] that [gold]Exhaust[/gold] when played into your [gold]Hand[/gold].\n[gold]Stackable Script[/gold]: Cards with \"Strike\" in their name apply {BurningPower:diff()} additional [gold]Burning[/gold].",
+  "SUNQIAN_UNIVERSE_CARD_PORTAL.title": "Portal",
+  "SUNQIAN_UNIVERSE_CARD_PORTAL.description": "[gold]Scry[/gold] {Scry}. Draw a card. If it is an [gold]Attack[/gold], play it at a random target{IfUpgraded:show: and draw another card|}."
 }
