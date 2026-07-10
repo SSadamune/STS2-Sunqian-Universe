@@ -19,9 +19,15 @@ namespace Squ.Cards;
 [RegisterCard(typeof(SunqianCardPool), StableEntryStem = "tianyi_goutong")]
 public sealed class TianyiGoutong : ModCardTemplate
 {
+	private const decimal ScryAmount = 3m;
+	private const decimal BaseBuffAmount = 2m;
+	private const decimal UpgradedBuffAmount = 3m;
+
 	protected override IEnumerable<DynamicVar> CanonicalVars =>
 	[
-		new ScryVar(3m),
+		new ScryVar(ScryAmount),
+		new PowerVar<StrengthPower>(BaseBuffAmount),
+		new PowerVar<DexterityPower>(BaseBuffAmount),
 	];
 
 	public override IEnumerable<CardKeyword> CanonicalKeywords =>
@@ -43,20 +49,17 @@ public sealed class TianyiGoutong : ModCardTemplate
 
 	protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
 	{
-		int scryAmount = DynamicVars.Scry().IntValue;
-
-		await TianyiGoutongPower.ExecuteProcess(choiceContext, Owner, scryAmount);
-
 		await PowerCmd.Apply<TianyiGoutongPower>(
 			choiceContext,
 			Owner.Creature,
-			scryAmount,
+			DynamicVars[nameof(StrengthPower)].BaseValue,
 			Owner.Creature,
 			this);
 	}
 
 	protected override void OnUpgrade()
 	{
-		DynamicVars.Scry().UpgradeValueBy(1m);
+		DynamicVars[nameof(StrengthPower)].UpgradeValueBy(UpgradedBuffAmount - BaseBuffAmount);
+		DynamicVars[nameof(DexterityPower)].UpgradeValueBy(UpgradedBuffAmount - BaseBuffAmount);
 	}
 }

@@ -70,5 +70,5 @@
   "SUNQIAN_UNIVERSE_POWER_BENEVOLENCE_RIGHTEOUSNESS_DUAL_SWORDS_POWER.description": "Cards with \"Strike\" in their name are played an additional [blue]{Amount}[/blue] {Amount:plural:time|times}.",
   "SUNQIAN_UNIVERSE_POWER_BENEVOLENCE_RIGHTEOUSNESS_DUAL_SWORDS_POWER.smartDescription": "Cards with \"Strike\" in their name are played an additional [blue]{Amount}[/blue] {Amount:plural:time|times}.",
   "SUNQIAN_UNIVERSE_POWER_TIANYI_GOUTONG_POWER.title": "Heaven's Will Communication",
-  "SUNQIAN_UNIVERSE_POWER_TIANYI_GOUTONG_POWER.description": "At the start of each turn, [gold]Scry[/gold] [blue]{Amount}[/blue]. Cards put into your discard pile this way are [gold]Exhausted[/gold] instead; if it's an [gold]Attack[/gold]/[gold]Skill[/gold], gain 1 [gold]Strength[/gold]/[gold]Dexterity[/gold]."
+  "SUNQIAN_UNIVERSE_POWER_TIANYI_GOUTONG_POWER.description": "At the start of each turn, [gold]Scry[/gold] [blue]3[/blue]. Cards put into your discard pile this way are [gold]Exhausted[/gold] instead. For each Attack/Skill exhausted this way, gain [blue]{Amount}[/blue] [gold]Strength[/gold]/[gold]Dexterity[/gold] this turn."
 }

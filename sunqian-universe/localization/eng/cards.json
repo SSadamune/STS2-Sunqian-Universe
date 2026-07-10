@@ -107,5 +107,5 @@
   "SUNQIAN_UNIVERSE_CARD_PORTAL.title": "Portal",
   "SUNQIAN_UNIVERSE_CARD_PORTAL.description": "[gold]Scry[/gold] {Scry}. Draw a card. If it is an [gold]Attack[/gold], play it at a random target{IfUpgraded:show: and draw another card|}.",
   "SUNQIAN_UNIVERSE_CARD_TIANYI_GOUTONG.title": "Heaven's Will Communication",
-  "SUNQIAN_UNIVERSE_CARD_TIANYI_GOUTONG.description": "[gold]Scry[/gold] {Scry:diff()}. Cards put into your discard pile this way are [gold]Exhausted[/gold] instead; if it's an [gold]Attack[/gold]/[gold]Skill[/gold], gain 1 [gold]Strength[/gold]/[gold]Dexterity[/gold].\nAt the start of each turn, repeat this process."
+  "SUNQIAN_UNIVERSE_CARD_TIANYI_GOUTONG.description": "At the start of each turn, [gold]Scry[/gold] {Scry}. Cards put into your discard pile this way are [gold]Exhausted[/gold] instead. For each Attack/Skill exhausted this way, gain {StrengthPower:diff()}/{DexterityPower:diff()} [gold]Strength[/gold]/[gold]Dexterity[/gold] this turn."
 }
