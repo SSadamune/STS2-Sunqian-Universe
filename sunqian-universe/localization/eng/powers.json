@@ -68,5 +68,7 @@
   "SUNQIAN_UNIVERSE_POWER_ALL_IN_POWER.smartDescription": "When you play your last card in [gold]Hand[/gold], if it is an [gold]Attack[/gold] or [gold]Skill[/gold], it deals [blue]{Amount}[/blue]% more damage and gains [blue]{Amount}[/blue]% more [gold]Block[/gold].",
   "SUNQIAN_UNIVERSE_POWER_BENEVOLENCE_RIGHTEOUSNESS_DUAL_SWORDS_POWER.title": "Benevolence & Righteousness Dual Swords",
   "SUNQIAN_UNIVERSE_POWER_BENEVOLENCE_RIGHTEOUSNESS_DUAL_SWORDS_POWER.description": "Cards with \"Strike\" in their name are played an additional [blue]{Amount}[/blue] {Amount:plural:time|times}.",
-  "SUNQIAN_UNIVERSE_POWER_BENEVOLENCE_RIGHTEOUSNESS_DUAL_SWORDS_POWER.smartDescription": "Cards with \"Strike\" in their name are played an additional [blue]{Amount}[/blue] {Amount:plural:time|times}."
+  "SUNQIAN_UNIVERSE_POWER_BENEVOLENCE_RIGHTEOUSNESS_DUAL_SWORDS_POWER.smartDescription": "Cards with \"Strike\" in their name are played an additional [blue]{Amount}[/blue] {Amount:plural:time|times}.",
+  "SUNQIAN_UNIVERSE_POWER_TIANYI_GOUTONG_POWER.title": "Heaven's Will Communication",
+  "SUNQIAN_UNIVERSE_POWER_TIANYI_GOUTONG_POWER.description": "At the start of each turn, [gold]Scry[/gold] [blue]{Amount}[/blue]. Cards put into your discard pile this way are [gold]Exhausted[/gold] instead; if it's an [gold]Attack[/gold]/[gold]Skill[/gold], gain 1 [gold]Strength[/gold]/[gold]Dexterity[/gold]."
 }

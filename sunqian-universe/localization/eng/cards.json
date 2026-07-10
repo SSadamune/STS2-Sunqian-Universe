@@ -105,5 +105,7 @@
   "SUNQIAN_UNIVERSE_CARD_NIGHT_RAID_WUCHAO_SCRIPT.title": "Night Raid on Wuchao Script",
   "SUNQIAN_UNIVERSE_CARD_NIGHT_RAID_WUCHAO_SCRIPT.description": "Add 2 [gold]{IfUpgraded:show:Starry Night Strike+|Starry Night Strike}[/gold] that [gold]Exhaust[/gold] when played into your [gold]Hand[/gold].\n[gold]Stackable Script[/gold]: Cards with \"Strike\" in their name apply {BurningPower:diff()} additional [gold]Burning[/gold].",
   "SUNQIAN_UNIVERSE_CARD_PORTAL.title": "Portal",
-  "SUNQIAN_UNIVERSE_CARD_PORTAL.description": "[gold]Scry[/gold] {Scry}. Draw a card. If it is an [gold]Attack[/gold], play it at a random target{IfUpgraded:show: and draw another card|}."
+  "SUNQIAN_UNIVERSE_CARD_PORTAL.description": "[gold]Scry[/gold] {Scry}. Draw a card. If it is an [gold]Attack[/gold], play it at a random target{IfUpgraded:show: and draw another card|}.",
+  "SUNQIAN_UNIVERSE_CARD_TIANYI_GOUTONG.title": "Heaven's Will Communication",
+  "SUNQIAN_UNIVERSE_CARD_TIANYI_GOUTONG.description": "[gold]Scry[/gold] {Scry:diff()}. Cards put into your discard pile this way are [gold]Exhausted[/gold] instead; if it's an [gold]Attack[/gold]/[gold]Skill[/gold], gain 1 [gold]Strength[/gold]/[gold]Dexterity[/gold].\nAt the start of each turn, repeat this process."
 }

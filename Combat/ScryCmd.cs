@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -42,7 +43,15 @@ public static class ScryCmd
 		return Execute(choiceContext, card.Owner, card.DynamicVars.Scry().IntValue);
 	}
 
-	public static async Task<ScryResult> Execute(PlayerChoiceContext choiceContext, Player player, int amount)
+	/// <param name="onCardChosen">
+	/// 若提供，被玩家选中的每张牌改由此回调处理（例如改为消耗而非置入弃牌堆），
+	/// 调用方需自行负责该牌的去向；不提供时使用默认的置入弃牌堆行为。
+	/// </param>
+	public static async Task<ScryResult> Execute(
+		PlayerChoiceContext choiceContext,
+		Player player,
+		int amount,
+		Func<PlayerChoiceContext, CardModel, Task>? onCardChosen = null)
 	{
 		var modifiedAmount = ScryHook.ModifyScryAmount(player, amount, out var modifiers);
 		await ScryHook.AfterModifyingScryAmount(choiceContext, player, modifiers, amount, modifiedAmount);
@@ -50,7 +59,6 @@ public static class ScryCmd
 		if (modifiedAmount <= 0) return ScryResult.Empty;
 
 		var drawPile = PileType.Draw.GetPile(player);
-		var discardPile = PileType.Discard.GetPile(player);
 		var combatState = player.Creature.CombatState;
 		if (combatState == null) return ScryResult.Empty;
 
@@ -68,14 +76,20 @@ public static class ScryCmd
 			player,
 			prefs)).ToList();
 
-		foreach (var discardedCard in cardsToDiscard)
+		foreach (var chosenCard in cardsToDiscard)
 		{
-			await CardPileCmd.Add(discardedCard, discardPile);
-			CombatManager.Instance.History.CardDiscarded(combatState, discardedCard);
-			await Hook.AfterCardDiscarded(combatState, choiceContext, discardedCard);
-		}
+			if (onCardChosen != null)
+			{
+				await onCardChosen(choiceContext, chosenCard);
+				continue;
+			}
 
-		discardPile.InvokeContentsChanged();
+			var discardPile = PileType.Discard.GetPile(player);
+			await CardPileCmd.Add(chosenCard, discardPile);
+			CombatManager.Instance.History.CardDiscarded(combatState, chosenCard);
+			await Hook.AfterCardDiscarded(combatState, choiceContext, chosenCard);
+			discardPile.InvokeContentsChanged();
+		}
 
 		await ScryHook.AfterScryed(choiceContext, player, modifiedAmount, cardsToDiscard.Count, cardsToDiscard);
 		return new ScryResult(cardsToDiscard);
