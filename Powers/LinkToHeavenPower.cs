@@ -22,22 +22,25 @@ using STS2RitsuLib.Scaffolding.Content.Patches;
 namespace Squ.Powers;
 
 /// <summary>
-/// 「天意沟通」的持续能力：每回合开始时[gold]预见[/gold] <see cref="ScryAmount"/>，
-/// 因此置入弃牌堆的牌改为[gold]消耗[/gold]；每因此消耗一张[gold]攻击[/gold]/[gold]技能[/gold]牌，
-/// 本回合获得 <see cref="Amount"/> 点[gold]力量[/gold]/[gold]敏捷[/gold]。
+/// 「天意连接」的持续能力：每回合开始时[gold]预见[/gold] <see cref="ScryAmount"/>，
+/// 未被保留的牌改为[gold]消耗[/gold]；每因此消耗一张[gold]攻击[/gold]/[gold]技能[/gold]/[gold]能力[/gold]牌，
+/// 本回合获得固定的[gold]力量[/gold]/[gold]敏捷[/gold]，或立即获得固定数量的能量。
 /// </summary>
 [RegisterPower]
-public sealed class TianyiGoutongPower : ModPowerTemplate
+public sealed class LinkToHeavenPower : ModPowerTemplate
 {
 	private const decimal ScryAmount = 3m;
+	private const decimal StrengthGain = 3m;
+	private const decimal DexterityGain = 2m;
+	private const int EnergyGain = 1;
 
 	public override PowerType Type => PowerType.Buff;
 
 	public override PowerStackType StackType => PowerStackType.Counter;
 
 	public override PowerAssetProfile AssetProfile => new(
-		IconPath: "res://images/powers/TianyiGoutongPower.png",
-		BigIconPath: "res://images/powers/TianyiGoutongPowerBig.png");
+		IconPath: "res://images/powers/LinkToHeavenPower.png",
+		BigIconPath: "res://images/powers/LinkToHeavenPowerBig.png");
 
 	protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
 	[
@@ -71,24 +74,27 @@ public sealed class TianyiGoutongPower : ModPowerTemplate
 		switch (card.Type)
 		{
 			case CardType.Attack:
-				await PowerCmd.Apply<TempStrFromTianyiGoutongPower>(choiceContext, owner, Amount, owner, null);
+				await PowerCmd.Apply<TempStrFromLinkToHeavenPower>(choiceContext, owner, StrengthGain, owner, null);
 				break;
 			case CardType.Skill:
-				await PowerCmd.Apply<TempDexFromTianyiGoutongPower>(choiceContext, owner, Amount, owner, null);
+				await PowerCmd.Apply<TempDexFromLinkToHeavenPower>(choiceContext, owner, DexterityGain, owner, null);
+				break;
+			case CardType.Power:
+				await PlayerCmd.GainEnergy(EnergyGain, card.Owner);
 				break;
 		}
 	}
 }
 
 [RegisterPower]
-public sealed class TempDexFromTianyiGoutongPower : TempDexPower<TianyiGoutongPower> { }
+public sealed class TempDexFromLinkToHeavenPower : TempDexPower<LinkToHeavenPower> { }
 
 [RegisterPower]
-public sealed class TempStrFromTianyiGoutongPower : TemporaryStrengthPower, IModPowerAssetOverrides
+public sealed class TempStrFromLinkToHeavenPower : TemporaryStrengthPower, IModPowerAssetOverrides
 {
 	private static readonly PowerModel SetupStrikePowerTemplate = ModelDb.Power<SetupStrikePower>();
 
-	public override AbstractModel OriginModel => ModelDb.Card<TianyiGoutong>();
+	public override AbstractModel OriginModel => ModelDb.Card<LinkToHeaven>();
 
 	public PowerAssetProfile AssetProfile => new(
 		IconPath: SetupStrikePowerTemplate.PackedIconPath,

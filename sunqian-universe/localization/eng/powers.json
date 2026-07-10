@@ -69,6 +69,6 @@
   "SUNQIAN_UNIVERSE_POWER_BENEVOLENCE_RIGHTEOUSNESS_DUAL_SWORDS_POWER.title": "Benevolence & Righteousness Dual Swords",
   "SUNQIAN_UNIVERSE_POWER_BENEVOLENCE_RIGHTEOUSNESS_DUAL_SWORDS_POWER.description": "Cards with \"Strike\" in their name are played an additional [blue]{Amount}[/blue] {Amount:plural:time|times}.",
   "SUNQIAN_UNIVERSE_POWER_BENEVOLENCE_RIGHTEOUSNESS_DUAL_SWORDS_POWER.smartDescription": "Cards with \"Strike\" in their name are played an additional [blue]{Amount}[/blue] {Amount:plural:time|times}.",
-  "SUNQIAN_UNIVERSE_POWER_TIANYI_GOUTONG_POWER.title": "Heaven's Will Communication",
-  "SUNQIAN_UNIVERSE_POWER_TIANYI_GOUTONG_POWER.description": "At the start of each turn, [gold]Scry[/gold] [blue]3[/blue]. Cards put into your discard pile this way are [gold]Exhausted[/gold] instead. For each Attack/Skill exhausted this way, gain [blue]{Amount}[/blue] [gold]Strength[/gold]/[gold]Dexterity[/gold] this turn."
+  "SUNQIAN_UNIVERSE_POWER_LINK_TO_HEAVEN_POWER.title": "Link to Heaven",
+  "SUNQIAN_UNIVERSE_POWER_LINK_TO_HEAVEN_POWER.description": "At the start of each turn, [gold]Scry[/gold] [blue]3[/blue]. Cards not kept are [gold]Exhausted[/gold] instead. For each Attack/Skill/Power exhausted this way, gain [blue]3[/blue] [gold]Strength[/gold]/[blue]2[/blue] [gold]Dexterity[/gold]/{energyPrefix:energyIcons(1)} this turn."
 }

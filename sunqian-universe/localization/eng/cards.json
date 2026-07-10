@@ -106,6 +106,6 @@
   "SUNQIAN_UNIVERSE_CARD_NIGHT_RAID_WUCHAO_SCRIPT.description": "Add 2 [gold]{IfUpgraded:show:Starry Night Strike+|Starry Night Strike}[/gold] that [gold]Exhaust[/gold] when played into your [gold]Hand[/gold].\n[gold]Stackable Script[/gold]: Cards with \"Strike\" in their name apply {BurningPower:diff()} additional [gold]Burning[/gold].",
   "SUNQIAN_UNIVERSE_CARD_PORTAL.title": "Portal",
   "SUNQIAN_UNIVERSE_CARD_PORTAL.description": "[gold]Scry[/gold] {Scry}. Draw a card. If it is an [gold]Attack[/gold], play it at a random target{IfUpgraded:show: and draw another card|}.",
-  "SUNQIAN_UNIVERSE_CARD_TIANYI_GOUTONG.title": "Heaven's Will Communication",
-  "SUNQIAN_UNIVERSE_CARD_TIANYI_GOUTONG.description": "At the start of each turn, [gold]Scry[/gold] {Scry}. Cards put into your discard pile this way are [gold]Exhausted[/gold] instead. For each Attack/Skill exhausted this way, gain {StrengthPower:diff()}/{DexterityPower:diff()} [gold]Strength[/gold]/[gold]Dexterity[/gold] this turn."
+  "SUNQIAN_UNIVERSE_CARD_LINK_TO_HEAVEN.title": "Link to Heaven",
+  "SUNQIAN_UNIVERSE_CARD_LINK_TO_HEAVEN.description": "At the start of each turn, [gold]Scry[/gold] [blue]3[/blue]. Cards not kept are [gold]Exhausted[/gold] instead. For each Attack/Skill/Power exhausted this way, gain [blue]3[/blue] [gold]Strength[/gold]/[blue]2[/blue] [gold]Dexterity[/gold]/{energyPrefix:energyIcons(1)} this turn."
 }

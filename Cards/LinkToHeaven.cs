@@ -4,10 +4,8 @@ using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.HoverTips;
-using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.Models.Powers;
 using Squ.Character;
-using Squ.Combat;
 using Squ.Powers;
 using STS2RitsuLib.Interop.AutoRegistration;
 using STS2RitsuLib.Scaffolding.Content;
@@ -16,19 +14,11 @@ using STS2RitsuLib.Scaffolding.Content;
 
 namespace Squ.Cards;
 
-[RegisterCard(typeof(SunqianCardPool), StableEntryStem = "tianyi_goutong")]
-public sealed class TianyiGoutong : ModCardTemplate
+[RegisterCard(typeof(SunqianCardPool), StableEntryStem = "link_to_heaven")]
+public sealed class LinkToHeaven : ModCardTemplate
 {
-	private const decimal ScryAmount = 3m;
-	private const decimal BaseBuffAmount = 2m;
-	private const decimal UpgradedBuffAmount = 3m;
-
-	protected override IEnumerable<DynamicVar> CanonicalVars =>
-	[
-		new ScryVar(ScryAmount),
-		new PowerVar<StrengthPower>(BaseBuffAmount),
-		new PowerVar<DexterityPower>(BaseBuffAmount),
-	];
+	public override CardAssetProfile AssetProfile => new(
+		PortraitPath: "res://images/cards/LinkToHeaven.png");
 
 	public override IEnumerable<CardKeyword> CanonicalKeywords =>
 	[
@@ -42,24 +32,24 @@ public sealed class TianyiGoutong : ModCardTemplate
 		HoverTipFactory.FromPower<DexterityPower>(),
 	];
 
-	public TianyiGoutong()
-		: base(1, CardType.Power, CardRarity.Ancient, TargetType.Self)
+	public LinkToHeaven()
+		: base(2, CardType.Power, CardRarity.Ancient, TargetType.Self)
 	{
 	}
 
 	protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
 	{
-		await PowerCmd.Apply<TianyiGoutongPower>(
+		await PowerCmd.Apply<LinkToHeavenPower>(
 			choiceContext,
 			Owner.Creature,
-			DynamicVars[nameof(StrengthPower)].BaseValue,
+			1m,
 			Owner.Creature,
 			this);
 	}
 
 	protected override void OnUpgrade()
 	{
-		DynamicVars[nameof(StrengthPower)].UpgradeValueBy(UpgradedBuffAmount - BaseBuffAmount);
-		DynamicVars[nameof(DexterityPower)].UpgradeValueBy(UpgradedBuffAmount - BaseBuffAmount);
+		MockSetEnergyCost(new CardEnergyCost(this, 1, costsX: false));
+		InvokeEnergyCostChanged();
 	}
 }
