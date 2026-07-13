@@ -150,7 +150,7 @@ public sealed class TeleprompterRelic : ScriptRelicTemplate
 			return;
 		}
 
-		TaskHelper.RunSafely(DoActivateVisuals());
+		_ = TaskHelper.RunSafely(DoActivateVisuals());
 		await CardPileCmd.Draw(choiceContext, ScriptsExhausted / threshold, Owner);
 		ScriptsExhausted %= threshold;
 	}

@@ -24,6 +24,9 @@ public sealed class Portal : ModCardTemplate
 		new ScryVar(ScryAmount),
 	];
 
+	public override CardAssetProfile AssetProfile => new(
+		PortraitPath: "res://images/cards/Portal.png");
+
 	public override IEnumerable<CardKeyword> CanonicalKeywords =>
 	[
 		SquKeywords.Scry,
