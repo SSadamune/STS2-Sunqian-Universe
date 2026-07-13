@@ -16,6 +16,7 @@ using MegaCrit.Sts2.Core.Nodes.Rooms;
 using MegaCrit.Sts2.Core.Nodes.Vfx;
 using MegaCrit.Sts2.Core.Random;
 using MegaCrit.Sts2.Core.ValueProps;
+using Squ.Relics;
 using STS2RitsuLib.Combat.HealthBars;
 using STS2RitsuLib.Interop.AutoRegistration;
 using STS2RitsuLib.Scaffolding.Content;
@@ -76,7 +77,8 @@ public sealed class BurningPower : ModPowerTemplate, IHealthBarForecastSource
 
 	public override Task AfterApplied(Creature? applier, CardModel? cardSource)
 	{
-		ResetClearChance();
+		ReduceClearChanceTo(InitialClearChance);
+		AdvancedGunpowderStudiesRelic.TryApplyZeroClearChance(applier ?? Applier, this);
 		return Task.CompletedTask;
 	}
 
@@ -90,7 +92,8 @@ public sealed class BurningPower : ModPowerTemplate, IHealthBarForecastSource
 		// Hook broadcasts to every combat listener; only react to our own stacks being increased.
 		if (power == this && amount > 0m)
 		{
-			ResetClearChance();
+			ReduceClearChanceTo(InitialClearChance);
+			AdvancedGunpowderStudiesRelic.TryApplyZeroClearChance(applier ?? Applier, this);
 		}
 
 		return Task.CompletedTask;
@@ -136,8 +139,6 @@ public sealed class BurningPower : ModPowerTemplate, IHealthBarForecastSource
 		data.ClearChance = Math.Min(data.ClearChance + ClearChanceIncrement, 1f);
 		SyncClearChanceVar();
 	}
-
-	private void ResetClearChance() => ReduceClearChanceTo(InitialClearChance);
 
 	/// <summary>
 	/// Lowers the clear-to-zero chance used at turn start (0–1). Never raises it.
