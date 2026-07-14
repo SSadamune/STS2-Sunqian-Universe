@@ -23,5 +23,8 @@
   "SUNQIAN_UNIVERSE_RELIC_SUPPORTING_ACTOR_BADGE.flavor": "姓名栏被人为涂抹，无法看清…",
   "SUNQIAN_UNIVERSE_RELIC_DAILY_WAGE.title": "日结工资",
   "SUNQIAN_UNIVERSE_RELIC_DAILY_WAGE.description": "在你的回合结束时，若你本回合使用过[gold]剧本[/gold]牌，获得[blue]{Gold}[/blue][gold]金币[/gold]。",
-  "SUNQIAN_UNIVERSE_RELIC_DAILY_WAGE.flavor": "今天拍完，今天结。"
+  "SUNQIAN_UNIVERSE_RELIC_DAILY_WAGE.flavor": "今天拍完，今天结。",
+  "SUNQIAN_UNIVERSE_RELIC_LUBU_BASKETBALL.title": "吕布的篮球",
+  "SUNQIAN_UNIVERSE_RELIC_LUBU_BASKETBALL.description": "每[blue]{Turns}[/blue]个回合，获得[blue]{VigorPower}[/blue]点[gold]活力[/gold]。",
+  "SUNQIAN_UNIVERSE_RELIC_LUBU_BASKETBALL.flavor": "人中吕布，球中mvp。"
 }

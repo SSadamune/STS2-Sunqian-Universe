@@ -23,5 +23,8 @@
   "SUNQIAN_UNIVERSE_RELIC_SUPPORTING_ACTOR_BADGE.flavor": "The name field has been deliberately smudged—illegible…",
   "SUNQIAN_UNIVERSE_RELIC_DAILY_WAGE.title": "Daily Wage",
   "SUNQIAN_UNIVERSE_RELIC_DAILY_WAGE.description": "At the end of your turn, if you played a [gold]Script[/gold] card this turn, gain [blue]{Gold}[/blue] [gold]Gold[/gold].",
-  "SUNQIAN_UNIVERSE_RELIC_DAILY_WAGE.flavor": "Shoot today, paid today."
+  "SUNQIAN_UNIVERSE_RELIC_DAILY_WAGE.flavor": "Shoot today, paid today.",
+  "SUNQIAN_UNIVERSE_RELIC_LUBU_BASKETBALL.title": "Lubu's Basketball",
+  "SUNQIAN_UNIVERSE_RELIC_LUBU_BASKETBALL.description": "Every [blue]{Turns}[/blue] {Turns:plural:turn|turns}, gain [blue]{VigorPower}[/blue] [gold]Vigor[/gold].",
+  "SUNQIAN_UNIVERSE_RELIC_LUBU_BASKETBALL.flavor": "Among men, Lubu. Among balls, MVP."
 }
