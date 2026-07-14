@@ -20,7 +20,7 @@ namespace Squ.Cards;
 [RegisterCard(typeof(SunqianCardPool), StableEntryStem = "transparent_hole")]
 public sealed class TransparentHole : ModCardTemplate, IRandomEnemyTargetCount
 {
-	public const int BaseDamage = 8;
+	public const int BaseDamage = 7;
 
 	protected override bool HasEnergyCostX => true;
 
