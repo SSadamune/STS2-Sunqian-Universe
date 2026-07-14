@@ -1,6 +1,6 @@
 {
   "SUNQIAN_UNIVERSE_KEYWORD_SCRIPT.title": "Script",
-  "SUNQIAN_UNIVERSE_KEYWORD_SCRIPT.description": "A special ongoing effect. Gaining another Script while you already have one ends the previous Script.",
+  "SUNQIAN_UNIVERSE_KEYWORD_SCRIPT.description": "A special type of status. When you gain a new Script status, the previous Script [gold]ends[/gold].",
   "SUNQIAN_UNIVERSE_KEYWORD_DOOM_KILL_THRESHOLD.title": "Doom kill threshold",
   "SUNQIAN_UNIVERSE_KEYWORD_DOOM_KILL_THRESHOLD.description": "That enemy's HP minus its [gold]Poison[/gold], [gold]Burning[/gold], and [gold]Doom[/gold].",
   "SUNQIAN_UNIVERSE_KEYWORD_STACKABLE_SCRIPT.title": "Stackable",
@@ -8,5 +8,7 @@
   "SUNQIAN_UNIVERSE_KEYWORD_MULTI_TARGET.title": "Multi-target",
   "SUNQIAN_UNIVERSE_KEYWORD_MULTI_TARGET.description": "A card that targets ALL enemies or multiple random enemies is called a Multi-target card.",
   "SUNQIAN_UNIVERSE_KEYWORD_ENVIRONMENTAL.title": "Environmental",
-  "SUNQIAN_UNIVERSE_KEYWORD_ENVIRONMENTAL.description": "This damage has no source and deals a fixed amount."
+  "SUNQIAN_UNIVERSE_KEYWORD_ENVIRONMENTAL.description": "This damage has no source and deals a fixed amount.",
+  "SUNQIAN_UNIVERSE_KEYWORD_SCRY.title": "Scry",
+  "SUNQIAN_UNIVERSE_KEYWORD_SCRY.description": "Look at the top cards of your draw pile, then discard any number of them."
 }

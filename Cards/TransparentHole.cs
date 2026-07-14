@@ -21,7 +21,6 @@ namespace Squ.Cards;
 public sealed class TransparentHole : ModCardTemplate, IRandomEnemyTargetCount
 {
 	public const int BaseDamage = 7;
-	public const int UpgradedDamage = 10;
 
 	protected override bool HasEnergyCostX => true;
 
@@ -40,7 +39,7 @@ public sealed class TransparentHole : ModCardTemplate, IRandomEnemyTargetCount
 	{
 	}
 
-	public int GetRandomEnemyTargetCount() => ResolveEnergyXValue();
+	public int GetRandomEnemyTargetCount() => ResolveTargetCount();
 
 	protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
 	{
@@ -50,7 +49,7 @@ public sealed class TransparentHole : ModCardTemplate, IRandomEnemyTargetCount
 			return;
 		}
 
-		int targetCount = ResolveEnergyXValue();
+		int targetCount = ResolveTargetCount();
 		if (targetCount <= 0)
 		{
 			return;
@@ -83,8 +82,14 @@ public sealed class TransparentHole : ModCardTemplate, IRandomEnemyTargetCount
 		}
 	}
 
-	protected override void OnUpgrade()
+	private int ResolveTargetCount()
 	{
-		DynamicVars.Damage.UpgradeValueBy(UpgradedDamage - BaseDamage);
+		int targetCount = ResolveEnergyXValue();
+		if (IsUpgraded)
+		{
+			targetCount++;
+		}
+
+		return targetCount;
 	}
 }

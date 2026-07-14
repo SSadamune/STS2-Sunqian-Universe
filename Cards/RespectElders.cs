@@ -83,6 +83,7 @@ public sealed class RespectElders : ModCardTemplate
 	{
 		int maxHp = target.MaxHp;
 		int currentHp = target.CurrentHp;
-		return currentHp <= maxHp * 3 / 4 && currentHp >= maxHp / 4;
+		// Compare via cross-multiply so 1/4 and 3/4 are exact (46/4 must not become 11).
+		return currentHp * 4 >= maxHp && currentHp * 4 <= maxHp * 3;
 	}
 }

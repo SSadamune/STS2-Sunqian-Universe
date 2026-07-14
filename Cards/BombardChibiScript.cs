@@ -24,10 +24,10 @@ namespace Squ.Cards;
 [RegisterCard(typeof(SunqianCardPool), StableEntryStem = "bombard_chibi_script")]
 public sealed class BombardChibiScript : ScriptCardTemplate
 {
-	public const int BaseBlock = 6;
-	public const int UpgradedBlock = 8;
-	public const int BaseBurning = 6;
-	public const int UpgradedBurning = 8;
+	public const int BaseBlock = 7;
+	public const int UpgradedBlock = 10;
+	public const int BaseBurning = 7;
+	public const int UpgradedBurning = 10;
 
 	protected override IEnumerable<DynamicVar> CanonicalVars =>
 	[
@@ -36,6 +36,8 @@ public sealed class BombardChibiScript : ScriptCardTemplate
 	];
 
 	public override bool GainsBlock => true;
+
+	protected override HashSet<CardTag> CanonicalTags => [SquCardTags.Script, SquCardTags.Burning];
 
 	protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
 	[
@@ -53,7 +55,7 @@ public sealed class BombardChibiScript : ScriptCardTemplate
 		PortraitPath: "res://images/cards/BombardChibiScript.png");
 
 	public BombardChibiScript()
-		: base(2, CardType.Skill, CardRarity.Uncommon, TargetType.AllEnemies, true)
+		: base(3, CardType.Skill, CardRarity.Uncommon, TargetType.AllEnemies, true)
 	{
 	}
 

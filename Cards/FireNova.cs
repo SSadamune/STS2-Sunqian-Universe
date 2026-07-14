@@ -28,7 +28,7 @@ namespace Squ.Cards;
 [RegisterCard(typeof(SunqianCardPool), StableEntryStem = "fire_nova")]
 public sealed class FireNova : ModCardTemplate, IRandomEnemyTargetCount
 {
-	public const int DamageAmount = 4;
+	public const int DamageAmount = 3;
 	public const int BurningStacks = 6;
 
 	protected override bool HasEnergyCostX => IsUpgraded;

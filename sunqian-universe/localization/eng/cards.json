@@ -34,7 +34,7 @@
   "SUNQIAN_UNIVERSE_CARD_WATER_FIRE_INVINCIBLE.title": "Water-Fire Invincible",
   "SUNQIAN_UNIVERSE_CARD_WATER_FIRE_INVINCIBLE.description": "Deal {Damage:diff()} damage. Apply [gold]Burning[/gold] equal to damage dealt. Gain [gold]Block[/gold] equal to [gold]Burning[/gold] applied.",
   "SUNQIAN_UNIVERSE_CARD_TABLE_FLIP.title": "Table Flip",
-  "SUNQIAN_UNIVERSE_CARD_TABLE_FLIP.description": "Deal {Damage:diff()} damage to ALL enemies. Apply {WeakPower:diff()} [gold]Weak[/gold] to ALL enemies. At the start of your turn, if no enemy has [gold]Weak[/gold], return this to your [gold]Hand[/gold].",
+  "SUNQIAN_UNIVERSE_CARD_TABLE_FLIP.description": "Deal {Damage:diff()} damage to ALL enemies and apply {WeakPower:diff()} [gold]Weak[/gold] to them. Then, at the start of your turn, if no enemy has [gold]Weak[/gold], return this card to your [gold]Hand[/gold].",
   "SUNQIAN_UNIVERSE_CARD_LOUD_SECRET_PLOT.title": "Loud Secret Plot",
   "SUNQIAN_UNIVERSE_CARD_LOUD_SECRET_PLOT.description": "While only one enemy remains, your [gold]Multi-target[/gold] Attack or Skill cards play an additional time.",
   "SUNQIAN_UNIVERSE_CARD_FINGER_SNAP_STRIKE.title": "Finger Snap Strike",
@@ -60,7 +60,7 @@
   "SUNQIAN_UNIVERSE_CARD_BUDDY_TANGXIAOHU.title": "Buddy Tangxiaohu",
   "SUNQIAN_UNIVERSE_CARD_BUDDY_TANGXIAOHU.description": "After you play a [gold]Script[/gold] card, gain {Block:diff()} [gold]Block[/gold]. This value is affected by [gold]Dexterity[/gold].",
   "SUNQIAN_UNIVERSE_CARD_TRANSPARENT_HOLE.title": "Transparent Hole",
-  "SUNQIAN_UNIVERSE_CARD_TRANSPARENT_HOLE.description": "Deal {Damage:diff()} damage to X random enemies. Then, if there are fewer enemies than this target count, perform this effect again at target count minus 1.",
+  "SUNQIAN_UNIVERSE_CARD_TRANSPARENT_HOLE.description": "Deal {Damage:diff()} damage to {IfUpgraded:show:X+1|X} random enemies. Then, if there are fewer enemies than this target count, perform this effect again at target count minus 1.",
   "SUNQIAN_UNIVERSE_CARD_XILIANG_SAVAGE_SCRIPT.title": "Xiliang Savage Script",
   "SUNQIAN_UNIVERSE_CARD_XILIANG_SAVAGE_SCRIPT.description": "Gain {Block:diff()} [gold]Block[/gold]. Gain {VigorPower:diff()} [gold]Vigor[/gold].\n[gold]Script[/gold]: Your [gold]Attacks[/gold] permanently gain the damage added from spent [gold]Vigor[/gold].",
   "SUNQIAN_UNIVERSE_CARD_VOICE_CHANGE.title": "Voice Change",
@@ -103,5 +103,9 @@
   "SUNQIAN_UNIVERSE_CARD_STARRY_NIGHT_STRIKE.title": "Starry Night Strike",
   "SUNQIAN_UNIVERSE_CARD_STARRY_NIGHT_STRIKE.description": "Deal {Damage:diff()} damage. At the end of your turn, play this card from your [gold]Hand[/gold] on a random enemy.",
   "SUNQIAN_UNIVERSE_CARD_NIGHT_RAID_WUCHAO_SCRIPT.title": "Night Raid on Wuchao Script",
-  "SUNQIAN_UNIVERSE_CARD_NIGHT_RAID_WUCHAO_SCRIPT.description": "Add 2 [gold]{IfUpgraded:show:Starry Night Strike+|Starry Night Strike}[/gold] that [gold]Exhaust[/gold] when played into your [gold]Hand[/gold].\n[gold]Stackable Script[/gold]: Cards with \"Strike\" in their name apply {BurningPower:diff()} additional [gold]Burning[/gold]."
+  "SUNQIAN_UNIVERSE_CARD_NIGHT_RAID_WUCHAO_SCRIPT.description": "Add 2 [gold]{IfUpgraded:show:Starry Night Strike+|Starry Night Strike}[/gold] that [gold]Exhaust[/gold] when played into your [gold]Hand[/gold].\n[gold]Stackable Script[/gold]: Cards with \"Strike\" in their name apply {BurningPower:diff()} additional [gold]Burning[/gold].",
+  "SUNQIAN_UNIVERSE_CARD_PORTAL.title": "Portal",
+  "SUNQIAN_UNIVERSE_CARD_PORTAL.description": "[gold]Scry[/gold] {Scry}. Draw a card.\nIf it is an [gold]Attack[/gold], play it at a random target{IfUpgraded:show: and draw another card|}.",
+  "SUNQIAN_UNIVERSE_CARD_LINK_TO_HEAVEN.title": "Link to Heaven",
+  "SUNQIAN_UNIVERSE_CARD_LINK_TO_HEAVEN.description": "At the start of each turn, [gold]Scry[/gold] [blue]3[/blue]. Cards not kept are [gold]Exhausted[/gold] instead. For each Attack/Skill/Power exhausted this way, gain [blue]3[/blue] [gold]Strength[/gold]/[blue]2[/blue] [gold]Dexterity[/gold]/{energyPrefix:energyIcons(1)} this turn."
 }

@@ -16,9 +16,9 @@ namespace Squ.Character;
 [RegisterCharacter]
 public sealed class SunqianCharacter : ModCharacterTemplate<SunqianCardPool, SunqianRelicPool, SunqianPotionPool>
 {
-	public override Color NameColor => new(0.55f, 0.35f, 0.95f);
-	public override Color EnergyLabelOutlineColor => new(0.55f, 0.35f, 0.95f);
-	public override Color MapDrawingColor => new(0.55f, 0.35f, 0.95f);
+	public override Color NameColor => new("6B3FA0");
+	public override Color EnergyLabelOutlineColor => new("3F2568");
+	public override Color MapDrawingColor => new("3F2568");
 
 	public override CharacterGender Gender => CharacterGender.Masculine;
 
@@ -35,12 +35,12 @@ public sealed class SunqianCharacter : ModCharacterTemplate<SunqianCardPool, Sun
 				RestSiteAnimPath: "res://scenes/sunqian_character_rest_site.tscn"
 			),
 			Ui: new(
-				IconTexturePath: "res://icon.svg",
+				IconTexturePath: "res://images/scenes/Sunqian_S.png",
 				IconPath: "res://scenes/sunqian_icon.tscn",
 				CharacterSelectBgPath: "res://scenes/sunqian_bg.tscn",
-				CharacterSelectIconPath: "res://icon.svg",
-				CharacterSelectLockedIconPath: "res://icon.svg",
-				MapMarkerPath: "res://icon.svg"
+				CharacterSelectIconPath: "res://images/scenes/CharacterSelectIcon.png",
+				CharacterSelectLockedIconPath: "res://images/scenes/CharacterSelectLockedIcon.png",
+				MapMarkerPath: "res://images/scenes/Sunqian_S.png"
 			),
 			Audio: new(
 				CharacterTransitionSfx: "event:/sfx/ui/wipe_ironclad"

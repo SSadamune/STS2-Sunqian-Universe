@@ -19,7 +19,7 @@ public sealed class AllIn : ModCardTemplate
 		PortraitPath: "res://images/cards/AllIn.png");
 
 	public AllIn()
-		: base(1, CardType.Power, CardRarity.Rare, TargetType.Self)
+		: base(1, CardType.Power, CardRarity.Uncommon, TargetType.Self)
 	{
 	}
 

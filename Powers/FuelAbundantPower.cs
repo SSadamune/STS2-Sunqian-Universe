@@ -58,6 +58,13 @@ public sealed class FuelAbundantPower : ModPowerTemplate
 			return 0m;
 		}
 
+		// 手牌预览传入的是 ModelDb 规范实例（非 mutable）。此时只展示加成，不绑定牌源，
+		// 否则预览会污染 BoundCardSource，导致其它灼烧牌预览/实装都拿不到加成。
+		if (!power.IsMutable)
+		{
+			return Amount;
+		}
+
 		Data data = GetInternalData<Data>();
 		if (data.BoundCardSource != null && data.BoundCardSource != cardSource)
 		{

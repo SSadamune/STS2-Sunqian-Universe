@@ -12,6 +12,8 @@
   "SUNQIAN_UNIVERSE_POWER_SCRIPT_NEUTRAL_AMBUSH_POWER.smartDescription": "When you draw [gold]Giant Rock[/gold] or [gold]Salvo Strike[/gold], play it on a random target.",
   "SUNQIAN_UNIVERSE_POWER_SCRIPT_SENTRY_POWER.title": "Script: Sentry",
   "SUNQIAN_UNIVERSE_POWER_SCRIPT_SENTRY_POWER.description": "Cards with \"Strike\" in their name deal [blue]1[/blue] additional damage.",
+  "SUNQIAN_UNIVERSE_POWER_SCRIPT_VICE_GENERAL_POWER.title": "Script: Vice General",
+  "SUNQIAN_UNIVERSE_POWER_SCRIPT_VICE_GENERAL_POWER.description": "Cards with \"Strike\" in their name deal [blue]2[/blue] additional damage.\nCards with \"Defend\" in their name grant [blue]1[/blue] additional [gold]Block[/gold].",
   "SUNQIAN_UNIVERSE_POWER_SCRIPT_SUNQIAN_POWER.title": "Script: Sunqian",
   "SUNQIAN_UNIVERSE_POWER_SCRIPT_SUNQIAN_POWER.description": "When this [gold]Script[/gold] ends, draw [blue]1[/blue] card.",
   "SUNQIAN_UNIVERSE_POWER_SCRIPT_SUNQIAN_POWER.smartDescription": "When this [gold]Script[/gold] ends, draw [blue]{Cards:diff()}[/blue] {Cards:plural:card|cards}.",
@@ -25,8 +27,8 @@
   "SUNQIAN_UNIVERSE_POWER_THE_ARROGANT_FALL_POWER.title": "The arrogant fall",
   "SUNQIAN_UNIVERSE_POWER_THE_ARROGANT_FALL_POWER.description": "At the start of your next turn, gain [blue]{Amount}[/blue] [gold]Weak[/gold] and [gold]Vulnerable[/gold].",
   "SUNQIAN_UNIVERSE_POWER_BURNING_POWER.title": "Burning",
-  "SUNQIAN_UNIVERSE_POWER_BURNING_POWER.description": "Burning creatures take damage at the start of their turn, then [gold]Burning[/gold] has a [blue]25%[/blue] chance to clear to 0. If not cleared, this chance increases by [blue]25%[/blue].\nApplying Burning again to a Burning creature resets this chance to [blue]25%[/blue].",
-  "SUNQIAN_UNIVERSE_POWER_BURNING_POWER.smartDescription": "At the start of {OnPlayer:your turn, take|its turn, takes} [blue]{Amount}[/blue] damage, then [gold]Burning[/gold] has a [blue]{ClearChance}%[/blue] chance to clear to 0. If not cleared, this chance increases by [blue]25%[/blue]. Applying [gold]Burning[/gold] again resets this chance to [blue]25%[/blue].",
+  "SUNQIAN_UNIVERSE_POWER_BURNING_POWER.description": "Burning creatures take damage at the start of their turn, then [gold]Burning[/gold] has a [blue]25%[/blue] chance to clear to 0. If not cleared, this chance increases by [blue]25%[/blue].\nApplying Burning again to a Burning creature lowers this chance to [blue]25%[/blue].",
+  "SUNQIAN_UNIVERSE_POWER_BURNING_POWER.smartDescription": "At the start of {OnPlayer:your turn, take|its turn, takes} [blue]{Amount}[/blue] damage, then [gold]Burning[/gold] has a [blue]{ClearChance}%[/blue] chance to clear to 0. If not cleared, this chance increases by [blue]25%[/blue]. Applying [gold]Burning[/gold] again lowers this chance to [blue]25%[/blue].",
   "SUNQIAN_UNIVERSE_POWER_FUEL_ABUNDANT_POWER.title": "Fuel Abundant",
   "SUNQIAN_UNIVERSE_POWER_FUEL_ABUNDANT_POWER.description": "Increase the [gold]Burning[/gold] applied by your next card that applies [gold]Burning[/gold].",
   "SUNQIAN_UNIVERSE_POWER_FUEL_ABUNDANT_POWER.smartDescription": "Your next card that applies [gold]Burning[/gold] applies [blue]{Amount}[/blue] additional [gold]Burning[/gold]. Then this power is removed.",
@@ -66,5 +68,7 @@
   "SUNQIAN_UNIVERSE_POWER_ALL_IN_POWER.smartDescription": "When you play your last card in [gold]Hand[/gold], if it is an [gold]Attack[/gold] or [gold]Skill[/gold], it deals [blue]{Amount}[/blue]% more damage and gains [blue]{Amount}[/blue]% more [gold]Block[/gold].",
   "SUNQIAN_UNIVERSE_POWER_BENEVOLENCE_RIGHTEOUSNESS_DUAL_SWORDS_POWER.title": "Benevolence & Righteousness Dual Swords",
   "SUNQIAN_UNIVERSE_POWER_BENEVOLENCE_RIGHTEOUSNESS_DUAL_SWORDS_POWER.description": "Cards with \"Strike\" in their name are played an additional [blue]{Amount}[/blue] {Amount:plural:time|times}.",
-  "SUNQIAN_UNIVERSE_POWER_BENEVOLENCE_RIGHTEOUSNESS_DUAL_SWORDS_POWER.smartDescription": "Cards with \"Strike\" in their name are played an additional [blue]{Amount}[/blue] {Amount:plural:time|times}."
+  "SUNQIAN_UNIVERSE_POWER_BENEVOLENCE_RIGHTEOUSNESS_DUAL_SWORDS_POWER.smartDescription": "Cards with \"Strike\" in their name are played an additional [blue]{Amount}[/blue] {Amount:plural:time|times}.",
+  "SUNQIAN_UNIVERSE_POWER_LINK_TO_HEAVEN_POWER.title": "Link to Heaven",
+  "SUNQIAN_UNIVERSE_POWER_LINK_TO_HEAVEN_POWER.description": "At the start of each turn, [gold]Scry[/gold] [blue]{Amount}[/blue]. Cards not kept are [gold]Exhausted[/gold] instead. For each Attack/Skill/Power exhausted this way, gain [blue]3[/blue] [gold]Strength[/gold]/[blue]2[/blue] [gold]Dexterity[/gold]/{energyPrefix:energyIcons(1)} this turn."
 }

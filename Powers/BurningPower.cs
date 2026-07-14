@@ -16,6 +16,7 @@ using MegaCrit.Sts2.Core.Nodes.Rooms;
 using MegaCrit.Sts2.Core.Nodes.Vfx;
 using MegaCrit.Sts2.Core.Random;
 using MegaCrit.Sts2.Core.ValueProps;
+using Squ.Relics;
 using STS2RitsuLib.Combat.HealthBars;
 using STS2RitsuLib.Interop.AutoRegistration;
 using STS2RitsuLib.Scaffolding.Content;
@@ -26,7 +27,7 @@ namespace Squ.Powers;
 
 /// <summary>
 /// Burning: stackable debuff that deals damage equal to its stacks at turn start,
-/// then may clear itself with an escalating chance. Applying more Burning resets the clear chance.
+/// then may clear itself with an escalating chance. Applying more Burning lowers the clear chance toward 25%.
 /// </summary>
 [RegisterPower]
 public sealed class BurningPower : ModPowerTemplate, IHealthBarForecastSource
@@ -76,7 +77,8 @@ public sealed class BurningPower : ModPowerTemplate, IHealthBarForecastSource
 
 	public override Task AfterApplied(Creature? applier, CardModel? cardSource)
 	{
-		ResetClearChance();
+		ReduceClearChanceTo(InitialClearChance);
+		AdvancedGunpowderStudiesRelic.TryApplyZeroClearChance(applier ?? Applier, this);
 		return Task.CompletedTask;
 	}
 
@@ -90,7 +92,8 @@ public sealed class BurningPower : ModPowerTemplate, IHealthBarForecastSource
 		// Hook broadcasts to every combat listener; only react to our own stacks being increased.
 		if (power == this && amount > 0m)
 		{
-			ResetClearChance();
+			ReduceClearChanceTo(InitialClearChance);
+			AdvancedGunpowderStudiesRelic.TryApplyZeroClearChance(applier ?? Applier, this);
 		}
 
 		return Task.CompletedTask;
@@ -137,9 +140,19 @@ public sealed class BurningPower : ModPowerTemplate, IHealthBarForecastSource
 		SyncClearChanceVar();
 	}
 
-	private void ResetClearChance()
+	/// <summary>
+	/// Lowers the clear-to-zero chance used at turn start (0–1). Never raises it.
+	/// </summary>
+	public void ReduceClearChanceTo(float clearChance)
 	{
-		GetInternalData<Data>().ClearChance = InitialClearChance;
+		Data data = GetInternalData<Data>();
+		float capped = Math.Clamp(clearChance, 0f, 1f);
+		if (capped >= data.ClearChance)
+		{
+			return;
+		}
+
+		data.ClearChance = capped;
 		SyncClearChanceVar();
 	}
 
