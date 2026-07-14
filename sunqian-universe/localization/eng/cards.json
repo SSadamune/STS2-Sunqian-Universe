@@ -34,7 +34,7 @@
   "SUNQIAN_UNIVERSE_CARD_WATER_FIRE_INVINCIBLE.title": "Water-Fire Invincible",
   "SUNQIAN_UNIVERSE_CARD_WATER_FIRE_INVINCIBLE.description": "Deal {Damage:diff()} damage. Apply [gold]Burning[/gold] equal to damage dealt. Gain [gold]Block[/gold] equal to [gold]Burning[/gold] applied.",
   "SUNQIAN_UNIVERSE_CARD_TABLE_FLIP.title": "Table Flip",
-  "SUNQIAN_UNIVERSE_CARD_TABLE_FLIP.description": "Deal {Damage:diff()} damage to ALL enemies. Apply {WeakPower:diff()} [gold]Weak[/gold] to ALL enemies. At the start of your turn, if no enemy has [gold]Weak[/gold], return this to your [gold]Hand[/gold].",
+  "SUNQIAN_UNIVERSE_CARD_TABLE_FLIP.description": "Deal {Damage:diff()} damage to ALL enemies and apply {WeakPower:diff()} [gold]Weak[/gold] to them. Then, at the start of your turn, if no enemy has [gold]Weak[/gold], return this card to your [gold]Hand[/gold].",
   "SUNQIAN_UNIVERSE_CARD_LOUD_SECRET_PLOT.title": "Loud Secret Plot",
   "SUNQIAN_UNIVERSE_CARD_LOUD_SECRET_PLOT.description": "While only one enemy remains, your [gold]Multi-target[/gold] Attack or Skill cards play an additional time.",
   "SUNQIAN_UNIVERSE_CARD_FINGER_SNAP_STRIKE.title": "Finger Snap Strike",

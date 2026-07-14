@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
+using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.ValueProps;
 using Squ.Character;
@@ -29,6 +30,11 @@ public sealed class RuthlessStrike : ModCardTemplate
 	];
 
 	protected override HashSet<CardTag> CanonicalTags => [CardTag.Strike];
+
+	protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
+	[
+		HoverTipFactory.Static(StaticHoverTip.Block),
+	];
 
 	public override CardAssetProfile AssetProfile => new(
 		PortraitPath: "res://images/cards/RuthlessStrike.png");

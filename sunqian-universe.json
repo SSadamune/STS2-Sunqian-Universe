@@ -3,7 +3,7 @@
   "name": "Sunqian Universe (SQU)",
   "author": "Sadaki",
   "description": "Sunqian Universe mod for Slay the Spire 2.",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "min_game_version": "0.108.0",
   "has_pck": true,
   "has_dll": true,

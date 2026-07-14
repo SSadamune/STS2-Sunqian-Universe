@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -16,12 +17,14 @@ using STS2RitsuLib.Scaffolding.Content;
 namespace Squ.Relics;
 
 /// <summary>
-/// 《孟德新书》：敌人正面状态种类减伤；自身负面状态种类增伤（每种 10%，乘算叠加）。
+/// 《孟德新书》：敌人正面状态种类减伤；自身负面状态种类增伤（每种 8%，加算叠加，至多 40%）。
 /// </summary>
 [RegisterRelic(typeof(SunqianRelicPool), StableEntryStem = "mengde_new_book")]
 public sealed class MengdeNewBookRelic : ModRelicTemplate
 {
-	public const decimal PercentPerPowerType = 0.10m;
+	public const decimal PercentPerPowerType = 0.08m;
+
+	public const decimal MaxPercent = 0.40m;
 
 	public override RelicRarity Rarity => RelicRarity.Rare;
 
@@ -48,8 +51,7 @@ public sealed class MengdeNewBookRelic : ModRelicTemplate
 			int buffTypes = CountDistinctPowerTypes(dealer.Powers, PowerType.Buff);
 			if (buffTypes > 0)
 			{
-				// 乘算：两种 buff → 0.9 × 0.9 = 0.81（约减伤 19%）
-				return Raise(1m - PercentPerPowerType, buffTypes);
+				return 1m - Math.Min(buffTypes * PercentPerPowerType, MaxPercent);
 			}
 		}
 
@@ -58,8 +60,7 @@ public sealed class MengdeNewBookRelic : ModRelicTemplate
 			int debuffTypes = CountDistinctPowerTypes(Owner.Creature.Powers, PowerType.Debuff);
 			if (debuffTypes > 0)
 			{
-				// 乘算：两种 debuff → 1.1 × 1.1 = 1.21（约增伤 21%）
-				return Raise(1m + PercentPerPowerType, debuffTypes);
+				return 1m + Math.Min(debuffTypes * PercentPerPowerType, MaxPercent);
 			}
 		}
 
@@ -70,17 +71,6 @@ public sealed class MengdeNewBookRelic : ModRelicTemplate
 	{
 		Flash();
 		return Task.CompletedTask;
-	}
-
-	private static decimal Raise(decimal factor, int stacks)
-	{
-		decimal result = 1m;
-		for (int i = 0; i < stacks; i++)
-		{
-			result *= factor;
-		}
-
-		return result;
 	}
 
 	private static int CountDistinctPowerTypes(IEnumerable<PowerModel> powers, PowerType type) =>
