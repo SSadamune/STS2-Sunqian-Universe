@@ -60,7 +60,7 @@
   "SUNQIAN_UNIVERSE_CARD_BUDDY_TANGXIAOHU.title": "Buddy Tangxiaohu",
   "SUNQIAN_UNIVERSE_CARD_BUDDY_TANGXIAOHU.description": "After you play a [gold]Script[/gold] card, gain {Block:diff()} [gold]Block[/gold]. This value is affected by [gold]Dexterity[/gold].",
   "SUNQIAN_UNIVERSE_CARD_TRANSPARENT_HOLE.title": "Transparent Hole",
-  "SUNQIAN_UNIVERSE_CARD_TRANSPARENT_HOLE.description": "Deal {Damage:diff()} damage to X random enemies. Then, if there are fewer enemies than this target count, perform this effect again at target count minus 1.",
+  "SUNQIAN_UNIVERSE_CARD_TRANSPARENT_HOLE.description": "Deal {Damage:diff()} damage to {IfUpgraded:show:X+1|X} random enemies. Then, if there are fewer enemies than this target count, perform this effect again at target count minus 1.",
   "SUNQIAN_UNIVERSE_CARD_XILIANG_SAVAGE_SCRIPT.title": "Xiliang Savage Script",
   "SUNQIAN_UNIVERSE_CARD_XILIANG_SAVAGE_SCRIPT.description": "Gain {Block:diff()} [gold]Block[/gold]. Gain {VigorPower:diff()} [gold]Vigor[/gold].\n[gold]Script[/gold]: Your [gold]Attacks[/gold] permanently gain the damage added from spent [gold]Vigor[/gold].",
   "SUNQIAN_UNIVERSE_CARD_VOICE_CHANGE.title": "Voice Change",
