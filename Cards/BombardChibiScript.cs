@@ -37,6 +37,8 @@ public sealed class BombardChibiScript : ScriptCardTemplate
 
 	public override bool GainsBlock => true;
 
+	protected override HashSet<CardTag> CanonicalTags => [SquCardTags.Script, SquCardTags.Burning];
+
 	protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
 	[
 		HoverTipFactory.FromPower<BurningPower>(),
