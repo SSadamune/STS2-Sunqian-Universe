@@ -1,6 +1,6 @@
 {
   "SUNQIAN_UNIVERSE_KEYWORD_SCRIPT.title": "Script",
-  "SUNQIAN_UNIVERSE_KEYWORD_SCRIPT.description": "A special ongoing effect. Gaining another Script while you already have one ends the previous Script.",
+  "SUNQIAN_UNIVERSE_KEYWORD_SCRIPT.description": "A special type of status. When you gain a new Script status, the previous Script [gold]ends[/gold].",
   "SUNQIAN_UNIVERSE_KEYWORD_DOOM_KILL_THRESHOLD.title": "Doom kill threshold",
   "SUNQIAN_UNIVERSE_KEYWORD_DOOM_KILL_THRESHOLD.description": "That enemy's HP minus its [gold]Poison[/gold], [gold]Burning[/gold], and [gold]Doom[/gold].",
   "SUNQIAN_UNIVERSE_KEYWORD_STACKABLE_SCRIPT.title": "Stackable",

@@ -35,12 +35,12 @@ public sealed class SunqianCharacter : ModCharacterTemplate<SunqianCardPool, Sun
 				RestSiteAnimPath: "res://scenes/sunqian_character_rest_site.tscn"
 			),
 			Ui: new(
-				IconTexturePath: "res://icon.svg",
+				IconTexturePath: "res://images/scenes/Sunqian_S.png",
 				IconPath: "res://scenes/sunqian_icon.tscn",
 				CharacterSelectBgPath: "res://scenes/sunqian_bg.tscn",
-				CharacterSelectIconPath: "res://icon.svg",
-				CharacterSelectLockedIconPath: "res://icon.svg",
-				MapMarkerPath: "res://icon.svg"
+				CharacterSelectIconPath: "res://images/scenes/CharacterSelectIcon.png",
+				CharacterSelectLockedIconPath: "res://images/scenes/CharacterSelectLockedIcon.png",
+				MapMarkerPath: "res://images/scenes/Sunqian_S.png"
 			),
 			Audio: new(
 				CharacterTransitionSfx: "event:/sfx/ui/wipe_ironclad"

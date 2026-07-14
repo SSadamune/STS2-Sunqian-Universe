@@ -1,4 +1,3 @@
-using System;
 using System.Reflection;
 using HarmonyLib;
 using MegaCrit.Sts2.Core.Logging;
@@ -6,7 +5,6 @@ using MegaCrit.Sts2.Core.Modding;
 using Squ.Cards;
 using Squ.Character;
 using Squ.Combat;
-using Squ.Patches;
 using Squ.Relics;
 using STS2RitsuLib;
 using STS2RitsuLib.Interop;
@@ -48,14 +46,7 @@ public static class SquMod
 
 		var harmony = new Harmony($"{ModId}.patches");
 		harmony.PatchAll(assembly);
-		try
-		{
-			SquStrikeRedirectPatches.Initialize(harmony);
-		}
-		catch (Exception ex)
-		{
-			Logger.Warn($"Basic strike redirection disabled: {ex.Message}");
-		}
+		SquStrikeRedirectPatches.Initialize(harmony);
 
 		Logger.Info("sunqian-universe (SQU) mod loaded!");
 	}
