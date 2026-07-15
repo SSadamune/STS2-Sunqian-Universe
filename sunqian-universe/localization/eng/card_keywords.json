@@ -10,5 +10,7 @@
   "SUNQIAN_UNIVERSE_KEYWORD_ENVIRONMENTAL.title": "Environmental",
   "SUNQIAN_UNIVERSE_KEYWORD_ENVIRONMENTAL.description": "This damage has no source and deals a fixed amount.",
   "SUNQIAN_UNIVERSE_KEYWORD_SCRY.title": "Scry",
-  "SUNQIAN_UNIVERSE_KEYWORD_SCRY.description": "Look at the top cards of your draw pile, then discard any number of them."
+  "SUNQIAN_UNIVERSE_KEYWORD_SCRY.description": "Look at the top cards of your draw pile, then discard any number of them.",
+  "SUNQIAN_UNIVERSE_KEYWORD_FIT.title": "Fit",
+  "SUNQIAN_UNIVERSE_KEYWORD_FIT.description": "Whenever this would be shuffled into your [gold]Draw Pile[/gold], place it on the top instead."
 }

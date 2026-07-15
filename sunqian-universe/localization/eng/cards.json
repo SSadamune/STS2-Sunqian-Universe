@@ -80,7 +80,7 @@
   "SUNQIAN_UNIVERSE_CARD_OPEN_DEFECATION.description": "Exhaust all unplayable cards in your [gold]Hand[/gold]. If at least {Threshold} were exhausted, add a [gold]{IfUpgraded:show:Splash+|Splash}[/gold] with [gold]Exhaust[/gold] into your [gold]Hand[/gold].",
   "SUNQIAN_UNIVERSE_CARD_RESPECT_ELDERS.title": "Respect Elders",
   "SUNQIAN_UNIVERSE_CARD_RESPECT_ELDERS.description": "Deal {Damage:diff()} damage.\n{HitText}",
-  "SUNQIAN_UNIVERSE_CARD_RESPECT_ELDERS.hitCondition": "If the target's HP is between 1/4 and 3/4 of its max, hit {HitCount:diff()} times.",
+  "SUNQIAN_UNIVERSE_CARD_RESPECT_ELDERS.hitCondition": "If the target's HP is between 25% and 75% of its max, hit {HitCount:diff()} times.",
   "SUNQIAN_UNIVERSE_CARD_RESPECT_ELDERS.noHitCondition": "[color=gray]My blade spares neither old nor young.[/color]",
   "SUNQIAN_UNIVERSE_CARD_GUAN_DI_FORM.title": "Guan Di Form",
   "SUNQIAN_UNIVERSE_CARD_GUAN_DI_FORM.description": "After you play a Skill, gain {DexterityPower:diff()} [gold]Dexterity[/gold] this turn. After you play an Attack, gain {StrengthPower:diff()} [gold]Strength[/gold] this turn.",
@@ -107,5 +107,7 @@
   "SUNQIAN_UNIVERSE_CARD_PORTAL.title": "Portal",
   "SUNQIAN_UNIVERSE_CARD_PORTAL.description": "[gold]Scry[/gold] {Scry}. Draw a card.\nIf it is an [gold]Attack[/gold], play it at a random target{IfUpgraded:show: and draw another card|}.",
   "SUNQIAN_UNIVERSE_CARD_LINK_TO_HEAVEN.title": "Link to Heaven",
-  "SUNQIAN_UNIVERSE_CARD_LINK_TO_HEAVEN.description": "At the start of each turn, [gold]Scry[/gold] [blue]3[/blue]. Cards not kept are [gold]Exhausted[/gold] instead. For each Attack/Skill/Power exhausted this way, gain [blue]3[/blue] [gold]Strength[/gold]/[blue]2[/blue] [gold]Dexterity[/gold]/{energyPrefix:energyIcons(1)} this turn."
+  "SUNQIAN_UNIVERSE_CARD_LINK_TO_HEAVEN.description": "At the start of each turn, [gold]Scry[/gold] [blue]3[/blue]. Cards not kept are [gold]Exhausted[/gold] instead. For each Attack/Skill/Power exhausted this way, gain [blue]3[/blue] [gold]Strength[/gold]/[blue]2[/blue] [gold]Dexterity[/gold]/{energyPrefix:energyIcons(1)} this turn.",
+  "SUNQIAN_UNIVERSE_CARD_BLITZKRIEG.title": "Blitzkrieg",
+  "SUNQIAN_UNIVERSE_CARD_BLITZKRIEG.description": "Deal {Damage:diff()} damage.\nPlay all [gold]Blitzkrieg[/gold] and [gold]Strike[/gold] cards from your [gold]Draw Pile[/gold] targeting this enemy."
 }

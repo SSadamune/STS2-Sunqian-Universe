@@ -102,7 +102,7 @@
   "SUNQIAN_UNIVERSE_CARD_OPEN_DEFECATION.description": "消耗所有不能打出的[gold]手牌[/gold]。若消耗了至少{Threshold}张，将一张带有[gold]消耗[/gold]的[gold]{IfUpgraded:show:飞溅+|飞溅}[/gold]加入[gold]手牌[/gold]。",
   "SUNQIAN_UNIVERSE_CARD_RESPECT_ELDERS.title": "尊老爱幼",
   "SUNQIAN_UNIVERSE_CARD_RESPECT_ELDERS.description": "造成{Damage:diff()}点伤害。\n{HitText}",
-  "SUNQIAN_UNIVERSE_CARD_RESPECT_ELDERS.hitCondition": "若该敌人的生命值不大于3/4且不小于1/4，则攻击{HitCount:diff()}次。",
+  "SUNQIAN_UNIVERSE_CARD_RESPECT_ELDERS.hitCondition": "若该敌人的生命值不大于75%且不小于25%，则攻击{HitCount:diff()}次。",
   "SUNQIAN_UNIVERSE_CARD_RESPECT_ELDERS.noHitCondition": "[color=gray]某的大刀不斩老幼[/color]",
   "SUNQIAN_UNIVERSE_CARD_GUAN_DI_FORM.title": "关帝形态",
   "SUNQIAN_UNIVERSE_CARD_GUAN_DI_FORM.description": "你使用技能牌后，本回合获得{DexterityPower:diff()}点[gold]敏捷[/gold]。你使用攻击牌后，本回合获得{StrengthPower:diff()}点[gold]力量[/gold]。",
@@ -127,5 +127,7 @@
   "SUNQIAN_UNIVERSE_CARD_PORTAL.title": "传送门",
   "SUNQIAN_UNIVERSE_CARD_PORTAL.description": "[gold]预见[/gold]{Scry}。抽1张牌。\n若抽到的是[gold]攻击[/gold]牌，对随机目标打出{IfUpgraded:show:并再抽1张牌|}。",
   "SUNQIAN_UNIVERSE_CARD_LINK_TO_HEAVEN.title": "天意连接",
-  "SUNQIAN_UNIVERSE_CARD_LINK_TO_HEAVEN.description": "每回合开始时[gold]预见[/gold][blue]3[/blue]。未被保留的牌将被[gold]消耗[/gold]，若为[gold]攻击[/gold]/[gold]技能[/gold]/[gold]能力[/gold]牌，你本回合获得[blue]3[/blue]点[gold]力量[/gold]/[blue]2[/blue]点[gold]敏捷[/gold]/{energyPrefix:energyIcons(1)}。"
+  "SUNQIAN_UNIVERSE_CARD_LINK_TO_HEAVEN.description": "每回合开始时[gold]预见[/gold][blue]3[/blue]。未被保留的牌将被[gold]消耗[/gold]，若为[gold]攻击[/gold]/[gold]技能[/gold]/[gold]能力[/gold]牌，你本回合获得[blue]3[/blue]点[gold]力量[/gold]/[blue]2[/blue]点[gold]敏捷[/gold]/{energyPrefix:energyIcons(1)}。",
+  "SUNQIAN_UNIVERSE_CARD_BLITZKRIEG.title": "闪电战",
+  "SUNQIAN_UNIVERSE_CARD_BLITZKRIEG.description": "造成{Damage:diff()}点伤害。\n对该敌人打出你抽牌堆中所有的[gold]闪电战[/gold]和[gold]打击[/gold]。"
 }
