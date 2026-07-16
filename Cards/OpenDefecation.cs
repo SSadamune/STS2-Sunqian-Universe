@@ -74,7 +74,7 @@ public sealed class OpenDefecation : ModCardTemplate
 				splash.UpgradeInternal();
 				splash.FinalizeUpgradeInternal();
 			}
-			splash.AddKeyword(CardKeyword.Exhaust);
+			splash.AddKeyword(CardKeyword.Retain);
 			await CardPileCmd.AddGeneratedCardToCombat(splash, PileType.Hand, Owner);
 		}
 	}

@@ -3,8 +3,8 @@ using System.Threading.Tasks;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
+using MegaCrit.Sts2.Core.Models.CardPools;
 using MegaCrit.Sts2.Core.ValueProps;
-using Squ.Character;
 using Squ.Combat;
 using STS2RitsuLib.Interop.AutoRegistration;
 using STS2RitsuLib.Scaffolding.Content;
@@ -13,7 +13,7 @@ using STS2RitsuLib.Scaffolding.Content;
 
 namespace Squ.Cards;
 
-[RegisterCard(typeof(SunqianCardPool), StableEntryStem = "salvo_strike")]
+[RegisterCard(typeof(TokenCardPool), StableEntryStem = "salvo_strike")]
 public sealed class SalvoStrike : ModCardTemplate, IRandomEnemyTargetCount
 {
 	public const int BaseDamage = 10;
@@ -38,7 +38,7 @@ public sealed class SalvoStrike : ModCardTemplate, IRandomEnemyTargetCount
 	public override TargetType TargetType => SquTargetTypes.RandomEnemies;
 
 	public SalvoStrike()
-		: base(1, CardType.Attack, CardRarity.Token, TargetType.AnyEnemy, showInCardLibrary: false)
+		: base(1, CardType.Attack, CardRarity.Token, TargetType.AnyEnemy)
 	{
 	}
 
