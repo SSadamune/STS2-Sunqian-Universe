@@ -71,7 +71,7 @@
   "SUNQIAN_UNIVERSE_CARD_VOICE_CHANGE.description": "Gain {Block:diff()} [gold]Block[/gold]. [gold]Upgrade[/gold] a [gold]Script[/gold] card from your [gold]Exhaust[/gold] pile and put it on top of your [gold]Draw Pile[/gold].",
   "SUNQIAN_UNIVERSE_CARD_VOICE_CHANGE.selectionScreenPrompt": "Choose a [gold]Script[/gold] card.",
   "SUNQIAN_UNIVERSE_CARD_LENS_RESHOOT.title": "Lens Reshoot",
-  "SUNQIAN_UNIVERSE_CARD_LENS_RESHOOT.description": "Put a random [gold]Script[/gold] card from your [gold]Discard Pile[/gold] into your [gold]Hand[/gold]. It costs 0 {energyPrefix:energyIcons(1)} this turn.",
+  "SUNQIAN_UNIVERSE_CARD_LENS_RESHOOT.description": "Put a random [gold]Script[/gold] card from your [gold]Discard Pile[/gold]{IfUpgraded:show: or [gold]Draw Pile[/gold]|} into your [gold]Hand[/gold]. It costs 0 {energyPrefix:energyIcons(1)} this turn.",
   "SUNQIAN_UNIVERSE_CARD_BOMBARD_CHIBI_SCRIPT.title": "Bombard Chibi Script",
   "SUNQIAN_UNIVERSE_CARD_BOMBARD_CHIBI_SCRIPT.description": "Gain {Block:diff()} [gold]Block[/gold].\nApply {BurningPower:diff()} [gold]Burning[/gold] to ALL enemies.\n[gold]Script[/gold]: When this Script ends, ALL enemies lose {BurningPower:diff()} [gold]Strength[/gold] this turn.",
   "SUNQIAN_UNIVERSE_CARD_STANDARD_BASE_VEHICLE.title": "Standard Base Vehicle",
@@ -113,5 +113,7 @@
   "SUNQIAN_UNIVERSE_CARD_LINK_TO_HEAVEN.title": "Link to Heaven",
   "SUNQIAN_UNIVERSE_CARD_LINK_TO_HEAVEN.description": "At the start of each turn, [gold]Scry[/gold] [blue]3[/blue]. Cards not kept are [gold]Exhausted[/gold] instead. For each Attack/Skill/Power exhausted this way, gain [blue]3[/blue] [gold]Strength[/gold]/[blue]2[/blue] [gold]Dexterity[/gold]/{energyPrefix:energyIcons(1)} this turn.",
   "SUNQIAN_UNIVERSE_CARD_BLITZKRIEG.title": "Blitzkrieg",
-  "SUNQIAN_UNIVERSE_CARD_BLITZKRIEG.description": "Deal {Damage:diff()} damage.\nPlay all [gold]Blitzkrieg[/gold] and [gold]Strike[/gold] cards from your [gold]Draw Pile[/gold] targeting this enemy."
+  "SUNQIAN_UNIVERSE_CARD_BLITZKRIEG.description": "Deal {Damage:diff()} damage.\nPlay all [gold]Blitzkrieg[/gold] and [gold]Strike[/gold] cards from your [gold]Draw Pile[/gold] targeting this enemy.",
+  "SUNQIAN_UNIVERSE_CARD_MONSTER_HUNTING_METHOD.title": "Monster Hunting Method",
+  "SUNQIAN_UNIVERSE_CARD_MONSTER_HUNTING_METHOD.description": "Apply {RegenPower:diff()} [gold]Regen[/gold] to a creature,\nIf it is an enemy, gain {VigorPower:diff()} [gold]Vigor[/gold]; otherwise [gold]Exhaust[/gold] this."
 }

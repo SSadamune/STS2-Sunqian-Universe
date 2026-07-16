@@ -18,11 +18,6 @@ namespace Squ.Cards;
 [RegisterCard(typeof(SunqianCardPool), StableEntryStem = "lens_reshoot")]
 public sealed class LensReshoot : ModCardTemplate
 {
-	public override IEnumerable<CardKeyword> CanonicalKeywords =>
-	[
-		CardKeyword.Exhaust,
-	];
-
 	protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
 	[
 		HoverTipFactory.FromKeyword(SquKeywords.Script),
@@ -38,28 +33,26 @@ public sealed class LensReshoot : ModCardTemplate
 
 	protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
 	{
-		List<CardModel> scriptCards = PileType.Discard.GetPile(Owner).Cards
-			.Where(IsScriptCard)
-			.ToList();
+		IEnumerable<CardModel> candidates = PileType.Discard.GetPile(Owner).Cards;
+		if (IsUpgraded)
+		{
+			candidates = candidates.Concat(PileType.Draw.GetPile(Owner).Cards);
+		}
+
+		List<CardModel> scriptCards = candidates.Where(IsScriptCard).ToList();
 		if (scriptCards.Count == 0)
 		{
 			return;
 		}
 
 		CardModel? scriptCard = Owner.RunState.Rng.CombatCardGeneration.NextItem(scriptCards);
-		if (scriptCard is null || scriptCard.Pile?.Type != PileType.Discard)
+		if (scriptCard?.Pile?.Type is not (PileType.Discard or PileType.Draw))
 		{
 			return;
 		}
 
 		await CardPileCmd.Add(scriptCard, PileType.Hand);
 		scriptCard.EnergyCost.SetThisTurn(0);
-	}
-
-	protected override void OnUpgrade()
-	{
-		RemoveKeyword(CardKeyword.Exhaust);
-		AddKeyword(CardKeyword.Retain);
 	}
 
 	private static bool IsScriptCard(CardModel card) =>
