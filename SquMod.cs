@@ -41,6 +41,7 @@ public static class SquMod
 			.CardKeywordOwnedByLocNamespace("multi_target")
 			.CardKeywordOwnedByLocNamespace("environmental")
 			.CardKeywordOwnedByLocNamespace("scry")
+			.CardKeywordOwnedByLocNamespace("counts_as_played")
 			.CardKeywordOwnedByLocNamespace(
 				"fit",
 				iconPath: null,

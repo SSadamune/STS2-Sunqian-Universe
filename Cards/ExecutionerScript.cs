@@ -1,0 +1,70 @@
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using MegaCrit.Sts2.Core.Commands;
+using MegaCrit.Sts2.Core.Entities.Cards;
+using MegaCrit.Sts2.Core.GameActions.Multiplayer;
+using MegaCrit.Sts2.Core.HoverTips;
+using MegaCrit.Sts2.Core.Localization.DynamicVars;
+using MegaCrit.Sts2.Core.Models.Powers;
+using Squ;
+using Squ.Character;
+using Squ.Powers;
+using STS2RitsuLib.Interop.AutoRegistration;
+using STS2RitsuLib.Scaffolding.Content;
+
+#nullable enable
+
+namespace Squ.Cards;
+
+[RegisterCard(typeof(SunqianCardPool), StableEntryStem = "executioner_script")]
+public sealed class ExecutionerScript : ScriptCardTemplate
+{
+	public const int BaseVigor = 4;
+	public const int UpgradedVigor = 6;
+
+	protected override IEnumerable<DynamicVar> CanonicalVars =>
+	[
+		new PowerVar<VigorPower>(BaseVigor),
+	];
+
+	protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
+	[
+		HoverTipFactory.FromPower<VigorPower>(),
+	];
+
+	public override IEnumerable<CardKeyword> CanonicalKeywords =>
+	[
+		SquKeywords.Script,
+		CardKeyword.Exhaust,
+	];
+
+	public override CardAssetProfile AssetProfile => new(
+		PortraitPath: "res://images/cards/ExecutionerScript.png");
+
+	public ExecutionerScript()
+		: base(1, CardType.Skill, CardRarity.Common, TargetType.Self, true)
+	{
+	}
+
+	protected override async Task PlayScriptAsync(PlayerChoiceContext choiceContext, CardPlay cardPlay)
+	{
+		await PowerCmd.Apply<VigorPower>(
+			choiceContext,
+			Owner.Creature,
+			DynamicVars[nameof(VigorPower)].BaseValue,
+			Owner.Creature,
+			this);
+
+		await PowerCmd.Apply<ScriptExecutionerPower>(
+			choiceContext,
+			Owner.Creature,
+			1m,
+			Owner.Creature,
+			this);
+	}
+
+	protected override void OnUpgrade()
+	{
+		DynamicVars[nameof(VigorPower)].UpgradeValueBy(UpgradedVigor - BaseVigor);
+	}
+}
