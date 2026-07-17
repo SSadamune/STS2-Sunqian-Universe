@@ -55,7 +55,7 @@
   "SUNQIAN_UNIVERSE_CARD_EXECUTION_COMMANDER_SCRIPT.title": "Execution Commander Script",
   "SUNQIAN_UNIVERSE_CARD_EXECUTION_COMMANDER_SCRIPT.description": "Add [gold]{IfUpgraded:show:Salvo Strike+|Salvo Strike}[/gold] into your [gold]Hand[/gold].\n[gold]Script[/gold]: While only one enemy remains, your [gold]Multi-target[/gold] Attacks deal 50% more damage.",
   "SUNQIAN_UNIVERSE_CARD_EXECUTIONER_SCRIPT.title": "Executioner Script",
-  "SUNQIAN_UNIVERSE_CARD_EXECUTIONER_SCRIPT.description": "Gain {VigorPower:diff()} [gold]Vigor[/gold].\n[gold]Script[/gold]: When your [gold]Attacks[/gold] kill an enemy, restore their spent [gold]Vigor[/gold]{IfUpgraded:show: and {energyPrefix:energyIcons(1)}|}.",
+  "SUNQIAN_UNIVERSE_CARD_EXECUTIONER_SCRIPT.description": "Gain {VigorPower:diff()} [gold]Vigor[/gold]. Apply {VulnerablePower:diff()} [gold]Vulnerable[/gold].\n[gold]Script[/gold]: If your Attack kills an enemy, restore its spent [gold]Vigor[/gold]{IfUpgraded:show: and {energyPrefix:energyIcons(1)}|}.",
   "SUNQIAN_UNIVERSE_CARD_SALVO_STRIKE.title": "Salvo Strike",
   "SUNQIAN_UNIVERSE_CARD_SALVO_STRIKE.description": "Deal {Damage:diff()} damage to 3 random enemies.",
   "SUNQIAN_UNIVERSE_CARD_GOLDEN_UPRISING.title": "Golden Uprising",

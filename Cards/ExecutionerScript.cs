@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using MegaCrit.Sts2.Core.Commands;
@@ -19,17 +20,21 @@ namespace Squ.Cards;
 [RegisterCard(typeof(SunqianCardPool), StableEntryStem = "executioner_script")]
 public sealed class ExecutionerScript : ScriptCardTemplate
 {
-	public const int BaseVigor = 4;
-	public const int UpgradedVigor = 6;
+	public const int BaseVigor = 3;
+	public const int UpgradedVigor = 4;
+
+	public const int VulnerableAmount = 1;
 
 	protected override IEnumerable<DynamicVar> CanonicalVars =>
 	[
 		new PowerVar<VigorPower>(BaseVigor),
+		new PowerVar<VulnerablePower>(VulnerableAmount),
 	];
 
 	protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
 	[
 		HoverTipFactory.FromPower<VigorPower>(),
+		HoverTipFactory.FromPower<VulnerablePower>(),
 	];
 
 	public override IEnumerable<CardKeyword> CanonicalKeywords =>
@@ -42,16 +47,25 @@ public sealed class ExecutionerScript : ScriptCardTemplate
 		PortraitPath: "res://images/cards/ExecutionerScript.png");
 
 	public ExecutionerScript()
-		: base(1, CardType.Skill, CardRarity.Common, TargetType.Self, true)
+		: base(1, CardType.Skill, CardRarity.Common, TargetType.AnyEnemy, true)
 	{
 	}
 
 	protected override async Task PlayScriptAsync(PlayerChoiceContext choiceContext, CardPlay cardPlay)
 	{
+		ArgumentNullException.ThrowIfNull(cardPlay.Target, nameof(cardPlay.Target));
+
 		await PowerCmd.Apply<VigorPower>(
 			choiceContext,
 			Owner.Creature,
 			DynamicVars[nameof(VigorPower)].BaseValue,
+			Owner.Creature,
+			this);
+
+		await PowerCmd.Apply<VulnerablePower>(
+			choiceContext,
+			cardPlay.Target,
+			DynamicVars[nameof(VulnerablePower)].BaseValue,
 			Owner.Creature,
 			this);
 
