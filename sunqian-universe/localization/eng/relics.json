@@ -26,5 +26,9 @@
   "SUNQIAN_UNIVERSE_RELIC_DAILY_WAGE.flavor": "Shoot today, paid today.",
   "SUNQIAN_UNIVERSE_RELIC_LUBU_BASKETBALL.title": "Lubu's Basketball",
   "SUNQIAN_UNIVERSE_RELIC_LUBU_BASKETBALL.description": "Every [blue]{Turns}[/blue] {Turns:plural:turn|turns}, gain [blue]{VigorPower}[/blue] [gold]Vigor[/gold].",
-  "SUNQIAN_UNIVERSE_RELIC_LUBU_BASKETBALL.flavor": "Among men, Lubu. Among balls, MVP."
+  "SUNQIAN_UNIVERSE_RELIC_LUBU_BASKETBALL.flavor": "Among men, Lubu. Among balls, MVP.",
+  "SUNQIAN_UNIVERSE_RELIC_REUSED_PROPS.title": "Reused Props",
+  "SUNQIAN_UNIVERSE_RELIC_REUSED_PROPS.description": "When obtained, choose an [gold]Exhaust[/gold] [gold]Script[/gold] card in your deck. It loses [gold]Exhaust[/gold].",
+  "SUNQIAN_UNIVERSE_RELIC_REUSED_PROPS.flavor": "Use it again. No one will notice…",
+  "SUNQIAN_UNIVERSE_RELIC_REUSED_PROPS.selectionScreenPrompt": "Choose an [gold]Exhaust[/gold] [gold]Script[/gold] card."
 }

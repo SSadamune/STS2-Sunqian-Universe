@@ -26,5 +26,9 @@
   "SUNQIAN_UNIVERSE_RELIC_DAILY_WAGE.flavor": "今天拍完，今天结。",
   "SUNQIAN_UNIVERSE_RELIC_LUBU_BASKETBALL.title": "吕布的篮球",
   "SUNQIAN_UNIVERSE_RELIC_LUBU_BASKETBALL.description": "每[blue]{Turns}[/blue]个回合，获得[blue]{VigorPower}[/blue]点[gold]活力[/gold]。",
-  "SUNQIAN_UNIVERSE_RELIC_LUBU_BASKETBALL.flavor": "人中吕布，球中mvp。"
+  "SUNQIAN_UNIVERSE_RELIC_LUBU_BASKETBALL.flavor": "人中吕布，球中mvp。",
+  "SUNQIAN_UNIVERSE_RELIC_REUSED_PROPS.title": "复用素材",
+  "SUNQIAN_UNIVERSE_RELIC_REUSED_PROPS.description": "拾起时，从你的牌组中选择一张有[gold]消耗[/gold]的[gold]剧本[/gold]牌，这张牌失去[gold]消耗[/gold]。",
+  "SUNQIAN_UNIVERSE_RELIC_REUSED_PROPS.flavor": "再用一遍，没人会发现的…",
+  "SUNQIAN_UNIVERSE_RELIC_REUSED_PROPS.selectionScreenPrompt": "选择一张有[gold]消耗[/gold]的[gold]剧本[/gold]牌。"
 }
