@@ -6,6 +6,7 @@ using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.Entities.Players;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.HoverTips;
+using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using Squ;
 using Squ.Character;
 using Squ.Powers;
@@ -20,9 +21,21 @@ namespace Squ.Cards;
 [RegisterCard(typeof(SunqianCardPool), StableEntryStem = "execution_commander_script")]
 public sealed class ExecutionCommanderScript : ScriptCardTemplate
 {
+	public const int GeneratedStrikeCount = 2;
+	public const decimal BaseBonusPercent = 50m;
+	public const decimal UpgradedBonusPercent = 75m;
+
+	private const string BonusPercentVarName = "BonusPercent";
+
+	protected override IEnumerable<DynamicVar> CanonicalVars =>
+	[
+		new DynamicVar(BonusPercentVarName, BaseBonusPercent),
+	];
+
 	protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
 	[
 		..HoverTipFactory.FromCardWithCardHoverTips<SalvoStrike>(IsUpgraded),
+		HoverTipFactory.FromKeyword(SquKeywords.StackableScript),
 		HoverTipFactory.FromKeyword(SquKeywords.MultiTarget),
 	];
 
@@ -46,17 +59,25 @@ public sealed class ExecutionCommanderScript : ScriptCardTemplate
 		ICombatState combatState = player.Creature.CombatState
 			?? throw new System.InvalidOperationException("ExecutionCommanderScript requires an active combat.");
 
-		await GeneratedCombatCards.AddToHandInCombat<SalvoStrike>(
-			combatState,
-			player,
-			IsUpgraded,
-			player);
+		for (int i = 0; i < GeneratedStrikeCount; i++)
+		{
+			await GeneratedCombatCards.AddToHandInCombat<SalvoStrike>(
+				combatState,
+				player,
+				IsUpgraded,
+				player);
+		}
 
 		await PowerCmd.Apply<ScriptExecutionCommanderPower>(
 			choiceContext,
 			player.Creature,
-			1m,
+			DynamicVars[BonusPercentVarName].BaseValue,
 			player.Creature,
 			this);
+	}
+
+	protected override void OnUpgrade()
+	{
+		DynamicVars[BonusPercentVarName].UpgradeValueBy(UpgradedBonusPercent - BaseBonusPercent);
 	}
 }

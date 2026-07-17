@@ -53,7 +53,7 @@
   "SUNQIAN_UNIVERSE_CARD_HUMAN_TRANSMUTATION.description": "Draw {Cards:diff()} card. Exhaust up to 3 cards. Choose 1 of that many random {IfUpgraded:show:Upgraded |}Attacks from any character to add into your [gold]Hand[/gold].",
   "SUNQIAN_UNIVERSE_CARD_HUMAN_TRANSMUTATION.rarityNote": "The offered Attacks will match the rarity of each Exhausted card when possible.",
   "SUNQIAN_UNIVERSE_CARD_EXECUTION_COMMANDER_SCRIPT.title": "Execution Commander Script",
-  "SUNQIAN_UNIVERSE_CARD_EXECUTION_COMMANDER_SCRIPT.description": "Add [gold]{IfUpgraded:show:Salvo Strike+|Salvo Strike}[/gold] into your [gold]Hand[/gold].\n[gold]Script[/gold]: While only one enemy remains, your [gold]Multi-target[/gold] Attacks deal 50% more damage.",
+  "SUNQIAN_UNIVERSE_CARD_EXECUTION_COMMANDER_SCRIPT.description": "Add 2 [gold]{IfUpgraded:show:Salvo Strike+|Salvo Strike}[/gold] into your [gold]Hand[/gold].\n[gold]Stackable Script[/gold]: While only one enemy remains, your [gold]Multi-target[/gold] Attacks deal {BonusPercent:diff()}% more damage.",
   "SUNQIAN_UNIVERSE_CARD_EXECUTIONER_SCRIPT.title": "Executioner Script",
   "SUNQIAN_UNIVERSE_CARD_EXECUTIONER_SCRIPT.description": "Gain {VigorPower:diff()} [gold]Vigor[/gold]. Apply {VulnerablePower:diff()} [gold]Vulnerable[/gold].\n[gold]Script[/gold]: If your Attack kills an enemy, restore its spent [gold]Vigor[/gold]{IfUpgraded:show: and {energyPrefix:energyIcons(1)}|}.",
   "SUNQIAN_UNIVERSE_CARD_SALVO_STRIKE.title": "Salvo Strike",
@@ -119,5 +119,5 @@
   "SUNQIAN_UNIVERSE_CARD_MONSTER_HUNTING_METHOD.title": "Monster Hunting Method",
   "SUNQIAN_UNIVERSE_CARD_MONSTER_HUNTING_METHOD.description": "Apply {RegenPower:diff()} [gold]Regen[/gold] to a creature,\nIf it is an enemy, gain {VigorPower:diff()} [gold]Vigor[/gold]; otherwise [gold]Exhaust[/gold] this.",
   "SUNQIAN_UNIVERSE_CARD_BOWANG_PARADOX_SCRIPT.title": "Bowang Paradox Script",
-  "SUNQIAN_UNIVERSE_CARD_BOWANG_PARADOX_SCRIPT.description": "Gain {VigorPower:diff()} [gold]Vigor[/gold]. Discard all [gold]Attack[/gold] cards.\n[gold]Script[/gold]: When this Script ends, gain {FuelAbundantPower:diff()} [gold]Fuel Abundant[/gold] and discard all cards that apply [gold]Burning[/gold]."
+  "SUNQIAN_UNIVERSE_CARD_BOWANG_PARADOX_SCRIPT.description": "Gain {VigorPower:diff()} [gold]Vigor[/gold]. Discard all [gold]Attack[/gold] cards.\n[gold]Script[/gold]: When this Script ends, gain {FuelAbundantPower:diff()} [gold]Fuel Abundant[/gold] and discard all [gold]Burning[/gold] cards."
 }

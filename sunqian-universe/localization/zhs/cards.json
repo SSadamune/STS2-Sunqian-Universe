@@ -74,7 +74,7 @@
   "SUNQIAN_UNIVERSE_CARD_HUMAN_TRANSMUTATION.description": "抽{Cards:diff()}张牌。消耗至多3张牌，从等量张任意角色的随机{IfUpgraded:show:升级过的|}攻击牌中选择一张加入[gold]手牌[/gold]。",
   "SUNQIAN_UNIVERSE_CARD_HUMAN_TRANSMUTATION.rarityNote": "备选的攻击牌将尽可能与每张被消耗的牌稀有度相同。",
   "SUNQIAN_UNIVERSE_CARD_EXECUTION_COMMANDER_SCRIPT.title": "行刑指挥官剧本",
-  "SUNQIAN_UNIVERSE_CARD_EXECUTION_COMMANDER_SCRIPT.description": "将一张[gold]{IfUpgraded:show:箭幕打击+|箭幕打击}[/gold]加入[gold]手牌[/gold]。\n[gold]剧本[/gold]：若仅有一名敌人，你的[gold]群体目标[/gold]攻击牌伤害增加50%。",
+  "SUNQIAN_UNIVERSE_CARD_EXECUTION_COMMANDER_SCRIPT.description": "将两张[gold]{IfUpgraded:show:箭幕打击+|箭幕打击}[/gold]加入[gold]手牌[/gold]。\n[gold]可叠层剧本[/gold]：若仅有一名敌人，你的[gold]群体目标[/gold]攻击牌伤害增加{BonusPercent:diff()}%。",
   "SUNQIAN_UNIVERSE_CARD_EXECUTIONER_SCRIPT.title": "刽子手剧本",
   "SUNQIAN_UNIVERSE_CARD_EXECUTIONER_SCRIPT.description": "获得{VigorPower:diff()}点[gold]活力[/gold]。给予{VulnerablePower:diff()}层[gold]易伤[/gold]。\n[gold]剧本[/gold]：若你的攻击牌杀死敌人，恢复其消耗的[gold]活力[/gold]{IfUpgraded:show:和{energyPrefix:energyIcons(1)}|}。",
   "SUNQIAN_UNIVERSE_CARD_SALVO_STRIKE.title": "箭幕打击",
@@ -133,5 +133,5 @@
   "SUNQIAN_UNIVERSE_CARD_MONSTER_HUNTING_METHOD.title": "过禽论",
   "SUNQIAN_UNIVERSE_CARD_MONSTER_HUNTING_METHOD.description": "给予一个生物{RegenPower:diff()}层[gold]再生[/gold]，\n若为敌人，则你获得{VigorPower:diff()}点[gold]活力[/gold]；否则[gold]消耗[/gold]这张牌。",
   "SUNQIAN_UNIVERSE_CARD_BOWANG_PARADOX_SCRIPT.title": "博望悖论剧本",
-  "SUNQIAN_UNIVERSE_CARD_BOWANG_PARADOX_SCRIPT.description": "获得{VigorPower:diff()}点[gold]活力[/gold]。丢弃所有[gold]攻击[/gold]牌。\n[gold]剧本[/gold]：失效时，获得{FuelAbundantPower:diff()}层[gold]燃料充足[/gold]，丢弃所有能造成[gold]灼烧[/gold]的牌。"
+  "SUNQIAN_UNIVERSE_CARD_BOWANG_PARADOX_SCRIPT.description": "获得{VigorPower:diff()}点[gold]活力[/gold]。丢弃所有[gold]攻击[/gold]牌。\n[gold]剧本[/gold]：失效时，获得{FuelAbundantPower:diff()}层[gold]燃料充足[/gold]，丢弃所有[gold]灼烧[/gold]牌。"
 }
