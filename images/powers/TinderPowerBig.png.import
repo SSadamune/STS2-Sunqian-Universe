@@ -3,7 +3,7 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://dyts5x7ka7ar0"
-path="res://.godot/imported/TinderPowerBig.png-2f7dbf2870f5b8608a15a3bc315779bf.ctex"
+path="res://.godot/imported/TinderPowerBig.png-6c8a6a6ac9cae63e6f298cf15285703d.ctex"
 metadata={
 "vram_texture": false
 }
@@ -11,7 +11,7 @@ metadata={
 [deps]
 
 source_file="res://images/powers/TinderPowerBig.png"
-dest_files=["res://.godot/imported/TinderPowerBig.png-2f7dbf2870f5b8608a15a3bc315779bf.ctex"]
+dest_files=["res://.godot/imported/TinderPowerBig.png-6c8a6a6ac9cae63e6f298cf15285703d.ctex"]
 
 [params]
 

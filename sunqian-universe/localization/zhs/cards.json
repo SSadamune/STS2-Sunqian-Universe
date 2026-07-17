@@ -133,5 +133,7 @@
   "SUNQIAN_UNIVERSE_CARD_MONSTER_HUNTING_METHOD.title": "过禽论",
   "SUNQIAN_UNIVERSE_CARD_MONSTER_HUNTING_METHOD.description": "给予一个生物{RegenPower:diff()}层[gold]再生[/gold]，\n若为敌人，则你获得{VigorPower:diff()}点[gold]活力[/gold]；否则[gold]消耗[/gold]这张牌。",
   "SUNQIAN_UNIVERSE_CARD_BOWANG_PARADOX_SCRIPT.title": "博望悖论剧本",
-  "SUNQIAN_UNIVERSE_CARD_BOWANG_PARADOX_SCRIPT.description": "获得{VigorPower:diff()}点[gold]活力[/gold]。丢弃所有[gold]攻击[/gold]牌。\n[gold]剧本[/gold]：失效时，获得{TinderPower:diff()}层[gold]火种[/gold]，丢弃所有[gold]灼烧[/gold]牌。"
+  "SUNQIAN_UNIVERSE_CARD_BOWANG_PARADOX_SCRIPT.description": "获得{VigorPower:diff()}点[gold]活力[/gold]。丢弃所有[gold]攻击[/gold]牌。\n[gold]剧本[/gold]：失效时，获得{TinderPower:diff()}层[gold]火种[/gold]，丢弃所有[gold]灼烧[/gold]牌。",
+  "SUNQIAN_UNIVERSE_CARD_CLOSE_FITTING_ARMOR.title": "贴身铠甲",
+  "SUNQIAN_UNIVERSE_CARD_CLOSE_FITTING_ARMOR.description": "获得{PlatingPower:diff()}层[gold]覆甲[/gold]。此数值受到[gold]敏捷[/gold]加成。"
 }

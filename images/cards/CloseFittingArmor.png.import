@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://bxcslx46u8cb0"
-path="res://.godot/imported/TinderPower.png-e5f22f0b9b51f17282d14ff31d48d149.ctex"
+uid="uid://dcd4uar8q2h6k"
+path="res://.godot/imported/CloseFittingArmor.png-830330bbe767d08eaf6588f61d16fcc0.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://images/powers/TinderPower.png"
-dest_files=["res://.godot/imported/TinderPower.png-e5f22f0b9b51f17282d14ff31d48d149.ctex"]
+source_file="res://images/cards/CloseFittingArmor.png"
+dest_files=["res://.godot/imported/CloseFittingArmor.png-830330bbe767d08eaf6588f61d16fcc0.ctex"]
 
 [params]
 

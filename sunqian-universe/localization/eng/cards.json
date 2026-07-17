@@ -119,5 +119,7 @@
   "SUNQIAN_UNIVERSE_CARD_MONSTER_HUNTING_METHOD.title": "Monster Hunting Method",
   "SUNQIAN_UNIVERSE_CARD_MONSTER_HUNTING_METHOD.description": "Apply {RegenPower:diff()} [gold]Regen[/gold] to a creature,\nIf it is an enemy, gain {VigorPower:diff()} [gold]Vigor[/gold]; otherwise [gold]Exhaust[/gold] this.",
   "SUNQIAN_UNIVERSE_CARD_BOWANG_PARADOX_SCRIPT.title": "Bowang Paradox Script",
-  "SUNQIAN_UNIVERSE_CARD_BOWANG_PARADOX_SCRIPT.description": "Gain {VigorPower:diff()} [gold]Vigor[/gold]. Discard all [gold]Attack[/gold] cards.\n[gold]Script[/gold]: When this Script ends, gain {TinderPower:diff()} [gold]Tinder[/gold] and discard all [gold]Burning[/gold] cards."
+  "SUNQIAN_UNIVERSE_CARD_BOWANG_PARADOX_SCRIPT.description": "Gain {VigorPower:diff()} [gold]Vigor[/gold]. Discard all [gold]Attack[/gold] cards.\n[gold]Script[/gold]: When this Script ends, gain {TinderPower:diff()} [gold]Tinder[/gold] and discard all [gold]Burning[/gold] cards.",
+  "SUNQIAN_UNIVERSE_CARD_CLOSE_FITTING_ARMOR.title": "Close-Fitting Armor",
+  "SUNQIAN_UNIVERSE_CARD_CLOSE_FITTING_ARMOR.description": "Gain {PlatingPower:diff()} [gold]Plating[/gold]. This amount is increased by your [gold]Dexterity[/gold]."
 }
