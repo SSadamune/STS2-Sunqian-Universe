@@ -20,7 +20,7 @@
   "SUNQIAN_UNIVERSE_CARD_PHASING.title": "Phasing",
   "SUNQIAN_UNIVERSE_CARD_PHASING.description": "Gain a random {MinDex}-{MaxDex:diff()} [gold]Dexterity[/gold] this turn and at the start of each turn.",
   "SUNQIAN_UNIVERSE_CARD_BURNING_LINKED_CAMPS_SCRIPT.title": "Burning Linked Camps Script",
-  "SUNQIAN_UNIVERSE_CARD_BURNING_LINKED_CAMPS_SCRIPT.description": "Gain {FuelAbundantPower:diff()} [gold]Fuel Abundant[/gold]. \n[gold]Script[/gold]: When this Script ends, add [gold]Shangfanggu's Sigh[/gold] into your [gold]Draw Pile[/gold].",
+  "SUNQIAN_UNIVERSE_CARD_BURNING_LINKED_CAMPS_SCRIPT.description": "Gain {TinderPower:diff()} [gold]Tinder[/gold]. \n[gold]Script[/gold]: When this Script ends, add [gold]Shangfanggu's Sigh[/gold] into your [gold]Draw Pile[/gold].",
   "SUNQIAN_UNIVERSE_CARD_TWO_WORD_POET_SCRIPT.title": "Two-Word Poet Script",
   "SUNQIAN_UNIVERSE_CARD_TWO_WORD_POET_SCRIPT.description": "Deal {Damage:diff()} damage {Repeat:diff()} times to {IfUpgraded:show:ALL enemies|an enemy}.\n[gold]Stackable Script[/gold]: At the start of each turn, {IfUpgraded:show:deal {Damage:diff()} damage {Repeat:diff()} times to ALL enemies|deal {Damage:diff()} damage {Repeat:diff()} times to a random enemy}.",
   "SUNQIAN_UNIVERSE_CARD_SHANGFANGGU_SIGH.title": "Shangfanggu's Sigh",
@@ -119,5 +119,5 @@
   "SUNQIAN_UNIVERSE_CARD_MONSTER_HUNTING_METHOD.title": "Monster Hunting Method",
   "SUNQIAN_UNIVERSE_CARD_MONSTER_HUNTING_METHOD.description": "Apply {RegenPower:diff()} [gold]Regen[/gold] to a creature,\nIf it is an enemy, gain {VigorPower:diff()} [gold]Vigor[/gold]; otherwise [gold]Exhaust[/gold] this.",
   "SUNQIAN_UNIVERSE_CARD_BOWANG_PARADOX_SCRIPT.title": "Bowang Paradox Script",
-  "SUNQIAN_UNIVERSE_CARD_BOWANG_PARADOX_SCRIPT.description": "Gain {VigorPower:diff()} [gold]Vigor[/gold]. Discard all [gold]Attack[/gold] cards.\n[gold]Script[/gold]: When this Script ends, gain {FuelAbundantPower:diff()} [gold]Fuel Abundant[/gold] and discard all [gold]Burning[/gold] cards."
+  "SUNQIAN_UNIVERSE_CARD_BOWANG_PARADOX_SCRIPT.description": "Gain {VigorPower:diff()} [gold]Vigor[/gold]. Discard all [gold]Attack[/gold] cards.\n[gold]Script[/gold]: When this Script ends, gain {TinderPower:diff()} [gold]Tinder[/gold] and discard all [gold]Burning[/gold] cards."
 }

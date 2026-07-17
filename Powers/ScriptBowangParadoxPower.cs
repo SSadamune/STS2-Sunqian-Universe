@@ -19,8 +19,8 @@ using STS2RitsuLib.Scaffolding.Content;
 namespace Squ.Powers;
 
 /// <summary>
-/// 博望悖论剧本：失效时，获得一次性的燃料充足层数，并丢弃手牌中所有能造成灼烧的牌。
-/// 燃料充足的具体层数在打出时（<see cref="AfterApplied"/>）根据牌是否已升级快照到内部数据，
+/// 博望悖论剧本：失效时，获得一次性的火种层数，并丢弃手牌中所有能造成灼烧的牌。
+/// 火种的具体层数在打出时（<see cref="AfterApplied"/>）根据牌是否已升级快照到内部数据，
 /// 失效结算（<see cref="AfterRemoved"/>）时直接读取快照值，不依赖届时的 DynamicVars 状态。
 /// </summary>
 [RegisterPower]
@@ -28,12 +28,12 @@ public sealed class ScriptBowangParadoxPower : ScriptPowerTemplate
 {
 	private sealed class Data
 	{
-		public decimal FuelAbundantStacks;
+		public decimal TinderStacks;
 	}
 
 	protected override IEnumerable<DynamicVar> CanonicalVars =>
 	[
-		new PowerVar<FuelAbundantPower>(BowangParadoxScript.BaseFuelAbundantStacks),
+		new PowerVar<TinderPower>(BowangParadoxScript.BaseTinderStacks),
 	];
 
 	protected override object InitInternalData() => new Data();
@@ -44,29 +44,29 @@ public sealed class ScriptBowangParadoxPower : ScriptPowerTemplate
 
 	protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
 	[
-		HoverTipFactory.FromPower<FuelAbundantPower>(),
+		HoverTipFactory.FromPower<TinderPower>(),
 		HoverTipFactory.FromPower<BurningPower>(),
 	];
 
 	public override Task AfterApplied(Creature? applier, CardModel? cardSource)
 	{
 		decimal stacks = cardSource is BowangParadoxScript { IsUpgraded: true }
-			? BowangParadoxScript.UpgradedFuelAbundantStacks
-			: BowangParadoxScript.BaseFuelAbundantStacks;
-		GetInternalData<Data>().FuelAbundantStacks = stacks;
-		DynamicVars[nameof(FuelAbundantPower)].BaseValue = stacks;
+			? BowangParadoxScript.UpgradedTinderStacks
+			: BowangParadoxScript.BaseTinderStacks;
+		GetInternalData<Data>().TinderStacks = stacks;
+		DynamicVars[nameof(TinderPower)].BaseValue = stacks;
 		return Task.CompletedTask;
 	}
 
 	public override async Task AfterRemoved(Creature oldOwner)
 	{
-		decimal stacks = GetInternalData<Data>().FuelAbundantStacks;
+		decimal stacks = GetInternalData<Data>().TinderStacks;
 		Player? player = oldOwner.Player;
 		if (stacks > 0 && player is not null)
 		{
 			PlayerChoiceContext choiceContext = new ThrowingPlayerChoiceContext();
 
-			await PowerCmd.Apply<FuelAbundantPower>(
+			await PowerCmd.Apply<TinderPower>(
 				choiceContext,
 				oldOwner,
 				stacks,

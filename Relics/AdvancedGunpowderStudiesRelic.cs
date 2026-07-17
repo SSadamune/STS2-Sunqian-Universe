@@ -16,18 +16,18 @@ using STS2RitsuLib.Scaffolding.Content;
 namespace Squ.Relics;
 
 /// <summary>
-/// 《高级火药学》：每场战斗开始时获得 5 层燃料充足；玩家造成灼烧后清零概率降至 0%。
+/// 《高级火药学》：每场战斗开始时获得 5 层火种；玩家造成灼烧后清零概率降至 0%。
 /// </summary>
 [RegisterRelic(typeof(SunqianRelicPool), StableEntryStem = "advanced_gunpowder_studies")]
 public sealed class AdvancedGunpowderStudiesRelic : ModRelicTemplate
 {
-	public const decimal CombatStartFuelAbundant = 5m;
+	public const decimal CombatStartTinder = 5m;
 
 	public override RelicRarity Rarity => RelicRarity.Rare;
 
 	protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
 	[
-		HoverTipFactory.FromPower<FuelAbundantPower>(),
+		HoverTipFactory.FromPower<TinderPower>(),
 		HoverTipFactory.FromPower<BurningPower>(),
 	];
 
@@ -39,10 +39,10 @@ public sealed class AdvancedGunpowderStudiesRelic : ModRelicTemplate
 	public override async Task BeforeCombatStart()
 	{
 		Flash();
-		await PowerCmd.Apply<FuelAbundantPower>(
+		await PowerCmd.Apply<TinderPower>(
 			new ThrowingPlayerChoiceContext(),
 			Owner.Creature,
-			CombatStartFuelAbundant,
+			CombatStartTinder,
 			Owner.Creature,
 			null);
 	}

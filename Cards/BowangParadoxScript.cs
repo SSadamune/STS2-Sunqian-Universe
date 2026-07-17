@@ -23,19 +23,19 @@ public sealed class BowangParadoxScript : ScriptCardTemplate
 {
 	public const decimal BaseVigor = 6m;
 	public const decimal UpgradedVigor = 9m;
-	public const decimal BaseFuelAbundantStacks = 6m;
-	public const decimal UpgradedFuelAbundantStacks = 9m;
+	public const decimal BaseTinderStacks = 6m;
+	public const decimal UpgradedTinderStacks = 9m;
 
 	protected override IEnumerable<DynamicVar> CanonicalVars =>
 	[
 		new PowerVar<VigorPower>(BaseVigor),
-		new PowerVar<FuelAbundantPower>(BaseFuelAbundantStacks),
+		new PowerVar<TinderPower>(BaseTinderStacks),
 	];
 
 	protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
 	[
 		HoverTipFactory.FromPower<VigorPower>(),
-		HoverTipFactory.FromPower<FuelAbundantPower>(),
+		HoverTipFactory.FromPower<TinderPower>(),
 		HoverTipFactory.FromPower<BurningPower>(),
 	];
 
@@ -81,6 +81,6 @@ public sealed class BowangParadoxScript : ScriptCardTemplate
 	protected override void OnUpgrade()
 	{
 		DynamicVars[nameof(VigorPower)].UpgradeValueBy(UpgradedVigor - BaseVigor);
-		DynamicVars[nameof(FuelAbundantPower)].UpgradeValueBy(UpgradedFuelAbundantStacks - BaseFuelAbundantStacks);
+		DynamicVars[nameof(TinderPower)].UpgradeValueBy(UpgradedTinderStacks - BaseTinderStacks);
 	}
 }
