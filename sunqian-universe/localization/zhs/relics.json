@@ -1,8 +1,8 @@
 {
   "SEA_GLASS.SUNQIAN_UNIVERSE_CHARACTER_SUNQIAN_CHARACTER.title": "群演海玻璃",
   "SUNQIAN_UNIVERSE_RELIC_BOX_LUNCH.title": "盒饭",
-  "SUNQIAN_UNIVERSE_RELIC_BOX_LUNCH.description": "每回合第一次[gold]剧本[/gold]失效后，获得{energyPrefix:energyIcons(1)}。\n每场战斗开始时，获得[gold]剧本：哨兵[/gold]。",
-  "SUNQIAN_UNIVERSE_RELIC_BOX_LUNCH.flavor": "盒饭没了我们吃什么？",
+  "SUNQIAN_UNIVERSE_RELIC_BOX_LUNCH.description": "你每回合第一次有[gold]剧本[/gold]失效后，获得{energyPrefix:energyIcons(1)}。每场战斗开始时，获得[gold]剧本：哨兵[/gold]。",
+  "SUNQIAN_UNIVERSE_RELIC_BOX_LUNCH.flavor": "没有盒饭我们吃什么？",
   "SUNQIAN_UNIVERSE_RELIC_ABUNDANT_BOX_LUNCH.title": "丰盛盒饭",
   "SUNQIAN_UNIVERSE_RELIC_ABUNDANT_BOX_LUNCH.description": "每回合前三次[gold]剧本[/gold]失效后，获得{energyPrefix:energyIcons(1)}。\n每场战斗开始时，获得[gold]剧本：副将[/gold]。",
   "SUNQIAN_UNIVERSE_RELIC_ABUNDANT_BOX_LUNCH.flavor": "加鸡腿！",
