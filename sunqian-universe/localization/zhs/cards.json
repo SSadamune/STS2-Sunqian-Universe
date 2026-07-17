@@ -131,5 +131,7 @@
   "SUNQIAN_UNIVERSE_CARD_BLITZKRIEG.title": "闪电战",
   "SUNQIAN_UNIVERSE_CARD_BLITZKRIEG.description": "造成{Damage:diff()}点伤害。\n对该敌人打出你抽牌堆中所有的[gold]闪电战[/gold]和[gold]打击[/gold]。",
   "SUNQIAN_UNIVERSE_CARD_MONSTER_HUNTING_METHOD.title": "过禽论",
-  "SUNQIAN_UNIVERSE_CARD_MONSTER_HUNTING_METHOD.description": "给予一个生物{RegenPower:diff()}层[gold]再生[/gold]，\n若为敌人，则你获得{VigorPower:diff()}点[gold]活力[/gold]；否则[gold]消耗[/gold]这张牌。"
+  "SUNQIAN_UNIVERSE_CARD_MONSTER_HUNTING_METHOD.description": "给予一个生物{RegenPower:diff()}层[gold]再生[/gold]，\n若为敌人，则你获得{VigorPower:diff()}点[gold]活力[/gold]；否则[gold]消耗[/gold]这张牌。",
+  "SUNQIAN_UNIVERSE_CARD_BOWANG_PARADOX_SCRIPT.title": "博望悖论剧本",
+  "SUNQIAN_UNIVERSE_CARD_BOWANG_PARADOX_SCRIPT.description": "获得{VigorPower:diff()}点[gold]活力[/gold]。丢弃所有[gold]攻击[/gold]牌。\n[gold]剧本[/gold]：失效时，获得{FuelAbundantPower:diff()}层[gold]燃料充足[/gold]，丢弃所有能造成[gold]灼烧[/gold]的牌。"
 }
