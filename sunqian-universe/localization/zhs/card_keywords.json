@@ -12,5 +12,9 @@
   "SUNQIAN_UNIVERSE_KEYWORD_ENVIRONMENTAL.title": "环境伤害",
   "SUNQIAN_UNIVERSE_KEYWORD_ENVIRONMENTAL.description": "此伤害没有来源且伤害值固定。",
   "SUNQIAN_UNIVERSE_KEYWORD_SCRY.title": "预见",
-  "SUNQIAN_UNIVERSE_KEYWORD_SCRY.description": "查看你抽牌堆顶部的若干张牌，然后可将其中任意数量的牌置入弃牌堆。"
+  "SUNQIAN_UNIVERSE_KEYWORD_SCRY.description": "查看你抽牌堆顶部的若干张牌，然后可将其中任意数量的牌置入弃牌堆。",
+  "SUNQIAN_UNIVERSE_KEYWORD_COUNTS_AS_PLAYED.title": "视为打出",
+  "SUNQIAN_UNIVERSE_KEYWORD_COUNTS_AS_PLAYED.description": "打出一张不存在的牌，正常结算其效果。",
+  "SUNQIAN_UNIVERSE_KEYWORD_FIT.title": "契合",
+  "SUNQIAN_UNIVERSE_KEYWORD_FIT.description": "每当这张牌要被洗入抽牌堆时，将其放在抽牌堆顶。"
 }

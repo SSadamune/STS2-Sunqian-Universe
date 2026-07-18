@@ -18,19 +18,19 @@ namespace Squ.Cards;
 [RegisterCard(typeof(SunqianCardPool), StableEntryStem = "burning_linked_camps_script")]
 public sealed class BurningLinkedCampsScript : ScriptCardTemplate
 {
-	public const decimal FuelAbundantStacks = 6m;
+	public const decimal TinderStacks = 6m;
 
-	public const decimal UpgradedFuelAbundantStacks = 9m;
+	public const decimal UpgradedTinderStacks = 9m;
 
 	protected override IEnumerable<DynamicVar> CanonicalVars =>
 	[
-		new PowerVar<FuelAbundantPower>(FuelAbundantStacks),
+		new PowerVar<TinderPower>(TinderStacks),
 	];
 
 	protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
 	[
-		..HoverTipFactory.FromPowerWithPowerHoverTips<FuelAbundantPower>(
-			(int)DynamicVars[nameof(FuelAbundantPower)].BaseValue),
+		..HoverTipFactory.FromPowerWithPowerHoverTips<TinderPower>(
+			(int)DynamicVars[nameof(TinderPower)].BaseValue),
 		HoverTipFactory.FromPower<BurningPower>(),
 		HoverTipFactory.FromCard<ShangfangguSigh>(upgrade: false),
 	];
@@ -51,11 +51,11 @@ public sealed class BurningLinkedCampsScript : ScriptCardTemplate
 
 	protected override async Task PlayScriptAsync(PlayerChoiceContext choiceContext, CardPlay cardPlay)
 	{
-		decimal fuelAbundantStacks = DynamicVars[nameof(FuelAbundantPower)].BaseValue;
-		await PowerCmd.Apply<FuelAbundantPower>(
+		decimal tinderStacks = DynamicVars[nameof(TinderPower)].BaseValue;
+		await PowerCmd.Apply<TinderPower>(
 			choiceContext,
 			Owner.Creature,
-			fuelAbundantStacks,
+			tinderStacks,
 			Owner.Creature,
 			this);
 
@@ -69,6 +69,6 @@ public sealed class BurningLinkedCampsScript : ScriptCardTemplate
 
 	protected override void OnUpgrade()
 	{
-		DynamicVars[nameof(FuelAbundantPower)].UpgradeValueBy(UpgradedFuelAbundantStacks - FuelAbundantStacks);
+		DynamicVars[nameof(TinderPower)].UpgradeValueBy(UpgradedTinderStacks - TinderStacks);
 	}
 }

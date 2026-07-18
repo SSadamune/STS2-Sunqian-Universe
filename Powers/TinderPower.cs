@@ -17,11 +17,11 @@ using STS2RitsuLib.Scaffolding.Content;
 namespace Squ.Powers;
 
 /// <summary>
-/// 「燃料充足」：下一张带 <see cref="SquCardTags.Burning"/> 的牌给予的灼烧额外加层，可跨回合保留。
+/// 「火种」：下一张带 <see cref="SquCardTags.Burning"/> 的牌给予的灼烧额外加层，可跨回合保留。
 /// 该牌一次打出内的多次给予灼烧均有效，于 <see cref="AfterCardPlayedLate"/> 后移除。
 /// </summary>
 [RegisterPower]
-public sealed class FuelAbundantPower : ModPowerTemplate
+public sealed class TinderPower : ModPowerTemplate
 {
 	private sealed class Data
 	{
@@ -35,8 +35,8 @@ public sealed class FuelAbundantPower : ModPowerTemplate
 	public override Color AmountLabelColor => PowerModel._normalAmountLabelColor;
 
 	public override PowerAssetProfile AssetProfile => new(
-		IconPath: "res://images/powers/FuelAbundantPower.png",
-		BigIconPath: "res://images/powers/FuelAbundantPowerBig.png");
+		IconPath: "res://images/powers/TinderPower.png",
+		BigIconPath: "res://images/powers/TinderPowerBig.png");
 
 	protected override object InitInternalData() => new Data();
 

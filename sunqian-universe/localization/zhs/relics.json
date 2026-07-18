@@ -1,8 +1,8 @@
 {
   "SEA_GLASS.SUNQIAN_UNIVERSE_CHARACTER_SUNQIAN_CHARACTER.title": "群演海玻璃",
   "SUNQIAN_UNIVERSE_RELIC_BOX_LUNCH.title": "盒饭",
-  "SUNQIAN_UNIVERSE_RELIC_BOX_LUNCH.description": "每回合第一次[gold]剧本[/gold]失效后，获得{energyPrefix:energyIcons(1)}。\n每场战斗开始时，获得[gold]剧本：哨兵[/gold]。",
-  "SUNQIAN_UNIVERSE_RELIC_BOX_LUNCH.flavor": "盒饭没了我们吃什么？",
+  "SUNQIAN_UNIVERSE_RELIC_BOX_LUNCH.description": "你每回合第一次有[gold]剧本[/gold]失效后，获得{energyPrefix:energyIcons(1)}。每场战斗开始时，获得[gold]剧本：哨兵[/gold]。",
+  "SUNQIAN_UNIVERSE_RELIC_BOX_LUNCH.flavor": "没有盒饭我们吃什么？",
   "SUNQIAN_UNIVERSE_RELIC_ABUNDANT_BOX_LUNCH.title": "丰盛盒饭",
   "SUNQIAN_UNIVERSE_RELIC_ABUNDANT_BOX_LUNCH.description": "每回合前三次[gold]剧本[/gold]失效后，获得{energyPrefix:energyIcons(1)}。\n每场战斗开始时，获得[gold]剧本：副将[/gold]。",
   "SUNQIAN_UNIVERSE_RELIC_ABUNDANT_BOX_LUNCH.flavor": "加鸡腿！",
@@ -10,7 +10,7 @@
   "SUNQIAN_UNIVERSE_RELIC_MENGDE_NEW_BOOK.description": "敌人每有一种[gold]正面状态[/gold]，对你造成的伤害减少[blue]8%[/blue]，至多[blue]40%[/blue]。\n你每有一种[gold]负面状态[/gold]，造成的伤害增加[blue]8%[/blue]，至多[blue]40%[/blue]。",
   "SUNQIAN_UNIVERSE_RELIC_MENGDE_NEW_BOOK.flavor": "兵法教出来的都是呆子，学打仗得看这个。",
   "SUNQIAN_UNIVERSE_RELIC_ADVANCED_GUNPOWDER_STUDIES.title": "《高级火药学》",
-  "SUNQIAN_UNIVERSE_RELIC_ADVANCED_GUNPOWDER_STUDIES.description": "每场战斗开始时，你获得[blue]5[/blue]点[gold]燃料充足[/gold]。\n当你造成[gold]灼烧[/gold]后，将其清零概率降低至[blue]0%[/blue]，而非[blue]25%[/blue]。",
+  "SUNQIAN_UNIVERSE_RELIC_ADVANCED_GUNPOWDER_STUDIES.description": "每场战斗开始时，你获得[blue]5[/blue]层[gold]火种[/gold]。\n当你造成[gold]灼烧[/gold]后，将其清零概率降低至[blue]0%[/blue]，而非[blue]25%[/blue]。",
   "SUNQIAN_UNIVERSE_RELIC_ADVANCED_GUNPOWDER_STUDIES.flavor": "——大汉科技出版社。",
   "SUNQIAN_UNIVERSE_RELIC_ZHU_DICTIONARY.title": "《朱氏词典》",
   "SUNQIAN_UNIVERSE_RELIC_ZHU_DICTIONARY.description": "每当你获得[gold]剧本[/gold]牌时，将其[gold]升级[/gold]。",
@@ -26,5 +26,9 @@
   "SUNQIAN_UNIVERSE_RELIC_DAILY_WAGE.flavor": "今天拍完，今天结。",
   "SUNQIAN_UNIVERSE_RELIC_LUBU_BASKETBALL.title": "吕布的篮球",
   "SUNQIAN_UNIVERSE_RELIC_LUBU_BASKETBALL.description": "每[blue]{Turns}[/blue]个回合，获得[blue]{VigorPower}[/blue]点[gold]活力[/gold]。",
-  "SUNQIAN_UNIVERSE_RELIC_LUBU_BASKETBALL.flavor": "人中吕布，球中mvp。"
+  "SUNQIAN_UNIVERSE_RELIC_LUBU_BASKETBALL.flavor": "人中吕布，球中mvp。",
+  "SUNQIAN_UNIVERSE_RELIC_REUSED_PROPS.title": "复用素材",
+  "SUNQIAN_UNIVERSE_RELIC_REUSED_PROPS.description": "拾起时，从你的牌组中选择一张有[gold]消耗[/gold]的[gold]剧本[/gold]牌，这张牌失去[gold]消耗[/gold]。",
+  "SUNQIAN_UNIVERSE_RELIC_REUSED_PROPS.flavor": "再用一遍，没人会发现的…",
+  "SUNQIAN_UNIVERSE_RELIC_REUSED_PROPS.selectionScreenPrompt": "选择一张有[gold]消耗[/gold]的[gold]剧本[/gold]牌。"
 }

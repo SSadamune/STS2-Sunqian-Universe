@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using MegaCrit.Sts2.Core.Commands;
@@ -23,6 +23,11 @@ public sealed class TheGrievingPrevail : ModCardTemplate
 		new PowerVar<RitualPower>(3),
 	];
 
+	public override IEnumerable<CardKeyword> CanonicalKeywords =>
+	[
+		CardKeyword.Exhaust,
+	];
+
 	protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
 	[
 		HoverTipFactory.FromPower<StrengthPower>(),
@@ -33,7 +38,7 @@ public sealed class TheGrievingPrevail : ModCardTemplate
 		PortraitPath: "res://images/cards/TheGrievingPrevail.png");
 
 	public TheGrievingPrevail()
-		: base(0, CardType.Power, CardRarity.Common, CustomTargetType.Anyone)
+		: base(0, CardType.Skill, CardRarity.Common, CustomTargetType.Anyone)
 	{
 	}
 

@@ -5,7 +5,7 @@ using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.Models;
-using Squ.Character;
+using MegaCrit.Sts2.Core.Models.CardPools;
 using Squ.Script;
 using STS2RitsuLib.Interop.AutoRegistration;
 using STS2RitsuLib.Scaffolding.Content;
@@ -14,7 +14,7 @@ using STS2RitsuLib.Scaffolding.Content;
 
 namespace Squ.Cards;
 
-[RegisterCard(typeof(SunqianCardPool), StableEntryStem = "exactly_what_to_eat")]
+[RegisterCard(typeof(TokenCardPool), StableEntryStem = "exactly_what_to_eat")]
 public sealed class ExactlyWhatToEat : ModCardTemplate
 {
 	public const int ExhaustCount = 1;
@@ -33,7 +33,7 @@ public sealed class ExactlyWhatToEat : ModCardTemplate
 	];
 
 	public ExactlyWhatToEat()
-		: base(0, CardType.Skill, CardRarity.Token, TargetType.Self, false)
+		: base(0, CardType.Skill, CardRarity.Token, TargetType.Self)
 	{
 	}
 

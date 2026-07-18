@@ -8,6 +8,7 @@ using Squ.Combat;
 using Squ.Relics;
 using STS2RitsuLib;
 using STS2RitsuLib.Interop;
+using STS2RitsuLib.Keywords;
 using STS2RitsuLib.Utils;
 using STS2RitsuLib.Utils.Persistence;
 
@@ -40,6 +41,12 @@ public static class SquMod
 			.CardKeywordOwnedByLocNamespace("multi_target")
 			.CardKeywordOwnedByLocNamespace("environmental")
 			.CardKeywordOwnedByLocNamespace("scry")
+			.CardKeywordOwnedByLocNamespace("counts_as_played")
+			.CardKeywordOwnedByLocNamespace(
+				"fit",
+				iconPath: null,
+				ModKeywordCardDescriptionPlacement.AfterCardDescription,
+				includeInCardHoverTip: true)
 			.ArchaicToothTranscendence<SunqianScript, SunqianUniverse>()
 			.TouchOfOrobasRefinement<BoxLunchRelic, AbundantBoxLunchRelic>()
 			.Apply();

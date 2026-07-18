@@ -24,23 +24,24 @@ namespace Squ.Cards;
 
 /// <summary>
 /// 生死不明（The Cat Died）：随机施加灾厄的技能牌。
-/// 若目标灾厄斩杀线（血条绿色部分）不大于伤害上限，则直接击杀。
+/// 若目标灾厄斩杀线（血条绿色部分）不大于灾厄上限，则直接击杀。
 /// </summary>
 [RegisterCard(typeof(SunqianCardPool), StableEntryStem = "cat_in_the_box")]
 public sealed class CatInTheBox : ModCardTemplate
 {
-	public const string MinDamageVarName = "MinDamage";
-	public const string MaxDamageVarName = "MaxDamage";
+	public const string MinDoomVarName = "MinDoom";
+	public const string MaxDoomVarName = "MaxDoom";
 	private const string CanKillVarName = "CanKill";
 
-	public const int BaseMinDamage = 7;
-	public const int BaseMaxDamage = 14;
-	public const int UpgradedMaxDamage = 28;
+	public const int BaseMinDoom = 7;
+	public const int BaseMaxDoom = 14;
+	public const int UpgradedMinDoom = 12;
+	public const int UpgradedMaxDoom = 24;
 
 	protected override IEnumerable<DynamicVar> CanonicalVars =>
 	[
-		ModCardVars.Int(MinDamageVarName, BaseMinDamage),
-		ModCardVars.Int(MaxDamageVarName, BaseMaxDamage),
+		ModCardVars.Int(MinDoomVarName, BaseMinDoom),
+		ModCardVars.Int(MaxDoomVarName, BaseMaxDoom),
 		ModCardVars.Computed(CanKillVarName, 0,
 			(CardModel? card, Creature? target) =>
 				card is CatInTheBox s && target != null &&
@@ -107,7 +108,8 @@ public sealed class CatInTheBox : ModCardTemplate
 
 	protected override void OnUpgrade()
 	{
-		DynamicVars[MaxDamageVarName].UpgradeValueBy(UpgradedMaxDamage - BaseMaxDamage);
+		DynamicVars[MinDoomVarName].UpgradeValueBy(UpgradedMinDoom - BaseMinDoom);
+		DynamicVars[MaxDoomVarName].UpgradeValueBy(UpgradedMaxDoom - BaseMaxDoom);
 	}
 
 	protected override void AddExtraArgsToDescription(LocString description)
@@ -117,14 +119,14 @@ public sealed class CatInTheBox : ModCardTemplate
 		var killText = new LocString("cards", locKey);
 		if (!canKill)
 		{
-			killText.Add(DynamicVars[MaxDamageVarName]);
+			killText.Add(DynamicVars[MaxDoomVarName]);
 		}
 		description.Add("KillText", killText);
 	}
 
 	private int GetMinRoll() =>
-		(int)DynamicVars[MinDamageVarName].BaseValue;
+		(int)DynamicVars[MinDoomVarName].BaseValue;
 
 	private int GetMaxRoll() =>
-		(int)DynamicVars[MaxDamageVarName].BaseValue;
+		(int)DynamicVars[MaxDoomVarName].BaseValue;
 }

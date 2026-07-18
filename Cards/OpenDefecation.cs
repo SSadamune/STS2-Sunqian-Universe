@@ -10,7 +10,9 @@ using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.Cards;
+using MegaCrit.Sts2.Core.Models.Powers;
 using Squ.Character;
+using Squ.Powers;
 using STS2RitsuLib.Interop.AutoRegistration;
 using STS2RitsuLib.Scaffolding.Content;
 
@@ -22,20 +24,20 @@ namespace Squ.Cards;
 public sealed class OpenDefecation : ModCardTemplate
 {
 	private const int Threshold = 3;
+	private const decimal BaseDexterity = 3m;
+	private const decimal UpgradedDexterity = 4m;
 
 	protected override IEnumerable<DynamicVar> CanonicalVars =>
 	[
 		new DynamicVar("Threshold", Threshold),
-	];
-
-	public override IEnumerable<CardKeyword> CanonicalKeywords =>
-	[
-		CardKeyword.Exhaust,
+		new PowerVar<DexterityPower>(BaseDexterity),
 	];
 
 	protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
 	[
-		HoverTipFactory.FromKeyword(CardKeyword.Exhaust),
+		HoverTipFactory.FromPower<DexterityPower>(),
+		HoverTipFactory.FromKeyword(CardKeyword.Unplayable),
+		HoverTipFactory.FromKeyword(SquKeywords.CountsAsPlayed),
 		HoverTipFactory.FromCard<Splash>(IsUpgraded),
 	];
 
@@ -44,10 +46,10 @@ public sealed class OpenDefecation : ModCardTemplate
 
 	protected override bool ShouldGlowGoldInternal =>
 		Pile?.Type == PileType.Hand
-		&& PileType.Hand.GetPile(Owner).Cards.Count(card => card != this && !card.CanPlay()) >= Threshold;
+		&& PileType.Draw.GetPile(Owner).Cards.Count(HasUnplayableKeyword) >= Threshold;
 
 	public OpenDefecation()
-		: base(0, CardType.Skill, CardRarity.Uncommon, TargetType.Self)
+		: base(1, CardType.Skill, CardRarity.Uncommon, TargetType.Self)
 	{
 	}
 
@@ -56,30 +58,47 @@ public sealed class OpenDefecation : ModCardTemplate
 		ICombatState? combatState = CombatState;
 		ArgumentNullException.ThrowIfNull(combatState, nameof(combatState));
 
-		CardPile hand = PileType.Hand.GetPile(Owner);
-		List<CardModel> unplayableCards = hand.Cards
-			.Where(card => !card.CanPlay())
+		await PowerCmd.Apply<TempDexFromOpenDefecationPower>(
+			choiceContext,
+			Owner.Creature,
+			DynamicVars[nameof(DexterityPower)].BaseValue,
+			Owner.Creature,
+			this);
+
+		List<CardModel> unplayableCards = PileType.Draw.GetPile(Owner).Cards
+			.Where(HasUnplayableKeyword)
 			.ToList();
 
 		foreach (CardModel card in unplayableCards)
 		{
-			await CardCmd.Exhaust(choiceContext, card);
+			await CardPileCmd.Add(card, PileType.Discard);
 		}
 
 		if (unplayableCards.Count >= Threshold)
 		{
-			CardModel splash = combatState.CreateCard<Splash>(Owner);
+			CardModel splashSource = combatState.CreateCard<Splash>(Owner);
 			if (IsUpgraded)
 			{
-				splash.UpgradeInternal();
-				splash.FinalizeUpgradeInternal();
+				splashSource.UpgradeInternal();
+				splashSource.FinalizeUpgradeInternal();
 			}
-			splash.AddKeyword(CardKeyword.Exhaust);
-			await CardPileCmd.AddGeneratedCardToCombat(splash, PileType.Hand, Owner);
+
+			CardModel splashDupe = splashSource.CreateDupe(Owner);
+			splashSource.RemoveFromState();
+			await CardCmd.AutoPlay(
+				choiceContext,
+				splashDupe,
+				target: null,
+				skipCardPileVisuals: true);
 		}
 	}
 
 	protected override void OnUpgrade()
 	{
+		DynamicVars[nameof(DexterityPower)]
+			.UpgradeValueBy(UpgradedDexterity - BaseDexterity);
 	}
+
+	private static bool HasUnplayableKeyword(CardModel card) =>
+		card.Keywords.Contains(CardKeyword.Unplayable);
 }

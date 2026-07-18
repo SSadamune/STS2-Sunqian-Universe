@@ -4,7 +4,7 @@ using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.HoverTips;
-using Squ.Character;
+using MegaCrit.Sts2.Core.Models.CardPools;
 using Squ.Powers;
 using STS2RitsuLib.Interop.AutoRegistration;
 using STS2RitsuLib.Scaffolding.Content;
@@ -13,7 +13,7 @@ using STS2RitsuLib.Scaffolding.Content;
 
 namespace Squ.Cards;
 
-[RegisterCard(typeof(SunqianCardPool), StableEntryStem = "shangfanggu_sigh")]
+[RegisterCard(typeof(TokenCardPool), StableEntryStem = "shangfanggu_sigh")]
 public sealed class ShangfangguSigh : ModCardTemplate
 {
 	protected override IEnumerable<IHoverTip> AdditionalHoverTips =>

@@ -18,7 +18,7 @@ public static class SquCardTags
 		.GetQualifiedCardTagId(SquMod.ModId, "script")
 		.GetModCardTag();
 
-	/// <summary>能造成 <see cref="Squ.Powers.BurningPower"/> 的卡牌（供燃料充足等效果识别）。</summary>
+	/// <summary>能造成 <see cref="Squ.Powers.BurningPower"/> 的卡牌（供火种等效果识别）。</summary>
 	public static readonly CardTag Burning = ModContentRegistry
 		.GetQualifiedCardTagId(SquMod.ModId, "burning")
 		.GetModCardTag();

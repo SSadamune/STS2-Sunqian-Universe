@@ -1,0 +1,17 @@
+{
+  "SUNQIAN_UNIVERSE_CHARACTER_SUNQIAN_CHARACTER.aromaPrinciple": "[sine][blue]These words… aren't what I wanted to say. The script is speaking for me.[/blue][/sine]",
+  "SUNQIAN_UNIVERSE_CHARACTER_SUNQIAN_CHARACTER.banter.alive.endTurnPing": "They haven't called wrap on this scene yet.",
+  "SUNQIAN_UNIVERSE_CHARACTER_SUNQIAN_CHARACTER.banter.dead.endTurnPing": "…Has anyone called cut?",
+  "SUNQIAN_UNIVERSE_CHARACTER_SUNQIAN_CHARACTER.cardsModifierDescription": "Supporting Actor cards now appear in rewards and shops.",
+  "SUNQIAN_UNIVERSE_CHARACTER_SUNQIAN_CHARACTER.cardsModifierTitle": "Supporting Actor Cards",
+  "SUNQIAN_UNIVERSE_CHARACTER_SUNQIAN_CHARACTER.description": "Once an extra in a historical drama, he played many roles.\nHe has come to the Spire in search of [gold]Destiny[/gold], and himself beyond the cycle.",
+  "SUNQIAN_UNIVERSE_CHARACTER_SUNQIAN_CHARACTER.eventDeathPrevention": "Don't let someone else take my role.",
+  "SUNQIAN_UNIVERSE_CHARACTER_SUNQIAN_CHARACTER.goldMonologue": "[sine]This Gold… If it can still rent a costume, maybe I can last one more scene.[/sine]",
+  "SUNQIAN_UNIVERSE_CHARACTER_SUNQIAN_CHARACTER.possessiveAdjective": "his",
+  "SUNQIAN_UNIVERSE_CHARACTER_SUNQIAN_CHARACTER.pronounObject": "him",
+  "SUNQIAN_UNIVERSE_CHARACTER_SUNQIAN_CHARACTER.pronounPossessive": "his",
+  "SUNQIAN_UNIVERSE_CHARACTER_SUNQIAN_CHARACTER.pronounSubject": "he",
+  "SUNQIAN_UNIVERSE_CHARACTER_SUNQIAN_CHARACTER.title": "Supporting Actor",
+  "SUNQIAN_UNIVERSE_CHARACTER_SUNQIAN_CHARACTER.titleObject": "Supporting Actor",
+  "SUNQIAN_UNIVERSE_CHARACTER_SUNQIAN_CHARACTER.unlockText": "Play a run with [pink]{Prerequisite}[/pink] to unlock this character."
+}

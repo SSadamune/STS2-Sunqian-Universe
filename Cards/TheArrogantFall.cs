@@ -1,14 +1,11 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
-using MegaCrit.Sts2.Core.Entities.Creatures;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.HoverTips;
-using MegaCrit.Sts2.Core.Hooks;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
-using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.CardPools;
 using MegaCrit.Sts2.Core.Models.Powers;
 using MegaCrit.Sts2.Core.ValueProps;
@@ -24,17 +21,16 @@ namespace Squ.Cards;
 [RegisterCard(typeof(ColorlessCardPool), StableEntryStem = "the_arrogant_fall")]
 public sealed class TheArrogantFall : ModCardTemplate
 {
-	private const decimal VigorAmount = 7m;
-	private const decimal BlockAmount = 7m;
+	private const string BuffVarName = "Buff";
+	private const string DebuffVarName = "Debuff";
+	private const decimal BuffAmount = 7m;
 
-	private static readonly ValueProp BlockProps = ValueProp.Move;
+	private static readonly ValueProp BlockProps = ValueProp.Unpowered;
 
 	protected override IEnumerable<DynamicVar> CanonicalVars =>
 	[
-		new PowerVar<VigorPower>(VigorAmount),
-		new TargetBlockVar(BlockAmount, BlockProps),
-		new PowerVar<WeakPower>(TheArrogantFallPower.DebuffAmountPerStack),
-		new PowerVar<VulnerablePower>(TheArrogantFallPower.DebuffAmountPerStack),
+		new DynamicVar(BuffVarName, BuffAmount),
+		new DynamicVar(DebuffVarName, TheArrogantFallPower.DebuffAmountPerStack),
 	];
 
 	public override bool GainsBlock => true;
@@ -43,13 +39,15 @@ public sealed class TheArrogantFall : ModCardTemplate
 	[
 		HoverTipFactory.FromPower<VigorPower>(),
 		HoverTipFactory.Static(StaticHoverTip.Block),
+		HoverTipFactory.FromPower<WeakPower>(),
+		HoverTipFactory.FromPower<VulnerablePower>(),
 	];
 
 	public override CardAssetProfile AssetProfile => new(
 		PortraitPath: "res://images/cards/TheArrogantFall.png");
 
 	public TheArrogantFall()
-		: base(0, CardType.Power, CardRarity.Common, CustomTargetType.Anyone)
+		: base(0, CardType.Skill, CardRarity.Common, CustomTargetType.Anyone)
 	{
 	}
 
@@ -57,19 +55,22 @@ public sealed class TheArrogantFall : ModCardTemplate
 	{
 		ArgumentNullException.ThrowIfNull(cardPlay.Target, "cardPlay.Target");
 
+		decimal buff = DynamicVars[BuffVarName].BaseValue;
+		decimal debuff = DynamicVars[DebuffVarName].BaseValue;
+
 		await PowerCmd.Apply<VigorPower>(
 			choiceContext,
 			cardPlay.Target,
-			DynamicVars[nameof(VigorPower)].BaseValue,
+			buff,
 			Owner.Creature,
 			this);
 
-		await CreatureCmd.GainBlock(cardPlay.Target, DynamicVars.Block, cardPlay: null);
+		await CreatureCmd.GainBlock(cardPlay.Target, buff, BlockProps, cardPlay: null);
 
 		await PowerCmd.Apply<TheArrogantFallPower>(
 			choiceContext,
 			cardPlay.Target,
-			TheArrogantFallPower.DebuffAmountPerStack,
+			debuff,
 			Owner.Creature,
 			this);
 	}
@@ -77,53 +78,5 @@ public sealed class TheArrogantFall : ModCardTemplate
 	protected override void OnUpgrade()
 	{
 		AddKeyword(CardKeyword.Retain);
-	}
-
-	/// <summary>
-	/// 格挡按获得格挡的目标计算（含敏捷）；无目标预览时不套用出牌者敏捷。
-	/// </summary>
-	private sealed class TargetBlockVar : BlockVar
-	{
-		public TargetBlockVar(decimal block, ValueProp props)
-			: base(block, props)
-		{
-		}
-
-		public override void UpdateCardPreview(
-			CardModel card,
-			CardPreviewMode previewMode,
-			Creature? target,
-			bool runGlobalHooks)
-		{
-			decimal amount = BaseValue;
-
-			EnchantmentModel? enchantment = card.Enchantment;
-			if (enchantment != null)
-			{
-				amount += enchantment.EnchantBlockAdditive(amount);
-				amount *= enchantment.EnchantBlockMultiplicative(amount);
-				if (!card.IsEnchantmentPreview)
-				{
-					EnchantedValue = amount;
-				}
-			}
-
-			if (!runGlobalHooks || target == null || card.CombatState == null)
-			{
-				PreviewValue = Math.Max(amount, 0m);
-				return;
-			}
-
-			amount = Hook.ModifyBlock(
-				card.CombatState,
-				target,
-				amount,
-				Props,
-				cardSource: null,
-				cardPlay: null,
-				out _);
-
-			PreviewValue = Math.Max(amount, 0m);
-		}
 	}
 }
