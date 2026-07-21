@@ -56,7 +56,7 @@ public sealed class RespectElders : ModCardTemplate
 
 		await DamageCmd.Attack(DynamicVars.Damage.BaseValue)
 			.WithHitCount(hitCount)
-			.FromCard(this, cardPlay)
+			.FromCard(this)
 			.Targeting(cardPlay.Target)
 			.WithHitFx("vfx/vfx_attack_blunt")
 			.Execute(choiceContext);

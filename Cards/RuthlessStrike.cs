@@ -50,7 +50,7 @@ public sealed class RuthlessStrike : ModCardTemplate
 
 		await DamageCmd.Attack(DynamicVars.Damage.BaseValue)
 			.WithDamageProps(DamageProps)
-			.FromCard(this, cardPlay)
+			.FromCard(this)
 			.Targeting(cardPlay.Target)
 			.WithHitFx("vfx/vfx_attack_slash")
 			.Execute(choiceContext);

@@ -74,8 +74,7 @@ public sealed class AllInPower : ModPowerTemplate
 		decimal amount,
 		ValueProp props,
 		Creature? dealer,
-		CardModel? card,
-		CardPlay? cardPlay)
+		CardModel? card)
 	{
 		if (!ShouldBoost(card, dealer))
 		{

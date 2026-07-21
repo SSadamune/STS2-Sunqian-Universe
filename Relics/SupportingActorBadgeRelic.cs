@@ -59,7 +59,24 @@ public sealed class SupportingActorBadgeRelic : ModRelicTemplate
 			return options;
 		}
 
-		return options.WithRarityOdds(CardRarityOddsType.BossEncounter);
+		CardCreationOptions result = options.CustomCardPool is not null
+			? new CardCreationOptions(
+				options.CustomCardPool,
+				options.Source,
+				CardRarityOddsType.BossEncounter)
+			: new CardCreationOptions(
+				options.CardPools,
+				options.Source,
+				CardRarityOddsType.BossEncounter,
+				options.CardPoolFilter);
+
+		result.WithFlags(options.Flags);
+		if (options.RngOverride is not null)
+		{
+			result.WithRngOverride(options.RngOverride);
+		}
+
+		return result;
 	}
 
 	public override decimal ModifyCardRewardUpgradeOdds(Player player, CardModel card, decimal odds)

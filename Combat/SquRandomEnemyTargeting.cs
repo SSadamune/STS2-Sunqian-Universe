@@ -134,7 +134,7 @@ public static class SquRandomEnemyTargeting
 		}
 
 		await DamageCmd.Attack(damagePerHit ?? card.DynamicVars.Damage.BaseValue)
-			.FromCard(card, cardPlay)
+			.FromCard(card)
 			.TargetingRandomOpponents(combatState, allowDuplicates: false)
 			.WithHitCount(hitCount)
 			.WithHitFx(hitFx)

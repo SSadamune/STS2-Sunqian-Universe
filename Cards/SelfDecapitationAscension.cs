@@ -52,8 +52,8 @@ public sealed class SelfDecapitationAscension : ModCardTemplate
 			Owner.Creature,
 			DynamicVars.HpLoss.BaseValue,
 			ValueProp.Unblockable | ValueProp.Unpowered | ValueProp.Move,
-			this,
-			cardPlay);
+			Owner.Creature,
+			this);
 
 		await PowerCmd.Apply<IntangiblePower>(
 			choiceContext,

@@ -40,8 +40,7 @@ public sealed class ScriptExecutionCommanderPower : StackableScriptPowerTemplate
 		decimal amount,
 		ValueProp props,
 		Creature? dealer,
-		CardModel? card,
-		CardPlay? cardPlay)
+		CardModel? card)
 	{
 		if (Amount <= 0m || !ShouldBoost(card, dealer) || !props.IsPoweredAttack())
 		{

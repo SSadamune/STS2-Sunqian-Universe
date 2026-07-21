@@ -133,7 +133,7 @@ public sealed class FireNova : ModCardTemplate, IRandomEnemyTargetCount
 		CardPlay cardPlay)
 	{
 		await DamageCmd.Attack(DynamicVars.Damage.BaseValue)
-			.FromCard(this, cardPlay)
+			.FromCard(this)
 			.Targeting(target)
 			.WithHitFx("vfx/vfx_attack_slash")
 			.Execute(choiceContext);
