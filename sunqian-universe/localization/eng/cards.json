@@ -97,7 +97,7 @@
   "SUNQIAN_UNIVERSE_CARD_ALL_IN.title": "All In",
   "SUNQIAN_UNIVERSE_CARD_ALL_IN.description": "When you play your last card in [gold]Hand[/gold], if it is an [gold]Attack[/gold] or [gold]Skill[/gold], it deals {IfUpgraded:show:75|50}% more damage and gains {IfUpgraded:show:75|50}% more [gold]Block[/gold].",
   "SUNQIAN_UNIVERSE_CARD_SELF_DECAPITATION_ASCENSION.title": "Self Decapitation, Return to Heaven!",
-  "SUNQIAN_UNIVERSE_CARD_SELF_DECAPITATION_ASCENSION.description": "Lose {HpLoss:diff()} HP. Gain {IntangiblePower:diff()} [gold]Intangible[/gold].",
+  "SUNQIAN_UNIVERSE_CARD_SELF_DECAPITATION_ASCENSION.description": "Lose {HpLoss:diff()} HP.\nDraw {Cards:diff()} {Cards:plural:card|cards}.\nGain {IntangiblePower:diff()} [gold]Intangible[/gold].",
   "SUNQIAN_UNIVERSE_CARD_BENEVOLENCE_RIGHTEOUSNESS_DUAL_SWORDS.title": "Benevolence & Righteousness Dual Swords",
   "SUNQIAN_UNIVERSE_CARD_BENEVOLENCE_RIGHTEOUSNESS_DUAL_SWORDS.description": "Cards with \"Strike\" in their name are played an additional 1 time.",
   "SUNQIAN_UNIVERSE_CARD_RUTHLESS_STRIKE.title": "Ruthless Strike",

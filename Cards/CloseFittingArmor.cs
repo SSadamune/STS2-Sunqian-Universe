@@ -21,11 +21,16 @@ namespace Squ.Cards;
 [RegisterCard(typeof(SunqianCardPool), StableEntryStem = "close_fitting_armor")]
 public sealed class CloseFittingArmor : ModCardTemplate
 {
-	private const decimal BasePlating = 3m;
+	private const decimal BasePlating = 2m;
 
 	protected override IEnumerable<DynamicVar> CanonicalVars =>
 	[
 		new DexterityPlatingVar(BasePlating),
+	];
+
+	public override IEnumerable<CardKeyword> CanonicalKeywords =>
+	[
+		CardKeyword.Retain,
 	];
 
 	protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
@@ -38,7 +43,7 @@ public sealed class CloseFittingArmor : ModCardTemplate
 		PortraitPath: "res://images/cards/CloseFittingArmor.png");
 
 	public CloseFittingArmor()
-		: base(0, CardType.Power, CardRarity.Rare, TargetType.Self)
+		: base(1, CardType.Power, CardRarity.Rare, TargetType.Self)
 	{
 	}
 
@@ -55,7 +60,8 @@ public sealed class CloseFittingArmor : ModCardTemplate
 
 	protected override void OnUpgrade()
 	{
-		AddKeyword(CardKeyword.Retain);
+		MockSetEnergyCost(new CardEnergyCost(this, 0, costsX: false));
+		InvokeEnergyCostChanged();
 	}
 
 	private static decimal GetPlatingAmount(Creature owner, decimal baseAmount)

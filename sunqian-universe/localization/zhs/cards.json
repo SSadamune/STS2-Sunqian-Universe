@@ -113,7 +113,7 @@
   "SUNQIAN_UNIVERSE_CARD_ALL_IN.title": "倾巢而出",
   "SUNQIAN_UNIVERSE_CARD_ALL_IN.description": "你打出最后一张[gold]手牌[/gold]时，若为[gold]攻击[/gold]牌或[gold]技能[/gold]牌，造成的伤害和[gold]格挡[/gold]增加{IfUpgraded:show:75|50}%。",
   "SUNQIAN_UNIVERSE_CARD_SELF_DECAPITATION_ASCENSION.title": "自刎归天！",
-  "SUNQIAN_UNIVERSE_CARD_SELF_DECAPITATION_ASCENSION.description": "失去{HpLoss:diff()}点生命。获得{IntangiblePower:diff()}层[gold]无实体[/gold]。",
+  "SUNQIAN_UNIVERSE_CARD_SELF_DECAPITATION_ASCENSION.description": "失去{HpLoss:diff()}点生命。\n抽{Cards:diff()}张牌。\n获得{IntangiblePower:diff()}层[gold]无实体[/gold]。",
   "SUNQIAN_UNIVERSE_CARD_BENEVOLENCE_RIGHTEOUSNESS_DUAL_SWORDS.title": "仁义双股剑",
   "SUNQIAN_UNIVERSE_CARD_BENEVOLENCE_RIGHTEOUSNESS_DUAL_SWORDS.description": "名字中有「打击」的牌额外打出1次。",
   "SUNQIAN_UNIVERSE_CARD_RUTHLESS_STRIKE.title": "无情打击",

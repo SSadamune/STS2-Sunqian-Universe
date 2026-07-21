@@ -18,22 +18,20 @@ namespace Squ.Cards;
 [RegisterCard(typeof(SunqianCardPool), StableEntryStem = "self_decapitation_ascension")]
 public sealed class SelfDecapitationAscension : ModCardTemplate
 {
-	private const decimal HpLossAmount = 10m;
+	private const decimal BaseHpLoss = 12m;
+	private const decimal UpgradedHpLoss = 8m;
+	private const int DrawCount = 1;
+	private const decimal IntangibleAmount = 1m;
 
 	protected override IEnumerable<DynamicVar> CanonicalVars =>
 	[
-		new HpLossVar(HpLossAmount),
-		new PowerVar<IntangiblePower>(1m),
-	];
-
-	public override IEnumerable<CardKeyword> CanonicalKeywords =>
-	[
-		CardKeyword.Exhaust,
+		new HpLossVar(BaseHpLoss),
+		new CardsVar(DrawCount),
+		new PowerVar<IntangiblePower>(IntangibleAmount),
 	];
 
 	protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
 	[
-		HoverTipFactory.FromKeyword(CardKeyword.Exhaust),
 		HoverTipFactory.FromPower<IntangiblePower>(),
 	];
 
@@ -55,6 +53,8 @@ public sealed class SelfDecapitationAscension : ModCardTemplate
 			this,
 			cardPlay);
 
+		await CardPileCmd.Draw(choiceContext, DynamicVars.Cards.BaseValue, Owner);
+
 		await PowerCmd.Apply<IntangiblePower>(
 			choiceContext,
 			Owner.Creature,
@@ -65,6 +65,6 @@ public sealed class SelfDecapitationAscension : ModCardTemplate
 
 	protected override void OnUpgrade()
 	{
-		AddKeyword(CardKeyword.Retain);
+		DynamicVars.HpLoss.UpgradeValueBy(UpgradedHpLoss - BaseHpLoss);
 	}
 }
