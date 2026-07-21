@@ -10,6 +10,7 @@ using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Helpers;
 using MegaCrit.Sts2.Core.Localization;
 using MegaCrit.Sts2.Core.Models;
+using MegaCrit.Sts2.Core.Models.Cards;
 using MegaCrit.Sts2.Core.Random;
 using Squ;
 using Squ.Character;
@@ -25,6 +26,43 @@ namespace Squ.Cards;
 public sealed class JuggleMultipleShoots : ModCardTemplate
 {
 	private const int ChoiceCount = 3;
+
+	/// <summary>
+	/// 对龙套演员几乎无用的他角能力（辉星/锻造/君王之剑/小刀/奥斯提/魂/充能球等）。
+	/// 明确保留：环绕轨道、熔炉、无尽刀刃、刀扇、雷暴、旋转工艺、暴涨。
+	/// </summary>
+	private static readonly HashSet<Type> ExcludedOtherCharacterPowers =
+	[
+		// 辉星
+		typeof(ChildOfTheStars),
+		typeof(BlackHole),
+		typeof(Genesis),
+		// 锻造（保留熔炉）
+		typeof(SeekingEdge),
+		typeof(HammerTime),
+		// 君王之剑
+		typeof(Parry),
+		typeof(SwordSage),
+		// 小刀（保留无尽刀刃、刀扇）
+		typeof(Accuracy),
+		typeof(PhantomBlades),
+		// 奥斯提
+		typeof(Calcify),
+		typeof(NecroMastery),
+		typeof(SentryMode),
+		// 魂牌
+		typeof(DevourLife),
+		typeof(Haunt),
+		typeof(Soulbound),
+		// 充能球 / 专注（保留雷暴、旋转工艺、暴涨）
+		typeof(Hailstorm),
+		typeof(Coolant),
+		typeof(Loop),
+		typeof(Capacitor),
+		typeof(Defragment),
+		typeof(Thunder),
+		typeof(ConsumingShadow),
+	];
 
 	private static readonly LocString SelectionPrompt =
 		new("cards", "SUNQIAN_UNIVERSE_CARD_JUGGLE_MULTIPLE_SHOOTS.selectionScreenPrompt");
@@ -220,7 +258,8 @@ public sealed class JuggleMultipleShoots : ModCardTemplate
 		&& card.CanBeGeneratedInCombat
 		&& card.Rarity is not CardRarity.Basic and not CardRarity.Ancient and not CardRarity.Event
 		&& !card.EnergyCost.CostsX
-		&& GetCanonicalEnergyCost(card) <= maxCost;
+		&& GetCanonicalEnergyCost(card) <= maxCost
+		&& !ExcludedOtherCharacterPowers.Contains(card.GetType());
 
 	private static int GetCanonicalEnergyCost(CardModel card) => card.EnergyCost.Canonical;
 }
