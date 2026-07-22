@@ -137,5 +137,7 @@
   "SUNQIAN_UNIVERSE_CARD_CLOSE_FITTING_ARMOR.title": "贴身铠甲",
   "SUNQIAN_UNIVERSE_CARD_CLOSE_FITTING_ARMOR.description": "获得{PlatingPower:diff()}层[gold]覆甲[/gold]。此数值受到[gold]敏捷[/gold]加成。",
   "SUNQIAN_UNIVERSE_CARD_LOYALTY_OVER_KIN.title": "大义灭亲",
-  "SUNQIAN_UNIVERSE_CARD_LOYALTY_OVER_KIN.description": "消耗抽牌堆中过去5场战斗打出率最高的X张牌。每消耗一张，造成{Damage:diff()}点伤害并获得{StrengthPower:diff()}点[gold]力量[/gold]。"
+  "SUNQIAN_UNIVERSE_CARD_LOYALTY_OVER_KIN.description": "消耗抽牌堆中打出率最高的两张牌：每消耗一张，获得{StrengthPower:diff()}点[gold]力量[/gold]、造成{Damage:diff()}点伤害。{TargetCards}",
+  "SUNQIAN_UNIVERSE_CARD_LOYALTY_OVER_KIN.targetCards": "\n（将消耗{Cards}）",
+  "SUNQIAN_UNIVERSE_CARD_LOYALTY_OVER_KIN.cardSeparator": "、"
 }

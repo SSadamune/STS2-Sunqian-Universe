@@ -123,5 +123,7 @@
   "SUNQIAN_UNIVERSE_CARD_CLOSE_FITTING_ARMOR.title": "Close-Fitting Armor",
   "SUNQIAN_UNIVERSE_CARD_CLOSE_FITTING_ARMOR.description": "Gain {PlatingPower:diff()} [gold]Plating[/gold]. This amount is increased by your [gold]Dexterity[/gold].",
   "SUNQIAN_UNIVERSE_CARD_LOYALTY_OVER_KIN.title": "Loyalty Over Kin",
-  "SUNQIAN_UNIVERSE_CARD_LOYALTY_OVER_KIN.description": "Exhaust the X cards in your draw pile with the highest play rate over the past 5 combats. For each, deal {Damage:diff()} damage and gain {StrengthPower:diff()} [gold]Strength[/gold]."
+  "SUNQIAN_UNIVERSE_CARD_LOYALTY_OVER_KIN.description": "Exhaust the 2 cards in your draw pile with the highest play rate: for each, gain {StrengthPower:diff()} [gold]Strength[/gold] and deal {Damage:diff()} damage.{TargetCards}",
+  "SUNQIAN_UNIVERSE_CARD_LOYALTY_OVER_KIN.targetCards": "\n(Exhausts {Cards})",
+  "SUNQIAN_UNIVERSE_CARD_LOYALTY_OVER_KIN.cardSeparator": ", "
 }

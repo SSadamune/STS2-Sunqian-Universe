@@ -6,7 +6,6 @@ using MegaCrit.Sts2.Core.Combat;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.Entities.Players;
 using MegaCrit.Sts2.Core.Models;
-using MegaCrit.Sts2.Core.Random;
 using MegaCrit.Sts2.Core.Runs;
 using STS2RitsuLib;
 using STS2RitsuLib.RunData;
@@ -59,15 +58,14 @@ public static class CardDrawPlayRateTracker
 
 	/// <summary>
 	/// 从抽牌堆中选出过去 <paramref name="windowSize"/> 场战斗打出率最高的至多 <paramref name="count"/> 张牌。
-	/// 打出率相同则优先打出次数更多者；仍相同则由 <paramref name="rng"/> 随机打破平局。
-	/// 无抽牌记录（draws=0）的牌不参与。
+	/// 无抽牌记录或 draws=0 的牌（含本场临时牌）视为打出率 0、打出次数 0，与有记录的 0% 牌同等参与。
+	/// 打出率相同则优先打出次数更多者；仍相同则优先更早获得的牌（入组楼层，再实例 ID / 抽牌堆次序）。
 	/// </summary>
 	public static List<CardModel> SelectHighestPlayRateFromDrawPile(
 		Player player,
 		int count,
 		int windowSize = DefaultWindowSize,
-		bool includeCurrentCombat = false,
-		Rng? rng = null)
+		bool includeCurrentCombat = false)
 	{
 		if (count <= 0)
 		{
@@ -75,24 +73,36 @@ public static class CardDrawPlayRateTracker
 		}
 
 		EnsureDeckInstanceIds(player);
-		rng ??= player.RunState.Rng.CombatCardGeneration;
 
-		List<(CardModel Card, float Rate, int Plays, float Jitter)> ranked = [];
+		List<(CardModel Card, float Rate, int Plays, int Floor, int InstanceId, int DrawIndex)> ranked = [];
+		int drawIndex = 0;
 		foreach (CardModel card in PileType.Draw.GetPile(player).Cards)
 		{
-			if (!TryGetStats(player, card, windowSize, includeCurrentCombat, out int draws, out int plays)
-				|| draws <= 0)
+			float rate = 0f;
+			int plays = 0;
+			if (TryGetStats(player, card, windowSize, includeCurrentCombat, out int draws, out int trackedPlays)
+				&& draws > 0)
 			{
-				continue;
+				rate = (float)trackedPlays / draws;
+				plays = trackedPlays;
 			}
 
-			ranked.Add((card, (float)plays / draws, plays, rng.NextFloat()));
+			CardModel identity = ResolveIdentityCard(card) ?? card;
+			int floor = identity.FloorAddedToDeck ?? int.MaxValue;
+			int instanceId = TryResolveInstanceId(player, card, assignIfMissing: false, out int resolvedId)
+				? resolvedId
+				: int.MaxValue;
+
+			ranked.Add((card, rate, plays, floor, instanceId, drawIndex));
+			drawIndex++;
 		}
 
 		return ranked
 			.OrderByDescending(entry => entry.Rate)
 			.ThenByDescending(entry => entry.Plays)
-			.ThenByDescending(entry => entry.Jitter)
+			.ThenBy(entry => entry.Floor)
+			.ThenBy(entry => entry.InstanceId)
+			.ThenBy(entry => entry.DrawIndex)
 			.Take(count)
 			.Select(entry => entry.Card)
 			.ToList();

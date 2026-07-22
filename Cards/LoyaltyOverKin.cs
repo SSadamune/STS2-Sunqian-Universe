@@ -1,11 +1,14 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
+using MegaCrit.Sts2.Core.Combat;
 using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.Entities.Creatures;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.HoverTips;
+using MegaCrit.Sts2.Core.Localization;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.Powers;
@@ -20,20 +23,24 @@ using STS2RitsuLib.Scaffolding.Content;
 namespace Squ.Cards;
 
 /// <summary>
-/// 大义灭亲：消耗抽牌堆中过去 5 场战斗打出率最高的 X 张牌（率相同则优先打出次数更多者）；每消耗一张造成伤害并获得力量。
+/// 大义灭亲：消耗抽牌堆中打出率最高的 2 张牌（无记录/临时牌视为 0%；
+/// 率相同则优先打出次数更多者，再按获得顺序）；每消耗一张先获得力量再造成伤害。
 /// </summary>
 [RegisterCard(typeof(SunqianCardPool), StableEntryStem = "loyalty_over_kin")]
 public sealed class LoyaltyOverKin : ModCardTemplate
 {
-	public const int DamageAmount = 6;
+	public const int DamageAmount = 5;
 
 	public const int BaseStrength = 2;
 
 	public const int UpgradedStrength = 3;
 
-	public const int PlayRateWindow = CardDrawPlayRateTracker.DefaultWindowSize;
+	public const int ExhaustCount = 2;
 
-	protected override bool HasEnergyCostX => true;
+	/// <summary>使用追踪器已保存的全部已结束战斗。</summary>
+	public const int PlayRateWindow = CardDrawPlayRateTracker.MaxStoredCombats;
+
+	private const bool IncludeCurrentCombat = false;
 
 	protected override IEnumerable<DynamicVar> CanonicalVars =>
 	[
@@ -55,7 +62,7 @@ public sealed class LoyaltyOverKin : ModCardTemplate
 		PortraitPath: "res://images/cards/LoyaltyOverKin.png");
 
 	public LoyaltyOverKin()
-		: base(0, CardType.Attack, CardRarity.Rare, TargetType.AnyEnemy)
+		: base(2, CardType.Attack, CardRarity.Rare, TargetType.AnyEnemy)
 	{
 	}
 
@@ -63,32 +70,14 @@ public sealed class LoyaltyOverKin : ModCardTemplate
 	{
 		ArgumentNullException.ThrowIfNull(cardPlay.Target, nameof(cardPlay.Target));
 
-		int count = ResolveEnergyXValue();
-		if (count <= 0)
-		{
-			return;
-		}
-
-		const bool includeCurrentCombat = false;
-		CardDrawPlayRateTracker.LogCurrentState(
-			Owner,
-			windowSize: PlayRateWindow,
-			includeCurrentCombat: includeCurrentCombat,
-			reason: $"Loyalty Over Kin OnPlay (X={count}, before selection)");
-
-		List<CardModel> selected = CardDrawPlayRateTracker.SelectHighestPlayRateFromDrawPile(
-			Owner,
-			count,
-			windowSize: PlayRateWindow,
-			includeCurrentCombat: includeCurrentCombat,
-			rng: Owner.RunState.Rng.CombatCardGeneration);
+		List<CardModel> selected = SelectTargets();
 
 		CardDrawPlayRateTracker.LogCurrentState(
 			Owner,
 			windowSize: PlayRateWindow,
-			includeCurrentCombat: includeCurrentCombat,
+			includeCurrentCombat: IncludeCurrentCombat,
 			selectedCards: selected,
-			reason: $"Loyalty Over Kin OnPlay (X={count}, after selection)");
+			reason: $"Loyalty Over Kin OnPlay (count={ExhaustCount})");
 
 		Creature target = cardPlay.Target;
 		decimal strengthAmount = DynamicVars[nameof(StrengthPower)].BaseValue;
@@ -103,6 +92,13 @@ public sealed class LoyaltyOverKin : ModCardTemplate
 
 			await CardCmd.Exhaust(choiceContext, card);
 
+			await PowerCmd.Apply<StrengthPower>(
+				choiceContext,
+				Owner.Creature,
+				strengthAmount,
+				Owner.Creature,
+				this);
+
 			if (target.IsAlive)
 			{
 				await DamageCmd.Attack(vigorSequence.ResolveNextAttackDamage())
@@ -111,18 +107,49 @@ public sealed class LoyaltyOverKin : ModCardTemplate
 					.WithHitFx("vfx/vfx_attack_slash")
 					.Execute(choiceContext);
 			}
-
-			await PowerCmd.Apply<StrengthPower>(
-				choiceContext,
-				Owner.Creature,
-				strengthAmount,
-				Owner.Creature,
-				this);
 		}
 	}
 
 	protected override void OnUpgrade()
 	{
 		DynamicVars[nameof(StrengthPower)].UpgradeValueBy(UpgradedStrength - BaseStrength);
+	}
+
+	protected override void AddExtraArgsToDescription(LocString description)
+	{
+		List<CardModel> previewTargets = GetDescriptionPreviewTargets();
+		if (previewTargets.Count == 0)
+		{
+			description.Add("TargetCards", string.Empty);
+			return;
+		}
+
+		var clause = new LocString("cards", Id.Entry + ".targetCards");
+		clause.Add("Cards", FormatCardList(previewTargets));
+		description.Add("TargetCards", clause);
+	}
+
+	private List<CardModel> GetDescriptionPreviewTargets()
+	{
+		if (!CombatManager.Instance.IsInProgress || Owner?.PlayerCombatState == null)
+		{
+			return [];
+		}
+
+		return SelectTargets();
+	}
+
+	private List<CardModel> SelectTargets() =>
+		CardDrawPlayRateTracker.SelectHighestPlayRateFromDrawPile(
+			Owner,
+			ExhaustCount,
+			windowSize: PlayRateWindow,
+			includeCurrentCombat: IncludeCurrentCombat);
+
+	private string FormatCardList(IReadOnlyList<CardModel> cards)
+	{
+		string separator = new LocString("cards", Id.Entry + ".cardSeparator").GetFormattedText()
+			?? ", ";
+		return string.Join(separator, cards.Select(card => $"[gold]{card.Title}[/gold]"));
 	}
 }
