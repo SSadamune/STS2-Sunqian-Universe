@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using MegaCrit.Sts2.Core.Combat;
 using MegaCrit.Sts2.Core.Commands;
@@ -22,8 +23,8 @@ using STS2RitsuLib.Scaffolding.Content;
 namespace Squ.Cards;
 
 /// <summary>
-/// Fire Nova: deals damage and applies Burning to all enemies; when upgraded, becomes X-cost and
-/// executes that effect once each on up to X distinct random enemies.
+/// 飞火流星：造成伤害并对所有敌人施加灼烧；升级后变为 X 费，
+/// 对至多 X 名互不重复的随机敌人分别执行「造成伤害 + 对所有敌人施加灼烧」。
 /// </summary>
 [RegisterCard(typeof(SunqianCardPool), StableEntryStem = "fire_nova")]
 public sealed class FireNova : ModCardTemplate, IRandomEnemyTargetCount
@@ -69,20 +70,38 @@ public sealed class FireNova : ModCardTemplate, IRandomEnemyTargetCount
 
 		if (IsUpgraded)
 		{
-			int hitCount = GetRandomEnemyTargetCount();
-			if (hitCount <= 0)
+			int requestedCount = GetRandomEnemyTargetCount();
+			if (requestedCount <= 0)
 			{
 				return;
 			}
 
-			int damageHits = await SquRandomEnemyTargeting.ExecuteDistinctRandomEnemyDamage(
-				this,
-				choiceContext,
-				hitCount,
-				cardPlay: cardPlay);
-
-			for (int i = 0; i < damageHits; i++)
+			List<Creature> damageTargets = SquRandomEnemyTargeting
+				.PickRandomEnemiesUnique(
+					combatState,
+					requestedCount,
+					Owner.RunState.Rng.CombatTargets)
+				.ToList();
+			if (damageTargets.Count == 0)
 			{
+				return;
+			}
+
+			SquVigorSnapshot.AttackSequence vigorSequence =
+				SquVigorSnapshot.BeginAttackSequence(Owner.Creature, this);
+
+			foreach (Creature damageTarget in damageTargets)
+			{
+				if (!damageTarget.IsAlive)
+				{
+					continue;
+				}
+
+				await DealDamage(
+					choiceContext,
+					damageTarget,
+					cardPlay,
+					vigorSequence.ResolveNextAttackDamage());
 				await ApplyBurningToAllEnemies(choiceContext, combatState);
 			}
 
@@ -121,7 +140,7 @@ public sealed class FireNova : ModCardTemplate, IRandomEnemyTargetCount
 			await PowerCmd.Apply<BurningPower>(
 				choiceContext,
 				target,
-				BurningStacks,
+				DynamicVars[nameof(BurningPower)].BaseValue,
 				Owner.Creature,
 				this);
 		}
@@ -130,9 +149,10 @@ public sealed class FireNova : ModCardTemplate, IRandomEnemyTargetCount
 	private async Task DealDamage(
 		PlayerChoiceContext choiceContext,
 		Creature target,
-		CardPlay cardPlay)
+		CardPlay cardPlay,
+		decimal? damage = null)
 	{
-		await DamageCmd.Attack(DynamicVars.Damage.BaseValue)
+		await DamageCmd.Attack(damage ?? DynamicVars.Damage.BaseValue)
 			.FromCard(this, cardPlay)
 			.Targeting(target)
 			.WithHitFx("vfx/vfx_attack_slash")

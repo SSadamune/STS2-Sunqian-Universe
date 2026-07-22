@@ -6,7 +6,7 @@
   "SUNQIAN_UNIVERSE_CARD_SUNQIAN_UNIVERSE.title": "Sunqian Universe",
   "SUNQIAN_UNIVERSE_CARD_SUNQIAN_UNIVERSE.description": "Gain {DexterityPower:diff()} [gold]Dexterity[/gold]. Whenever your [gold]Script[/gold] ends, draw {Cards:diff()} card.",
   "SUNQIAN_UNIVERSE_CARD_FIRE_NOVA.title": "Fire Nova",
-  "SUNQIAN_UNIVERSE_CARD_FIRE_NOVA.description": "{IfUpgraded:show:On X random enemies, respectively: \"|}Deal {Damage:diff()} damage. Apply {BurningPower:diff()} [gold]Burning[/gold] to ALL enemies.{IfUpgraded:show:\"|}",
+  "SUNQIAN_UNIVERSE_CARD_FIRE_NOVA.description": "{IfUpgraded:show:On X random enemies, respectively execute: \"|}Deal {Damage:diff()} damage. Apply {BurningPower:diff()} [gold]Burning[/gold] to ALL enemies.{IfUpgraded:show:\"|}",
   "SUNQIAN_UNIVERSE_CARD_FLAME_STRIKE.title": "Flame Strike",
   "SUNQIAN_UNIVERSE_CARD_FLAME_STRIKE.description": "Deal {Damage:diff()} damage. Apply {BurningPower:diff()} [gold]Burning[/gold].",
   "SUNQIAN_UNIVERSE_CARD_THE_GRIEVING_PREVAIL.title": "The grieving prevail",
@@ -121,5 +121,7 @@
   "SUNQIAN_UNIVERSE_CARD_BOWANG_PARADOX_SCRIPT.title": "Bowang Paradox Script",
   "SUNQIAN_UNIVERSE_CARD_BOWANG_PARADOX_SCRIPT.description": "Gain {VigorPower:diff()} [gold]Vigor[/gold]. Discard all [gold]Attack[/gold] cards.\n[gold]Script[/gold]: When this Script ends, gain {TinderPower:diff()} [gold]Tinder[/gold] and discard all [gold]Burning[/gold] cards.",
   "SUNQIAN_UNIVERSE_CARD_CLOSE_FITTING_ARMOR.title": "Close-Fitting Armor",
-  "SUNQIAN_UNIVERSE_CARD_CLOSE_FITTING_ARMOR.description": "Gain {PlatingPower:diff()} [gold]Plating[/gold]. This amount is increased by your [gold]Dexterity[/gold]."
+  "SUNQIAN_UNIVERSE_CARD_CLOSE_FITTING_ARMOR.description": "Gain {PlatingPower:diff()} [gold]Plating[/gold]. This amount is increased by your [gold]Dexterity[/gold].",
+  "SUNQIAN_UNIVERSE_CARD_LOYALTY_OVER_KIN.title": "Loyalty Over Kin",
+  "SUNQIAN_UNIVERSE_CARD_LOYALTY_OVER_KIN.description": "Exhaust the X cards in your draw pile with the highest play rate over the past 5 combats. For each, deal {Damage:diff()} damage and gain {StrengthPower:diff()} [gold]Strength[/gold]."
 }
