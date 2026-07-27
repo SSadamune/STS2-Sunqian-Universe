@@ -123,7 +123,11 @@
   "SUNQIAN_UNIVERSE_CARD_CLOSE_FITTING_ARMOR.title": "Close-Fitting Armor",
   "SUNQIAN_UNIVERSE_CARD_CLOSE_FITTING_ARMOR.description": "Gain {PlatingPower:diff()} [gold]Plating[/gold]. This amount is increased by your [gold]Dexterity[/gold].",
   "SUNQIAN_UNIVERSE_CARD_LOYALTY_OVER_KIN.title": "Loyalty Over Kin",
-  "SUNQIAN_UNIVERSE_CARD_LOYALTY_OVER_KIN.description": "Exhaust the 2 cards in your draw pile with the highest play rate: for each, gain {StrengthPower:diff()} [gold]Strength[/gold] and deal {Damage:diff()} damage.{TargetCards}",
+  "SUNQIAN_UNIVERSE_CARD_LOYALTY_OVER_KIN.description": "Exhaust the 2 cards in your draw pile with the highest play rate: for each, deal {Damage:diff()} damage and gain {StrengthPower:diff()} [gold]Strength[/gold].{TargetCards}",
   "SUNQIAN_UNIVERSE_CARD_LOYALTY_OVER_KIN.targetCards": "\n(Exhausts {Cards})",
-  "SUNQIAN_UNIVERSE_CARD_LOYALTY_OVER_KIN.cardSeparator": ", "
+  "SUNQIAN_UNIVERSE_CARD_LOYALTY_OVER_KIN.cardSeparator": ", ",
+  "SUNQIAN_UNIVERSE_CARD_CELEBRATE_MOURNING.title": "Celebrate Mourning",
+  "SUNQIAN_UNIVERSE_CARD_CELEBRATE_MOURNING.description": "Gain {VigorPower:diff()} [gold]Vigor[/gold] and {Block:diff()} [gold]Block[/gold].\nDraw {Cards:diff()} {Cards:plural:card|cards}.\nWhenever another card with the highest play rate in your deck is Exhausted, {IfUpgraded:show:put this card into your Hand and set its cost to {energyPrefix:energyIcons(0)} for this combat.|put this card into your Hand.}",
+  "SUNQIAN_UNIVERSE_CARD_CELEBRATE_MOURNING.returnTriggerHoverTip": "Will be put into your Hand when {Cards} is Exhausted.",
+  "SUNQIAN_UNIVERSE_CARD_CELEBRATE_MOURNING.cardSeparator": ", "
 }

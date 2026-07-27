@@ -1,14 +1,13 @@
 {
   "DARV.talk.SUNQIAN_UNIVERSE_CHARACTER_SUNQIAN_CHARACTER.0-0.char": "这里像撤景后的仓库。道具堆得到处都是……我认得几套，是我穿过的。",
   "DARV.talk.SUNQIAN_UNIVERSE_CHARACTER_SUNQIAN_CHARACTER.0-0.next": "继续",
-  "DARV.talk.SUNQIAN_UNIVERSE_CHARACTER_SUNQIAN_CHARACTER.0-1.ancient": "列位诸公，别见怪，都是撤景落下的。喏，那把斧子——潘凤用过的，跟华雄打了几个回合才落地。你挑件顺手的吧。",
+  "DARV.talk.SUNQIAN_UNIVERSE_CHARACTER_SUNQIAN_CHARACTER.0-1.ancient": "列位诸公，各位百官，这都是撤景落下的。你挑件顺手的吧。",
   "DARV.talk.SUNQIAN_UNIVERSE_CHARACTER_SUNQIAN_CHARACTER.1-0r.ancient": "龙套啊，你又来了。上次你还是门卫，这次通告单上写成关二爷了——眼皮一眨，老母鸡变鸭！",
   "DARV.talk.SUNQIAN_UNIVERSE_CHARACTER_SUNQIAN_CHARACTER.2-0.ancient": "我翻了半天，也没找着能证明「你就是你」的道具。这么几个龙套要演几百个角色，谁记得谁是谁。",
   "DARV.talk.SUNQIAN_UNIVERSE_CHARACTER_SUNQIAN_CHARACTER.2-0.next": "回应",
   "DARV.talk.SUNQIAN_UNIVERSE_CHARACTER_SUNQIAN_CHARACTER.2-1.char": "……要是真有那种东西，也不会摆在仓库门口。龙套用的都在角落里，跟主子爷身边的奴才一样，没人记得。",
   "DARV.talk.SUNQIAN_UNIVERSE_CHARACTER_SUNQIAN_CHARACTER.2-1.next": "继续",
   "DARV.talk.SUNQIAN_UNIVERSE_CHARACTER_SUNQIAN_CHARACTER.2-2.ancient": "说得在理。拿着走吧。下一场要是演砸被场务叉出去——至少道具还在你手上。",
-
   "NEOW.talk.SUNQIAN_UNIVERSE_CHARACTER_SUNQIAN_CHARACTER.0-0.char": "没有布景，没有镜头……空景里有个旁白在念：「三国再次归于一统……」——等等，什么叫「再次」？",
   "NEOW.talk.SUNQIAN_UNIVERSE_CHARACTER_SUNQIAN_CHARACTER.0-0.next": "继续",
   "NEOW.talk.SUNQIAN_UNIVERSE_CHARACTER_SUNQIAN_CHARACTER.0-1.ancient": "[sine]...那是天意爷..... \n...导演进去了..... \n...编剧也进去了..... \n...只剩旁白..... \n...还在念..... \n...历史发生了剧变.....[/sine]",
@@ -17,8 +16,7 @@
   "NEOW.talk.SUNQIAN_UNIVERSE_CHARACTER_SUNQIAN_CHARACTER.2-0.next": "祈求",
   "NEOW.talk.SUNQIAN_UNIVERSE_CHARACTER_SUNQIAN_CHARACTER.2-1.char": "若你一定要把我写进剧本……请让我分得清，哪些记忆属于演员，哪些属于角色。",
   "NEOW.talk.SUNQIAN_UNIVERSE_CHARACTER_SUNQIAN_CHARACTER.2-1.next": "继续",
-  "NEOW.talk.SUNQIAN_UNIVERSE_CHARACTER_SUNQIAN_CHARACTER.2-2.ancient": "[sine]...塔顶有人写结局..... \n...去吧..... \n...别信旁白..... \n...它只管巨变..... \n...不管演员.....[/sine]",
-
+  "NEOW.talk.SUNQIAN_UNIVERSE_CHARACTER_SUNQIAN_CHARACTER.2-2.ancient": "[sine]...塔顶有人写结局..... \n...去吧..... \n...别信剧本..... \n...别听旁白.....[/sine]",
   "NONUPEIPE.talk.SUNQIAN_UNIVERSE_CHARACTER_SUNQIAN_CHARACTER.0-0.char": "满墙的脸谱……我演过的每一张，好像都被你收在这儿了。",
   "NONUPEIPE.talk.SUNQIAN_UNIVERSE_CHARACTER_SUNQIAN_CHARACTER.0-0.next": "继续",
   "NONUPEIPE.talk.SUNQIAN_UNIVERSE_CHARACTER_SUNQIAN_CHARACTER.0-1.ancient": "说出吾名，吓汝一跳！……逗你的，我是化妆师。来，拾掇成今天最像主角的样子。",
@@ -28,7 +26,6 @@
   "NONUPEIPE.talk.SUNQIAN_UNIVERSE_CHARACTER_SUNQIAN_CHARACTER.2-1.char": "……我没有自己的脸。有的只是一堆借来的五官——整部戏说不定都是孙乾演的，换张皮而已。",
   "NONUPEIPE.talk.SUNQIAN_UNIVERSE_CHARACTER_SUNQIAN_CHARACTER.2-1.next": "继续",
   "NONUPEIPE.talk.SUNQIAN_UNIVERSE_CHARACTER_SUNQIAN_CHARACTER.2-2.ancient": "那就挑几张借来的带走。下一幕它们还会抢着替你说话——我子敬真的是要醉啦，这妆化得我眼花。",
-
   "OROBAS.talk.SUNQIAN_UNIVERSE_CHARACTER_SUNQIAN_CHARACTER.0-0.char": "通告单又改了……上一页我还是传令兵，这一页写成太监，再下一页要我去给丞相养马倒尿壶。",
   "OROBAS.talk.SUNQIAN_UNIVERSE_CHARACTER_SUNQIAN_CHARACTER.0-0.next": "继续",
   "OROBAS.talk.SUNQIAN_UNIVERSE_CHARACTER_SUNQIAN_CHARACTER.0-1.ancient": "龙套啊，上一秒你是上将军，下一秒你是小公公——这就是天意！！",
@@ -38,18 +35,16 @@
   "OROBAS.talk.SUNQIAN_UNIVERSE_CHARACTER_SUNQIAN_CHARACTER.2-1.char": "……我只想要一条不会自己改写的剧本。",
   "OROBAS.talk.SUNQIAN_UNIVERSE_CHARACTER_SUNQIAN_CHARACTER.2-1.next": "继续",
   "OROBAS.talk.SUNQIAN_UNIVERSE_CHARACTER_SUNQIAN_CHARACTER.2-2.ancient": "没有那种东西！！但乱也有乱的好处——总有一天你能找到跳出轮回的方法！！",
-
   "PAEL.talk.SUNQIAN_UNIVERSE_CHARACTER_SUNQIAN_CHARACTER.0-0.char": "场记还没喊「CUT」，导演已经拍下一条了……龙套躺下，生死不明。",
   "PAEL.talk.SUNQIAN_UNIVERSE_CHARACTER_SUNQIAN_CHARACTER.0-0.next": "继续",
   "PAEL.talk.SUNQIAN_UNIVERSE_CHARACTER_SUNQIAN_CHARACTER.0-1.ancient": "[thinky_dots]生死不明？那就是死了……在剧组里，没戏拍跟死了没区别……[/thinky_dots]",
   "PAEL.talk.SUNQIAN_UNIVERSE_CHARACTER_SUNQIAN_CHARACTER.1-0r.ancient": "[thinky_dots]醒着的人背台词……躺着的人等场记……演尸体演得越多，自刎术就越高明……[/thinky_dots]",
   "PAEL.talk.SUNQIAN_UNIVERSE_CHARACTER_SUNQIAN_CHARACTER.2-0.ancient": "[thinky_dots]所以……你都爬了一辈子塔了，就不能享受享受吗……[/thinky_dots]",
   "PAEL.talk.SUNQIAN_UNIVERSE_CHARACTER_SUNQIAN_CHARACTER.2-0.next": "回答",
-  "PAEL.talk.SUNQIAN_UNIVERSE_CHARACTER_SUNQIAN_CHARACTER.2-1.char": "他们都有名字、下场、至少是墓碑……但龙套必须不停地演……",
+  "PAEL.talk.SUNQIAN_UNIVERSE_CHARACTER_SUNQIAN_CHARACTER.2-1.char": "有的人出场就是墓碑……但龙套一集也不能落下……",
   "PAEL.talk.SUNQIAN_UNIVERSE_CHARACTER_SUNQIAN_CHARACTER.2-1.next": "继续",
-  "PAEL.talk.SUNQIAN_UNIVERSE_CHARACTER_SUNQIAN_CHARACTER.2-2.ancient": "[thinky_dots]也是……拿着这个走吧……下一场开拍前……还能享受一下凉爽的夏夜……[/thinky_dots]",
-
-  "TANX.talk.SUNQIAN_UNIVERSE_CHARACTER_SUNQIAN_CHARACTER.0-0.char": "武戏没排练就要上……通告单只写了「开打」，连对手是谁都没标。",
+  "PAEL.talk.SUNQIAN_UNIVERSE_CHARACTER_SUNQIAN_CHARACTER.2-2.ancient": "[thinky_dots]活着……无尽轮回……死后……凉爽夏夜……[/thinky_dots]",
+  "TANX.talk.SUNQIAN_UNIVERSE_CHARACTER_SUNQIAN_CHARACTER.0-0.char": "没排练就要上武戏……主演却连马都不会骑。",
   "TANX.talk.SUNQIAN_UNIVERSE_CHARACTER_SUNQIAN_CHARACTER.0-0.next": "继续",
   "TANX.talk.SUNQIAN_UNIVERSE_CHARACTER_SUNQIAN_CHARACTER.0-1.ancient": "[b]别废话！！我的大斧早就饥渴难耐了！！!你！拿着兵器赶紧过来！！[/b]",
   "TANX.talk.SUNQIAN_UNIVERSE_CHARACTER_SUNQIAN_CHARACTER.1-0r.ancient": "[b]主演呢？！那个拿天价片酬的怎么还不来？！别老让龙套扛武戏！[/b]",
@@ -58,7 +53,6 @@
   "TANX.talk.SUNQIAN_UNIVERSE_CHARACTER_SUNQIAN_CHARACTER.2-1.char": "……我明明没练过武。可身体记得怎么挥刀……。",
   "TANX.talk.SUNQIAN_UNIVERSE_CHARACTER_SUNQIAN_CHARACTER.2-1.next": "继续",
   "TANX.talk.SUNQIAN_UNIVERSE_CHARACTER_SUNQIAN_CHARACTER.2-2.ancient": "[b]好！！那就往上打！！打到塔顶！！捅他一万个透明窟窿！！！[/b]",
-
   "TEZCATARA.talk.SUNQIAN_UNIVERSE_CHARACTER_SUNQIAN_CHARACTER.0-0.char": "火堆倒是暖和……可剧组收工了，陈留大食堂都关门了，连盒饭都没留下。",
   "TEZCATARA.talk.SUNQIAN_UNIVERSE_CHARACTER_SUNQIAN_CHARACTER.0-0.next": "继续",
   "TEZCATARA.talk.SUNQIAN_UNIVERSE_CHARACTER_SUNQIAN_CHARACTER.0-1.ancient": "龙套啊，没饭吃不要紧。来，先喝口[jitter][b]热酒[/b][/jitter]——当浮一大白！吃什么？有酒就行。",
@@ -68,7 +62,6 @@
   "TEZCATARA.talk.SUNQIAN_UNIVERSE_CHARACTER_SUNQIAN_CHARACTER.2-1.char": "……不用了。龙套饿一点反而正常——没人记得有没有给你发过饭。",
   "TEZCATARA.talk.SUNQIAN_UNIVERSE_CHARACTER_SUNQIAN_CHARACTER.2-1.next": "继续",
   "TEZCATARA.talk.SUNQIAN_UNIVERSE_CHARACTER_SUNQIAN_CHARACTER.2-2.ancient": "那就在火边坐会儿。……等火灭了，再星夜赶路。",
-
   "VAKUU.talk.SUNQIAN_UNIVERSE_CHARACTER_SUNQIAN_CHARACTER.0-0.char": "你也做生意？那你要换走什么……名字，记忆，还是「龙套演员」这四个字？",
   "VAKUU.talk.SUNQIAN_UNIVERSE_CHARACTER_SUNQIAN_CHARACTER.0-0.next": "继续",
   "VAKUU.talk.SUNQIAN_UNIVERSE_CHARACTER_SUNQIAN_CHARACTER.0-1.ancient": "最便宜的，是你以为还属于自己的那点[sine]自我[/sine]。你知道的，我这个人做买卖一向实在——卑鄙是卑鄙者的通行证，合同里写得明白。",
@@ -78,21 +71,18 @@
   "VAKUU.talk.SUNQIAN_UNIVERSE_CHARACTER_SUNQIAN_CHARACTER.2-1.char": "随便什么……反正一切都是天意。",
   "VAKUU.talk.SUNQIAN_UNIVERSE_CHARACTER_SUNQIAN_CHARACTER.2-1.next": "继续",
   "VAKUU.talk.SUNQIAN_UNIVERSE_CHARACTER_SUNQIAN_CHARACTER.2-2.ancient": "好志气！！但愿你分得清，哪一笔账该由哪一个「你」来付。",
-
   "THE_ARCHITECT.talk.SUNQIAN_UNIVERSE_CHARACTER_SUNQIAN_CHARACTER.0-0r.ancient": "你的通告单可没让你来这里。",
   "THE_ARCHITECT.talk.SUNQIAN_UNIVERSE_CHARACTER_SUNQIAN_CHARACTER.0-0r.next": "回答",
   "THE_ARCHITECT.talk.SUNQIAN_UNIVERSE_CHARACTER_SUNQIAN_CHARACTER.0-1r.char": "通什么？告什么？没听说过！",
   "THE_ARCHITECT.talk.SUNQIAN_UNIVERSE_CHARACTER_SUNQIAN_CHARACTER.0-1r.next": "继续",
   "THE_ARCHITECT.talk.SUNQIAN_UNIVERSE_CHARACTER_SUNQIAN_CHARACTER.0-2r.ancient": "这塔顶到底你是主，还是我是主？",
   "THE_ARCHITECT.talk.SUNQIAN_CHARACTER.0-attack": "Both",
-
   "THE_ARCHITECT.talk.SUNQIAN_UNIVERSE_CHARACTER_SUNQIAN_CHARACTER.1-0r.ancient": "又来了。你要补拍，还是再演一轮？",
   "THE_ARCHITECT.talk.SUNQIAN_UNIVERSE_CHARACTER_SUNQIAN_CHARACTER.1-0r.next": "继续",
   "THE_ARCHITECT.talk.SUNQIAN_UNIVERSE_CHARACTER_SUNQIAN_CHARACTER.1-1r.char": "建贼！奸贼！恶贼！逆~ 贼！",
   "THE_ARCHITECT.talk.SUNQIAN_UNIVERSE_CHARACTER_SUNQIAN_CHARACTER.1-1r.next": "继续",
   "THE_ARCHITECT.talk.SUNQIAN_UNIVERSE_CHARACTER_SUNQIAN_CHARACTER.1-2r.ancient": "不要愤怒，愤怒会降低你的智慧。",
   "THE_ARCHITECT.talk.SUNQIAN_CHARACTER.1-attack": "Both",
-
   "THE_ARCHITECT.talk.SUNQIAN_UNIVERSE_CHARACTER_SUNQIAN_CHARACTER.2-0r.ancient": "被侵蚀成这样，还能走到这里吗…",
   "THE_ARCHITECT.talk.SUNQIAN_UNIVERSE_CHARACTER_SUNQIAN_CHARACTER.2-0r.next": "继续",
   "THE_ARCHITECT.talk.SUNQIAN_UNIVERSE_CHARACTER_SUNQIAN_CHARACTER.2-1r.char": "龙套把角色全演完后……\n[i][font_size=22]剩下的，会是我自己吗？？[/font_size][/i]",

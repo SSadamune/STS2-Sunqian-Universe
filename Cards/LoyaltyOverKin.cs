@@ -23,13 +23,14 @@ using STS2RitsuLib.Scaffolding.Content;
 namespace Squ.Cards;
 
 /// <summary>
-/// 大义灭亲：消耗抽牌堆中打出率最高的 2 张牌（无记录/临时牌视为 0%；
-/// 率相同则优先打出次数更多者，再按获得顺序）；每消耗一张先获得力量再造成伤害。
+/// 大义灭亲：消耗抽牌堆中打出率最高的 2 张牌
+/// （PlayCount / (PlayWithoutDiscardOrExhaustCount + ExhaustEntryCount + DiscardEntryCount)；
+/// 率相同则优先打出次数更多者，再按获得顺序）；每消耗一张先造成伤害再获得力量。
 /// </summary>
 [RegisterCard(typeof(SunqianCardPool), StableEntryStem = "loyalty_over_kin")]
 public sealed class LoyaltyOverKin : ModCardTemplate
 {
-	public const int DamageAmount = 5;
+	public const int DamageAmount = 7;
 
 	public const int BaseStrength = 2;
 
@@ -40,7 +41,7 @@ public sealed class LoyaltyOverKin : ModCardTemplate
 	/// <summary>使用追踪器已保存的全部已结束战斗。</summary>
 	public const int PlayRateWindow = CardDrawPlayRateTracker.MaxStoredCombats;
 
-	private const bool IncludeCurrentCombat = false;
+	private const bool IncludeCurrentCombat = true;
 
 	protected override IEnumerable<DynamicVar> CanonicalVars =>
 	[
@@ -92,13 +93,6 @@ public sealed class LoyaltyOverKin : ModCardTemplate
 
 			await CardCmd.Exhaust(choiceContext, card);
 
-			await PowerCmd.Apply<StrengthPower>(
-				choiceContext,
-				Owner.Creature,
-				strengthAmount,
-				Owner.Creature,
-				this);
-
 			if (target.IsAlive)
 			{
 				await DamageCmd.Attack(vigorSequence.ResolveNextAttackDamage())
@@ -107,6 +101,13 @@ public sealed class LoyaltyOverKin : ModCardTemplate
 					.WithHitFx("vfx/vfx_attack_slash")
 					.Execute(choiceContext);
 			}
+
+			await PowerCmd.Apply<StrengthPower>(
+				choiceContext,
+				Owner.Creature,
+				strengthAmount,
+				Owner.Creature,
+				this);
 		}
 	}
 

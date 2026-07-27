@@ -20,8 +20,8 @@ namespace Squ.Cards;
 [RegisterCard(typeof(SunqianCardPool), StableEntryStem = "xiliang_savage_script")]
 public sealed class XiliangSavageScript : ScriptCardTemplate
 {
-	public const int BaseBlock = 12;
-	public const int UpgradedBlock = 16;
+	public const int BaseBlock = 10;
+	public const int UpgradedBlock = 14;
 	public const int BaseVigor = 3;
 	public const int UpgradedVigor = 5;
 

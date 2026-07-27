@@ -15,8 +15,12 @@ using STS2RitsuLib.RunData;
 namespace Squ.Combat;
 
 /// <summary>
-/// 按牌组卡牌实例跟踪「抽到次数 / Play 阶段打出次数」，并保留最近若干场已结束战斗的快照。
-/// 打出率 = Plays / Draws（仅 Draws &gt; 0 时有定义）；仅 <see cref="PlayerTurnPhase.Play"/> 阶段的打出计入分子。
+/// 按牌组卡牌实例跟踪打出率，并保留最近若干场已结束战斗的快照。
+/// 打出率 = PlayCount / (PlayWithoutDiscardOrExhaustCount + ExhaustEntryCount + DiscardEntryCount)：
+/// PlayCount = 打出次数（含自动打出/任意阶段；重放仅计 PlayIndex==0）；
+/// PlayWithoutDiscardOrExhaustCount = 打出后未进入消耗堆或弃牌堆的次数；
+/// ExhaustEntryCount = 进入消耗堆次数；
+/// DiscardEntryCount = 进入弃牌堆次数。
 /// </summary>
 public static class CardDrawPlayRateTracker
 {
@@ -24,7 +28,7 @@ public static class CardDrawPlayRateTracker
 
 	public const int MaxStoredCombats = 10;
 
-	private const string SaveKey = "card_draw_play_rate";
+	private const string SaveKey = "card_play_rate_v2";
 
 	private static readonly PlayerRunSavedData<PlayerSaveState> SavedData =
 		RitsuLibFramework.GetRunSavedDataStore(SquMod.ModId).RegisterPerPlayer(
@@ -47,8 +51,8 @@ public static class CardDrawPlayRateTracker
 		}
 
 		_initialized = true;
-		RitsuLibFramework.SubscribeLifecycle<CardDrawnEvent>(OnCardDrawn);
 		RitsuLibFramework.SubscribeLifecycle<CardPlayedEvent>(OnCardPlayed);
+		RitsuLibFramework.SubscribeLifecycle<CardMovedBetweenPilesEvent>(OnCardMovedBetweenPiles);
 		RitsuLibFramework.SubscribeLifecycle<CombatStartingEvent>(OnCombatStarting);
 		RitsuLibFramework.SubscribeLifecycle<CombatEndedEvent>(OnCombatEnded);
 		RitsuLibFramework.SubscribeLifecycle<RunLoadedEvent>(OnRunLoaded);
@@ -57,9 +61,8 @@ public static class CardDrawPlayRateTracker
 	}
 
 	/// <summary>
-	/// 从抽牌堆中选出过去 <paramref name="windowSize"/> 场战斗打出率最高的至多 <paramref name="count"/> 张牌。
-	/// 无抽牌记录或 draws=0 的牌（含本场临时牌）视为打出率 0、打出次数 0，与有记录的 0% 牌同等参与。
-	/// 打出率相同则优先打出次数更多者；仍相同则优先更早获得的牌（入组楼层，再实例 ID / 抽牌堆次序）。
+	/// 从抽牌堆中选出打出率最高的至多 <paramref name="count"/> 张牌。
+	/// 分母为 0 时视为打出率 0；率相同则优先打出次数更多者，再按获得顺序。
 	/// </summary>
 	public static List<CardModel> SelectHighestPlayRateFromDrawPile(
 		Player player,
@@ -74,18 +77,21 @@ public static class CardDrawPlayRateTracker
 
 		EnsureDeckInstanceIds(player);
 
-		List<(CardModel Card, float Rate, int Plays, int Floor, int InstanceId, int DrawIndex)> ranked = [];
+		List<(CardModel Card, float Rate, int PlayCount, int Floor, int InstanceId, int DrawIndex)> ranked = [];
 		int drawIndex = 0;
 		foreach (CardModel card in PileType.Draw.GetPile(player).Cards)
 		{
-			float rate = 0f;
-			int plays = 0;
-			if (TryGetStats(player, card, windowSize, includeCurrentCombat, out int draws, out int trackedPlays)
-				&& draws > 0)
-			{
-				rate = (float)trackedPlays / draws;
-				plays = trackedPlays;
-			}
+			TryGetStats(
+				player,
+				card,
+				windowSize,
+				includeCurrentCombat,
+				out int playCount,
+				out int playWithoutDiscardOrExhaustCount,
+				out int exhaustEntryCount,
+				out int discardEntryCount);
+			int denominator = playWithoutDiscardOrExhaustCount + exhaustEntryCount + discardEntryCount;
+			float rate = denominator > 0 ? (float)playCount / denominator : 0f;
 
 			CardModel identity = ResolveIdentityCard(card) ?? card;
 			int floor = identity.FloorAddedToDeck ?? int.MaxValue;
@@ -93,13 +99,13 @@ public static class CardDrawPlayRateTracker
 				? resolvedId
 				: int.MaxValue;
 
-			ranked.Add((card, rate, plays, floor, instanceId, drawIndex));
+			ranked.Add((card, rate, playCount, floor, instanceId, drawIndex));
 			drawIndex++;
 		}
 
 		return ranked
 			.OrderByDescending(entry => entry.Rate)
-			.ThenByDescending(entry => entry.Plays)
+			.ThenByDescending(entry => entry.PlayCount)
 			.ThenBy(entry => entry.Floor)
 			.ThenBy(entry => entry.InstanceId)
 			.ThenBy(entry => entry.DrawIndex)
@@ -108,23 +114,81 @@ public static class CardDrawPlayRateTracker
 			.ToList();
 	}
 
+	/// <summary>
+	/// 返回牌组中打出率最高的全部卡牌（并列全收）。
+	/// 分母为 0 时视为打出率 0；可通过 <paramref name="exclude"/> 排除若干牌。
+	/// </summary>
+	public static HashSet<CardModel> GetHighestPlayRateDeckCards(
+		Player player,
+		int windowSize = MaxStoredCombats,
+		bool includeCurrentCombat = false,
+		Func<CardModel, bool>? exclude = null)
+	{
+		EnsureDeckInstanceIds(player);
+
+		List<(CardModel Card, float Rate)> ranked = [];
+		foreach (CardModel card in PileType.Deck.GetPile(player).Cards)
+		{
+			if (exclude?.Invoke(card) == true)
+			{
+				continue;
+			}
+
+			TryGetStats(
+				player,
+				card,
+				windowSize,
+				includeCurrentCombat,
+				out int playCount,
+				out int playWithoutDiscardOrExhaustCount,
+				out int exhaustEntryCount,
+				out int discardEntryCount);
+			int denominator = playWithoutDiscardOrExhaustCount + exhaustEntryCount + discardEntryCount;
+			float rate = denominator > 0 ? (float)playCount / denominator : 0f;
+			ranked.Add((card, rate));
+		}
+
+		if (ranked.Count == 0)
+		{
+			return [];
+		}
+
+		float maxRate = ranked.Max(entry => entry.Rate);
+		return ranked
+			.Where(entry => entry.Rate >= maxRate)
+			.Select(entry => entry.Card)
+			.ToHashSet();
+	}
+
 	public static bool TryGetStats(
 		Player player,
 		CardModel card,
 		int windowSize,
 		bool includeCurrentCombat,
-		out int draws,
-		out int plays)
+		out int playCount,
+		out int playWithoutDiscardOrExhaustCount,
+		out int exhaustEntryCount,
+		out int discardEntryCount)
 	{
-		draws = 0;
-		plays = 0;
+		playCount = 0;
+		playWithoutDiscardOrExhaustCount = 0;
+		exhaustEntryCount = 0;
+		discardEntryCount = 0;
 		if (!TryResolveInstanceId(player, card, assignIfMissing: false, out int instanceId))
 		{
 			return false;
 		}
 
 		PlayerRuntime runtime = GetOrCreateRuntime(player);
-		AggregateWindow(runtime, instanceId, windowSize, includeCurrentCombat, out draws, out plays);
+		AggregateWindow(
+			runtime,
+			instanceId,
+			windowSize,
+			includeCurrentCombat,
+			out playCount,
+			out playWithoutDiscardOrExhaustCount,
+			out exhaustEntryCount,
+			out discardEntryCount);
 		return true;
 	}
 
@@ -147,6 +211,8 @@ public static class CardDrawPlayRateTracker
 			builder.Append("  reason: ").AppendLine(reason);
 		}
 
+		builder.AppendLine(
+			"  formula: PlayCount/(PlayWithoutDiscardOrExhaustCount+ExhaustEntryCount+DiscardEntryCount)");
 		builder.Append("  playerNetId: ").AppendLine(player.NetId.ToString());
 		builder.Append("  windowSize: ").AppendLine(windowSize.ToString());
 		builder.Append("  includeCurrentCombat: ").AppendLine(includeCurrentCombat.ToString());
@@ -154,6 +220,7 @@ public static class CardDrawPlayRateTracker
 			.Append('/').AppendLine(MaxStoredCombats.ToString());
 		builder.Append("  nextInstanceId: ").AppendLine(runtime.NextInstanceId.ToString());
 		builder.Append("  deckMappingsRestored: ").AppendLine(runtime.DeckMappingsRestored.ToString());
+		builder.Append("  pendingPlayOutcomes: ").AppendLine(runtime.PendingPlayOutcomes.Count.ToString());
 
 		AppendSnapshotSection(builder, "deckInstanceMap", runtime.CardToInstanceId
 			.OrderBy(pair => pair.Value)
@@ -175,18 +242,7 @@ public static class CardDrawPlayRateTracker
 		builder.AppendLine("  drawPileRates:");
 		foreach (CardModel card in PileType.Draw.GetPile(player).Cards)
 		{
-			if (!TryGetStats(player, card, windowSize, includeCurrentCombat, out int draws, out int plays))
-			{
-				builder.Append("    ").Append(FormatCardLabel(card))
-					.AppendLine(" -> no tracked stats");
-				continue;
-			}
-
-			builder.Append("    ").Append(FormatCardLabel(card))
-				.Append(" -> draws=").Append(draws)
-				.Append(", plays=").Append(plays)
-				.Append(", rate=").Append(FormatRate(draws, plays))
-				.AppendLine();
+			AppendCardRateLine(builder, "    ", player, card, windowSize, includeCurrentCombat);
 		}
 
 		if (selectedCards is { Count: > 0 })
@@ -194,31 +250,46 @@ public static class CardDrawPlayRateTracker
 			builder.AppendLine("  selectedThisPlay:");
 			foreach (CardModel card in selectedCards)
 			{
-				builder.Append("    ").Append(FormatCardLabel(card));
-				if (TryGetStats(player, card, windowSize, includeCurrentCombat, out int draws, out int plays))
-				{
-					builder.Append(" -> draws=").Append(draws)
-						.Append(", plays=").Append(plays)
-						.Append(", rate=").Append(FormatRate(draws, plays));
-				}
-
-				builder.AppendLine();
+				AppendCardRateLine(builder, "    ", player, card, windowSize, includeCurrentCombat);
 			}
 		}
 
 		SquMod.Logger.Info(builder.ToString());
 	}
 
-	private static void OnCardDrawn(CardDrawnEvent evt)
+	private static void AppendCardRateLine(
+		StringBuilder builder,
+		string indent,
+		Player player,
+		CardModel card,
+		int windowSize,
+		bool includeCurrentCombat)
 	{
-		CardModel card = evt.Card;
-		Player? player = card.Owner;
-		if (player is null || !TryResolveInstanceId(player, card, assignIfMissing: true, out int instanceId))
+		builder.Append(indent).Append(FormatCardLabel(card));
+		if (!TryGetStats(
+			    player,
+			    card,
+			    windowSize,
+			    includeCurrentCombat,
+			    out int playCount,
+			    out int playWithoutDiscardOrExhaustCount,
+			    out int exhaustEntryCount,
+			    out int discardEntryCount))
 		{
+			builder.AppendLine(" -> no tracked stats");
 			return;
 		}
 
-		GetOrCreateRuntime(player).Current.AddDraw(instanceId);
+		builder.Append(" -> playCount=").Append(playCount)
+			.Append(", playWithoutDiscardOrExhaustCount=").Append(playWithoutDiscardOrExhaustCount)
+			.Append(", exhaustEntryCount=").Append(exhaustEntryCount)
+			.Append(", discardEntryCount=").Append(discardEntryCount)
+			.Append(", rate=").Append(FormatRate(
+				playCount,
+				playWithoutDiscardOrExhaustCount,
+				exhaustEntryCount,
+				discardEntryCount))
+			.AppendLine();
 	}
 
 	private static void OnCardPlayed(CardPlayedEvent evt)
@@ -231,17 +302,51 @@ public static class CardDrawPlayRateTracker
 
 		CardModel card = cardPlay.Card;
 		Player? player = card.Owner;
-		if (player is null || player.PlayerCombatState?.Phase != PlayerTurnPhase.Play)
+		if (player is null
+			|| !TryResolveInstanceId(player, card, assignIfMissing: true, out int instanceId))
 		{
 			return;
 		}
 
-		if (!TryResolveInstanceId(player, card, assignIfMissing: true, out int instanceId))
+		PlayerRuntime runtime = GetOrCreateRuntime(player);
+		runtime.Current.AddPlayCount(instanceId);
+		runtime.PendingPlayOutcomes.Add(instanceId);
+	}
+
+	private static void OnCardMovedBetweenPiles(CardMovedBetweenPilesEvent evt)
+	{
+		CardModel card = evt.Card;
+		Player? player = card.Owner;
+		if (player is null
+			|| !TryResolveInstanceId(player, card, assignIfMissing: true, out int instanceId))
 		{
 			return;
 		}
 
-		GetOrCreateRuntime(player).Current.AddPlay(instanceId);
+		PileType previousPile = evt.PreviousPile;
+		PileType? newPile = card.Pile?.Type;
+		PlayerRuntime runtime = GetOrCreateRuntime(player);
+
+		if (newPile == PileType.Exhaust && previousPile != PileType.Exhaust)
+		{
+			runtime.Current.AddExhaustEntry(instanceId);
+			runtime.PendingPlayOutcomes.Remove(instanceId);
+			return;
+		}
+
+		if (newPile == PileType.Discard && previousPile != PileType.Discard)
+		{
+			runtime.Current.AddDiscardEntry(instanceId);
+			runtime.PendingPlayOutcomes.Remove(instanceId);
+			return;
+		}
+
+		// 打出后离开 Play 且未进消耗/弃牌（能力牌离场、回手等）。
+		if (previousPile == PileType.Play
+			&& runtime.PendingPlayOutcomes.Remove(instanceId))
+		{
+			runtime.Current.AddPlayWithoutDiscardOrExhaust(instanceId);
+		}
 	}
 
 	private static void OnCombatStarting(CombatStartingEvent evt)
@@ -255,7 +360,9 @@ public static class CardDrawPlayRateTracker
 		{
 			LoadSavedState(player);
 			EnsureDeckInstanceIds(player);
-			GetOrCreateRuntime(player).Current = new CombatSnapshot();
+			PlayerRuntime runtime = GetOrCreateRuntime(player);
+			runtime.Current = new CombatSnapshot();
+			runtime.PendingPlayOutcomes.Clear();
 			Persist(player);
 		}
 	}
@@ -265,6 +372,7 @@ public static class CardDrawPlayRateTracker
 		foreach (Player player in evt.RunState.Players)
 		{
 			PlayerRuntime runtime = GetOrCreateRuntime(player);
+			FlushPendingPlayOutcomes(runtime);
 			if (runtime.Current.Cards.Count > 0)
 			{
 				runtime.Recent.Add(runtime.Current);
@@ -278,6 +386,16 @@ public static class CardDrawPlayRateTracker
 			EnsureDeckInstanceIds(player);
 			Persist(player);
 		}
+	}
+
+	private static void FlushPendingPlayOutcomes(PlayerRuntime runtime)
+	{
+		foreach (int instanceId in runtime.PendingPlayOutcomes.ToList())
+		{
+			runtime.Current.AddPlayWithoutDiscardOrExhaust(instanceId);
+		}
+
+		runtime.PendingPlayOutcomes.Clear();
 	}
 
 	private static void OnRunLoaded(RunLoadedEvent evt)
@@ -315,6 +433,7 @@ public static class CardDrawPlayRateTracker
 		runtime.NextInstanceId = Math.Max(1, saved.NextInstanceId);
 		runtime.Recent = CloneCombatList(saved.RecentCombats);
 		runtime.Current = new CombatSnapshot();
+		runtime.PendingPlayOutcomes.Clear();
 		runtime.CardToInstanceId.Clear();
 		runtime.DeckMappingsRestored = false;
 		runtime.SavedStateLoaded = true;
@@ -355,7 +474,6 @@ public static class CardDrawPlayRateTracker
 		runtime.CardToInstanceId.Clear();
 		int matched = 0;
 
-		// 牌组顺序即物理牌顺序；读档后对象引用会变，但顺序与上次 Persist 时一致。
 		if (savedBindings.Count == deckCards.Count)
 		{
 			for (int i = 0; i < deckCards.Count; i++)
@@ -368,7 +486,6 @@ public static class CardDrawPlayRateTracker
 		}
 		else
 		{
-			// 牌组数量变化时的兜底：按 cardId + 入组楼层 FIFO 匹配（不含升级/附魔）。
 			List<DeckInstanceBinding> unusedBindings = savedBindings.Select(binding => binding.Clone()).ToList();
 			foreach (CardModel card in deckCards)
 			{
@@ -485,11 +602,15 @@ public static class CardDrawPlayRateTracker
 		int instanceId,
 		int windowSize,
 		bool includeCurrentCombat,
-		out int draws,
-		out int plays)
+		out int playCount,
+		out int playWithoutDiscardOrExhaustCount,
+		out int exhaustEntryCount,
+		out int discardEntryCount)
 	{
-		draws = 0;
-		plays = 0;
+		playCount = 0;
+		playWithoutDiscardOrExhaustCount = 0;
+		exhaustEntryCount = 0;
+		discardEntryCount = 0;
 		int take = Math.Max(0, windowSize);
 		IEnumerable<CombatSnapshot> finished = runtime.Recent.Count <= take
 			? runtime.Recent
@@ -500,15 +621,19 @@ public static class CardDrawPlayRateTracker
 		{
 			if (snapshot.Cards.TryGetValue(key, out CardCombatStats? stats))
 			{
-				draws += stats.Draws;
-				plays += stats.Plays;
+				playCount += stats.PlayCount;
+				playWithoutDiscardOrExhaustCount += stats.PlayWithoutDiscardOrExhaustCount;
+				exhaustEntryCount += stats.ExhaustEntryCount;
+				discardEntryCount += stats.DiscardEntryCount;
 			}
 		}
 
 		if (includeCurrentCombat && runtime.Current.Cards.TryGetValue(key, out CardCombatStats? current))
 		{
-			draws += current.Draws;
-			plays += current.Plays;
+			playCount += current.PlayCount;
+			playWithoutDiscardOrExhaustCount += current.PlayWithoutDiscardOrExhaustCount;
+			exhaustEntryCount += current.ExhaustEntryCount;
+			discardEntryCount += current.DiscardEntryCount;
 		}
 	}
 
@@ -554,7 +679,6 @@ public static class CardDrawPlayRateTracker
 
 	/// <summary>
 	/// 仅用于牌组数量变化时的兜底匹配；正常读档按牌组索引恢复。
-	/// 不含升级/附魔，同一张物理牌在变身后 Id 会变，需重新分配实例。
 	/// </summary>
 	private static string GetMatchKey(CardModel card)
 	{
@@ -586,9 +710,15 @@ public static class CardDrawPlayRateTracker
 			         .OrderBy(pair => int.Parse(pair.Key)))
 		{
 			builder.Append(indent).Append("#").Append(instanceId)
-				.Append(" draws=").Append(stats.Draws)
-				.Append(", plays=").Append(stats.Plays)
-				.Append(", rate=").Append(FormatRate(stats.Draws, stats.Plays))
+				.Append(" playCount=").Append(stats.PlayCount)
+				.Append(", playWithoutDiscardOrExhaustCount=").Append(stats.PlayWithoutDiscardOrExhaustCount)
+				.Append(", exhaustEntryCount=").Append(stats.ExhaustEntryCount)
+				.Append(", discardEntryCount=").Append(stats.DiscardEntryCount)
+				.Append(", rate=").Append(FormatRate(
+					stats.PlayCount,
+					stats.PlayWithoutDiscardOrExhaustCount,
+					stats.ExhaustEntryCount,
+					stats.DiscardEntryCount))
 				.AppendLine();
 		}
 	}
@@ -599,8 +729,17 @@ public static class CardDrawPlayRateTracker
 		return $"{identity.Title} ({identity.Id.Entry})";
 	}
 
-	private static string FormatRate(int draws, int plays) =>
-		draws <= 0 ? "n/a" : $"{plays}/{draws} ({(100f * plays / draws):0.##}%)";
+	private static string FormatRate(
+		int playCount,
+		int playWithoutDiscardOrExhaustCount,
+		int exhaustEntryCount,
+		int discardEntryCount)
+	{
+		int denominator = playWithoutDiscardOrExhaustCount + exhaustEntryCount + discardEntryCount;
+		return denominator <= 0
+			? "n/a"
+			: $"{playCount}/{denominator} ({(100f * playCount / denominator):0.##}%)";
+	}
 
 	private sealed class PlayerRuntime
 	{
@@ -611,6 +750,11 @@ public static class CardDrawPlayRateTracker
 		public bool DeckMappingsRestored;
 
 		public Dictionary<CardModel, int> CardToInstanceId { get; } = new();
+
+		/// <summary>
+		/// 已计入 PlayCount、等待判定是否记入 PlayWithoutDiscardOrExhaustCount 的实例。
+		/// </summary>
+		public HashSet<int> PendingPlayOutcomes { get; } = [];
 
 		public List<CombatSnapshot> Recent { get; set; } = [];
 
@@ -647,9 +791,14 @@ public static class CardDrawPlayRateTracker
 	{
 		public Dictionary<string, CardCombatStats> Cards { get; set; } = new();
 
-		public void AddDraw(int instanceId) => GetOrCreate(instanceId).Draws++;
+		public void AddPlayCount(int instanceId) => GetOrCreate(instanceId).PlayCount++;
 
-		public void AddPlay(int instanceId) => GetOrCreate(instanceId).Plays++;
+		public void AddPlayWithoutDiscardOrExhaust(int instanceId) =>
+			GetOrCreate(instanceId).PlayWithoutDiscardOrExhaustCount++;
+
+		public void AddExhaustEntry(int instanceId) => GetOrCreate(instanceId).ExhaustEntryCount++;
+
+		public void AddDiscardEntry(int instanceId) => GetOrCreate(instanceId).DiscardEntryCount++;
 
 		public CombatSnapshot Clone()
 		{
@@ -658,8 +807,10 @@ public static class CardDrawPlayRateTracker
 			{
 				clone.Cards[key] = new CardCombatStats
 				{
-					Draws = stats.Draws,
-					Plays = stats.Plays,
+					PlayCount = stats.PlayCount,
+					PlayWithoutDiscardOrExhaustCount = stats.PlayWithoutDiscardOrExhaustCount,
+					ExhaustEntryCount = stats.ExhaustEntryCount,
+					DiscardEntryCount = stats.DiscardEntryCount,
 				};
 			}
 
@@ -681,8 +832,16 @@ public static class CardDrawPlayRateTracker
 
 	public sealed class CardCombatStats
 	{
-		public int Draws { get; set; }
+		/// <summary>打出次数（含自动打出；重放仅计第一次）。</summary>
+		public int PlayCount { get; set; }
 
-		public int Plays { get; set; }
+		/// <summary>打出后未进入消耗堆或弃牌堆的次数。</summary>
+		public int PlayWithoutDiscardOrExhaustCount { get; set; }
+
+		/// <summary>进入消耗堆的次数。</summary>
+		public int ExhaustEntryCount { get; set; }
+
+		/// <summary>进入弃牌堆的次数。</summary>
+		public int DiscardEntryCount { get; set; }
 	}
 }
