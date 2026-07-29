@@ -2,7 +2,6 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
-using MegaCrit.Sts2.Core.Entities.Creatures;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.ValueProps;
@@ -19,11 +18,12 @@ namespace Squ.Cards;
 [RegisterCard(typeof(SunqianCardPool), StableEntryStem = "chicken_foot_cheese")]
 public sealed class ChickenFootCheese : ModCardTemplate, IRandomEnemyTargetCount
 {
-	public const int BaseDamage = 9;
-	public const int UpgradedDamage = 12;
+	public const int BaseDamage = 4;
+	public const int UpgradedDamage = 6;
 	public const int BaseTurns = 2;
 	public const int UpgradedTurns = 3;
 	public const int RandomEnemyTargetCount = 2;
+	public const int HitCountPerTarget = 2;
 
 	protected override IEnumerable<DynamicVar> CanonicalVars =>
 	[
@@ -49,6 +49,7 @@ public sealed class ChickenFootCheese : ModCardTemplate, IRandomEnemyTargetCount
 			this,
 			choiceContext,
 			RandomEnemyTargetCount,
+			hitCountPerTarget: HitCountPerTarget,
 			cardPlay: cardPlay);
 
 		await PowerCmd.Apply<ChickenFootCheeseStrikePower>(

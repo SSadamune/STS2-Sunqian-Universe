@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -50,15 +49,14 @@ public sealed class FireNova : ModCardTemplate, IRandomEnemyTargetCount
 	public override CardAssetProfile AssetProfile => new(
 		PortraitPath: "res://images/cards/FireNova.png");
 
-	public override TargetType TargetType =>
-		IsUpgraded ? SquTargetTypes.RandomEnemies : TargetType.AnyEnemy;
+	public override TargetType TargetType => SquTargetTypes.RandomEnemies;
 
 	public FireNova()
 		: base(1, CardType.Attack, CardRarity.Uncommon, TargetType.AnyEnemy)
 	{
 	}
 
-	public int GetRandomEnemyTargetCount() => ResolveEnergyXValue();
+	public int GetRandomEnemyTargetCount() => IsUpgraded ? ResolveEnergyXValue() : 1;
 
 	protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
 	{
@@ -68,64 +66,42 @@ public sealed class FireNova : ModCardTemplate, IRandomEnemyTargetCount
 			return;
 		}
 
-		if (IsUpgraded)
+		int requestedCount = GetRandomEnemyTargetCount();
+		if (requestedCount <= 0)
 		{
-			int requestedCount = GetRandomEnemyTargetCount();
-			if (requestedCount <= 0)
-			{
-				return;
-			}
-
-			List<Creature> damageTargets = SquRandomEnemyTargeting
-				.PickRandomEnemiesUnique(
-					combatState,
-					requestedCount,
-					Owner.RunState.Rng.CombatTargets)
-				.ToList();
-			if (damageTargets.Count == 0)
-			{
-				return;
-			}
-
-			SquVigorSnapshot.AttackSequence vigorSequence =
-				SquVigorSnapshot.BeginAttackSequence(Owner.Creature, this);
-
-			foreach (Creature damageTarget in damageTargets)
-			{
-				if (!damageTarget.IsAlive)
-				{
-					continue;
-				}
-
-				await DealDamage(
-					choiceContext,
-					damageTarget,
-					cardPlay,
-					vigorSequence.ResolveNextAttackDamage());
-				await ApplyBurningToAllEnemies(choiceContext, combatState);
-			}
-
 			return;
 		}
 
-		ArgumentNullException.ThrowIfNull(cardPlay.Target, nameof(cardPlay.Target));
-		await ExecuteBaseEffect(choiceContext, combatState, cardPlay.Target, cardPlay);
+		List<Creature> damageTargets = SquRandomEnemyTargeting
+			.SelectRandomEnemies(this, requestedCount);
+		if (damageTargets.Count == 0)
+		{
+			return;
+		}
+
+		SquVigorSnapshot.AttackSequence vigorSequence =
+			SquVigorSnapshot.BeginAttackSequence(Owner.Creature, this);
+
+		foreach (Creature damageTarget in damageTargets)
+		{
+			if (!damageTarget.IsAlive)
+			{
+				continue;
+			}
+
+			await DealDamage(
+				choiceContext,
+				damageTarget,
+				cardPlay,
+				vigorSequence.ResolveNextAttackDamage());
+			await ApplyBurningToAllEnemies(choiceContext, combatState);
+		}
 	}
 
 	protected override void OnUpgrade()
 	{
 		MockSetEnergyCost(new CardEnergyCost(this, 0, costsX: true));
 		InvokeEnergyCostChanged();
-	}
-
-	private async Task ExecuteBaseEffect(
-		PlayerChoiceContext choiceContext,
-		ICombatState combatState,
-		Creature damageTarget,
-		CardPlay cardPlay)
-	{
-		await DealDamage(choiceContext, damageTarget, cardPlay);
-		await ApplyBurningToAllEnemies(choiceContext, combatState);
 	}
 
 	private async Task ApplyBurningToAllEnemies(PlayerChoiceContext choiceContext, ICombatState combatState)
