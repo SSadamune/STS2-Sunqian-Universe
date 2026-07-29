@@ -51,6 +51,7 @@
   "SUNQIAN_UNIVERSE_POWER_SCRIPT_EXECUTIONER_POWER.smartDescriptionUpgraded": "你打出攻击牌后，若这张牌杀死过敌人，恢复该攻击牌消耗的[gold]活力[/gold]和[gold]能量[/gold]。",
   "SUNQIAN_UNIVERSE_POWER_SCRIPT_NIGHT_RAID_WUCHAO_POWER.title": "可叠层剧本：夜袭乌巢",
   "SUNQIAN_UNIVERSE_POWER_SCRIPT_NIGHT_RAID_WUCHAO_POWER.smartDescription": "你的名字中有「打击」的牌额外给予[blue]{Amount}[/blue]点[gold]灼烧[/gold]。",
+  "SUNQIAN_UNIVERSE_POWER_SCRIPT_NIGHT_RAID_WUCHAO_POWER.cardDescription": "\n给予目标敌人[blue]{Amount}[/blue]点[gold]灼烧[/gold]。",
   "SUNQIAN_UNIVERSE_POWER_BUDDY_TANGXIAOHU_POWER.title": "好哥们唐小虎",
   "SUNQIAN_UNIVERSE_POWER_BUDDY_TANGXIAOHU_POWER.smartDescription": "当你打出[gold]剧本[/gold]牌后，获得[blue]{Block:diff()}[/blue]点[gold]格挡[/gold]。此数值受到[gold]敏捷[/gold]影响。",
   "SUNQIAN_UNIVERSE_POWER_SCRIPT_XILIANG_SAVAGE_POWER.title": "剧本：西凉野人",

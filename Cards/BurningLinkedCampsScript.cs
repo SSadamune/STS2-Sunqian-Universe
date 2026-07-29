@@ -18,9 +18,9 @@ namespace Squ.Cards;
 [RegisterCard(typeof(SunqianCardPool), StableEntryStem = "burning_linked_camps_script")]
 public sealed class BurningLinkedCampsScript : ScriptCardTemplate
 {
-	public const decimal TinderStacks = 6m;
+	public const decimal TinderStacks = 4m;
 
-	public const decimal UpgradedTinderStacks = 9m;
+	public const decimal UpgradedTinderStacks = 8m;
 
 	protected override IEnumerable<DynamicVar> CanonicalVars =>
 	[

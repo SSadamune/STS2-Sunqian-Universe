@@ -21,7 +21,7 @@ namespace Squ.Cards;
 [RegisterCard(typeof(SunqianCardPool), StableEntryStem = "close_fitting_armor")]
 public sealed class CloseFittingArmor : ModCardTemplate
 {
-	private const decimal BasePlating = 2m;
+	private const decimal BasePlating = 3m;
 
 	protected override IEnumerable<DynamicVar> CanonicalVars =>
 	[
@@ -43,7 +43,7 @@ public sealed class CloseFittingArmor : ModCardTemplate
 		PortraitPath: "res://images/cards/CloseFittingArmor.png");
 
 	public CloseFittingArmor()
-		: base(1, CardType.Power, CardRarity.Rare, TargetType.Self)
+		: base(0, CardType.Power, CardRarity.Rare, TargetType.Self)
 	{
 	}
 
@@ -60,8 +60,7 @@ public sealed class CloseFittingArmor : ModCardTemplate
 
 	protected override void OnUpgrade()
 	{
-		MockSetEnergyCost(new CardEnergyCost(this, 0, costsX: false));
-		InvokeEnergyCostChanged();
+		AddKeyword(CardKeyword.Innate);
 	}
 
 	private static decimal GetPlatingAmount(Creature owner, decimal baseAmount)
