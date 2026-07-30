@@ -22,7 +22,7 @@ using STS2RitsuLib.Scaffolding.Content;
 namespace Squ.Relics;
 
 /// <summary>
-/// 提词器：每消耗三张剧本牌抽一张牌（参考 Joss Paper）。
+/// 提词器：每消耗三张剧本牌抽两张牌（参考 Joss Paper）。
 /// </summary>
 [RegisterRelic(typeof(SunqianRelicPool), StableEntryStem = "teleprompter")]
 public sealed class TeleprompterRelic : ScriptRelicTemplate
@@ -93,7 +93,7 @@ public sealed class TeleprompterRelic : ScriptRelicTemplate
 	protected override IEnumerable<DynamicVar> CanonicalVars =>
 	[
 		new DynamicVar(ScriptAmountKey, 3m),
-		new CardsVar(1),
+		new CardsVar(2),
 	];
 
 	public override RelicAssetProfile AssetProfile => new(
@@ -151,7 +151,8 @@ public sealed class TeleprompterRelic : ScriptRelicTemplate
 		}
 
 		_ = TaskHelper.RunSafely(DoActivateVisuals());
-		await CardPileCmd.Draw(choiceContext, ScriptsExhausted / threshold, Owner);
+		int drawCount = ScriptsExhausted / threshold * DynamicVars.Cards.IntValue;
+		await CardPileCmd.Draw(choiceContext, drawCount, Owner);
 		ScriptsExhausted %= threshold;
 	}
 

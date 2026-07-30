@@ -1,7 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using MegaCrit.Sts2.Core.Combat;
 using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
@@ -52,10 +51,16 @@ public sealed class CelebrateMourning : ModCardTemplate
 		get
 		{
 			List<IHoverTip> tips = [HoverTipFactory.FromPower<VigorPower>()];
-			IHoverTip? triggerTip = CreateReturnTriggerHoverTip();
+			List<CardModel> triggerTargets = GetReturnTriggerTargets();
+			IHoverTip? triggerTip = CreateReturnTriggerHoverTip(triggerTargets);
 			if (triggerTip != null)
 			{
 				tips.Add(triggerTip);
+				foreach (CardModel target in triggerTargets)
+				{
+					tips.Add(HoverTipFactory.FromCard(target));
+					tips.AddRange(target.HoverTips);
+				}
 			}
 
 			return tips;
@@ -123,23 +128,28 @@ public sealed class CelebrateMourning : ModCardTemplate
 		await CardPileCmd.Add(this, PileType.Hand);
 	}
 
-	private IHoverTip? CreateReturnTriggerHoverTip()
+	private List<CardModel> GetReturnTriggerTargets()
 	{
-		if (!CombatManager.Instance.IsInProgress || Owner?.PlayerCombatState == null)
+		// 图鉴规范卡不可变，访问 Owner 会 AssertMutable；仅可变且绑定运行的预览才显示动态目标。
+		if (RunState is null || !IsMutable)
 		{
-			return null;
+			return [];
 		}
 
-		List<CardModel> highest = GetHighestOtherPlayRateDeckCards()
+		return GetHighestOtherPlayRateDeckCards()
 			.OrderBy(card => card.Title, System.StringComparer.Ordinal)
 			.ToList();
-		if (highest.Count == 0)
+	}
+
+	private IHoverTip? CreateReturnTriggerHoverTip(IReadOnlyList<CardModel> triggerTargets)
+	{
+		if (triggerTargets.Count == 0)
 		{
 			return null;
 		}
 
 		LocString description = new("cards", Id.Entry + ".returnTriggerHoverTip");
-		description.Add("Cards", FormatCardList(highest));
+		description.Add("Cards", FormatCardList(triggerTargets));
 		return new HoverTip(SquCommonL10n.AnnotationTitle(), description);
 	}
 
