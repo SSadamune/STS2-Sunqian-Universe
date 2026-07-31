@@ -83,7 +83,7 @@
   "SUNQIAN_UNIVERSE_CARD_BUDDY_HU.title": "Buddy Hu",
   "SUNQIAN_UNIVERSE_CARD_BUDDY_HU.description": "Whenever you gain [gold]Vigor[/gold], gain [blue]1[/blue] less. Gain [blue]1[/blue] [gold]Strength[/gold] instead.",
   "SUNQIAN_UNIVERSE_CARD_OPEN_DEFECATION.title": "Open Defecation",
-  "SUNQIAN_UNIVERSE_CARD_OPEN_DEFECATION.description": "Gain {DexterityPower:diff()} [gold]Dexterity[/gold] this turn.\nPut all cards with [gold]Unplayable[/gold] from your [gold]Draw Pile[/gold] into your [gold]Discard Pile[/gold]. If at least {Threshold} cards were moved, you [gold]Count as Playing[/gold] a [gold]{IfUpgraded:show:Splash+|Splash}[/gold].",
+  "SUNQIAN_UNIVERSE_CARD_OPEN_DEFECATION.description": "Gain {DexterityPower:diff()} [gold]Dexterity[/gold] this turn.\nPut all cards with [gold]Unplayable[/gold] from your [gold]Draw Pile[/gold] and [gold]Hand[/gold] into your [gold]Discard Pile[/gold]. If at least {Threshold} cards were moved, you [gold]Count as Playing[/gold] a [gold]{IfUpgraded:show:Splash+|Splash}[/gold].",
   "SUNQIAN_UNIVERSE_CARD_RESPECT_ELDERS.title": "Respect Elders",
   "SUNQIAN_UNIVERSE_CARD_RESPECT_ELDERS.description": "Deal {Damage:diff()} damage.\n{HitText}",
   "SUNQIAN_UNIVERSE_CARD_RESPECT_ELDERS.hitCondition": "If the target's HP is between 25% and 75% of its max, hit {HitCount:diff()} times.",

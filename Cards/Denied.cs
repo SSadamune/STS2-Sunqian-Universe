@@ -21,7 +21,7 @@ namespace Squ.Cards;
 
 /// <summary>
 /// 被动回手：当本牌位于抽牌堆/弃牌堆/消耗堆时，若玩家通过其他来源施加的 debuff
-/// 被人工制品抵消，则将此牌移入手牌（参考 Make It So / Right Hand Hand 的 CardPileCmd.Add 与 AfterCardPlayedLate 时机）。
+/// 被人工制品抵消，则立即将此牌移入手牌。
 /// </summary>
 [RegisterCard(typeof(SunqianCardPool), StableEntryStem = "denied")]
 public sealed class Denied : ModCardTemplate
@@ -32,7 +32,7 @@ public sealed class Denied : ModCardTemplate
 	/// <summary>正在观察的一次 debuff 施加：记录施加前层数，供事后对比结果。</summary>
 	private PendingDebuffApplication? _pendingDebuffApplication;
 
-	/// <summary>已确认应回手，等待 <see cref="AfterCardPlayedLate"/> 再执行（对齐 Make It So 时机）。</summary>
+	/// <summary>已确认应回手，等待人工制品的扣层结算完成后执行。</summary>
 	private bool _returnToHandReady;
 
 	protected override IEnumerable<DynamicVar> CanonicalVars =>
@@ -152,11 +152,24 @@ public sealed class Denied : ModCardTemplate
 	}
 
 	/// <summary>
-	/// 卡牌打出流程结束后再检查一次（与 Make It So 相同 hook）。
-	/// 此时人工制品通常已扣层，是 pending 的最终兜底结算点。
+	/// 人工制品抵消 debuff 后，会嵌套结算自身的扣层；在该扣层完成后立即回手。
+	/// 限定为正在观察目标的人工制品，避免由无关 power 变动触发。
 	/// </summary>
-	public override async Task AfterCardPlayedLate(PlayerChoiceContext choiceContext, CardPlay cardPlay)
+	public override async Task AfterPowerAmountChanged(
+		PlayerChoiceContext choiceContext,
+		PowerModel power,
+		decimal amount,
+		Creature? applier,
+		CardModel? cardSource)
 	{
+		if (_pendingDebuffApplication is not PendingDebuffApplication pending
+			|| power is not ArtifactPower
+			|| power.Owner != pending.Target
+			|| amount >= 0m)
+		{
+			return;
+		}
+
 		await TryReturnToHandIfPendingDebuffFailedAsync();
 		await TryExecuteReturnToHandAsync();
 	}
