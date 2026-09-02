@@ -114,14 +114,16 @@ public sealed class CatInTheBox : ModCardTemplate
 
 	protected override void AddExtraArgsToDescription(LocString description)
 	{
-		bool canKill = DynamicVars[CanKillVarName].PreviewValue > 0;
-		string locKey = Id.Entry + (canKill ? ".killConfirm" : ".killCondition");
-		var killText = new LocString("cards", locKey);
-		if (!canKill)
+		if (DynamicVars[CanKillVarName].PreviewValue > 0)
 		{
-			killText.Add(DynamicVars[MaxDoomVarName]);
+			description.Add("BodyText", new LocString("cards", Id.Entry + ".killConfirm"));
+			return;
 		}
-		description.Add("KillText", killText);
+
+		var bodyText = new LocString("cards", Id.Entry + ".normalBody");
+		bodyText.Add(DynamicVars[MinDoomVarName]);
+		bodyText.Add(DynamicVars[MaxDoomVarName]);
+		description.Add("BodyText", bodyText);
 	}
 
 	private int GetMinRoll() =>

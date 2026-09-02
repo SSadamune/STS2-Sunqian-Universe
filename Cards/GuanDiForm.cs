@@ -18,13 +18,15 @@ namespace Squ.Cards;
 [RegisterCard(typeof(SunqianCardPool), StableEntryStem = "guan_di_form")]
 public sealed class GuanDiForm : ModCardTemplate
 {
-	private const int BaseAmount = 1;
-	private const int UpgradedAmount = 2;
+	private const int BaseDexterity = 1;
+	private const int UpgradedDexterity = 2;
+	private const int BaseStrength = 2;
+	private const int UpgradedStrength = 3;
 
 	protected override IEnumerable<DynamicVar> CanonicalVars =>
 	[
-		new PowerVar<DexterityPower>(BaseAmount),
-		new PowerVar<StrengthPower>(BaseAmount),
+		new PowerVar<DexterityPower>(BaseDexterity),
+		new PowerVar<StrengthPower>(BaseStrength),
 	];
 
 	protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
@@ -53,7 +55,7 @@ public sealed class GuanDiForm : ModCardTemplate
 
 	protected override void OnUpgrade()
 	{
-		DynamicVars[nameof(DexterityPower)].UpgradeValueBy(UpgradedAmount - BaseAmount);
-		DynamicVars[nameof(StrengthPower)].UpgradeValueBy(UpgradedAmount - BaseAmount);
+		DynamicVars[nameof(DexterityPower)].UpgradeValueBy(UpgradedDexterity - BaseDexterity);
+		DynamicVars[nameof(StrengthPower)].UpgradeValueBy(UpgradedStrength - BaseStrength);
 	}
 }

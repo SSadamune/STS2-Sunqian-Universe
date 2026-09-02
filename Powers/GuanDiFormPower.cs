@@ -21,19 +21,45 @@ namespace Squ.Powers;
 [RegisterPower]
 public sealed class GuanDiFormPower : ModPowerTemplate
 {
+	/// <summary>叠加后的攻击牌临时力量总量；敏捷总量由原版 <see cref="PowerModel.Amount"/> 追踪。</summary>
+	private decimal _strengthAmount;
+
 	public override PowerType Type => PowerType.Buff;
 
-	public override PowerStackType StackType => PowerStackType.Counter;
+	public override PowerStackType StackType => PowerStackType.None;
 
 	public override PowerAssetProfile AssetProfile => new(
 		IconPath: "res://images/powers/GuanDiFormPower.png",
 		BigIconPath: "res://images/powers/GuanDiFormPowerBig.png");
+
+	protected override IEnumerable<DynamicVar> CanonicalVars =>
+	[
+		new PowerVar<DexterityPower>(1),
+		new PowerVar<StrengthPower>(2),
+	];
 
 	protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
 	[
 		HoverTipFactory.FromPower<DexterityPower>(),
 		HoverTipFactory.FromPower<StrengthPower>(),
 	];
+
+	public override Task AfterPowerAmountChanged(
+		PlayerChoiceContext choiceContext,
+		PowerModel power,
+		decimal amount,
+		Creature? applier,
+		CardModel? cardSource)
+	{
+		if (power == this && amount > 0m)
+		{
+			// 首次 Apply 与叠层都会走这里；勿在 AfterApplied 再记一次，否则会双计力量。
+			_strengthAmount += GetStrengthContribution(cardSource);
+			SyncDynamicVarsFromTotals();
+		}
+
+		return Task.CompletedTask;
+	}
 
 	public override async Task AfterCardPlayed(PlayerChoiceContext choiceContext, CardPlay cardPlay)
 	{
@@ -53,9 +79,20 @@ public sealed class GuanDiFormPower : ModPowerTemplate
 			case CardType.Attack:
 				Flash();
 				await PowerCmd.Apply<TempStrFromGuanDiFormPower>(
-					choiceContext, Owner, Amount, Owner, null);
+					choiceContext, Owner, _strengthAmount, Owner, null);
 				break;
 		}
+	}
+
+	private static decimal GetStrengthContribution(CardModel? cardSource) =>
+		cardSource is GuanDiForm card
+			? card.DynamicVars[nameof(StrengthPower)].BaseValue
+			: 0m;
+
+	private void SyncDynamicVarsFromTotals()
+	{
+		DynamicVars[nameof(DexterityPower)].BaseValue = Amount;
+		DynamicVars[nameof(StrengthPower)].BaseValue = _strengthAmount;
 	}
 }
 
