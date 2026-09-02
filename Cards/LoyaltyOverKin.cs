@@ -132,7 +132,8 @@ public sealed class LoyaltyOverKin : ModCardTemplate
 
 	private List<CardModel> GetDescriptionPreviewTargets()
 	{
-		if (!CombatManager.Instance.IsInProgress || Owner?.PlayerCombatState == null)
+		// 图鉴规范卡不可变，访问 Owner 会 AssertMutable；仅战斗中的可变实例才预览消耗目标。
+		if (!IsMutable || RunState is null || !CombatManager.Instance.IsInProgress || Owner?.PlayerCombatState == null)
 		{
 			return [];
 		}
