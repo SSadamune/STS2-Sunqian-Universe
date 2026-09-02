@@ -6,6 +6,7 @@ using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.CardPools;
+using Squ.Audio;
 using Squ.Script;
 using STS2RitsuLib.Interop.AutoRegistration;
 using STS2RitsuLib.Scaffolding.Content;
@@ -39,6 +40,7 @@ public sealed class ExactlyWhatToEat : ModCardTemplate
 
 	protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
 	{
+		SquSfx.Play(SquSfx.ExactlyWhatToEatEvent);
 		int drawCount = DynamicVars.Cards.IntValue;
 		await EatSomethingCardLogic.DrawAndExhaustFromHandAsync(
 			choiceContext,

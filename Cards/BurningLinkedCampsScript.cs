@@ -6,6 +6,7 @@ using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using Squ;
+using Squ.Audio;
 using Squ.Character;
 using Squ.Powers;
 using STS2RitsuLib.Interop.AutoRegistration;
@@ -51,6 +52,7 @@ public sealed class BurningLinkedCampsScript : ScriptCardTemplate
 
 	protected override async Task PlayScriptAsync(PlayerChoiceContext choiceContext, CardPlay cardPlay)
 	{
+		SquSfx.Play(SquSfx.EmperorKnowsNoWarEvent);
 		decimal tinderStacks = DynamicVars[nameof(TinderPower)].BaseValue;
 		await PowerCmd.Apply<TinderPower>(
 			choiceContext,

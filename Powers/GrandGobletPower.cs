@@ -11,6 +11,7 @@ using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.Powers;
+using Squ.Audio;
 using STS2RitsuLib.Interop.AutoRegistration;
 using STS2RitsuLib.Scaffolding.Content;
 
@@ -68,6 +69,7 @@ public sealed class GrandGobletPower : ModPowerTemplate
 		}
 
 		Flash();
+		SquSfx.Play(SquSfx.WontBePoliteEvent);
 		await PlayerCmd.GainEnergy((int)DynamicVars.Energy.BaseValue, player);
 		await PowerCmd.Apply<VigorPower>(
 			new ThrowingPlayerChoiceContext(),

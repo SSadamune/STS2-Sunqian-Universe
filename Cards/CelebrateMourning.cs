@@ -78,6 +78,7 @@ public sealed class CelebrateMourning : ModCardTemplate
 
 	protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
 	{
+		SquSfx.PlayRandom(RunState, SquSfx.CongratulateLordEvent, SquSfx.GrieveForLordEvent);
 		await PowerCmd.Apply<VigorPower>(
 			choiceContext,
 			Owner.Creature,
