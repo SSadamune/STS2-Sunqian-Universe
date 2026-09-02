@@ -11,6 +11,7 @@ using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.ValueProps;
+using Squ.Audio;
 using Squ.Character;
 using STS2RitsuLib.Interop.AutoRegistration;
 using STS2RitsuLib.Scaffolding.Content;
@@ -63,6 +64,11 @@ public sealed class Blitzkrieg : ModCardTemplate
 
 		try
 		{
+			if (!cardPlay.IsAutoPlay)
+			{
+				SquSfx.Play(SquSfx.ThreeHoursBreakJingzhouEvent);
+			}
+
 			await DamageCmd.Attack(DynamicVars.Damage.BaseValue)
 				.FromCard(this, cardPlay)
 				.Targeting(cardPlay.Target)
@@ -86,6 +92,7 @@ public sealed class Blitzkrieg : ModCardTemplate
 					continue;
 				}
 
+				PlayAutoPlaySfx();
 				await CardCmd.AutoPlay(choiceContext, card, target);
 			}
 		}
@@ -126,4 +133,14 @@ public sealed class Blitzkrieg : ModCardTemplate
 	private static bool ShouldAutoPlayFromDrawPile(CardModel card) =>
 		card is Blitzkrieg
 		|| (card.Rarity == CardRarity.Basic && card.Tags.Contains(CardTag.Strike));
+
+	private void PlayAutoPlaySfx()
+	{
+		SquSfx.PlayRandom(
+			RunState,
+			SquSfx.CaptureLiuBiaoEvent,
+			SquSfx.EightHundredLiEvent,
+			SquSfx.ConsecutiveSiegesEvent,
+			SquSfx.LuKangUndefendedEvent);
+	}
 }
