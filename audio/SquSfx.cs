@@ -19,6 +19,7 @@ internal static class SquSfx
 	public const string TenThousandTransparentHolesEvent = "event:/sunqian_universe/sfx/一万个透明窟窿";
 	public const string DualSwordsEvent = "event:/sunqian_universe/sfx/一把叫仁之剑，一把叫义之剑";
 	public const string WontBePoliteEvent = "event:/sunqian_universe/sfx/不会客气";
+	public const string SpareTheYoungAndOldEvent = "event:/sunqian_universe/sfx/不斩老幼";
 	public const string GrieveForLordEvent = "event:/sunqian_universe/sfx/为主公悲伤";
 	public const string RighteousnessSwordEvent = "event:/sunqian_universe/sfx/义之剑";
 	public const string TwoWordHowToRelieveWorryEvent = "event:/sunqian_universe/sfx/二言-何以解忧";
@@ -28,22 +29,31 @@ internal static class SquSfx
 	public const string TwoWordUnforgettableWorryEvent = "event:/sunqian_universe/sfx/二言-忧思难忘";
 	public const string TwoWordGenerousAndStrongEvent = "event:/sunqian_universe/sfx/二言-慨当以慷";
 	public const string TwoWordLikeMorningDewEvent = "event:/sunqian_universe/sfx/二言-譬如朝露";
+	public const string HumanTransmutationEvent = "event:/sunqian_universe/sfx/人体炼成";
 	public const string BenevolenceSwordEvent = "event:/sunqian_universe/sfx/仁之剑";
+	public const string WhoAreYouEvent = "event:/sunqian_universe/sfx/你是何人";
 	public const string RunWildAgainEvent = "event:/sunqian_universe/sfx/再来撒野";
 	public const string HuaguMianzhangEvent = "event:/sunqian_universe/sfx/化骨绵掌";
 	public const string WhoseHoundsEvent = "event:/sunqian_universe/sfx/哪家的鹰犬";
 	public const string TraitorDongZhuoEvent = "event:/sunqian_universe/sfx/国贼董卓";
 	public const string GrieveThenCongratulateLordEvent = "event:/sunqian_universe/sfx/在下一者为主公悲伤，二者给主公道喜";
+	public const string LoyaltyOverKinEvent = "event:/sunqian_universe/sfx/大义灭亲";
 	public const string YilingFineFireEvent = "event:/sunqian_universe/sfx/夷陵好火";
+	public const string NearAndFarEvent = "event:/sunqian_universe/sfx/忽近忽远";
 	public const string SlamTheCommandDeskEvent = "event:/sunqian_universe/sfx/怒掀帅案";
 	public const string WhatDoWeEatEvent = "event:/sunqian_universe/sfx/我们吃什么";
 	public const string BiggerGobletEvent = "event:/sunqian_universe/sfx/换大盏";
 	public const string ExactlyWhatToEatEvent = "event:/sunqian_universe/sfx/是啊吃什么";
 	public const string EmperorKnowsNoWarEvent = "event:/sunqian_universe/sfx/朕不知兵";
 	public const string WaterFireInvincibleEvent = "event:/sunqian_universe/sfx/水火无敌";
+	public const string FateUnknownEvent = "event:/sunqian_universe/sfx/生死不明";
+	public const string SilverUprisingEvent = "event:/sunqian_universe/sfx/白银起义";
 	public const string DeniedEvent = "event:/sunqian_universe/sfx/竟然不许";
+	public const string ArrowCurtainEvent = "event:/sunqian_universe/sfx/箭幕";
 	public const string CongratulateLordEvent = "event:/sunqian_universe/sfx/给主公道喜";
 	public const string SelfDecapitationEvent = "event:/sunqian_universe/sfx/自刎归天";
+	public const string ExecutionerArchersReadyEvent = "event:/sunqian_universe/sfx/行刑官-弓箭手准备";
+	public const string ExecutionerLooseArrowsEvent = "event:/sunqian_universe/sfx/行刑官-放箭";
 	public const string CloseFittingArmorEvent = "event:/sunqian_universe/sfx/贴身铠甲";
 	public const string TransparentHoleEvent = "event:/sunqian_universe/sfx/透明窟窿";
 	public const string ThreeHoursBreakJingzhouEvent = "event:/sunqian_universe/sfx/闪电战-三个时辰破荆州";
@@ -51,6 +61,8 @@ internal static class SquSfx
 	public const string EightHundredLiEvent = "event:/sunqian_universe/sfx/闪电战-纵横八百里";
 	public const string ConsecutiveSiegesEvent = "event:/sunqian_universe/sfx/闪电战-连续攻城拔寨";
 	public const string LuKangUndefendedEvent = "event:/sunqian_universe/sfx/闪电战-陆康未设防";
+	public const string LuXunCybertronEvent = "event:/sunqian_universe/sfx/陆逊塞伯坦";
+	public const string GoldenUprisingEvent = "event:/sunqian_universe/sfx/黄金起义";
 
 	public static void Register()
 	{

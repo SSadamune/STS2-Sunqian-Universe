@@ -8,6 +8,7 @@ using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using Squ;
+using Squ.Audio;
 using Squ.Character;
 using Squ.Powers;
 using Squ.Script;
@@ -55,6 +56,7 @@ public sealed class ExecutionCommanderScript : ScriptCardTemplate
 
 	protected override async Task PlayScriptAsync(PlayerChoiceContext choiceContext, CardPlay cardPlay)
 	{
+		SquSfx.Play(SquSfx.ExecutionerArchersReadyEvent);
 		Player player = Owner;
 		ICombatState combatState = player.Creature.CombatState
 			?? throw new System.InvalidOperationException("ExecutionCommanderScript requires an active combat.");

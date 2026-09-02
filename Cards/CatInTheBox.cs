@@ -12,6 +12,7 @@ using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.Powers;
 using Squ;
+using Squ.Audio;
 using Squ.Character;
 using Squ.Combat;
 using STS2RitsuLib.Cards.DynamicVars;
@@ -93,6 +94,7 @@ public sealed class CatInTheBox : ModCardTemplate
 		int maxRoll = GetMaxRoll();
 		if (SquDoomKillThreshold.GetEffectiveGreenHp(target) <= maxRoll)
 		{
+			SquSfx.Play(SquSfx.FateUnknownEvent);
 			await DoomPower.DoomKill([target]);
 			return;
 		}

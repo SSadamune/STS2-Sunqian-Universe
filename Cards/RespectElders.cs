@@ -10,6 +10,7 @@ using MegaCrit.Sts2.Core.Localization;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.ValueProps;
+using Squ.Audio;
 using Squ.Character;
 using STS2RitsuLib.Cards.DynamicVars;
 using STS2RitsuLib.Interop.AutoRegistration;
@@ -50,7 +51,13 @@ public sealed class RespectElders : ModCardTemplate
 	{
 		ArgumentNullException.ThrowIfNull(cardPlay.Target, "cardPlay.Target");
 
-		int hitCount = IsInHpRange(cardPlay.Target)
+		bool extraHits = IsInHpRange(cardPlay.Target);
+		if (extraHits)
+		{
+			SquSfx.Play(SquSfx.SpareTheYoungAndOldEvent);
+		}
+
+		int hitCount = extraHits
 			? (int)DynamicVars["HitCount"].BaseValue
 			: 1;
 

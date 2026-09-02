@@ -13,6 +13,7 @@ using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.Powers;
 using MegaCrit.Sts2.Core.ValueProps;
+using Squ.Audio;
 using Squ.Character;
 using Squ.Combat;
 using STS2RitsuLib.Interop.AutoRegistration;
@@ -71,6 +72,7 @@ public sealed class LoyaltyOverKin : ModCardTemplate
 	{
 		ArgumentNullException.ThrowIfNull(cardPlay.Target, nameof(cardPlay.Target));
 
+		SquSfx.Play(SquSfx.LoyaltyOverKinEvent);
 		List<CardModel> selected = SelectTargets();
 
 		CardDrawPlayRateTracker.LogCurrentState(

@@ -8,6 +8,7 @@ using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.ValueProps;
+using Squ.Audio;
 using Squ.Character;
 using Squ.Powers;
 using STS2RitsuLib.Interop.AutoRegistration;
@@ -55,6 +56,7 @@ public sealed class CybertronStrength : ModCardTemplate
 			return;
 		}
 
+		SquSfx.Play(SquSfx.LuXunCybertronEvent);
 		int blockGains = 1 + GetTotalEnemyBurning(combatState) / BurningPerExtraBlock;
 		for (int i = 0; i < blockGains; i++)
 		{

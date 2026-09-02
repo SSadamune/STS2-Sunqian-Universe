@@ -5,6 +5,7 @@ using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.Models.CardPools;
 using MegaCrit.Sts2.Core.ValueProps;
+using Squ.Audio;
 using Squ.Combat;
 using STS2RitsuLib.Interop.AutoRegistration;
 using STS2RitsuLib.Scaffolding.Content;
@@ -46,6 +47,7 @@ public sealed class SalvoStrike : ModCardTemplate, IRandomEnemyTargetCount
 
 	protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
 	{
+		SquSfx.Play(SquSfx.ArrowCurtainEvent);
 		await SquRandomEnemyTargeting.ExecuteDistinctRandomEnemyDamage(
 			this,
 			choiceContext,
