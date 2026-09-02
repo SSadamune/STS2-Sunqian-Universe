@@ -11,6 +11,7 @@ using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.CardPools;
 using MegaCrit.Sts2.Core.Models.Powers;
+using Squ.Audio;
 using Squ.Character;
 using STS2RitsuLib.Interop.AutoRegistration;
 using STS2RitsuLib.Scaffolding.Content;
@@ -230,6 +231,7 @@ public sealed class Denied : ModCardTemplate
 		}
 
 		_returnToHandReady = false;
+		SquSfx.Play(SquSfx.DeniedEvent);
 		await CardPileCmd.Add(this, PileType.Hand);
 	}
 

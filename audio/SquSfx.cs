@@ -1,6 +1,10 @@
 #nullable enable
+using System;
 using MegaCrit.Sts2.Core.Commands;
+using MegaCrit.Sts2.Core.Random;
+using MegaCrit.Sts2.Core.Runs;
 using STS2RitsuLib.Audio;
+using STS2RitsuLib.RunRngs;
 
 namespace Squ.Audio;
 
@@ -11,6 +15,7 @@ internal static class SquSfx
 {
 	public const string BankPath = "res://audio/sunqian_universe.bank";
 	public const string GuidsPath = "res://audio/GUIDs.txt";
+	private const string SfxRngStreamId = "sfx";
 
 	public const string TenThousandTransparentHolesEvent = "event:/sunqian_universe/sfx/一万个透明窟窿";
 	public const string DualSwordsEvent = "event:/sunqian_universe/sfx/一把叫仁之剑，一把叫义之剑";
@@ -39,5 +44,37 @@ internal static class SquSfx
 	public static void Play(string eventPath)
 	{
 		SfxCmd.Play(eventPath);
+	}
+
+	/// <summary>
+	/// 等概率播放其中一个事件。使用本 Mod 独立的跑局 RNG 流（<c>sfx</c>），
+	/// 与 <c>CombatTargets</c>、<c>Shuffle</c>、<c>Niche</c>、奖励/商店等原版序列互不影响。
+	/// </summary>
+	public static void PlayRandom(IRunState? runState, params ReadOnlySpan<string> eventPaths)
+	{
+		if (eventPaths.Length == 0)
+		{
+			return;
+		}
+
+		int index = 0;
+		if (eventPaths.Length > 1 && TryGetSfxRng(runState, out Rng rng))
+		{
+			index = rng.NextInt(eventPaths.Length);
+		}
+
+		Play(eventPaths[index]);
+	}
+
+	private static bool TryGetSfxRng(IRunState? runState, out Rng rng)
+	{
+		if (runState is RunState concrete)
+		{
+			rng = ModRunRngRegistry.Get(concrete, SquMod.ModId, SfxRngStreamId);
+			return true;
+		}
+
+		rng = null!;
+		return false;
 	}
 }

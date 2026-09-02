@@ -11,6 +11,7 @@ using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.Powers;
 using MegaCrit.Sts2.Core.ValueProps;
 using Squ;
+using Squ.Audio;
 using Squ.Character;
 using Squ.Combat;
 using STS2RitsuLib.Interop.AutoRegistration;
@@ -125,6 +126,7 @@ public sealed class CelebrateMourning : ModCardTemplate
 			EnergyCost.SetThisCombat(0);
 		}
 
+		SquSfx.Play(SquSfx.GrieveThenCongratulateLordEvent);
 		await CardPileCmd.Add(this, PileType.Hand);
 	}
 

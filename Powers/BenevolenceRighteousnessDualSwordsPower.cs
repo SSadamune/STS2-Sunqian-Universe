@@ -44,17 +44,13 @@ public sealed class BenevolenceRighteousnessDualSwordsPower : ModPowerTemplate
 		if (card.Owner.Creature == Owner && IsStrikeCard(card))
 		{
 			Flash();
-			PlayTriggerSfx();
+			SquSfx.PlayRandom(
+				CombatState?.RunState,
+				SquSfx.BenevolenceSwordEvent,
+				SquSfx.RighteousnessSwordEvent);
 		}
 
 		return Task.CompletedTask;
-	}
-
-	private void PlayTriggerSfx()
-	{
-		string[] events = [SquSfx.BenevolenceSwordEvent, SquSfx.RighteousnessSwordEvent];
-		int index = CombatState?.RunState.Rng.Niche.NextInt(events.Length) ?? 0;
-		SquSfx.Play(events[index]);
 	}
 
 	private static bool IsStrikeCard(CardModel card) =>
