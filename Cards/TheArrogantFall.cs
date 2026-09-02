@@ -47,7 +47,7 @@ public sealed class TheArrogantFall : ModCardTemplate
 		PortraitPath: "res://images/cards/TheArrogantFall.png");
 
 	public TheArrogantFall()
-		: base(0, CardType.Skill, CardRarity.Common, CustomTargetType.Anyone)
+		: base(0, CardType.Skill, CardRarity.Uncommon, CustomTargetType.Anyone)
 	{
 	}
 

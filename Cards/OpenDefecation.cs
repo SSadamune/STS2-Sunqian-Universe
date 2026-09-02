@@ -46,7 +46,7 @@ public sealed class OpenDefecation : ModCardTemplate
 
 	protected override bool ShouldGlowGoldInternal =>
 		Pile?.Type == PileType.Hand
-		&& PileType.Draw.GetPile(Owner).Cards.Count(HasUnplayableKeyword) >= Threshold;
+		&& CountUnplayableInDrawAndHand() >= Threshold;
 
 	public OpenDefecation()
 		: base(1, CardType.Skill, CardRarity.Uncommon, TargetType.Self)
@@ -65,9 +65,7 @@ public sealed class OpenDefecation : ModCardTemplate
 			Owner.Creature,
 			this);
 
-		List<CardModel> unplayableCards = PileType.Draw.GetPile(Owner).Cards
-			.Where(HasUnplayableKeyword)
-			.ToList();
+		List<CardModel> unplayableCards = GetUnplayableCardsInDrawAndHand().ToList();
 
 		foreach (CardModel card in unplayableCards)
 		{
@@ -101,4 +99,30 @@ public sealed class OpenDefecation : ModCardTemplate
 
 	private static bool HasUnplayableKeyword(CardModel card) =>
 		card.Keywords.Contains(CardKeyword.Unplayable);
+
+	private int CountUnplayableInDrawAndHand() =>
+		PileType.Draw.GetPile(Owner).Cards.Count(HasUnplayableKeyword)
+		+ PileType.Hand.GetPile(Owner).Cards.Count(IsMovableUnplayableInHand);
+
+	private IEnumerable<CardModel> GetUnplayableCardsInDrawAndHand()
+	{
+		foreach (CardModel card in PileType.Draw.GetPile(Owner).Cards)
+		{
+			if (HasUnplayableKeyword(card))
+			{
+				yield return card;
+			}
+		}
+
+		foreach (CardModel card in PileType.Hand.GetPile(Owner).Cards)
+		{
+			if (IsMovableUnplayableInHand(card))
+			{
+				yield return card;
+			}
+		}
+	}
+
+	private bool IsMovableUnplayableInHand(CardModel card) =>
+		card != this && HasUnplayableKeyword(card);
 }

@@ -84,62 +84,59 @@ public static class SquRandomEnemyTargeting
 			return CardModelTargetingExtensions.GetTargets(card, selectedTarget);
 		}
 
+		return SelectRandomEnemies(card, GetRandomEnemyTargetCount(card));
+	}
+
+	/// <summary>
+	/// 为一项随机多目标效果选择一次目标集合。调用方必须在该效果的后续结算中复用返回的集合。
+	/// </summary>
+	public static List<Creature> SelectRandomEnemies(CardModel card, int requestedTargetCount)
+	{
 		ICombatState? combatState = card.CombatState;
-		if (combatState == null)
+		if (combatState == null || requestedTargetCount <= 0)
 		{
 			return [];
 		}
 
 		return PickRandomEnemiesUnique(
 			combatState,
-			GetRandomEnemyTargetCount(card),
+			requestedTargetCount,
 			card.Owner.RunState.Rng.CombatTargets).ToList();
 	}
 
-	public static int GetEffectiveRandomEnemyHitCount(ICombatState combatState, int requestedHitCount)
-	{
-		if (requestedHitCount <= 0)
-		{
-			return 0;
-		}
-
-		int aliveCount = combatState.HittableEnemies.Count(creature => creature.IsAlive);
-		return Math.Min(requestedHitCount, aliveCount);
-	}
-
 	/// <summary>
-	/// One <see cref="AttackCommand"/> with distinct random targets per hit so card-sourced
-	/// bonuses (e.g. Vigor) apply to every hit before <c>AfterAttack</c> consumes them.
-	/// Multi-wave cards should snapshot vigor for follow-up <see cref="AttackCommand"/>s
-	/// (see <see cref="SquVigorSnapshot"/>).
+	/// 用一条 <see cref="AttackCommand"/> 对一次选定的随机目标集合造成伤害。
+	/// 同一条命令的所有命中都复用该集合；再次调用此方法才会选择新的集合。
 	/// </summary>
 	public static async Task<int> ExecuteDistinctRandomEnemyDamage(
 		CardModel card,
 		PlayerChoiceContext choiceContext,
-		int requestedHitCount,
+		int requestedTargetCount,
 		decimal? damagePerHit = null,
+		int hitCountPerTarget = 1,
 		string hitFx = "vfx/vfx_attack_slash",
 		CardPlay? cardPlay = null)
 	{
 		ICombatState? combatState = card.CombatState;
-		if (combatState == null || requestedHitCount <= 0)
+		if (combatState == null || requestedTargetCount <= 0 || hitCountPerTarget <= 0)
 		{
 			return 0;
 		}
 
-		int hitCount = GetEffectiveRandomEnemyHitCount(combatState, requestedHitCount);
-		if (hitCount <= 0)
+		List<Creature> targets = SelectRandomEnemies(card, requestedTargetCount);
+		if (targets.Count == 0)
 		{
 			return 0;
 		}
 
 		await DamageCmd.Attack(damagePerHit ?? card.DynamicVars.Damage.BaseValue)
 			.FromCard(card, cardPlay)
-			.TargetingRandomOpponents(combatState, allowDuplicates: false)
-			.WithHitCount(hitCount)
+			.TargetingAllOpponents(combatState)
+			.TargetingFiltered(targets)
+			.WithHitCount(hitCountPerTarget)
 			.WithHitFx(hitFx)
 			.Execute(choiceContext);
 
-		return hitCount;
+		return targets.Count;
 	}
 }

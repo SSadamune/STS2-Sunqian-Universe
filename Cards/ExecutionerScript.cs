@@ -20,10 +20,10 @@ namespace Squ.Cards;
 [RegisterCard(typeof(SunqianCardPool), StableEntryStem = "executioner_script")]
 public sealed class ExecutionerScript : ScriptCardTemplate
 {
-	public const int BaseVigor = 3;
-	public const int UpgradedVigor = 4;
+	public const int BaseVigor = 6;
+	public const int UpgradedVigor = 8;
 
-	public const int VulnerableAmount = 1;
+	public const int VulnerableAmount = 2;
 
 	protected override IEnumerable<DynamicVar> CanonicalVars =>
 	[
@@ -47,7 +47,7 @@ public sealed class ExecutionerScript : ScriptCardTemplate
 		PortraitPath: "res://images/cards/ExecutionerScript.png");
 
 	public ExecutionerScript()
-		: base(1, CardType.Skill, CardRarity.Common, TargetType.AnyEnemy, true)
+		: base(2, CardType.Skill, CardRarity.Common, TargetType.AnyEnemy, true)
 	{
 	}
 

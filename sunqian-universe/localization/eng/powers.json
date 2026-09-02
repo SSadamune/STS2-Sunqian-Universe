@@ -51,6 +51,7 @@
   "SUNQIAN_UNIVERSE_POWER_SCRIPT_EXECUTIONER_POWER.smartDescriptionUpgraded": "After you play an [gold]Attack[/gold], if it has killed an enemy, restore that Attack's spent [gold]Vigor[/gold] and [gold]Energy[/gold].",
   "SUNQIAN_UNIVERSE_POWER_SCRIPT_NIGHT_RAID_WUCHAO_POWER.title": "Stackable Script: Night Raid on Wuchao",
   "SUNQIAN_UNIVERSE_POWER_SCRIPT_NIGHT_RAID_WUCHAO_POWER.smartDescription": "Cards with \"Strike\" in their name apply [blue]{Amount}[/blue] additional [gold]Burning[/gold].",
+  "SUNQIAN_UNIVERSE_POWER_SCRIPT_NIGHT_RAID_WUCHAO_POWER.cardDescription": "\nApply [blue]{Amount}[/blue] [gold]Burning[/gold] to target enemies.",
   "SUNQIAN_UNIVERSE_POWER_BUDDY_TANGXIAOHU_POWER.title": "Buddy Tangxiaohu",
   "SUNQIAN_UNIVERSE_POWER_BUDDY_TANGXIAOHU_POWER.smartDescription": "After you play a [gold]Script[/gold] card, gain [blue]{Block:diff()}[/blue] [gold]Block[/gold]. This value is affected by [gold]Dexterity[/gold].",
   "SUNQIAN_UNIVERSE_POWER_SCRIPT_XILIANG_SAVAGE_POWER.title": "Script: Xiliang Savage",

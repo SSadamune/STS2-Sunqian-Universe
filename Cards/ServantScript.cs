@@ -19,9 +19,12 @@ namespace Squ.Cards;
 [RegisterCard(typeof(SunqianCardPool), StableEntryStem = "servant_script")]
 public sealed class ServantScript : ScriptCardTemplate
 {
+	public const int BaseBlock = 12;
+	public const int UpgradedBlock = 16;
+
 	protected override IEnumerable<DynamicVar> CanonicalVars =>
 	[
-		new BlockVar(9m, ValueProp.Move),
+		new BlockVar(BaseBlock, ValueProp.Move),
 	];
 
 	public override bool GainsBlock => true;
@@ -60,6 +63,6 @@ public sealed class ServantScript : ScriptCardTemplate
 
 	protected override void OnUpgrade()
 	{
-		DynamicVars.Block.UpgradeValueBy(3m);
+		DynamicVars.Block.UpgradeValueBy(UpgradedBlock - BaseBlock);
 	}
 }

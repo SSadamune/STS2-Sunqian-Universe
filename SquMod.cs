@@ -54,6 +54,7 @@ public static class SquMod
 		var harmony = new Harmony($"{ModId}.patches");
 		harmony.PatchAll(assembly);
 		SquStrikeRedirectPatches.Initialize(harmony);
+		CardDrawPlayRateTracker.Initialize();
 
 		Logger.Info("sunqian-universe (SQU) mod loaded!");
 	}

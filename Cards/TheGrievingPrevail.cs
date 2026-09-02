@@ -38,7 +38,7 @@ public sealed class TheGrievingPrevail : ModCardTemplate
 		PortraitPath: "res://images/cards/TheGrievingPrevail.png");
 
 	public TheGrievingPrevail()
-		: base(0, CardType.Skill, CardRarity.Common, CustomTargetType.Anyone)
+		: base(0, CardType.Skill, CardRarity.Uncommon, CustomTargetType.Anyone)
 	{
 	}
 

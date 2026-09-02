@@ -16,7 +16,7 @@
   "SUNQIAN_UNIVERSE_RELIC_ZHU_DICTIONARY.description": "每当你获得[gold]剧本[/gold]牌时，将其[gold]升级[/gold]。",
   "SUNQIAN_UNIVERSE_RELIC_ZHU_DICTIONARY.flavor": "吃透这本书，你也是修辞大师。",
   "SUNQIAN_UNIVERSE_RELIC_TELEPROMPTER.title": "提词器",
-  "SUNQIAN_UNIVERSE_RELIC_TELEPROMPTER.description": "你每有[blue]3[/blue]张[gold]剧本[/gold]牌被[gold]消耗[/gold]后，抽[blue]1[/blue]张牌。",
+  "SUNQIAN_UNIVERSE_RELIC_TELEPROMPTER.description": "你每有[blue]3[/blue]张[gold]剧本[/gold]牌被[gold]消耗[/gold]后，抽[blue]{Cards:diff()}[/blue]张牌。",
   "SUNQIAN_UNIVERSE_RELIC_TELEPROMPTER.flavor": "如果能标上拼音会更有用。",
   "SUNQIAN_UNIVERSE_RELIC_SUPPORTING_ACTOR_BADGE.title": "配角工牌",
   "SUNQIAN_UNIVERSE_RELIC_SUPPORTING_ACTOR_BADGE.description": "强怪池的战斗结束后，如精英战斗般获得[gold]遗物[/gold]奖励。\n第三层的倒数第二个Boss战斗结束后，获得一次[gold]升级[/gold]的[gold]稀有[/gold]卡牌奖励。",

@@ -61,7 +61,9 @@ public sealed class ScriptNightRaidWuchaoPower : StackableScriptPowerTemplate
 
 	public override async Task AfterAttack(PlayerChoiceContext choiceContext, AttackCommand command)
 	{
-		if (Owner.IsDead || Amount <= 0m || !TryGetStrikeAttackCard(command, out _))
+		if (Owner.IsDead
+			|| Amount <= 0m
+			|| !TryGetStrikeAttackCard(command, out CardModel strikeCard))
 		{
 			return;
 		}
@@ -86,7 +88,7 @@ public sealed class ScriptNightRaidWuchaoPower : StackableScriptPowerTemplate
 				target,
 				Amount,
 				Owner,
-				command.ModelSource as CardModel);
+				strikeCard);
 		}
 	}
 

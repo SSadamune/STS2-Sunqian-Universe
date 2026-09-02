@@ -16,7 +16,7 @@
   "SUNQIAN_UNIVERSE_RELIC_ZHU_DICTIONARY.description": "Whenever you obtain a [gold]Script[/gold] card, [gold]Upgrade[/gold] it.",
   "SUNQIAN_UNIVERSE_RELIC_ZHU_DICTIONARY.flavor": "Master this book, and you're a rhetorician too.",
   "SUNQIAN_UNIVERSE_RELIC_TELEPROMPTER.title": "Teleprompter",
-  "SUNQIAN_UNIVERSE_RELIC_TELEPROMPTER.description": "Whenever [blue]3[/blue] [gold]Script[/gold] cards are [gold]Exhausted[/gold], draw [blue]1[/blue] card.",
+  "SUNQIAN_UNIVERSE_RELIC_TELEPROMPTER.description": "Whenever [blue]3[/blue] [gold]Script[/gold] cards are [gold]Exhausted[/gold], draw [blue]{Cards:diff()}[/blue] {Cards:plural:card|cards}.",
   "SUNQIAN_UNIVERSE_RELIC_TELEPROMPTER.flavor": "It'd be more useful with pinyin.",
   "SUNQIAN_UNIVERSE_RELIC_SUPPORTING_ACTOR_BADGE.title": "Supporting Actor Badge",
   "SUNQIAN_UNIVERSE_RELIC_SUPPORTING_ACTOR_BADGE.description": "After combats from the strong monster pool, gain a [gold]Relic[/gold] as if from an Elite.\nAfter the second-to-last Boss combat in Act 3, gain an [gold]Upgraded[/gold] [gold]Rare[/gold] card reward.",

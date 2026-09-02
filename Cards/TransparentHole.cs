@@ -55,8 +55,7 @@ public sealed class TransparentHole : ModCardTemplate, IRandomEnemyTargetCount
 			return;
 		}
 
-		int vigorAtPlay = SquVigorSnapshot.GetAmount(Owner.Creature);
-		bool isFirstWave = true;
+		SquVigorSnapshot.AttackSequence vigorSequence = SquVigorSnapshot.BeginAttackSequence(Owner.Creature, this);
 
 		while (targetCount > 0)
 		{
@@ -64,9 +63,8 @@ public sealed class TransparentHole : ModCardTemplate, IRandomEnemyTargetCount
 				this,
 				choiceContext,
 				targetCount,
-				damagePerHit: SquVigorSnapshot.DamagePerHitWithSnapshot(this, vigorAtPlay, !isFirstWave),
+				damagePerHit: vigorSequence.ResolveNextAttackDamage(),
 				cardPlay: cardPlay);
-			isFirstWave = false;
 			if (hits <= 0)
 			{
 				break;
