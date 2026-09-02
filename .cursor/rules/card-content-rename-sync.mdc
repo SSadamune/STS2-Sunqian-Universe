@@ -34,7 +34,14 @@ alwaysApply: true
 
 ## 卡牌名称引用
 
-整理或展示卡牌列表时，**必须**从 `localization/zhs/cards.json`（或对应语言的本地化文件）读取 `.title` 值作为中文牌名，**禁止**自行翻译英文类名/Stem。
+在 PR 描述、commit message、文档、对话回复等**任何**提及 Mod 内卡牌/能力/遗物中文名时：
+
+1. **必须**从 `sunqian-universe/localization/zhs/` 对应表的 `.title` 读取正式译名（`cards.json`、`powers.json`、`relics.json` 等）
+2. **禁止**根据英文类名、Stem 或原版直译自行翻译中文名
+
+反例：`The Arrogant Fall` → ❌「傲慢者陨落」　✅「骄兵必败」（见 `cards.json`）
+
+整理或展示卡牌列表时同样遵守上述规则。
 
 ## 命名约定速查
 
