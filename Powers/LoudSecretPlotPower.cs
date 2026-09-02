@@ -46,7 +46,7 @@ public sealed class LoudSecretPlotPower : ModPowerTemplate
 		if (card.Owner.Creature == Owner && ShouldReplay(card))
 		{
 			Flash();
-			SquSfx.PlayOneShot(SquSfx.TraitorDongZhuoPath);
+			SquSfx.Play(SquSfx.TraitorDongZhuoEvent);
 		}
 
 		return Task.CompletedTask;

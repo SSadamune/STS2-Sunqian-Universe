@@ -38,7 +38,7 @@ public sealed class LoudSecretPlot : ModCardTemplate
 
 	protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
 	{
-		SquSfx.PlayOneShot(SquSfx.WhoseHoundsPath);
+		SquSfx.Play(SquSfx.WhoseHoundsEvent);
 		await PowerCmd.Apply<LoudSecretPlotPower>(
 			choiceContext,
 			Owner.Creature,

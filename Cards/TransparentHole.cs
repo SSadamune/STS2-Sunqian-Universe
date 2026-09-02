@@ -7,6 +7,7 @@ using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.ValueProps;
+using Squ.Audio;
 using Squ.Character;
 using Squ.Combat;
 using Squ.Script;
@@ -43,6 +44,8 @@ public sealed class TransparentHole : ModCardTemplate, IRandomEnemyTargetCount
 
 	protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
 	{
+		SquSfx.Play(SquSfx.TenThousandTransparentHolesEvent);
+
 		ICombatState? combatState = CombatState;
 		if (combatState == null)
 		{
@@ -57,8 +60,14 @@ public sealed class TransparentHole : ModCardTemplate, IRandomEnemyTargetCount
 
 		SquVigorSnapshot.AttackSequence vigorSequence = SquVigorSnapshot.BeginAttackSequence(Owner.Creature, this);
 
+		bool playFollowUpStrikeSfx = false;
 		while (targetCount > 0)
 		{
+			if (playFollowUpStrikeSfx)
+			{
+				SquSfx.Play(SquSfx.TransparentHoleEvent);
+			}
+
 			int hits = await SquRandomEnemyTargeting.ExecuteDistinctRandomEnemyDamage(
 				this,
 				choiceContext,
@@ -77,6 +86,7 @@ public sealed class TransparentHole : ModCardTemplate, IRandomEnemyTargetCount
 			}
 
 			targetCount--;
+			playFollowUpStrikeSfx = true;
 		}
 	}
 
