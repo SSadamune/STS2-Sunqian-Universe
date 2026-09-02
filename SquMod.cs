@@ -2,6 +2,7 @@ using System.Reflection;
 using HarmonyLib;
 using MegaCrit.Sts2.Core.Logging;
 using MegaCrit.Sts2.Core.Modding;
+using Squ.Audio;
 using Squ.Cards;
 using Squ.Character;
 using Squ.Combat;
@@ -32,6 +33,8 @@ public static class SquMod
 		SquTargetTypes.Register();
 		RitsuLibFramework.EnsureGodotScriptsRegistered(assembly, Logger);
 		ModTypeDiscoveryHub.RegisterModAssembly(ModId, assembly);
+		SunqianSelectBgm.Register();
+		SquSfx.Register();
 
 		RitsuLibFramework.CreateContentPack(ModId)
 			.CharacterStarterRelic<SunqianCharacter, BoxLunchRelic>(1)

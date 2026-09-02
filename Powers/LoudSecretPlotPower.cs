@@ -5,6 +5,7 @@ using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.Entities.Creatures;
 using MegaCrit.Sts2.Core.Entities.Powers;
 using MegaCrit.Sts2.Core.Models;
+using Squ.Audio;
 using Squ.Combat;
 using STS2RitsuLib.Interop.AutoRegistration;
 using STS2RitsuLib.Scaffolding.Content;
@@ -45,6 +46,7 @@ public sealed class LoudSecretPlotPower : ModPowerTemplate
 		if (card.Owner.Creature == Owner && ShouldReplay(card))
 		{
 			Flash();
+			SquSfx.PlayOneShot(SquSfx.TraitorDongZhuoPath);
 		}
 
 		return Task.CompletedTask;
