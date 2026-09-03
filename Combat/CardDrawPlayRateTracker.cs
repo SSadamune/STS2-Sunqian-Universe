@@ -31,6 +31,17 @@ public static class CardDrawPlayRateTracker
 
 	private const string SaveKey = "card_play_rate_v3";
 
+	private const string CelebrateMourningEntrySuffix = "CELEBRATE_MOURNING";
+
+	private static readonly PileType[] CelebrateMourningScanPiles =
+	[
+		PileType.Hand,
+		PileType.Draw,
+		PileType.Discard,
+		PileType.Exhaust,
+		PileType.Play,
+	];
+
 	private static readonly PlayerRunSavedData<PlayerSaveState> SavedData =
 		RitsuLibFramework.GetRunSavedDataStore(SquMod.ModId).RegisterPerPlayer(
 			SaveKey,
@@ -121,7 +132,20 @@ public static class CardDrawPlayRateTracker
 		Player player,
 		int windowSize = MaxStoredCombats,
 		bool includeCurrentCombat = false,
-		Func<CardModel, bool>? exclude = null)
+		Func<CardModel, bool>? exclude = null) =>
+		GetHighestPlayRateDeckCards(
+			player,
+			windowSize,
+			includeCurrentCombat,
+			exclude,
+			subtractCurrentCombatExhaustForKey: null);
+
+	private static HashSet<CardModel> GetHighestPlayRateDeckCards(
+		Player player,
+		int windowSize,
+		bool includeCurrentCombat,
+		Func<CardModel, bool>? exclude,
+		string? subtractCurrentCombatExhaustForKey)
 	{
 		List<(CardModel Card, int PlayCount, int Denominator)> ranked = [];
 		foreach (CardModel card in PileType.Deck.GetPile(player).Cards)
@@ -139,7 +163,8 @@ public static class CardDrawPlayRateTracker
 				out int playCount,
 				out int playWithoutDiscardOrExhaustCount,
 				out int exhaustEntryCount,
-				out int discardEntryCount);
+				out int discardEntryCount,
+				subtractCurrentCombatExhaustForKey);
 			int denominator = playWithoutDiscardOrExhaustCount + exhaustEntryCount + discardEntryCount;
 			ranked.Add((card, playCount, denominator));
 		}
@@ -164,6 +189,80 @@ public static class CardDrawPlayRateTracker
 			.ToHashSet();
 	}
 
+	/// <summary>
+	/// 判断被消耗牌在<strong>本次消耗计入统计之前</strong>是否属于最高打出率档。
+	/// <see cref="Hook.AfterCardExhausted"/> 触发时，打出率追踪器已在牌堆移动事件中记入了本次 ExhaustEntry，
+	/// 须回退该次计数后再比较，否则刚被消耗的最高档牌会立刻掉出最高档而无法触发闻丧贺喜。
+	/// </summary>
+	public static bool WasAmongHighestPlayRateDeckCardsBeforeExhaust(
+		Player player,
+		CardModel exhaustedCard,
+		int windowSize = MaxStoredCombats,
+		bool includeCurrentCombat = false,
+		Func<CardModel, bool>? exclude = null)
+	{
+		CardModel? identity = ResolveIdentityCard(exhaustedCard);
+		if (identity is null)
+		{
+			return false;
+		}
+
+		string targetKey = GetIdentityKey(identity);
+		HashSet<CardModel> highest = GetHighestPlayRateDeckCards(
+			player,
+			windowSize,
+			includeCurrentCombat,
+			exclude,
+			subtractCurrentCombatExhaustForKey: targetKey);
+
+		foreach (CardModel deckCard in highest)
+		{
+			CardModel deckIdentity = ResolveIdentityCard(deckCard) ?? deckCard;
+			if (GetIdentityKey(deckIdentity) == targetKey)
+			{
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	/// <summary>
+	/// 判断 <paramref name="card"/> 是否与牌组中当前最高打出率档的任一牌共享身份键。
+	/// 用身份键而非 <see cref="CardModel"/> 引用比较，避免 DeckVersion 与牌组实例不一致时误判。
+	/// </summary>
+	public static bool IsAmongHighestPlayRateDeckCards(
+		Player player,
+		CardModel card,
+		int windowSize = MaxStoredCombats,
+		bool includeCurrentCombat = false,
+		Func<CardModel, bool>? exclude = null)
+	{
+		CardModel? identity = ResolveIdentityCard(card);
+		if (identity is null)
+		{
+			return false;
+		}
+
+		string targetKey = GetIdentityKey(identity);
+		HashSet<CardModel> highest = GetHighestPlayRateDeckCards(
+			player,
+			windowSize,
+			includeCurrentCombat,
+			exclude);
+
+		foreach (CardModel deckCard in highest)
+		{
+			CardModel deckIdentity = ResolveIdentityCard(deckCard) ?? deckCard;
+			if (GetIdentityKey(deckIdentity) == targetKey)
+			{
+				return true;
+			}
+		}
+
+		return false;
+	}
+
 	public static bool TryGetStats(
 		Player player,
 		CardModel card,
@@ -172,7 +271,8 @@ public static class CardDrawPlayRateTracker
 		out int playCount,
 		out int playWithoutDiscardOrExhaustCount,
 		out int exhaustEntryCount,
-		out int discardEntryCount)
+		out int discardEntryCount,
+		string? subtractCurrentCombatExhaustForKey = null)
 	{
 		playCount = 0;
 		playWithoutDiscardOrExhaustCount = 0;
@@ -192,7 +292,8 @@ public static class CardDrawPlayRateTracker
 			out playCount,
 			out playWithoutDiscardOrExhaustCount,
 			out exhaustEntryCount,
-			out discardEntryCount);
+			out discardEntryCount,
+			subtractCurrentCombatExhaustForKey);
 		return true;
 	}
 
@@ -258,6 +359,137 @@ public static class CardDrawPlayRateTracker
 		SquMod.Logger.Info(builder.ToString());
 	}
 
+	/// <summary>
+	/// 临时诊断：任意牌进入消耗堆时记录打出率排名与「闻丧贺喜」位置（Debug Log Viewer）。
+	/// </summary>
+	public static void LogCardExhaustedDiagnostics(
+		Player player,
+		CardModel exhaustedCard,
+		PileType previousPile,
+		int windowSize = MaxStoredCombats,
+		bool includeCurrentCombat = true)
+	{
+		var builder = new StringBuilder();
+		builder.AppendLine("[CardDrawPlayRateTracker] card exhausted (Celebrate Mourning debug)");
+		builder.Append("  exhaustedFrom: ").AppendLine(previousPile.ToString());
+		builder.Append("  exhaustedCard: ").Append(FormatCardLabel(exhaustedCard));
+		builder.Append(" objectHash=").AppendLine(exhaustedCard.GetHashCode().ToString());
+
+		CardModel? resolvedIdentity = ResolveIdentityCard(exhaustedCard);
+		if (resolvedIdentity is null)
+		{
+			builder.AppendLine("  resolveIdentity: FAILED (no DeckVersion and not in Deck pile)");
+		}
+		else
+		{
+			builder.Append("  resolveIdentity: ").Append(FormatCardLabel(resolvedIdentity))
+				.Append(" [").Append(GetIdentityKey(resolvedIdentity)).AppendLine("]");
+		}
+
+		builder.Append("  deckVersion: ")
+			.AppendLine(exhaustedCard.DeckVersion is null ? "null" : FormatCardLabel(exhaustedCard.DeckVersion));
+
+		if (TryGetStats(
+			    player,
+			    exhaustedCard,
+			    windowSize,
+			    includeCurrentCombat,
+			    out int playCount,
+			    out int playWithoutDiscardOrExhaustCount,
+			    out int exhaustEntryCount,
+			    out int discardEntryCount))
+		{
+			builder.Append("  exhaustedCardStats: playCount=").Append(playCount)
+				.Append(", playWithoutDiscardOrExhaustCount=").Append(playWithoutDiscardOrExhaustCount)
+				.Append(", exhaustEntryCount=").Append(exhaustEntryCount)
+				.Append(", discardEntryCount=").Append(discardEntryCount)
+				.Append(", rate=").AppendLine(FormatRate(
+					playCount,
+					playWithoutDiscardOrExhaustCount,
+					exhaustEntryCount,
+					discardEntryCount));
+		}
+		else
+		{
+			builder.AppendLine("  exhaustedCardStats: (no tracked stats for this card)");
+		}
+
+		List<RankedDeckCard> rankedOthers = GetRankedDeckCards(
+			player,
+			windowSize,
+			includeCurrentCombat,
+			exclude: IsCelebrateMourningCard);
+		AppendExhaustedPlayRateRank(builder, exhaustedCard, rankedOthers);
+
+		builder.AppendLine("  highestOtherPlayRateDeckCards:");
+		HashSet<CardModel> highestOthers = GetHighestPlayRateDeckCards(
+			player,
+			windowSize,
+			includeCurrentCombat,
+			exclude: IsCelebrateMourningCard);
+		if (highestOthers.Count == 0)
+		{
+			builder.AppendLine("    (none)");
+		}
+		else
+		{
+			foreach (CardModel deckCard in highestOthers.OrderBy(card => card.Title, StringComparer.Ordinal))
+			{
+				builder.Append("    ").AppendLine(FormatCardLabel(deckCard));
+			}
+		}
+
+		bool isAmongHighestOthers = IsAmongHighestPlayRateDeckCards(
+			player,
+			exhaustedCard,
+			windowSize,
+			includeCurrentCombat,
+			exclude: IsCelebrateMourningCard);
+		bool wasAmongHighestBeforeExhaust = WasAmongHighestPlayRateDeckCardsBeforeExhaust(
+			player,
+			exhaustedCard,
+			windowSize,
+			includeCurrentCombat,
+			exclude: IsCelebrateMourningCard);
+		builder.Append("  isAmongHighestOtherPlayRate: ").AppendLine(isAmongHighestOthers.ToString());
+		builder.Append("  wasAmongHighestBeforeThisExhaust: ")
+			.AppendLine(wasAmongHighestBeforeExhaust.ToString());
+		builder.Append("  isCelebrateMourningCard: ").AppendLine(IsCelebrateMourningCard(exhaustedCard).ToString());
+
+		builder.AppendLine("  deckPlayRateRanking (excluding Celebrate Mourning):");
+		if (rankedOthers.Count == 0)
+		{
+			builder.AppendLine("    (empty deck)");
+		}
+		else
+		{
+			for (int i = 0; i < rankedOthers.Count; i++)
+			{
+				RankedDeckCard entry = rankedOthers[i];
+				builder.Append("    #").Append(i + 1).Append(' ')
+					.Append(FormatCardLabel(entry.Card))
+					.Append(" [").Append(entry.IdentityKey).Append("] rate=")
+					.Append(FormatRate(
+						entry.PlayCount,
+						entry.PlayWithoutDiscardOrExhaustCount,
+						entry.ExhaustEntryCount,
+						entry.DiscardEntryCount))
+					.AppendLine();
+			}
+		}
+
+		builder.AppendLine("  celebrateMourningInstances:");
+		AppendCelebrateMourningInstances(
+			builder,
+			player,
+			exhaustedCard,
+			windowSize,
+			includeCurrentCombat,
+			wasAmongHighestBeforeExhaust);
+
+		SquMod.Logger.Info(builder.ToString());
+	}
+
 	private static void AppendCardRateLine(
 		StringBuilder builder,
 		string indent,
@@ -319,7 +551,7 @@ public static class CardDrawPlayRateTracker
 	{
 		CardModel card = evt.Card;
 		Player? player = card.Owner;
-		if (player is null || !TryGetStatsKey(card, out string statsKey))
+		if (player is null)
 		{
 			return;
 		}
@@ -330,22 +562,32 @@ public static class CardDrawPlayRateTracker
 
 		if (newPile == PileType.Exhaust && previousPile != PileType.Exhaust)
 		{
-			runtime.Current.AddExhaustEntry(statsKey);
-			DecrementPending(runtime, statsKey);
+			LogCardExhaustedDiagnostics(player, card, previousPile);
+			if (TryGetStatsKey(card, out string statsKey))
+			{
+				runtime.Current.AddExhaustEntry(statsKey);
+				DecrementPending(runtime, statsKey);
+			}
+
+			return;
+		}
+
+		if (!TryGetStatsKey(card, out string movedStatsKey))
+		{
 			return;
 		}
 
 		if (newPile == PileType.Discard && previousPile != PileType.Discard)
 		{
-			runtime.Current.AddDiscardEntry(statsKey);
-			DecrementPending(runtime, statsKey);
+			runtime.Current.AddDiscardEntry(movedStatsKey);
+			DecrementPending(runtime, movedStatsKey);
 			return;
 		}
 
 		// 打出后离开 Play 且未进消耗/弃牌（能力牌离场、回手等）。
-		if (previousPile == PileType.Play && DecrementPending(runtime, statsKey))
+		if (previousPile == PileType.Play && DecrementPending(runtime, movedStatsKey))
 		{
-			runtime.Current.AddPlayWithoutDiscardOrExhaust(statsKey);
+			runtime.Current.AddPlayWithoutDiscardOrExhaust(movedStatsKey);
 		}
 	}
 
@@ -477,7 +719,8 @@ public static class CardDrawPlayRateTracker
 		out int playCount,
 		out int playWithoutDiscardOrExhaustCount,
 		out int exhaustEntryCount,
-		out int discardEntryCount)
+		out int discardEntryCount,
+		string? subtractCurrentCombatExhaustForKey = null)
 	{
 		playCount = 0;
 		playWithoutDiscardOrExhaustCount = 0;
@@ -501,9 +744,17 @@ public static class CardDrawPlayRateTracker
 
 		if (includeCurrentCombat && runtime.Current.Cards.TryGetValue(statsKey, out CardCombatStats? current))
 		{
+			int currentExhaustEntryCount = current.ExhaustEntryCount;
+			if (subtractCurrentCombatExhaustForKey != null
+			    && statsKey == subtractCurrentCombatExhaustForKey
+			    && currentExhaustEntryCount > 0)
+			{
+				currentExhaustEntryCount--;
+			}
+
 			playCount += current.PlayCount;
 			playWithoutDiscardOrExhaustCount += current.PlayWithoutDiscardOrExhaustCount;
-			exhaustEntryCount += current.ExhaustEntryCount;
+			exhaustEntryCount += currentExhaustEntryCount;
 			discardEntryCount += current.DiscardEntryCount;
 		}
 	}
@@ -652,6 +903,202 @@ public static class CardDrawPlayRateTracker
 			? "n/a"
 			: $"{playCount}/{denominator} ({(100f * playCount / denominator):0.##}%)";
 	}
+
+	private static bool IsCelebrateMourningCard(CardModel card) =>
+		card.Id.Entry.EndsWith(CelebrateMourningEntrySuffix, StringComparison.Ordinal)
+		|| card.DeckVersion?.Id.Entry.EndsWith(CelebrateMourningEntrySuffix, StringComparison.Ordinal) == true;
+
+	private static List<RankedDeckCard> GetRankedDeckCards(
+		Player player,
+		int windowSize,
+		bool includeCurrentCombat,
+		Func<CardModel, bool>? exclude = null)
+	{
+		List<RankedDeckCard> ranked = [];
+		foreach (CardModel deckCard in PileType.Deck.GetPile(player).Cards)
+		{
+			if (exclude?.Invoke(deckCard) == true)
+			{
+				continue;
+			}
+
+			TryGetStats(
+				player,
+				deckCard,
+				windowSize,
+				includeCurrentCombat,
+				out int playCount,
+				out int playWithoutDiscardOrExhaustCount,
+				out int exhaustEntryCount,
+				out int discardEntryCount);
+			CardModel identity = ResolveIdentityCard(deckCard) ?? deckCard;
+			ranked.Add(new RankedDeckCard(
+				deckCard,
+				playCount,
+				playWithoutDiscardOrExhaustCount,
+				exhaustEntryCount,
+				discardEntryCount,
+				GetIdentityKey(identity)));
+		}
+
+		ranked.Sort(CompareRankedDeckCards);
+		return ranked;
+	}
+
+	private static void AppendExhaustedPlayRateRank(
+		StringBuilder builder,
+		CardModel exhaustedCard,
+		IReadOnlyList<RankedDeckCard> rankedOthers)
+	{
+		if (!TryGetExhaustedIdentityKey(exhaustedCard, out string exhaustedKey))
+		{
+			builder.AppendLine("  exhaustedPlayRateRankAmongOthers: (identity unresolved)");
+			return;
+		}
+
+		int rank = -1;
+		for (int i = 0; i < rankedOthers.Count; i++)
+		{
+			if (rankedOthers[i].IdentityKey == exhaustedKey)
+			{
+				rank = i + 1;
+				break;
+			}
+		}
+
+		if (rank < 0)
+		{
+			builder.AppendLine(
+				"  exhaustedPlayRateRankAmongOthers: (not found in deck ranking — likely not a deck card identity)");
+			return;
+		}
+
+		RankedDeckCard entry = rankedOthers[rank - 1];
+		builder.Append("  exhaustedPlayRateRankAmongOthers: #").Append(rank)
+			.Append('/').Append(rankedOthers.Count)
+			.Append(" rate=").Append(FormatRate(
+				entry.PlayCount,
+				entry.PlayWithoutDiscardOrExhaustCount,
+				entry.ExhaustEntryCount,
+				entry.DiscardEntryCount))
+			.AppendLine();
+	}
+
+	private static void AppendCelebrateMourningInstances(
+		StringBuilder builder,
+		Player player,
+		CardModel exhaustedCard,
+		int windowSize,
+		bool includeCurrentCombat,
+		bool wasAmongHighestBeforeExhaust)
+	{
+		bool found = false;
+		foreach (PileType pileType in CelebrateMourningScanPiles)
+		{
+			IReadOnlyList<CardModel> cards = pileType.GetPile(player).Cards;
+			for (int index = 0; index < cards.Count; index++)
+			{
+				CardModel card = cards[index];
+				if (!IsCelebrateMourningCard(card))
+				{
+					continue;
+				}
+
+				found = true;
+				bool canListen = CanCelebrateMourningListenForReturnTrigger(card.Pile?.Type);
+				bool ownerMatches = exhaustedCard.Owner == card.Owner;
+				bool exhaustedIsSelf = IsCelebrateMourningCard(exhaustedCard);
+				bool wouldTriggerReturn = canListen
+				                          && ownerMatches
+				                          && !exhaustedIsSelf
+				                          && wasAmongHighestBeforeExhaust;
+
+				builder.Append("    ").Append(pileType).Append('[').Append(index).Append("]: ")
+					.Append(FormatCardLabel(card))
+					.Append(" objectHash=").Append(card.GetHashCode())
+					.Append(", canListen=").Append(canListen)
+					.Append(", ownerMatches=").Append(ownerMatches)
+					.Append(", wouldTriggerReturn=").Append(wouldTriggerReturn);
+
+				if (!wouldTriggerReturn)
+				{
+					builder.Append(" (");
+					if (!canListen)
+					{
+						builder.Append("pile not listened; ");
+					}
+
+					if (!ownerMatches)
+					{
+						builder.Append("owner mismatch; ");
+					}
+
+					if (exhaustedIsSelf)
+					{
+						builder.Append("exhausted card is Celebrate Mourning; ");
+					}
+
+					if (!wasAmongHighestBeforeExhaust)
+					{
+						builder.Append("exhausted card not among highest other play rate before this exhaust; ");
+					}
+
+					builder.Append(')');
+				}
+
+				builder.AppendLine();
+			}
+		}
+
+		if (!found)
+		{
+			builder.AppendLine("    (none in Hand/Draw/Discard/Exhaust/Play)");
+		}
+	}
+
+	private static bool TryGetExhaustedIdentityKey(CardModel card, out string identityKey)
+	{
+		CardModel? identity = ResolveIdentityCard(card);
+		if (identity is null)
+		{
+			identityKey = string.Empty;
+			return false;
+		}
+
+		identityKey = GetIdentityKey(identity);
+		return true;
+	}
+
+	private static bool CanCelebrateMourningListenForReturnTrigger(PileType? pileType) =>
+		pileType is PileType.Hand or PileType.Draw or PileType.Discard or PileType.Exhaust;
+
+	private static int CompareRankedDeckCards(RankedDeckCard left, RankedDeckCard right)
+	{
+		int leftDenominator = left.PlayWithoutDiscardOrExhaustCount + left.ExhaustEntryCount + left.DiscardEntryCount;
+		int rightDenominator = right.PlayWithoutDiscardOrExhaustCount + right.ExhaustEntryCount
+		                       + right.DiscardEntryCount;
+		int rateCmp = CompareRate(left.PlayCount, leftDenominator, right.PlayCount, rightDenominator);
+		if (rateCmp != 0)
+		{
+			return -rateCmp;
+		}
+
+		int playCmp = left.PlayCount.CompareTo(right.PlayCount);
+		if (playCmp != 0)
+		{
+			return -playCmp;
+		}
+
+		return string.CompareOrdinal(left.IdentityKey, right.IdentityKey);
+	}
+
+	private readonly record struct RankedDeckCard(
+		CardModel Card,
+		int PlayCount,
+		int PlayWithoutDiscardOrExhaustCount,
+		int ExhaustEntryCount,
+		int DiscardEntryCount,
+		string IdentityKey);
 
 	private readonly record struct RankedDrawCard(
 		CardModel Card,

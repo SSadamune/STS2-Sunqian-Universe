@@ -38,7 +38,10 @@ public sealed class SupernaturallyWise : ModCardTemplate
 
 	protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
 	{
-		SquSfx.Play(SquSfx.CunningYuanShuEvent);
+		SquSfx.PlayRandom(
+			RunState,
+			SquSfx.CunningYuanShuWhyPursueEvent,
+			SquSfx.CunningYuanShuGreedyGloryEvent);
 		await PowerCmd.Apply<SupernaturallyWisePower>(
 			choiceContext,
 			Owner.Creature,

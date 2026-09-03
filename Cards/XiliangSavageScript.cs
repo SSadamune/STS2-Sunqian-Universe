@@ -22,7 +22,7 @@ namespace Squ.Cards;
 public sealed class XiliangSavageScript : ScriptCardTemplate
 {
 	public const int BaseBlock = 10;
-	public const int UpgradedBlock = 14;
+	public const int UpgradedBlock = 15;
 	public const int BaseVigor = 4;
 	public const int UpgradedVigor = 6;
 

@@ -41,7 +41,8 @@ internal static class SquSfx
 	public const string WhoseHoundsEvent = "event:/sunqian_universe/sfx/哪家的鹰犬";
 	public const string TraitorDongZhuoEvent = "event:/sunqian_universe/sfx/国贼董卓";
 	public const string GrieveThenCongratulateLordEvent = "event:/sunqian_universe/sfx/在下一者为主公悲伤，二者给主公道喜";
-	public const string CunningYuanShuEvent = "event:/sunqian_universe/sfx/多智袁术";
+	public const string CunningYuanShuWhyPursueEvent = "event:/sunqian_universe/sfx/多智袁术-为何追杀";
+	public const string CunningYuanShuGreedyGloryEvent = "event:/sunqian_universe/sfx/多智袁术-贪功心切";
 	public const string LoyaltyOverKinEvent = "event:/sunqian_universe/sfx/大义灭亲";
 	public const string YilingFineFireEvent = "event:/sunqian_universe/sfx/夷陵好火";
 	public const string HouseServantsComeEvent = "event:/sunqian_universe/sfx/家丁剧本-来人";
@@ -70,11 +71,12 @@ internal static class SquSfx
 	public const string TransparentHoleMaChaoEvent = "event:/sunqian_universe/sfx/透明窟窿-戳马超";
 	public const string TransparentHoleLuBuEvent = "event:/sunqian_universe/sfx/透明窟窿-捅吕布";
 	public const string TransparentHoleYuanShuEvent = "event:/sunqian_universe/sfx/透明窟窿-捅袁术";
-	public const string ThreeHoursBreakJingzhouEvent = "event:/sunqian_universe/sfx/闪电战-三个时辰破荆州";
-	public const string CaptureLiuBiaoEvent = "event:/sunqian_universe/sfx/闪电战-擒下刘表";
-	public const string EightHundredLiEvent = "event:/sunqian_universe/sfx/闪电战-纵横八百里";
-	public const string ConsecutiveSiegesEvent = "event:/sunqian_universe/sfx/闪电战-连续攻城拔寨";
-	public const string LuKangUndefendedEvent = "event:/sunqian_universe/sfx/闪电战-陆康未设防";
+	public const string BlitzkriegThreeHoursBreakJingzhouEvent = "event:/sunqian_universe/sfx/闪电战-三个时辰破荆州";
+	public const string BlitzkriegThreeDaysEightHundredLiEvent = "event:/sunqian_universe/sfx/闪电战-三天内纵横八百里";
+	public const string BlitzkriegHahahaEvent = "event:/sunqian_universe/sfx/闪电战-哈哈哈哈哈";
+	public const string BlitzkriegRushToLujiangEvent = "event:/sunqian_universe/sfx/闪电战-星夜兼程奔赴庐江";
+	public const string BlitzkriegConsecutiveSiegesEvent = "event:/sunqian_universe/sfx/闪电战-连续攻城拔寨";
+	public const string BlitzkriegLuKangUndefendedEvent = "event:/sunqian_universe/sfx/闪电战-陆康未设防";
 	public const string LuXunCybertronEvent = "event:/sunqian_universe/sfx/陆逊塞伯坦";
 	public const string FlyingFireMeteor1Event = "event:/sunqian_universe/sfx/飞火流星1";
 	public const string FlyingFireMeteor2Event = "event:/sunqian_universe/sfx/飞火流星2";

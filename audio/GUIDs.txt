@@ -36,7 +36,8 @@
 {6de1432d-a5e0-412f-849a-f58941f1a9ab} event:/sunqian_universe/sfx/哪家的鹰犬
 {880314bd-44ae-48f0-a56f-1579ca6ad9f8} event:/sunqian_universe/sfx/国贼董卓
 {4de9aa3e-d9b4-48db-858f-6cee2f50e57f} event:/sunqian_universe/sfx/在下一者为主公悲伤，二者给主公道喜
-{25f87d38-dcce-42b8-acf2-fd369148d02a} event:/sunqian_universe/sfx/多智袁术
+{25f87d38-dcce-42b8-acf2-fd369148d02a} event:/sunqian_universe/sfx/多智袁术-为何追杀
+{2b7a15c9-c02e-442d-9c4d-5f55dcd4ef94} event:/sunqian_universe/sfx/多智袁术-贪功心切
 {10189575-4fd1-4c12-aeab-dfb859667ae5} event:/sunqian_universe/sfx/大义灭亲
 {1fae88d6-0db5-4220-b506-40d4367e636b} event:/sunqian_universe/sfx/夷陵好火
 {c7401d0e-ca36-4fb2-8efd-5c6f6255d628} event:/sunqian_universe/sfx/家丁剧本-来人
@@ -66,8 +67,9 @@
 {63609ff5-eb62-4a3b-a4e6-aae1fd6d51a4} event:/sunqian_universe/sfx/透明窟窿-捅吕布
 {567226dd-47f8-4fd6-8c9e-35f7f1a34557} event:/sunqian_universe/sfx/透明窟窿-捅袁术
 {ee06c914-5fff-4fb5-a174-ed9a77258ddf} event:/sunqian_universe/sfx/闪电战-三个时辰破荆州
-{cb7aa2fb-35e6-4140-bc50-adc10e5b8b90} event:/sunqian_universe/sfx/闪电战-擒下刘表
-{8b989ba7-b676-4938-a635-0a4fbddd704b} event:/sunqian_universe/sfx/闪电战-纵横八百里
+{e04a25e5-520b-46f2-a4e1-22c88a18d29b} event:/sunqian_universe/sfx/闪电战-三天内纵横八百里
+{f6e36b7c-e057-4179-b8ee-921196c1e9ab} event:/sunqian_universe/sfx/闪电战-哈哈哈哈哈
+{92ded35f-0530-4f9b-b0ce-7435b97d3917} event:/sunqian_universe/sfx/闪电战-星夜兼程奔赴庐江
 {347c77f7-b0e7-4d2a-9444-9fb734b2ce77} event:/sunqian_universe/sfx/闪电战-连续攻城拔寨
 {71174d78-bec4-4b5b-a421-7d2a678ee3f2} event:/sunqian_universe/sfx/闪电战-陆康未设防
 {a36fa3e2-f327-4b84-9398-1ca8d6be1cd9} event:/sunqian_universe/sfx/陆逊塞伯坦

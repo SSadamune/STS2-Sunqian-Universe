@@ -66,7 +66,7 @@ public sealed class Blitzkrieg : ModCardTemplate
 		{
 			if (!cardPlay.IsAutoPlay)
 			{
-				SquSfx.Play(SquSfx.ThreeHoursBreakJingzhouEvent);
+				SquSfx.Play(SquSfx.BlitzkriegThreeHoursBreakJingzhouEvent);
 			}
 
 			await DamageCmd.Attack(DynamicVars.Damage.BaseValue)
@@ -138,9 +138,10 @@ public sealed class Blitzkrieg : ModCardTemplate
 	{
 		SquSfx.PlayRandom(
 			RunState,
-			SquSfx.CaptureLiuBiaoEvent,
-			SquSfx.EightHundredLiEvent,
-			SquSfx.ConsecutiveSiegesEvent,
-			SquSfx.LuKangUndefendedEvent);
+			SquSfx.BlitzkriegThreeDaysEightHundredLiEvent,
+			SquSfx.BlitzkriegHahahaEvent,
+			SquSfx.BlitzkriegRushToLujiangEvent,
+			SquSfx.BlitzkriegConsecutiveSiegesEvent,
+			SquSfx.BlitzkriegLuKangUndefendedEvent);
 	}
 }

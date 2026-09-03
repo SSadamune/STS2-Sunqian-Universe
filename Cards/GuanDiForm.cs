@@ -6,6 +6,7 @@ using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.Models.Powers;
+using MegaCrit.Sts2.Core.ValueProps;
 using Squ.Audio;
 using Squ.Character;
 using Squ.Powers;
@@ -19,21 +20,24 @@ namespace Squ.Cards;
 [RegisterCard(typeof(SunqianCardPool), StableEntryStem = "guan_di_form")]
 public sealed class GuanDiForm : ModCardTemplate
 {
-	private const int BaseDexterity = 1;
-	private const int UpgradedDexterity = 2;
-	private const int BaseStrength = 2;
-	private const int UpgradedStrength = 3;
+	public const int BaseBlockPerEnergy = 2;
+
+	public const int UpgradedBlockPerEnergy = 3;
+
+	public const int BaseVigorPerEnergy = 2;
+
+	public const int UpgradedVigorPerEnergy = 3;
 
 	protected override IEnumerable<DynamicVar> CanonicalVars =>
 	[
-		new PowerVar<DexterityPower>(BaseDexterity),
-		new PowerVar<StrengthPower>(BaseStrength),
+		new BlockVar(BaseBlockPerEnergy, ValueProp.Move),
+		new PowerVar<VigorPower>(BaseVigorPerEnergy),
 	];
 
 	protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
 	[
-		HoverTipFactory.FromPower<DexterityPower>(),
-		HoverTipFactory.FromPower<StrengthPower>(),
+		HoverTipFactory.Static(StaticHoverTip.Block),
+		HoverTipFactory.FromPower<VigorPower>(),
 	];
 
 	public override CardAssetProfile AssetProfile => new(
@@ -50,14 +54,14 @@ public sealed class GuanDiForm : ModCardTemplate
 		await PowerCmd.Apply<GuanDiFormPower>(
 			choiceContext,
 			Owner.Creature,
-			DynamicVars[nameof(DexterityPower)].BaseValue,
+			DynamicVars[nameof(VigorPower)].BaseValue,
 			Owner.Creature,
 			this);
 	}
 
 	protected override void OnUpgrade()
 	{
-		DynamicVars[nameof(DexterityPower)].UpgradeValueBy(UpgradedDexterity - BaseDexterity);
-		DynamicVars[nameof(StrengthPower)].UpgradeValueBy(UpgradedStrength - BaseStrength);
+		DynamicVars.Block.UpgradeValueBy(UpgradedBlockPerEnergy - BaseBlockPerEnergy);
+		DynamicVars[nameof(VigorPower)].UpgradeValueBy(UpgradedVigorPerEnergy - BaseVigorPerEnergy);
 	}
 }

@@ -9,24 +9,25 @@ using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.Powers;
-using Squ.Cards;
+using MegaCrit.Sts2.Core.ValueProps;
 using STS2RitsuLib.Interop.AutoRegistration;
 using STS2RitsuLib.Scaffolding.Content;
-using STS2RitsuLib.Scaffolding.Content.Patches;
 
 #nullable enable
 
 namespace Squ.Powers;
 
+/// <summary>
+/// 关帝形态：持有者打出牌后，按该牌消耗的能量获得格挡与活力（Amount = 每点能量收益，可叠加）。
+/// </summary>
 [RegisterPower]
 public sealed class GuanDiFormPower : ModPowerTemplate
 {
-	/// <summary>叠加后的攻击牌临时力量总量；敏捷总量由原版 <see cref="PowerModel.Amount"/> 追踪。</summary>
-	private decimal _strengthAmount;
+	private static readonly ValueProp BlockProps = ValueProp.Move;
 
 	public override PowerType Type => PowerType.Buff;
 
-	public override PowerStackType StackType => PowerStackType.None;
+	public override PowerStackType StackType => PowerStackType.Counter;
 
 	public override PowerAssetProfile AssetProfile => new(
 		IconPath: "res://images/powers/GuanDiFormPower.png",
@@ -34,14 +35,14 @@ public sealed class GuanDiFormPower : ModPowerTemplate
 
 	protected override IEnumerable<DynamicVar> CanonicalVars =>
 	[
-		new PowerVar<DexterityPower>(1),
-		new PowerVar<StrengthPower>(2),
+		new BlockVar(2, BlockProps),
+		new PowerVar<VigorPower>(2),
 	];
 
 	protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
 	[
-		HoverTipFactory.FromPower<DexterityPower>(),
-		HoverTipFactory.FromPower<StrengthPower>(),
+		HoverTipFactory.Static(StaticHoverTip.Block),
+		HoverTipFactory.FromPower<VigorPower>(),
 	];
 
 	public override Task AfterPowerAmountChanged(
@@ -51,11 +52,9 @@ public sealed class GuanDiFormPower : ModPowerTemplate
 		Creature? applier,
 		CardModel? cardSource)
 	{
-		if (power == this && amount > 0m)
+		if (power == this)
 		{
-			// 首次 Apply 与叠层都会走这里；勿在 AfterApplied 再记一次，否则会双计力量。
-			_strengthAmount += GetStrengthContribution(cardSource);
-			SyncDynamicVarsFromTotals();
+			SyncDynamicVarsFromAmount();
 		}
 
 		return Task.CompletedTask;
@@ -63,54 +62,26 @@ public sealed class GuanDiFormPower : ModPowerTemplate
 
 	public override async Task AfterCardPlayed(PlayerChoiceContext choiceContext, CardPlay cardPlay)
 	{
-		if (Owner.IsDead || cardPlay.Card.Owner != Owner.Player)
+		if (Owner.IsDead || cardPlay.Card.Owner != Owner.Player || cardPlay.PlayIndex != 0)
 		{
 			return;
 		}
 
-		switch (cardPlay.Card.Type)
+		int energySpent = cardPlay.Resources.EnergySpent;
+		if (energySpent <= 0 || Amount <= 0m)
 		{
-			case CardType.Skill:
-				Flash();
-				await PowerCmd.Apply<TempDexFromGuanDiFormPower>(
-					choiceContext, Owner, Amount, Owner, null);
-				break;
-
-			case CardType.Attack:
-				Flash();
-				await PowerCmd.Apply<TempStrFromGuanDiFormPower>(
-					choiceContext, Owner, _strengthAmount, Owner, null);
-				break;
+			return;
 		}
+
+		decimal gain = Amount * energySpent;
+		Flash();
+		await CreatureCmd.GainBlock(Owner, gain, BlockProps, cardPlay: null);
+		await PowerCmd.Apply<VigorPower>(choiceContext, Owner, gain, Owner, cardPlay.Card);
 	}
 
-	private static decimal GetStrengthContribution(CardModel? cardSource) =>
-		cardSource is GuanDiForm card
-			? card.DynamicVars[nameof(StrengthPower)].BaseValue
-			: 0m;
-
-	private void SyncDynamicVarsFromTotals()
+	private void SyncDynamicVarsFromAmount()
 	{
-		DynamicVars[nameof(DexterityPower)].BaseValue = Amount;
-		DynamicVars[nameof(StrengthPower)].BaseValue = _strengthAmount;
+		DynamicVars.Block.BaseValue = Amount;
+		DynamicVars[nameof(VigorPower)].BaseValue = Amount;
 	}
-}
-
-[RegisterPower]
-public sealed class TempDexFromGuanDiFormPower : TempDexPower<GuanDiFormPower> { }
-
-[RegisterPower]
-public sealed class TempStrFromGuanDiFormPower : TemporaryStrengthPower, IModPowerAssetOverrides
-{
-	private static readonly PowerModel SetupStrikePowerTemplate = ModelDb.Power<SetupStrikePower>();
-
-	public override AbstractModel OriginModel => ModelDb.Card<GuanDiForm>();
-
-	public PowerAssetProfile AssetProfile => new(
-		IconPath: SetupStrikePowerTemplate.PackedIconPath,
-		BigIconPath: SetupStrikePowerTemplate.ResolvedBigIconPath);
-
-	public string? CustomIconPath => AssetProfile.IconPath;
-
-	public string? CustomBigIconPath => AssetProfile.BigIconPath;
 }
