@@ -76,5 +76,7 @@
   "SUNQIAN_UNIVERSE_POWER_LINK_TO_HEAVEN_POWER.title": "天意连接",
   "SUNQIAN_UNIVERSE_POWER_LINK_TO_HEAVEN_POWER.description": "每回合开始时[gold]预见[/gold][blue]{Amount}[/blue]。未被保留的牌将被[gold]消耗[/gold]，因此消耗[gold]攻击[/gold]/[gold]技能[/gold]/[gold]能力[/gold]牌后，本回合获得[blue]3[/blue]点[gold]力量[/gold]/[blue]2[/blue]点[gold]敏捷[/gold]/{energyPrefix:energyIcons(1)}。",
   "SUNQIAN_UNIVERSE_POWER_SCRIPT_BOWANG_PARADOX_POWER.title": "剧本：博望悖论",
-  "SUNQIAN_UNIVERSE_POWER_SCRIPT_BOWANG_PARADOX_POWER.smartDescription": "此剧本失效时，获得[blue]{TinderPower:diff()}[/blue]层[gold]火种[/gold]，丢弃所有[gold]灼烧[/gold]牌。"
+  "SUNQIAN_UNIVERSE_POWER_SCRIPT_BOWANG_PARADOX_POWER.smartDescription": "此剧本失效时，获得[blue]{TinderPower:diff()}[/blue]层[gold]火种[/gold]，丢弃所有[gold]灼烧[/gold]牌。",
+  "SUNQIAN_UNIVERSE_POWER_SCRIPT_EUNUCH_POWER.title": "剧本：小黄门",
+  "SUNQIAN_UNIVERSE_POWER_SCRIPT_EUNUCH_POWER.smartDescription": "失效时，消耗所有[gold]小黄门的口信[/gold]。"
 }

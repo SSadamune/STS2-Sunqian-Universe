@@ -16,5 +16,7 @@
   "SUNQIAN_UNIVERSE_KEYWORD_COUNTS_AS_PLAYED.title": "视为打出",
   "SUNQIAN_UNIVERSE_KEYWORD_COUNTS_AS_PLAYED.description": "打出一张不存在的牌，正常结算其效果。",
   "SUNQIAN_UNIVERSE_KEYWORD_FIT.title": "契合",
-  "SUNQIAN_UNIVERSE_KEYWORD_FIT.description": "每当这张牌要被洗入抽牌堆时，将其放在抽牌堆顶。"
+  "SUNQIAN_UNIVERSE_KEYWORD_FIT.description": "每当这张牌要被洗入抽牌堆时，将其放在抽牌堆顶。",
+  "SUNQIAN_UNIVERSE_KEYWORD_EUNUCH_MESSAGE.title": "小黄门的口信",
+  "SUNQIAN_UNIVERSE_KEYWORD_EUNUCH_MESSAGE.description": "这张牌具有[gold]保留[/gold]。\n当「剧本：小黄门」失效时，这张牌会被[gold]消耗[/gold]。\n当这张牌离开手牌区时，移除[gold]小黄门的口信[/gold]词条。"
 }

@@ -46,6 +46,11 @@ public static class SquMod
 			.CardKeywordOwnedByLocNamespace("scry")
 			.CardKeywordOwnedByLocNamespace("counts_as_played")
 			.CardKeywordOwnedByLocNamespace(
+				"eunuch_message",
+				iconPath: null,
+				ModKeywordCardDescriptionPlacement.BeforeCardDescription,
+				includeInCardHoverTip: true)
+			.CardKeywordOwnedByLocNamespace(
 				"fit",
 				iconPath: null,
 				ModKeywordCardDescriptionPlacement.AfterCardDescription,

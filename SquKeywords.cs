@@ -52,6 +52,13 @@ public static class SquKeywords
 
 	public static readonly CardKeyword CountsAsPlayed = CountsAsPlayedId.GetModCardKeyword();
 
+	public static readonly string EunuchMessageId = ModContentRegistry
+		.GetQualifiedKeywordId(SquMod.ModId, "eunuch_message");
+
+	public static readonly CardKeyword EunuchMessage = EunuchMessageId.GetModCardKeyword();
+
 	/// <summary>名字/关键词中带有[gold]预见[/gold]的牌。</summary>
 	public static bool IsScry(this CardModel card) => card.Keywords.Contains(Scry);
+
+	public static bool HasEunuchMessage(this CardModel card) => card.Keywords.Contains(EunuchMessage);
 }

@@ -76,5 +76,7 @@
   "SUNQIAN_UNIVERSE_POWER_LINK_TO_HEAVEN_POWER.title": "Link to Heaven",
   "SUNQIAN_UNIVERSE_POWER_LINK_TO_HEAVEN_POWER.description": "At the start of each turn, [gold]Scry[/gold] [blue]{Amount}[/blue]. Cards not kept are [gold]Exhausted[/gold] instead. For each Attack/Skill/Power exhausted this way, gain [blue]3[/blue] [gold]Strength[/gold]/[blue]2[/blue] [gold]Dexterity[/gold]/{energyPrefix:energyIcons(1)} this turn.",
   "SUNQIAN_UNIVERSE_POWER_SCRIPT_BOWANG_PARADOX_POWER.title": "Script: Bowang Paradox",
-  "SUNQIAN_UNIVERSE_POWER_SCRIPT_BOWANG_PARADOX_POWER.smartDescription": "When this Script ends, gain [blue]{TinderPower:diff()}[/blue] [gold]Tinder[/gold] and discard all [gold]Burning[/gold] cards."
+  "SUNQIAN_UNIVERSE_POWER_SCRIPT_BOWANG_PARADOX_POWER.smartDescription": "When this Script ends, gain [blue]{TinderPower:diff()}[/blue] [gold]Tinder[/gold] and discard all [gold]Burning[/gold] cards.",
+  "SUNQIAN_UNIVERSE_POWER_SCRIPT_EUNUCH_POWER.title": "Script: Eunuch",
+  "SUNQIAN_UNIVERSE_POWER_SCRIPT_EUNUCH_POWER.smartDescription": "When this ends, [gold]Exhaust[/gold] all [gold]Eunuch's Message[/gold]."
 }

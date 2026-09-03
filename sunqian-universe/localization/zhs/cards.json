@@ -143,5 +143,7 @@
   "SUNQIAN_UNIVERSE_CARD_CELEBRATE_MOURNING.title": "闻丧贺喜",
   "SUNQIAN_UNIVERSE_CARD_CELEBRATE_MOURNING.description": "获得{VigorPower:diff()}点[gold]活力[/gold]和{Block:diff()}点[gold]格挡[/gold]。\n抽{Cards:diff()}张牌。\n当你卡组中打出率最高的其它卡牌被消耗后，{IfUpgraded:show:将这张牌放入你的手牌且耗能改为{energyPrefix:energyIcons(0)}。|将这张牌放入你的手牌。}",
   "SUNQIAN_UNIVERSE_CARD_CELEBRATE_MOURNING.returnTriggerHoverTip": "将在{Cards}被消耗时被放入手牌。",
-  "SUNQIAN_UNIVERSE_CARD_CELEBRATE_MOURNING.cardSeparator": "、"
+  "SUNQIAN_UNIVERSE_CARD_CELEBRATE_MOURNING.cardSeparator": "、",
+  "SUNQIAN_UNIVERSE_CARD_EUNUCH_SCRIPT.title": "小黄门剧本",
+  "SUNQIAN_UNIVERSE_CARD_EUNUCH_SCRIPT.description": "抽{Cards:diff()}张牌，并令其在离开你的[gold]手牌[/gold]之前获得[gold]保留[/gold]。\n[gold]剧本[/gold]：失效时，消耗手牌中以此法抽到的牌。"
 }

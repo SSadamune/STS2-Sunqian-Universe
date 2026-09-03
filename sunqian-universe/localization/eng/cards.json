@@ -129,5 +129,7 @@
   "SUNQIAN_UNIVERSE_CARD_CELEBRATE_MOURNING.title": "Celebrate Mourning",
   "SUNQIAN_UNIVERSE_CARD_CELEBRATE_MOURNING.description": "Gain {VigorPower:diff()} [gold]Vigor[/gold] and {Block:diff()} [gold]Block[/gold].\nDraw {Cards:diff()} {Cards:plural:card|cards}.\nWhenever another card with the highest play rate in your deck is Exhausted, {IfUpgraded:show:put this card into your Hand and set its cost to {energyPrefix:energyIcons(0)} for this combat.|put this card into your Hand.}",
   "SUNQIAN_UNIVERSE_CARD_CELEBRATE_MOURNING.returnTriggerHoverTip": "Will be put into your Hand when {Cards} is Exhausted.",
-  "SUNQIAN_UNIVERSE_CARD_CELEBRATE_MOURNING.cardSeparator": ", "
+  "SUNQIAN_UNIVERSE_CARD_CELEBRATE_MOURNING.cardSeparator": ", ",
+  "SUNQIAN_UNIVERSE_CARD_EUNUCH_SCRIPT.title": "Eunuch Script",
+  "SUNQIAN_UNIVERSE_CARD_EUNUCH_SCRIPT.description": "Draw {Cards:diff()} {Cards:plural:card|cards} and grant them [gold]Retain[/gold] until they leave your [gold]Hand[/gold].\n[gold]Script[/gold]: When this [gold]Script[/gold] ends, [gold]Exhaust[/gold] cards in your hand drawn this way."
 }

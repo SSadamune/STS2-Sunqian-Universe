@@ -14,5 +14,7 @@
   "SUNQIAN_UNIVERSE_KEYWORD_COUNTS_AS_PLAYED.title": "Counts as Played",
   "SUNQIAN_UNIVERSE_KEYWORD_COUNTS_AS_PLAYED.description": "Play a card that doesn't exist. It resolves normally.",
   "SUNQIAN_UNIVERSE_KEYWORD_FIT.title": "Fit",
-  "SUNQIAN_UNIVERSE_KEYWORD_FIT.description": "Whenever this would be shuffled into your [gold]Draw Pile[/gold], place it on the top instead."
+  "SUNQIAN_UNIVERSE_KEYWORD_FIT.description": "Whenever this would be shuffled into your [gold]Draw Pile[/gold], place it on the top instead.",
+  "SUNQIAN_UNIVERSE_KEYWORD_EUNUCH_MESSAGE.title": "Eunuch's Message",
+  "SUNQIAN_UNIVERSE_KEYWORD_EUNUCH_MESSAGE.description": "This card has [gold]Retain[/gold].\nWhen [gold]Script: Eunuch[/gold] ends, this card is [gold]Exhausted[/gold].\nWhen this card leaves your hand, remove [gold]Eunuch's Message[/gold]."
 }
