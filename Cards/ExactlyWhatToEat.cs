@@ -2,7 +2,6 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
-using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.CardPools;
@@ -28,9 +27,9 @@ public sealed class ExactlyWhatToEat : ModCardTemplate
 		new CardsVar(1),
 	];
 
-	protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
+	public override IEnumerable<CardKeyword> CanonicalKeywords =>
 	[
-		HoverTipFactory.FromKeyword(CardKeyword.Exhaust),
+		CardKeyword.Exhaust,
 	];
 
 	public ExactlyWhatToEat()

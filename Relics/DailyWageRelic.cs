@@ -27,13 +27,13 @@ public sealed class DailyWageRelic : ScriptRelicTemplate
 {
 	private bool _playedScriptThisTurn;
 
-	public override RelicRarity Rarity => RelicRarity.Uncommon;
+	public override RelicRarity Rarity => RelicRarity.Rare;
 
 	public override bool IsAllowedInShops => false;
 
 	protected override IEnumerable<DynamicVar> CanonicalVars =>
 	[
-		new GoldVar(3),
+		new GoldVar(4),
 	];
 
 	public override RelicAssetProfile AssetProfile => new(
