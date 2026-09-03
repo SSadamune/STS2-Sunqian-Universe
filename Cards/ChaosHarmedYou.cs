@@ -12,6 +12,7 @@ using MegaCrit.Sts2.Core.Hooks;
 using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.ValueProps;
+using Squ.Audio;
 using Squ.Character;
 using Squ.Combat;
 using STS2RitsuLib.Interop.AutoRegistration;
@@ -75,11 +76,17 @@ public sealed class ChaosHarmedYou : ModCardTemplate
 	protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
 	{
 		ArgumentNullException.ThrowIfNull(cardPlay.Target, nameof(cardPlay.Target));
+		Creature target = cardPlay.Target;
+		ICombatState? combatState = CombatState;
+		bool canKill = combatState is not null && WouldKill(combatState, target);
+		SquSfx.Play(canKill
+			? SquSfx.ChaosHarmedYouNotDieInVainEvent
+			: SquSfx.ChaosHarmedYouNotAmanEvent);
 
 		AttackCommand attackCommand = await DamageCmd.Attack(DynamicVars.Damage.BaseValue)
 			.WithDamageProps(DamageProps)
 			.FromCard(this, cardPlay)
-			.Targeting(cardPlay.Target)
+			.Targeting(target)
 			.WithHitFx("vfx/vfx_attack_slash")
 			.Execute(choiceContext);
 

@@ -7,6 +7,7 @@ using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.Models;
+using Squ.Audio;
 using Squ.Cards;
 using MegaCrit.Sts2.Core.Models.Powers;
 using Squ.Powers;
@@ -51,6 +52,7 @@ public sealed class ScriptBombardChibiPower : ScriptPowerTemplate
 		ICombatState? combatState = oldOwner.CombatState;
 		if (strengthLoss > 0 && combatState is not null)
 		{
+			SquSfx.Play(SquSfx.BombardChibiReduceAttackEvent);
 			foreach (Creature enemy in combatState.HittableEnemies)
 			{
 				if (!enemy.IsAlive)
