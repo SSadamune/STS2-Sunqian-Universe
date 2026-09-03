@@ -22,8 +22,8 @@ public sealed class XiliangSavageScript : ScriptCardTemplate
 {
 	public const int BaseBlock = 10;
 	public const int UpgradedBlock = 14;
-	public const int BaseVigor = 3;
-	public const int UpgradedVigor = 5;
+	public const int BaseVigor = 4;
+	public const int UpgradedVigor = 6;
 
 	protected override IEnumerable<DynamicVar> CanonicalVars =>
 	[
