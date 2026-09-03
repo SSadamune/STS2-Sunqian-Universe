@@ -15,7 +15,8 @@ using STS2RitsuLib.RunData;
 namespace Squ.Combat;
 
 /// <summary>
-/// 按牌组卡牌实例跟踪打出率，并保留最近若干场已结束战斗的快照。
+/// 按卡牌稳定身份跟踪打出率，并保留最近若干场已结束战斗的快照。
+/// 身份由 Entry、升级次数、获得楼层、附魔决定，host/client 对同一张逻辑牌看到同一套数字。
 /// 打出率 = PlayCount / (PlayWithoutDiscardOrExhaustCount + ExhaustEntryCount + DiscardEntryCount)：
 /// PlayCount = 打出次数（含自动打出/任意阶段；重放仅计 PlayIndex==0）；
 /// PlayWithoutDiscardOrExhaustCount = 打出后未进入消耗堆或弃牌堆的次数；
@@ -28,7 +29,7 @@ public static class CardDrawPlayRateTracker
 
 	public const int MaxStoredCombats = 10;
 
-	private const string SaveKey = "card_play_rate_v2";
+	private const string SaveKey = "card_play_rate_v3";
 
 	private static readonly PlayerRunSavedData<PlayerSaveState> SavedData =
 		RitsuLibFramework.GetRunSavedDataStore(SquMod.ModId).RegisterPerPlayer(
@@ -62,7 +63,7 @@ public static class CardDrawPlayRateTracker
 
 	/// <summary>
 	/// 从抽牌堆中选出打出率最高的至多 <paramref name="count"/> 张牌。
-	/// 分母为 0 时视为打出率 0；率相同则优先打出次数更多者，再按获得顺序。
+	/// 分母为 0 时视为打出率 0；率相同则优先打出次数更多者，再按获得顺序、身份键、抽牌堆位置。
 	/// </summary>
 	public static List<CardModel> SelectHighestPlayRateFromDrawPile(
 		Player player,
@@ -75,9 +76,7 @@ public static class CardDrawPlayRateTracker
 			return [];
 		}
 
-		EnsureDeckInstanceIds(player);
-
-		List<(CardModel Card, float Rate, int PlayCount, int Floor, int InstanceId, int DrawIndex)> ranked = [];
+		List<RankedDrawCard> ranked = [];
 		int drawIndex = 0;
 		foreach (CardModel card in PileType.Draw.GetPile(player).Cards)
 		{
@@ -91,27 +90,27 @@ public static class CardDrawPlayRateTracker
 				out int exhaustEntryCount,
 				out int discardEntryCount);
 			int denominator = playWithoutDiscardOrExhaustCount + exhaustEntryCount + discardEntryCount;
-			float rate = denominator > 0 ? (float)playCount / denominator : 0f;
-
 			CardModel identity = ResolveIdentityCard(card) ?? card;
-			int floor = identity.FloorAddedToDeck ?? int.MaxValue;
-			int instanceId = TryResolveInstanceId(player, card, assignIfMissing: false, out int resolvedId)
-				? resolvedId
-				: int.MaxValue;
-
-			ranked.Add((card, rate, playCount, floor, instanceId, drawIndex));
+			ranked.Add(new RankedDrawCard(
+				card,
+				playCount,
+				denominator,
+				identity.FloorAddedToDeck ?? int.MaxValue,
+				identity.Id.Entry,
+				GetIdentityKey(identity),
+				drawIndex));
 			drawIndex++;
 		}
 
-		return ranked
-			.OrderByDescending(entry => entry.Rate)
-			.ThenByDescending(entry => entry.PlayCount)
-			.ThenBy(entry => entry.Floor)
-			.ThenBy(entry => entry.InstanceId)
-			.ThenBy(entry => entry.DrawIndex)
-			.Take(count)
-			.Select(entry => entry.Card)
-			.ToList();
+		ranked.Sort(CompareRankedDrawCards);
+		int take = Math.Min(count, ranked.Count);
+		var selected = new List<CardModel>(take);
+		for (int i = 0; i < take; i++)
+		{
+			selected.Add(ranked[i].Card);
+		}
+
+		return selected;
 	}
 
 	/// <summary>
@@ -124,9 +123,7 @@ public static class CardDrawPlayRateTracker
 		bool includeCurrentCombat = false,
 		Func<CardModel, bool>? exclude = null)
 	{
-		EnsureDeckInstanceIds(player);
-
-		List<(CardModel Card, float Rate)> ranked = [];
+		List<(CardModel Card, int PlayCount, int Denominator)> ranked = [];
 		foreach (CardModel card in PileType.Deck.GetPile(player).Cards)
 		{
 			if (exclude?.Invoke(card) == true)
@@ -144,8 +141,7 @@ public static class CardDrawPlayRateTracker
 				out int exhaustEntryCount,
 				out int discardEntryCount);
 			int denominator = playWithoutDiscardOrExhaustCount + exhaustEntryCount + discardEntryCount;
-			float rate = denominator > 0 ? (float)playCount / denominator : 0f;
-			ranked.Add((card, rate));
+			ranked.Add((card, playCount, denominator));
 		}
 
 		if (ranked.Count == 0)
@@ -153,9 +149,17 @@ public static class CardDrawPlayRateTracker
 			return [];
 		}
 
-		float maxRate = ranked.Max(entry => entry.Rate);
+		(CardModel Card, int PlayCount, int Denominator) best = ranked[0];
+		foreach ((CardModel Card, int PlayCount, int Denominator) entry in ranked)
+		{
+			if (CompareRate(entry.PlayCount, entry.Denominator, best.PlayCount, best.Denominator) > 0)
+			{
+				best = entry;
+			}
+		}
+
 		return ranked
-			.Where(entry => entry.Rate >= maxRate)
+			.Where(entry => CompareRate(entry.PlayCount, entry.Denominator, best.PlayCount, best.Denominator) == 0)
 			.Select(entry => entry.Card)
 			.ToHashSet();
 	}
@@ -174,7 +178,7 @@ public static class CardDrawPlayRateTracker
 		playWithoutDiscardOrExhaustCount = 0;
 		exhaustEntryCount = 0;
 		discardEntryCount = 0;
-		if (!TryResolveInstanceId(player, card, assignIfMissing: false, out int instanceId))
+		if (!TryGetStatsKey(card, out string statsKey))
 		{
 			return false;
 		}
@@ -182,7 +186,7 @@ public static class CardDrawPlayRateTracker
 		PlayerRuntime runtime = GetOrCreateRuntime(player);
 		AggregateWindow(
 			runtime,
-			instanceId,
+			statsKey,
 			windowSize,
 			includeCurrentCombat,
 			out playCount,
@@ -202,7 +206,6 @@ public static class CardDrawPlayRateTracker
 		IReadOnlyList<CardModel>? selectedCards = null,
 		string? reason = null)
 	{
-		EnsureDeckInstanceIds(player);
 		PlayerRuntime runtime = GetOrCreateRuntime(player);
 		var builder = new StringBuilder();
 		builder.AppendLine("[CardDrawPlayRateTracker] snapshot");
@@ -218,13 +221,11 @@ public static class CardDrawPlayRateTracker
 		builder.Append("  includeCurrentCombat: ").AppendLine(includeCurrentCombat.ToString());
 		builder.Append("  storedCombats: ").Append(runtime.Recent.Count)
 			.Append('/').AppendLine(MaxStoredCombats.ToString());
-		builder.Append("  nextInstanceId: ").AppendLine(runtime.NextInstanceId.ToString());
-		builder.Append("  deckMappingsRestored: ").AppendLine(runtime.DeckMappingsRestored.ToString());
 		builder.Append("  pendingPlayOutcomes: ").AppendLine(runtime.PendingPlayOutcomes.Count.ToString());
 
-		AppendSnapshotSection(builder, "deckInstanceMap", runtime.CardToInstanceId
-			.OrderBy(pair => pair.Value)
-			.Select(pair => $"    #{pair.Value}: {FormatCardLabel(pair.Key)} [{GetMatchKey(pair.Key)}]"));
+		AppendSnapshotSection(builder, "deckIdentityKeys", PileType.Deck.GetPile(player).Cards
+			.Select(card => $"    {GetIdentityKey(card)}: {FormatCardLabel(card)}")
+			.OrderBy(line => line, StringComparer.Ordinal));
 
 		int finishedInWindow = Math.Min(windowSize, runtime.Recent.Count);
 		int firstFinishedIndex = runtime.Recent.Count - finishedInWindow;
@@ -266,6 +267,8 @@ public static class CardDrawPlayRateTracker
 		bool includeCurrentCombat)
 	{
 		builder.Append(indent).Append(FormatCardLabel(card));
+		CardModel identity = ResolveIdentityCard(card) ?? card;
+		builder.Append(" [").Append(GetIdentityKey(identity)).Append(']');
 		if (!TryGetStats(
 			    player,
 			    card,
@@ -302,23 +305,21 @@ public static class CardDrawPlayRateTracker
 
 		CardModel card = cardPlay.Card;
 		Player? player = card.Owner;
-		if (player is null
-			|| !TryResolveInstanceId(player, card, assignIfMissing: true, out int instanceId))
+		if (player is null || !TryGetStatsKey(card, out string statsKey))
 		{
 			return;
 		}
 
 		PlayerRuntime runtime = GetOrCreateRuntime(player);
-		runtime.Current.AddPlayCount(instanceId);
-		runtime.PendingPlayOutcomes.Add(instanceId);
+		runtime.Current.AddPlayCount(statsKey);
+		runtime.PendingPlayOutcomes[statsKey] = runtime.PendingPlayOutcomes.GetValueOrDefault(statsKey) + 1;
 	}
 
 	private static void OnCardMovedBetweenPiles(CardMovedBetweenPilesEvent evt)
 	{
 		CardModel card = evt.Card;
 		Player? player = card.Owner;
-		if (player is null
-			|| !TryResolveInstanceId(player, card, assignIfMissing: true, out int instanceId))
+		if (player is null || !TryGetStatsKey(card, out string statsKey))
 		{
 			return;
 		}
@@ -329,23 +330,22 @@ public static class CardDrawPlayRateTracker
 
 		if (newPile == PileType.Exhaust && previousPile != PileType.Exhaust)
 		{
-			runtime.Current.AddExhaustEntry(instanceId);
-			runtime.PendingPlayOutcomes.Remove(instanceId);
+			runtime.Current.AddExhaustEntry(statsKey);
+			DecrementPending(runtime, statsKey);
 			return;
 		}
 
 		if (newPile == PileType.Discard && previousPile != PileType.Discard)
 		{
-			runtime.Current.AddDiscardEntry(instanceId);
-			runtime.PendingPlayOutcomes.Remove(instanceId);
+			runtime.Current.AddDiscardEntry(statsKey);
+			DecrementPending(runtime, statsKey);
 			return;
 		}
 
 		// 打出后离开 Play 且未进消耗/弃牌（能力牌离场、回手等）。
-		if (previousPile == PileType.Play
-			&& runtime.PendingPlayOutcomes.Remove(instanceId))
+		if (previousPile == PileType.Play && DecrementPending(runtime, statsKey))
 		{
-			runtime.Current.AddPlayWithoutDiscardOrExhaust(instanceId);
+			runtime.Current.AddPlayWithoutDiscardOrExhaust(statsKey);
 		}
 	}
 
@@ -359,11 +359,9 @@ public static class CardDrawPlayRateTracker
 		foreach (Player player in runState.Players)
 		{
 			LoadSavedState(player);
-			EnsureDeckInstanceIds(player);
 			PlayerRuntime runtime = GetOrCreateRuntime(player);
 			runtime.Current = new CombatSnapshot();
 			runtime.PendingPlayOutcomes.Clear();
-			Persist(player);
 		}
 	}
 
@@ -383,16 +381,18 @@ public static class CardDrawPlayRateTracker
 			}
 
 			runtime.Current = new CombatSnapshot();
-			EnsureDeckInstanceIds(player);
 			Persist(player);
 		}
 	}
 
 	private static void FlushPendingPlayOutcomes(PlayerRuntime runtime)
 	{
-		foreach (int instanceId in runtime.PendingPlayOutcomes.ToList())
+		foreach ((string statsKey, int pending) in runtime.PendingPlayOutcomes.ToList())
 		{
-			runtime.Current.AddPlayWithoutDiscardOrExhaust(instanceId);
+			for (int i = 0; i < pending; i++)
+			{
+				runtime.Current.AddPlayWithoutDiscardOrExhaust(statsKey);
+			}
 		}
 
 		runtime.PendingPlayOutcomes.Clear();
@@ -403,7 +403,6 @@ public static class CardDrawPlayRateTracker
 		foreach (Player player in evt.RunState.Players)
 		{
 			LoadSavedState(player, force: true);
-			EnsureDeckInstanceIds(player);
 		}
 	}
 
@@ -412,7 +411,6 @@ public static class CardDrawPlayRateTracker
 		foreach (Player player in evt.RunState.Players)
 		{
 			LoadSavedState(player, force: true);
-			EnsureDeckInstanceIds(player);
 		}
 	}
 
@@ -430,148 +428,22 @@ public static class CardDrawPlayRateTracker
 		}
 
 		PlayerSaveState saved = SavedData.Get(player);
-		runtime.NextInstanceId = Math.Max(1, saved.NextInstanceId);
 		runtime.Recent = CloneCombatList(saved.RecentCombats);
 		runtime.Current = new CombatSnapshot();
 		runtime.PendingPlayOutcomes.Clear();
-		runtime.CardToInstanceId.Clear();
-		runtime.DeckMappingsRestored = false;
 		runtime.SavedStateLoaded = true;
 	}
 
-	private static void EnsureDeckInstanceIds(Player player)
-	{
-		IReadOnlyList<CardModel> deckCards = PileType.Deck.GetPile(player).Cards;
-		if (deckCards.Count == 0)
-		{
-			return;
-		}
-
-		PlayerRuntime runtime = GetOrCreateRuntime(player);
-		LoadSavedState(player);
-
-		if (!runtime.DeckMappingsRestored)
-		{
-			RestoreDeckInstanceMappings(player, runtime, deckCards);
-		}
-
-		foreach (CardModel card in deckCards)
-		{
-			GetOrAssignInstanceId(runtime, card);
-		}
-	}
-
-	private static void RestoreDeckInstanceMappings(
-		Player player,
-		PlayerRuntime runtime,
-		IReadOnlyList<CardModel> deckCards)
-	{
-		PlayerSaveState saved = SavedData.Get(player);
-		List<DeckInstanceBinding> savedBindings = saved.DeckInstances.Count > 0
-			? saved.DeckInstances
-			: BuildLegacyBindings(saved.DeckInstanceIds, deckCards);
-
-		runtime.CardToInstanceId.Clear();
-		int matched = 0;
-
-		if (savedBindings.Count == deckCards.Count)
-		{
-			for (int i = 0; i < deckCards.Count; i++)
-			{
-				DeckInstanceBinding binding = savedBindings[i];
-				runtime.CardToInstanceId[deckCards[i]] = binding.InstanceId;
-				runtime.NextInstanceId = Math.Max(runtime.NextInstanceId, binding.InstanceId + 1);
-				matched++;
-			}
-		}
-		else
-		{
-			List<DeckInstanceBinding> unusedBindings = savedBindings.Select(binding => binding.Clone()).ToList();
-			foreach (CardModel card in deckCards)
-			{
-				string matchKey = GetMatchKey(card);
-				int index = unusedBindings.FindIndex(binding => binding.MatchKey == matchKey);
-				if (index < 0)
-				{
-					continue;
-				}
-
-				DeckInstanceBinding binding = unusedBindings[index];
-				unusedBindings.RemoveAt(index);
-				runtime.CardToInstanceId[card] = binding.InstanceId;
-				runtime.NextInstanceId = Math.Max(runtime.NextInstanceId, binding.InstanceId + 1);
-				matched++;
-			}
-
-			if (unusedBindings.Count > 0)
-			{
-				SquMod.Logger.Info(
-					$"[CardDrawPlayRateTracker] deck mapping fallback left {unusedBindings.Count} unused bindings");
-			}
-		}
-
-		runtime.DeckMappingsRestored = true;
-
-		if (matched < deckCards.Count)
-		{
-			SquMod.Logger.Info(
-				$"[CardDrawPlayRateTracker] deck mapping partial after restore: matched {matched}/{deckCards.Count}, "
-				+ $"savedBindings={savedBindings.Count}, nextInstanceId={runtime.NextInstanceId}");
-		}
-	}
-
-	private static List<DeckInstanceBinding> BuildLegacyBindings(
-		IReadOnlyList<int> legacyIds,
-		IReadOnlyList<CardModel> deckCards)
-	{
-		if (legacyIds.Count != deckCards.Count)
-		{
-			return [];
-		}
-
-		var bindings = new List<DeckInstanceBinding>(deckCards.Count);
-		for (int i = 0; i < deckCards.Count; i++)
-		{
-			int instanceId = legacyIds[i];
-			if (instanceId <= 0)
-			{
-				continue;
-			}
-
-			bindings.Add(CreateBinding(deckCards[i], instanceId));
-		}
-
-		return bindings;
-	}
-
-	private static bool TryResolveInstanceId(
-		Player player,
-		CardModel card,
-		bool assignIfMissing,
-		out int instanceId)
+	private static bool TryGetStatsKey(CardModel card, out string statsKey)
 	{
 		CardModel? identity = ResolveIdentityCard(card);
 		if (identity is null)
 		{
-			instanceId = 0;
+			statsKey = string.Empty;
 			return false;
 		}
 
-		PlayerRuntime runtime = GetOrCreateRuntime(player);
-		EnsureDeckInstanceIds(player);
-
-		if (runtime.CardToInstanceId.TryGetValue(identity, out instanceId))
-		{
-			return true;
-		}
-
-		if (!assignIfMissing || identity.Pile?.Type != PileType.Deck)
-		{
-			instanceId = 0;
-			return false;
-		}
-
-		instanceId = GetOrAssignInstanceId(runtime, identity);
+		statsKey = GetIdentityKey(identity);
 		return true;
 	}
 
@@ -585,21 +457,21 @@ public static class CardDrawPlayRateTracker
 		return card.Pile?.Type == PileType.Deck ? card : null;
 	}
 
-	private static int GetOrAssignInstanceId(PlayerRuntime runtime, CardModel deckCard)
+	/// <summary>
+	/// 可从复制状态推导的稳定统计键。同名、同升级、同楼层、同附魔的牌共享打出率。
+	/// </summary>
+	private static string GetIdentityKey(CardModel card)
 	{
-		if (runtime.CardToInstanceId.TryGetValue(deckCard, out int existing))
-		{
-			return existing;
-		}
-
-		int id = runtime.NextInstanceId++;
-		runtime.CardToInstanceId[deckCard] = id;
-		return id;
+		string floor = card.FloorAddedToDeck?.ToString() ?? "none";
+		string enchantment = card.Enchantment == null
+			? "none"
+			: $"{card.Enchantment.Id.Entry}:{card.Enchantment.Amount}";
+		return $"{card.Id.Entry}|u{card.CurrentUpgradeLevel}|f{floor}|e{enchantment}";
 	}
 
 	private static void AggregateWindow(
 		PlayerRuntime runtime,
-		int instanceId,
+		string statsKey,
 		int windowSize,
 		bool includeCurrentCombat,
 		out int playCount,
@@ -616,10 +488,9 @@ public static class CardDrawPlayRateTracker
 			? runtime.Recent
 			: runtime.Recent.Skip(runtime.Recent.Count - take);
 
-		string key = instanceId.ToString();
 		foreach (CombatSnapshot snapshot in finished)
 		{
-			if (snapshot.Cards.TryGetValue(key, out CardCombatStats? stats))
+			if (snapshot.Cards.TryGetValue(statsKey, out CardCombatStats? stats))
 			{
 				playCount += stats.PlayCount;
 				playWithoutDiscardOrExhaustCount += stats.PlayWithoutDiscardOrExhaustCount;
@@ -628,7 +499,7 @@ public static class CardDrawPlayRateTracker
 			}
 		}
 
-		if (includeCurrentCombat && runtime.Current.Cards.TryGetValue(key, out CardCombatStats? current))
+		if (includeCurrentCombat && runtime.Current.Cards.TryGetValue(statsKey, out CardCombatStats? current))
 		{
 			playCount += current.PlayCount;
 			playWithoutDiscardOrExhaustCount += current.PlayWithoutDiscardOrExhaustCount;
@@ -659,31 +530,72 @@ public static class CardDrawPlayRateTracker
 		PlayerRuntime runtime = GetOrCreateRuntime(player);
 		SavedData.Modify(player, saved =>
 		{
-			saved.NextInstanceId = runtime.NextInstanceId;
 			saved.RecentCombats = CloneCombatList(runtime.Recent);
-			saved.DeckInstances = PileType.Deck.GetPile(player).Cards
-				.Select(card => CreateBinding(card, GetOrAssignInstanceId(runtime, card)))
-				.ToList();
-			saved.DeckInstanceIds = [];
 		});
 	}
 
-	private static DeckInstanceBinding CreateBinding(CardModel card, int instanceId)
+	private static bool DecrementPending(PlayerRuntime runtime, string statsKey)
 	{
-		return new DeckInstanceBinding
+		if (!runtime.PendingPlayOutcomes.TryGetValue(statsKey, out int pending) || pending <= 0)
 		{
-			InstanceId = instanceId,
-			MatchKey = GetMatchKey(card),
-		};
+			return false;
+		}
+
+		if (pending == 1)
+		{
+			runtime.PendingPlayOutcomes.Remove(statsKey);
+		}
+		else
+		{
+			runtime.PendingPlayOutcomes[statsKey] = pending - 1;
+		}
+
+		return true;
 	}
 
 	/// <summary>
-	/// 仅用于牌组数量变化时的兜底匹配；正常读档按牌组索引恢复。
+	/// 交叉相乘比较打出率，避免 float 非确定性。分母为 0 时视为 0。
 	/// </summary>
-	private static string GetMatchKey(CardModel card)
+	private static int CompareRate(int playA, int denominatorA, int playB, int denominatorB)
 	{
-		string floor = card.FloorAddedToDeck?.ToString() ?? "none";
-		return $"{card.Id.Entry}|f{floor}";
+		long left = (long)(denominatorA > 0 ? playA : 0) * (denominatorB > 0 ? denominatorB : 1);
+		long right = (long)(denominatorB > 0 ? playB : 0) * (denominatorA > 0 ? denominatorA : 1);
+		return left.CompareTo(right);
+	}
+
+	private static int CompareRankedDrawCards(RankedDrawCard left, RankedDrawCard right)
+	{
+		int rateCmp = CompareRate(left.PlayCount, left.Denominator, right.PlayCount, right.Denominator);
+		if (rateCmp != 0)
+		{
+			return -rateCmp;
+		}
+
+		int playCmp = left.PlayCount.CompareTo(right.PlayCount);
+		if (playCmp != 0)
+		{
+			return -playCmp;
+		}
+
+		int floorCmp = left.Floor.CompareTo(right.Floor);
+		if (floorCmp != 0)
+		{
+			return floorCmp;
+		}
+
+		int entryCmp = string.CompareOrdinal(left.Entry, right.Entry);
+		if (entryCmp != 0)
+		{
+			return entryCmp;
+		}
+
+		int keyCmp = string.CompareOrdinal(left.IdentityKey, right.IdentityKey);
+		if (keyCmp != 0)
+		{
+			return keyCmp;
+		}
+
+		return left.DrawIndex.CompareTo(right.DrawIndex);
 	}
 
 	private static List<CombatSnapshot> CloneCombatList(IEnumerable<CombatSnapshot>? source) =>
@@ -706,10 +618,10 @@ public static class CardDrawPlayRateTracker
 			return;
 		}
 
-		foreach ((string instanceId, CardCombatStats stats) in snapshot.Cards
-			         .OrderBy(pair => int.Parse(pair.Key)))
+		foreach ((string statsKey, CardCombatStats stats) in snapshot.Cards
+			         .OrderBy(pair => pair.Key, StringComparer.Ordinal))
 		{
-			builder.Append(indent).Append("#").Append(instanceId)
+			builder.Append(indent).Append(statsKey)
 				.Append(" playCount=").Append(stats.PlayCount)
 				.Append(", playWithoutDiscardOrExhaustCount=").Append(stats.PlayWithoutDiscardOrExhaustCount)
 				.Append(", exhaustEntryCount=").Append(stats.ExhaustEntryCount)
@@ -741,20 +653,23 @@ public static class CardDrawPlayRateTracker
 			: $"{playCount}/{denominator} ({(100f * playCount / denominator):0.##}%)";
 	}
 
+	private readonly record struct RankedDrawCard(
+		CardModel Card,
+		int PlayCount,
+		int Denominator,
+		int Floor,
+		string Entry,
+		string IdentityKey,
+		int DrawIndex);
+
 	private sealed class PlayerRuntime
 	{
-		public int NextInstanceId = 1;
-
 		public bool SavedStateLoaded;
 
-		public bool DeckMappingsRestored;
-
-		public Dictionary<CardModel, int> CardToInstanceId { get; } = new();
-
 		/// <summary>
-		/// 已计入 PlayCount、等待判定是否记入 PlayWithoutDiscardOrExhaustCount 的实例。
+		/// 已计入 PlayCount、等待判定是否记入 PlayWithoutDiscardOrExhaustCount 的身份键及其次数。
 		/// </summary>
-		public HashSet<int> PendingPlayOutcomes { get; } = [];
+		public Dictionary<string, int> PendingPlayOutcomes { get; } = new(StringComparer.Ordinal);
 
 		public List<CombatSnapshot> Recent { get; set; } = [];
 
@@ -763,42 +678,21 @@ public static class CardDrawPlayRateTracker
 
 	public sealed class PlayerSaveState
 	{
-		public int NextInstanceId { get; set; } = 1;
-
-		/// <summary>旧版按牌组顺序存的实例 ID，仅用于迁移。</summary>
-		public List<int> DeckInstanceIds { get; set; } = [];
-
-		public List<DeckInstanceBinding> DeckInstances { get; set; } = [];
-
 		public List<CombatSnapshot> RecentCombats { get; set; } = [];
-	}
-
-	public sealed class DeckInstanceBinding
-	{
-		public int InstanceId { get; set; }
-
-		/// <summary>兜底匹配用；正常读档按牌组索引恢复，不依赖此字段。</summary>
-		public string MatchKey { get; set; } = string.Empty;
-
-		public DeckInstanceBinding Clone() => new()
-		{
-			InstanceId = InstanceId,
-			MatchKey = MatchKey,
-		};
 	}
 
 	public sealed class CombatSnapshot
 	{
-		public Dictionary<string, CardCombatStats> Cards { get; set; } = new();
+		public Dictionary<string, CardCombatStats> Cards { get; set; } = new(StringComparer.Ordinal);
 
-		public void AddPlayCount(int instanceId) => GetOrCreate(instanceId).PlayCount++;
+		public void AddPlayCount(string statsKey) => GetOrCreate(statsKey).PlayCount++;
 
-		public void AddPlayWithoutDiscardOrExhaust(int instanceId) =>
-			GetOrCreate(instanceId).PlayWithoutDiscardOrExhaustCount++;
+		public void AddPlayWithoutDiscardOrExhaust(string statsKey) =>
+			GetOrCreate(statsKey).PlayWithoutDiscardOrExhaustCount++;
 
-		public void AddExhaustEntry(int instanceId) => GetOrCreate(instanceId).ExhaustEntryCount++;
+		public void AddExhaustEntry(string statsKey) => GetOrCreate(statsKey).ExhaustEntryCount++;
 
-		public void AddDiscardEntry(int instanceId) => GetOrCreate(instanceId).DiscardEntryCount++;
+		public void AddDiscardEntry(string statsKey) => GetOrCreate(statsKey).DiscardEntryCount++;
 
 		public CombatSnapshot Clone()
 		{
@@ -817,13 +711,12 @@ public static class CardDrawPlayRateTracker
 			return clone;
 		}
 
-		private CardCombatStats GetOrCreate(int instanceId)
+		private CardCombatStats GetOrCreate(string statsKey)
 		{
-			string key = instanceId.ToString();
-			if (!Cards.TryGetValue(key, out CardCombatStats? stats))
+			if (!Cards.TryGetValue(statsKey, out CardCombatStats? stats))
 			{
 				stats = new CardCombatStats();
-				Cards[key] = stats;
+				Cards[statsKey] = stats;
 			}
 
 			return stats;
