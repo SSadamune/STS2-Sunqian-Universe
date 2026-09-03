@@ -25,15 +25,15 @@ public sealed class RespectElders : ModCardTemplate
 {
 	private const int BaseHitCount = 2;
 	private const int UpgradedHitCount = 3;
-	private const string OutOfRangeVarName = "OutOfRange";
+	private const string CanMultiHitVarName = "CanMultiHit";
 
 	protected override IEnumerable<DynamicVar> CanonicalVars =>
 	[
 		new DamageVar(7m, ValueProp.Move),
 		new DynamicVar("HitCount", BaseHitCount),
-		ModCardVars.Computed(OutOfRangeVarName, 0,
+		ModCardVars.Computed(CanMultiHitVarName, 0,
 			(CardModel? card, Creature? target) =>
-				target != null && !IsInHpRange(target) ? 1 : 0),
+				target != null && IsInHpRange(target) ? 1 : 0),
 	];
 
 	public override CardAssetProfile AssetProfile => new(
@@ -76,14 +76,19 @@ public sealed class RespectElders : ModCardTemplate
 
 	protected override void AddExtraArgsToDescription(LocString description)
 	{
-		bool outOfRange = DynamicVars[OutOfRangeVarName].PreviewValue > 0;
-		string locKey = Id.Entry + (outOfRange ? ".noHitCondition" : ".hitCondition");
-		var hitText = new LocString("cards", locKey);
-		if (!outOfRange)
+		if (DynamicVars[CanMultiHitVarName].PreviewValue > 0)
 		{
-			hitText.Add(DynamicVars["HitCount"]);
+			var hitConfirm = new LocString("cards", Id.Entry + ".hitConfirm");
+			hitConfirm.Add(DynamicVars.Damage);
+			hitConfirm.Add(DynamicVars["HitCount"]);
+			description.Add("BodyText", hitConfirm);
+			return;
 		}
-		description.Add("HitText", hitText);
+
+		var bodyText = new LocString("cards", Id.Entry + ".normalBody");
+		bodyText.Add(DynamicVars.Damage);
+		bodyText.Add(DynamicVars["HitCount"]);
+		description.Add("BodyText", bodyText);
 	}
 
 	private static bool IsInHpRange(Creature target)

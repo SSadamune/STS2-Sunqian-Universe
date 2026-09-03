@@ -2,10 +2,13 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using MegaCrit.Sts2.Core.Combat;
 using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Commands.Builders;
 using MegaCrit.Sts2.Core.Entities.Cards;
+using MegaCrit.Sts2.Core.Entities.Creatures;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
+using MegaCrit.Sts2.Core.Hooks;
 using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.ValueProps;
@@ -42,6 +45,28 @@ public sealed class ChaosHarmedYou : ModCardTemplate
 	public override CardAssetProfile AssetProfile => new(
 		PortraitPath: "res://images/cards/ChaosHarmedYou.png");
 
+	protected override bool ShouldGlowGoldInternal
+	{
+		get
+		{
+			ICombatState? combatState = CombatState;
+			if (combatState == null)
+			{
+				return false;
+			}
+
+			foreach (Creature enemy in combatState.HittableEnemies)
+			{
+				if (enemy.IsAlive && WouldKill(combatState, enemy))
+				{
+					return true;
+				}
+			}
+
+			return false;
+		}
+	}
+
 	public ChaosHarmedYou()
 		: base(2, CardType.Attack, CardRarity.Uncommon, TargetType.AnyEnemy)
 	{
@@ -68,5 +93,26 @@ public sealed class ChaosHarmedYou : ModCardTemplate
 	{
 		DynamicVars.Damage.UpgradeValueBy(UpgradedDamage - BaseDamage);
 		DynamicVars.Cards.UpgradeValueBy(UpgradedDrawOnKill - BaseDrawOnKill);
+	}
+
+	private bool WouldKill(ICombatState combatState, Creature enemy)
+	{
+		decimal damage = Hook.ModifyDamage(
+			Owner.RunState,
+			combatState,
+			enemy,
+			Owner.Creature,
+			DynamicVars.Damage.BaseValue,
+			DamageProps,
+			this,
+			null,
+			ModifyDamageHookType.All,
+			CardPreviewMode.None,
+			out _);
+
+		decimal blocked = DamageProps.HasFlag(ValueProp.Unblockable)
+			? 0m
+			: Math.Min((decimal)enemy.Block, damage);
+		return damage - blocked >= enemy.CurrentHp;
 	}
 }
