@@ -23,9 +23,13 @@ namespace Squ.Cards;
 [RegisterCard(typeof(SunqianCardPool))]
 public sealed class HuaguMianzhang : ModCardTemplate
 {
+	public const int BaseDamage = 12;
+
+	public const int UpgradedDamage = 16;
+
 	protected override IEnumerable<DynamicVar> CanonicalVars =>
 	[
-		new DamageVar(14m, ValueProp.Move),
+		new DamageVar(BaseDamage, ValueProp.Move),
 	];
 
 	protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
@@ -71,6 +75,6 @@ public sealed class HuaguMianzhang : ModCardTemplate
 
 	protected override void OnUpgrade()
 	{
-		DynamicVars.Damage.UpgradeValueBy(4m);
+		DynamicVars.Damage.UpgradeValueBy(UpgradedDamage - BaseDamage);
 	}
 }
