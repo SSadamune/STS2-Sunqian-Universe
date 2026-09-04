@@ -70,9 +70,9 @@ public sealed class JuggleMultipleShoots : ModCardTemplate
 	public override CardAssetProfile AssetProfile => new(
 		PortraitPath: "res://images/cards/JuggleMultipleShoots.png");
 
-	private IHoverTip CreateZeroEnergyHoverTip()
+	private IHoverTip CreateAnnotationHoverTip()
 	{
-		LocString description = new("cards", "SUNQIAN_UNIVERSE_CARD_JUGGLE_MULTIPLE_SHOOTS.zeroEnergyHoverTip");
+		LocString description = new("cards", "SUNQIAN_UNIVERSE_CARD_JUGGLE_MULTIPLE_SHOOTS.annotation");
 		description.Add("energyPrefix", EnergyIconHelper.GetPrefix(this));
 		return new HoverTip(SquCommonL10n.AnnotationTitle(), description);
 	}
@@ -80,7 +80,7 @@ public sealed class JuggleMultipleShoots : ModCardTemplate
 	protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
 	[
 		HoverTipFactory.ForEnergy(this),
-		CreateZeroEnergyHoverTip(),
+		CreateAnnotationHoverTip(),
 		HoverTipFactory.FromKeyword(SquKeywords.Script),
 	];
 
