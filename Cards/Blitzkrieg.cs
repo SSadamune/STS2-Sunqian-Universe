@@ -23,15 +23,15 @@ namespace Squ.Cards;
 
 /// <summary>
 /// 闪电战：对目标造成伤害，再从手牌与抽牌堆对该敌人打出所有闪电战与打击。
-/// 结算期间若有敌人死亡，立即将一张未强化的闪电战加入牌组（同场、同玩家至多一次）。
-/// 升级获得「契合」（参考原版 Perfect Fit：非初始洗牌时置顶）。
+/// 精英或 Boss 战斗结束时，若本战打出过闪电战，可在奖励界面额外获得一张闪电战。
+/// 升级获得「契合」（参考原版 PerfectFit：非初始洗牌时置顶）。
 /// </summary>
 [RegisterCard(typeof(SunqianCardPool), StableEntryStem = "blitzkrieg")]
 public sealed class Blitzkrieg : ModCardTemplate
 {
 	public const int BaseDamage = 8;
 
-	public const int UpgradedDamage = 9;
+	public const int UpgradedDamage = 10;
 
 	private const float AutoPlayDelaySeconds = 0.2f;
 
@@ -66,7 +66,8 @@ public sealed class Blitzkrieg : ModCardTemplate
 			return;
 		}
 
-		bool monitoring = BlitzkriegResolutionTracker.TryBeginMonitoring(Owner);
+		BlitzkriegResolutionTracker.RecordPlayed(Owner);
+
 		try
 		{
 			if (!cardPlay.IsAutoPlay)
@@ -84,30 +85,8 @@ public sealed class Blitzkrieg : ModCardTemplate
 		}
 		finally
 		{
-			if (monitoring)
-			{
-				BlitzkriegResolutionTracker.EndMonitoring(Owner);
-			}
-
 			Resolving.Remove(this);
 		}
-	}
-
-	/// <summary>
-	/// 闪电战结算窗口内，任意敌人死亡时立即将一张未强化闪电战加入牌组（同场至多一次）。
-	/// </summary>
-	public override async Task AfterDeath(
-		PlayerChoiceContext choiceContext,
-		Creature creature,
-		bool wasRemovalPrevented,
-		float deathAnimLength)
-	{
-		if (wasRemovalPrevented || Owner is null || !creature.IsEnemy)
-		{
-			return;
-		}
-
-		await BlitzkriegResolutionTracker.TryGrantDeckLootAsync(choiceContext, Owner);
 	}
 
 	protected override void OnUpgrade()

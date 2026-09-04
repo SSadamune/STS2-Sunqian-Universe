@@ -117,7 +117,7 @@
   "SUNQIAN_UNIVERSE_CARD_LINK_TO_HEAVEN.title": "Link to Heaven",
   "SUNQIAN_UNIVERSE_CARD_LINK_TO_HEAVEN.description": "At the start of each turn, [gold]Scry[/gold] [blue]3[/blue]. Cards not kept are [gold]Exhausted[/gold] instead. For each Attack/Skill/Power exhausted this way, gain [blue]3[/blue] [gold]Strength[/gold]/[blue]2[/blue] [gold]Dexterity[/gold]/{energyPrefix:energyIcons(1)} this turn.",
   "SUNQIAN_UNIVERSE_CARD_BLITZKRIEG.title": "Blitzkrieg",
-  "SUNQIAN_UNIVERSE_CARD_BLITZKRIEG.description": "Deal {Damage:diff()} damage. Play all [gold]Strike[/gold] and [gold]Blitzkrieg[/gold] cards from your [gold]Hand[/gold] and [gold]Draw Pile[/gold] targeting this enemy.\nOnce per combat, if an enemy dies during this resolution, add a [gold]Blitzkrieg[/gold] into your Deck.",
+  "SUNQIAN_UNIVERSE_CARD_BLITZKRIEG.description": "Deal {Damage:diff()} damage. Play all [gold]Strike[/gold] and [gold]Blitzkrieg[/gold] from your Hand and Draw Pile targeting this enemy.\nElite or Boss combats where you played [gold]Blitzkrieg[/gold] drop a [gold]Blitzkrieg[/gold].",
   "SUNQIAN_UNIVERSE_CARD_MONSTER_HUNTING_METHOD.title": "Monster Hunting Method",
   "SUNQIAN_UNIVERSE_CARD_MONSTER_HUNTING_METHOD.description": "Apply {RegenPower:diff()} [gold]Regen[/gold] to a creature,\nIf it is an enemy, gain {VigorPower:diff()} [gold]Vigor[/gold]; otherwise [gold]Exhaust[/gold] this.",
   "SUNQIAN_UNIVERSE_CARD_BOWANG_PARADOX_SCRIPT.title": "Bowang Paradox Script",

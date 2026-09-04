@@ -131,7 +131,7 @@
   "SUNQIAN_UNIVERSE_CARD_LINK_TO_HEAVEN.title": "天意连接",
   "SUNQIAN_UNIVERSE_CARD_LINK_TO_HEAVEN.description": "每回合开始时[gold]预见[/gold][blue]3[/blue]。未被保留的牌将被[gold]消耗[/gold]，若为[gold]攻击[/gold]/[gold]技能[/gold]/[gold]能力[/gold]牌，你本回合获得[blue]3[/blue]点[gold]力量[/gold]/[blue]2[/blue]点[gold]敏捷[/gold]/{energyPrefix:energyIcons(1)}。",
   "SUNQIAN_UNIVERSE_CARD_BLITZKRIEG.title": "闪电战",
-  "SUNQIAN_UNIVERSE_CARD_BLITZKRIEG.description": "造成{Damage:diff()}点伤害，对该敌人打出手牌和抽牌堆所有的[gold]打击[/gold]和[gold]闪电战[/gold]。\n每场战斗限一次，若结算中有敌人死亡，将一张[gold]闪电战[/gold]加入卡组。",
+  "SUNQIAN_UNIVERSE_CARD_BLITZKRIEG.description": "造成{Damage:diff()}点伤害，对该敌人打出手牌和抽牌堆中所有[gold]打击[/gold]和[gold]闪电战[/gold]。\n你打出过[gold]闪电战[/gold]的精英或Boss战将掉落一张[gold]闪电战[/gold]。",
   "SUNQIAN_UNIVERSE_CARD_MONSTER_HUNTING_METHOD.title": "过禽论",
   "SUNQIAN_UNIVERSE_CARD_MONSTER_HUNTING_METHOD.description": "给予一个生物{RegenPower:diff()}层[gold]再生[/gold]，\n若为敌人，则你获得{VigorPower:diff()}点[gold]活力[/gold]；否则[gold]消耗[/gold]这张牌。",
   "SUNQIAN_UNIVERSE_CARD_BOWANG_PARADOX_SCRIPT.title": "博望悖论剧本",

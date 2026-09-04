@@ -1,10 +1,8 @@
 using System.Collections.Generic;
-using System.Threading.Tasks;
-using MegaCrit.Sts2.Core.Commands;
-using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.Entities.Players;
-using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.Models;
+using MegaCrit.Sts2.Core.Rewards;
+using MegaCrit.Sts2.Core.Rooms;
 using MegaCrit.Sts2.Core.Runs;
 using Squ.Audio;
 using Squ.Cards;
@@ -14,55 +12,45 @@ using Squ.Cards;
 namespace Squ.Combat;
 
 /// <summary>
-/// 闪电战单次打出结算窗口：同场战斗、同一玩家至多将一张未强化闪电战加入牌组一次。
+/// 追踪本战是否打出过闪电战；精英/Boss 胜利结束时提供可选的额外闪电战奖励。
 /// </summary>
 public static class BlitzkriegResolutionTracker
 {
-	private static readonly HashSet<ulong> ActiveMonitoring = [];
+	private static readonly HashSet<ulong> PlayersWhoPlayed = [];
 
-	private static readonly HashSet<ulong> GrantedDeckLoot = [];
+	public static void RecordPlayed(Player player) => PlayersWhoPlayed.Add(player.NetId);
 
-	public static bool TryBeginMonitoring(Player player)
+	public static void TryOfferCombatRewards(CombatRoom room)
 	{
-		if (GrantedDeckLoot.Contains(player.NetId))
-		{
-			return false;
-		}
-
-		return ActiveMonitoring.Add(player.NetId);
-	}
-
-	public static void EndMonitoring(Player player)
-	{
-		ActiveMonitoring.Remove(player.NetId);
-	}
-
-	public static bool IsMonitoring(Player player) => ActiveMonitoring.Contains(player.NetId);
-
-	public static async Task TryGrantDeckLootAsync(
-		PlayerChoiceContext choiceContext,
-		Player player)
-	{
-		if (!IsMonitoring(player) || !GrantedDeckLoot.Add(player.NetId))
+		if (room.RoomType is not RoomType.Elite and not RoomType.Boss)
 		{
 			return;
 		}
 
-		ActiveMonitoring.Remove(player.NetId);
+		bool offeredAny = false;
 
-		if (player.RunState is not RunState runState)
+		foreach (Player player in room.CombatState.Players)
 		{
-			return;
+			if (!PlayersWhoPlayed.Contains(player.NetId))
+			{
+				continue;
+			}
+
+			if (player.RunState is not RunState runState)
+			{
+				continue;
+			}
+
+			CardModel blitzkrieg = runState.CreateCard<Blitzkrieg>(player);
+			room.AddExtraReward(player, new SpecialCardReward(blitzkrieg, player));
+			offeredAny = true;
 		}
 
-		CardModel blitzkrieg = runState.CreateCard<Blitzkrieg>(player);
-		SquSfx.PlayDuringCombatEnd(SquSfx.BlitzkriegThreeHoursBreakJingzhouEvent);
-		await CardPileCmd.Add(blitzkrieg, PileType.Deck);
+		if (offeredAny)
+		{
+			SquSfx.PlayDuringCombatEnd(SquSfx.BlitzkriegThreeHoursBreakJingzhouEvent);
+		}
 	}
 
-	public static void ClearCombat()
-	{
-		ActiveMonitoring.Clear();
-		GrantedDeckLoot.Clear();
-	}
+	public static void ClearCombat() => PlayersWhoPlayed.Clear();
 }
