@@ -47,9 +47,7 @@ public sealed class Blitzkrieg : ModCardTemplate
 	];
 
 	protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
-		IsUpgraded
-			? [SquKeywords.CreateWarFeedsWarHoverTip(this), HoverTipFactory.FromKeyword(SquKeywords.Fit)]
-			: [SquKeywords.CreateWarFeedsWarHoverTip(this)];
+		IsUpgraded ? [HoverTipFactory.FromKeyword(SquKeywords.Fit)] : [];
 
 	public override IEnumerable<CardKeyword> CanonicalKeywords => [SquKeywords.WarFeedsWar];
 
