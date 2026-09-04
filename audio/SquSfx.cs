@@ -1,5 +1,6 @@
 #nullable enable
 using MegaCrit.Sts2.Core.Commands;
+using MegaCrit.Sts2.Core.Helpers;
 using MegaCrit.Sts2.Core.Random;
 using MegaCrit.Sts2.Core.Runs;
 using STS2RitsuLib.Audio;
@@ -83,6 +84,8 @@ internal static class SquSfx
 	public const string FlyingFireMeteor3Event = "event:/sunqian_universe/sfx/飞火流星3";
 	public const string FlyingFireMeteor4Event = "event:/sunqian_universe/sfx/飞火流星4";
 	public const string GoldenUprisingEvent = "event:/sunqian_universe/sfx/黄金起义";
+	public const string BlockFirefightingDoNotDisturbEvent = "event:/sunqian_universe/sfx/阻拦救火-不可惊扰";
+	public const string BlockFirefightingSageEvent = "event:/sunqian_universe/sfx/阻拦救火-先生奇人";
 
 	public static void Register()
 	{
@@ -93,6 +96,20 @@ internal static class SquSfx
 	public static void Play(string eventPath)
 	{
 		SfxCmd.Play(eventPath);
+	}
+
+	/// <summary>
+	/// 战斗结束结算（<see cref="CombatManager.IsEnding"/>）时仍要播放的语音。
+	/// 原版 <see cref="SfxCmd.Play"/> 会在 IsEnding 时静默跳过。
+	/// </summary>
+	public static void PlayDuringCombatEnd(string eventPath)
+	{
+		if (NonInteractiveMode.IsActive)
+		{
+			return;
+		}
+
+		GameFmod.Studio.PlayOneShot(eventPath);
 	}
 
 	/// <summary>

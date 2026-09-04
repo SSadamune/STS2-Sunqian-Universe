@@ -104,6 +104,8 @@
   "SUNQIAN_UNIVERSE_CARD_RUTHLESS_STRIKE.description": "Deal {Damage:diff()} damage. Ignores [gold]Block[/gold].",
   "SUNQIAN_UNIVERSE_CARD_WATCH_FIRE_FROM_SHORE.title": "Watch Fire from Afar",
   "SUNQIAN_UNIVERSE_CARD_WATCH_FIRE_FROM_SHORE.description": "Gain {Block:diff()} [gold]Block[/gold]. Apply {BurningPower:diff()} [gold]Burning[/gold] to 2 random enemies.",
+  "SUNQIAN_UNIVERSE_CARD_BLOCK_FIREFIGHTING.title": "Block Firefighting",
+  "SUNQIAN_UNIVERSE_CARD_BLOCK_FIREFIGHTING.description": "Gain {WeakPower:diff()} [gold]Weak[/gold].\nApply {BurningPower:diff()} [gold]Burning[/gold] to ALL enemies.\nIf you have not played an Attack this turn, set those enemies' [gold]Burning[/gold] clear chance to [blue]0%[/blue].",
   "SUNQIAN_UNIVERSE_CARD_CHAOS_HARMED_YOU.title": "Chaos Wronged You",
   "SUNQIAN_UNIVERSE_CARD_CHAOS_HARMED_YOU.description": "Deal {Damage:diff()} [gold]Environmental[/gold] damage.\nIf this card kills an enemy, draw {Cards:diff()} {Cards:plural:card|cards}.",
   "SUNQIAN_UNIVERSE_CARD_STARRY_NIGHT_STRIKE.title": "Starry Night Strike",

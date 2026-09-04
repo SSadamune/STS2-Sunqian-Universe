@@ -72,6 +72,8 @@
 {92ded35f-0530-4f9b-b0ce-7435b97d3917} event:/sunqian_universe/sfx/闪电战-星夜兼程奔赴庐江
 {347c77f7-b0e7-4d2a-9444-9fb734b2ce77} event:/sunqian_universe/sfx/闪电战-连续攻城拔寨
 {71174d78-bec4-4b5b-a421-7d2a678ee3f2} event:/sunqian_universe/sfx/闪电战-陆康未设防
+{b4b0759b-3afb-4abb-83b8-e105f3781afd} event:/sunqian_universe/sfx/阻拦救火-不可惊扰
+{0435b182-d104-44a2-bcbd-2c30188c6da7} event:/sunqian_universe/sfx/阻拦救火-先生奇人
 {a36fa3e2-f327-4b84-9398-1ca8d6be1cd9} event:/sunqian_universe/sfx/陆逊塞伯坦
 {9de43e87-b9f6-4e68-90a3-eb124f7ef062} event:/sunqian_universe/sfx/飞火流星1
 {17eb9846-0a3a-4ae9-934a-89d69d955a7b} event:/sunqian_universe/sfx/飞火流星2

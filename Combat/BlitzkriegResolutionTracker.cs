@@ -6,6 +6,7 @@ using MegaCrit.Sts2.Core.Entities.Players;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Runs;
+using Squ.Audio;
 using Squ.Cards;
 
 #nullable enable
@@ -55,6 +56,7 @@ public static class BlitzkriegResolutionTracker
 		}
 
 		CardModel blitzkrieg = runState.CreateCard<Blitzkrieg>(player);
+		SquSfx.PlayDuringCombatEnd(SquSfx.BlitzkriegThreeHoursBreakJingzhouEvent);
 		await CardPileCmd.Add(blitzkrieg, PileType.Deck);
 	}
 

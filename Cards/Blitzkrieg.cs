@@ -33,6 +33,8 @@ public sealed class Blitzkrieg : ModCardTemplate
 
 	public const int UpgradedDamage = 9;
 
+	private const float AutoPlayDelaySeconds = 0.2f;
+
 	/// <summary>
 	/// 防止同一张实例在尚未结算完时被再次拉入 OnPlay（例如洗牌回抽牌堆后的嵌套 AutoPlay）造成无限循环。
 	/// 不同实例之间的递归打出是允许的。
@@ -69,7 +71,7 @@ public sealed class Blitzkrieg : ModCardTemplate
 		{
 			if (!cardPlay.IsAutoPlay)
 			{
-				SquSfx.Play(SquSfx.BlitzkriegThreeHoursBreakJingzhouEvent);
+				SquSfx.Play(SquSfx.BlitzkriegThreeDaysEightHundredLiEvent);
 			}
 
 			await DamageCmd.Attack(DynamicVars.Damage.BaseValue)
@@ -156,6 +158,7 @@ public sealed class Blitzkrieg : ModCardTemplate
 				continue;
 			}
 
+			await Cmd.Wait(AutoPlayDelaySeconds);
 			PlayAutoPlaySfx();
 			await CardCmd.AutoPlay(choiceContext, card, target);
 		}
@@ -173,10 +176,9 @@ public sealed class Blitzkrieg : ModCardTemplate
 	{
 		SquSfx.PlayRandom(
 			RunState,
-			SquSfx.BlitzkriegThreeDaysEightHundredLiEvent,
-			SquSfx.BlitzkriegHahahaEvent,
 			SquSfx.BlitzkriegRushToLujiangEvent,
 			SquSfx.BlitzkriegConsecutiveSiegesEvent,
-			SquSfx.BlitzkriegLuKangUndefendedEvent);
+			SquSfx.BlitzkriegLuKangUndefendedEvent,
+			SquSfx.BlitzkriegHahahaEvent);
 	}
 }
