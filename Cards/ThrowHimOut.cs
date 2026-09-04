@@ -4,6 +4,7 @@ using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
+using MegaCrit.Sts2.Core.Models.CardPools;
 using MegaCrit.Sts2.Core.ValueProps;
 using Squ.Audio;
 using Squ.Character;
@@ -14,7 +15,7 @@ using STS2RitsuLib.Scaffolding.Content;
 
 namespace Squ.Cards;
 
-[RegisterCard(typeof(SunqianCardPool), StableEntryStem = "throw_him_out")]
+[RegisterCard(typeof(TokenCardPool), StableEntryStem = "throw_him_out")]
 public sealed class ThrowHimOut : ModCardTemplate
 {
 	protected override IEnumerable<DynamicVar> CanonicalVars =>
@@ -33,7 +34,7 @@ public sealed class ThrowHimOut : ModCardTemplate
 	];
 
 	public ThrowHimOut()
-		: base(0, CardType.Skill, CardRarity.Common, TargetType.Self)
+		: base(0, CardType.Skill, CardRarity.Token, TargetType.Self)
 	{
 	}
 

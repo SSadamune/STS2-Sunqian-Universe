@@ -18,8 +18,8 @@ namespace Squ.Cards;
 [RegisterCard(typeof(SunqianCardPool), StableEntryStem = "standard_base_vehicle")]
 public sealed class StandardBaseVehicle : ModCardTemplate
 {
-	public const int BaseBlock = 9;
-	public const int UpgradedBlock = 12;
+	public const int BaseBlock = 8;
+	public const int UpgradedBlock = 11;
 
 	protected override IEnumerable<DynamicVar> CanonicalVars =>
 	[

@@ -37,6 +37,7 @@ public sealed class EunuchScript : ScriptCardTemplate
 	public override IEnumerable<CardKeyword> CanonicalKeywords =>
 	[
 		SquKeywords.Script,
+		CardKeyword.Exhaust,
 	];
 
 	public override CardAssetProfile AssetProfile => new(

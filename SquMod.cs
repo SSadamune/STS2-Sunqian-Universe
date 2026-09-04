@@ -1,5 +1,6 @@
 using System.Reflection;
 using HarmonyLib;
+using MegaCrit.Sts2.Core.Combat;
 using MegaCrit.Sts2.Core.Logging;
 using MegaCrit.Sts2.Core.Modding;
 using Squ.Audio;
@@ -63,6 +64,7 @@ public static class SquMod
 		harmony.PatchAll(assembly);
 		SquStrikeRedirectPatches.Initialize(harmony);
 		CardDrawPlayRateTracker.Initialize();
+		RitsuLibFramework.SubscribeLifecycle<CombatEndedEvent>(_ => BlitzkriegResolutionTracker.ClearCombat());
 
 		Logger.Info("sunqian-universe (SQU) mod loaded!");
 	}
