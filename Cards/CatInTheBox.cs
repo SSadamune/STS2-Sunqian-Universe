@@ -94,11 +94,12 @@ public sealed class CatInTheBox : ModCardTemplate
 		int maxRoll = GetMaxRoll();
 		if (SquDoomKillThreshold.GetEffectiveGreenHp(target) <= maxRoll)
 		{
-			SquSfx.Play(SquSfx.FateUnknownEvent);
+			SquSfx.Play(SquSfx.FateUnknownThatsDeathEvent);
 			await DoomPower.DoomKill([target]);
 			return;
 		}
 
+		SquSfx.Play(SquSfx.FateUnknownEvent);
 		int rolled = Owner.RunState.Rng.CombatTargets.NextInt(GetMinRoll(), maxRoll + 1);
 		await PowerCmd.Apply<DoomPower>(
 			choiceContext,

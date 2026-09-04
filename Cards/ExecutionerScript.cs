@@ -25,6 +25,8 @@ public sealed class ExecutionerScript : ScriptCardTemplate
 
 	public const int VulnerableAmount = 2;
 
+	public const int UpgradedVulnerableAmount = 3;
+
 	protected override IEnumerable<DynamicVar> CanonicalVars =>
 	[
 		new PowerVar<VigorPower>(BaseVigor),
@@ -80,5 +82,6 @@ public sealed class ExecutionerScript : ScriptCardTemplate
 	protected override void OnUpgrade()
 	{
 		DynamicVars[nameof(VigorPower)].UpgradeValueBy(UpgradedVigor - BaseVigor);
+		DynamicVars[nameof(VulnerablePower)].UpgradeValueBy(UpgradedVulnerableAmount - VulnerableAmount);
 	}
 }

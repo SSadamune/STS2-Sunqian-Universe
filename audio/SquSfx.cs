@@ -20,8 +20,8 @@ internal static class SquSfx
 	public const string HoldNanJunAloneEvent = "event:/sunqian_universe/sfx/一人坚守南郡城";
 	public const string DualSwordsEvent = "event:/sunqian_universe/sfx/一把叫仁之剑，一把叫义之剑";
 	public const string WontBePoliteEvent = "event:/sunqian_universe/sfx/不会客气";
-	public const string SpareTheYoungAndOldEvent = "event:/sunqian_universe/sfx/不斩老幼";
-	public const string GrieveForLordEvent = "event:/sunqian_universe/sfx/为主公悲伤";
+	public const string RespectEldersTooOldEvent = "event:/sunqian_universe/sfx/尊老爱幼-你太老了";
+	public const string RespectEldersSpareTheYoungAndOldEvent = "event:/sunqian_universe/sfx/尊老爱幼-不斩老幼";
 	public const string RighteousnessSwordEvent = "event:/sunqian_universe/sfx/义之剑";
 	public const string ChaosHarmedYouNotAmanEvent = "event:/sunqian_universe/sfx/乱世害你-不是阿瞒害了你";
 	public const string ChaosHarmedYouNotDieInVainEvent = "event:/sunqian_universe/sfx/乱世害你-不能白死";
@@ -41,7 +41,6 @@ internal static class SquSfx
 	public const string ForkOutGetUpEvent = "event:/sunqian_universe/sfx/叉出去-起来";
 	public const string WhoseHoundsEvent = "event:/sunqian_universe/sfx/哪家的鹰犬";
 	public const string TraitorDongZhuoEvent = "event:/sunqian_universe/sfx/国贼董卓";
-	public const string GrieveThenCongratulateLordEvent = "event:/sunqian_universe/sfx/在下一者为主公悲伤，二者给主公道喜";
 	public const string CunningYuanShuWhyPursueEvent = "event:/sunqian_universe/sfx/多智袁术-为何追杀";
 	public const string CunningYuanShuGreedyGloryEvent = "event:/sunqian_universe/sfx/多智袁术-贪功心切";
 	public const string LoyaltyOverKinEvent = "event:/sunqian_universe/sfx/大义灭亲";
@@ -58,10 +57,12 @@ internal static class SquSfx
 	public const string BombardChibiReduceAttackEvent = "event:/sunqian_universe/sfx/炮轰赤壁-减攻";
 	public const string BombardChibiIgniteEvent = "event:/sunqian_universe/sfx/炮轰赤壁-点火";
 	public const string FateUnknownEvent = "event:/sunqian_universe/sfx/生死不明";
+	public const string FateUnknownThatsDeathEvent = "event:/sunqian_universe/sfx/生死不明-那就是死了";
 	public const string SilverUprisingEvent = "event:/sunqian_universe/sfx/白银起义";
 	public const string DeniedEvent = "event:/sunqian_universe/sfx/竟然不许";
 	public const string ArrowCurtainEvent = "event:/sunqian_universe/sfx/箭幕";
-	public const string CongratulateLordEvent = "event:/sunqian_universe/sfx/给主公道喜";
+	public const string CelebrateMourningCongratulateLordEvent = "event:/sunqian_universe/sfx/闻丧贺喜-给主公道喜";
+	public const string CelebrateMourningGrieveForLordEvent = "event:/sunqian_universe/sfx/闻丧贺喜-为主公悲伤";
 	public const string SelfDecapitationEvent = "event:/sunqian_universe/sfx/自刎归天";
 	public const string ExecutionerArchersReadyEvent = "event:/sunqian_universe/sfx/行刑官-弓箭手准备";
 	public const string ExecutionerLooseArrowsEvent = "event:/sunqian_universe/sfx/行刑官-放箭";
@@ -86,6 +87,9 @@ internal static class SquSfx
 	public const string GoldenUprisingEvent = "event:/sunqian_universe/sfx/黄金起义";
 	public const string BlockFirefightingDoNotDisturbEvent = "event:/sunqian_universe/sfx/阻拦救火-不可惊扰";
 	public const string BlockFirefightingSageEvent = "event:/sunqian_universe/sfx/阻拦救火-先生奇人";
+	public const string MonsterHuntingMethodEnemyEvent = "event:/sunqian_universe/sfx/过禽论-若除禽兽";
+	public const string MonsterHuntingMethodSelfEvent = "event:/sunqian_universe/sfx/过禽论-与禽兽何异";
+	public const string MonsterHuntingMethodOtherEvent = "event:/sunqian_universe/sfx/过禽论-义父要把我";
 
 	public static void Register()
 	{

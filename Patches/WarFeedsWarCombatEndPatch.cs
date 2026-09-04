@@ -8,8 +8,8 @@ using Squ.Combat;
 namespace Squ.Patches;
 
 [HarmonyPatch(typeof(Hook), nameof(Hook.AfterCombatEnd))]
-internal static class BlitzkriegCombatEndPatch
+internal static class WarFeedsWarCombatEndPatch
 {
 	private static void Postfix(CombatRoom __2) =>
-		BlitzkriegResolutionTracker.TryOfferCombatRewards(__2);
+		WarFeedsWarResolutionTracker.TryOfferCombatRewards(__2);
 }

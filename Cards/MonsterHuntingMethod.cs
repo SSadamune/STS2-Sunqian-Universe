@@ -9,6 +9,7 @@ using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.Models.Powers;
+using Squ.Audio;
 using Squ.Character;
 using STS2RitsuLib.Combat.CardTargeting;
 using STS2RitsuLib.Interop.AutoRegistration;
@@ -68,6 +69,8 @@ public sealed class MonsterHuntingMethod : ModCardTemplate
 		ArgumentNullException.ThrowIfNull(cardPlay.Target, nameof(cardPlay.Target));
 		Creature target = cardPlay.Target;
 
+		PlayTargetSfx(target);
+
 		await PowerCmd.Apply<RegenPower>(
 			choiceContext,
 			target,
@@ -90,5 +93,21 @@ public sealed class MonsterHuntingMethod : ModCardTemplate
 	{
 		DynamicVars[nameof(RegenPower)].UpgradeValueBy(UpgradedRegen - BaseRegen);
 		DynamicVars[nameof(VigorPower)].UpgradeValueBy(UpgradedVigor - BaseVigor);
+	}
+
+	private void PlayTargetSfx(Creature target)
+	{
+		if (target.Side == CombatSide.Enemy)
+		{
+			SquSfx.Play(SquSfx.MonsterHuntingMethodEnemyEvent);
+		}
+		else if (target == Owner.Creature)
+		{
+			SquSfx.Play(SquSfx.MonsterHuntingMethodSelfEvent);
+		}
+		else
+		{
+			SquSfx.Play(SquSfx.MonsterHuntingMethodOtherEvent);
+		}
 	}
 }

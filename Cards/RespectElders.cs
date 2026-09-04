@@ -52,10 +52,9 @@ public sealed class RespectElders : ModCardTemplate
 		ArgumentNullException.ThrowIfNull(cardPlay.Target, "cardPlay.Target");
 
 		bool extraHits = IsInHpRange(cardPlay.Target);
-		if (extraHits)
-		{
-			SquSfx.Play(SquSfx.SpareTheYoungAndOldEvent);
-		}
+		SquSfx.Play(extraHits
+			? SquSfx.RespectEldersSpareTheYoungAndOldEvent
+			: SquSfx.RespectEldersTooOldEvent);
 
 		int hitCount = extraHits
 			? (int)DynamicVars["HitCount"].BaseValue

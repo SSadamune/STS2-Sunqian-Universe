@@ -1,4 +1,6 @@
 using MegaCrit.Sts2.Core.Entities.Cards;
+using MegaCrit.Sts2.Core.HoverTips;
+using MegaCrit.Sts2.Core.Localization;
 using MegaCrit.Sts2.Core.Models;
 using STS2RitsuLib.Content;
 using STS2RitsuLib.Keywords;
@@ -56,6 +58,19 @@ public static class SquKeywords
 		.GetQualifiedKeywordId(SquMod.ModId, "eunuch_message");
 
 	public static readonly CardKeyword EunuchMessage = EunuchMessageId.GetModCardKeyword();
+
+	public static readonly string WarFeedsWarId = ModContentRegistry
+		.GetQualifiedKeywordId(SquMod.ModId, "war_feeds_war");
+
+	public static readonly CardKeyword WarFeedsWar = WarFeedsWarId.GetModCardKeyword();
+
+	public static IHoverTip CreateWarFeedsWarHoverTip(CardModel card)
+	{
+		LocString title = ModKeywordRegistry.GetTitle(WarFeedsWarId);
+		LocString description = ModKeywordRegistry.GetDescription(WarFeedsWarId);
+		description.Add("CardName", card.Title);
+		return new HoverTip(title, description, icon: null);
+	}
 
 	/// <summary>名字/关键词中带有[gold]预见[/gold]的牌。</summary>
 	public static bool IsScry(this CardModel card) => card.Keywords.Contains(Scry);

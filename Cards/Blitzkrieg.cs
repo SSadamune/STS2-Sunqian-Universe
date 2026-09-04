@@ -11,6 +11,7 @@ using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.ValueProps;
+using Squ;
 using Squ.Audio;
 using Squ.Character;
 using Squ.Combat;
@@ -23,7 +24,6 @@ namespace Squ.Cards;
 
 /// <summary>
 /// 闪电战：对目标造成伤害，再从手牌与抽牌堆对该敌人打出所有闪电战与打击。
-/// 精英或 Boss 战斗结束时，若本战打出过闪电战，可在奖励界面额外获得一张闪电战。
 /// 升级获得「契合」（参考原版 PerfectFit：非初始洗牌时置顶）。
 /// </summary>
 [RegisterCard(typeof(SunqianCardPool), StableEntryStem = "blitzkrieg")]
@@ -47,7 +47,11 @@ public sealed class Blitzkrieg : ModCardTemplate
 	];
 
 	protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
-		IsUpgraded ? [HoverTipFactory.FromKeyword(SquKeywords.Fit)] : [];
+		IsUpgraded
+			? [SquKeywords.CreateWarFeedsWarHoverTip(this), HoverTipFactory.FromKeyword(SquKeywords.Fit)]
+			: [SquKeywords.CreateWarFeedsWarHoverTip(this)];
+
+	public override IEnumerable<CardKeyword> CanonicalKeywords => [SquKeywords.WarFeedsWar];
 
 	public override CardAssetProfile AssetProfile => new(
 		PortraitPath: "res://images/cards/Blitzkrieg.png");
@@ -66,7 +70,7 @@ public sealed class Blitzkrieg : ModCardTemplate
 			return;
 		}
 
-		BlitzkriegResolutionTracker.RecordPlayed(Owner);
+		WarFeedsWarResolutionTracker.RecordPlayed(this);
 
 		try
 		{

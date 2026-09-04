@@ -56,6 +56,11 @@ public static class SquMod
 				iconPath: null,
 				ModKeywordCardDescriptionPlacement.AfterCardDescription,
 				includeInCardHoverTip: true)
+			.CardKeywordOwnedByLocNamespace(
+				"war_feeds_war",
+				iconPath: null,
+				ModKeywordCardDescriptionPlacement.AfterCardDescription,
+				includeInCardHoverTip: false)
 			.ArchaicToothTranscendence<SunqianScript, SunqianUniverse>()
 			.TouchOfOrobasRefinement<BoxLunchRelic, AbundantBoxLunchRelic>()
 			.Apply();
@@ -64,7 +69,7 @@ public static class SquMod
 		harmony.PatchAll(assembly);
 		SquStrikeRedirectPatches.Initialize(harmony);
 		CardDrawPlayRateTracker.Initialize();
-		RitsuLibFramework.SubscribeLifecycle<CombatEndedEvent>(_ => BlitzkriegResolutionTracker.ClearCombat());
+		RitsuLibFramework.SubscribeLifecycle<CombatEndedEvent>(_ => WarFeedsWarResolutionTracker.ClearCombat());
 
 		Logger.Info("sunqian-universe (SQU) mod loaded!");
 	}
