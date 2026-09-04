@@ -1,4 +1,5 @@
 using MegaCrit.Sts2.Core.Entities.Cards;
+using MegaCrit.Sts2.Core.Helpers;
 using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Localization;
 using MegaCrit.Sts2.Core.Models;
@@ -64,12 +65,28 @@ public static class SquKeywords
 
 	public static readonly CardKeyword WarFeedsWar = WarFeedsWarId.GetModCardKeyword();
 
+	public static readonly string ChargeId = ModContentRegistry
+		.GetQualifiedKeywordId(SquMod.ModId, "charge");
+
+	public static readonly CardKeyword Charge = ChargeId.GetModCardKeyword();
+
 	public static IHoverTip CreateWarFeedsWarHoverTip(CardModel card)
 	{
 		LocString title = ModKeywordRegistry.GetTitle(WarFeedsWarId);
 		LocString description = ModKeywordRegistry.GetDescription(WarFeedsWarId);
 		description.Add("CardName", card.Title);
 		return new HoverTip(title, description, icon: null);
+	}
+
+	public static LocString FormatChargeCardText(CardModel card, string effectLocKey)
+	{
+		LocString effect = new("cards", effectLocKey);
+		effect.Add("energyPrefix", EnergyIconHelper.GetPrefix(card));
+
+		LocString wrapper = new("card_keywords", "SUNQIAN_UNIVERSE_KEYWORD_CHARGE.cardDescription");
+		wrapper.Add("Title", ModKeywordRegistry.GetTitle(ChargeId));
+		wrapper.Add("Effect", effect);
+		return wrapper;
 	}
 
 	/// <summary>名字/关键词中带有[gold]预见[/gold]的牌。</summary>

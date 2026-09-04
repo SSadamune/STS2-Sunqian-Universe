@@ -40,6 +40,8 @@
 {c7401d0e-ca36-4fb2-8efd-5c6f6255d628} event:/sunqian_universe/sfx/家丁剧本-来人
 {0931c89d-1db8-4f2b-acf4-92d114c4f976} event:/sunqian_universe/sfx/尊老爱幼-不斩老幼
 {07376e4f-d455-483a-9c1c-827ed2a7bf87} event:/sunqian_universe/sfx/尊老爱幼-你太老了
+{74199e61-287a-4088-bc17-b2804cc64858} event:/sunqian_universe/sfx/平湖惊雷-只要一息尚存
+{bc335cb9-e440-460e-a646-6f057abbc932} event:/sunqian_universe/sfx/平湖惊雷-放肆我砍你的头
 {5423043d-d233-444b-ba63-e15a4e20ea30} event:/sunqian_universe/sfx/弹指打击-取董贼首级
 {e877f801-8783-4fa5-b960-ce4e1da130c0} event:/sunqian_universe/sfx/忽近忽远
 {0b3dc75a-46bb-4e30-ac7d-fbd666e94348} event:/sunqian_universe/sfx/怒掀帅案

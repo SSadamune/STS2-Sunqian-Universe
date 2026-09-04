@@ -6,9 +6,13 @@ using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.Entities.Players;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
+using MegaCrit.Sts2.Core.Helpers;
+using MegaCrit.Sts2.Core.HoverTips;
+using MegaCrit.Sts2.Core.Localization;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.Nodes.Cards;
 using MegaCrit.Sts2.Core.ValueProps;
+using Squ;
 using Squ.Audio;
 using Squ.Character;
 using STS2RitsuLib.Interop.AutoRegistration;
@@ -44,6 +48,18 @@ public sealed class FingerSnapStrike : ModCardTemplate
 		CardKeyword.Retain,
 	];
 
+	private IHoverTip CreateAnnotationHoverTip()
+	{
+		LocString description = new("cards", Id.Entry + ".annotation");
+		description.Add("energyPrefix", EnergyIconHelper.GetPrefix(this));
+		return new HoverTip(SquCommonL10n.AnnotationTitle(), description);
+	}
+
+	protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
+	[
+		CreateAnnotationHoverTip(),
+	];
+
 	public override CardAssetProfile AssetProfile => new(
 		PortraitPath: "res://images/cards/FingerSnapStrike.png");
 
@@ -62,6 +78,8 @@ public sealed class FingerSnapStrike : ModCardTemplate
 			.Targeting(cardPlay.Target)
 			.WithHitFx("vfx/vfx_attack_slash")
 			.Execute(choiceContext);
+
+		EnergyCost.SetThisCombat(EnergyCost.Canonical);
 	}
 
 	/// <summary>回合开始抽牌前，为手牌中的本牌随机耗能。</summary>

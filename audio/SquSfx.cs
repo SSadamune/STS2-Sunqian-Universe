@@ -46,6 +46,8 @@ internal static class SquSfx
 	public const string LoyaltyOverKinEvent = "event:/sunqian_universe/sfx/大义灭亲";
 	public const string YilingFineFireEvent = "event:/sunqian_universe/sfx/夷陵好火";
 	public const string HouseServantsComeEvent = "event:/sunqian_universe/sfx/家丁剧本-来人";
+	public const string ThunderOnStillLakeAsLongAsIBreatheEvent = "event:/sunqian_universe/sfx/平湖惊雷-只要一息尚存";
+	public const string ThunderOnStillLakeChopYourHeadEvent = "event:/sunqian_universe/sfx/平湖惊雷-放肆我砍你的头";
 	public const string FingerStrikeDongZhuoHeadEvent = "event:/sunqian_universe/sfx/弹指打击-取董贼首级";
 	public const string NearAndFarEvent = "event:/sunqian_universe/sfx/忽近忽远";
 	public const string SlamTheCommandDeskEvent = "event:/sunqian_universe/sfx/怒掀帅案";
