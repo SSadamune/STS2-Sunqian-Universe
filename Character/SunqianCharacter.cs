@@ -50,7 +50,7 @@ public sealed class SunqianCharacter : ModCharacterTemplate<SunqianCardPool, Sun
 				.Single("hit", "res://images/character/Longtao.png", 0.5f)
 				.Single("attack", "res://images/character/Longtao.png", 0.5f)
 				.Single("cast", "res://images/character/Longtao.png", 0.5f)
-				.Single("dead", "res://images/character/Longtao.png")
+				.Single("dead", "res://images/character/Longtao-dead.png")
 				.Single("relaxed", "res://images/character/Longtao.png")
 				.Build()
 		));
