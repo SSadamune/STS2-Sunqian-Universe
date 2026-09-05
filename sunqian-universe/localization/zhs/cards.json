@@ -125,7 +125,7 @@
   "SUNQIAN_UNIVERSE_CARD_WATCH_FIRE_FROM_SHORE.title": "隔岸观火",
   "SUNQIAN_UNIVERSE_CARD_WATCH_FIRE_FROM_SHORE.description": "获得{Block:diff()}点[gold]格挡[/gold]。给予随机两名敌人各{BurningPower:diff()}层[gold]灼烧[/gold]。",
   "SUNQIAN_UNIVERSE_CARD_BLOCK_FIREFIGHTING.title": "阻拦救火",
-  "SUNQIAN_UNIVERSE_CARD_BLOCK_FIREFIGHTING.description": "获得{WeakPower:diff()}层[gold]虚弱[/gold]。\n对所有敌人给予{BurningPower:diff()}层[gold]灼烧[/gold]。\n如果你本回合没有打出过攻击牌，将敌人的[gold]灼烧[/gold]清零概率修改为[blue]0%[/blue]。",
+  "SUNQIAN_UNIVERSE_CARD_BLOCK_FIREFIGHTING.description": "给予{BurningPower:diff()}层[gold]灼烧[/gold]。\n你获得{WeakPower:diff()}层[gold]虚弱[/gold]。\n如果你本回合还没打出过攻击牌，该敌人的[gold]灼烧[/gold]在{UnextinguishedPower:diff()}回合内不会熄灭。",
   "SUNQIAN_UNIVERSE_CARD_CHAOS_HARMED_YOU.title": "乱世害了你",
   "SUNQIAN_UNIVERSE_CARD_CHAOS_HARMED_YOU.description": "造成{Damage:diff()}点[gold]环境伤害[/gold]。\n如果此牌击杀了敌人，则抽{Cards:diff()}张牌。",
   "SUNQIAN_UNIVERSE_CARD_NIGHT_RAID_WUCHAO_SCRIPT.title": "夜袭乌巢剧本",

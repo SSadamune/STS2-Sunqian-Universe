@@ -27,7 +27,7 @@ namespace Squ.Powers;
 
 /// <summary>
 /// Burning: stackable debuff that deals damage equal to its stacks at turn start,
-/// then may clear itself with an escalating chance. Applying more Burning lowers the clear chance toward 25%.
+/// then may extinguish itself with an escalating chance. Applying more Burning lowers the extinguish chance toward 25%.
 /// </summary>
 [RegisterPower]
 public sealed class BurningPower : ModPowerTemplate, IHealthBarForecastSource
@@ -129,8 +129,9 @@ public sealed class BurningPower : ModPowerTemplate, IHealthBarForecastSource
 
 		Data data = GetInternalData<Data>();
 		Rng rng = combatState.RunState.Rng.Niche;
-		bool cleared = data.ClearChance >= 1f || rng.NextFloat() < data.ClearChance;
-		if (cleared)
+		bool rolledExtinguish = data.ClearChance >= 1f || rng.NextFloat() < data.ClearChance;
+		bool prevented = await UnextinguishedPower.TryPreventExtinguish(Owner);
+		if (rolledExtinguish && !prevented)
 		{
 			await PowerCmd.Remove(this);
 			return;
@@ -141,7 +142,7 @@ public sealed class BurningPower : ModPowerTemplate, IHealthBarForecastSource
 	}
 
 	/// <summary>
-	/// Lowers the clear-to-zero chance used at turn start (0–1). Never raises it.
+	/// Lowers the extinguish chance used at turn start (0–1). Never raises it.
 	/// </summary>
 	public void ReduceClearChanceTo(float clearChance)
 	{

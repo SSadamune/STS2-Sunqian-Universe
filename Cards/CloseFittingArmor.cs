@@ -29,11 +29,6 @@ public sealed class CloseFittingArmor : ModCardTemplate
 		new DexterityPlatingVar(BasePlating),
 	];
 
-	public override IEnumerable<CardKeyword> CanonicalKeywords =>
-	[
-		CardKeyword.Retain,
-	];
-
 	protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
 	[
 		HoverTipFactory.FromPower<PlatingPower>(),
@@ -62,7 +57,7 @@ public sealed class CloseFittingArmor : ModCardTemplate
 
 	protected override void OnUpgrade()
 	{
-		AddKeyword(CardKeyword.Innate);
+		AddKeyword(CardKeyword.Retain);
 	}
 
 	private static decimal GetPlatingAmount(Creature owner, decimal baseAmount)

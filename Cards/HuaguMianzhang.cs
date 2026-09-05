@@ -23,9 +23,9 @@ namespace Squ.Cards;
 [RegisterCard(typeof(SunqianCardPool))]
 public sealed class HuaguMianzhang : ModCardTemplate
 {
-	public const int BaseDamage = 12;
+	public const int BaseDamage = 14;
 
-	public const int UpgradedDamage = 16;
+	public const int UpgradedDamage = 20;
 
 	protected override IEnumerable<DynamicVar> CanonicalVars =>
 	[

@@ -1,10 +1,10 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using MegaCrit.Sts2.Core.Combat;
 using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
-using MegaCrit.Sts2.Core.Entities.Creatures;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
@@ -27,19 +27,23 @@ public sealed class BlockFirefighting : ModCardTemplate
 	public const decimal WeakAmount = 1m;
 	public const decimal BaseBurning = 6m;
 	public const decimal UpgradedBurning = 8m;
+	public const decimal BaseUnextinguished = 2m;
+	public const decimal UpgradedUnextinguished = 3m;
 
 	protected override IEnumerable<DynamicVar> CanonicalVars =>
 	[
-		new PowerVar<WeakPower>(WeakAmount),
 		new PowerVar<BurningPower>(BaseBurning),
+		new PowerVar<WeakPower>(WeakAmount),
+		new PowerVar<UnextinguishedPower>(BaseUnextinguished),
 	];
 
 	protected override HashSet<CardTag> CanonicalTags => [SquCardTags.Burning];
 
 	protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
 	[
-		HoverTipFactory.FromPower<WeakPower>(),
 		HoverTipFactory.FromPower<BurningPower>(),
+		HoverTipFactory.FromPower<WeakPower>(),
+		HoverTipFactory.FromPower<UnextinguishedPower>(),
 	];
 
 	public override CardAssetProfile AssetProfile => new(
@@ -60,17 +64,26 @@ public sealed class BlockFirefighting : ModCardTemplate
 	}
 
 	public BlockFirefighting()
-		: base(1, CardType.Skill, CardRarity.Uncommon, TargetType.AllEnemies)
+		: base(1, CardType.Skill, CardRarity.Uncommon, TargetType.AnyEnemy)
 	{
 	}
 
 	protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
 	{
+		ArgumentNullException.ThrowIfNull(cardPlay.Target);
+
 		ICombatState? combatState = CombatState;
 		if (combatState == null)
 		{
 			return;
 		}
+
+		await PowerCmd.Apply<BurningPower>(
+			choiceContext,
+			cardPlay.Target,
+			DynamicVars[nameof(BurningPower)].BaseValue,
+			Owner.Creature,
+			this);
 
 		await PowerCmd.Apply<WeakPower>(
 			choiceContext,
@@ -79,27 +92,6 @@ public sealed class BlockFirefighting : ModCardTemplate
 			Owner.Creature,
 			this);
 
-		decimal burningStacks = DynamicVars[nameof(BurningPower)].BaseValue;
-		List<BurningPower> appliedBurning = [];
-		foreach (Creature enemy in combatState.HittableEnemies)
-		{
-			if (!enemy.IsAlive)
-			{
-				continue;
-			}
-
-			BurningPower? burning = await PowerCmd.Apply<BurningPower>(
-				choiceContext,
-				enemy,
-				burningStacks,
-				Owner.Creature,
-				this);
-			if (burning != null)
-			{
-				appliedBurning.Add(burning);
-			}
-		}
-
 		if (PlayedAttackThisTurn(combatState))
 		{
 			SquSfx.Play(SquSfx.BlockFirefightingDoNotDisturbEvent);
@@ -107,15 +99,18 @@ public sealed class BlockFirefighting : ModCardTemplate
 		}
 
 		SquSfx.Play(SquSfx.BlockFirefightingSageEvent);
-		foreach (BurningPower burning in appliedBurning)
-		{
-			burning.ReduceClearChanceTo(0f);
-		}
+		await PowerCmd.Apply<UnextinguishedPower>(
+			choiceContext,
+			cardPlay.Target,
+			DynamicVars[nameof(UnextinguishedPower)].BaseValue,
+			Owner.Creature,
+			this);
 	}
 
 	protected override void OnUpgrade()
 	{
 		DynamicVars[nameof(BurningPower)].UpgradeValueBy(UpgradedBurning - BaseBurning);
+		DynamicVars[nameof(UnextinguishedPower)].UpgradeValueBy(UpgradedUnextinguished - BaseUnextinguished);
 	}
 
 	private bool PlayedAttackThisTurn(ICombatState combatState) =>

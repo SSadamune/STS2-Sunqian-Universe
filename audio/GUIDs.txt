@@ -25,6 +25,8 @@
 {180dae91-3f06-4120-8bba-dbd0f778a909} event:/sunqian_universe/sfx/二言-慨当以慷
 {72724425-ba4c-4e2a-bcf3-d87866d0ca15} event:/sunqian_universe/sfx/二言-譬如朝露
 {d0f605cb-1c30-40cd-8ea5-ff261220f60a} event:/sunqian_universe/sfx/人体炼成
+{5170d31e-7a65-4c21-b013-cc2883924040} event:/sunqian_universe/sfx/仁义-仁义也分大仁小仁
+{54c28a9e-23c8-467a-9134-c7c2e62bdb68} event:/sunqian_universe/sfx/仁义-仁义才能征服天下人心
 {91ef17ac-32b2-45f0-8639-2bb6d11f3f09} event:/sunqian_universe/sfx/仁之剑
 {6d9d9448-74e3-4bcf-898f-b932986f4bd1} event:/sunqian_universe/sfx/你是何人
 {3cf5479e-59e7-4157-a775-cdc0fee8d893} event:/sunqian_universe/sfx/再来撒野
@@ -86,6 +88,11 @@
 {17eb9846-0a3a-4ae9-934a-89d69d955a7b} event:/sunqian_universe/sfx/飞火流星2
 {4a44dd86-1451-4572-b733-3ef0d783d9df} event:/sunqian_universe/sfx/飞火流星3
 {b3c7f392-5475-4c1c-9c60-bb6d62e6eb90} event:/sunqian_universe/sfx/飞火流星4
+{919a9e1d-2499-4cc0-953d-bf44f1258b47} event:/sunqian_universe/sfx/鸡脚芝士-刘备
+{f471f0f3-f440-46a3-99f7-8a7bf5d5efda} event:/sunqian_universe/sfx/鸡脚芝士-徐庶
+{c71ab1d1-5c15-41c3-865a-574618065025} event:/sunqian_universe/sfx/鸡脚芝士-王平
+{75e2180e-8c73-4511-89b9-900ad456594a} event:/sunqian_universe/sfx/鸡脚芝士-陈宫
+{56495cf1-8efe-4365-964d-3471bffaed2a} event:/sunqian_universe/sfx/鸡脚芝士-陶谦
 {a8190c02-7973-438d-8f3c-c4e9527f5bcf} event:/sunqian_universe/sfx/黄金起义
 {06cefc2c-7055-44b5-af2e-7652cd2414d6} parameter:/Progress
 {a36ba432-c5b1-44ff-b5e4-12f654cfa067} parameter:/sfx_duck
