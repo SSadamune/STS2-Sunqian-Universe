@@ -23,7 +23,8 @@ public abstract class ChargeCardTemplate : ModCardTemplate
 	public readonly record struct ChargeHooks(
 		Func<PlayerChoiceContext, Task>? OnTurnEndInHand,
 		Func<PlayerChoiceContext, PowerModel, decimal, Creature?, CardModel?, Task>? OnPowerAmountChanged,
-		Action Clear);
+		Action Clear,
+		Func<PlayerChoiceContext, CardPlay, Task>? OnCardPlayed = null);
 
 	protected ChargeCardTemplate(
 		int cost,
@@ -77,12 +78,21 @@ public abstract class ChargeCardTemplate : ModCardTemplate
 
 	public override Task AfterCardPlayedLate(PlayerChoiceContext choiceContext, CardPlay cardPlay)
 	{
-		if (cardPlay.Card != this || cardPlay.PlayIndex != cardPlay.PlayCount - 1)
+		if (cardPlay.Card == this)
+		{
+			if (cardPlay.PlayIndex == cardPlay.PlayCount - 1)
+			{
+				Charge.Clear();
+			}
+
+			return Task.CompletedTask;
+		}
+
+		if (Pile?.Type != PileType.Hand || Charge.OnCardPlayed is null)
 		{
 			return Task.CompletedTask;
 		}
 
-		Charge.Clear();
-		return Task.CompletedTask;
+		return Charge.OnCardPlayed(choiceContext, cardPlay);
 	}
 }

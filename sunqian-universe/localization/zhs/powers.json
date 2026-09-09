@@ -41,7 +41,7 @@
   "SUNQIAN_UNIVERSE_POWER_SUPERNATURALLY_WISE_POWER.smartDescription": "如果你在一回合内打出过[gold]消耗[/gold]牌，则在你的下一回合开始时额外抽[blue]{Amount}[/blue]张牌。",
   "SUNQIAN_UNIVERSE_POWER_BURNING_POWER.title": "灼烧",
   "SUNQIAN_UNIVERSE_POWER_BURNING_POWER.description": "灼烧的生物会在自身回合开始时受到伤害，然后有小概率([blue]25[/blue]%)熄灭。\n[gold]灼烧[/gold]的熄灭概率每回合将会小幅度提升，且会在[gold]灼烧[/gold]层数增加时重置。",
-  "SUNQIAN_UNIVERSE_POWER_BURNING_POWER.smartDescription": "在自身回合开始时受到伤害，然后有一定概率熄灭。\n当前熄灭概率为 [blue]{ClearChance}[/blue]%。\n此概率每回合 +25%，且会在[gold]灼烧[/gold]层数增加时重置为 25%。",
+  "SUNQIAN_UNIVERSE_POWER_BURNING_POWER.smartDescription": "在自身回合开始时受到伤害，然后有一定概率熄灭。\n当前熄灭概率为[blue]{ClearChance}[/blue]%。\n此概率每回合+25%，且会在[gold]灼烧[/gold]层数增加时重置为25%。",
   "SUNQIAN_UNIVERSE_POWER_UNEXTINGUISHED_POWER.title": "不熄",
   "SUNQIAN_UNIVERSE_POWER_UNEXTINGUISHED_POWER.description": "在[blue]{Amount}[/blue]个回合内，[gold]灼烧[/gold]不会熄灭。",
   "SUNQIAN_UNIVERSE_POWER_UNEXTINGUISHED_POWER.smartDescription": "在[blue]{Amount}[/blue]个回合内，[gold]灼烧[/gold]不会熄灭。",
