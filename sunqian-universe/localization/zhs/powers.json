@@ -40,8 +40,8 @@
   "SUNQIAN_UNIVERSE_POWER_SUPERNATURALLY_WISE_POWER.description": "如果当前回合打出过[gold]消耗[/gold]牌，则下一回合开始时额外抽牌。",
   "SUNQIAN_UNIVERSE_POWER_SUPERNATURALLY_WISE_POWER.smartDescription": "如果你在一回合内打出过[gold]消耗[/gold]牌，则在你的下一回合开始时额外抽[blue]{Amount}[/blue]张牌。",
   "SUNQIAN_UNIVERSE_POWER_BURNING_POWER.title": "灼烧",
-  "SUNQIAN_UNIVERSE_POWER_BURNING_POWER.description": "灼烧的生物会在自身回合开始时受到伤害，然后[gold]灼烧[/gold]有[blue]25%[/blue]的概率熄灭；若未熄灭，则此概率提升[blue]25%[/blue]。\n有灼烧的生物再次获得灼烧后，此概率降低至[blue]25%[/blue]。",
-  "SUNQIAN_UNIVERSE_POWER_BURNING_POWER.smartDescription": "在{OnPlayer:你的回合|其回合}开始时受到[blue]{Amount}[/blue]点伤害，然后[gold]灼烧[/gold]有[blue]{ClearChance}%[/blue]的概率熄灭；若未熄灭，则此概率提升[blue]25%[/blue]。再次获得[gold]灼烧[/gold]后，此概率降低至[blue]25%[/blue]。",
+  "SUNQIAN_UNIVERSE_POWER_BURNING_POWER.description": "灼烧的生物会在自身回合开始时受到伤害，然后有小概率([blue]25[/blue]%)熄灭。\n[gold]灼烧[/gold]的熄灭概率每回合将会小幅度提升，且会在[gold]灼烧[/gold]层数增加时重置。",
+  "SUNQIAN_UNIVERSE_POWER_BURNING_POWER.smartDescription": "在自身回合开始时受到伤害，然后有一定概率熄灭。\n当前熄灭概率为 [blue]{ClearChance}[/blue]%。\n此概率每回合 +25%，且会在[gold]灼烧[/gold]层数增加时重置为 25%。",
   "SUNQIAN_UNIVERSE_POWER_UNEXTINGUISHED_POWER.title": "不熄",
   "SUNQIAN_UNIVERSE_POWER_UNEXTINGUISHED_POWER.description": "在[blue]{Amount}[/blue]个回合内，[gold]灼烧[/gold]不会熄灭。",
   "SUNQIAN_UNIVERSE_POWER_UNEXTINGUISHED_POWER.smartDescription": "在[blue]{Amount}[/blue]个回合内，[gold]灼烧[/gold]不会熄灭。",
@@ -81,5 +81,12 @@
   "SUNQIAN_UNIVERSE_POWER_SCRIPT_BOWANG_PARADOX_POWER.title": "剧本：博望悖论",
   "SUNQIAN_UNIVERSE_POWER_SCRIPT_BOWANG_PARADOX_POWER.smartDescription": "此剧本失效时，获得[blue]{TinderPower:diff()}[/blue]层[gold]火种[/gold]，丢弃所有[gold]灼烧[/gold]牌。",
   "SUNQIAN_UNIVERSE_POWER_SCRIPT_EUNUCH_POWER.title": "剧本：小黄门",
-  "SUNQIAN_UNIVERSE_POWER_SCRIPT_EUNUCH_POWER.smartDescription": "失效时，消耗所有[gold]小黄门的口信[/gold]。"
+  "SUNQIAN_UNIVERSE_POWER_SCRIPT_EUNUCH_POWER.smartDescription": "失效时，消耗所有[gold]小黄门的口信[/gold]。",
+  "SUNQIAN_UNIVERSE_POWER_BURN_AFTER_READING_POWER.title": "阅后即焚",
+  "SUNQIAN_UNIVERSE_POWER_BURN_AFTER_READING_POWER.description": "你每回合打出前[blue]{Amount}[/blue]张有[gold]消耗[/gold]的牌后，获得{Energy:energyIcons()}和[blue]{TinderPower}[/blue]层[gold]火种[/gold]。",
+  "SUNQIAN_UNIVERSE_POWER_BURN_AFTER_READING_POWER.smartDescription": "你每回合打出前[blue]{Amount}[/blue]张有[gold]消耗[/gold]的牌后，获得{Energy:energyIcons()}和[blue]{TinderPower}[/blue]层[gold]火种[/gold]。",
+  "SUNQIAN_UNIVERSE_POWER_DISTRIBUTED_SCREENWRITER_POWER.title": "分布式编剧",
+  "SUNQIAN_UNIVERSE_POWER_DISTRIBUTED_SCREENWRITER_POWER.description": "在你的回合开始时，将一张随机[gold]剧本[/gold]牌添加到你的[gold]手牌[/gold]。",
+  "SUNQIAN_UNIVERSE_POWER_DISTRIBUTED_SCREENWRITER_POWER.smartDescription": "在你的回合开始时，将[blue]{Amount}[/blue]张随机[gold]剧本[/gold]牌添加到你的[gold]手牌[/gold]。",
+  "SUNQIAN_UNIVERSE_POWER_DISTRIBUTED_SCREENWRITER_POWER.smartDescriptionUpgraded": "在你的回合开始时，将[blue]{Amount}[/blue]张随机升级过的[gold]剧本[/gold]牌添加到你的[gold]手牌[/gold]。"
 }

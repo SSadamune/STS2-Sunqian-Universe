@@ -64,7 +64,7 @@
   "SUNQIAN_UNIVERSE_CARD_LOUD_SECRET_PLOT.description": "如果仅有一名敌人，你的[gold]群体目标[/gold]攻击牌或技能牌额外打出一次。",
   "SUNQIAN_UNIVERSE_CARD_FINGER_SNAP_STRIKE.title": "弹指打击",
   "SUNQIAN_UNIVERSE_CARD_FINGER_SNAP_STRIKE.description": "造成{Damage:diff()}点伤害。每回合开始时，这张牌的耗能在[blue]{MinCost}[/blue]到[blue]{MaxCost}[/blue]之间随机变化。",
-  "SUNQIAN_UNIVERSE_CARD_FINGER_SNAP_STRIKE.annotation": "这张牌被打出后，消耗改为{energyPrefix:energyIcons(2)}。",
+  "SUNQIAN_UNIVERSE_CARD_FINGER_SNAP_STRIKE.annotation": "这张牌被打出后，消耗重置为{energyPrefix:energyIcons(2)}。",
   "SUNQIAN_UNIVERSE_CARD_THUNDER_ON_STILL_LAKE.title": "平湖惊雷",
   "SUNQIAN_UNIVERSE_CARD_THUNDER_ON_STILL_LAKE.description": "对所有敌人造成{Damage:diff()}点伤害。{ChargeText}",
   "SUNQIAN_UNIVERSE_CARD_THUNDER_ON_STILL_LAKE.chargeEffect": "回合结束时，费用降低{energyPrefix:energyIcons(1)}；你消耗[gold]活力[/gold]后，增加等量伤害。",
@@ -151,5 +151,9 @@
   "SUNQIAN_UNIVERSE_CARD_CELEBRATE_MOURNING.returnTriggerHoverTip": "将在{Cards}被消耗时被放入手牌。",
   "SUNQIAN_UNIVERSE_CARD_CELEBRATE_MOURNING.cardSeparator": "、",
   "SUNQIAN_UNIVERSE_CARD_EUNUCH_SCRIPT.title": "小黄门剧本",
-  "SUNQIAN_UNIVERSE_CARD_EUNUCH_SCRIPT.description": "抽{Cards:diff()}张牌，并令其在离开你的[gold]手牌[/gold]之前获得[gold]保留[/gold]。\n[gold]剧本[/gold]：失效时，消耗手牌中以此法抽到的牌。"
+  "SUNQIAN_UNIVERSE_CARD_EUNUCH_SCRIPT.description": "抽{Cards:diff()}张牌，这些牌在离开你的[gold]手牌[/gold]之前获得[gold]保留[/gold]。\n[gold]剧本[/gold]：失效时，消耗手牌中的这些牌。",
+  "SUNQIAN_UNIVERSE_CARD_BURN_AFTER_READING.title": "阅后即焚",
+  "SUNQIAN_UNIVERSE_CARD_BURN_AFTER_READING.description": "你每回合打出{IfUpgraded:show:前两张|第一张}有[gold]消耗[/gold]的牌后，获得{Energy:energyIcons()}和{TinderPower:diff()}层[gold]火种[/gold]。",
+  "SUNQIAN_UNIVERSE_CARD_DISTRIBUTED_SCREENWRITER.title": "分布式编剧",
+  "SUNQIAN_UNIVERSE_CARD_DISTRIBUTED_SCREENWRITER.description": "在你的回合开始时，将一张随机{IfUpgraded:show:升级过的|}[gold]剧本[/gold]牌加入你的[gold]手牌[/gold]。"
 }

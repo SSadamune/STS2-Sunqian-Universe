@@ -137,5 +137,9 @@
   "SUNQIAN_UNIVERSE_CARD_CELEBRATE_MOURNING.returnTriggerHoverTip": "Will be put into your Hand when {Cards} is Exhausted.",
   "SUNQIAN_UNIVERSE_CARD_CELEBRATE_MOURNING.cardSeparator": ", ",
   "SUNQIAN_UNIVERSE_CARD_EUNUCH_SCRIPT.title": "Eunuch Script",
-  "SUNQIAN_UNIVERSE_CARD_EUNUCH_SCRIPT.description": "Draw {Cards:diff()} {Cards:plural:card|cards} and grant them [gold]Retain[/gold] until they leave your [gold]Hand[/gold].\n[gold]Script[/gold]: When this [gold]Script[/gold] ends, [gold]Exhaust[/gold] cards in your hand drawn this way."
+  "SUNQIAN_UNIVERSE_CARD_EUNUCH_SCRIPT.description": "Draw {Cards:diff()} {Cards:plural:card|cards} and grant them [gold]Retain[/gold] until they leave your [gold]Hand[/gold].\n[gold]Script[/gold]: When this [gold]Script[/gold] ends, [gold]Exhaust[/gold] cards in your hand drawn this way.",
+  "SUNQIAN_UNIVERSE_CARD_BURN_AFTER_READING.title": "Burn After Reading",
+  "SUNQIAN_UNIVERSE_CARD_BURN_AFTER_READING.description": "After you play each of your first {IfUpgraded:show:two|one} [gold]Exhaust[/gold] {IfUpgraded:show:cards|card} each turn, gain {Energy:energyIcons()} and {TinderPower:diff()} [gold]Tinder[/gold].",
+  "SUNQIAN_UNIVERSE_CARD_DISTRIBUTED_SCREENWRITER.title": "Distributed Screenwriter",
+  "SUNQIAN_UNIVERSE_CARD_DISTRIBUTED_SCREENWRITER.description": "At the start of your turn, add a random {IfUpgraded:show:Upgraded |}[gold]Script[/gold] card into your [gold]Hand[/gold]."
 }

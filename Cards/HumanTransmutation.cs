@@ -49,7 +49,7 @@ public sealed class HumanTransmutation : ModCardTemplate
 	[
 		new(typeof(Swift), 3),
 		new(typeof(Sown), 1),
-		new(typeof(Inky), 0),
+		new(typeof(Momentum), 5),
 		new(typeof(Glam), 0),
 		new(typeof(Corrupted), 0),
 	];
@@ -290,6 +290,12 @@ public sealed class HumanTransmutation : ModCardTemplate
 		if (spec.EnchantmentType == typeof(Sown))
 		{
 			Apply<Sown>(card, spec.Amount);
+			return;
+		}
+
+		if (spec.EnchantmentType == typeof(Momentum))
+		{
+			Apply<Momentum>(card, spec.Amount);
 			return;
 		}
 

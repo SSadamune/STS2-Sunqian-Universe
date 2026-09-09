@@ -27,8 +27,8 @@
   "SUNQIAN_UNIVERSE_POWER_THE_ARROGANT_FALL_POWER.title": "The arrogant fall",
   "SUNQIAN_UNIVERSE_POWER_THE_ARROGANT_FALL_POWER.description": "At the start of your next turn, gain [blue]{Amount}[/blue] [gold]Weak[/gold] and [gold]Vulnerable[/gold].",
   "SUNQIAN_UNIVERSE_POWER_BURNING_POWER.title": "Burning",
-  "SUNQIAN_UNIVERSE_POWER_BURNING_POWER.description": "Burning creatures take damage at the start of their turn, then [gold]Burning[/gold] has a [blue]25%[/blue] chance to be extinguished. If not extinguished, this chance increases by [blue]25%[/blue].\nApplying Burning again to a Burning creature lowers this chance to [blue]25%[/blue].",
-  "SUNQIAN_UNIVERSE_POWER_BURNING_POWER.smartDescription": "At the start of {OnPlayer:your turn, take|its turn, takes} [blue]{Amount}[/blue] damage, then [gold]Burning[/gold] has a [blue]{ClearChance}%[/blue] chance to be extinguished. If not extinguished, this chance increases by [blue]25%[/blue]. Applying [gold]Burning[/gold] again lowers this chance to [blue]25%[/blue].",
+  "SUNQIAN_UNIVERSE_POWER_BURNING_POWER.description": "Burning creatures take damage at the start of their turn, then have a small chance ([blue]25[/blue]%) to be extinguished.\nThe extinguish chance of [gold]Burning[/gold] increases slightly each turn, and resets when [gold]Burning[/gold] stacks increase.",
+  "SUNQIAN_UNIVERSE_POWER_BURNING_POWER.smartDescription": "At the start of their turn, take damage, then have a chance to be extinguished.\nCurrent extinguish chance: [blue]{ClearChance}[/blue]%.\nThis chance increases by 25% each turn, and resets to 25% when [gold]Burning[/gold] stacks increase.",
   "SUNQIAN_UNIVERSE_POWER_UNEXTINGUISHED_POWER.title": "Unextinguished",
   "SUNQIAN_UNIVERSE_POWER_UNEXTINGUISHED_POWER.description": "For [blue]{Amount}[/blue] {Amount:plural:turn|turns}, [gold]Burning[/gold] will not be extinguished.",
   "SUNQIAN_UNIVERSE_POWER_UNEXTINGUISHED_POWER.smartDescription": "For [blue]{Amount}[/blue] {Amount:plural:turn|turns}, [gold]Burning[/gold] will not be extinguished.",
@@ -81,5 +81,12 @@
   "SUNQIAN_UNIVERSE_POWER_SCRIPT_BOWANG_PARADOX_POWER.title": "Script: Bowang Paradox",
   "SUNQIAN_UNIVERSE_POWER_SCRIPT_BOWANG_PARADOX_POWER.smartDescription": "When this Script ends, gain [blue]{TinderPower:diff()}[/blue] [gold]Tinder[/gold] and discard all [gold]Burning[/gold] cards.",
   "SUNQIAN_UNIVERSE_POWER_SCRIPT_EUNUCH_POWER.title": "Script: Eunuch",
-  "SUNQIAN_UNIVERSE_POWER_SCRIPT_EUNUCH_POWER.smartDescription": "When this ends, [gold]Exhaust[/gold] all [gold]Eunuch's Message[/gold]."
+  "SUNQIAN_UNIVERSE_POWER_SCRIPT_EUNUCH_POWER.smartDescription": "When this ends, [gold]Exhaust[/gold] all [gold]Eunuch's Message[/gold].",
+  "SUNQIAN_UNIVERSE_POWER_BURN_AFTER_READING_POWER.title": "Burn After Reading",
+  "SUNQIAN_UNIVERSE_POWER_BURN_AFTER_READING_POWER.description": "After you play each of your first [blue]{Amount}[/blue] [gold]Exhaust[/gold] {Amount:plural:card|cards} each turn, gain {Energy:energyIcons()} and [blue]{TinderPower}[/blue] [gold]Tinder[/gold].",
+  "SUNQIAN_UNIVERSE_POWER_BURN_AFTER_READING_POWER.smartDescription": "After you play each of your first [blue]{Amount}[/blue] [gold]Exhaust[/gold] {Amount:plural:card|cards} each turn, gain {Energy:energyIcons()} and [blue]{TinderPower}[/blue] [gold]Tinder[/gold].",
+  "SUNQIAN_UNIVERSE_POWER_DISTRIBUTED_SCREENWRITER_POWER.title": "Distributed Screenwriter",
+  "SUNQIAN_UNIVERSE_POWER_DISTRIBUTED_SCREENWRITER_POWER.description": "At the start of your turn, add a random [gold]Script[/gold] card into your [gold]Hand[/gold].",
+  "SUNQIAN_UNIVERSE_POWER_DISTRIBUTED_SCREENWRITER_POWER.smartDescription": "At the start of your turn, add {Amount:plural:a random [gold]Script[/gold] card|[blue]{}[/blue] random [gold]Script[/gold] cards} into your [gold]Hand[/gold].",
+  "SUNQIAN_UNIVERSE_POWER_DISTRIBUTED_SCREENWRITER_POWER.smartDescriptionUpgraded": "At the start of your turn, add {Amount:plural:a random Upgraded [gold]Script[/gold] card|[blue]{}[/blue] random Upgraded [gold]Script[/gold] cards} into your [gold]Hand[/gold]."
 }
