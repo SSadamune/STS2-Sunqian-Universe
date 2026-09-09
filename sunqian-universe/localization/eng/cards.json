@@ -107,10 +107,10 @@
   "SUNQIAN_UNIVERSE_CARD_RUTHLESS_STRIKE.title": "Ruthless Strike",
   "SUNQIAN_UNIVERSE_CARD_RUTHLESS_STRIKE.description": "{BodyText}",
   "SUNQIAN_UNIVERSE_CARD_RUTHLESS_STRIKE.normalBody": "Deal {Damage:diff()} damage that [gold]ignores Block[/gold].{ChargeText}",
-  "SUNQIAN_UNIVERSE_CARD_RUTHLESS_STRIKE.chargedDescription": "Deal {Damage:diff()} damage {Repeat:diff()} times that [gold]ignores Block[/gold].{ChargeText}",
+  "SUNQIAN_UNIVERSE_CARD_RUTHLESS_STRIKE.chargedDescription": "Deal {Damage:diff()} damage [green]{Repeat}[/green] times that [gold]ignores Block[/gold].{ChargeText}",
   "SUNQIAN_UNIVERSE_CARD_RUTHLESS_STRIKE.chargeEffect": "Whenever you play a card with [gold]Exhaust[/gold], deal damage an additional time.",
   "SUNQIAN_UNIVERSE_CARD_DIG_RAID.title": "Dig Raid",
-  "SUNQIAN_UNIVERSE_CARD_DIG_RAID.description": "Deal {Damage:diff()} damage that [gold]ignores Block[/gold]. Apply {BurningPower:diff()} [gold]Burning[/gold].",
+  "SUNQIAN_UNIVERSE_CARD_DIG_RAID.description": "Deal {Damage:diff()} damage that [gold]ignores Block[/gold].\nApply {BurningPower:diff()} [gold]Burning[/gold].",
   "SUNQIAN_UNIVERSE_CARD_WATCH_FIRE_FROM_SHORE.title": "Watch Fire from Afar",
   "SUNQIAN_UNIVERSE_CARD_WATCH_FIRE_FROM_SHORE.description": "Gain {Block:diff()} [gold]Block[/gold]. Apply {BurningPower:diff()} [gold]Burning[/gold] to 2 random enemies.",
   "SUNQIAN_UNIVERSE_CARD_BLOCK_FIREFIGHTING.title": "Block Firefighting",
@@ -146,5 +146,9 @@
   "SUNQIAN_UNIVERSE_CARD_BURN_AFTER_READING.title": "Burn After Reading",
   "SUNQIAN_UNIVERSE_CARD_BURN_AFTER_READING.description": "After you play each of your first {IfUpgraded:show:two|one} [gold]Exhaust[/gold] {IfUpgraded:show:cards|card} each turn, gain {Energy:energyIcons()} and {TinderPower:diff()} [gold]Tinder[/gold].",
   "SUNQIAN_UNIVERSE_CARD_DISTRIBUTED_SCREENWRITER.title": "Distributed Screenwriter",
-  "SUNQIAN_UNIVERSE_CARD_DISTRIBUTED_SCREENWRITER.description": "At the start of your turn, add a random {IfUpgraded:show:Upgraded |}[gold]Script[/gold] card into your [gold]Hand[/gold]."
+  "SUNQIAN_UNIVERSE_CARD_DISTRIBUTED_SCREENWRITER.description": "At the start of your turn, add a random {IfUpgraded:show:Upgraded |}[gold]Script[/gold] card into your [gold]Hand[/gold].",
+  "SUNQIAN_UNIVERSE_CARD_KEEP_CALM.title": "Keep Calm",
+  "SUNQIAN_UNIVERSE_CARD_KEEP_CALM.description": "Gain {Energy:energyIcons()}.{ChargeText}",
+  "SUNQIAN_UNIVERSE_CARD_KEEP_CALM.chargeEffect": "At the end of your turn, gain {energyPrefix:energyIcons(1)} more. After you take unblocked attack damage, Exhaust this and [gold]Vent {IfUpgraded:show:Anger+|Anger}[/gold].",
+  "SUNQIAN_UNIVERSE_CARD_KEEP_CALM.annotation": "[gold]Gain Anger{IfUpgraded:show:+|}[/gold]: Add [gold]Anger{IfUpgraded:show:+|}[/gold] into your Hand equal to the {energyPrefix:energyIcons(1)} this card accumulated. If it accumulated at least {energyPrefix:energyIcons(3)}, also add a [gold]Rage{IfUpgraded:show:+|}[/gold]."
 }

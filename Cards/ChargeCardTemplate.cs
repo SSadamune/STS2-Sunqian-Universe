@@ -48,7 +48,10 @@ public abstract class ChargeCardTemplate : ModCardTemplate
 
 	protected override void AddExtraArgsToDescription(LocString description)
 	{
-		description.Add("ChargeText", SquKeywords.FormatChargeCardText(this, ChargeEffectLocKey));
+		SquKeywords.AddNestedLoc(
+			description,
+			"ChargeText",
+			SquKeywords.FormatChargeCardText(this, ChargeEffectLocKey));
 	}
 
 	public override Task AfterAutoPostPlayPhaseEntered(PlayerChoiceContext choiceContext, Player player)

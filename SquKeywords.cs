@@ -2,6 +2,7 @@ using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.Helpers;
 using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Localization;
+using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.Models;
 using STS2RitsuLib.Content;
 using STS2RitsuLib.Keywords;
@@ -78,15 +79,44 @@ public static class SquKeywords
 		return new HoverTip(title, description, icon: null);
 	}
 
+	/// <summary>
+	/// <see cref="LocString.Add(string, LocString)"/> 会立刻格式化子串，蓄能正文里的
+	/// <c>{IfUpgraded}</c> 会赶在卡面注入升级预览状态之前被算死。用 <see cref="LocString.AddObj"/>
+	/// 挂上延迟展开，等父级 <c>IfUpgraded</c> 到位后再格式化，锻造/武装预览才能标绿。
+	/// </summary>
+	public static void AddNestedLoc(LocString parent, string name, LocString child)
+	{
+		parent.AddObj(name, new DeferredLocText(parent, child));
+	}
+
 	public static LocString FormatChargeCardText(CardModel card, string effectLocKey)
 	{
 		LocString effect = new("cards", effectLocKey);
 		effect.Add("energyPrefix", EnergyIconHelper.GetPrefix(card));
+		effect.Add(new IfUpgradedVar(card.IsUpgraded ? UpgradeDisplay.Upgraded : UpgradeDisplay.Normal));
 
 		LocString wrapper = new("card_keywords", "SUNQIAN_UNIVERSE_KEYWORD_CHARGE.cardDescription");
 		wrapper.Add("Title", ModKeywordRegistry.GetTitle(ChargeId));
-		wrapper.Add("Effect", effect);
+		AddNestedLoc(wrapper, "Effect", effect);
 		return wrapper;
+	}
+
+	private sealed class DeferredLocText
+	{
+		private readonly LocString _parent;
+		private readonly LocString _child;
+
+		public DeferredLocText(LocString parent, LocString child)
+		{
+			_parent = parent;
+			_child = child;
+		}
+
+		public override string ToString()
+		{
+			_child.AddVariablesFrom(_parent);
+			return _child.GetFormattedText();
+		}
 	}
 
 	/// <summary>名字/关键词中带有[gold]预见[/gold]的牌。</summary>

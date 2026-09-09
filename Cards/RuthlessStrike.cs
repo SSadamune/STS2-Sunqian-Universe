@@ -95,8 +95,11 @@ public sealed class RuthlessStrike : ChargeCardTemplate
 		}
 
 		body.Add(DynamicVars.Damage);
-		body.Add("ChargeText", SquKeywords.FormatChargeCardText(this, ChargeEffectLocKey));
-		description.Add("BodyText", body);
+		SquKeywords.AddNestedLoc(
+			body,
+			"ChargeText",
+			SquKeywords.FormatChargeCardText(this, ChargeEffectLocKey));
+		SquKeywords.AddNestedLoc(description, "BodyText", body);
 	}
 
 	private bool ShouldShowChargedDescription()
