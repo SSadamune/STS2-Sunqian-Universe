@@ -41,6 +41,7 @@ public sealed class RuthlessStrike : ChargeCardTemplate
 
 	protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
 	[
+		..base.AdditionalHoverTips,
 		HoverTipFactory.Static(StaticHoverTip.Block),
 		HoverTipFactory.FromKeyword(CardKeyword.Exhaust),
 	];

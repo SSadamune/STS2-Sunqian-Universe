@@ -153,5 +153,5 @@
   "SUNQIAN_UNIVERSE_CARD_KEEP_CALM.annotation": "[gold]Gain Anger{IfUpgraded:show:+|}[/gold]: Add [gold]Anger{IfUpgraded:show:+|}[/gold] into your Hand equal to the {energyPrefix:energyIcons(1)} this card accumulated. If it accumulated at least {energyPrefix:energyIcons(3)}, also add a [gold]Rage{IfUpgraded:show:+|}[/gold].",
   "SUNQIAN_UNIVERSE_CARD_SEND_HORSE_WITHOUT_HAY.title": "Send a Horse Without Hay",
   "SUNQIAN_UNIVERSE_CARD_SEND_HORSE_WITHOUT_HAY.description": "Draw {Cards:diff()} {Cards:plural:card|cards}.{ChargeText}",
-  "SUNQIAN_UNIVERSE_CARD_SEND_HORSE_WITHOUT_HAY.chargeEffect": "After you spend a total of {energyPrefix:energyIcons(2)}, this card instead draws {IfUpgraded:show:3|2} cards."
+  "SUNQIAN_UNIVERSE_CARD_SEND_HORSE_WITHOUT_HAY.chargeEffect": "After you spend a total of {IfUpgraded:show:{energyPrefix:energyIcons(2)}|{energyPrefix:energyIcons(3)}}, this card instead draws 3 cards."
 }

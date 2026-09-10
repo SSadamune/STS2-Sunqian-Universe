@@ -15,15 +15,15 @@ using STS2RitsuLib.Scaffolding.Content;
 namespace Squ.Cards;
 
 /// <summary>
-/// 缺草送马：打出抽牌。蓄能累计消耗 2 能量后改为抽 2（升级 3）张；不够则仍为 0。打出后解除。
+/// 缺草送马：打出抽牌。蓄能累计消耗 3 （升级 2）能量后改为抽 3 张；不够则仍为 0。打出后解除。
 /// </summary>
 [RegisterCard(typeof(SunqianCardPool), StableEntryStem = "send_horse_without_hay")]
 public sealed class SendHorseWithoutHay : ChargeCardTemplate
 {
 	public const int CanonicalDraw = 0;
-	public const int EnergyThreshold = 2;
-	public const int UnupgradedDraw = 2;
-	public const int UpgradedDraw = 3;
+	public const int ChargedDraw = 3;
+	public const int UnupgradedEnergyThreshold = 3;
+	public const int UpgradedEnergyThreshold = 2;
 
 	private int _spentEnergy;
 
@@ -50,7 +50,7 @@ public sealed class SendHorseWithoutHay : ChargeCardTemplate
 	{
 	}
 
-	private int PrintedDraw => IsUpgraded ? UpgradedDraw : UnupgradedDraw;
+	private int EnergyThreshold => IsUpgraded ? UpgradedEnergyThreshold : UnupgradedEnergyThreshold;
 
 	private bool IsCharged => _spentEnergy >= EnergyThreshold;
 
@@ -84,7 +84,7 @@ public sealed class SendHorseWithoutHay : ChargeCardTemplate
 
 	private void RefreshDrawnCards()
 	{
-		DynamicVars.Cards.BaseValue = IsCharged ? PrintedDraw : CanonicalDraw;
+		DynamicVars.Cards.BaseValue = IsCharged ? ChargedDraw : CanonicalDraw;
 	}
 
 	private void ResetCharge()

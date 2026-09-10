@@ -54,6 +54,7 @@ public sealed class ThunderOnStillLake : ChargeCardTemplate
 
 	protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
 	[
+		..base.AdditionalHoverTips,
 		HoverTipFactory.FromPower<VigorPower>(),
 	];
 

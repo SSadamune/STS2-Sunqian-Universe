@@ -80,9 +80,9 @@ public static class SquKeywords
 	}
 
 	/// <summary>
-	/// <see cref="LocString.Add(string, LocString)"/> 会立刻格式化子串，蓄能正文里的
+	/// <see cref="LocString.Add(string, LocString)"/> 会立刻格式化子串，蓄能效果中的
 	/// <c>{IfUpgraded}</c> 会赶在卡面注入升级预览状态之前被算死。用 <see cref="LocString.AddObj"/>
-	/// 挂上延迟展开，等父级 <c>IfUpgraded</c> 到位后再格式化，锻造/武装预览才能标绿。
+	/// 挂上延迟展开，等父级 <c>IfUpgraded</c> 到位后再格式化，锻造预览才能把差分标绿。
 	/// </summary>
 	public static void AddNestedLoc(LocString parent, string name, LocString child)
 	{
@@ -95,10 +95,16 @@ public static class SquKeywords
 		effect.Add("energyPrefix", EnergyIconHelper.GetPrefix(card));
 		effect.Add(new IfUpgradedVar(card.IsUpgraded ? UpgradeDisplay.Upgraded : UpgradeDisplay.Normal));
 
-		LocString wrapper = new("card_keywords", "SUNQIAN_UNIVERSE_KEYWORD_CHARGE.cardDescription");
-		wrapper.Add("Title", ModKeywordRegistry.GetTitle(ChargeId));
+		LocString wrapper = new(SquCommonL10n.Table, SquCommonL10n.ChargeCardTextKey);
 		AddNestedLoc(wrapper, "Effect", effect);
 		return wrapper;
+	}
+
+	public static IHoverTip CreateChargeHoverTip()
+	{
+		return new HoverTip(
+			SquCommonL10n.AnnotationTitle(),
+			new LocString(SquCommonL10n.Table, SquCommonL10n.ChargeHoverDescriptionKey));
 	}
 
 	private sealed class DeferredLocText

@@ -1,3 +1,5 @@
 {
-  "SUNQIAN_UNIVERSE_COMMON.ANNOTATION.title": "※补充说明"
+  "SUNQIAN_UNIVERSE_COMMON.ANNOTATION.title": "※补充说明",
+  "SUNQIAN_UNIVERSE_COMMON.CHARGE.cardText": "\n[color=gray]{Effect}[/color]",
+  "SUNQIAN_UNIVERSE_COMMON.CHARGE.hoverDescription": "[color=gray]灰色字体[/color]中的效果仅当此牌在手牌中时生效，且该效果会在打出这张牌后被重置。"
 }

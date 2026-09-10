@@ -167,5 +167,5 @@
   "SUNQIAN_UNIVERSE_CARD_KEEP_CALM.annotation": "[gold]获得愤怒{IfUpgraded:show:+|}[/gold]：根据这张牌积攒的{energyPrefix:energyIcons(1)}，将等量张[gold]愤怒{IfUpgraded:show:+|}[/gold]加入手牌，若至少有{energyPrefix:energyIcons(3)}，则还会加入一张[gold]狂怒{IfUpgraded:show:+|}[/gold]。",
   "SUNQIAN_UNIVERSE_CARD_SEND_HORSE_WITHOUT_HAY.title": "缺草送马",
   "SUNQIAN_UNIVERSE_CARD_SEND_HORSE_WITHOUT_HAY.description": "抽{Cards:diff()}张牌。{ChargeText}",
-  "SUNQIAN_UNIVERSE_CARD_SEND_HORSE_WITHOUT_HAY.chargeEffect": "累计消耗{energyPrefix:energyIcons(2)}后，改为抽{IfUpgraded:show:3|2}张牌。"
+  "SUNQIAN_UNIVERSE_CARD_SEND_HORSE_WITHOUT_HAY.chargeEffect": "累计花费{IfUpgraded:show:{energyPrefix:energyIcons(2)}|{energyPrefix:energyIcons(3)}}后，改为抽3张牌。"
 }
