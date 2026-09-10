@@ -5,7 +5,6 @@ using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.Entities.Creatures;
 using MegaCrit.Sts2.Core.Entities.Players;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
-using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Localization;
 using MegaCrit.Sts2.Core.Models;
 using Squ;
@@ -36,20 +35,15 @@ public abstract class ChargeCardTemplate : ModCardTemplate
 	{
 	}
 
-	/// <summary>卡面灰色字体中的效果 loc 键。</summary>
+	/// <summary>该牌蓄能正文的 loc 键（不含「蓄能：」外壳）。</summary>
 	protected abstract string ChargeEffectLocKey { get; }
 
-	/// <summary>各牌自己的手牌中结算（降费、加伤等）。</summary>
+	/// <summary>各牌自己的蓄能结算（降费、加伤等）。</summary>
 	protected abstract ChargeHooks Charge { get; }
 
 	public override IEnumerable<CardKeyword> CanonicalKeywords =>
 	[
 		SquKeywords.Charge,
-	];
-
-	protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
-	[
-		SquKeywords.CreateChargeHoverTip(),
 	];
 
 	protected override void AddExtraArgsToDescription(LocString description)

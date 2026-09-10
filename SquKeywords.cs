@@ -95,16 +95,10 @@ public static class SquKeywords
 		effect.Add("energyPrefix", EnergyIconHelper.GetPrefix(card));
 		effect.Add(new IfUpgradedVar(card.IsUpgraded ? UpgradeDisplay.Upgraded : UpgradeDisplay.Normal));
 
-		LocString wrapper = new(SquCommonL10n.Table, SquCommonL10n.ChargeCardTextKey);
+		LocString wrapper = new("card_keywords", "SUNQIAN_UNIVERSE_KEYWORD_CHARGE.cardDescription");
+		wrapper.Add("Title", ModKeywordRegistry.GetTitle(ChargeId));
 		AddNestedLoc(wrapper, "Effect", effect);
 		return wrapper;
-	}
-
-	public static IHoverTip CreateChargeHoverTip()
-	{
-		return new HoverTip(
-			SquCommonL10n.AnnotationTitle(),
-			new LocString(SquCommonL10n.Table, SquCommonL10n.ChargeHoverDescriptionKey));
 	}
 
 	private sealed class DeferredLocText

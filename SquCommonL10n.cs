@@ -9,8 +9,6 @@ namespace Squ;
 public static class SquCommonL10n
 {
 	public const string AnnotationTitleKey = "SUNQIAN_UNIVERSE_COMMON.ANNOTATION.title";
-	public const string ChargeCardTextKey = "SUNQIAN_UNIVERSE_COMMON.CHARGE.cardText";
-	public const string ChargeHoverDescriptionKey = "SUNQIAN_UNIVERSE_COMMON.CHARGE.hoverDescription";
 
 	public static string Table =>
 		RitsuLibFramework.GetI18NLocTableId(SquMod.ModId, SquMod.CommonL10nStem);

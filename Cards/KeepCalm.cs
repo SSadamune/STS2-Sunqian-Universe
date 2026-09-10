@@ -57,7 +57,6 @@ public sealed class KeepCalm : ChargeCardTemplate
 
 	protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
 	[
-		..base.AdditionalHoverTips,
 		HoverTipFactory.ForEnergy(this),
 		CreateAnnotationHoverTip(),
 		HoverTipFactory.FromCard<Anger>(IsUpgraded),
