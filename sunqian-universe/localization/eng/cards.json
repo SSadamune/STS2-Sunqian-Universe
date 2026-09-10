@@ -87,7 +87,7 @@
   "SUNQIAN_UNIVERSE_CARD_BUDDY_HU.title": "Buddy Hu",
   "SUNQIAN_UNIVERSE_CARD_BUDDY_HU.description": "Whenever you gain [gold]Vigor[/gold], gain [blue]1[/blue] less. Gain [blue]1[/blue] [gold]Strength[/gold] instead.",
   "SUNQIAN_UNIVERSE_CARD_OPEN_DEFECATION.title": "Open Defecation",
-  "SUNQIAN_UNIVERSE_CARD_OPEN_DEFECATION.description": "Gain {DexterityPower:diff()} [gold]Dexterity[/gold] this turn.\nPut all cards with [gold]Unplayable[/gold] from your [gold]Draw Pile[/gold] and [gold]Hand[/gold] into your [gold]Discard Pile[/gold]. If at least {Threshold} cards were moved, you [gold]Count as Playing[/gold] a [gold]{IfUpgraded:show:Splash+|Splash}[/gold].",
+  "SUNQIAN_UNIVERSE_CARD_OPEN_DEFECATION.description": "Gain {DexterityPower:diff()} [gold]Dexterity[/gold] this turn.\nDiscard all cards with [gold]Unplayable[/gold] from your [gold]Draw Pile[/gold] and [gold]Hand[/gold]. If at least {Threshold} cards were discarded, you [gold]Count as Playing[/gold] a [gold]{IfUpgraded:show:Splash+|Splash}[/gold].",
   "SUNQIAN_UNIVERSE_CARD_RESPECT_ELDERS.title": "Respect Elders",
   "SUNQIAN_UNIVERSE_CARD_RESPECT_ELDERS.description": "{BodyText}",
   "SUNQIAN_UNIVERSE_CARD_RESPECT_ELDERS.normalBody": "Deal {Damage:diff()} damage.\nIf the target's HP is between 25% and 75% of its max, hit {HitCount:diff()} times.",
@@ -153,5 +153,8 @@
   "SUNQIAN_UNIVERSE_CARD_KEEP_CALM.annotation": "[gold]Gain Anger{IfUpgraded:show:+|}[/gold]: Add [gold]Anger{IfUpgraded:show:+|}[/gold] into your Hand equal to the {energyPrefix:energyIcons(1)} this card accumulated. If it accumulated at least {energyPrefix:energyIcons(3)}, also add a [gold]Rage{IfUpgraded:show:+|}[/gold].",
   "SUNQIAN_UNIVERSE_CARD_SEND_HORSE_WITHOUT_HAY.title": "Send a Horse Without Hay",
   "SUNQIAN_UNIVERSE_CARD_SEND_HORSE_WITHOUT_HAY.description": "Draw {Cards:diff()} {Cards:plural:card|cards}.{ChargeText}",
-  "SUNQIAN_UNIVERSE_CARD_SEND_HORSE_WITHOUT_HAY.chargeEffect": "After you spend a total of {IfUpgraded:show:{energyPrefix:energyIcons(2)}|{energyPrefix:energyIcons(3)}}, this card instead draws 3 cards."
+  "SUNQIAN_UNIVERSE_CARD_SEND_HORSE_WITHOUT_HAY.chargeEffect": "After you spend a total of {IfUpgraded:show:{energyPrefix:energyIcons(2)}|{energyPrefix:energyIcons(3)}}, this card instead draws 3 cards.",
+  "SUNQIAN_UNIVERSE_CARD_KNOW_WRONG_DENY_WRONG.title": "Know Wrong, Deny Wrong",
+  "SUNQIAN_UNIVERSE_CARD_KNOW_WRONG_DENY_WRONG.description": "Deal damage equal to the number of times you have reloaded this run.{CurrentLine}",
+  "SUNQIAN_UNIVERSE_CARD_KNOW_WRONG_DENY_WRONG.currentDamage": "\n(Currently {Damage:diff()})"
 }

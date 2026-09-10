@@ -103,7 +103,7 @@
   "SUNQIAN_UNIVERSE_CARD_BUDDY_HU.title": "好哥们胡兄",
   "SUNQIAN_UNIVERSE_CARD_BUDDY_HU.description": "你每次获得[gold]活力[/gold]时少获得[blue]1[/blue]点，改为获得[blue]1[/blue]点[gold]力量[/gold]。",
   "SUNQIAN_UNIVERSE_CARD_OPEN_DEFECATION.title": "魏武挥鞭",
-  "SUNQIAN_UNIVERSE_CARD_OPEN_DEFECATION.description": "在本回合获得{DexterityPower:diff()}点[gold]敏捷[/gold]。\n将[gold]抽牌堆[/gold]和[gold]手牌[/gold]中有「[gold]不能被打出[/gold]」的所有牌放入[gold]弃牌堆[/gold]。如果移动了至少{Threshold}张牌，你[gold]视为打出[/gold]一张[gold]{IfUpgraded:show:飞溅+|飞溅}[/gold]。",
+  "SUNQIAN_UNIVERSE_CARD_OPEN_DEFECATION.description": "在本回合获得{DexterityPower:diff()}点[gold]敏捷[/gold]。\n丢弃[gold]抽牌堆[/gold]和[gold]手牌[/gold]中有「[gold]不能被打出[/gold]」的所有牌。如果丢弃了至少{Threshold}张牌，你[gold]视为打出[/gold]一张[gold]{IfUpgraded:show:飞溅+|飞溅}[/gold]。",
   "SUNQIAN_UNIVERSE_CARD_RESPECT_ELDERS.title": "尊老爱幼",
   "SUNQIAN_UNIVERSE_CARD_RESPECT_ELDERS.description": "{BodyText}",
   "SUNQIAN_UNIVERSE_CARD_RESPECT_ELDERS.normalBody": "造成{Damage:diff()}点伤害。\n如果该敌人的生命值不大于75%且不小于25%，则攻击{HitCount:diff()}次。",
@@ -167,5 +167,8 @@
   "SUNQIAN_UNIVERSE_CARD_KEEP_CALM.annotation": "[gold]获得愤怒{IfUpgraded:show:+|}[/gold]：根据这张牌积攒的{energyPrefix:energyIcons(1)}，将等量张[gold]愤怒{IfUpgraded:show:+|}[/gold]加入手牌，若至少有{energyPrefix:energyIcons(3)}，则还会加入一张[gold]狂怒{IfUpgraded:show:+|}[/gold]。",
   "SUNQIAN_UNIVERSE_CARD_SEND_HORSE_WITHOUT_HAY.title": "缺草送马",
   "SUNQIAN_UNIVERSE_CARD_SEND_HORSE_WITHOUT_HAY.description": "抽{Cards:diff()}张牌。{ChargeText}",
-  "SUNQIAN_UNIVERSE_CARD_SEND_HORSE_WITHOUT_HAY.chargeEffect": "累计花费{IfUpgraded:show:{energyPrefix:energyIcons(2)}|{energyPrefix:energyIcons(3)}}后，改为抽3张牌。"
+  "SUNQIAN_UNIVERSE_CARD_SEND_HORSE_WITHOUT_HAY.chargeEffect": "累计花费{IfUpgraded:show:{energyPrefix:energyIcons(2)}|{energyPrefix:energyIcons(3)}}后，改为抽3张牌。",
+  "SUNQIAN_UNIVERSE_CARD_KNOW_WRONG_DENY_WRONG.title": "知错改错不认错",
+  "SUNQIAN_UNIVERSE_CARD_KNOW_WRONG_DENY_WRONG.description": "造成等量于你本局游戏中SL次数的伤害。{CurrentLine}",
+  "SUNQIAN_UNIVERSE_CARD_KNOW_WRONG_DENY_WRONG.currentDamage": "\n（当前为{Damage:diff()}）"
 }

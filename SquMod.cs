@@ -70,6 +70,7 @@ public static class SquMod
 		harmony.PatchAll(assembly);
 		SquStrikeRedirectPatches.Initialize(harmony);
 		CardDrawPlayRateTracker.Initialize();
+		RunReloadCount.Initialize();
 		RitsuLibFramework.SubscribeLifecycle<CombatEndedEvent>(_ => WarFeedsWarResolutionTracker.ClearCombat());
 
 		Logger.Info("sunqian-universe (SQU) mod loaded!");
