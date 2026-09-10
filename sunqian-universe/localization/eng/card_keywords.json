@@ -20,6 +20,6 @@
   "SUNQIAN_UNIVERSE_KEYWORD_EUNUCH_MESSAGE.title": "Eunuch's Message",
   "SUNQIAN_UNIVERSE_KEYWORD_EUNUCH_MESSAGE.description": "This card has [gold]Retain[/gold].\nWhen [gold]Script: Eunuch[/gold] ends, this card is [gold]Exhausted[/gold].\nWhen this card leaves your hand, remove [gold]Eunuch's Message[/gold].",
   "SUNQIAN_UNIVERSE_KEYWORD_CHARGE.title": "Charge",
-  "SUNQIAN_UNIVERSE_KEYWORD_CHARGE.description": "The effects this card has while it is in your Hand.\nWhen this card is played, remove all Charge effects.",
-  "SUNQIAN_UNIVERSE_KEYWORD_CHARGE.cardDescription": "\n[gold]{Title}<[/gold]{Effect}[gold]>[/gold]"
+  "SUNQIAN_UNIVERSE_KEYWORD_CHARGE.description": "If this card is in your Hand, its play effect changes when its conditions are met. When this card is played, [gold]Charge[/gold] effects are reset.",
+  "SUNQIAN_UNIVERSE_KEYWORD_CHARGE.cardDescription": "\n[gold]{Title}[/gold]: {Effect}"
 }

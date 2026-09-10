@@ -42,7 +42,7 @@
   "SUNQIAN_UNIVERSE_CARD_FINGER_SNAP_STRIKE.annotation": "After this card is played, its cost changes to {energyPrefix:energyIcons(2)}.",
   "SUNQIAN_UNIVERSE_CARD_THUNDER_ON_STILL_LAKE.title": "Thunder on Still Lake",
   "SUNQIAN_UNIVERSE_CARD_THUNDER_ON_STILL_LAKE.description": "Deal {Damage:diff()} damage to ALL enemies.{ChargeText}",
-  "SUNQIAN_UNIVERSE_CARD_THUNDER_ON_STILL_LAKE.chargeEffect": "At the end of your turn, reduce its cost by {energyPrefix:energyIcons(1)}; after you spend [gold]Vigor[/gold], it gains that much damage.",
+  "SUNQIAN_UNIVERSE_CARD_THUNDER_ON_STILL_LAKE.chargeEffect": "At the end of your turn, this card costs {energyPrefix:energyIcons(1)} less; after you spend [gold]Vigor[/gold], this card gains that much damage.",
   "SUNQIAN_UNIVERSE_CARD_CHICKEN_FOOT_CHEESE.title": "Chicken Foot Cheese",
   "SUNQIAN_UNIVERSE_CARD_CHICKEN_FOOT_CHEESE.description": "Deal {Damage:diff()} damage twice to each of 2 random enemies. For {ChickenFootCheeseStrikePower:diff()} {ChickenFootCheeseStrikePower:plural:turn|turns}, [gold]Strike[/gold] cards you play target 2 random enemies instead.",
   "SUNQIAN_UNIVERSE_CARD_SUPERNATURALLY_WISE.title": "Supernaturally Wise",
@@ -108,7 +108,7 @@
   "SUNQIAN_UNIVERSE_CARD_RUTHLESS_STRIKE.description": "{BodyText}",
   "SUNQIAN_UNIVERSE_CARD_RUTHLESS_STRIKE.normalBody": "Deal {Damage:diff()} damage that [gold]ignores Block[/gold].{ChargeText}",
   "SUNQIAN_UNIVERSE_CARD_RUTHLESS_STRIKE.chargedDescription": "Deal {Damage:diff()} damage [green]{Repeat}[/green] times that [gold]ignores Block[/gold].{ChargeText}",
-  "SUNQIAN_UNIVERSE_CARD_RUTHLESS_STRIKE.chargeEffect": "Whenever you play a card with [gold]Exhaust[/gold], deal damage an additional time.",
+  "SUNQIAN_UNIVERSE_CARD_RUTHLESS_STRIKE.chargeEffect": "After you play a card with [gold]Exhaust[/gold], this card deals damage 1 additional time.",
   "SUNQIAN_UNIVERSE_CARD_DIG_RAID.title": "Dig Raid",
   "SUNQIAN_UNIVERSE_CARD_DIG_RAID.description": "Deal {Damage:diff()} damage that [gold]ignores Block[/gold].\nApply {BurningPower:diff()} [gold]Burning[/gold].",
   "SUNQIAN_UNIVERSE_CARD_WATCH_FIRE_FROM_SHORE.title": "Watch Fire from Afar",
@@ -149,6 +149,9 @@
   "SUNQIAN_UNIVERSE_CARD_DISTRIBUTED_SCREENWRITER.description": "At the start of your turn, add a random {IfUpgraded:show:Upgraded |}[gold]Script[/gold] card into your [gold]Hand[/gold].",
   "SUNQIAN_UNIVERSE_CARD_KEEP_CALM.title": "Keep Calm",
   "SUNQIAN_UNIVERSE_CARD_KEEP_CALM.description": "Gain {Energy:energyIcons()}.{ChargeText}",
-  "SUNQIAN_UNIVERSE_CARD_KEEP_CALM.chargeEffect": "At the end of your turn, gain {energyPrefix:energyIcons(1)} more. After you take unblocked attack damage, Exhaust this and [gold]Vent {IfUpgraded:show:Anger+|Anger}[/gold].",
-  "SUNQIAN_UNIVERSE_CARD_KEEP_CALM.annotation": "[gold]Gain Anger{IfUpgraded:show:+|}[/gold]: Add [gold]Anger{IfUpgraded:show:+|}[/gold] into your Hand equal to the {energyPrefix:energyIcons(1)} this card accumulated. If it accumulated at least {energyPrefix:energyIcons(3)}, also add a [gold]Rage{IfUpgraded:show:+|}[/gold]."
+  "SUNQIAN_UNIVERSE_CARD_KEEP_CALM.chargeEffect": "At the end of your turn, this card gains {energyPrefix:energyIcons(1)} more. When you take unblocked attack damage, Exhaust this and [gold]Gain {IfUpgraded:show:Anger+|Anger}[/gold].",
+  "SUNQIAN_UNIVERSE_CARD_KEEP_CALM.annotation": "[gold]Gain Anger{IfUpgraded:show:+|}[/gold]: Add [gold]Anger{IfUpgraded:show:+|}[/gold] into your Hand equal to the {energyPrefix:energyIcons(1)} this card accumulated. If it accumulated at least {energyPrefix:energyIcons(3)}, also add a [gold]Rage{IfUpgraded:show:+|}[/gold].",
+  "SUNQIAN_UNIVERSE_CARD_SEND_HORSE_WITHOUT_HAY.title": "Send a Horse Without Hay",
+  "SUNQIAN_UNIVERSE_CARD_SEND_HORSE_WITHOUT_HAY.description": "Draw {Cards:diff()} {Cards:plural:card|cards}.{ChargeText}",
+  "SUNQIAN_UNIVERSE_CARD_SEND_HORSE_WITHOUT_HAY.chargeEffect": "After you spend a total of {energyPrefix:energyIcons(2)}, this card instead draws {IfUpgraded:show:3|2} cards."
 }

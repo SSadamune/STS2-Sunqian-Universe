@@ -22,6 +22,6 @@
   "SUNQIAN_UNIVERSE_KEYWORD_EUNUCH_MESSAGE.title": "小黄门的口信",
   "SUNQIAN_UNIVERSE_KEYWORD_EUNUCH_MESSAGE.description": "这张牌具有[gold]保留[/gold]。\n当「剧本：小黄门」失效时，这张牌会被[gold]消耗[/gold]。\n当这张牌离开手牌区时，移除[gold]小黄门的口信[/gold]词条。",
   "SUNQIAN_UNIVERSE_KEYWORD_CHARGE.title": "蓄能",
-  "SUNQIAN_UNIVERSE_KEYWORD_CHARGE.description": "这张牌在手牌中时具有的效果。当这张牌被打出后，所有[gold]蓄能[/gold]效果都会被重置。",
-  "SUNQIAN_UNIVERSE_KEYWORD_CHARGE.cardDescription": "\n[gold]{Title}：「[/gold]{Effect}[gold]」[/gold]"
+  "SUNQIAN_UNIVERSE_KEYWORD_CHARGE.description": "手牌中的这张牌会在满足条件时增强，该增强会在打出这张牌后被重置。",
+  "SUNQIAN_UNIVERSE_KEYWORD_CHARGE.cardDescription": "\n[gold]{Title}[/gold]：{Effect}"
 }

@@ -67,7 +67,7 @@
   "SUNQIAN_UNIVERSE_CARD_FINGER_SNAP_STRIKE.annotation": "这张牌被打出后，消耗重置为{energyPrefix:energyIcons(2)}。",
   "SUNQIAN_UNIVERSE_CARD_THUNDER_ON_STILL_LAKE.title": "平湖惊雷",
   "SUNQIAN_UNIVERSE_CARD_THUNDER_ON_STILL_LAKE.description": "对所有敌人造成{Damage:diff()}点伤害。{ChargeText}",
-  "SUNQIAN_UNIVERSE_CARD_THUNDER_ON_STILL_LAKE.chargeEffect": "回合结束时，费用降低{energyPrefix:energyIcons(1)}；你消耗[gold]活力[/gold]后，增加等量伤害。",
+  "SUNQIAN_UNIVERSE_CARD_THUNDER_ON_STILL_LAKE.chargeEffect": "回合结束时，此牌耗能降低{energyPrefix:energyIcons(1)}；消耗[gold]活力[/gold]后，此牌增加等量伤害。",
   "SUNQIAN_UNIVERSE_CARD_CHICKEN_FOOT_CHEESE.title": "鸡脚芝士",
   "SUNQIAN_UNIVERSE_CARD_CHICKEN_FOOT_CHEESE.description": "对随机两名敌人各造成{Damage:diff()}点伤害两次。{ChickenFootCheeseStrikePower:diff()}回合内，你使用[gold]打击[/gold]的目标修改为「随机两名敌人」。",
   "SUNQIAN_UNIVERSE_CARD_SUPERNATURALLY_WISE.title": "多智近妖",
@@ -124,7 +124,7 @@
   "SUNQIAN_UNIVERSE_CARD_RUTHLESS_STRIKE.description": "{BodyText}",
   "SUNQIAN_UNIVERSE_CARD_RUTHLESS_STRIKE.normalBody": "造成{Damage:diff()}点[gold]无视格挡[/gold]的伤害。{ChargeText}",
   "SUNQIAN_UNIVERSE_CARD_RUTHLESS_STRIKE.chargedDescription": "造成{Damage:diff()}点[gold]无视格挡[/gold]的伤害[green]{Repeat}[/green]次。{ChargeText}",
-  "SUNQIAN_UNIVERSE_CARD_RUTHLESS_STRIKE.chargeEffect": "每打出一张有[gold]消耗[/gold]的牌，额外造成1次伤害。",
+  "SUNQIAN_UNIVERSE_CARD_RUTHLESS_STRIKE.chargeEffect": "打出有[gold]消耗[/gold]的牌后，此牌多造成1次伤害。",
   "SUNQIAN_UNIVERSE_CARD_DIG_RAID.title": "掘地突袭",
   "SUNQIAN_UNIVERSE_CARD_DIG_RAID.description": "造成{Damage:diff()}点[gold]无视格挡[/gold]的伤害。\n给予{BurningPower:diff()}层[gold]灼烧[/gold]。",
   "SUNQIAN_UNIVERSE_CARD_WATCH_FIRE_FROM_SHORE.title": "隔岸观火",
@@ -163,6 +163,9 @@
   "SUNQIAN_UNIVERSE_CARD_DISTRIBUTED_SCREENWRITER.description": "在你的回合开始时，将一张随机{IfUpgraded:show:升级过的|}[gold]剧本[/gold]牌加入你的[gold]手牌[/gold]。",
   "SUNQIAN_UNIVERSE_CARD_KEEP_CALM.title": "保持冷静",
   "SUNQIAN_UNIVERSE_CARD_KEEP_CALM.description": "获得{Energy:energyIcons()}。{ChargeText}",
-  "SUNQIAN_UNIVERSE_CARD_KEEP_CALM.chargeEffect": "回合结束时，多获得{energyPrefix:energyIcons(1)}。受到未被格挡的攻击伤害后，消耗此牌并[gold]发泄{IfUpgraded:show:愤怒+|愤怒}[/gold]。",
-  "SUNQIAN_UNIVERSE_CARD_KEEP_CALM.annotation": "[gold]获得愤怒{IfUpgraded:show:+|}[/gold]：根据这张牌积攒的{energyPrefix:energyIcons(1)}，将等量张[gold]愤怒{IfUpgraded:show:+|}[/gold]加入手牌，若至少有{energyPrefix:energyIcons(3)}，则还会加入一张[gold]狂怒{IfUpgraded:show:+|}[/gold]。"
+  "SUNQIAN_UNIVERSE_CARD_KEEP_CALM.chargeEffect": "回合结束时，此牌多获得{energyPrefix:energyIcons(1)}。受到未被格挡的攻击伤害时，消耗此牌并[gold]获得{IfUpgraded:show:愤怒+|愤怒}[/gold]。",
+  "SUNQIAN_UNIVERSE_CARD_KEEP_CALM.annotation": "[gold]获得愤怒{IfUpgraded:show:+|}[/gold]：根据这张牌积攒的{energyPrefix:energyIcons(1)}，将等量张[gold]愤怒{IfUpgraded:show:+|}[/gold]加入手牌，若至少有{energyPrefix:energyIcons(3)}，则还会加入一张[gold]狂怒{IfUpgraded:show:+|}[/gold]。",
+  "SUNQIAN_UNIVERSE_CARD_SEND_HORSE_WITHOUT_HAY.title": "缺草送马",
+  "SUNQIAN_UNIVERSE_CARD_SEND_HORSE_WITHOUT_HAY.description": "抽{Cards:diff()}张牌。{ChargeText}",
+  "SUNQIAN_UNIVERSE_CARD_SEND_HORSE_WITHOUT_HAY.chargeEffect": "累计消耗{energyPrefix:energyIcons(2)}后，改为抽{IfUpgraded:show:3|2}张牌。"
 }
