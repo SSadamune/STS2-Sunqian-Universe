@@ -74,7 +74,7 @@ public static class SquKeywords
 	public static IHoverTip CreateWarFeedsWarHoverTip(CardModel card)
 	{
 		LocString title = ModKeywordRegistry.GetTitle(WarFeedsWarId);
-		LocString description = ModKeywordRegistry.GetDescription(WarFeedsWarId);
+		LocString description = new("card_keywords", "SUNQIAN_UNIVERSE_KEYWORD_WAR_FEEDS_WAR.cardHover");
 		description.Add("CardName", card.Title);
 		return new HoverTip(title, description, icon: null);
 	}

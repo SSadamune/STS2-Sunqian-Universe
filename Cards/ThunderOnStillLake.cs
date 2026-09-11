@@ -22,7 +22,7 @@ namespace Squ.Cards;
 
 /// <summary>
 /// 平湖惊雷：保留。对所有敌人造成伤害（未升级 1 费 4，升级后 5 费 3）。
-/// 蓄能：回合结束降费；消耗活力后增加等量伤害。打出后解除。
+/// 蓄能：被保留时降费；消耗活力后增加等量伤害。打出后解除。
 /// </summary>
 [RegisterCard(typeof(SunqianCardPool), StableEntryStem = "thunder_on_still_lake")]
 public sealed class ThunderOnStillLake : ChargeCardTemplate
@@ -60,7 +60,7 @@ public sealed class ThunderOnStillLake : ChargeCardTemplate
 	protected override string ChargeEffectLocKey => Id.Entry + ".chargeEffect";
 
 	protected override ChargeHooks Charge => new(
-		OnTurnEndInHand: ReduceCostUntilPlayed,
+		OnRetained: ReduceCostUntilPlayed,
 		OnPowerAmountChanged: GainDamageFromSpentVigor,
 		Clear: ResetDamageUntilPlayed);
 

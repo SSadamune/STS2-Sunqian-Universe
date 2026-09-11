@@ -35,7 +35,7 @@ public sealed class SendHorseWithoutHay : ChargeCardTemplate
 	protected override string ChargeEffectLocKey => Id.Entry + ".chargeEffect";
 
 	protected override ChargeHooks Charge => new(
-		OnTurnEndInHand: null,
+		OnRetained: null,
 		OnPowerAmountChanged: null,
 		Clear: ResetCharge,
 		OnCardPlayed: AccumulateSpentEnergy);

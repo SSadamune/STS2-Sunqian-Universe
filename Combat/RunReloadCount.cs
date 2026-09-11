@@ -1,48 +1,45 @@
 using System.Reflection;
 using HarmonyLib;
 using MegaCrit.Sts2.Core.Runs;
-using STS2RitsuLib;
 
 #nullable enable
 
 namespace Squ.Combat;
 
 /// <summary>
-/// 缓存本局 <c>RunManager._numReloads</c>（存档字段 num_reloads）。
-/// 在读档/开局时读一次，避免调用沉重的 <c>ToSave</c>。
+/// 读取本局 <c>RunManager._numReloads</c>（存档字段 num_reloads）。
+/// 每次取值时直接读字段，不依赖读档事件缓存。
 /// </summary>
 public static class RunReloadCount
 {
 	private static readonly FieldInfo? NumReloadsField =
 		AccessTools.Field(typeof(RunManager), "_numReloads");
 
-	private static int _cached;
-	private static bool _initialized;
+	public static int Current
+	{
+		get
+		{
+			RunManager? manager = RunManager.Instance;
+			if (manager == null || NumReloadsField == null)
+			{
+				return 0;
+			}
 
-	public static int Current => _cached;
+			return NumReloadsField.GetValue(manager) switch
+			{
+				int count => count,
+				uint count => (int)count,
+				long count => (int)count,
+				_ => 0,
+			};
+		}
+	}
 
 	public static void Initialize()
 	{
-		if (_initialized)
+		if (NumReloadsField == null)
 		{
-			return;
+			SquMod.Logger.Warn("RunManager._numReloads was not found; reload count will be 0.");
 		}
-
-		_initialized = true;
-		RitsuLibFramework.SubscribeLifecycle<RunLoadedEvent>(_ => RefreshFromRunManager());
-		RitsuLibFramework.SubscribeLifecycle<RunStartedEvent>(_ => RefreshFromRunManager());
-		RitsuLibFramework.SubscribeLifecycle<RunEndedEvent>(_ => _cached = 0);
-	}
-
-	private static void RefreshFromRunManager()
-	{
-		RunManager? manager = RunManager.Instance;
-		if (manager == null || NumReloadsField == null)
-		{
-			_cached = 0;
-			return;
-		}
-
-		_cached = NumReloadsField.GetValue(manager) is int count ? count : 0;
 	}
 }

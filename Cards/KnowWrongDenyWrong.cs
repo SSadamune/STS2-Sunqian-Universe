@@ -30,6 +30,11 @@ public sealed class KnowWrongDenyWrong : ModCardTemplate
 	public override CardMultiplayerConstraint MultiplayerConstraint =>
 		CardMultiplayerConstraint.SingleplayerOnly;
 
+	public override IEnumerable<CardKeyword> CanonicalKeywords =>
+	[
+		CardKeyword.Ethereal,
+	];
+
 	public override CardAssetProfile AssetProfile => new(
 		PortraitPath: "res://images/cards/KnowWrongDenyWrong.png");
 

@@ -39,3 +39,6 @@ public sealed class TempDexFromArmInjuryWindmillPower : TempDexPower<ArmInjuryWi
 
 [RegisterPower]
 public sealed class TempDexFromOpenDefecationPower : TempDexPower<OpenDefecation> { }
+
+[RegisterPower]
+public sealed class TempDexFromJadeMaidenSwordplayPower : TempDexPower<JadeMaidenSwordplay> { }

@@ -1,14 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using MegaCrit.Sts2.Core.Combat;
 using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
-using MegaCrit.Sts2.Core.Entities.Players;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
-using MegaCrit.Sts2.Core.Helpers;
-using MegaCrit.Sts2.Core.HoverTips;
-using MegaCrit.Sts2.Core.Localization;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.Nodes.Cards;
 using MegaCrit.Sts2.Core.ValueProps;
@@ -23,11 +18,11 @@ using STS2RitsuLib.Scaffolding.Content;
 namespace Squ.Cards;
 
 /// <summary>
-/// 保留。每回合开始时随机将本战耗能设为 0~2（参考 Slither 的
-/// <see cref="CardEnergyCost.SetThisCombat"/> + 随机耗能动画）。
+/// 保留。蓄能：被保留时将本战耗能随机为 0~2（参考 Slither 的
+/// <see cref="CardEnergyCost.SetThisCombat"/> + 随机耗能动画）。打出后解除。
 /// </summary>
 [RegisterCard(typeof(SunqianCardPool), StableEntryStem = "finger_snap_strike")]
-public sealed class FingerSnapStrike : ModCardTemplate
+public sealed class FingerSnapStrike : ChargeCardTemplate
 {
 	public const string MinCostVarName = "MinCost";
 	public const string MaxCostVarName = "MaxCost";
@@ -46,19 +41,15 @@ public sealed class FingerSnapStrike : ModCardTemplate
 	public override IEnumerable<CardKeyword> CanonicalKeywords =>
 	[
 		CardKeyword.Retain,
+		.. base.CanonicalKeywords,
 	];
 
-	private IHoverTip CreateAnnotationHoverTip()
-	{
-		LocString description = new("cards", Id.Entry + ".annotation");
-		description.Add("energyPrefix", EnergyIconHelper.GetPrefix(this));
-		return new HoverTip(SquCommonL10n.AnnotationTitle(), description);
-	}
+	protected override string ChargeEffectLocKey => Id.Entry + ".chargeEffect";
 
-	protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
-	[
-		CreateAnnotationHoverTip(),
-	];
+	protected override ChargeHooks Charge => new(
+		OnRetained: RandomizeEnergyCostUntilPlayed,
+		OnPowerAmountChanged: null,
+		Clear: ResetEnergyCost);
 
 	public override CardAssetProfile AssetProfile => new(
 		PortraitPath: "res://images/cards/FingerSnapStrike.png");
@@ -78,23 +69,6 @@ public sealed class FingerSnapStrike : ModCardTemplate
 			.Targeting(cardPlay.Target)
 			.WithHitFx("vfx/vfx_attack_slash")
 			.Execute(choiceContext);
-
-		EnergyCost.SetThisCombat(EnergyCost.Canonical);
-	}
-
-	/// <summary>回合开始抽牌前，为手牌中的本牌随机耗能。</summary>
-	public override Task BeforeHandDraw(
-		Player player,
-		PlayerChoiceContext choiceContext,
-		ICombatState combatState)
-	{
-		if (player != Owner || Pile?.Type != PileType.Hand)
-		{
-			return Task.CompletedTask;
-		}
-
-		RandomizeEnergyCostThisCombat();
-		return Task.CompletedTask;
 	}
 
 	protected override void OnUpgrade()
@@ -102,10 +76,16 @@ public sealed class FingerSnapStrike : ModCardTemplate
 		DynamicVars.Damage.UpgradeValueBy(4m);
 	}
 
-	private void RandomizeEnergyCostThisCombat()
+	private Task RandomizeEnergyCostUntilPlayed(PlayerChoiceContext choiceContext)
 	{
 		int cost = Owner.RunState.Rng.CombatEnergyCosts.NextInt(RandomCostInclusiveMax + 1);
 		EnergyCost.SetThisCombat(cost);
 		NCard.FindOnTable(this)?.PlayRandomizeCostAnim();
+		return Task.CompletedTask;
+	}
+
+	private void ResetEnergyCost()
+	{
+		EnergyCost.SetThisCombat(EnergyCost.Canonical);
 	}
 }

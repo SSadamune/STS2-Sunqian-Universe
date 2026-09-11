@@ -13,7 +13,8 @@ using Squ;
 namespace Squ.Combat;
 
 /// <summary>
-/// 「以战养战」：追踪本战打出过的带该词条的牌；精英/Boss 胜利结束时提供可选的额外同名牌奖励。
+/// 「以战养战」：按牌名（<see cref="ModelId"/>，升级与否同一张）记录本战是否打出过；
+/// 同名多张或自动打出多次只算一次。精英/Boss 胜利结束时掉落一张对应的牌。
 /// </summary>
 public static class WarFeedsWarResolutionTracker
 {
@@ -32,6 +33,7 @@ public static class WarFeedsWarResolutionTracker
 			PlayedCardIdsByPlayer[owner.NetId] = playedIds;
 		}
 
+		// ModelId 是牌类型，不是实例：两张同名牌分别打出，只会留下一条。
 		playedIds.Add(card.Id);
 	}
 

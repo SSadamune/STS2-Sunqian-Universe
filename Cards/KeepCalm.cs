@@ -24,7 +24,7 @@ using STS2RitsuLib.Scaffolding.Content;
 namespace Squ.Cards;
 
 /// <summary>
-/// 保持冷静：保留。打出获得当前积攒的能量；蓄能时回合结束增加本牌能量数值，
+/// 保持冷静：保留。打出获得当前积攒的能量；蓄能时被保留增加本牌能量数值，
 /// 受到未被格挡的攻击伤害后消耗，并按积攒能量加入愤怒与狂怒。
 /// </summary>
 [RegisterCard(typeof(SunqianCardPool), StableEntryStem = "keep_calm")]
@@ -67,7 +67,7 @@ public sealed class KeepCalm : ChargeCardTemplate
 	protected override string ChargeEffectLocKey => Id.Entry + ".chargeEffect";
 
 	protected override ChargeHooks Charge => new(
-		OnTurnEndInHand: IncreaseEnergyUntilPlayed,
+		OnRetained: IncreaseEnergyUntilPlayed,
 		OnPowerAmountChanged: null,
 		Clear: ResetEnergy);
 

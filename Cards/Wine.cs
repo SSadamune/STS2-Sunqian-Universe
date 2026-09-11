@@ -22,7 +22,6 @@ namespace Squ.Cards;
 public sealed class Wine : ModCardTemplate
 {
 	public const int BaseVigor = 3;
-	public const int UpgradedVigor = 3;
 	public const int BaseEnergy = 1;
 	public const int UpgradedEnergy = 2;
 
@@ -70,7 +69,6 @@ public sealed class Wine : ModCardTemplate
 
 	protected override void OnUpgrade()
 	{
-		DynamicVars[nameof(VigorPower)].UpgradeValueBy(UpgradedVigor - BaseVigor);
 		DynamicVars.Energy.UpgradeValueBy(UpgradedEnergy - BaseEnergy);
 	}
 }

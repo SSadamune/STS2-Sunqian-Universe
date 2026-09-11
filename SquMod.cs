@@ -1,3 +1,4 @@
+using System;
 using System.Reflection;
 using HarmonyLib;
 using MegaCrit.Sts2.Core.Combat;
@@ -66,14 +67,30 @@ public static class SquMod
 			.TouchOfOrobasRefinement<BoxLunchRelic, AbundantBoxLunchRelic>()
 			.Apply();
 
-		var harmony = new Harmony($"{ModId}.patches");
-		harmony.PatchAll(assembly);
-		SquStrikeRedirectPatches.Initialize(harmony);
 		CardDrawPlayRateTracker.Initialize();
 		RunReloadCount.Initialize();
 		RitsuLibFramework.SubscribeLifecycle<CombatEndedEvent>(_ => WarFeedsWarResolutionTracker.ClearCombat());
 
+		var harmony = new Harmony($"{ModId}.patches");
+		PatchAllResilient(harmony, assembly);
+		SquStrikeRedirectPatches.Initialize(harmony);
+
 		Logger.Info("sunqian-universe (SQU) mod loaded!");
+	}
+
+	private static void PatchAllResilient(Harmony harmony, Assembly assembly)
+	{
+		foreach (Type type in AccessTools.GetTypesFromAssembly(assembly))
+		{
+			try
+			{
+				harmony.CreateClassProcessor(type).Patch();
+			}
+			catch (Exception ex)
+			{
+				Logger.Error($"Failed to apply Harmony patches on {type.FullName}: {ex}");
+			}
+		}
 	}
 
 	private static void RegisterCommonLocalization()
