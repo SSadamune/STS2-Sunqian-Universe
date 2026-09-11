@@ -6,8 +6,11 @@ using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.Entities.Creatures;
 using MegaCrit.Sts2.Core.Entities.Players;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
+using MegaCrit.Sts2.Core.Helpers;
 using MegaCrit.Sts2.Core.Localization;
 using MegaCrit.Sts2.Core.Models;
+using MegaCrit.Sts2.Core.Models.Cards;
+using MegaCrit.Sts2.Core.ValueProps;
 using Squ;
 using STS2RitsuLib.Scaffolding.Content;
 
@@ -26,7 +29,8 @@ public abstract class ChargeCardTemplate : ModCardTemplate
 		Func<PlayerChoiceContext, Task>? OnRetained,
 		Func<PlayerChoiceContext, PowerModel, decimal, Creature?, CardModel?, Task>? OnPowerAmountChanged,
 		Action Clear,
-		Func<PlayerChoiceContext, CardPlay, Task>? OnCardPlayed = null);
+		Func<PlayerChoiceContext, CardPlay, Task>? OnCardPlayed = null,
+		Func<PlayerChoiceContext, Task>? OnAttacked = null);
 
 	protected ChargeCardTemplate(
 		int cost,
@@ -50,6 +54,7 @@ public abstract class ChargeCardTemplate : ModCardTemplate
 
 	protected override void AddExtraArgsToDescription(LocString description)
 	{
+		description.Add("energyPrefix", EnergyIconHelper.GetPrefix(this));
 		SquKeywords.AddNestedLoc(
 			description,
 			"ChargeText",
@@ -70,6 +75,29 @@ public abstract class ChargeCardTemplate : ModCardTemplate
 		}
 
 		return Charge.OnRetained(choiceContext);
+	}
+
+	/// <summary>
+	/// 对齐原版 <c>ThornsPower</c>：在受到攻击伤害结算前触发（含被格挡），每次命中一次。
+	/// </summary>
+	public override Task BeforeDamageReceived(
+		PlayerChoiceContext choiceContext,
+		Creature target,
+		decimal amount,
+		ValueProp props,
+		Creature? dealer,
+		CardModel? cardSource)
+	{
+		if (Charge.OnAttacked is null
+			|| Pile?.Type != PileType.Hand
+			|| target != Owner.Creature
+			|| dealer is null
+			|| !(props.IsPoweredAttack() || cardSource is Omnislice))
+		{
+			return Task.CompletedTask;
+		}
+
+		return Charge.OnAttacked(choiceContext);
 	}
 
 	public override Task AfterPowerAmountChanged(

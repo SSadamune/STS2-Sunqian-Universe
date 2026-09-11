@@ -21,21 +21,21 @@ using STS2RitsuLib.Scaffolding.Content;
 namespace Squ.Cards;
 
 /// <summary>
-/// 平湖惊雷：保留。对所有敌人造成伤害（未升级 1 费 4，升级后 5 费 3）。
-/// 蓄能：被保留时降费；消耗活力后增加等量伤害。打出后解除。
+/// 平湖惊雷：保留。对所有敌人造成伤害（未升级 5 费 1，升级后 4 费 7）。
+/// 蓄能：被攻击时降费；消耗活力后增加等量伤害。打出后解除。
 /// </summary>
 [RegisterCard(typeof(SunqianCardPool), StableEntryStem = "thunder_on_still_lake")]
 public sealed class ThunderOnStillLake : ChargeCardTemplate
 {
 	public const decimal CanonicalDamage = 1m;
 
-	public const decimal UpgradedDamage = 7m;
+	public const decimal UpgradedDamage = 10m;
 
-	public const int CanonicalCost = 4;
+	public const int CanonicalCost = 5;
 
-	public const int UpgradedCost = 3;
+	public const int UpgradedCost = 4;
 
-	public const int EnergyReductionPerTurn = 1;
+	public const int EnergyReductionPerAttack = 1;
 
 	private const decimal ChopYourHeadDamage = 30m;
 
@@ -60,9 +60,10 @@ public sealed class ThunderOnStillLake : ChargeCardTemplate
 	protected override string ChargeEffectLocKey => Id.Entry + ".chargeEffect";
 
 	protected override ChargeHooks Charge => new(
-		OnRetained: ReduceCostUntilPlayed,
+		OnRetained: null,
 		OnPowerAmountChanged: GainDamageFromSpentVigor,
-		Clear: ResetDamageUntilPlayed);
+		Clear: ResetDamageUntilPlayed,
+		OnAttacked: ReduceCostUntilPlayed);
 
 	public override CardAssetProfile AssetProfile => new(
 		PortraitPath: "res://images/cards/ThunderOnStillLake.png");
@@ -107,7 +108,7 @@ public sealed class ThunderOnStillLake : ChargeCardTemplate
 
 	private Task ReduceCostUntilPlayed(PlayerChoiceContext choiceContext)
 	{
-		EnergyCost.AddUntilPlayed(-EnergyReductionPerTurn);
+		EnergyCost.AddUntilPlayed(-EnergyReductionPerAttack);
 		InvokeEnergyCostChanged();
 		return Task.CompletedTask;
 	}
