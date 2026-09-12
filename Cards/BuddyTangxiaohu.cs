@@ -24,10 +24,8 @@ public sealed class BuddyTangxiaohu : ModCardTemplate
 
 	protected override IEnumerable<DynamicVar> CanonicalVars =>
 	[
-		new BlockVar(BaseBlock, ValueProp.Move),
+		new BlockVar(BaseBlock, ValueProp.Unpowered),
 	];
-
-	public override bool GainsBlock => true;
 
 	protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
 	[

@@ -28,7 +28,7 @@ namespace Squ.Cards;
 public sealed class KeepEnjoying : ModCardTemplate
 {
 	public const decimal CanonicalBlock = 8m;
-	public const decimal UpgradedBlock = 11m;
+	public const decimal UpgradedBlock = 12m;
 
 	private static readonly ValueProp BlockProps = ValueProp.Move;
 
@@ -51,7 +51,7 @@ public sealed class KeepEnjoying : ModCardTemplate
 		Owner?.Creature != null && SquVigorSnapshot.GetAmount(Owner.Creature) > 0;
 
 	public KeepEnjoying()
-		: base(1, CardType.Skill, CardRarity.Uncommon, TargetType.Self)
+		: base(1, CardType.Skill, CardRarity.Common, TargetType.Self)
 	{
 	}
 

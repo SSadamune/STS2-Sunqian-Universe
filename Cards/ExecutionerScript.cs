@@ -20,7 +20,7 @@ namespace Squ.Cards;
 [RegisterCard(typeof(SunqianCardPool), StableEntryStem = "executioner_script")]
 public sealed class ExecutionerScript : ScriptCardTemplate
 {
-	public const int BaseVigor = 6;
+	public const int BaseVigor = 5;
 	public const int UpgradedVigor = 8;
 
 	public const int VulnerableAmount = 2;

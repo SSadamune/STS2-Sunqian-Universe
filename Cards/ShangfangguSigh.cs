@@ -4,6 +4,7 @@ using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.HoverTips;
+using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.Models.CardPools;
 using Squ.Audio;
 using Squ.Powers;
@@ -17,8 +18,17 @@ namespace Squ.Cards;
 [RegisterCard(typeof(TokenCardPool), StableEntryStem = "shangfanggu_sigh")]
 public sealed class ShangfangguSigh : ModCardTemplate
 {
+	public const decimal BaseBonusPercent = 100m;
+	public const decimal UpgradedBonusPercent = 150m;
+
+	protected override IEnumerable<DynamicVar> CanonicalVars =>
+	[
+		new PowerVar<GoodFirePower>(BaseBonusPercent),
+	];
+
 	protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
 	[
+		HoverTipFactory.FromPower<GoodFirePower>(),
 		HoverTipFactory.FromPower<BurningPower>(),
 	];
 
@@ -36,8 +46,13 @@ public sealed class ShangfangguSigh : ModCardTemplate
 		await PowerCmd.Apply<GoodFirePower>(
 			choiceContext,
 			Owner.Creature,
-			1m,
+			DynamicVars[nameof(GoodFirePower)].BaseValue,
 			Owner.Creature,
 			this);
+	}
+
+	protected override void OnUpgrade()
+	{
+		DynamicVars[nameof(GoodFirePower)].UpgradeValueBy(UpgradedBonusPercent - BaseBonusPercent);
 	}
 }

@@ -26,8 +26,6 @@ namespace Squ.Cards;
 [RegisterCard(typeof(SunqianCardPool), StableEntryStem = "human_transmutation")]
 public sealed class HumanTransmutation : ModCardTemplate
 {
-	private const int DrawCount = 1;
-
 	private const int MaxExhaustCount = 3;
 
 	private const int SlitherMinCost = 3;
@@ -62,11 +60,6 @@ public sealed class HumanTransmutation : ModCardTemplate
 		new(typeof(Sharp), 8),
 	];
 
-	protected override IEnumerable<DynamicVar> CanonicalVars =>
-	[
-		new CardsVar(DrawCount),
-	];
-
 	protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
 	[
 		HoverTipFactory.FromKeyword(CardKeyword.Exhaust),
@@ -86,7 +79,6 @@ public sealed class HumanTransmutation : ModCardTemplate
 	protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
 	{
 		SquSfx.Play(SquSfx.HumanTransmutationEvent);
-		await CardPileCmd.Draw(choiceContext, DrawCount, Owner);
 
 		CardSelectorPrefs exhaustPrefs = new(
 			CardSelectorPrefs.ExhaustSelectionPrompt,

@@ -21,8 +21,8 @@ namespace Squ.Cards;
 [RegisterCard(typeof(SunqianCardPool), StableEntryStem = "xiliang_savage_script")]
 public sealed class XiliangSavageScript : ScriptCardTemplate
 {
-	public const int BaseBlock = 10;
-	public const int UpgradedBlock = 15;
+	public const int BaseBlock = 11;
+	public const int UpgradedBlock = 16;
 	public const int BaseVigor = 4;
 	public const int UpgradedVigor = 6;
 
@@ -49,7 +49,7 @@ public sealed class XiliangSavageScript : ScriptCardTemplate
 		PortraitPath: "res://images/cards/XiliangSavageScript.png");
 
 	public XiliangSavageScript()
-		: base(2, CardType.Skill, CardRarity.Common, TargetType.Self, true)
+		: base(2, CardType.Skill, CardRarity.Uncommon, TargetType.Self, true)
 	{
 	}
 

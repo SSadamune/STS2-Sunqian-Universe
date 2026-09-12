@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
-using Godot;
 using MegaCrit.Sts2.Core.Combat;
 using MegaCrit.Sts2.Core.Entities.Creatures;
 using MegaCrit.Sts2.Core.Entities.Players;
@@ -8,6 +7,7 @@ using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.Models;
+using MegaCrit.Sts2.Core.Models.Cards;
 using Squ.Cards;
 using Squ.Script;
 using STS2RitsuLib.Interop.AutoRegistration;
@@ -22,6 +22,11 @@ public sealed class ScriptBurningLinkedCampsPower : ScriptPowerTemplate
 {
 	public const string GeneratedCardVarName = "GeneratedCard";
 
+	private sealed class Data
+	{
+		public bool GrantUpgradedShangfangguSigh;
+	}
+
 	public override PowerAssetProfile AssetProfile => new(
 		IconPath: "res://images/powers/ScriptBurningLinkedCampsPower.png",
 		BigIconPath: "res://images/powers/ScriptBurningLinkedCampsPowerBig.png");
@@ -35,13 +40,19 @@ public sealed class ScriptBurningLinkedCampsPower : ScriptPowerTemplate
 
 	protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
 	[
-		HoverTipFactory.FromCard<ShangfangguSigh>(upgrade: false),
+		HoverTipFactory.FromCard<Burn>(),
+		HoverTipFactory.FromCard<ShangfangguSigh>(GetInternalData<Data>().GrantUpgradedShangfangguSigh),
 	];
+
+	protected override object InitInternalData() => new Data();
 
 	public override Task AfterApplied(Creature? applier, CardModel? cardSource)
 	{
+		bool upgraded = cardSource is BurningLinkedCampsScript { IsUpgraded: true };
+		Data data = GetInternalData<Data>();
+		data.GrantUpgradedShangfangguSigh = upgraded;
 		((StringVar)DynamicVars[GeneratedCardVarName]).StringValue =
-			$"[gold]{GeneratedCombatCards.GetDisplayTitle<ShangfangguSigh>(upgraded: false)}[/gold]";
+			$"[gold]{GeneratedCombatCards.GetDisplayTitle<ShangfangguSigh>(upgraded)}[/gold]";
 		return Task.CompletedTask;
 	}
 
@@ -51,11 +62,17 @@ public sealed class ScriptBurningLinkedCampsPower : ScriptPowerTemplate
 		ICombatState? combatState = oldOwner.CombatState;
 		if (player is not null && combatState is not null)
 		{
+			await GeneratedCombatCards.AddToHandInCombat<Burn>(
+				combatState,
+				player,
+				upgraded: false,
+				player);
+
 			await GeneratedCombatCards.AddToDrawPileInCombat<ShangfangguSigh>(
 				combatState,
 				player,
 				1,
-				upgraded: false,
+				upgraded: GetInternalData<Data>().GrantUpgradedShangfangguSigh,
 				player);
 		}
 
