@@ -18,10 +18,10 @@ using STS2RitsuLib.Scaffolding.Content;
 namespace Squ.Cards;
 
 /// <summary>
-/// 玉女剑法：造成伤害，并在本回合获得敏捷。
+/// 马戏：造成伤害，并在本回合获得敏捷。
 /// </summary>
-[RegisterCard(typeof(SunqianCardPool), StableEntryStem = "jade_maiden_swordplay")]
-public sealed class JadeMaidenSwordplay : ModCardTemplate
+[RegisterCard(typeof(SunqianCardPool), StableEntryStem = "circus")]
+public sealed class Circus : ModCardTemplate
 {
 	public const decimal CanonicalDamage = 9m;
 	public const decimal UpgradedDamage = 12m;
@@ -40,9 +40,9 @@ public sealed class JadeMaidenSwordplay : ModCardTemplate
 	];
 
 	public override CardAssetProfile AssetProfile => new(
-		PortraitPath: "res://images/cards/JadeMaidenSwordplay.png");
+		PortraitPath: "res://images/cards/Circus.png");
 
-	public JadeMaidenSwordplay()
+	public Circus()
 		: base(1, CardType.Attack, CardRarity.Common, TargetType.AnyEnemy)
 	{
 	}
@@ -57,7 +57,7 @@ public sealed class JadeMaidenSwordplay : ModCardTemplate
 			.WithHitFx("vfx/vfx_attack_slash")
 			.Execute(choiceContext);
 
-		await PowerCmd.Apply<TempDexFromJadeMaidenSwordplayPower>(
+		await PowerCmd.Apply<TempDexFromCircusPower>(
 			choiceContext,
 			Owner.Creature,
 			DynamicVars[nameof(DexterityPower)].BaseValue,
