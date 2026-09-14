@@ -19,8 +19,8 @@ namespace Squ.Cards;
 [RegisterCard(typeof(SunqianCardPool), StableEntryStem = "self_decapitation_ascension")]
 public sealed class SelfDecapitationAscension : ModCardTemplate
 {
-	private const decimal BaseHpLoss = 12m;
-	private const decimal UpgradedHpLoss = 8m;
+	private const decimal BaseHpLoss = 11m;
+	private const decimal UpgradedHpLoss = 7m;
 	private const int DrawCount = 1;
 	private const decimal IntangibleAmount = 1m;
 

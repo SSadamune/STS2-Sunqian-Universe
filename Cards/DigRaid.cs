@@ -29,7 +29,7 @@ namespace Squ.Cards;
 [RegisterCard(typeof(SunqianCardPool), StableEntryStem = "dig_raid")]
 public sealed class DigRaid : ModCardTemplate
 {
-	public const decimal CanonicalDamage = 7m;
+	public const decimal CanonicalDamage = 8m;
 	public const decimal UpgradedDamage = 11m;
 	public const decimal CanonicalBurning = 5m;
 	public const decimal UpgradedBurning = 7m;

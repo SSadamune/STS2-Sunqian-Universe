@@ -1,6 +1,7 @@
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.Entities.Creatures;
 using MegaCrit.Sts2.Core.Entities.Players;
+using Squ.Powers;
 using STS2RitsuLib.Combat.CardTargeting;
 
 #nullable enable
@@ -8,11 +9,14 @@ using STS2RitsuLib.Combat.CardTargeting;
 namespace Squ.Combat;
 
 /// <summary>
-/// Mod-scoped <see cref="TargetType"/> values for random multi-enemy targeting.
+/// Mod-scoped <see cref="TargetType"/> values for random multi-enemy targeting
+/// and condition-gated single targets such as burning enemies.
 /// </summary>
 public static class SquTargetTypes
 {
 	public static TargetType RandomEnemies { get; private set; }
+
+	public static TargetType AnyBurningEnemy { get; private set; }
 
 	public static void Register()
 	{
@@ -21,6 +25,14 @@ public static class SquTargetTypes
 			"random_enemies",
 			static (Creature creature, Player player) =>
 				creature.IsAlive && creature.Side != player.Creature.Side);
+
+		AnyBurningEnemy = CustomTargetType.RegisterSingleTargetType(
+			SquMod.ModId,
+			"any_burning_enemy",
+			static (Creature creature, Player player) =>
+				creature.IsAlive
+				&& creature.Side != player.Creature.Side
+				&& creature.HasPower<BurningPower>());
 	}
 
 	public static bool IsRandomEnemiesTarget(TargetType type) => type == RandomEnemies;

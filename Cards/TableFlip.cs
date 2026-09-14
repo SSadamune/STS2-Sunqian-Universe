@@ -78,7 +78,6 @@ public sealed class TableFlip : ModCardTemplate
 
 	protected override void OnUpgrade()
 	{
-		MockSetEnergyCost(new CardEnergyCost(this, 2, costsX: false));
-		InvokeEnergyCostChanged();
+		EnergyCost.UpgradeBy(-1);
 	}
 }

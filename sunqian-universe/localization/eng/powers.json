@@ -30,7 +30,7 @@
   "SUNQIAN_UNIVERSE_POWER_BURNING_POWER.description": "Burning creatures take damage at the start of their turn, then have a small chance ([blue]25[/blue]%) to be extinguished.\nThe extinguish chance of [gold]Burning[/gold] increases slightly each turn, and resets when [gold]Burning[/gold] stacks increase.",
   "SUNQIAN_UNIVERSE_POWER_BURNING_POWER.smartDescription": "At the start of their turn, take damage, then have a chance to be extinguished.\nCurrent extinguish chance: [blue]{ClearChance}[/blue]%.\nThis chance increases by 25% each turn, and resets to 25% when [gold]Burning[/gold] stacks increase.",
   "SUNQIAN_UNIVERSE_POWER_UNEXTINGUISHED_POWER.title": "Unextinguished",
-  "SUNQIAN_UNIVERSE_POWER_UNEXTINGUISHED_POWER.description": "For [blue]{Amount}[/blue] {Amount:plural:turn|turns}, [gold]Burning[/gold] will not be extinguished.",
+  "SUNQIAN_UNIVERSE_POWER_UNEXTINGUISHED_POWER.description": "For several turns, this creature's [gold]Burning[/gold] will not be extinguished.",
   "SUNQIAN_UNIVERSE_POWER_UNEXTINGUISHED_POWER.smartDescription": "For [blue]{Amount}[/blue] {Amount:plural:turn|turns}, [gold]Burning[/gold] will not be extinguished.",
   "SUNQIAN_UNIVERSE_POWER_TINDER_POWER.title": "Tinder",
   "SUNQIAN_UNIVERSE_POWER_TINDER_POWER.description": "Increase the [gold]Burning[/gold] applied by your next card that applies [gold]Burning[/gold].",
@@ -88,5 +88,8 @@
   "SUNQIAN_UNIVERSE_POWER_DISTRIBUTED_SCREENWRITER_POWER.title": "Distributed Screenwriter",
   "SUNQIAN_UNIVERSE_POWER_DISTRIBUTED_SCREENWRITER_POWER.description": "At the start of your turn, add a random [gold]Script[/gold] card into your [gold]Hand[/gold].",
   "SUNQIAN_UNIVERSE_POWER_DISTRIBUTED_SCREENWRITER_POWER.smartDescription": "At the start of your turn, add {Amount:plural:a random [gold]Script[/gold] card|[blue]{}[/blue] random [gold]Script[/gold] cards} into your [gold]Hand[/gold].",
-  "SUNQIAN_UNIVERSE_POWER_DISTRIBUTED_SCREENWRITER_POWER.smartDescriptionUpgraded": "At the start of your turn, add {Amount:plural:a random Upgraded [gold]Script[/gold] card|[blue]{}[/blue] random Upgraded [gold]Script[/gold] cards} into your [gold]Hand[/gold]."
+  "SUNQIAN_UNIVERSE_POWER_DISTRIBUTED_SCREENWRITER_POWER.smartDescriptionUpgraded": "At the start of your turn, add {Amount:plural:a random Upgraded [gold]Script[/gold] card|[blue]{}[/blue] random Upgraded [gold]Script[/gold] cards} into your [gold]Hand[/gold].",
+  "SUNQIAN_UNIVERSE_POWER_BUDDY_LONGTAODI_POWER.title": "Buddy Longtaodi",
+  "SUNQIAN_UNIVERSE_POWER_BUDDY_LONGTAODI_POWER.description": "After you play the 3rd card each turn, draw [blue]{Amount}[/blue] {Amount:plural:card|cards}.",
+  "SUNQIAN_UNIVERSE_POWER_BUDDY_LONGTAODI_POWER.smartDescription": "After you play the 3rd card each turn, draw [blue]{Amount}[/blue] {Amount:plural:card|cards}."
 }

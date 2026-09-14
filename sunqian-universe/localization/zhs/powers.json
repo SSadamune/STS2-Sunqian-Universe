@@ -44,10 +44,10 @@
   "SUNQIAN_UNIVERSE_POWER_BURNING_POWER.description": "灼烧的生物会在自身回合开始时受到伤害，然后有小概率([blue]25[/blue]%)熄灭。\n[gold]灼烧[/gold]的熄灭概率每回合将会小幅度提升，且会在[gold]灼烧[/gold]层数增加时重置。",
   "SUNQIAN_UNIVERSE_POWER_BURNING_POWER.smartDescription": "在自身回合开始时受到伤害，然后有一定概率熄灭。\n当前熄灭概率为[blue]{ClearChance}[/blue]%。\n此概率每回合+25%，且会在[gold]灼烧[/gold]层数增加时重置为25%。",
   "SUNQIAN_UNIVERSE_POWER_UNEXTINGUISHED_POWER.title": "不熄",
-  "SUNQIAN_UNIVERSE_POWER_UNEXTINGUISHED_POWER.description": "在[blue]{Amount}[/blue]个回合内，[gold]灼烧[/gold]不会熄灭。",
+  "SUNQIAN_UNIVERSE_POWER_UNEXTINGUISHED_POWER.description": "在若干回合内，该生物的[gold]灼烧[/gold]不会熄灭。",
   "SUNQIAN_UNIVERSE_POWER_UNEXTINGUISHED_POWER.smartDescription": "在[blue]{Amount}[/blue]个回合内，[gold]灼烧[/gold]不会熄灭。",
   "SUNQIAN_UNIVERSE_POWER_CHICKEN_FOOT_CHEESE_STRIKE_POWER.title": "鸡脚芝士",
-  "SUNQIAN_UNIVERSE_POWER_CHICKEN_FOOT_CHEESE_STRIKE_POWER.smartDescription": "[blue]{Amount}[/blue]回合内，你使用[gold]打击[/gold]的目标修改为「随机两名敌人」。",
+  "SUNQIAN_UNIVERSE_POWER_CHICKEN_FOOT_CHEESE_STRIKE_POWER.smartDescription": "[blue]{Amount}[/blue]回合内，你的[gold]打击[/gold]的目标改为「随机两名敌人」。",
   "SUNQIAN_UNIVERSE_POWER_SCRIPT_EXECUTION_COMMANDER_POWER.title": "可叠层剧本：行刑指挥官",
   "SUNQIAN_UNIVERSE_POWER_SCRIPT_EXECUTION_COMMANDER_POWER.smartDescription": "若仅有一名敌人，你的[gold]群体目标[/gold]攻击牌伤害增加[blue]{Amount}[/blue]%。",
   "SUNQIAN_UNIVERSE_POWER_SCRIPT_EXECUTIONER_POWER.title": "剧本：刽子手",
@@ -68,7 +68,7 @@
   "SUNQIAN_UNIVERSE_POWER_BUDDY_HU_POWER.description": "你每次获得[gold]活力[/gold]时少获得[blue]{Amount}[/blue]点，改为获得[blue]{Amount}[/blue]点[gold]力量[/gold]。",
   "SUNQIAN_UNIVERSE_POWER_BUDDY_HU_POWER.smartDescription": "你每次获得[gold]活力[/gold]时少获得[blue]{Amount}[/blue]点，改为获得[blue]{Amount}[/blue]点[gold]力量[/gold]。",
   "SUNQIAN_UNIVERSE_POWER_GUAN_DI_FORM_POWER.title": "关帝形态",
-  "SUNQIAN_UNIVERSE_POWER_GUAN_DI_FORM_POWER.description": "当你打出一张牌后，这张牌每消耗{energyPrefix:energyIcons(1)}，就获得[blue]{Amount}[/blue]点[gold]格挡[/gold]和[blue]{Amount}[/blue]点[gold]活力[/gold]。",
+  "SUNQIAN_UNIVERSE_POWER_GUAN_DI_FORM_POWER.description": "当你打出一张牌后，这张牌每花费{energyPrefix:energyIcons(1)}，就获得[blue]{Amount}[/blue]点[gold]格挡[/gold]和[blue]{Amount}[/blue]点[gold]活力[/gold]。",
   "SUNQIAN_UNIVERSE_POWER_GUAN_DI_FORM_POWER.smartDescription": "当你打出一张牌后，这张牌每消耗{energyPrefix:energyIcons(1)}，就获得[blue]{Amount}[/blue]点[gold]格挡[/gold]和[blue]{Amount}[/blue]点[gold]活力[/gold]。",
   "SUNQIAN_UNIVERSE_POWER_ALL_IN_POWER.title": "倾巢而出",
   "SUNQIAN_UNIVERSE_POWER_ALL_IN_POWER.description": "当你打出最后一张[gold]手牌[/gold]时，若其为[gold]攻击[/gold]牌或[gold]技能[/gold]牌，其造成的伤害和[gold]格挡[/gold]增加[blue]{Amount}[/blue]%。",
@@ -88,5 +88,8 @@
   "SUNQIAN_UNIVERSE_POWER_DISTRIBUTED_SCREENWRITER_POWER.title": "分布式编剧",
   "SUNQIAN_UNIVERSE_POWER_DISTRIBUTED_SCREENWRITER_POWER.description": "在你的回合开始时，将一张随机[gold]剧本[/gold]牌添加到你的[gold]手牌[/gold]。",
   "SUNQIAN_UNIVERSE_POWER_DISTRIBUTED_SCREENWRITER_POWER.smartDescription": "在你的回合开始时，将[blue]{Amount}[/blue]张随机[gold]剧本[/gold]牌添加到你的[gold]手牌[/gold]。",
-  "SUNQIAN_UNIVERSE_POWER_DISTRIBUTED_SCREENWRITER_POWER.smartDescriptionUpgraded": "在你的回合开始时，将[blue]{Amount}[/blue]张随机升级过的[gold]剧本[/gold]牌添加到你的[gold]手牌[/gold]。"
+  "SUNQIAN_UNIVERSE_POWER_DISTRIBUTED_SCREENWRITER_POWER.smartDescriptionUpgraded": "在你的回合开始时，将[blue]{Amount}[/blue]张随机升级过的[gold]剧本[/gold]牌添加到你的[gold]手牌[/gold]。",
+  "SUNQIAN_UNIVERSE_POWER_BUDDY_LONGTAODI_POWER.title": "好哥们龙套帝",
+  "SUNQIAN_UNIVERSE_POWER_BUDDY_LONGTAODI_POWER.description": "当你每回合第3次打出牌后，抽[blue]{Amount}[/blue]张牌。",
+  "SUNQIAN_UNIVERSE_POWER_BUDDY_LONGTAODI_POWER.smartDescription": "当你每回合第3次打出牌后，抽[blue]{Amount}[/blue]张牌。"
 }

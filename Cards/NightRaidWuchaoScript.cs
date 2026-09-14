@@ -26,8 +26,8 @@ namespace Squ.Cards;
 public sealed class NightRaidWuchaoScript : ScriptCardTemplate
 {
 	public const int GeneratedStrikeCount = 2;
-	public const int BaseBurning = 2;
-	public const int UpgradedBurning = 3;
+	public const int BaseBurning = 3;
+	public const int UpgradedBurning = 4;
 
 	protected override IEnumerable<DynamicVar> CanonicalVars =>
 	[

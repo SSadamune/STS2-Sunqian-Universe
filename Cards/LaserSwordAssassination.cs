@@ -26,8 +26,8 @@ namespace Squ.Cards;
 [RegisterCard(typeof(SunqianCardPool), StableEntryStem = "laser_sword_assassination")]
 public sealed class LaserSwordAssassination : ModCardTemplate
 {
-	public const decimal CanonicalDamage = 8m;
-	public const decimal UpgradedDamage = 11m;
+	public const decimal CanonicalDamage = 3m;
+	public const decimal UpgradedDamage = 6m;
 
 	internal static readonly ValueProp DamageProps = ValueProp.Move | ValueProp.Unblockable;
 
@@ -67,7 +67,7 @@ public sealed class LaserSwordAssassination : ModCardTemplate
 	}
 
 	public LaserSwordAssassination()
-		: base(1, CardType.Attack, CardRarity.Common, TargetType.AnyEnemy)
+		: base(0, CardType.Attack, CardRarity.Common, TargetType.AnyEnemy)
 	{
 	}
 

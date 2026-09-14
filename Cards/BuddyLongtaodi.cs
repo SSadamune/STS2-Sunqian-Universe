@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
-using Squ.Audio;
+using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using Squ.Character;
 using Squ.Powers;
 using STS2RitsuLib.Interop.AutoRegistration;
@@ -13,32 +13,37 @@ using STS2RitsuLib.Scaffolding.Content;
 
 namespace Squ.Cards;
 
-[RegisterCard(typeof(SunqianCardPool), StableEntryStem = "benevolence_righteousness_dual_swords")]
-public sealed class BenevolenceRighteousnessDualSwords : ModCardTemplate
+[RegisterCard(typeof(SunqianCardPool), StableEntryStem = "buddy_longtaodi")]
+public sealed class BuddyLongtaodi : ModCardTemplate
 {
-	public const decimal ExtraPlaysPerCard = 1m;
+	public const int BaseDraw = 1;
+	public const int UpgradedDraw = 2;
+
+	protected override IEnumerable<DynamicVar> CanonicalVars =>
+	[
+		new CardsVar(BaseDraw),
+	];
 
 	public override CardAssetProfile AssetProfile => new(
-		PortraitPath: "res://images/cards/BenevolenceRighteousnessDualSwords.png");
+		PortraitPath: "res://images/cards/BuddyLongtaodi.png");
 
-	public BenevolenceRighteousnessDualSwords()
-		: base(2, CardType.Power, CardRarity.Rare, TargetType.Self)
+	public BuddyLongtaodi()
+		: base(1, CardType.Power, CardRarity.Uncommon, TargetType.Self)
 	{
 	}
 
 	protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
 	{
-		SquSfx.Play(SquSfx.DualSwordsEvent);
-		await PowerCmd.Apply<BenevolenceRighteousnessDualSwordsPower>(
+		await PowerCmd.Apply<BuddyLongtaodiPower>(
 			choiceContext,
 			Owner.Creature,
-			ExtraPlaysPerCard,
+			DynamicVars.Cards.BaseValue,
 			Owner.Creature,
 			this);
 	}
 
 	protected override void OnUpgrade()
 	{
-		EnergyCost.UpgradeBy(-1);
+		DynamicVars.Cards.UpgradeValueBy(UpgradedDraw - BaseDraw);
 	}
 }

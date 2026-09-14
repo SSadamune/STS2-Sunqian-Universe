@@ -27,9 +27,9 @@ namespace Squ.Cards;
 [RegisterCard(typeof(SunqianCardPool), StableEntryStem = "water_fire_invincible")]
 public sealed class WaterFireInvincible : ModCardTemplate
 {
-	public const decimal BaseDamage = 8m;
+	public const decimal BaseDamage = 7m;
 
-	public const decimal UpgradedDamage = 12m;
+	public const decimal UpgradedDamage = 11m;
 
 	public override bool GainsBlock => true;
 

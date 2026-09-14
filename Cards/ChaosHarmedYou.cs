@@ -25,8 +25,8 @@ namespace Squ.Cards;
 [RegisterCard(typeof(SunqianCardPool), StableEntryStem = "chaos_harmed_you")]
 public sealed class ChaosHarmedYou : ModCardTemplate
 {
-	public const decimal BaseDamage = 22m;
-	public const decimal UpgradedDamage = 33m;
+	public const decimal BaseDamage = 21m;
+	public const decimal UpgradedDamage = 28m;
 	private const int BaseDrawOnKill = 2;
 	private const int UpgradedDrawOnKill = 3;
 
@@ -69,7 +69,7 @@ public sealed class ChaosHarmedYou : ModCardTemplate
 	}
 
 	public ChaosHarmedYou()
-		: base(2, CardType.Attack, CardRarity.Uncommon, TargetType.AnyEnemy)
+		: base(2, CardType.Attack, CardRarity.Common, TargetType.AnyEnemy)
 	{
 	}
 
