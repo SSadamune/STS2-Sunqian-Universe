@@ -25,8 +25,7 @@ namespace Squ.Cards;
 
 /// <summary>
 /// 大义灭亲：消耗抽牌堆中打出率最高的 2 张牌
-/// （PlayCount / (PlayWithoutDiscardOrExhaustCount + ExhaustEntryCount + DiscardEntryCount)；
-/// 率相同则优先打出次数更多者，再按获得顺序）；每消耗一张先造成伤害再获得力量。
+/// （从手牌打出次数 / 进入手牌次数；率相同则优先打出次数更多者，再按获得顺序）；每消耗一张先造成伤害再获得力量。
 /// </summary>
 [RegisterCard(typeof(SunqianCardPool), StableEntryStem = "loyalty_over_kin")]
 public sealed class LoyaltyOverKin : ModCardTemplate

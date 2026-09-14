@@ -21,8 +21,7 @@ using STS2RitsuLib.Scaffolding.Content;
 namespace Squ.Cards;
 
 /// <summary>
-/// 闻丧贺喜：获得活力并抽牌；牌组中打出率最高的「其它」牌被消耗时回手，
-/// 且耗能降至 0 直至下次打出（同 <see cref="MegaCrit.Sts2.Core.Models.Cards.RocketPunch"/>）。
+/// 闻丧贺喜：获得活力；牌组中打出率最高的「其它」牌被消耗时回手。
 /// </summary>
 [RegisterCard(typeof(SunqianCardPool), StableEntryStem = "celebrate_mourning")]
 public sealed class CelebrateMourning : ModCardTemplate
@@ -31,8 +30,6 @@ public sealed class CelebrateMourning : ModCardTemplate
 
 	public const int UpgradedVigor = 6;
 
-	public const int DrawAmount = 1;
-
 	public const int PlayRateWindow = CardDrawPlayRateTracker.MaxStoredCombats;
 
 	private const bool IncludeCurrentCombat = true;
@@ -40,7 +37,6 @@ public sealed class CelebrateMourning : ModCardTemplate
 	protected override IEnumerable<DynamicVar> CanonicalVars =>
 	[
 		new PowerVar<VigorPower>(BaseVigor),
-		new CardsVar(DrawAmount),
 	];
 
 	protected override IEnumerable<IHoverTip> AdditionalHoverTips
@@ -67,7 +63,7 @@ public sealed class CelebrateMourning : ModCardTemplate
 		PortraitPath: "res://images/cards/CelebrateMourning.png");
 
 	public CelebrateMourning()
-		: base(1, CardType.Skill, CardRarity.Uncommon, TargetType.Self)
+		: base(0, CardType.Skill, CardRarity.Uncommon, TargetType.Self)
 	{
 	}
 
@@ -80,8 +76,6 @@ public sealed class CelebrateMourning : ModCardTemplate
 			DynamicVars[nameof(VigorPower)].BaseValue,
 			Owner.Creature,
 			this);
-
-		await CardPileCmd.Draw(choiceContext, DynamicVars.Cards.BaseValue, Owner);
 	}
 
 	protected override void OnUpgrade()
@@ -120,8 +114,6 @@ public sealed class CelebrateMourning : ModCardTemplate
 			includeCurrentCombat: IncludeCurrentCombat,
 			selectedCards: highest.ToList(),
 			reason: $"Celebrate Mourning return-to-hand (exhausted: {card.Title})");
-
-		EnergyCost.SetUntilPlayed(0);
 
 		SquSfx.Play(SquSfx.CelebrateMourningGrieveForLordEvent);
 		if (Pile?.Type != PileType.Hand)

@@ -22,7 +22,7 @@ public sealed class OneManOneCity : ScriptCardTemplate
 {
 	public const decimal PlatingStacks = 6m;
 
-	public const decimal UpgradedPlatingStacks = 9m;
+	public const decimal UpgradedPlatingStacks = 8m;
 
 	protected override IEnumerable<DynamicVar> CanonicalVars =>
 	[
