@@ -29,6 +29,9 @@
 {54c28a9e-23c8-467a-9134-c7c2e62bdb68} event:/sunqian_universe/sfx/仁义-仁义才能征服天下人心
 {91ef17ac-32b2-45f0-8639-2bb6d11f3f09} event:/sunqian_universe/sfx/仁之剑
 {6d9d9448-74e3-4bcf-898f-b932986f4bd1} event:/sunqian_universe/sfx/你是何人
+{d0a9b922-06a6-4e84-a7b7-0e9279836f77} event:/sunqian_universe/sfx/保持冷静-不要愤怒愤怒会降低智慧
+{289ff2dd-7a8a-41a5-abf0-6fa1dc8078e9} event:/sunqian_universe/sfx/保持冷静-仇恨会使你丧失判断力
+{51f2912e-5c1c-48eb-a93e-b7b8e8232f4f} event:/sunqian_universe/sfx/保持冷静-吕布一介匹夫
 {3cf5479e-59e7-4157-a775-cdc0fee8d893} event:/sunqian_universe/sfx/再来撒野
 {4033daf5-e1a1-41f2-b4d0-ab3a8ab8a259} event:/sunqian_universe/sfx/化骨绵掌
 {ee369cdd-67fc-4edb-9ced-6cb15c071654} event:/sunqian_universe/sfx/叉出去-走
@@ -49,6 +52,11 @@
 {0b3dc75a-46bb-4e30-ac7d-fbd666e94348} event:/sunqian_universe/sfx/怒掀帅案
 {f102970a-3482-4d08-95d3-8decb30a4c8d} event:/sunqian_universe/sfx/我们吃什么
 {7068564a-fdb6-4b42-89d6-31da409c64e5} event:/sunqian_universe/sfx/换大盏
+{8cf1ccb8-75f6-4790-936a-4665fed4dc50} event:/sunqian_universe/sfx/掘地突袭
+{3233f9b6-47fc-4186-9753-fd60b7694eba} event:/sunqian_universe/sfx/无双乱舞-我原本以为吕布
+{422bc859-6769-4d75-a031-d476b5b2363c} event:/sunqian_universe/sfx/无双乱舞-我爱死他了
+{b83f1637-5192-4f24-a452-f5457118bb16} event:/sunqian_universe/sfx/无情打击-剑声
+{2ad9175d-3e66-4d48-a995-dc5c0f0b6575} event:/sunqian_universe/sfx/无情打击-可别逼我使出无情剑来
 {f192248d-cad0-4781-adcc-8a20d2dc8b06} event:/sunqian_universe/sfx/是啊吃什么
 {277d450e-51b3-416a-a78f-4b1b4c02aa8e} event:/sunqian_universe/sfx/朕不知兵
 {ca742ee5-99e2-40d3-a8c5-c5a3de703620} event:/sunqian_universe/sfx/水火无敌
@@ -59,6 +67,8 @@
 {19a69e50-cedd-43c9-9634-513e9df4cb4d} event:/sunqian_universe/sfx/白银起义
 {1ba1aa01-3f0b-4671-8afb-8ba1c04969de} event:/sunqian_universe/sfx/竟然不许
 {639dc942-2347-4014-a068-b9f6142dc7d6} event:/sunqian_universe/sfx/箭幕
+{952a0fab-ffcf-499f-a37e-69bfcb8af795} event:/sunqian_universe/sfx/继续享受-我打了一辈子仗就不能享受享受吗
+{794d1912-0b0b-4bce-b9ab-c2ae450974a5} event:/sunqian_universe/sfx/继续享受-接着奏乐接着舞
 {ae68d8ad-b2fa-4b1f-bdb0-86c39de22e75} event:/sunqian_universe/sfx/自刎归天
 {7ca7864b-ae89-48cc-8cc2-780ea0855b22} event:/sunqian_universe/sfx/行刑官-弓箭手准备
 {73024157-f158-417b-81e5-7ba747ca505b} event:/sunqian_universe/sfx/行刑官-放箭
@@ -81,6 +91,10 @@
 {71174d78-bec4-4b5b-a421-7d2a678ee3f2} event:/sunqian_universe/sfx/闪电战-陆康未设防
 {f5d58d94-59c5-4db0-a007-6e696c8ff963} event:/sunqian_universe/sfx/闻丧贺喜-为主公悲伤
 {c7576ef4-f64d-4599-a514-468b39f9cb18} event:/sunqian_universe/sfx/闻丧贺喜-给主公道喜
+{24848df3-0918-447d-a29e-b14ce6caf190} event:/sunqian_universe/sfx/阅后即焚-全部读完则全部烧尽
+{df95e9f2-a486-4391-80ce-b6796bcd5a8a} event:/sunqian_universe/sfx/阅后即焚-因此书房无书
+{e6a54ee6-35be-4ebe-ba94-7673d5017043} event:/sunqian_universe/sfx/阅后即焚-读完一卷烧一卷
+{2646161c-1fa8-4645-9847-67fde6e7663c} event:/sunqian_universe/sfx/阅后即焚-读完一卷烧一卷，全部读完则全部烧尽
 {b4b0759b-3afb-4abb-83b8-e105f3781afd} event:/sunqian_universe/sfx/阻拦救火-不可惊扰
 {0435b182-d104-44a2-bcbd-2c30188c6da7} event:/sunqian_universe/sfx/阻拦救火-先生奇人
 {a36fa3e2-f327-4b84-9398-1ca8d6be1cd9} event:/sunqian_universe/sfx/陆逊塞伯坦

@@ -24,6 +24,8 @@ namespace Squ.Cards;
 [RegisterCard(typeof(SunqianCardPool), StableEntryStem = "finger_snap_strike")]
 public sealed class FingerSnapStrike : ChargeCardTemplate
 {
+	public const int BaseDamage = 11;
+	public const int UpgradedDamage = 15;
 	public const string MinCostVarName = "MinCost";
 	public const string MaxCostVarName = "MaxCost";
 
@@ -31,7 +33,7 @@ public sealed class FingerSnapStrike : ChargeCardTemplate
 
 	protected override IEnumerable<DynamicVar> CanonicalVars =>
 	[
-		new DamageVar(10m, ValueProp.Move),
+		new DamageVar(BaseDamage, ValueProp.Move),
 		new DynamicVar(MinCostVarName, 0),
 		new DynamicVar(MaxCostVarName, RandomCostInclusiveMax),
 	];
@@ -73,7 +75,7 @@ public sealed class FingerSnapStrike : ChargeCardTemplate
 
 	protected override void OnUpgrade()
 	{
-		DynamicVars.Damage.UpgradeValueBy(4m);
+		DynamicVars.Damage.UpgradeValueBy(UpgradedDamage - BaseDamage);
 	}
 
 	private Task RandomizeEnergyCostUntilPlayed(PlayerChoiceContext choiceContext)

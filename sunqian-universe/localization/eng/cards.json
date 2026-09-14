@@ -162,7 +162,7 @@
   "SUNQIAN_UNIVERSE_CARD_DISTRIBUTED_SCREENWRITER.title": "Distributed Screenwriter",
   "SUNQIAN_UNIVERSE_CARD_DISTRIBUTED_SCREENWRITER.description": "At the start of your turn, add a random {IfUpgraded:show:Upgraded |}[gold]Script[/gold] card into your [gold]Hand[/gold].",
   "SUNQIAN_UNIVERSE_CARD_KEEP_CALM.title": "Keep Calm",
-  "SUNQIAN_UNIVERSE_CARD_KEEP_CALM.description": "Gain {energyPrefix:energyIcons(1)}.{ChargeText}",
+  "SUNQIAN_UNIVERSE_CARD_KEEP_CALM.description": "Gain {Energy:energyIcons()}.{ChargeText}",
   "SUNQIAN_UNIVERSE_CARD_KEEP_CALM.chargeEffect": "When this card is Retained, the {energyPrefix:energyIcons(1)} it grants increases by {RetainBonus:diff()}. When you take unblocked attack damage, the accumulated {Energy:energyIcons()} is reset to 0 and you [gold]Gain Anger[/gold] equal to that amount.",
   "SUNQIAN_UNIVERSE_CARD_SEND_HORSE_WITHOUT_HAY.title": "Send a Horse Without Hay",
   "SUNQIAN_UNIVERSE_CARD_SEND_HORSE_WITHOUT_HAY.description": "Draw {Cards:diff()} {Cards:plural:card|cards}.{ChargeText}",

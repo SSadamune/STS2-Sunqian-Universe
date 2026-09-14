@@ -85,6 +85,7 @@ public sealed class SendHorseWithoutHay : ChargeCardTemplate
 	private void RefreshDrawnCards()
 	{
 		DynamicVars.Cards.BaseValue = IsCharged ? ChargedDraw : CanonicalDraw;
+		RefreshCardVisuals();
 	}
 
 	private void ResetCharge()

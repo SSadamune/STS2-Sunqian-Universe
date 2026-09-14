@@ -10,6 +10,7 @@ using MegaCrit.Sts2.Core.Helpers;
 using MegaCrit.Sts2.Core.Localization;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.Cards;
+using MegaCrit.Sts2.Core.Nodes.Cards;
 using MegaCrit.Sts2.Core.ValueProps;
 using Squ;
 using STS2RitsuLib.Scaffolding.Content;
@@ -133,5 +134,19 @@ public abstract class ChargeCardTemplate : ModCardTemplate
 		}
 
 		return Charge.OnCardPlayed(choiceContext, cardPlay);
+	}
+
+	/// <summary>
+	/// 蓄能改写了伤害、抽牌、能量等动态变量后立刻重绘手牌描述。
+	/// 《弹指打击》改耗能走 <see cref="NCard.PlayRandomizeCostAnim"/>，不要在动画开始前调用本方法。
+	/// </summary>
+	protected void RefreshCardVisuals()
+	{
+		if (Pile is not { } pile)
+		{
+			return;
+		}
+
+		NCard.FindOnTable(this)?.UpdateVisuals(pile.Type, CardPreviewMode.Normal);
 	}
 }

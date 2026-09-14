@@ -12,6 +12,7 @@ using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.Powers;
 using MegaCrit.Sts2.Core.ValueProps;
 using Squ;
+using Squ.Audio;
 using Squ.Character;
 using Squ.Combat;
 using Squ.Powers;
@@ -78,6 +79,7 @@ public sealed class DigRaid : ModCardTemplate
 	{
 		ArgumentNullException.ThrowIfNull(cardPlay.Target, nameof(cardPlay.Target));
 
+		SquSfx.Play(SquSfx.DigRaidEvent);
 		Creature owner = Owner.Creature;
 		int vigor = SquVigorSnapshot.GetAmount(owner);
 		decimal tinderBonus = IsUpgraded ? GetTinderAmount(owner) : 0m;

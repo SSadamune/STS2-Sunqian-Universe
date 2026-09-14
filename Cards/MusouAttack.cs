@@ -11,6 +11,7 @@ using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.Powers;
 using MegaCrit.Sts2.Core.ValueProps;
+using Squ.Audio;
 using Squ.Character;
 using STS2RitsuLib.Interop.AutoRegistration;
 using STS2RitsuLib.Scaffolding.Content;
@@ -58,6 +59,7 @@ public sealed class MusouAttack : ModCardTemplate
 	{
 		ArgumentNullException.ThrowIfNull(CombatState, nameof(CombatState));
 
+		SquSfx.Play(SquSfx.MusouAttackThoughtLuBuEvent);
 		await DamageCmd.Attack(DynamicVars.Damage.BaseValue + GetDexterityBonus(this))
 			.FromCard(this, cardPlay)
 			.TargetingAllOpponents(CombatState)

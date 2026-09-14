@@ -10,6 +10,7 @@ using MegaCrit.Sts2.Core.Localization;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.ValueProps;
 using Squ;
+using Squ.Audio;
 using Squ.Character;
 using Squ.Combat;
 using STS2RitsuLib.Interop.AutoRegistration;
@@ -66,6 +67,11 @@ public sealed class RuthlessStrike : ChargeCardTemplate
 	protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
 	{
 		ArgumentNullException.ThrowIfNull(cardPlay.Target, nameof(cardPlay.Target));
+
+		if (HasChargedHits)
+		{
+			SquSfx.Play(SquSfx.RuthlessStrikeSwordSoundEvent);
+		}
 
 		await DamageCmd.Attack(DynamicVars.Damage.BaseValue)
 			.WithDamageProps(DamageProps)
@@ -128,11 +134,14 @@ public sealed class RuthlessStrike : ChargeCardTemplate
 		}
 
 		DynamicVars.Repeat.BaseValue += 1m;
+		RefreshCardVisuals();
+		SquSfx.Play(SquSfx.RuthlessStrikeDontForceMeEvent);
 		return Task.CompletedTask;
 	}
 
 	private void ResetHitsUntilPlayed()
 	{
 		DynamicVars.Repeat.BaseValue = CanonicalHits;
+		RefreshCardVisuals();
 	}
 }

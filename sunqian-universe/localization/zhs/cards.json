@@ -162,7 +162,7 @@
   "SUNQIAN_UNIVERSE_CARD_DISTRIBUTED_SCREENWRITER.title": "分布式编剧",
   "SUNQIAN_UNIVERSE_CARD_DISTRIBUTED_SCREENWRITER.description": "在你的回合开始时，将一张随机{IfUpgraded:show:升级过的|}[gold]剧本[/gold]牌加入你的[gold]手牌[/gold]。",
   "SUNQIAN_UNIVERSE_CARD_KEEP_CALM.title": "保持冷静",
-  "SUNQIAN_UNIVERSE_CARD_KEEP_CALM.description": "获得{energyPrefix:energyIcons(1)}。{ChargeText}",
+  "SUNQIAN_UNIVERSE_CARD_KEEP_CALM.description": "获得{Energy:energyIcons()}。{ChargeText}",
   "SUNQIAN_UNIVERSE_CARD_KEEP_CALM.chargeEffect": "此牌被保留时，{energyPrefix:energyIcons(1)}+{RetainBonus:diff()}。你受到未被格挡的攻击伤害时，{Energy:energyIcons()}清零并获得等量[gold]愤怒[/gold]。",
   "SUNQIAN_UNIVERSE_CARD_SEND_HORSE_WITHOUT_HAY.title": "缺草送马",
   "SUNQIAN_UNIVERSE_CARD_SEND_HORSE_WITHOUT_HAY.description": "抽{Cards:diff()}张牌。{ChargeText}",

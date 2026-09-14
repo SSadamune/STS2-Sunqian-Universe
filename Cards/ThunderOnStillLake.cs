@@ -110,6 +110,7 @@ public sealed class ThunderOnStillLake : ChargeCardTemplate
 	{
 		EnergyCost.AddUntilPlayed(-EnergyReductionPerAttack);
 		InvokeEnergyCostChanged();
+		RefreshCardVisuals();
 		return Task.CompletedTask;
 	}
 
@@ -126,12 +127,14 @@ public sealed class ThunderOnStillLake : ChargeCardTemplate
 		}
 
 		DynamicVars.Damage.BaseValue += -amount;
+		RefreshCardVisuals();
 		return Task.CompletedTask;
 	}
 
 	private void ResetDamageUntilPlayed()
 	{
 		DynamicVars.Damage.BaseValue = PrintedDamage;
+		RefreshCardVisuals();
 	}
 
 	private decimal PrintedDamage => IsUpgraded ? UpgradedDamage : CanonicalDamage;

@@ -11,6 +11,7 @@ using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.Models;
+using Squ.Audio;
 using STS2RitsuLib.Interop.AutoRegistration;
 using STS2RitsuLib.Scaffolding.Content;
 
@@ -30,9 +31,17 @@ public sealed class BurnAfterReadingPower : ModPowerTemplate
 	public const int BaseTriggerCount = 1;
 	public const int UpgradedTriggerCount = 2;
 
+	private static readonly string[] TriggerSfxCycle =
+	[
+		SquSfx.BurnAfterReadingTriggerBurnOneEvent,
+		SquSfx.BurnAfterReadingTriggerBurnAllEvent,
+		SquSfx.BurnAfterReadingTriggerEmptyStudyEvent,
+	];
+
 	private sealed class Data
 	{
 		public int ExhaustCardsPlayedThisTurn;
+		public int TriggersThisTurn;
 	}
 
 	public override PowerType Type => PowerType.Buff;
@@ -77,7 +86,9 @@ public sealed class BurnAfterReadingPower : ModPowerTemplate
 			return Task.CompletedTask;
 		}
 
-		GetInternalData<Data>().ExhaustCardsPlayedThisTurn = 0;
+		Data data = GetInternalData<Data>();
+		data.ExhaustCardsPlayedThisTurn = 0;
+		data.TriggersThisTurn = 0;
 		return Task.CompletedTask;
 	}
 
@@ -101,6 +112,8 @@ public sealed class BurnAfterReadingPower : ModPowerTemplate
 			return;
 		}
 
+		data.TriggersThisTurn++;
+		SquSfx.Play(TriggerSfxCycle[(data.TriggersThisTurn - 1) % TriggerSfxCycle.Length]);
 		Flash();
 		await PlayerCmd.GainEnergy((int)DynamicVars.Energy.BaseValue, player);
 		await PowerCmd.Apply<TinderPower>(

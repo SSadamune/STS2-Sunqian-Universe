@@ -92,6 +92,19 @@ internal static class SquSfx
 	public const string MonsterHuntingMethodEnemyEvent = "event:/sunqian_universe/sfx/过禽论-若除禽兽";
 	public const string MonsterHuntingMethodSelfEvent = "event:/sunqian_universe/sfx/过禽论-与禽兽何异";
 	public const string MonsterHuntingMethodOtherEvent = "event:/sunqian_universe/sfx/过禽论-义父要把我";
+	public const string KeepCalmHateCloudsJudgmentEvent = "event:/sunqian_universe/sfx/保持冷静-仇恨会使你丧失判断力";
+	public const string KeepCalmDoNotAngerEvent = "event:/sunqian_universe/sfx/保持冷静-不要愤怒愤怒会降低智慧";
+	public const string KeepCalmLuBuMereMortalEvent = "event:/sunqian_universe/sfx/保持冷静-吕布一介匹夫";
+	public const string DigRaidEvent = "event:/sunqian_universe/sfx/掘地突袭";
+	public const string MusouAttackThoughtLuBuEvent = "event:/sunqian_universe/sfx/无双乱舞-我原本以为吕布";
+	public const string RuthlessStrikeDontForceMeEvent = "event:/sunqian_universe/sfx/无情打击-可别逼我使出无情剑来";
+	public const string RuthlessStrikeSwordSoundEvent = "event:/sunqian_universe/sfx/无情打击-剑声";
+	public const string KeepEnjoyingKeepDancingEvent = "event:/sunqian_universe/sfx/继续享受-接着奏乐接着舞";
+	public const string KeepEnjoyingLetMeEnjoyEvent = "event:/sunqian_universe/sfx/继续享受-我打了一辈子仗就不能享受享受吗";
+	public const string BurnAfterReadingPlayEvent = "event:/sunqian_universe/sfx/阅后即焚-读完一卷烧一卷，全部读完则全部烧尽";
+	public const string BurnAfterReadingTriggerBurnOneEvent = "event:/sunqian_universe/sfx/阅后即焚-读完一卷烧一卷";
+	public const string BurnAfterReadingTriggerBurnAllEvent = "event:/sunqian_universe/sfx/阅后即焚-全部读完则全部烧尽";
+	public const string BurnAfterReadingTriggerEmptyStudyEvent = "event:/sunqian_universe/sfx/阅后即焚-因此书房无书";
 
 	public static void Register()
 	{

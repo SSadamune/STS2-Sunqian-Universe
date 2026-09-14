@@ -11,6 +11,7 @@ using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.Cards;
 using MegaCrit.Sts2.Core.ValueProps;
+using Squ.Audio;
 using Squ.Character;
 using Squ.Script;
 using STS2RitsuLib.Interop.AutoRegistration;
@@ -21,7 +22,7 @@ using STS2RitsuLib.Scaffolding.Content;
 namespace Squ.Cards;
 
 /// <summary>
-/// 保持冷静：保留。打出获得当前积攒的能量（印面始终 1）。
+/// 保持冷静：保留。打出获得当前积攒的能量（卡面能量图标随蓄能更新）。
 /// 被保留时能量 +1（升级 +2）。受到未被格挡的攻击伤害时能量变为 0，
 /// 并按损失的能量加入等量未升级愤怒。
 /// </summary>
@@ -73,6 +74,7 @@ public sealed class KeepCalm : ChargeCardTemplate
 
 	protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
 	{
+		SquSfx.Play(SquSfx.KeepCalmHateCloudsJudgmentEvent);
 		int energy = DynamicVars.Energy.IntValue;
 		if (energy > 0)
 		{
@@ -113,6 +115,8 @@ public sealed class KeepCalm : ChargeCardTemplate
 		try
 		{
 			DynamicVars.Energy.BaseValue = 0m;
+			RefreshCardVisuals();
+			SquSfx.Play(SquSfx.KeepCalmLuBuMereMortalEvent);
 			await AddAngerAsync(energyLost);
 		}
 		finally
@@ -124,6 +128,8 @@ public sealed class KeepCalm : ChargeCardTemplate
 	private Task IncreaseEnergyUntilPlayed(PlayerChoiceContext choiceContext)
 	{
 		DynamicVars.Energy.BaseValue += DynamicVars[RetainBonusVarName].IntValue;
+		RefreshCardVisuals();
+		SquSfx.Play(SquSfx.KeepCalmDoNotAngerEvent);
 		return Task.CompletedTask;
 	}
 
@@ -145,5 +151,6 @@ public sealed class KeepCalm : ChargeCardTemplate
 	private void ResetEnergy()
 	{
 		DynamicVars.Energy.BaseValue = CanonicalEnergy;
+		RefreshCardVisuals();
 	}
 }

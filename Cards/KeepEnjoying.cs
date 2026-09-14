@@ -11,6 +11,7 @@ using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.Powers;
 using MegaCrit.Sts2.Core.ValueProps;
+using Squ.Audio;
 using Squ.Character;
 using Squ.Combat;
 using STS2RitsuLib.Interop.AutoRegistration;
@@ -58,6 +59,9 @@ public sealed class KeepEnjoying : ModCardTemplate
 	protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
 	{
 		int spentVigor = await SquVigorSnapshot.SpendAll(choiceContext, Owner.Creature, this);
+		SquSfx.Play(spentVigor > 0
+			? SquSfx.KeepEnjoyingLetMeEnjoyEvent
+			: SquSfx.KeepEnjoyingKeepDancingEvent);
 		decimal block = DynamicVars.Block.BaseValue + spentVigor;
 		await CreatureCmd.GainBlock(Owner.Creature, block, BlockProps, cardPlay);
 	}
