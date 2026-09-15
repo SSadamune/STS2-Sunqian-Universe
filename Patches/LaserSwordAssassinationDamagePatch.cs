@@ -33,11 +33,11 @@ internal static class LaserSwordAssassinationDamagePatch
 	private static void Postfix(
 		Creature? target,
 		CardModel? cardSource,
-		ModifyDamageHookType hookType,
+		ModifyDamageHookType modifyDamageHookType,
 		ref decimal __result)
 	{
 		if (LaserSwordAssassination.IsUpdatingCardPreview
-			|| hookType != ModifyDamageHookType.All
+			|| modifyDamageHookType != ModifyDamageHookType.All
 			|| cardSource is not LaserSwordAssassination)
 		{
 			return;

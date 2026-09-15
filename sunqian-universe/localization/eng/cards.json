@@ -107,7 +107,7 @@
   "SUNQIAN_UNIVERSE_CARD_RESPECT_ELDERS.normalBody": "Deal {Damage:diff()} damage.\nIf the target's HP is between 25% and 75% of its max, hit {HitCount:diff()} times.",
   "SUNQIAN_UNIVERSE_CARD_RESPECT_ELDERS.hitConfirm": "Deal {Damage:diff()} damage to this enemy {HitCount:diff()} times.",
   "SUNQIAN_UNIVERSE_CARD_GUAN_DI_FORM.title": "Guan Di Form",
-  "SUNQIAN_UNIVERSE_CARD_GUAN_DI_FORM.description": "Whenever you play a card, gain {Block:diff()} [gold]Block[/gold] and {VigorPower:diff()} [gold]Vigor[/gold] for each {energyPrefix:energyIcons(1)} it spent.",
+  "SUNQIAN_UNIVERSE_CARD_GUAN_DI_FORM.description": "Whenever you play a card, gain {Power:diff()} [gold]Block[/gold] and {Power:diff()} [gold]Vigor[/gold] for each {energyPrefix:energyIcons(1)} it spent.",
   "SUNQIAN_UNIVERSE_CARD_WINE.title": "Wine",
   "SUNQIAN_UNIVERSE_CARD_WINE.description": "Gain {Energy:energyIcons()} and {VigorPower:diff()} [gold]Vigor[/gold].\nAdd a [gold]Dazed[/gold] into your [gold]Draw Pile[/gold].",
   "SUNQIAN_UNIVERSE_CARD_ARM_INJURY_WINDMILL.title": "Arm Injury Windmill",

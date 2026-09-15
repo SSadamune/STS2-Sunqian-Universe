@@ -109,7 +109,7 @@
   "SUNQIAN_UNIVERSE_CARD_RESPECT_ELDERS.normalBody": "造成{Damage:diff()}点伤害。\n如果该敌人的生命值不大于75%且不小于25%，则攻击{HitCount:diff()}次。",
   "SUNQIAN_UNIVERSE_CARD_RESPECT_ELDERS.hitConfirm": "对该敌人造成{Damage:diff()}点伤害{HitCount:diff()}次。",
   "SUNQIAN_UNIVERSE_CARD_GUAN_DI_FORM.title": "关帝形态",
-  "SUNQIAN_UNIVERSE_CARD_GUAN_DI_FORM.description": "当你打出一张牌后，该牌每消耗1{energyPrefix:energyIcons(1)}，就获得{Block:diff()}点[gold]格挡[/gold]和{VigorPower:diff()}点[gold]活力[/gold]。",
+  "SUNQIAN_UNIVERSE_CARD_GUAN_DI_FORM.description": "每当你打出一张牌后，该牌每花费一点{energyPrefix:energyIcons(1)}，获得{Power:diff()}层[gold]格挡[/gold]和{Power:diff()}层[gold]活力[/gold]。",
   "SUNQIAN_UNIVERSE_CARD_WINE.title": "酒",
   "SUNQIAN_UNIVERSE_CARD_WINE.description": "获得{Energy:energyIcons()}和{VigorPower:diff()}点[gold]活力[/gold]。\n将一张[gold]晕眩[/gold]加入你的[gold]抽牌堆[/gold]。",
   "SUNQIAN_UNIVERSE_CARD_ARM_INJURY_WINDMILL.title": "伤臂大风车",

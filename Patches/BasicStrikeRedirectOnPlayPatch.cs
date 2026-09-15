@@ -23,7 +23,7 @@ internal static class BasicStrikeRedirectOnPlayPatch
 
 	public static int Apply(Harmony harmony)
 	{
-		var prefix = new HarmonyMethod(typeof(BasicStrikeRedirectOnPlayPatch), nameof(Prefix));
+		var prefix = new HarmonyMethod(typeof(BasicStrikeRedirectOnPlayPatch), nameof(TryRedirectOnPlay));
 		int patched = 0;
 
 		foreach (MethodInfo onPlay in EnumerateBasicStrikeOnPlayMethods())
@@ -68,7 +68,7 @@ internal static class BasicStrikeRedirectOnPlayPatch
 		}
 	}
 
-	private static bool Prefix(
+	private static bool TryRedirectOnPlay(
 		CardModel __instance,
 		PlayerChoiceContext choiceContext,
 		CardPlay cardPlay,

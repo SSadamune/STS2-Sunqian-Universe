@@ -6,7 +6,6 @@ using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.Models.Powers;
-using MegaCrit.Sts2.Core.ValueProps;
 using Squ.Audio;
 using Squ.Character;
 using Squ.Powers;
@@ -20,18 +19,15 @@ namespace Squ.Cards;
 [RegisterCard(typeof(SunqianCardPool), StableEntryStem = "guan_di_form")]
 public sealed class GuanDiForm : ModCardTemplate
 {
-	public const int BaseBlockPerEnergy = 2;
+	private const string PowerVarName = "Power";
 
-	public const int UpgradedBlockPerEnergy = 3;
+	public const int BaseAmountPerEnergy = 2;
 
-	public const int BaseVigorPerEnergy = 2;
-
-	public const int UpgradedVigorPerEnergy = 3;
+	public const int UpgradedAmountPerEnergy = 3;
 
 	protected override IEnumerable<DynamicVar> CanonicalVars =>
 	[
-		new BlockVar(BaseBlockPerEnergy, ValueProp.Move),
-		new PowerVar<VigorPower>(BaseVigorPerEnergy),
+		new DynamicVar(PowerVarName, BaseAmountPerEnergy),
 	];
 
 	protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
@@ -54,14 +50,13 @@ public sealed class GuanDiForm : ModCardTemplate
 		await PowerCmd.Apply<GuanDiFormPower>(
 			choiceContext,
 			Owner.Creature,
-			DynamicVars[nameof(VigorPower)].BaseValue,
+			DynamicVars[PowerVarName].BaseValue,
 			Owner.Creature,
 			this);
 	}
 
 	protected override void OnUpgrade()
 	{
-		DynamicVars.Block.UpgradeValueBy(UpgradedBlockPerEnergy - BaseBlockPerEnergy);
-		DynamicVars[nameof(VigorPower)].UpgradeValueBy(UpgradedVigorPerEnergy - BaseVigorPerEnergy);
+		DynamicVars[PowerVarName].UpgradeValueBy(UpgradedAmountPerEnergy - BaseAmountPerEnergy);
 	}
 }

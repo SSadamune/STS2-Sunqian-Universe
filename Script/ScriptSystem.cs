@@ -1,12 +1,14 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using MegaCrit.Sts2.Core.Combat;
 using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Creatures;
 using MegaCrit.Sts2.Core.Entities.Players;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.Models;
 using Squ.Powers;
+using STS2RitsuLib;
 
 #nullable enable
 
@@ -14,7 +16,23 @@ namespace Squ.Script;
 
 public static class ScriptSystem
 {
+	private static bool _initialized;
+
 	internal static bool SuppressLiftNotification { get; set; }
+
+	public static void Initialize()
+	{
+		if (_initialized)
+		{
+			return;
+		}
+
+		_initialized = true;
+		RitsuLibFramework.SubscribeLifecycle<CombatStartingEvent>(
+			_ => PlayerScriptLiftTracker.ClearCombat());
+		RitsuLibFramework.SubscribeLifecycle<CombatEndedEvent>(
+			_ => PlayerScriptLiftTracker.ClearCombat());
+	}
 
 	/// <summary>
 	/// 本回合该玩家已记录的剧本失效次数。

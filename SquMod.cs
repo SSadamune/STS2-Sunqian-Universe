@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Reflection;
 using HarmonyLib;
 using MegaCrit.Sts2.Core.Combat;
@@ -9,6 +10,7 @@ using Squ.Cards;
 using Squ.Character;
 using Squ.Combat;
 using Squ.Relics;
+using Squ.Script;
 using STS2RitsuLib;
 using STS2RitsuLib.Interop;
 using STS2RitsuLib.Keywords;
@@ -69,6 +71,7 @@ public static class SquMod
 
 		CardDrawPlayRateTracker.Initialize();
 		RunReloadCount.Initialize();
+		ScriptSystem.Initialize();
 		RitsuLibFramework.SubscribeLifecycle<CombatEndedEvent>(_ => WarFeedsWarResolutionTracker.ClearCombat());
 
 		var harmony = new Harmony($"{ModId}.patches");
@@ -82,6 +85,11 @@ public static class SquMod
 	{
 		foreach (Type type in AccessTools.GetTypesFromAssembly(assembly))
 		{
+			if (!HasHarmonyPatchAnnotations(type))
+			{
+				continue;
+			}
+
 			try
 			{
 				harmony.CreateClassProcessor(type).Patch();
@@ -91,6 +99,21 @@ public static class SquMod
 				Logger.Error($"Failed to apply Harmony patches on {type.FullName}: {ex}");
 			}
 		}
+	}
+
+	/// <summary>
+	/// Harmony 会把名为 Prefix/Postfix 的方法当成补丁入口。
+	/// 手动 <c>harmony.Patch</c> 的类型没有 <see cref="HarmonyPatch"/>，必须跳过，否则会报 Undefined target method。
+	/// </summary>
+	private static bool HasHarmonyPatchAnnotations(Type type)
+	{
+		if (type.GetCustomAttributes(true).OfType<HarmonyAttribute>().Any())
+		{
+			return true;
+		}
+
+		return AccessTools.GetDeclaredMethods(type)
+			.Any(method => method.GetCustomAttributes(true).OfType<HarmonyAttribute>().Any());
 	}
 
 	private static void RegisterCommonLocalization()
