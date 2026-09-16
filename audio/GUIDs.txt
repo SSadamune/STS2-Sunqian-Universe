@@ -13,7 +13,7 @@
 {bfa231d3-c7a0-4395-bb21-4afdf4149043} bus:/master/sfx_ducking_big
 {ea805add-ecda-4cfb-a5c4-295d960f51e7} event:/sunqian_universe/sfx/一人坚守南郡城
 {634747f4-ee4c-41be-9d36-f9958a348430} event:/sunqian_universe/sfx/一把叫仁之剑，一把叫义之剑
-{85873c41-4c1e-414c-803f-204c3629cbe5} event:/sunqian_universe/sfx/不会客气
+{dc6fbd79-f408-485e-bcc8-c071037f1394} event:/sunqian_universe/sfx/中原第一雄关
 {59f4eca2-a4c7-4992-9ebf-d8ac77d78652} event:/sunqian_universe/sfx/义之剑
 {26de34bd-22f5-4be3-8836-8c7b34eddbdc} event:/sunqian_universe/sfx/乱世害你-不是阿瞒害了你
 {229ba135-c7ab-445b-8fac-e2e57f7e65e2} event:/sunqian_universe/sfx/乱世害你-不能白死
@@ -28,10 +28,15 @@
 {5170d31e-7a65-4c21-b013-cc2883924040} event:/sunqian_universe/sfx/仁义-仁义也分大仁小仁
 {54c28a9e-23c8-467a-9134-c7c2e62bdb68} event:/sunqian_universe/sfx/仁义-仁义才能征服天下人心
 {91ef17ac-32b2-45f0-8639-2bb6d11f3f09} event:/sunqian_universe/sfx/仁之剑
+{071e84b9-12e0-4b35-bc7e-c0a39c0d69cb} event:/sunqian_universe/sfx/何疑魏-魏延早就把三军看成他自己的了
+{2cc64cd2-9834-438d-b17b-12cfbf7e7d48} event:/sunqian_universe/sfx/何谓人主，那就是知错改错不认错
 {6d9d9448-74e3-4bcf-898f-b932986f4bd1} event:/sunqian_universe/sfx/你是何人
 {d0a9b922-06a6-4e84-a7b7-0e9279836f77} event:/sunqian_universe/sfx/保持冷静-不要愤怒愤怒会降低智慧
 {289ff2dd-7a8a-41a5-abf0-6fa1dc8078e9} event:/sunqian_universe/sfx/保持冷静-仇恨会使你丧失判断力
 {51f2912e-5c1c-48eb-a93e-b7b8e8232f4f} event:/sunqian_universe/sfx/保持冷静-吕布一介匹夫
+{5cc59de0-a502-422d-9c6e-5f49371478f5} event:/sunqian_universe/sfx/保持冷静-徐州原本就是我哒
+{438a8ab6-7ed2-435a-9f37-6797691135a0} event:/sunqian_universe/sfx/光剑刺杀-拔刀
+{542eca1e-4347-4fac-97b0-073eff87cedd} event:/sunqian_universe/sfx/光剑刺杀-激光
 {3cf5479e-59e7-4157-a775-cdc0fee8d893} event:/sunqian_universe/sfx/再来撒野
 {4033daf5-e1a1-41f2-b4d0-ab3a8ab8a259} event:/sunqian_universe/sfx/化骨绵掌
 {ee369cdd-67fc-4edb-9ced-6cb15c071654} event:/sunqian_universe/sfx/叉出去-走
@@ -51,7 +56,9 @@
 {e877f801-8783-4fa5-b960-ce4e1da130c0} event:/sunqian_universe/sfx/忽近忽远
 {0b3dc75a-46bb-4e30-ac7d-fbd666e94348} event:/sunqian_universe/sfx/怒掀帅案
 {f102970a-3482-4d08-95d3-8decb30a4c8d} event:/sunqian_universe/sfx/我们吃什么
-{7068564a-fdb6-4b42-89d6-31da409c64e5} event:/sunqian_universe/sfx/换大盏
+{adb55ca6-8f3b-4736-bddc-c598dd033ce7} event:/sunqian_universe/sfx/换大盏-不会客气
+{12e32a1d-4b35-4662-af72-aa768810c34b} event:/sunqian_universe/sfx/换大盏-当浮一大白
+{b919b957-780f-4bd0-87ca-29b1e6d03468} event:/sunqian_universe/sfx/换大盏-换大盏
 {8cf1ccb8-75f6-4790-936a-4665fed4dc50} event:/sunqian_universe/sfx/掘地突袭
 {3233f9b6-47fc-4186-9753-fd60b7694eba} event:/sunqian_universe/sfx/无双乱舞-我原本以为吕布
 {422bc859-6769-4d75-a031-d476b5b2363c} event:/sunqian_universe/sfx/无双乱舞-我爱死他了

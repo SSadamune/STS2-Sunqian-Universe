@@ -19,7 +19,7 @@ internal static class SquSfx
 
 	public const string HoldNanJunAloneEvent = "event:/sunqian_universe/sfx/一人坚守南郡城";
 	public const string DualSwordsEvent = "event:/sunqian_universe/sfx/一把叫仁之剑，一把叫义之剑";
-	public const string WontBePoliteEvent = "event:/sunqian_universe/sfx/不会客气";
+	public const string KnowWrongDenyWrongEvent = "event:/sunqian_universe/sfx/何谓人主，那就是知错改错不认错";
 	public const string RespectEldersTooOldEvent = "event:/sunqian_universe/sfx/尊老爱幼-你太老了";
 	public const string RespectEldersSpareTheYoungAndOldEvent = "event:/sunqian_universe/sfx/尊老爱幼-不斩老幼";
 	public const string RighteousnessSwordEvent = "event:/sunqian_universe/sfx/义之剑";
@@ -52,7 +52,9 @@ internal static class SquSfx
 	public const string NearAndFarEvent = "event:/sunqian_universe/sfx/忽近忽远";
 	public const string SlamTheCommandDeskEvent = "event:/sunqian_universe/sfx/怒掀帅案";
 	public const string WhatDoWeEatEvent = "event:/sunqian_universe/sfx/我们吃什么";
-	public const string BiggerGobletEvent = "event:/sunqian_universe/sfx/换大盏";
+	public const string BiggerGobletEvent = "event:/sunqian_universe/sfx/换大盏-换大盏";
+	public const string BiggerGobletWontBePoliteEvent = "event:/sunqian_universe/sfx/换大盏-不会客气";
+	public const string BiggerGobletToastEvent = "event:/sunqian_universe/sfx/换大盏-当浮一大白";
 	public const string ExactlyWhatToEatEvent = "event:/sunqian_universe/sfx/是啊吃什么";
 	public const string EmperorKnowsNoWarEvent = "event:/sunqian_universe/sfx/朕不知兵";
 	public const string WaterFireInvincibleEvent = "event:/sunqian_universe/sfx/水火无敌";
@@ -95,6 +97,9 @@ internal static class SquSfx
 	public const string KeepCalmHateCloudsJudgmentEvent = "event:/sunqian_universe/sfx/保持冷静-仇恨会使你丧失判断力";
 	public const string KeepCalmDoNotAngerEvent = "event:/sunqian_universe/sfx/保持冷静-不要愤怒愤怒会降低智慧";
 	public const string KeepCalmLuBuMereMortalEvent = "event:/sunqian_universe/sfx/保持冷静-吕布一介匹夫";
+	public const string KeepCalmXuzhouWasMineEvent = "event:/sunqian_universe/sfx/保持冷静-徐州原本就是我哒";
+	public const string LaserSwordAssassinationDrawEvent = "event:/sunqian_universe/sfx/光剑刺杀-拔刀";
+	public const string LaserSwordAssassinationLaserEvent = "event:/sunqian_universe/sfx/光剑刺杀-激光";
 	public const string DigRaidEvent = "event:/sunqian_universe/sfx/掘地突袭";
 	public const string MusouAttackThoughtLuBuEvent = "event:/sunqian_universe/sfx/无双乱舞-我原本以为吕布";
 	public const string RuthlessStrikeDontForceMeEvent = "event:/sunqian_universe/sfx/无情打击-可别逼我使出无情剑来";

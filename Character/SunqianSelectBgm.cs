@@ -22,6 +22,13 @@ internal static class SunqianSelectBgm
 
 	public static void Play()
 	{
+		if (_music is { IsValid: true })
+		{
+			return;
+		}
+
+		StopOurMusic();
+
 		// 流式 MP3 不会替换原版 Studio 菜单曲，先让出原版音乐槽，避免叠音。
 		GameFmod.Studio.StopMusic();
 
@@ -39,6 +46,7 @@ internal static class SunqianSelectBgm
 
 		if (handle is not { IsValid: true })
 		{
+			handle?.Dispose();
 			_music = null;
 			PlayVanillaMenuMusic();
 			return;
@@ -72,11 +80,7 @@ internal static class SunqianSelectBgm
 
 	private static void PlayVanillaMenuMusic()
 	{
-		GameAudioService.Shared.PlayMusic(
-			AudioSource.Event(MenuMusicEventPath),
-			new AudioPlaybackOptions
-			{
-				UseVanillaRouting = true,
-			});
+		// 原版菜单负责这条 BGM；必须走原版唯一音乐槽，不能创建并遗失新的托管句柄。
+		GameFmod.Studio.PlayMusic(MenuMusicEventPath);
 	}
 }

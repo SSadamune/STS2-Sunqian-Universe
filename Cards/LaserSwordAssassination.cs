@@ -11,6 +11,7 @@ using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.ValueProps;
 using Squ;
+using Squ.Audio;
 using Squ.Character;
 using Squ.Combat;
 using STS2RitsuLib.Interop.AutoRegistration;
@@ -74,6 +75,10 @@ public sealed class LaserSwordAssassination : ModCardTemplate
 	protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
 	{
 		ArgumentNullException.ThrowIfNull(cardPlay.Target, nameof(cardPlay.Target));
+
+		SquSfx.Play(ShouldDoubleDamage(cardPlay.Target)
+			? SquSfx.LaserSwordAssassinationLaserEvent
+			: SquSfx.LaserSwordAssassinationDrawEvent);
 
 		await DamageCmd.Attack(DynamicVars.Damage.BaseValue)
 			.WithDamageProps(DamageProps)

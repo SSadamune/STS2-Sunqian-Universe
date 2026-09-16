@@ -69,7 +69,10 @@ public sealed class GrandGobletPower : ModPowerTemplate
 		}
 
 		Flash();
-		SquSfx.Play(SquSfx.WontBePoliteEvent);
+		SquSfx.PlayRandom(
+			combatState.RunState,
+			SquSfx.BiggerGobletWontBePoliteEvent,
+			SquSfx.BiggerGobletToastEvent);
 		await PlayerCmd.GainEnergy((int)DynamicVars.Energy.BaseValue, player);
 		await PowerCmd.Apply<VigorPower>(
 			new ThrowingPlayerChoiceContext(),

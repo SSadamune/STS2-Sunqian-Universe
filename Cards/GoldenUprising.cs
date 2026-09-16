@@ -58,7 +58,7 @@ public sealed class GoldenUprising : ModCardTemplate
 
 	protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
 	{
-		SquSfx.Play(SquSfx.GoldenUprisingEvent);
+		SquSfx.Play(SquSfx.SilverUprisingEvent);
 		int pickCount = GetPickCount();
 		if (pickCount <= 0)
 		{

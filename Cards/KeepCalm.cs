@@ -116,7 +116,10 @@ public sealed class KeepCalm : ChargeCardTemplate
 		{
 			DynamicVars.Energy.BaseValue = 0m;
 			RefreshCardVisuals();
-			SquSfx.Play(SquSfx.KeepCalmLuBuMereMortalEvent);
+			SquSfx.PlayRandom(
+				RunState,
+				SquSfx.KeepCalmXuzhouWasMineEvent,
+				SquSfx.KeepCalmLuBuMereMortalEvent);
 			await AddAngerAsync(energyLost);
 		}
 		finally
