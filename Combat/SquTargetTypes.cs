@@ -18,6 +18,8 @@ public static class SquTargetTypes
 
 	public static TargetType AnyBurningEnemy { get; private set; }
 
+	public static TargetType AnyPlayer { get; private set; }
+
 	public static void Register()
 	{
 		RandomEnemies = CustomTargetType.RegisterMultiTargetType(
@@ -33,6 +35,12 @@ public static class SquTargetTypes
 				creature.IsAlive
 				&& creature.Side != player.Creature.Side
 				&& creature.HasPower<BurningPower>());
+
+		AnyPlayer = CustomTargetType.RegisterSingleTargetType(
+			SquMod.ModId,
+			"any_player",
+			static (Creature creature, Player player) =>
+				creature.IsAlive && creature.IsPlayer);
 	}
 
 	public static bool IsRandomEnemiesTarget(TargetType type) => type == RandomEnemies;

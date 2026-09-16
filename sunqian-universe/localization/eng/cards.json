@@ -158,7 +158,7 @@
   "SUNQIAN_UNIVERSE_CARD_EUNUCH_SCRIPT.title": "Eunuch Script",
   "SUNQIAN_UNIVERSE_CARD_EUNUCH_SCRIPT.description": "Draw {Cards:diff()} {Cards:plural:card|cards} and grant them [gold]Retain[/gold] until they leave your [gold]Hand[/gold].\n[gold]Script[/gold]: When this [gold]Script[/gold] ends, [gold]Exhaust[/gold] cards in your hand drawn this way.",
   "SUNQIAN_UNIVERSE_CARD_BURN_AFTER_READING.title": "Burn After Reading",
-  "SUNQIAN_UNIVERSE_CARD_BURN_AFTER_READING.description": "After you play each of your first {IfUpgraded:show:two|one} [gold]Exhaust[/gold] {IfUpgraded:show:cards|card} each turn, gain {Energy:energyIcons()} and {TinderPower:diff()} [gold]Tinder[/gold].",
+  "SUNQIAN_UNIVERSE_CARD_BURN_AFTER_READING.description": "After you play a card with [gold]Exhaust[/gold], gain {TinderPower:diff()} [gold]Tinder[/gold].",
   "SUNQIAN_UNIVERSE_CARD_DISTRIBUTED_SCREENWRITER.title": "Distributed Screenwriter",
   "SUNQIAN_UNIVERSE_CARD_DISTRIBUTED_SCREENWRITER.description": "At the start of your turn, add a random {IfUpgraded:show:Upgraded |}[gold]Script[/gold] card into your [gold]Hand[/gold].",
   "SUNQIAN_UNIVERSE_CARD_KEEP_CALM.title": "Keep Calm",
@@ -179,5 +179,10 @@
   "SUNQIAN_UNIVERSE_CARD_MUSOU_ATTACK.title": "Musou Attack",
   "SUNQIAN_UNIVERSE_CARD_MUSOU_ATTACK.description": "Deal {Damage:diff()} damage to ALL enemies. This damage gains {DexterityMult:diff()} times your [gold]Dexterity[/gold].",
   "SUNQIAN_UNIVERSE_CARD_BUDDY_LONGTAODI.title": "Buddy Longtaodi",
-  "SUNQIAN_UNIVERSE_CARD_BUDDY_LONGTAODI.description": "After you play the 3rd card each turn, draw {Cards:diff()} {Cards:plural:card|cards}."
+  "SUNQIAN_UNIVERSE_CARD_BUDDY_LONGTAODI.description": "After you play the 3rd card each turn, draw {Cards:diff()} {Cards:plural:card|cards}.",
+  "SUNQIAN_UNIVERSE_CARD_STARGAZING.title": "Stargazing",
+  "SUNQIAN_UNIVERSE_CARD_STARGAZING.description": "When this card enters your [gold]Discard Pile[/gold], [gold]Scry[/gold] {InCombat:{Scry}|N}{InCombat:. This number is the total of enemies and players, up to 5.| (N is the total of enemies and players, up to 5.)}",
+  "SUNQIAN_UNIVERSE_CARD_GREATEST_PASS_OF_CENTRAL_PLAINS.title": "Greatest Pass of the Central Plains",
+  "SUNQIAN_UNIVERSE_CARD_GREATEST_PASS_OF_CENTRAL_PLAINS.description": "This is a “[blue]Potion[/blue]” capable of granting {IfUpgraded:show:a massive|a large} amount of [gold]Block[/gold].",
+  "SUNQIAN_UNIVERSE_CARD_GREATEST_PASS_OF_CENTRAL_PLAINS.annotation": "This card enters your Hand at the start of combat and is [red]removed[/red] from your Deck after it is played.\nThis card counts as using a potion on the target player with the effect “[blue]Grant {Block:diff()} [gold]Block[/gold][/blue].”"
 }

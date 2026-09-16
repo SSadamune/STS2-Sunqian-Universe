@@ -45,6 +45,8 @@
 {880314bd-44ae-48f0-a56f-1579ca6ad9f8} event:/sunqian_universe/sfx/国贼董卓
 {25f87d38-dcce-42b8-acf2-fd369148d02a} event:/sunqian_universe/sfx/多智袁术-为何追杀
 {2b7a15c9-c02e-442d-9c4d-5f55dcd4ef94} event:/sunqian_universe/sfx/多智袁术-贪功心切
+{43748165-1fbc-48c2-a594-23e597853580} event:/sunqian_universe/sfx/夜观天象-王允
+{f88e063e-0622-4b5c-a7e2-13c66980d840} event:/sunqian_universe/sfx/夜观天象-董卓
 {10189575-4fd1-4c12-aeab-dfb859667ae5} event:/sunqian_universe/sfx/大义灭亲
 {1fae88d6-0db5-4220-b506-40d4367e636b} event:/sunqian_universe/sfx/夷陵好火
 {c7401d0e-ca36-4fb2-8efd-5c6f6255d628} event:/sunqian_universe/sfx/家丁剧本-来人

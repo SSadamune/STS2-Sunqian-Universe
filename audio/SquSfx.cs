@@ -19,6 +19,7 @@ internal static class SquSfx
 
 	public const string HoldNanJunAloneEvent = "event:/sunqian_universe/sfx/一人坚守南郡城";
 	public const string DualSwordsEvent = "event:/sunqian_universe/sfx/一把叫仁之剑，一把叫义之剑";
+	public const string GreatestPassOfCentralPlainsEvent = "event:/sunqian_universe/sfx/中原第一雄关";
 	public const string KnowWrongDenyWrongEvent = "event:/sunqian_universe/sfx/何谓人主，那就是知错改错不认错";
 	public const string RespectEldersTooOldEvent = "event:/sunqian_universe/sfx/尊老爱幼-你太老了";
 	public const string RespectEldersSpareTheYoungAndOldEvent = "event:/sunqian_universe/sfx/尊老爱幼-不斩老幼";
@@ -110,6 +111,8 @@ internal static class SquSfx
 	public const string BurnAfterReadingTriggerBurnOneEvent = "event:/sunqian_universe/sfx/阅后即焚-读完一卷烧一卷";
 	public const string BurnAfterReadingTriggerBurnAllEvent = "event:/sunqian_universe/sfx/阅后即焚-全部读完则全部烧尽";
 	public const string BurnAfterReadingTriggerEmptyStudyEvent = "event:/sunqian_universe/sfx/阅后即焚-因此书房无书";
+	public const string StargazingWangYunEvent = "event:/sunqian_universe/sfx/夜观天象-王允";
+	public const string StargazingDongZhuoEvent = "event:/sunqian_universe/sfx/夜观天象-董卓";
 
 	public static void Register()
 	{

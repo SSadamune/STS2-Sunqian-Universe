@@ -158,7 +158,7 @@
   "SUNQIAN_UNIVERSE_CARD_EUNUCH_SCRIPT.title": "小黄门剧本",
   "SUNQIAN_UNIVERSE_CARD_EUNUCH_SCRIPT.description": "抽{Cards:diff()}张牌，这些牌在离开你的[gold]手牌[/gold]之前获得[gold]保留[/gold]。\n[gold]剧本[/gold]：失效时，消耗手牌中的这些牌。",
   "SUNQIAN_UNIVERSE_CARD_BURN_AFTER_READING.title": "阅后即焚",
-  "SUNQIAN_UNIVERSE_CARD_BURN_AFTER_READING.description": "你每回合打出{IfUpgraded:show:前两张|第一张}有[gold]消耗[/gold]的牌后，获得{Energy:energyIcons()}和{TinderPower:diff()}层[gold]火种[/gold]。",
+  "SUNQIAN_UNIVERSE_CARD_BURN_AFTER_READING.description": "你打出有[gold]消耗[/gold]的牌后，获得{TinderPower:diff()}层[gold]火种[/gold]。",
   "SUNQIAN_UNIVERSE_CARD_DISTRIBUTED_SCREENWRITER.title": "分布式编剧",
   "SUNQIAN_UNIVERSE_CARD_DISTRIBUTED_SCREENWRITER.description": "在你的回合开始时，将一张随机{IfUpgraded:show:升级过的|}[gold]剧本[/gold]牌加入你的[gold]手牌[/gold]。",
   "SUNQIAN_UNIVERSE_CARD_KEEP_CALM.title": "保持冷静",
@@ -179,5 +179,10 @@
   "SUNQIAN_UNIVERSE_CARD_MUSOU_ATTACK.title": "无双乱舞",
   "SUNQIAN_UNIVERSE_CARD_MUSOU_ATTACK.description": "对所有敌人造成{Damage:diff()}点伤害，此伤害值受到[gold]敏捷[/gold]的{DexterityMult:diff()}倍加成。",
   "SUNQIAN_UNIVERSE_CARD_BUDDY_LONGTAODI.title": "好哥们龙套帝",
-  "SUNQIAN_UNIVERSE_CARD_BUDDY_LONGTAODI.description": "当你每回合第3次打出牌后，抽{Cards:diff()}张牌。"
+  "SUNQIAN_UNIVERSE_CARD_BUDDY_LONGTAODI.description": "当你每回合第3次打出牌后，抽{Cards:diff()}张牌。",
+  "SUNQIAN_UNIVERSE_CARD_STARGAZING.title": "夜观天象",
+  "SUNQIAN_UNIVERSE_CARD_STARGAZING.description": "当此牌进入[gold]弃牌堆[/gold]时，[gold]预见[/gold]{InCombat:{Scry}|N}{InCombat:，此数值为敌人和玩家的总数且至多为5。|。（N为敌人和玩家的总数且至多为5）}",
+  "SUNQIAN_UNIVERSE_CARD_GREATEST_PASS_OF_CENTRAL_PLAINS.title": "中原第一雄关",
+  "SUNQIAN_UNIVERSE_CARD_GREATEST_PASS_OF_CENTRAL_PLAINS.description": "这是一张能够造成{IfUpgraded:show:巨量|大量}[gold]格挡[/gold]的「[blue]药水[/blue]」。",
+  "SUNQIAN_UNIVERSE_CARD_GREATEST_PASS_OF_CENTRAL_PLAINS.annotation": "此牌会在战斗开始时进入手牌、在被打出后从你的卡组中[red]移除[/red]。\n此牌的效果为：视为对目标玩家使用「[blue]给予{Block:diff()}点[gold]格挡[/gold][/blue]」的药水。"
 }

@@ -18,16 +18,17 @@ namespace Squ.Cards;
 [RegisterCard(typeof(SunqianCardPool), StableEntryStem = "burn_after_reading")]
 public sealed class BurnAfterReading : ModCardTemplate
 {
+	public const decimal TinderStacks = 3m;
+	public const decimal UpgradedTinderStacks = 4m;
+
 	protected override IEnumerable<DynamicVar> CanonicalVars =>
 	[
-		new EnergyVar(BurnAfterReadingPower.EnergyGain),
-		new PowerVar<TinderPower>(BurnAfterReadingPower.TinderStacks),
+		new PowerVar<TinderPower>(TinderStacks),
 	];
 
 	protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
 	[
 		HoverTipFactory.FromKeyword(CardKeyword.Exhaust),
-		HoverTipFactory.ForEnergy(this),
 		..HoverTipFactory.FromPowerWithPowerHoverTips<TinderPower>(
 			(int)DynamicVars[nameof(TinderPower)].BaseValue),
 		HoverTipFactory.FromPower<BurningPower>(),
@@ -47,8 +48,13 @@ public sealed class BurnAfterReading : ModCardTemplate
 		await PowerCmd.Apply<BurnAfterReadingPower>(
 			choiceContext,
 			Owner.Creature,
-			IsUpgraded ? BurnAfterReadingPower.UpgradedTriggerCount : BurnAfterReadingPower.BaseTriggerCount,
+			DynamicVars[nameof(TinderPower)].BaseValue,
 			Owner.Creature,
 			this);
+	}
+
+	protected override void OnUpgrade()
+	{
+		DynamicVars[nameof(TinderPower)].UpgradeValueBy(UpgradedTinderStacks - TinderStacks);
 	}
 }

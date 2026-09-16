@@ -9,7 +9,6 @@ using MegaCrit.Sts2.Core.Entities.Creatures;
 using MegaCrit.Sts2.Core.Entities.Powers;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.HoverTips;
-using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.Models;
 using Squ.Audio;
 using STS2RitsuLib.Interop.AutoRegistration;
@@ -20,17 +19,12 @@ using STS2RitsuLib.Scaffolding.Content;
 namespace Squ.Powers;
 
 /// <summary>
-/// 阅后即焚：每回合打出的前 <see cref="Amount"/> 张带消耗的牌会给予能量与火种。
-/// 层数叠加时增加可触发的消耗牌数量。
+/// 阅后即焚：打出带消耗的牌后获得 <see cref="Amount"/> 层火种。
+/// 层数叠加时增加每次获得的火种。
 /// </summary>
 [RegisterPower]
 public sealed class BurnAfterReadingPower : ModPowerTemplate
 {
-	public const int EnergyGain = 1;
-	public const decimal TinderStacks = 3m;
-	public const int BaseTriggerCount = 1;
-	public const int UpgradedTriggerCount = 2;
-
 	private static readonly string[] TriggerSfxCycle =
 	[
 		SquSfx.BurnAfterReadingTriggerBurnOneEvent,
@@ -40,7 +34,6 @@ public sealed class BurnAfterReadingPower : ModPowerTemplate
 
 	private sealed class Data
 	{
-		public int ExhaustCardsPlayedThisTurn;
 		public int TriggersThisTurn;
 	}
 
@@ -54,27 +47,14 @@ public sealed class BurnAfterReadingPower : ModPowerTemplate
 		IconPath: "res://images/powers/BurnAfterReadingPower.png",
 		BigIconPath: "res://images/powers/BurnAfterReadingPowerBig.png");
 
-	protected override IEnumerable<DynamicVar> CanonicalVars =>
-	[
-		new EnergyVar(EnergyGain),
-		new PowerVar<TinderPower>(TinderStacks),
-	];
-
 	protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
 	[
 		HoverTipFactory.FromKeyword(CardKeyword.Exhaust),
-		HoverTipFactory.ForEnergy(this),
 		HoverTipFactory.FromPower<TinderPower>(),
 		HoverTipFactory.FromPower<BurningPower>(),
 	];
 
 	protected override object InitInternalData() => new Data();
-
-	public override Task AfterApplied(Creature? applier, CardModel? cardSource)
-	{
-		SyncExhaustCountFromHistory();
-		return Task.CompletedTask;
-	}
 
 	public override Task AfterSideTurnStart(
 		CombatSide side,
@@ -86,15 +66,14 @@ public sealed class BurnAfterReadingPower : ModPowerTemplate
 			return Task.CompletedTask;
 		}
 
-		Data data = GetInternalData<Data>();
-		data.ExhaustCardsPlayedThisTurn = 0;
-		data.TriggersThisTurn = 0;
+		GetInternalData<Data>().TriggersThisTurn = 0;
 		return Task.CompletedTask;
 	}
 
 	public override async Task AfterCardPlayed(PlayerChoiceContext choiceContext, CardPlay cardPlay)
 	{
 		if (Owner.IsDead
+			|| Amount <= 0m
 			|| Owner.Player is not { } player
 			|| cardPlay.Card.Owner != player
 			|| cardPlay.PlayIndex != 0
@@ -106,36 +85,14 @@ public sealed class BurnAfterReadingPower : ModPowerTemplate
 		}
 
 		Data data = GetInternalData<Data>();
-		data.ExhaustCardsPlayedThisTurn++;
-		if (data.ExhaustCardsPlayedThisTurn > Amount)
-		{
-			return;
-		}
-
 		data.TriggersThisTurn++;
 		SquSfx.Play(TriggerSfxCycle[(data.TriggersThisTurn - 1) % TriggerSfxCycle.Length]);
 		Flash();
-		await PlayerCmd.GainEnergy((int)DynamicVars.Energy.BaseValue, player);
 		await PowerCmd.Apply<TinderPower>(
 			choiceContext,
 			Owner,
-			DynamicVars[nameof(TinderPower)].BaseValue,
+			Amount,
 			Owner,
 			cardPlay.Card);
-	}
-
-	private void SyncExhaustCountFromHistory()
-	{
-		if (CombatState is not { } combatState || Owner.Player is not { } player)
-		{
-			return;
-		}
-
-		GetInternalData<Data>().ExhaustCardsPlayedThisTurn =
-			CombatManager.Instance.History.CardPlaysFinished.Count(entry =>
-				entry.HappenedThisTurn(combatState)
-				&& entry.CardPlay.Card.Owner == player
-				&& entry.CardPlay.PlayIndex == 0
-				&& entry.CardPlay.Card.Keywords.Contains(CardKeyword.Exhaust));
 	}
 }
