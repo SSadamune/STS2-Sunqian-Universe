@@ -20,6 +20,7 @@ internal static class SquSfx
 	public const string HoldNanJunAloneEvent = "event:/sunqian_universe/sfx/一人坚守南郡城";
 	public const string DualSwordsEvent = "event:/sunqian_universe/sfx/一把叫仁之剑，一把叫义之剑";
 	public const string GreatestPassOfCentralPlainsEvent = "event:/sunqian_universe/sfx/中原第一雄关";
+	public const string WhyDoubtWeiEvent = "event:/sunqian_universe/sfx/何疑魏-魏延早就把三军看成他自己的了";
 	public const string KnowWrongDenyWrongEvent = "event:/sunqian_universe/sfx/何谓人主，那就是知错改错不认错";
 	public const string RespectEldersTooOldEvent = "event:/sunqian_universe/sfx/尊老爱幼-你太老了";
 	public const string RespectEldersSpareTheYoungAndOldEvent = "event:/sunqian_universe/sfx/尊老爱幼-不斩老幼";
@@ -40,6 +41,15 @@ internal static class SquSfx
 	public const string HuaguMianzhangEvent = "event:/sunqian_universe/sfx/化骨绵掌";
 	public const string ForkOutWalkEvent = "event:/sunqian_universe/sfx/叉出去-走";
 	public const string ForkOutGetUpEvent = "event:/sunqian_universe/sfx/叉出去-起来";
+	public const string PortalJizhouJingzhouEvent = "event:/sunqian_universe/sfx/传送门-冀州和荆州有空间通道";
+	public const string PortalGansuHenanEvent = "event:/sunqian_universe/sfx/传送门-星夜从甘肃杀到河南";
+	public const string PortalYuanShaoXuzhouEvent = "event:/sunqian_universe/sfx/传送门-袁绍兵发徐州";
+	public const string PortalXiliangChenliuEvent = "event:/sunqian_universe/sfx/传送门-西凉太守来陈留会盟";
+	public const string PortalChanganMeiwuEvent = "event:/sunqian_universe/sfx/传送门-长安和堳坞之间有传送门";
+	public const string VoiceChangeObviousEvent = "event:/sunqian_universe/sfx/变声期-有个很明显的变声期";
+	public const string VoiceChangeYearsAgoEvent = "event:/sunqian_universe/sfx/变声期-这个多年前，明显有变声期";
+	public const string VoiceChangeTheseWordsEvent = "event:/sunqian_universe/sfx/变声期-这几个字儿明显是变声期啊";
+	public const string VoiceChangeVolumeWrongEvent = "event:/sunqian_universe/sfx/变声期-音量不对";
 	public const string WhoseHoundsEvent = "event:/sunqian_universe/sfx/哪家的鹰犬";
 	public const string TraitorDongZhuoEvent = "event:/sunqian_universe/sfx/国贼董卓";
 	public const string CunningYuanShuWhyPursueEvent = "event:/sunqian_universe/sfx/多智袁术-为何追杀";
@@ -111,6 +121,13 @@ internal static class SquSfx
 	public const string BurnAfterReadingTriggerBurnOneEvent = "event:/sunqian_universe/sfx/阅后即焚-读完一卷烧一卷";
 	public const string BurnAfterReadingTriggerBurnAllEvent = "event:/sunqian_universe/sfx/阅后即焚-全部读完则全部烧尽";
 	public const string BurnAfterReadingTriggerEmptyStudyEvent = "event:/sunqian_universe/sfx/阅后即焚-因此书房无书";
+	public const string LensReshootShowHeWasThereEvent = "event:/sunqian_universe/sfx/镜头补拍-为了表现他此时在场";
+	public const string LensReshootGoodSpiritEvent = "event:/sunqian_universe/sfx/镜头补拍-好，好志气";
+	public const string LensReshootZhaoYunDidntComeEvent = "event:/sunqian_universe/sfx/镜头补拍-说明赵云没来";
+	public const string WatchFireFromShoreNoRudenessEvent = "event:/sunqian_universe/sfx/隔岸观火-三弟休得无礼";
+	public const string WatchFireFromShoreStopTalkingEvent = "event:/sunqian_universe/sfx/隔岸观火-三弟快快住口";
+	public const string WatchFireFromShoreKneelEvent = "event:/sunqian_universe/sfx/隔岸观火-放肆，还不快跪下";
+	public const string WatchFireFromShoreYideEvent = "event:/sunqian_universe/sfx/隔岸观火-翼德，不可出言不逊";
 	public const string StargazingWangYunEvent = "event:/sunqian_universe/sfx/夜观天象-王允";
 	public const string StargazingDongZhuoEvent = "event:/sunqian_universe/sfx/夜观天象-董卓";
 

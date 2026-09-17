@@ -28,6 +28,13 @@
 {5170d31e-7a65-4c21-b013-cc2883924040} event:/sunqian_universe/sfx/仁义-仁义也分大仁小仁
 {54c28a9e-23c8-467a-9134-c7c2e62bdb68} event:/sunqian_universe/sfx/仁义-仁义才能征服天下人心
 {91ef17ac-32b2-45f0-8639-2bb6d11f3f09} event:/sunqian_universe/sfx/仁之剑
+{c9bc6e2e-6108-4c91-953a-ba9dad3f2b50} event:/sunqian_universe/sfx/传送门-冀州和荆州有空间通道
+{138a95d2-7e7f-44ed-9475-087351c3fe1f} event:/sunqian_universe/sfx/传送门-冀州韩馥占据荆州当阳
+{5b64ddfc-20fb-4712-b30b-eb05519d5377} event:/sunqian_universe/sfx/传送门-星夜从甘肃杀到河南
+{b5aefd8c-3a2a-4eda-bfd9-410da64cc0cb} event:/sunqian_universe/sfx/传送门-荆州刘表占冀州的城池
+{76123c37-b3ec-4199-bf96-43f4b5f91a6d} event:/sunqian_universe/sfx/传送门-袁绍兵发徐州
+{d8deef0f-77f0-49ca-a919-22cdbcf07a6f} event:/sunqian_universe/sfx/传送门-西凉太守来陈留会盟
+{7f9ee073-a015-4cf4-91c7-9442677d45d5} event:/sunqian_universe/sfx/传送门-长安和堳坞之间有传送门
 {071e84b9-12e0-4b35-bc7e-c0a39c0d69cb} event:/sunqian_universe/sfx/何疑魏-魏延早就把三军看成他自己的了
 {2cc64cd2-9834-438d-b17b-12cfbf7e7d48} event:/sunqian_universe/sfx/何谓人主，那就是知错改错不认错
 {6d9d9448-74e3-4bcf-898f-b932986f4bd1} event:/sunqian_universe/sfx/你是何人
@@ -41,6 +48,11 @@
 {4033daf5-e1a1-41f2-b4d0-ab3a8ab8a259} event:/sunqian_universe/sfx/化骨绵掌
 {ee369cdd-67fc-4edb-9ced-6cb15c071654} event:/sunqian_universe/sfx/叉出去-走
 {39b2f1f6-05de-4db5-95b7-14eb117ca968} event:/sunqian_universe/sfx/叉出去-起来
+{ff4cdbce-c609-460d-872b-560eb973a1de} event:/sunqian_universe/sfx/变声期-有个很明显的变声期
+{a6f47487-cd5e-45c6-841b-35c325a9d810} event:/sunqian_universe/sfx/变声期-特意去看首播版
+{2f952604-ddc5-4925-be78-55e2c20c2913} event:/sunqian_universe/sfx/变声期-这个多年前，明显有变声期
+{34bd8133-b692-4101-b620-1c4f07f8bbfd} event:/sunqian_universe/sfx/变声期-这几个字儿明显是变声期啊
+{0aa3243b-5119-4bf7-8a6a-072c0534aa2b} event:/sunqian_universe/sfx/变声期-音量不对
 {6de1432d-a5e0-412f-849a-f58941f1a9ab} event:/sunqian_universe/sfx/哪家的鹰犬
 {880314bd-44ae-48f0-a56f-1579ca6ad9f8} event:/sunqian_universe/sfx/国贼董卓
 {25f87d38-dcce-42b8-acf2-fd369148d02a} event:/sunqian_universe/sfx/多智袁术-为何追杀
@@ -67,6 +79,7 @@
 {b83f1637-5192-4f24-a452-f5457118bb16} event:/sunqian_universe/sfx/无情打击-剑声
 {2ad9175d-3e66-4d48-a995-dc5c0f0b6575} event:/sunqian_universe/sfx/无情打击-可别逼我使出无情剑来
 {f192248d-cad0-4781-adcc-8a20d2dc8b06} event:/sunqian_universe/sfx/是啊吃什么
+{697db058-db22-4e5f-b107-a32690e0f631} event:/sunqian_universe/sfx/曹操哭丧
 {277d450e-51b3-416a-a78f-4b1b4c02aa8e} event:/sunqian_universe/sfx/朕不知兵
 {ca742ee5-99e2-40d3-a8c5-c5a3de703620} event:/sunqian_universe/sfx/水火无敌
 {cd280832-1db9-4aa7-a907-b5116acc6829} event:/sunqian_universe/sfx/炮轰赤壁-减攻
@@ -74,6 +87,7 @@
 {fb6b5c93-ac46-4f27-9087-cbf43b84ddc0} event:/sunqian_universe/sfx/生死不明
 {adef8aef-88ec-4baf-9e48-999915329fda} event:/sunqian_universe/sfx/生死不明-那就是死了
 {19a69e50-cedd-43c9-9634-513e9df4cb4d} event:/sunqian_universe/sfx/白银起义
+{659d1e33-3952-4c3b-83af-b660d59bf8a9} event:/sunqian_universe/sfx/称呼别人喜欢在后面带个啊
 {1ba1aa01-3f0b-4671-8afb-8ba1c04969de} event:/sunqian_universe/sfx/竟然不许
 {639dc942-2347-4014-a068-b9f6142dc7d6} event:/sunqian_universe/sfx/箭幕
 {952a0fab-ffcf-499f-a37e-69bfcb8af795} event:/sunqian_universe/sfx/继续享受-我打了一辈子仗就不能享受享受吗
@@ -92,6 +106,9 @@
 {71fa4c5a-0c07-4570-aa7d-d770b40fdb25} event:/sunqian_universe/sfx/透明窟窿-戳马超
 {63609ff5-eb62-4a3b-a4e6-aae1fd6d51a4} event:/sunqian_universe/sfx/透明窟窿-捅吕布
 {567226dd-47f8-4fd6-8c9e-35f7f1a34557} event:/sunqian_universe/sfx/透明窟窿-捅袁术
+{63f32692-99b8-4b38-b39f-2e486dab6725} event:/sunqian_universe/sfx/镜头补拍-为了表现他此时在场
+{20e67140-0b0a-463b-8fce-4c22a8f9bd68} event:/sunqian_universe/sfx/镜头补拍-好，好志气
+{6a0ee6da-c0c9-401f-8dc3-21d34d9c9453} event:/sunqian_universe/sfx/镜头补拍-说明赵云没来
 {ee06c914-5fff-4fb5-a174-ed9a77258ddf} event:/sunqian_universe/sfx/闪电战-三个时辰破荆州
 {e04a25e5-520b-46f2-a4e1-22c88a18d29b} event:/sunqian_universe/sfx/闪电战-三天内纵横八百里
 {f6e36b7c-e057-4179-b8ee-921196c1e9ab} event:/sunqian_universe/sfx/闪电战-哈哈哈哈哈
@@ -99,6 +116,7 @@
 {347c77f7-b0e7-4d2a-9444-9fb734b2ce77} event:/sunqian_universe/sfx/闪电战-连续攻城拔寨
 {71174d78-bec4-4b5b-a421-7d2a678ee3f2} event:/sunqian_universe/sfx/闪电战-陆康未设防
 {f5d58d94-59c5-4db0-a007-6e696c8ff963} event:/sunqian_universe/sfx/闻丧贺喜-为主公悲伤
+{81b0f5b8-4d32-4f7e-8357-a776ecc367c3} event:/sunqian_universe/sfx/闻丧贺喜-曹操哭丧
 {c7576ef4-f64d-4599-a514-468b39f9cb18} event:/sunqian_universe/sfx/闻丧贺喜-给主公道喜
 {24848df3-0918-447d-a29e-b14ce6caf190} event:/sunqian_universe/sfx/阅后即焚-全部读完则全部烧尽
 {df95e9f2-a486-4391-80ce-b6796bcd5a8a} event:/sunqian_universe/sfx/阅后即焚-因此书房无书
@@ -107,6 +125,10 @@
 {b4b0759b-3afb-4abb-83b8-e105f3781afd} event:/sunqian_universe/sfx/阻拦救火-不可惊扰
 {0435b182-d104-44a2-bcbd-2c30188c6da7} event:/sunqian_universe/sfx/阻拦救火-先生奇人
 {a36fa3e2-f327-4b84-9398-1ca8d6be1cd9} event:/sunqian_universe/sfx/陆逊塞伯坦
+{2a3b833d-fff7-421d-912f-3cb4431842be} event:/sunqian_universe/sfx/隔岸观火-三弟休得无礼
+{0352d615-e415-4e76-85f0-db4ac39a759a} event:/sunqian_universe/sfx/隔岸观火-三弟快快住口
+{724bad7d-daae-4223-a179-57f961211f50} event:/sunqian_universe/sfx/隔岸观火-放肆，还不快跪下
+{ffe619e9-9bda-419c-97e0-a43c7b7be578} event:/sunqian_universe/sfx/隔岸观火-翼德，不可出言不逊
 {9de43e87-b9f6-4e68-90a3-eb124f7ef062} event:/sunqian_universe/sfx/飞火流星1
 {17eb9846-0a3a-4ae9-934a-89d69d955a7b} event:/sunqian_universe/sfx/飞火流星2
 {4a44dd86-1451-4572-b733-3ef0d783d9df} event:/sunqian_universe/sfx/飞火流星3

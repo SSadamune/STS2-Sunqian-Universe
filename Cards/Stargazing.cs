@@ -84,9 +84,30 @@ public sealed class Stargazing : ModCardTemplate
 		CombatSide side,
 		IEnumerable<Creature> participants)
 	{
-		while (_pendingDiscardPileEntries > 0)
+		if (CombatState is not { } combatState)
 		{
-			await ConsumeOneDiscardPileEntry(choiceContext);
+			return;
+		}
+
+		List<Stargazing> ownerCopies = combatState
+			.IterateHookListeners()
+			.OfType<Stargazing>()
+			.Where(card => card.Owner == Owner)
+			.ToList();
+
+		// 回合结束钩子会在一次玩家选择暂停后继续启动其他监听者。
+		// 只让第一张牌负责串行结算，避免后续预见提前缓存相同的抽牌堆顶。
+		if (ownerCopies.Count == 0 || ownerCopies[0] != this)
+		{
+			return;
+		}
+
+		foreach (Stargazing card in ownerCopies)
+		{
+			while (card._pendingDiscardPileEntries > 0)
+			{
+				await card.ConsumeOneDiscardPileEntry(choiceContext);
+			}
 		}
 	}
 

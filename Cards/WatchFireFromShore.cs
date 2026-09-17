@@ -9,6 +9,7 @@ using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.ValueProps;
 using Squ;
+using Squ.Audio;
 using Squ.Character;
 using Squ.Combat;
 using Squ.Powers;
@@ -57,6 +58,12 @@ public sealed class WatchFireFromShore : ModCardTemplate, IRandomEnemyTargetCoun
 
 	protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
 	{
+		SquSfx.PlayRandom(
+			RunState,
+			SquSfx.WatchFireFromShoreYideEvent,
+			SquSfx.WatchFireFromShoreStopTalkingEvent,
+			SquSfx.WatchFireFromShoreNoRudenessEvent,
+			SquSfx.WatchFireFromShoreKneelEvent);
 		await CreatureCmd.GainBlock(Owner.Creature, DynamicVars.Block, cardPlay);
 
 		decimal burningStacks = DynamicVars[nameof(BurningPower)].BaseValue;

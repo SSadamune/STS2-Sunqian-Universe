@@ -11,6 +11,7 @@ using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.ValueProps;
 using Squ;
+using Squ.Audio;
 using Squ.Character;
 using STS2RitsuLib.Interop.AutoRegistration;
 using STS2RitsuLib.Scaffolding.Content;
@@ -55,6 +56,12 @@ public sealed class VoiceChange : ModCardTemplate
 
 	protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
 	{
+		SquSfx.PlayRandom(
+			RunState,
+			SquSfx.VoiceChangeYearsAgoEvent,
+			SquSfx.VoiceChangeObviousEvent,
+			SquSfx.VoiceChangeTheseWordsEvent,
+			SquSfx.VoiceChangeVolumeWrongEvent);
 		await CreatureCmd.GainBlock(Owner.Creature, DynamicVars.Block, cardPlay);
 
 		CardPile exhaustPile = PileType.Exhaust.GetPile(Owner);
