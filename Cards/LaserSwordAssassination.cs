@@ -27,8 +27,8 @@ namespace Squ.Cards;
 [RegisterCard(typeof(SunqianCardPool), StableEntryStem = "laser_sword_assassination")]
 public sealed class LaserSwordAssassination : ModCardTemplate
 {
-	public const decimal CanonicalDamage = 3m;
-	public const decimal UpgradedDamage = 6m;
+	public const decimal CanonicalDamage = 4m;
+	public const decimal UpgradedDamage = 7m;
 
 	internal static readonly ValueProp DamageProps = ValueProp.Move | ValueProp.Unblockable;
 

@@ -20,6 +20,8 @@ internal static class SquSfx
 	public const string HoldNanJunAloneEvent = "event:/sunqian_universe/sfx/一人坚守南郡城";
 	public const string DualSwordsEvent = "event:/sunqian_universe/sfx/一把叫仁之剑，一把叫义之剑";
 	public const string GreatestPassOfCentralPlainsEvent = "event:/sunqian_universe/sfx/中原第一雄关";
+	public const string WhyDoubtWeiTooCautiousEvent = "event:/sunqian_universe/sfx/何疑魏-丞相太过于谨小慎微了";
+	public const string WhyDoubtWeiSoCautiousEvent = "event:/sunqian_universe/sfx/何疑魏-想不到丞相竟是这般谨慎";
 	public const string WhyDoubtWeiEvent = "event:/sunqian_universe/sfx/何疑魏-魏延早就把三军看成他自己的了";
 	public const string KnowWrongDenyWrongEvent = "event:/sunqian_universe/sfx/何谓人主，那就是知错改错不认错";
 	public const string RespectEldersTooOldEvent = "event:/sunqian_universe/sfx/尊老爱幼-你太老了";

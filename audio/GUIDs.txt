@@ -35,6 +35,8 @@
 {76123c37-b3ec-4199-bf96-43f4b5f91a6d} event:/sunqian_universe/sfx/传送门-袁绍兵发徐州
 {d8deef0f-77f0-49ca-a919-22cdbcf07a6f} event:/sunqian_universe/sfx/传送门-西凉太守来陈留会盟
 {7f9ee073-a015-4cf4-91c7-9442677d45d5} event:/sunqian_universe/sfx/传送门-长安和堳坞之间有传送门
+{7f1175f4-1cfc-4c02-8b84-a752a279f4be} event:/sunqian_universe/sfx/何疑魏-丞相太过于谨小慎微了
+{93a94d02-5377-48d7-b7df-d91c1c65917f} event:/sunqian_universe/sfx/何疑魏-想不到丞相竟是这般谨慎
 {071e84b9-12e0-4b35-bc7e-c0a39c0d69cb} event:/sunqian_universe/sfx/何疑魏-魏延早就把三军看成他自己的了
 {2cc64cd2-9834-438d-b17b-12cfbf7e7d48} event:/sunqian_universe/sfx/何谓人主，那就是知错改错不认错
 {6d9d9448-74e3-4bcf-898f-b932986f4bd1} event:/sunqian_universe/sfx/你是何人
@@ -115,6 +117,7 @@
 {92ded35f-0530-4f9b-b0ce-7435b97d3917} event:/sunqian_universe/sfx/闪电战-星夜兼程奔赴庐江
 {347c77f7-b0e7-4d2a-9444-9fb734b2ce77} event:/sunqian_universe/sfx/闪电战-连续攻城拔寨
 {71174d78-bec4-4b5b-a421-7d2a678ee3f2} event:/sunqian_universe/sfx/闪电战-陆康未设防
+{d420b14b-5b27-4693-88ac-53045903c393} event:/sunqian_universe/sfx/闻丧贺喜-一者悲伤二者道喜
 {f5d58d94-59c5-4db0-a007-6e696c8ff963} event:/sunqian_universe/sfx/闻丧贺喜-为主公悲伤
 {81b0f5b8-4d32-4f7e-8357-a776ecc367c3} event:/sunqian_universe/sfx/闻丧贺喜-曹操哭丧
 {c7576ef4-f64d-4599-a514-468b39f9cb18} event:/sunqian_universe/sfx/闻丧贺喜-给主公道喜

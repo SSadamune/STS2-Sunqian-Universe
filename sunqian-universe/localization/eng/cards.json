@@ -186,5 +186,5 @@
   "SUNQIAN_UNIVERSE_CARD_GREATEST_PASS_OF_CENTRAL_PLAINS.description": "This is a “[blue]Potion[/blue]” capable of granting {IfUpgraded:show:a massive|a large} amount of [gold]Block[/gold].",
   "SUNQIAN_UNIVERSE_CARD_GREATEST_PASS_OF_CENTRAL_PLAINS.annotation": "This card enters your Hand at the start of combat and is [red]removed[/red] from your Deck after it is played.\nThis card counts as using a potion on the target player with the effect “[blue]Grant {Block:diff()} [gold]Block[/gold][/blue].”",
   "SUNQIAN_UNIVERSE_CARD_WHY_DOUBT_WEI.title": "Why Doubt Wei",
-  "SUNQIAN_UNIVERSE_CARD_WHY_DOUBT_WEI.description": "Deal {Damage:diff()} damage.\nGain {StrengthPower:diff()} [gold]Strength[/gold].\nWhen this card is Exhausted by [gold]Ethereal[/gold], gain {WeakPower:diff()} [gold]Weak[/gold]."
+  "SUNQIAN_UNIVERSE_CARD_WHY_DOUBT_WEI.description": "Deal {Damage:diff()} damage.\nGain {StrengthPower:diff()} [gold]Strength[/gold].\nWhen this card is Exhausted by [gold]Ethereal[/gold], gain {Block:diff()} [gold]Block[/gold] and {WeakPower:diff()} [gold]Weak[/gold]."
 }

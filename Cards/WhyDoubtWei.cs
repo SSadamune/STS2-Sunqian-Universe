@@ -19,20 +19,22 @@ using STS2RitsuLib.Scaffolding.Content;
 namespace Squ.Cards;
 
 /// <summary>
-/// 何疑魏：造成伤害并获得力量；因虚无被消耗后获得虚弱。
+/// 何疑魏：造成伤害并获得力量；因虚无被消耗后获得格挡与虚弱。
 /// </summary>
 [RegisterCard(typeof(SunqianCardPool), StableEntryStem = "why_doubt_wei")]
 public sealed class WhyDoubtWei : ModCardTemplate
 {
-	public const decimal BaseDamage = 15m;
-	public const decimal UpgradedDamage = 19m;
+	public const decimal BaseDamage = 14m;
+	public const decimal UpgradedDamage = 17m;
+	public const decimal BlockAmount = 7m;
 	public const decimal BaseStrength = 2m;
 	public const decimal UpgradedStrength = 3m;
-	public const decimal WeakAmount = 3m;
+	public const decimal WeakAmount = 2m;
 
 	protected override IEnumerable<DynamicVar> CanonicalVars =>
 	[
 		new DamageVar(BaseDamage, ValueProp.Move),
+		new BlockVar(BlockAmount, ValueProp.Move),
 		new PowerVar<StrengthPower>(BaseStrength),
 		new PowerVar<WeakPower>(WeakAmount),
 	];
@@ -45,6 +47,7 @@ public sealed class WhyDoubtWei : ModCardTemplate
 	protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
 	[
 		HoverTipFactory.FromPower<StrengthPower>(),
+		HoverTipFactory.Static(StaticHoverTip.Block),
 		HoverTipFactory.FromPower<WeakPower>(),
 	];
 
@@ -79,12 +82,27 @@ public sealed class WhyDoubtWei : ModCardTemplate
 		CardModel card,
 		bool causedByEthereal)
 	{
-		if (card != this || !causedByEthereal || CombatState == null)
+		if (card != this)
 		{
 			return;
 		}
 
-		SquSfx.Play(SquSfx.WhyDoubtWeiEvent);
+		if (!causedByEthereal)
+		{
+			SquSfx.Play(SquSfx.WhyDoubtWeiEvent);
+			return;
+		}
+
+		if (CombatState == null)
+		{
+			return;
+		}
+
+		SquSfx.PlayRandom(
+			RunState,
+			SquSfx.WhyDoubtWeiTooCautiousEvent,
+			SquSfx.WhyDoubtWeiSoCautiousEvent);
+		await CreatureCmd.GainBlock(Owner.Creature, DynamicVars.Block, cardPlay: null);
 		await PowerCmd.Apply<WeakPower>(
 			choiceContext,
 			Owner.Creature,
