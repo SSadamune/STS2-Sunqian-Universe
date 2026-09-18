@@ -29,9 +29,9 @@ namespace Squ.Cards;
 [RegisterCard(typeof(SunqianCardPool), StableEntryStem = "blitzkrieg")]
 public sealed class Blitzkrieg : ModCardTemplate
 {
-	public const int BaseDamage = 9;
+	public const int BaseDamage = 11;
 
-	public const int UpgradedDamage = 11;
+	public const int UpgradedDamage = 15;
 
 	private const float AutoPlayDelaySeconds = 0.2f;
 
