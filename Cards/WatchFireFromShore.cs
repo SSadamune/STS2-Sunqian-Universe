@@ -23,8 +23,8 @@ namespace Squ.Cards;
 [RegisterCard(typeof(SunqianCardPool), StableEntryStem = "watch_fire_from_shore")]
 public sealed class WatchFireFromShore : ModCardTemplate, IRandomEnemyTargetCount
 {
-	public const int BaseBlock = 7;
-	public const int UpgradedBlock = 9;
+	public const int BaseBlock = 8;
+	public const int UpgradedBlock = 10;
 	public const int BaseBurning = 2;
 	public const int UpgradedBurning = 3;
 	public const int RandomEnemyTargetCount = 2;

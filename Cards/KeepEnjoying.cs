@@ -29,13 +29,16 @@ namespace Squ.Cards;
 public sealed class KeepEnjoying : ModCardTemplate
 {
 	public const decimal CanonicalBlock = 8m;
-	public const decimal UpgradedBlock = 12m;
+	public const decimal UpgradedBlock = 4m;
+	public const int CanonicalRepeat = 1;
+	public const int UpgradedRepeat = 2;
 
 	private static readonly ValueProp BlockProps = ValueProp.Move;
 
 	protected override IEnumerable<DynamicVar> CanonicalVars =>
 	[
 		new VigorBlockVar(CanonicalBlock),
+		new RepeatVar(CanonicalRepeat),
 	];
 
 	public override bool GainsBlock => true;
@@ -63,12 +66,16 @@ public sealed class KeepEnjoying : ModCardTemplate
 			? SquSfx.KeepEnjoyingLetMeEnjoyEvent
 			: SquSfx.KeepEnjoyingKeepDancingEvent);
 		decimal block = DynamicVars.Block.BaseValue + spentVigor;
-		await CreatureCmd.GainBlock(Owner.Creature, block, BlockProps, cardPlay);
+		for (int i = 0; i < DynamicVars.Repeat.IntValue; i++)
+		{
+			await CreatureCmd.GainBlock(Owner.Creature, block, BlockProps, cardPlay);
+		}
 	}
 
 	protected override void OnUpgrade()
 	{
 		DynamicVars.Block.UpgradeValueBy(UpgradedBlock - CanonicalBlock);
+		DynamicVars.Repeat.UpgradeValueBy(UpgradedRepeat - CanonicalRepeat);
 	}
 
 	/// <summary>

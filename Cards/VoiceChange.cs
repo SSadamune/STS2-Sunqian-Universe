@@ -27,7 +27,7 @@ public sealed class VoiceChange : ModCardTemplate
 		new("cards", "SUNQIAN_UNIVERSE_CARD_VOICE_CHANGE.selectionScreenPrompt");
 
 	public const decimal BaseBlock = 7m;
-	public const decimal UpgradedBlock = 9m;
+	public const decimal UpgradedBlock = 8m;
 
 	protected override IEnumerable<DynamicVar> CanonicalVars =>
 	[

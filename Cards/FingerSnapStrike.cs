@@ -18,7 +18,7 @@ using STS2RitsuLib.Scaffolding.Content;
 namespace Squ.Cards;
 
 /// <summary>
-/// 保留。蓄能：被保留时将本战耗能随机为 0~2（参考 Slither 的
+/// 保留。蓄能：被保留时将本战耗能随机改为与当前不同的 0~2（参考 Slither 的
 /// <see cref="CardEnergyCost.SetThisCombat"/> + 随机耗能动画）。打出后解除。
 /// </summary>
 [RegisterCard(typeof(SunqianCardPool), StableEntryStem = "finger_snap_strike")]
@@ -83,7 +83,17 @@ public sealed class FingerSnapStrike : ChargeCardTemplate
 
 	private Task RandomizeEnergyCostUntilPlayed(PlayerChoiceContext choiceContext)
 	{
-		int cost = Owner.RunState.Rng.CombatEnergyCosts.NextInt(RandomCostInclusiveMax + 1);
+		int currentCost = EnergyCost.GetResolved();
+		int cost = Owner.RunState.Rng.CombatEnergyCosts.NextInt(
+			currentCost is >= 0 and <= RandomCostInclusiveMax
+				? RandomCostInclusiveMax
+				: RandomCostInclusiveMax + 1);
+
+		if (currentCost is >= 0 and <= RandomCostInclusiveMax && cost >= currentCost)
+		{
+			cost++;
+		}
+
 		EnergyCost.SetThisCombat(cost);
 		NCard.FindOnTable(this)?.PlayRandomizeCostAnim();
 		return Task.CompletedTask;

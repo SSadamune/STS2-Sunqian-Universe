@@ -5,10 +5,10 @@ using MegaCrit.Sts2.Core.Models;
 namespace Squ.Combat;
 
 /// <summary>
-/// Permanently increases an attack card's base damage for the rest of combat, mirroring
-/// <see cref="MegaCrit.Sts2.Core.Models.Cards.Thrash"/>.
+/// Permanently increases a card's printed combat values, mirroring
+/// <see cref="MegaCrit.Sts2.Core.Models.Cards.Thrash"/> for damage.
 /// </summary>
-public static class AttackCardDamageRetain
+public static class CardValueRetain
 {
 	public static bool TryAddBaseDamage(CardModel card, decimal amount)
 	{
@@ -38,5 +38,16 @@ public static class AttackCardDamageRetain
 		Squ.SquMod.Logger?.Warn(
 			$"Could not retain {amount} damage on {card.Id.Entry}: no recognized damage dynamic var.");
 		return false;
+	}
+
+	public static bool TryAddBaseValue(CardModel card, string dynamicVarName, decimal amount)
+	{
+		if (amount <= 0m || !card.DynamicVars.ContainsKey(dynamicVarName))
+		{
+			return false;
+		}
+
+		card.DynamicVars[dynamicVarName].BaseValue += amount;
+		return true;
 	}
 }
