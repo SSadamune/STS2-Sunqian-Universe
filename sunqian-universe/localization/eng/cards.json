@@ -59,8 +59,8 @@
   "SUNQIAN_UNIVERSE_CARD_THUNDER_ON_STILL_LAKE.chargeEffect": "Whenever you are attacked, this card costs {energyPrefix:energyIcons(1)} less; when you spend [gold]Vigor[/gold], this card gains that much damage.",
   "SUNQIAN_UNIVERSE_CARD_CHICKEN_FOOT_CHEESE.title": "Chicken Foot Cheese",
   "SUNQIAN_UNIVERSE_CARD_CHICKEN_FOOT_CHEESE.description": "Deal {Damage:diff()} damage twice to each of 2 random enemies. For {ChickenFootCheeseStrikePower:diff()} {ChickenFootCheeseStrikePower:plural:turn|turns}, [gold]Strike[/gold] cards you play target 2 random enemies instead.",
-  "SUNQIAN_UNIVERSE_CARD_SUPERNATURALLY_WISE.title": "Supernaturally Wise",
-  "SUNQIAN_UNIVERSE_CARD_SUPERNATURALLY_WISE.description": "If you play an [gold]Exhaust[/gold] card this turn, draw {Cards:diff()} {Cards:plural:card|cards} at the start of your next turn.",
+  "SUNQIAN_UNIVERSE_CARD_TOO_SMART_TO_BE_REAL.title": "Too Smart to Be Real",
+  "SUNQIAN_UNIVERSE_CARD_TOO_SMART_TO_BE_REAL.description": "If you play an [gold]Exhaust[/gold] card this turn, draw {Cards:diff()} {Cards:plural:card|cards} at the start of your next turn.",
   "SUNQIAN_UNIVERSE_CARD_WHAT_TO_EAT.title": "What to Eat",
   "SUNQIAN_UNIVERSE_CARD_WHAT_TO_EAT.description": "Draw {Cards:diff()} cards. [gold]Exhaust[/gold] 2 cards.\nAdd 1 [gold]{IfUpgraded:show:Exactly, What to Eat+|Exactly, What to Eat}[/gold] into each other player's [gold]Hand[/gold].",
   "SUNQIAN_UNIVERSE_CARD_EXACTLY_WHAT_TO_EAT.title": "Exactly, What to Eat",
@@ -186,5 +186,7 @@
   "SUNQIAN_UNIVERSE_CARD_GREATEST_PASS_OF_CENTRAL_PLAINS.description": "This is a “[blue]Potion[/blue]” capable of granting {IfUpgraded:show:a massive|a large} amount of [gold]Block[/gold].",
   "SUNQIAN_UNIVERSE_CARD_GREATEST_PASS_OF_CENTRAL_PLAINS.annotation": "This card enters your Hand at the start of combat and is [red]removed[/red] from your Deck after it is played.\nThis card counts as using a potion on the target player with the effect “[blue]Grant {Block:diff()} [gold]Block[/gold][/blue].”",
   "SUNQIAN_UNIVERSE_CARD_WHY_DOUBT_WEI.title": "Why Doubt Wei",
-  "SUNQIAN_UNIVERSE_CARD_WHY_DOUBT_WEI.description": "Deal {Damage:diff()} damage.\nGain {StrengthPower:diff()} [gold]Strength[/gold].\nWhen this card is Exhausted by [gold]Ethereal[/gold], gain {Block:diff()} [gold]Block[/gold] and {WeakPower:diff()} [gold]Weak[/gold]."
+  "SUNQIAN_UNIVERSE_CARD_WHY_DOUBT_WEI.description": "Deal {Damage:diff()} damage.\nGain {StrengthPower:diff()} [gold]Strength[/gold].\nWhen this card is Exhausted by [gold]Ethereal[/gold], gain {Block:diff()} [gold]Block[/gold] and {WeakPower:diff()} [gold]Weak[/gold].",
+  "SUNQIAN_UNIVERSE_CARD_TOO_KIND_TO_BE_TRUE.title": "Too Kind to Be True",
+  "SUNQIAN_UNIVERSE_CARD_TOO_KIND_TO_BE_TRUE.description": "[gold]Transform[/gold] an Attack into [gold]{IfUpgraded:show:Ultimate Defend|Defend+}[/gold].\nFor each unique Debuff you have, cards with \"Defend\" in their name gain {ExtraBlock:diff()} additional [gold]Block[/gold]."
 }

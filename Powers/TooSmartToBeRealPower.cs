@@ -20,7 +20,7 @@ namespace Squ.Powers;
 /// 在抽牌阶段回溯上一玩家回合的战斗历史，故本回合在打出此能力前打出的消耗牌同样计入。
 /// </summary>
 [RegisterPower]
-public sealed class SupernaturallyWisePower : ModPowerTemplate
+public sealed class TooSmartToBeRealPower : ModPowerTemplate
 {
 	public override PowerType Type => PowerType.Buff;
 
@@ -29,8 +29,8 @@ public sealed class SupernaturallyWisePower : ModPowerTemplate
 	public override Color AmountLabelColor => PowerModel._normalAmountLabelColor;
 
 	public override PowerAssetProfile AssetProfile => new(
-		IconPath: "res://images/powers/SupernaturallyWisePower.png",
-		BigIconPath: "res://images/powers/SupernaturallyWisePowerBig.png");
+		IconPath: "res://images/powers/TooSmartToBeRealPower.png",
+		BigIconPath: "res://images/powers/TooSmartToBeRealPowerBig.png");
 
 	protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
 	[

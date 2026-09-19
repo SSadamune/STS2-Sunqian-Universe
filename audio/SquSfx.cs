@@ -61,6 +61,7 @@ internal static class SquSfx
 	public const string HouseServantsComeEvent = "event:/sunqian_universe/sfx/家丁剧本-来人";
 	public const string ThunderOnStillLakeAsLongAsIBreatheEvent = "event:/sunqian_universe/sfx/平湖惊雷-只要一息尚存";
 	public const string ThunderOnStillLakeChopYourHeadEvent = "event:/sunqian_universe/sfx/平湖惊雷-放肆我砍你的头";
+	public const string FingerStrikeRemainingLandEvent = "event:/sunqian_universe/sfx/弹指打击-剩下一小片江山";
 	public const string FingerStrikeDongZhuoHeadEvent = "event:/sunqian_universe/sfx/弹指打击-取董贼首级";
 	public const string NearAndFarEvent = "event:/sunqian_universe/sfx/忽近忽远";
 	public const string SlamTheCommandDeskEvent = "event:/sunqian_universe/sfx/怒掀帅案";
@@ -130,6 +131,7 @@ internal static class SquSfx
 	public const string WatchFireFromShoreStopTalkingEvent = "event:/sunqian_universe/sfx/隔岸观火-三弟快快住口";
 	public const string WatchFireFromShoreKneelEvent = "event:/sunqian_universe/sfx/隔岸观火-放肆，还不快跪下";
 	public const string WatchFireFromShoreYideEvent = "event:/sunqian_universe/sfx/隔岸观火-翼德，不可出言不逊";
+	public const string TooKindToBeTrueEvent = "event:/sunqian_universe/sfx/长厚似伪-为何老替他说话";
 	public const string StargazingWangYunEvent = "event:/sunqian_universe/sfx/夜观天象-王允";
 	public const string StargazingDongZhuoEvent = "event:/sunqian_universe/sfx/夜观天象-董卓";
 

@@ -15,8 +15,8 @@ using STS2RitsuLib.Scaffolding.Content;
 
 namespace Squ.Cards;
 
-[RegisterCard(typeof(SunqianCardPool), StableEntryStem = "supernaturally_wise")]
-public sealed class SupernaturallyWise : ModCardTemplate
+[RegisterCard(typeof(SunqianCardPool), StableEntryStem = "too_smart_to_be_real")]
+public sealed class TooSmartToBeReal : ModCardTemplate
 {
 	protected override IEnumerable<DynamicVar> CanonicalVars =>
 	[
@@ -29,9 +29,9 @@ public sealed class SupernaturallyWise : ModCardTemplate
 	];
 
 	public override CardAssetProfile AssetProfile => new(
-		PortraitPath: "res://images/cards/SupernaturallyWise.png");
+		PortraitPath: "res://images/cards/TooSmartToBeReal.png");
 
-	public SupernaturallyWise()
+	public TooSmartToBeReal()
 		: base(1, CardType.Power, CardRarity.Uncommon, TargetType.Self)
 	{
 	}
@@ -42,7 +42,7 @@ public sealed class SupernaturallyWise : ModCardTemplate
 			RunState,
 			SquSfx.CunningYuanShuWhyPursueEvent,
 			SquSfx.CunningYuanShuGreedyGloryEvent);
-		await PowerCmd.Apply<SupernaturallyWisePower>(
+		await PowerCmd.Apply<TooSmartToBeRealPower>(
 			choiceContext,
 			Owner.Creature,
 			DynamicVars.Cards.BaseValue,
