@@ -69,9 +69,12 @@ public sealed class BlockFirefighting : ModCardTemplate
 	{
 		ArgumentNullException.ThrowIfNull(cardPlay.Target);
 
+		SquSfx.Play(IsUpgraded
+			? SquSfx.BlockFirefightingSageEvent
+			: SquSfx.BlockFirefightingDoNotDisturbEvent);
+
 		if (cardPlay.Target.HasPower<BurningPower>())
 		{
-			SquSfx.Play(SquSfx.BlockFirefightingSageEvent);
 			await PowerCmd.Apply<BurningPower>(
 				choiceContext,
 				cardPlay.Target,
