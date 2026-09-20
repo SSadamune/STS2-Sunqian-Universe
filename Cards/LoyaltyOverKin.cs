@@ -13,6 +13,7 @@ using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.Powers;
 using MegaCrit.Sts2.Core.ValueProps;
+using Squ.Audio;
 using Squ.Character;
 using Squ.Combat;
 using STS2RitsuLib.Interop.AutoRegistration;
@@ -24,8 +25,7 @@ namespace Squ.Cards;
 
 /// <summary>
 /// 大义灭亲：消耗抽牌堆中打出率最高的 2 张牌
-/// （PlayCount / (PlayWithoutDiscardOrExhaustCount + ExhaustEntryCount + DiscardEntryCount)；
-/// 率相同则优先打出次数更多者，再按获得顺序）；每消耗一张先造成伤害再获得力量。
+/// （从手牌打出次数 / 进入手牌次数；率相同则优先打出次数更多者，再按获得顺序）；每消耗一张先造成伤害再获得力量。
 /// </summary>
 [RegisterCard(typeof(SunqianCardPool), StableEntryStem = "loyalty_over_kin")]
 public sealed class LoyaltyOverKin : ModCardTemplate
@@ -71,6 +71,7 @@ public sealed class LoyaltyOverKin : ModCardTemplate
 	{
 		ArgumentNullException.ThrowIfNull(cardPlay.Target, nameof(cardPlay.Target));
 
+		SquSfx.Play(SquSfx.LoyaltyOverKinEvent);
 		List<CardModel> selected = SelectTargets();
 
 		CardDrawPlayRateTracker.LogCurrentState(
@@ -132,7 +133,8 @@ public sealed class LoyaltyOverKin : ModCardTemplate
 
 	private List<CardModel> GetDescriptionPreviewTargets()
 	{
-		if (!CombatManager.Instance.IsInProgress || Owner?.PlayerCombatState == null)
+		// 图鉴规范卡不可变，访问 Owner 会 AssertMutable；仅战斗中的可变实例才预览消耗目标。
+		if (!IsMutable || RunState is null || !CombatManager.Instance.IsInProgress || Owner?.PlayerCombatState == null)
 		{
 			return [];
 		}

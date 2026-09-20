@@ -12,6 +12,7 @@ using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.ValueProps;
 using MegaCrit.Sts2.Core.Models.Powers;
 using Squ;
+using Squ.Audio;
 using Squ.Character;
 using Squ.Powers;
 using STS2RitsuLib.Interop.AutoRegistration;
@@ -28,11 +29,13 @@ public sealed class BombardChibiScript : ScriptCardTemplate
 	public const int UpgradedBlock = 10;
 	public const int BaseBurning = 7;
 	public const int UpgradedBurning = 10;
+	public const string StrengthLossVarName = "StrengthLoss";
 
 	protected override IEnumerable<DynamicVar> CanonicalVars =>
 	[
 		new BlockVar(BaseBlock, ValueProp.Move),
 		new PowerVar<BurningPower>(BaseBurning),
+		new DynamicVar(StrengthLossVarName, BaseBurning),
 	];
 
 	public override bool GainsBlock => true;
@@ -64,6 +67,7 @@ public sealed class BombardChibiScript : ScriptCardTemplate
 		ICombatState? combatState = CombatState;
 		ArgumentNullException.ThrowIfNull(combatState, nameof(combatState));
 
+		SquSfx.Play(SquSfx.BombardChibiIgniteEvent);
 		await CreatureCmd.TriggerAnim(Owner.Creature, "Cast", Owner.Character.CastAnimDelay);
 		await CreatureCmd.GainBlock(Owner.Creature, DynamicVars.Block, cardPlay);
 
@@ -95,5 +99,6 @@ public sealed class BombardChibiScript : ScriptCardTemplate
 	{
 		DynamicVars.Block.UpgradeValueBy(UpgradedBlock - BaseBlock);
 		DynamicVars[nameof(BurningPower)].UpgradeValueBy(UpgradedBurning - BaseBurning);
+		DynamicVars[StrengthLossVarName].UpgradeValueBy(UpgradedBurning - BaseBurning);
 	}
 }

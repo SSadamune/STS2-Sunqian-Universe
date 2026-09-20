@@ -45,12 +45,18 @@ public sealed class SunqianCharacter : ModCharacterTemplate<SunqianCardPool, Sun
 			Audio: new(
 				CharacterTransitionSfx: "event:/sfx/ui/wipe_ironclad"
 			),
+			Multiplayer: new(
+				ArmPointingTexturePath: "res://images/character/SunqianArmPointing.png",
+				ArmRockTexturePath: "res://images/character/SunqianArmRock.png",
+				ArmPaperTexturePath: "res://images/character/SunqianArmPaper.png",
+				ArmScissorsTexturePath: "res://images/character/SunqianArmScissors.png"
+			),
 			VisualCues: ModVisualCues.CueSet()
 				.Single("idle", "res://images/character/Longtao.png")
 				.Single("hit", "res://images/character/Longtao.png", 0.5f)
 				.Single("attack", "res://images/character/Longtao.png", 0.5f)
 				.Single("cast", "res://images/character/Longtao.png", 0.5f)
-				.Single("dead", "res://images/character/Longtao.png")
+				.Single("dead", "res://images/character/Longtao-dead.png")
 				.Single("relaxed", "res://images/character/Longtao.png")
 				.Build()
 		));

@@ -5,6 +5,7 @@ using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.Models;
+using Squ.Audio;
 using Squ.Character;
 using Squ.Combat;
 using STS2RitsuLib.Interop.AutoRegistration;
@@ -39,6 +40,13 @@ public sealed class Portal : ModCardTemplate
 
 	protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
 	{
+		SquSfx.PlayRandom(
+			RunState,
+			SquSfx.PortalChanganMeiwuEvent,
+			SquSfx.PortalYuanShaoXuzhouEvent,
+			SquSfx.PortalJizhouJingzhouEvent,
+			SquSfx.PortalGansuHenanEvent,
+			SquSfx.PortalXiliangChenliuEvent);
 		await ScryCmd.Execute(choiceContext, this);
 
 		CardModel? drawn = await CardPileCmd.Draw(choiceContext, Owner);

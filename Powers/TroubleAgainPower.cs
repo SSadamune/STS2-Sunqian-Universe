@@ -12,6 +12,7 @@ using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.Powers;
+using Squ.Audio;
 using Squ.Cards;
 using STS2RitsuLib.Interop.AutoRegistration;
 using STS2RitsuLib.Scaffolding.Content;
@@ -107,6 +108,7 @@ public sealed class TroubleAgainPower : ModPowerTemplate
 		}
 
 		Flash();
+		SquSfx.Play(SquSfx.RunWildAgainEvent);
 		await ReturnTrackedCardAndRemoveAsync(choiceContext);
 	}
 

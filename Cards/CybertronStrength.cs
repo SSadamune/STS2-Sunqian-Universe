@@ -8,6 +8,7 @@ using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.ValueProps;
+using Squ.Audio;
 using Squ.Character;
 using Squ.Powers;
 using STS2RitsuLib.Interop.AutoRegistration;
@@ -21,12 +22,16 @@ namespace Squ.Cards;
 public sealed class CybertronStrength : ModCardTemplate
 {
 	public const decimal BaseBlock = 7m;
-	public const decimal UpgradedBlock = 10m;
-	public const int BurningPerExtraBlock = 10;
+	public const decimal UpgradedBlock = 9m;
+	public const int BaseBurningPerExtraBlock = 9;
+	public const int UpgradedBurningPerExtraBlock = 7;
+
+	private const string BurningPerVarName = "BurningPer";
 
 	protected override IEnumerable<DynamicVar> CanonicalVars =>
 	[
 		new BlockVar(BaseBlock, ValueProp.Move),
+		new DynamicVar(BurningPerVarName, BaseBurningPerExtraBlock),
 	];
 
 	public override bool GainsBlock => true;
@@ -42,6 +47,8 @@ public sealed class CybertronStrength : ModCardTemplate
 	protected override bool ShouldGlowGoldInternal =>
 		GetTotalEnemyBurning(CombatState) >= BurningPerExtraBlock;
 
+	private int BurningPerExtraBlock => (int)DynamicVars[BurningPerVarName].BaseValue;
+
 	public CybertronStrength()
 		: base(1, CardType.Skill, CardRarity.Uncommon, TargetType.Self)
 	{
@@ -55,6 +62,7 @@ public sealed class CybertronStrength : ModCardTemplate
 			return;
 		}
 
+		SquSfx.Play(SquSfx.LuXunCybertronEvent);
 		int blockGains = 1 + GetTotalEnemyBurning(combatState) / BurningPerExtraBlock;
 		for (int i = 0; i < blockGains; i++)
 		{
@@ -65,6 +73,7 @@ public sealed class CybertronStrength : ModCardTemplate
 	protected override void OnUpgrade()
 	{
 		DynamicVars.Block.UpgradeValueBy(UpgradedBlock - BaseBlock);
+		DynamicVars[BurningPerVarName].UpgradeValueBy(UpgradedBurningPerExtraBlock - BaseBurningPerExtraBlock);
 	}
 
 	private static int GetTotalEnemyBurning(ICombatState? combatState) =>

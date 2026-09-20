@@ -12,6 +12,7 @@ using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.Powers;
 using Squ;
+using Squ.Audio;
 using Squ.Character;
 using Squ.Combat;
 using STS2RitsuLib.Cards.DynamicVars;
@@ -35,8 +36,8 @@ public sealed class CatInTheBox : ModCardTemplate
 
 	public const int BaseMinDoom = 7;
 	public const int BaseMaxDoom = 14;
-	public const int UpgradedMinDoom = 12;
-	public const int UpgradedMaxDoom = 24;
+	public const int UpgradedMinDoom = 14;
+	public const int UpgradedMaxDoom = 21;
 
 	protected override IEnumerable<DynamicVar> CanonicalVars =>
 	[
@@ -93,10 +94,12 @@ public sealed class CatInTheBox : ModCardTemplate
 		int maxRoll = GetMaxRoll();
 		if (SquDoomKillThreshold.GetEffectiveGreenHp(target) <= maxRoll)
 		{
+			SquSfx.Play(SquSfx.FateUnknownThatsDeathEvent);
 			await DoomPower.DoomKill([target]);
 			return;
 		}
 
+		SquSfx.Play(SquSfx.FateUnknownEvent);
 		int rolled = Owner.RunState.Rng.CombatTargets.NextInt(GetMinRoll(), maxRoll + 1);
 		await PowerCmd.Apply<DoomPower>(
 			choiceContext,
@@ -114,14 +117,16 @@ public sealed class CatInTheBox : ModCardTemplate
 
 	protected override void AddExtraArgsToDescription(LocString description)
 	{
-		bool canKill = DynamicVars[CanKillVarName].PreviewValue > 0;
-		string locKey = Id.Entry + (canKill ? ".killConfirm" : ".killCondition");
-		var killText = new LocString("cards", locKey);
-		if (!canKill)
+		if (DynamicVars[CanKillVarName].PreviewValue > 0)
 		{
-			killText.Add(DynamicVars[MaxDoomVarName]);
+			description.Add("BodyText", new LocString("cards", Id.Entry + ".killConfirm"));
+			return;
 		}
-		description.Add("KillText", killText);
+
+		var bodyText = new LocString("cards", Id.Entry + ".normalBody");
+		bodyText.Add(DynamicVars[MinDoomVarName]);
+		bodyText.Add(DynamicVars[MaxDoomVarName]);
+		description.Add("BodyText", bodyText);
 	}
 
 	private int GetMinRoll() =>

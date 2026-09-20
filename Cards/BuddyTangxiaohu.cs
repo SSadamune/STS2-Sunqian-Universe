@@ -19,15 +19,13 @@ namespace Squ.Cards;
 [RegisterCard(typeof(SunqianCardPool), StableEntryStem = "buddy_tangxiaohu")]
 public sealed class BuddyTangxiaohu : ModCardTemplate
 {
-	public const int BaseBlock = 4;
-	public const int UpgradedBlock = 6;
+	public const int BaseBlock = 5;
+	public const int UpgradedBlock = 7;
 
 	protected override IEnumerable<DynamicVar> CanonicalVars =>
 	[
-		new BlockVar(BaseBlock, ValueProp.Move),
+		new BlockVar(BaseBlock, ValueProp.Unpowered),
 	];
-
-	public override bool GainsBlock => true;
 
 	protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
 	[

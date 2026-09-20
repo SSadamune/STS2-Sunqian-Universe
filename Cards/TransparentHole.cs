@@ -2,11 +2,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using MegaCrit.Sts2.Core.Combat;
+using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.ValueProps;
+using Squ.Audio;
 using Squ.Character;
 using Squ.Combat;
 using Squ.Script;
@@ -21,6 +23,8 @@ namespace Squ.Cards;
 public sealed class TransparentHole : ModCardTemplate, IRandomEnemyTargetCount
 {
 	public const int BaseDamage = 7;
+
+	private const float RepeatAttackDelaySeconds = 0.2f;
 
 	protected override bool HasEnergyCostX => true;
 
@@ -57,8 +61,16 @@ public sealed class TransparentHole : ModCardTemplate, IRandomEnemyTargetCount
 
 		SquVigorSnapshot.AttackSequence vigorSequence = SquVigorSnapshot.BeginAttackSequence(Owner.Creature, this);
 
+		bool isFirstAttack = true;
 		while (targetCount > 0)
 		{
+			if (!isFirstAttack)
+			{
+				await Cmd.Wait(RepeatAttackDelaySeconds);
+			}
+
+			isFirstAttack = false;
+			PlayTransparentHoleSfx();
 			int hits = await SquRandomEnemyTargeting.ExecuteDistinctRandomEnemyDamage(
 				this,
 				choiceContext,
@@ -78,6 +90,17 @@ public sealed class TransparentHole : ModCardTemplate, IRandomEnemyTargetCount
 
 			targetCount--;
 		}
+	}
+
+	private void PlayTransparentHoleSfx()
+	{
+		SquSfx.PlayRandom(
+			RunState,
+			SquSfx.TransparentHoleGuanYuEvent,
+			SquSfx.TransparentHoleZhouYuEvent,
+			SquSfx.TransparentHoleMaChaoEvent,
+			SquSfx.TransparentHoleLuBuEvent,
+			SquSfx.TransparentHoleYuanShuEvent);
 	}
 
 	private int ResolveTargetCount()

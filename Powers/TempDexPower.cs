@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Localization;
 using MegaCrit.Sts2.Core.Models;
@@ -39,3 +39,6 @@ public sealed class TempDexFromArmInjuryWindmillPower : TempDexPower<ArmInjuryWi
 
 [RegisterPower]
 public sealed class TempDexFromOpenDefecationPower : TempDexPower<OpenDefecation> { }
+
+[RegisterPower]
+public sealed class TempDexFromCircusPower : TempDexPower<Circus> { }

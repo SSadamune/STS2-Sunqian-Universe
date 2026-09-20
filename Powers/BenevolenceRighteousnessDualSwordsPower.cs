@@ -5,6 +5,7 @@ using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.Entities.Creatures;
 using MegaCrit.Sts2.Core.Entities.Powers;
 using MegaCrit.Sts2.Core.Models;
+using Squ.Audio;
 using STS2RitsuLib.Interop.AutoRegistration;
 using STS2RitsuLib.Scaffolding.Content;
 
@@ -43,6 +44,10 @@ public sealed class BenevolenceRighteousnessDualSwordsPower : ModPowerTemplate
 		if (card.Owner.Creature == Owner && IsStrikeCard(card))
 		{
 			Flash();
+			SquSfx.PlayRandom(
+				CombatState?.RunState,
+				SquSfx.BenevolenceSwordEvent,
+				SquSfx.RighteousnessSwordEvent);
 		}
 
 		return Task.CompletedTask;

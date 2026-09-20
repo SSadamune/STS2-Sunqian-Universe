@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
@@ -6,6 +6,7 @@ using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.Models.CardPools;
 using MegaCrit.Sts2.Core.Models.Powers;
+using Squ.Audio;
 using Squ.Character;
 using Squ.Powers;
 using STS2RitsuLib.Interop.AutoRegistration;
@@ -44,6 +45,7 @@ public sealed class Phasing : ModCardTemplate
 
 	protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
 	{
+		SquSfx.Play(SquSfx.NearAndFarEvent);
 		int minDexterity = (int)DynamicVars[MinDexVarName].BaseValue;
 		int maxDexterity = (int)DynamicVars[MaxDexVarName].BaseValue;
 		int dexterity = PhasingPower.RollTemporaryDexterity(Owner, minDexterity, maxDexterity);

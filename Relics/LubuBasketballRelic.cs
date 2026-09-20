@@ -10,9 +10,9 @@ using MegaCrit.Sts2.Core.Helpers;
 using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.Models.Powers;
+using MegaCrit.Sts2.Core.Models.RelicPools;
 using MegaCrit.Sts2.Core.Rooms;
 using MegaCrit.Sts2.Core.Saves.Runs;
-using Squ.Character;
 using STS2RitsuLib.Interop.AutoRegistration;
 using STS2RitsuLib.Scaffolding.Content;
 
@@ -23,7 +23,7 @@ namespace Squ.Relics;
 /// <summary>
 /// 吕布的篮球：每 3 个回合获得活力。
 /// </summary>
-[RegisterRelic(typeof(SunqianRelicPool), StableEntryStem = "lubu_basketball")]
+[RegisterRelic(typeof(EventRelicPool), StableEntryStem = "lubu_basketball")]
 public sealed class LubuBasketballRelic : ModRelicTemplate
 {
 	private const string TurnsKey = "Turns";
@@ -32,7 +32,7 @@ public sealed class LubuBasketballRelic : ModRelicTemplate
 
 	private int _turnsSeen;
 
-	public override RelicRarity Rarity => RelicRarity.Common;
+	public override RelicRarity Rarity => RelicRarity.Event;
 
 	public override bool ShowCounter => true;
 

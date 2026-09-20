@@ -10,10 +10,11 @@ using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.ValueProps;
+using Squ;
+using Squ.Audio;
 using Squ.Character;
 using Squ.Combat;
 using Squ.Powers;
-using Squ;
 using STS2RitsuLib.Interop.AutoRegistration;
 using STS2RitsuLib.Scaffolding.Content;
 
@@ -128,6 +129,12 @@ public sealed class FireNova : ModCardTemplate, IRandomEnemyTargetCount
 		CardPlay cardPlay,
 		decimal? damage = null)
 	{
+		SquSfx.PlayRandom(
+			RunState,
+			SquSfx.FlyingFireMeteor1Event,
+			SquSfx.FlyingFireMeteor2Event,
+			SquSfx.FlyingFireMeteor3Event,
+			SquSfx.FlyingFireMeteor4Event);
 		await DamageCmd.Attack(damage ?? DynamicVars.Damage.BaseValue)
 			.FromCard(this, cardPlay)
 			.Targeting(target)

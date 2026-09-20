@@ -7,6 +7,7 @@ using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.Models.Powers;
 using MegaCrit.Sts2.Core.ValueProps;
+using Squ.Audio;
 using Squ.Character;
 using STS2RitsuLib.Interop.AutoRegistration;
 using STS2RitsuLib.Scaffolding.Content;
@@ -18,8 +19,8 @@ namespace Squ.Cards;
 [RegisterCard(typeof(SunqianCardPool), StableEntryStem = "self_decapitation_ascension")]
 public sealed class SelfDecapitationAscension : ModCardTemplate
 {
-	private const decimal BaseHpLoss = 12m;
-	private const decimal UpgradedHpLoss = 8m;
+	private const decimal BaseHpLoss = 11m;
+	private const decimal UpgradedHpLoss = 7m;
 	private const int DrawCount = 1;
 	private const decimal IntangibleAmount = 1m;
 
@@ -45,6 +46,7 @@ public sealed class SelfDecapitationAscension : ModCardTemplate
 
 	protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
 	{
+		SquSfx.Play(SquSfx.SelfDecapitationEvent);
 		await CreatureCmd.Damage(
 			choiceContext,
 			Owner.Creature,

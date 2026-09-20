@@ -9,8 +9,8 @@ using MegaCrit.Sts2.Core.Localization;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.Powers;
-using MegaCrit.Sts2.Core.ValueProps;
 using Squ;
+using Squ.Audio;
 using Squ.Character;
 using Squ.Combat;
 using STS2RitsuLib.Interop.AutoRegistration;
@@ -21,17 +21,14 @@ using STS2RitsuLib.Scaffolding.Content;
 namespace Squ.Cards;
 
 /// <summary>
-/// 闻丧贺喜：获得活力与格挡并抽牌；牌组中打出率最高的「其它」牌被消耗时回手。
-/// 升级后回手时本场战斗耗能改为 0。
+/// 闻丧贺喜：获得活力；牌组中打出率最高的「其它」牌被消耗时回手。
 /// </summary>
 [RegisterCard(typeof(SunqianCardPool), StableEntryStem = "celebrate_mourning")]
 public sealed class CelebrateMourning : ModCardTemplate
 {
-	public const int VigorAmount = 4;
+	public const int BaseVigor = 4;
 
-	public const int BlockAmount = 4;
-
-	public const int DrawAmount = 1;
+	public const int UpgradedVigor = 6;
 
 	public const int PlayRateWindow = CardDrawPlayRateTracker.MaxStoredCombats;
 
@@ -39,12 +36,8 @@ public sealed class CelebrateMourning : ModCardTemplate
 
 	protected override IEnumerable<DynamicVar> CanonicalVars =>
 	[
-		new PowerVar<VigorPower>(VigorAmount),
-		new BlockVar(BlockAmount, ValueProp.Move),
-		new CardsVar(DrawAmount),
+		new PowerVar<VigorPower>(BaseVigor),
 	];
-
-	public override bool GainsBlock => true;
 
 	protected override IEnumerable<IHoverTip> AdditionalHoverTips
 	{
@@ -59,7 +52,6 @@ public sealed class CelebrateMourning : ModCardTemplate
 				foreach (CardModel target in triggerTargets)
 				{
 					tips.Add(HoverTipFactory.FromCard(target));
-					tips.AddRange(target.HoverTips);
 				}
 			}
 
@@ -71,21 +63,24 @@ public sealed class CelebrateMourning : ModCardTemplate
 		PortraitPath: "res://images/cards/CelebrateMourning.png");
 
 	public CelebrateMourning()
-		: base(1, CardType.Skill, CardRarity.Uncommon, TargetType.Self)
+		: base(0, CardType.Skill, CardRarity.Uncommon, TargetType.Self)
 	{
 	}
 
 	protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
 	{
+		SquSfx.Play(SquSfx.CelebrateMourningCongratulateLordEvent);
 		await PowerCmd.Apply<VigorPower>(
 			choiceContext,
 			Owner.Creature,
 			DynamicVars[nameof(VigorPower)].BaseValue,
 			Owner.Creature,
 			this);
+	}
 
-		await CreatureCmd.GainBlock(Owner.Creature, DynamicVars.Block, cardPlay);
-		await CardPileCmd.Draw(choiceContext, DynamicVars.Cards.BaseValue, Owner);
+	protected override void OnUpgrade()
+	{
+		DynamicVars[nameof(VigorPower)].UpgradeValueBy(UpgradedVigor - BaseVigor);
 	}
 
 	/// <summary>
@@ -96,36 +91,35 @@ public sealed class CelebrateMourning : ModCardTemplate
 		CardModel card,
 		bool causedByEthereal)
 	{
-		if (!CanReturnToHand() || card.Owner != Owner || IsCelebrateMourning(card))
+		if (!CanListenForReturnTrigger() || card.Owner != Owner || IsCelebrateMourning(card))
 		{
 			return;
 		}
 
-		CardModel? identity = card.DeckVersion ?? (card.Pile?.Type == PileType.Deck ? card : null);
-		if (identity is null || IsCelebrateMourning(identity))
+		if (!CardDrawPlayRateTracker.WasAmongHighestPlayRateDeckCardsBeforeExhaust(
+			    Owner,
+			    card,
+			    windowSize: PlayRateWindow,
+			    includeCurrentCombat: IncludeCurrentCombat,
+			    exclude: IsCelebrateMourning))
 		{
 			return;
 		}
 
 		HashSet<CardModel> highest = GetHighestOtherPlayRateDeckCards();
-		if (!highest.Contains(identity))
-		{
-			return;
-		}
 
 		CardDrawPlayRateTracker.LogCurrentState(
 			Owner,
 			windowSize: PlayRateWindow,
 			includeCurrentCombat: IncludeCurrentCombat,
 			selectedCards: highest.ToList(),
-			reason: $"Celebrate Mourning return-to-hand (exhausted: {identity.Title})");
+			reason: $"Celebrate Mourning return-to-hand (exhausted: {card.Title})");
 
-		if (IsUpgraded)
+		SquSfx.Play(SquSfx.CelebrateMourningGrieveForLordEvent);
+		if (Pile?.Type != PileType.Hand)
 		{
-			EnergyCost.SetThisCombat(0);
+			await CardPileCmd.Add(this, PileType.Hand);
 		}
-
-		await CardPileCmd.Add(this, PileType.Hand);
 	}
 
 	private List<CardModel> GetReturnTriggerTargets()
@@ -170,8 +164,8 @@ public sealed class CelebrateMourning : ModCardTemplate
 	private static bool IsCelebrateMourning(CardModel card) =>
 		card is CelebrateMourning || card.DeckVersion is CelebrateMourning;
 
-	private static bool CanReturnToHand(PileType? pileType) =>
-		pileType is PileType.Draw or PileType.Discard or PileType.Exhaust;
+	private static bool CanListenForReturnTrigger(PileType? pileType) =>
+		pileType is PileType.Hand or PileType.Draw or PileType.Discard or PileType.Exhaust;
 
-	private bool CanReturnToHand() => CanReturnToHand(Pile?.Type);
+	private bool CanListenForReturnTrigger() => CanListenForReturnTrigger(Pile?.Type);
 }

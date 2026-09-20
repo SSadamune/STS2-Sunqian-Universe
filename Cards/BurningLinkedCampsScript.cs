@@ -5,7 +5,9 @@ using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
+using MegaCrit.Sts2.Core.Models.Cards;
 using Squ;
+using Squ.Audio;
 using Squ.Character;
 using Squ.Powers;
 using STS2RitsuLib.Interop.AutoRegistration;
@@ -18,7 +20,7 @@ namespace Squ.Cards;
 [RegisterCard(typeof(SunqianCardPool), StableEntryStem = "burning_linked_camps_script")]
 public sealed class BurningLinkedCampsScript : ScriptCardTemplate
 {
-	public const decimal TinderStacks = 4m;
+	public const decimal TinderStacks = 5m;
 
 	public const decimal UpgradedTinderStacks = 8m;
 
@@ -32,7 +34,8 @@ public sealed class BurningLinkedCampsScript : ScriptCardTemplate
 		..HoverTipFactory.FromPowerWithPowerHoverTips<TinderPower>(
 			(int)DynamicVars[nameof(TinderPower)].BaseValue),
 		HoverTipFactory.FromPower<BurningPower>(),
-		HoverTipFactory.FromCard<ShangfangguSigh>(upgrade: false),
+		HoverTipFactory.FromCard<Burn>(),
+		HoverTipFactory.FromCard<ShangfangguSigh>(IsUpgraded),
 	];
 
 	public override IEnumerable<CardKeyword> CanonicalKeywords =>
@@ -51,6 +54,7 @@ public sealed class BurningLinkedCampsScript : ScriptCardTemplate
 
 	protected override async Task PlayScriptAsync(PlayerChoiceContext choiceContext, CardPlay cardPlay)
 	{
+		SquSfx.Play(SquSfx.EmperorKnowsNoWarEvent);
 		decimal tinderStacks = DynamicVars[nameof(TinderPower)].BaseValue;
 		await PowerCmd.Apply<TinderPower>(
 			choiceContext,

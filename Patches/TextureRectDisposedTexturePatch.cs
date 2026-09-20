@@ -14,12 +14,16 @@ internal static class TextureRectDisposedTexturePatch
 {
 	[HarmonyPrefix]
 	[HarmonyPatch(nameof(TextureRect.SetTexture))]
-	private static bool SetTexturePrefix(TextureRect __instance, Texture2D texture)
+	private static bool SetTexturePrefix(TextureRect __instance, ref Texture2D texture)
 	{
+		if (!GodotObject.IsInstanceValid(__instance))
+		{
+			return false;
+		}
+
 		if (texture != null && !GodotObject.IsInstanceValid(texture))
 		{
-			__instance.Texture = null;
-			return false;
+			texture = null!;
 		}
 
 		return true;

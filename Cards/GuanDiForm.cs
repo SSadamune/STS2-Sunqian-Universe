@@ -6,6 +6,7 @@ using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.Models.Powers;
+using Squ.Audio;
 using Squ.Character;
 using Squ.Powers;
 using STS2RitsuLib.Interop.AutoRegistration;
@@ -18,19 +19,21 @@ namespace Squ.Cards;
 [RegisterCard(typeof(SunqianCardPool), StableEntryStem = "guan_di_form")]
 public sealed class GuanDiForm : ModCardTemplate
 {
-	private const int BaseAmount = 1;
-	private const int UpgradedAmount = 2;
+	private const string PowerVarName = "Power";
+
+	public const int BaseAmountPerEnergy = 2;
+
+	public const int UpgradedAmountPerEnergy = 3;
 
 	protected override IEnumerable<DynamicVar> CanonicalVars =>
 	[
-		new PowerVar<DexterityPower>(BaseAmount),
-		new PowerVar<StrengthPower>(BaseAmount),
+		new DynamicVar(PowerVarName, BaseAmountPerEnergy),
 	];
 
 	protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
 	[
-		HoverTipFactory.FromPower<DexterityPower>(),
-		HoverTipFactory.FromPower<StrengthPower>(),
+		HoverTipFactory.Static(StaticHoverTip.Block),
+		HoverTipFactory.FromPower<VigorPower>(),
 	];
 
 	public override CardAssetProfile AssetProfile => new(
@@ -43,17 +46,17 @@ public sealed class GuanDiForm : ModCardTemplate
 
 	protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
 	{
+		SquSfx.Play(SquSfx.WhoAreYouEvent);
 		await PowerCmd.Apply<GuanDiFormPower>(
 			choiceContext,
 			Owner.Creature,
-			DynamicVars[nameof(DexterityPower)].BaseValue,
+			DynamicVars[PowerVarName].BaseValue,
 			Owner.Creature,
 			this);
 	}
 
 	protected override void OnUpgrade()
 	{
-		DynamicVars[nameof(DexterityPower)].UpgradeValueBy(UpgradedAmount - BaseAmount);
-		DynamicVars[nameof(StrengthPower)].UpgradeValueBy(UpgradedAmount - BaseAmount);
+		DynamicVars[PowerVarName].UpgradeValueBy(UpgradedAmountPerEnergy - BaseAmountPerEnergy);
 	}
 }

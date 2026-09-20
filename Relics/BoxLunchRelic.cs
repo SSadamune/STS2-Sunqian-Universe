@@ -7,6 +7,7 @@ using MegaCrit.Sts2.Core.Entities.Creatures;
 using MegaCrit.Sts2.Core.Entities.Relics;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.HoverTips;
+using MegaCrit.Sts2.Core.Rooms;
 using Squ.Character;
 using Squ.Powers;
 using Squ.Script;
@@ -44,6 +45,8 @@ public sealed class BoxLunchRelic : ScriptRelicTemplate, IScriptLiftHandler
 			return;
 		}
 
+		Status = RelicStatus.Active;
+
 		if (Owner.PlayerCombatState?.TurnNumber > 1)
 		{
 			return;
@@ -67,5 +70,12 @@ public sealed class BoxLunchRelic : ScriptRelicTemplate, IScriptLiftHandler
 
 		Flash();
 		await PlayerCmd.GainEnergy(1m, Owner);
+		Status = RelicStatus.Normal;
+	}
+
+	public override Task AfterCombatEnd(CombatRoom room)
+	{
+		Status = RelicStatus.Normal;
+		return Task.CompletedTask;
 	}
 }

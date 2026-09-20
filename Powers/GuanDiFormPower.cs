@@ -2,22 +2,22 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
-using MegaCrit.Sts2.Core.Entities.Creatures;
 using MegaCrit.Sts2.Core.Entities.Powers;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.HoverTips;
-using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.Powers;
-using Squ.Cards;
+using MegaCrit.Sts2.Core.ValueProps;
 using STS2RitsuLib.Interop.AutoRegistration;
 using STS2RitsuLib.Scaffolding.Content;
-using STS2RitsuLib.Scaffolding.Content.Patches;
 
 #nullable enable
 
 namespace Squ.Powers;
 
+/// <summary>
+/// 关帝形态：持有者整张牌结算后，按该牌实际花费的能量获得不受敏捷影响的格挡与活力。
+/// </summary>
 [RegisterPower]
 public sealed class GuanDiFormPower : ModPowerTemplate
 {
@@ -31,49 +31,35 @@ public sealed class GuanDiFormPower : ModPowerTemplate
 
 	protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
 	[
-		HoverTipFactory.FromPower<DexterityPower>(),
-		HoverTipFactory.FromPower<StrengthPower>(),
+		HoverTipFactory.Static(StaticHoverTip.Block),
+		HoverTipFactory.FromPower<VigorPower>(),
 	];
 
-	public override async Task AfterCardPlayed(PlayerChoiceContext choiceContext, CardPlay cardPlay)
+	public override async Task AfterCardPlayedLate(
+		PlayerChoiceContext choiceContext,
+		CardPlay cardPlay)
 	{
-		if (Owner.IsDead || cardPlay.Card.Owner != Owner.Player)
+		if (Amount <= 0m
+			|| cardPlay.Card.Owner.Creature != Owner
+			|| cardPlay.PlayIndex != cardPlay.PlayCount - 1)
 		{
 			return;
 		}
 
-		switch (cardPlay.Card.Type)
+		int energySpent = cardPlay.Resources.EnergySpent;
+		if (energySpent <= 0)
 		{
-			case CardType.Skill:
-				Flash();
-				await PowerCmd.Apply<TempDexFromGuanDiFormPower>(
-					choiceContext, Owner, Amount, Owner, null);
-				break;
-
-			case CardType.Attack:
-				Flash();
-				await PowerCmd.Apply<TempStrFromGuanDiFormPower>(
-					choiceContext, Owner, Amount, Owner, null);
-				break;
+			return;
 		}
+
+		decimal gain = Amount * energySpent;
+		Flash();
+		await CreatureCmd.GainBlock(Owner, gain, ValueProp.Unpowered, cardPlay: null);
+		await PowerCmd.Apply<VigorPower>(
+			choiceContext,
+			Owner,
+			gain,
+			Owner,
+			cardPlay.Card);
 	}
-}
-
-[RegisterPower]
-public sealed class TempDexFromGuanDiFormPower : TempDexPower<GuanDiFormPower> { }
-
-[RegisterPower]
-public sealed class TempStrFromGuanDiFormPower : TemporaryStrengthPower, IModPowerAssetOverrides
-{
-	private static readonly PowerModel SetupStrikePowerTemplate = ModelDb.Power<SetupStrikePower>();
-
-	public override AbstractModel OriginModel => ModelDb.Card<GuanDiForm>();
-
-	public PowerAssetProfile AssetProfile => new(
-		IconPath: SetupStrikePowerTemplate.PackedIconPath,
-		BigIconPath: SetupStrikePowerTemplate.ResolvedBigIconPath);
-
-	public string? CustomIconPath => AssetProfile.IconPath;
-
-	public string? CustomBigIconPath => AssetProfile.BigIconPath;
 }

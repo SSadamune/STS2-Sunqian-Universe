@@ -37,9 +37,10 @@ namespace Squ.Potions;
 [RegisterPotion(typeof(SunqianPotionPool), StableEntryStem = "peiguo_brew")]
 public sealed class PeiguoBrewPotion : ModPotionTemplate
 {
-	public const int EnergyAmount = 1;
-	public const int VigorAmount = 6;
+	public const int EnergyAmount = 2;
+	public const int VigorAmount = 5;
 	public const int MerchantGold = 100;
+	public const decimal MerchantPrice = 100m;
 
 	public override PotionRarity Rarity => PotionRarity.Uncommon;
 
