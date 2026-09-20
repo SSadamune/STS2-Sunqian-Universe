@@ -12,6 +12,7 @@ using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.Models.CardPools;
 using MegaCrit.Sts2.Core.Models.Powers;
 using MegaCrit.Sts2.Core.ValueProps;
+using Squ.Audio;
 using Squ.Character;
 using Squ.Powers;
 using STS2RitsuLib.Interop.AutoRegistration;
@@ -22,9 +23,11 @@ namespace Squ.Cards;
 [RegisterCard(typeof(SunqianCardPool))]
 public sealed class HuaguMianzhang : ModCardTemplate
 {
+	public const int BaseDamage = 5;
+
 	protected override IEnumerable<DynamicVar> CanonicalVars =>
 	[
-		new DamageVar(14m, ValueProp.Move),
+		new DamageVar(BaseDamage, ValueProp.Move),
 	];
 
 	protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
@@ -36,13 +39,15 @@ public sealed class HuaguMianzhang : ModCardTemplate
 		PortraitPath: "res://images/cards/HuaguMianzhang.png");
 
 	public HuaguMianzhang()
-		: base(3, CardType.Attack, CardRarity.Rare, TargetType.AnyEnemy)
+		: base(1, CardType.Attack, CardRarity.Rare, TargetType.AnyEnemy)
 	{
 	}
 
 	protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
 	{
 		ArgumentNullException.ThrowIfNull(cardPlay.Target, "cardPlay.Target");
+
+		SquSfx.Play(SquSfx.HuaguMianzhangEvent);
 
 		AttackCommand attack = await DamageCmd.Attack(DynamicVars.Damage.BaseValue)
 			.FromCard(this, cardPlay)
@@ -68,6 +73,6 @@ public sealed class HuaguMianzhang : ModCardTemplate
 
 	protected override void OnUpgrade()
 	{
-		DynamicVars.Damage.UpgradeValueBy(4m);
+		EnergyCost.UpgradeBy(-1);
 	}
 }

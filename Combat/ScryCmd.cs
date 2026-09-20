@@ -6,6 +6,7 @@ using MegaCrit.Sts2.Core.CardSelection;
 using MegaCrit.Sts2.Core.Combat;
 using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
+using MegaCrit.Sts2.Core.Entities.Multiplayer;
 using MegaCrit.Sts2.Core.Entities.Players;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.Hooks;
@@ -30,7 +31,7 @@ public readonly record struct ScryResult
 }
 
 /// <summary>
-/// [gold]预见[/gold]命令：查看抽牌堆顶部的若干张牌，并可将其中任意数量置入弃牌堆。
+/// [gold]预见[/gold]命令：查看抽牌堆顶部的若干张牌，并可丢弃其中任意数量。
 /// 数量会先经 <see cref="IModifyScryAmount"/> 修改，结算后触发 <see cref="IAfterScryed"/>。
 /// </summary>
 public static class ScryCmd
@@ -44,8 +45,8 @@ public static class ScryCmd
 	}
 
 	/// <param name="onCardChosen">
-	/// 若提供，被玩家选中的每张牌改由此回调处理（例如改为消耗而非置入弃牌堆），
-	/// 调用方需自行负责该牌的去向；不提供时使用默认的置入弃牌堆行为。
+	/// 若提供，被玩家选中的每张牌改由此回调处理（例如改为消耗而非丢弃），
+	/// 调用方需自行负责该牌的去向；不提供时使用默认的丢弃行为。
 	/// </param>
 	public static async Task<ScryResult> Execute(
 		PlayerChoiceContext choiceContext,
@@ -76,22 +77,47 @@ public static class ScryCmd
 			player,
 			prefs)).ToList();
 
-		foreach (var chosenCard in cardsToDiscard)
+		if (onCardChosen == null)
 		{
-			if (onCardChosen != null)
+			await DiscardSelectedCards(choiceContext, player, combatState, cardsToDiscard);
+		}
+		else
+		{
+			foreach (var chosenCard in cardsToDiscard)
 			{
 				await onCardChosen(choiceContext, chosenCard);
-				continue;
 			}
-
-			var discardPile = PileType.Discard.GetPile(player);
-			await CardPileCmd.Add(chosenCard, discardPile);
-			CombatManager.Instance.History.CardDiscarded(combatState, chosenCard);
-			await Hook.AfterCardDiscarded(combatState, choiceContext, chosenCard);
-			discardPile.InvokeContentsChanged();
 		}
 
 		await ScryHook.AfterScryed(choiceContext, player, modifiedAmount, cardsToDiscard.Count, cardsToDiscard);
 		return new ScryResult(cardsToDiscard);
+	}
+
+	private static async Task DiscardSelectedCards(
+		PlayerChoiceContext choiceContext,
+		Player player,
+		ICombatState combatState,
+		IReadOnlyList<CardModel> cards)
+	{
+		List<CardModel> slyCards = cards.Where(card => card.IsSlyThisTurn).ToList();
+		var discardPile = PileType.Discard.GetPile(player);
+
+		// 先完成全部移动，再分发弃牌 Hook。这样由弃牌触发的嵌套预见
+		// 只能读取更新后的抽牌堆，不会再次看到本次已选中的牌。
+		await CardPileCmd.Add(cards, discardPile);
+
+		foreach (var card in cards)
+		{
+			CombatManager.Instance.History.CardDiscarded(combatState, card);
+			await Hook.AfterCardDiscarded(combatState, choiceContext, card);
+		}
+
+		discardPile.InvokeContentsChanged();
+
+		// 对齐 CardCmd.Discard：预见弃牌属于正式弃牌，并触发奇巧自动打出。
+		foreach (var slyCard in slyCards)
+		{
+			await CardCmd.AutoPlay(choiceContext, slyCard, null, AutoPlayType.SlyDiscard);
+		}
 	}
 }

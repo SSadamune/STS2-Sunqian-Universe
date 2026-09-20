@@ -1,4 +1,7 @@
+using System.Threading.Tasks;
+using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Creatures;
+using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.Powers;
 
@@ -14,6 +17,26 @@ public static class SquVigorSnapshot
 {
 	public static int GetAmount(Creature creature) =>
 		creature.GetPower<VigorPower>() is { Amount: > 0 } vigor ? vigor.Amount : 0;
+
+	/// <summary>
+	/// Spends all current <see cref="VigorPower"/> through <see cref="PowerCmd.ModifyAmount"/>,
+	/// so listeners such as 平湖惊雷 still see a negative amount change.
+	/// </summary>
+	public static async Task<int> SpendAll(
+		PlayerChoiceContext choiceContext,
+		Creature creature,
+		CardModel? cardSource)
+	{
+		VigorPower? vigor = creature.GetPower<VigorPower>();
+		if (vigor is not { Amount: > 0 })
+		{
+			return 0;
+		}
+
+		int spent = vigor.Amount;
+		await PowerCmd.ModifyAmount(choiceContext, vigor, -spent, creature, cardSource);
+		return spent;
+	}
 
 	/// <summary>
 	/// Returns card base damage plus a snapshotted vigor bonus for follow-up attacks after the first

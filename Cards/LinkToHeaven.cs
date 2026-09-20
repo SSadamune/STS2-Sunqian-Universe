@@ -52,7 +52,6 @@ public sealed class LinkToHeaven : ModCardTemplate
 
 	protected override void OnUpgrade()
 	{
-		MockSetEnergyCost(new CardEnergyCost(this, 1, costsX: false));
-		InvokeEnergyCostChanged();
+		EnergyCost.UpgradeBy(-1);
 	}
 }

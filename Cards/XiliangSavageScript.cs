@@ -8,6 +8,7 @@ using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.Models.Powers;
 using MegaCrit.Sts2.Core.ValueProps;
 using Squ;
+using Squ.Audio;
 using Squ.Character;
 using Squ.Powers;
 using STS2RitsuLib.Interop.AutoRegistration;
@@ -20,10 +21,10 @@ namespace Squ.Cards;
 [RegisterCard(typeof(SunqianCardPool), StableEntryStem = "xiliang_savage_script")]
 public sealed class XiliangSavageScript : ScriptCardTemplate
 {
-	public const int BaseBlock = 10;
-	public const int UpgradedBlock = 14;
-	public const int BaseVigor = 3;
-	public const int UpgradedVigor = 5;
+	public const int BaseBlock = 11;
+	public const int UpgradedBlock = 16;
+	public const int BaseVigor = 4;
+	public const int UpgradedVigor = 6;
 
 	protected override IEnumerable<DynamicVar> CanonicalVars =>
 	[
@@ -48,12 +49,13 @@ public sealed class XiliangSavageScript : ScriptCardTemplate
 		PortraitPath: "res://images/cards/XiliangSavageScript.png");
 
 	public XiliangSavageScript()
-		: base(2, CardType.Skill, CardRarity.Common, TargetType.Self, true)
+		: base(2, CardType.Skill, CardRarity.Uncommon, TargetType.Self, true)
 	{
 	}
 
 	protected override async Task PlayScriptAsync(PlayerChoiceContext choiceContext, CardPlay cardPlay)
 	{
+		SquSfx.Play(SquSfx.XiliangSavageEvent);
 		await CreatureCmd.GainBlock(Owner.Creature, DynamicVars.Block, cardPlay);
 
 		await PowerCmd.Apply<VigorPower>(

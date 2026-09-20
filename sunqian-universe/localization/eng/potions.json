@@ -4,6 +4,6 @@
   "SUNQIAN_UNIVERSE_POTION_PEIGUO_BREW.title": "Peiguo Brew",
   "SUNQIAN_UNIVERSE_POTION_PEIGUO_BREW.description": "Gain {Energy:energyIcons()} and [blue]{VigorPower}[/blue] [gold]Vigor[/gold].\nCan also be thrown at the [gold]Merchant[/gold] for [blue]{Gold}[/blue] [gold]Gold[/gold].",
   "SUNQIAN_UNIVERSE_POTION_FIRE_OIL_RICE.title": "Fire Oil Rice",
-  "SUNQIAN_UNIVERSE_POTION_FIRE_OIL_RICE.description": "Apply [blue]{BurningPower}[/blue] [gold]Burning[/gold]. Set that enemy's [gold]Burning[/gold] clear chance to [blue]0%[/blue].",
+  "SUNQIAN_UNIVERSE_POTION_FIRE_OIL_RICE.description": "Apply [blue]{BurningPower}[/blue] [gold]Burning[/gold]. Set that enemy's [gold]Burning[/gold] extinguish chance to [blue]0%[/blue].",
   "FIRE_POTION.description": "Deal [blue]10[/blue] damage. Apply [blue]6[/blue] [gold]Burning[/gold]."
 }

@@ -3,7 +3,6 @@ using System.Threading.Tasks;
 using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
-using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using Squ.Character;
 using Squ.Powers;
@@ -14,30 +13,28 @@ using STS2RitsuLib.Scaffolding.Content;
 
 namespace Squ.Cards;
 
-[RegisterCard(typeof(SunqianCardPool), StableEntryStem = "supernaturally_wise")]
-public sealed class SupernaturallyWise : ModCardTemplate
+[RegisterCard(typeof(SunqianCardPool), StableEntryStem = "buddy_longtaodi")]
+public sealed class BuddyLongtaodi : ModCardTemplate
 {
+	public const int BaseDraw = 1;
+	public const int UpgradedDraw = 2;
+
 	protected override IEnumerable<DynamicVar> CanonicalVars =>
 	[
-		new CardsVar(1),
-	];
-
-	protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
-	[
-		HoverTipFactory.FromKeyword(CardKeyword.Exhaust),
+		new CardsVar(BaseDraw),
 	];
 
 	public override CardAssetProfile AssetProfile => new(
-		PortraitPath: "res://images/cards/SupernaturallyWise.png");
+		PortraitPath: "res://images/cards/BuddyLongtaodi.png");
 
-	public SupernaturallyWise()
+	public BuddyLongtaodi()
 		: base(1, CardType.Power, CardRarity.Uncommon, TargetType.Self)
 	{
 	}
 
 	protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
 	{
-		await PowerCmd.Apply<SupernaturallyWisePower>(
+		await PowerCmd.Apply<BuddyLongtaodiPower>(
 			choiceContext,
 			Owner.Creature,
 			DynamicVars.Cards.BaseValue,
@@ -47,6 +44,6 @@ public sealed class SupernaturallyWise : ModCardTemplate
 
 	protected override void OnUpgrade()
 	{
-		DynamicVars.Cards.UpgradeValueBy(1m);
+		DynamicVars.Cards.UpgradeValueBy(UpgradedDraw - BaseDraw);
 	}
 }

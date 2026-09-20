@@ -37,7 +37,7 @@ public sealed class TeleprompterRelic : ScriptRelicTemplate
 
 	public override string FlashSfx => "event:/sfx/ui/relic_activate_draw";
 
-	public override RelicRarity Rarity => RelicRarity.Uncommon;
+	public override RelicRarity Rarity => RelicRarity.Common;
 
 	public override bool ShowCounter => true;
 

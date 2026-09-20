@@ -10,6 +10,7 @@ using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.Powers;
+using Squ.Audio;
 using Squ.Character;
 using STS2RitsuLib.Interop.AutoRegistration;
 using STS2RitsuLib.Scaffolding.Content;
@@ -28,11 +29,6 @@ public sealed class CloseFittingArmor : ModCardTemplate
 		new DexterityPlatingVar(BasePlating),
 	];
 
-	public override IEnumerable<CardKeyword> CanonicalKeywords =>
-	[
-		CardKeyword.Retain,
-	];
-
 	protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
 	[
 		HoverTipFactory.FromPower<PlatingPower>(),
@@ -49,6 +45,7 @@ public sealed class CloseFittingArmor : ModCardTemplate
 
 	protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
 	{
+		SquSfx.Play(SquSfx.CloseFittingArmorEvent);
 		decimal plating = GetPlatingAmount(Owner.Creature, DynamicVars[nameof(PlatingPower)].BaseValue);
 		await PowerCmd.Apply<PlatingPower>(
 			choiceContext,
@@ -60,7 +57,7 @@ public sealed class CloseFittingArmor : ModCardTemplate
 
 	protected override void OnUpgrade()
 	{
-		AddKeyword(CardKeyword.Innate);
+		AddKeyword(CardKeyword.Retain);
 	}
 
 	private static decimal GetPlatingAmount(Creature owner, decimal baseAmount)

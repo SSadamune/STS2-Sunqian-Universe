@@ -17,7 +17,7 @@ using STS2RitsuLib.Scaffolding.Content;
 namespace Squ.Potions;
 
 /// <summary>
-/// 火油泡饭：给予灼烧，并将该敌人的灼烧清零概率调整为 0%。
+/// 火油泡饭：给予灼烧，并将该敌人的灼烧熄灭概率调整为 0%。
 /// </summary>
 [RegisterPotion(typeof(SunqianPotionPool), StableEntryStem = "fire_oil_rice")]
 public sealed class FireOilRicePotion : ModPotionTemplate

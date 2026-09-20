@@ -14,5 +14,13 @@
   "SUNQIAN_UNIVERSE_KEYWORD_COUNTS_AS_PLAYED.title": "Counts as Played",
   "SUNQIAN_UNIVERSE_KEYWORD_COUNTS_AS_PLAYED.description": "Play a card that doesn't exist. It resolves normally.",
   "SUNQIAN_UNIVERSE_KEYWORD_FIT.title": "Fit",
-  "SUNQIAN_UNIVERSE_KEYWORD_FIT.description": "Whenever this would be shuffled into your [gold]Draw Pile[/gold], place it on the top instead."
+  "SUNQIAN_UNIVERSE_KEYWORD_FIT.description": "Whenever this would be shuffled into your [gold]Draw Pile[/gold], place it on the top instead.",
+  "SUNQIAN_UNIVERSE_KEYWORD_WAR_FEEDS_WAR.title": "War Feeds War",
+  "SUNQIAN_UNIVERSE_KEYWORD_WAR_FEEDS_WAR.description": "At the end of Elite or Boss combats, if you played at least one card with this name this combat, drop one additional copy of this card.",
+  "SUNQIAN_UNIVERSE_KEYWORD_WAR_FEEDS_WAR.cardHover": "At the end of Elite or Boss combats, if you played at least one card named [gold]{CardName}[/gold] this combat, drop one additional [gold]{CardName}[/gold].",
+  "SUNQIAN_UNIVERSE_KEYWORD_EUNUCH_MESSAGE.title": "Eunuch's Message",
+  "SUNQIAN_UNIVERSE_KEYWORD_EUNUCH_MESSAGE.description": "This card has [gold]Retain[/gold].\nWhen [gold]Script: Eunuch[/gold] ends, this card is [gold]Exhausted[/gold].\nWhen this card leaves your hand, remove [gold]Eunuch's Message[/gold].",
+  "SUNQIAN_UNIVERSE_KEYWORD_CHARGE.title": "Charge",
+  "SUNQIAN_UNIVERSE_KEYWORD_CHARGE.description": "If this card is in your Hand, its [gold]Charge[/gold] effect triggers when the conditions are met. The effect is reset after this card is played.",
+  "SUNQIAN_UNIVERSE_KEYWORD_CHARGE.cardDescription": "\n[gold]{Title}[/gold]: {Effect}"
 }

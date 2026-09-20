@@ -11,6 +11,7 @@ using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.ValueProps;
 using Squ;
+using Squ.Audio;
 using Squ.Character;
 using Squ.Powers;
 using STS2RitsuLib.Interop.AutoRegistration;
@@ -26,9 +27,9 @@ namespace Squ.Cards;
 [RegisterCard(typeof(SunqianCardPool), StableEntryStem = "water_fire_invincible")]
 public sealed class WaterFireInvincible : ModCardTemplate
 {
-	public const decimal BaseDamage = 8m;
+	public const decimal BaseDamage = 7m;
 
-	public const decimal UpgradedDamage = 12m;
+	public const decimal UpgradedDamage = 11m;
 
 	public override bool GainsBlock => true;
 
@@ -55,6 +56,8 @@ public sealed class WaterFireInvincible : ModCardTemplate
 	protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
 	{
 		ArgumentNullException.ThrowIfNull(cardPlay.Target, nameof(cardPlay.Target));
+
+		SquSfx.Play(SquSfx.WaterFireInvincibleEvent);
 
 		AttackCommand attackCommand = await DamageCmd.Attack(DynamicVars.Damage.BaseValue)
 			.FromCard(this, cardPlay)

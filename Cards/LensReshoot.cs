@@ -7,6 +7,7 @@ using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Models;
 using Squ;
+using Squ.Audio;
 using Squ.Character;
 using STS2RitsuLib.Interop.AutoRegistration;
 using STS2RitsuLib.Scaffolding.Content;
@@ -33,6 +34,18 @@ public sealed class LensReshoot : ModCardTemplate
 
 	protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
 	{
+		if (IsUpgraded)
+		{
+			SquSfx.Play(SquSfx.LensReshootGoodSpiritEvent);
+		}
+		else
+		{
+			SquSfx.PlayRandom(
+				RunState,
+				SquSfx.LensReshootShowHeWasThereEvent,
+				SquSfx.LensReshootZhaoYunDidntComeEvent);
+		}
+
 		IEnumerable<CardModel> candidates = PileType.Discard.GetPile(Owner).Cards;
 		if (IsUpgraded)
 		{

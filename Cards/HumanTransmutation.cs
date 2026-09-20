@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -10,8 +11,10 @@ using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Localization;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.Models;
+using MegaCrit.Sts2.Core.Models.Enchantments;
 using MegaCrit.Sts2.Core.Random;
 using Squ;
+using Squ.Audio;
 using Squ.Character;
 using STS2RitsuLib.Interop.AutoRegistration;
 using STS2RitsuLib.Scaffolding.Content;
@@ -23,13 +26,38 @@ namespace Squ.Cards;
 [RegisterCard(typeof(SunqianCardPool), StableEntryStem = "human_transmutation")]
 public sealed class HumanTransmutation : ModCardTemplate
 {
-	private const int DrawCount = 1;
-
 	private const int MaxExhaustCount = 3;
 
-	protected override IEnumerable<DynamicVar> CanonicalVars =>
+	private const int SlitherMinCost = 3;
+
+	private readonly record struct EnchantmentSpec(Type EnchantmentType, int Amount);
+
+	private static readonly EnchantmentSpec SlitherSpec = new(typeof(Slither), 0);
+
+	private static readonly EnchantmentSpec[] CommonPool =
 	[
-		new CardsVar(DrawCount),
+		new(typeof(Sharp), 3),
+		new(typeof(Swift), 2),
+		new(typeof(Vigorous), 6),
+		new(typeof(Steady), 0),
+		new(typeof(Inky), 0),
+	];
+
+	private static readonly EnchantmentSpec[] UncommonPool =
+	[
+		new(typeof(Swift), 3),
+		new(typeof(Sown), 1),
+		new(typeof(Momentum), 5),
+		new(typeof(Glam), 0),
+		new(typeof(Corrupted), 0),
+	];
+
+	private static readonly EnchantmentSpec[] RarePool =
+	[
+		new(typeof(Instinct), 0),
+		new(typeof(Sown), 2),
+		new(typeof(Spiral), 0),
+		new(typeof(Sharp), 8),
 	];
 
 	protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
@@ -50,7 +78,7 @@ public sealed class HumanTransmutation : ModCardTemplate
 
 	protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
 	{
-		await CardPileCmd.Draw(choiceContext, DrawCount, Owner);
+		SquSfx.Play(SquSfx.HumanTransmutationEvent);
 
 		CardSelectorPrefs exhaustPrefs = new(
 			CardSelectorPrefs.ExhaustSelectionPrompt,
@@ -74,28 +102,30 @@ public sealed class HumanTransmutation : ModCardTemplate
 		}
 
 		Rng rng = Owner.RunState.Rng.CombatCardGeneration;
+		HashSet<Type> usedEnchantmentTypes = [];
 		List<CardModel> choices = [];
 		foreach (CardModel exhausted in toExhaust)
 		{
-			CardModel? attack = PickRandomAttackForRarity(MapExhaustedRarity(exhausted.Rarity), rng);
-			if (attack is not null)
+			CardRarity rarity = MapExhaustedRarity(exhausted.Rarity);
+			CardModel? attack = PickRandomAttackForRarity(rarity, rng);
+			if (attack is null)
 			{
-				choices.Add(attack);
+				continue;
 			}
+
+			if (IsUpgraded)
+			{
+				attack.UpgradeInternal();
+				attack.FinalizeUpgradeInternal();
+			}
+
+			ApplyChoiceEnchantment(attack, rarity, rng, usedEnchantmentTypes);
+			choices.Add(attack);
 		}
 
 		if (choices.Count == 0)
 		{
 			return;
-		}
-
-		if (IsUpgraded)
-		{
-			foreach (CardModel choice in choices)
-			{
-				choice.UpgradeInternal();
-				choice.FinalizeUpgradeInternal();
-			}
 		}
 
 		CardModel? selected = await CardSelectCmd.FromChooseACardScreen(
@@ -118,22 +148,165 @@ public sealed class HumanTransmutation : ModCardTemplate
 			return null;
 		}
 
-		CardPoolModel? chosenPool = rng.NextItem(allPools);
-		if (chosenPool is null)
+		IEnumerable<CardModel> eligibleAttacks = allPools
+			.SelectMany(pool => pool.GetUnlockedCards(
+				Owner.UnlockState,
+				Owner.RunState.CardMultiplayerConstraint))
+			.Where(card => IsEligibleAttack(card, rarity));
+
+		return CardFactory.GetDistinctForCombat(Owner, eligibleAttacks, 1, rng).FirstOrDefault();
+	}
+
+	private static bool IsEligibleAttack(CardModel card, CardRarity rarity) =>
+		card.Type == CardType.Attack
+		&& card.Rarity == rarity
+		&& !CostsStars(card)
+		&& !InvolvesOsty(card);
+
+	private static bool CostsStars(CardModel card) =>
+		card.HasStarCostX || card.CanonicalStarCost > 0;
+
+	private static bool InvolvesOsty(CardModel card) =>
+		card.Tags.Contains(CardTag.OstyAttack)
+		|| card.DynamicVars.ContainsKey(OstyDamageVar.defaultName);
+
+	private static void ApplyChoiceEnchantment(
+		CardModel card,
+		CardRarity rarity,
+		Rng rng,
+		HashSet<Type> usedTypes)
+	{
+		EnchantmentSpec spec = TryRollSlither(card, rng, usedTypes)
+			?? PickRaritySpec(rarity, rng, usedTypes);
+		ApplySpec(card, spec);
+		usedTypes.Add(spec.EnchantmentType);
+	}
+
+	private static EnchantmentSpec? TryRollSlither(
+		CardModel card,
+		Rng rng,
+		HashSet<Type> usedTypes)
+	{
+		if (card.EnergyCost.CostsX || card.EnergyCost.Canonical < SlitherMinCost)
 		{
 			return null;
 		}
 
-		IEnumerable<CardModel> poolCards = chosenPool.GetUnlockedCards(
-			Owner.UnlockState,
-			Owner.RunState.CardMultiplayerConstraint);
+		if (!rng.NextBool())
+		{
+			return null;
+		}
 
-		return CardFactory.GetDistinctForCombat(
-				Owner,
-				poolCards.Where(card => card.Type == CardType.Attack && card.Rarity == rarity),
-				1,
-				rng)
-			.FirstOrDefault();
+		if (usedTypes.Contains(typeof(Slither)))
+		{
+			return null;
+		}
+
+		return SlitherSpec;
+	}
+
+	private static EnchantmentSpec PickRaritySpec(
+		CardRarity rarity,
+		Rng rng,
+		HashSet<Type> usedTypes)
+	{
+		EnchantmentSpec[] pool = rarity switch
+		{
+			CardRarity.Uncommon => UncommonPool,
+			CardRarity.Rare => RarePool,
+			_ => CommonPool,
+		};
+
+		EnchantmentSpec[] unused = pool
+			.Where(spec => !usedTypes.Contains(spec.EnchantmentType))
+			.ToArray();
+		return rng.NextItem(unused.Length > 0 ? unused : pool);
+	}
+
+	private static void ApplySpec(CardModel card, EnchantmentSpec spec)
+	{
+		if (spec.EnchantmentType == typeof(Sharp))
+		{
+			Apply<Sharp>(card, spec.Amount);
+			return;
+		}
+
+		if (spec.EnchantmentType == typeof(Swift))
+		{
+			Apply<Swift>(card, spec.Amount);
+			return;
+		}
+
+		if (spec.EnchantmentType == typeof(Vigorous))
+		{
+			Apply<Vigorous>(card, spec.Amount);
+			return;
+		}
+
+		if (spec.EnchantmentType == typeof(Steady))
+		{
+			Apply<Steady>(card, spec.Amount);
+			return;
+		}
+
+		if (spec.EnchantmentType == typeof(Slither))
+		{
+			Apply<Slither>(card, spec.Amount);
+			return;
+		}
+
+		if (spec.EnchantmentType == typeof(Inky))
+		{
+			Apply<Inky>(card, spec.Amount);
+			return;
+		}
+
+		if (spec.EnchantmentType == typeof(Glam))
+		{
+			Apply<Glam>(card, spec.Amount);
+			return;
+		}
+
+		if (spec.EnchantmentType == typeof(Corrupted))
+		{
+			Apply<Corrupted>(card, spec.Amount);
+			return;
+		}
+
+		if (spec.EnchantmentType == typeof(Instinct))
+		{
+			Apply<Instinct>(card, spec.Amount);
+			return;
+		}
+
+		if (spec.EnchantmentType == typeof(Sown))
+		{
+			Apply<Sown>(card, spec.Amount);
+			return;
+		}
+
+		if (spec.EnchantmentType == typeof(Momentum))
+		{
+			Apply<Momentum>(card, spec.Amount);
+			return;
+		}
+
+		Apply<Spiral>(card, spec.Amount);
+	}
+
+	private static void Apply<T>(CardModel card, int amount)
+		where T : EnchantmentModel
+	{
+		EnchantmentModel enchantment = ModelDb.Enchantment<T>().ToMutable();
+		if (enchantment.CanEnchant(card))
+		{
+			CardCmd.Enchant(enchantment, card, amount);
+			return;
+		}
+
+		// 涡旋原版只允许基础打击/防御；此处仍按设计贴到稀有攻击上。
+		card.EnchantInternal(enchantment, amount);
+		enchantment.ModifyCard();
 	}
 
 	/// <summary>

@@ -7,6 +7,7 @@ using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.Models;
+using Squ.Audio;
 using Squ.Cards;
 using MegaCrit.Sts2.Core.Models.Powers;
 using Squ.Powers;
@@ -31,15 +32,15 @@ public sealed class ScriptBombardChibiPower : ScriptPowerTemplate
 
 	protected override IEnumerable<DynamicVar> CanonicalVars =>
 	[
-		new PowerVar<BurningPower>(BombardChibiScript.BaseBurning),
+		new DynamicVar(BombardChibiScript.StrengthLossVarName, BombardChibiScript.BaseBurning),
 	];
 
 	public override Task AfterApplied(Creature? applier, CardModel? cardSource)
 	{
 		if (cardSource is BombardChibiScript card)
 		{
-			DynamicVars[nameof(BurningPower)].BaseValue =
-				card.DynamicVars[nameof(BurningPower)].BaseValue;
+			DynamicVars[BombardChibiScript.StrengthLossVarName].BaseValue =
+				card.DynamicVars[BombardChibiScript.StrengthLossVarName].BaseValue;
 		}
 
 		return Task.CompletedTask;
@@ -47,10 +48,11 @@ public sealed class ScriptBombardChibiPower : ScriptPowerTemplate
 
 	public override async Task AfterRemoved(Creature oldOwner)
 	{
-		decimal strengthLoss = DynamicVars[nameof(BurningPower)].BaseValue;
+		decimal strengthLoss = DynamicVars[BombardChibiScript.StrengthLossVarName].BaseValue;
 		ICombatState? combatState = oldOwner.CombatState;
 		if (strengthLoss > 0 && combatState is not null)
 		{
+			SquSfx.Play(SquSfx.BombardChibiReduceAttackEvent);
 			foreach (Creature enemy in combatState.HittableEnemies)
 			{
 				if (!enemy.IsAlive)

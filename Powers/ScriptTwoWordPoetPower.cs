@@ -12,6 +12,7 @@ using MegaCrit.Sts2.Core.Hooks;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.ValueProps;
+using Squ.Audio;
 using Squ.Cards;
 using STS2RitsuLib.Interop.AutoRegistration;
 using STS2RitsuLib.Scaffolding.Content;
@@ -96,6 +97,14 @@ public sealed class ScriptTwoWordPoetPower : StackableScriptPowerTemplate
 		}
 
 		Flash();
+		SquSfx.PlayRandom(
+			combatState.RunState,
+			SquSfx.TwoWordHowToRelieveWorryEvent,
+			SquSfx.TwoWordBitterDaysEvent,
+			SquSfx.TwoWordOnlyDukangEvent,
+			SquSfx.TwoWordUnforgettableWorryEvent,
+			SquSfx.TwoWordGenerousAndStrongEvent,
+			SquSfx.TwoWordLikeMorningDewEvent);
 
 		AttackCommand attack = DamageCmd.Attack(Amount)
 			.Unpowered()

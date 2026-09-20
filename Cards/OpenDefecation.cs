@@ -66,11 +66,7 @@ public sealed class OpenDefecation : ModCardTemplate
 			this);
 
 		List<CardModel> unplayableCards = GetUnplayableCardsInDrawAndHand().ToList();
-
-		foreach (CardModel card in unplayableCards)
-		{
-			await CardPileCmd.Add(card, PileType.Discard);
-		}
+		await CardCmd.Discard(choiceContext, unplayableCards);
 
 		if (unplayableCards.Count >= Threshold)
 		{

@@ -34,6 +34,12 @@ public sealed class SupportingActorBadgeRelic : ModRelicTemplate
 		IconOutlinePath: "res://images/relics/SupportingActorBadgeRelicOutline.png",
 		BigIconPath: "res://images/relics/SupportingActorBadgeRelicBig.png");
 
+	public override Task AfterRoomEntered(AbstractRoom room)
+	{
+		Status = ShouldPulseInRoom(room) ? RelicStatus.Active : RelicStatus.Normal;
+		return Task.CompletedTask;
+	}
+
 	public override Task AfterCombatEnd(CombatRoom room)
 	{
 		if (IsStrongMonsterEncounter(room))
@@ -47,6 +53,7 @@ public sealed class SupportingActorBadgeRelic : ModRelicTemplate
 			_pendingUpgradedRareCardReward = true;
 		}
 
+		Status = RelicStatus.Normal;
 		return Task.CompletedTask;
 	}
 
@@ -96,6 +103,10 @@ public sealed class SupportingActorBadgeRelic : ModRelicTemplate
 
 		return true;
 	}
+
+	private bool ShouldPulseInRoom(AbstractRoom room) =>
+		room is CombatRoom combat
+		&& (IsStrongMonsterEncounter(combat) || IsAct3PenultimateBossFight(Owner.RunState, combat));
 
 	private static bool IsStrongMonsterEncounter(CombatRoom room) =>
 		room.RoomType == RoomType.Monster && !room.Encounter.IsWeak;

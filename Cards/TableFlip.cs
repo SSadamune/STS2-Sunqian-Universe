@@ -11,6 +11,7 @@ using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.Powers;
 using MegaCrit.Sts2.Core.ValueProps;
+using Squ.Audio;
 using Squ.Character;
 using Squ.Powers;
 using STS2RitsuLib.Interop.AutoRegistration;
@@ -47,6 +48,8 @@ public sealed class TableFlip : ModCardTemplate
 		ICombatState? combatState = CombatState;
 		ArgumentNullException.ThrowIfNull(combatState, nameof(combatState));
 
+		SquSfx.Play(SquSfx.SlamTheCommandDeskEvent);
+
 		decimal weakAmount = DynamicVars[nameof(WeakPower)].BaseValue;
 
 		await DamageCmd.Attack(DynamicVars.Damage.BaseValue)
@@ -75,7 +78,6 @@ public sealed class TableFlip : ModCardTemplate
 
 	protected override void OnUpgrade()
 	{
-		MockSetEnergyCost(new CardEnergyCost(this, 2, costsX: false));
-		InvokeEnergyCostChanged();
+		EnergyCost.UpgradeBy(-1);
 	}
 }

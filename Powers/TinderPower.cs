@@ -53,7 +53,8 @@ public sealed class TinderPower : ModPowerTemplate
 		CardModel? cardSource)
 	{
 		if (giver != Owner || power is not BurningPower || Amount <= 0
-			|| cardSource == null || !SquCardTags.AppliesBurning(cardSource))
+			|| cardSource == null || !SquCardTags.AppliesBurning(cardSource)
+			|| cardSource.Owner?.Creature != Owner)
 		{
 			return 0m;
 		}
@@ -77,7 +78,7 @@ public sealed class TinderPower : ModPowerTemplate
 
 	public override async Task AfterCardPlayedLate(PlayerChoiceContext choiceContext, CardPlay cardPlay)
 	{
-		if (!SquCardTags.AppliesBurning(cardPlay.Card))
+		if (cardPlay.Card.Owner.Creature != Owner || !SquCardTags.AppliesBurning(cardPlay.Card))
 		{
 			return;
 		}
