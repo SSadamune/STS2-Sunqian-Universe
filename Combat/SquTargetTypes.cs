@@ -20,6 +20,8 @@ public static class SquTargetTypes
 
 	public static TargetType AnyPlayer { get; private set; }
 
+	public static TargetType AnyOtherPlayer { get; private set; }
+
 	public static void Register()
 	{
 		RandomEnemies = CustomTargetType.RegisterMultiTargetType(
@@ -41,6 +43,12 @@ public static class SquTargetTypes
 			"any_player",
 			static (Creature creature, Player player) =>
 				creature.IsAlive && creature.IsPlayer);
+
+		AnyOtherPlayer = CustomTargetType.RegisterSingleTargetType(
+			SquMod.ModId,
+			"any_other_player",
+			static (Creature creature, Player player) =>
+				creature.IsAlive && creature.IsPlayer && creature != player.Creature);
 	}
 
 	public static bool IsRandomEnemiesTarget(TargetType type) => type == RandomEnemies;

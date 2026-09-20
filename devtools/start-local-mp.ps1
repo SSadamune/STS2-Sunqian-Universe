@@ -24,13 +24,12 @@ if (-not (Test-Path $appIdPath)) {
 
 Add-Type -AssemblyName System.Windows.Forms
 $area = [System.Windows.Forms.Screen]::PrimaryScreen.WorkingArea
-# -wpos 对准的是客户区，需给标题栏/顶部任务栏留空；两个窗口错开一点重叠即可。
 $topChrome = 140
 $sideMargin = 32
 $hostX = $area.Left + $sideMargin
 $hostY = $area.Top + $topChrome
 $joinX = $hostX + 80
-$joinY = $hostY + 40
+$joinY = $hostY
 
 if ($WindowWidth -le 0) {
     $WindowWidth = [Math]::Max(960, [Math]::Min(1280, $area.Width - $sideMargin * 2))
@@ -39,10 +38,29 @@ if ($WindowHeight -le 0) {
     $WindowHeight = [Math]::Max(540, $area.Height - $topChrome - 48)
 }
 
-function Start-Sts2Instance([string]$FastMpArgs, [int]$X, [int]$Y) {
-    $argString = "--windowed --resolution ${WindowWidth}x${WindowHeight} -wpos $X $Y $FastMpArgs"
-    Write-Host "Launching: SlayTheSpire2.exe $argString" -ForegroundColor Cyan
-    Start-Process -FilePath $exe -WorkingDirectory $GameDir -ArgumentList $argString
+function Start-Sts2Instance {
+    param(
+        [int]$X,
+        [int]$Y,
+        [string[]]$GameArgs
+    )
+
+    $argLine = @(
+        "--windowed",
+        "--resolution",
+        "$WindowWidth`x$WindowHeight",
+        "--position",
+        "$X,$Y"
+    ) + $GameArgs
+
+    $startInfo = New-Object System.Diagnostics.ProcessStartInfo
+    $startInfo.FileName = $exe
+    $startInfo.WorkingDirectory = $GameDir
+    $startInfo.UseShellExecute = $true
+    $startInfo.Arguments = [string]::Join(" ", $argLine)
+
+    Write-Host "Launching: SlayTheSpire2.exe $($startInfo.Arguments)" -ForegroundColor Cyan
+    [void][System.Diagnostics.Process]::Start($startInfo)
 }
 
 if (-not (Get-Process -Name steam -ErrorAction SilentlyContinue)) {
@@ -50,7 +68,7 @@ if (-not (Get-Process -Name steam -ErrorAction SilentlyContinue)) {
 }
 
 if ($Mode -in @("Both", "Host")) {
-    Start-Sts2Instance "-fastmp $HostMode" $hostX $hostY
+    Start-Sts2Instance -X $hostX -Y $hostY -GameArgs @("-fastmp", $HostMode)
 }
 
 if ($Mode -in @("Both", "Join")) {
@@ -58,10 +76,7 @@ if ($Mode -in @("Both", "Join")) {
         Write-Host "Waiting $JoinDelaySeconds s for host..." -ForegroundColor DarkGray
         Start-Sleep -Seconds $JoinDelaySeconds
     }
-    Start-Sts2Instance "-fastmp join -clientId $ClientId" $joinX $joinY
+    Start-Sts2Instance -X $joinX -Y $joinY -GameArgs @("-fastmp", "join", "-clientId", "$ClientId")
 }
-
-Write-Host "Done." -ForegroundColor Green
-
 
 Write-Host "Done." -ForegroundColor Green

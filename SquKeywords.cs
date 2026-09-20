@@ -71,6 +71,11 @@ public static class SquKeywords
 
 	public static readonly CardKeyword Charge = ChargeId.GetModCardKeyword();
 
+	public static readonly string EnthralledId = ModContentRegistry
+		.GetQualifiedKeywordId(SquMod.ModId, "enthralled");
+
+	public static readonly CardKeyword Enthralled = EnthralledId.GetModCardKeyword();
+
 	public static IHoverTip CreateWarFeedsWarHoverTip(CardModel card)
 	{
 		LocString title = ModKeywordRegistry.GetTitle(WarFeedsWarId);
@@ -123,4 +128,6 @@ public static class SquKeywords
 	public static bool IsScry(this CardModel card) => card.Keywords.Contains(Scry);
 
 	public static bool HasEunuchMessage(this CardModel card) => card.Keywords.Contains(EunuchMessage);
+
+	public static bool HasEnthralled(this CardModel card) => card.Keywords.Contains(Enthralled);
 }

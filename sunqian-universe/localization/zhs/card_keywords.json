@@ -24,5 +24,7 @@
   "SUNQIAN_UNIVERSE_KEYWORD_EUNUCH_MESSAGE.description": "这张牌具有[gold]保留[/gold]。\n当「剧本：小黄门」失效时，这张牌会被[gold]消耗[/gold]。\n当这张牌离开手牌区时，移除[gold]小黄门的口信[/gold]词条。",
   "SUNQIAN_UNIVERSE_KEYWORD_CHARGE.title": "蓄能",
   "SUNQIAN_UNIVERSE_KEYWORD_CHARGE.description": "如果此牌在手牌中，当满足条件时将会触发[gold]蓄能[/gold]效果，该效果会在打出此牌后被重置。",
-  "SUNQIAN_UNIVERSE_KEYWORD_CHARGE.cardDescription": "\n[gold]{Title}[/gold]：{Effect}"
+  "SUNQIAN_UNIVERSE_KEYWORD_CHARGE.cardDescription": "\n[gold]{Title}[/gold]：{Effect}",
+  "SUNQIAN_UNIVERSE_KEYWORD_ENTHRALLED.title": "执迷",
+  "SUNQIAN_UNIVERSE_KEYWORD_ENTHRALLED.description": "如果此牌在你的[gold]手牌[/gold]中，你必须优先打出有[gold]执迷[/gold]的牌。"
 }

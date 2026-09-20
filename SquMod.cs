@@ -52,6 +52,11 @@ public static class SquMod
 			.CardKeywordOwnedByLocNamespace("counts_as_played")
 			.CardKeywordOwnedByLocNamespace("charge")
 			.CardKeywordOwnedByLocNamespace(
+				"enthralled",
+				iconPath: null,
+				ModKeywordCardDescriptionPlacement.BeforeCardDescription,
+				includeInCardHoverTip: true)
+			.CardKeywordOwnedByLocNamespace(
 				"eunuch_message",
 				iconPath: null,
 				ModKeywordCardDescriptionPlacement.BeforeCardDescription,
