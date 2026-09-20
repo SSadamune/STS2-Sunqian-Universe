@@ -27,7 +27,7 @@ public sealed class TableFlip : ModCardTemplate
 	protected override IEnumerable<DynamicVar> CanonicalVars =>
 	[
 		new PowerVar<WeakPower>(2),
-		new DamageVar(16m, ValueProp.Move),
+		new DamageVar(18m, ValueProp.Move),
 	];
 
 	protected override IEnumerable<IHoverTip> AdditionalHoverTips =>

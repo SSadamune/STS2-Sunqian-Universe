@@ -9,6 +9,7 @@ using Squ.Audio;
 using Squ.Cards;
 using Squ.Character;
 using Squ.Combat;
+using Squ.Interop;
 using Squ.Relics;
 using Squ.Script;
 using STS2RitsuLib;
@@ -78,7 +79,11 @@ public static class SquMod
 		PatchAllResilient(harmony, assembly);
 		SquStrikeRedirectPatches.Initialize(harmony);
 
+		RitsuLibFramework.SubscribeLifecycleOnce<DeferredInitializationCompletedEvent>(_ =>
+			NewsanguoInteropDiagnostics.LogSnapshot("DeferredInitializationCompleted"));
+
 		Logger.Info("sunqian-universe (SQU) mod loaded!");
+		NewsanguoInteropDiagnostics.LogSnapshot("ModLoaded");
 	}
 
 	private static void PatchAllResilient(Harmony harmony, Assembly assembly)

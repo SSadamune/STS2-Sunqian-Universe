@@ -1,3 +1,7 @@
 {
-  "SUNQIAN_UNIVERSE_COMMON.ANNOTATION.title": "* Supplemental Notes"
+  "SUNQIAN_UNIVERSE_COMMON.ANNOTATION.title": "* Supplemental Notes",
+  "SUNQIAN_UNIVERSE_COMMON.NEWSANGUO_VIGOR_SWAP.hoverTitle": "Note",
+  "SUNQIAN_UNIVERSE_COMMON.NEWSANGUO_VIGOR_SWAP.libraryHover": "This effect grants [gold]Drunken Might[/gold] instead of Vigor to characters from the New Three Kingdoms mod.",
+  "SUNQIAN_UNIVERSE_COMMON.NEWSANGUO_VIGOR_SWAP.combatNote": "You do not gain Vigor this way, and instead gain an equal amount of [gold]Drunken Might[/gold].",
+  "SUNQIAN_UNIVERSE_COMMON.NEWSANGUO_VIGOR_SWAP.combatPowerNote": "This character gains [gold]Drunken Might[/gold] this way, instead of Vigor."
 }

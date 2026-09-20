@@ -12,6 +12,7 @@ using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.Powers;
 using Squ.Audio;
+using Squ.Interop;
 using STS2RitsuLib.Interop.AutoRegistration;
 using STS2RitsuLib.Scaffolding.Content;
 
@@ -40,7 +41,8 @@ public sealed class GrandGobletPower : ModPowerTemplate
 	protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
 	[
 		HoverTipFactory.ForEnergy(this),
-		HoverTipFactory.FromPower<VigorPower>(),
+		..NewsanguoVigorSwap.GrantedPowerHoverTips(this),
+		..NewsanguoVigorSwap.LibraryHoverTips(),
 	];
 
 	public override Task AfterPowerAmountChanged(
@@ -74,7 +76,7 @@ public sealed class GrandGobletPower : ModPowerTemplate
 			SquSfx.BiggerGobletWontBePoliteEvent,
 			SquSfx.BiggerGobletToastEvent);
 		await PlayerCmd.GainEnergy((int)DynamicVars.Energy.BaseValue, player);
-		await PowerCmd.Apply<VigorPower>(
+		await NewsanguoVigorSwap.ApplyVigorOrDrunkenMight(
 			new ThrowingPlayerChoiceContext(),
 			Owner,
 			Amount,

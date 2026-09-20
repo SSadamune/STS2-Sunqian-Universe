@@ -6,10 +6,12 @@ using MegaCrit.Sts2.Core.Combat;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.HoverTips;
+using MegaCrit.Sts2.Core.Localization;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.Models.Cards;
 using MegaCrit.Sts2.Core.Models.Powers;
 using Squ.Character;
+using Squ.Interop;
 using Squ.Script;
 using STS2RitsuLib.Interop.AutoRegistration;
 using STS2RitsuLib.Scaffolding.Content;
@@ -34,8 +36,9 @@ public sealed class Wine : ModCardTemplate
 	protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
 	[
 		HoverTipFactory.ForEnergy(this),
-		HoverTipFactory.FromPower<VigorPower>(),
+		..NewsanguoVigorSwap.GrantedPowerHoverTips(this),
 		HoverTipFactory.FromCard<Dazed>(),
+		..NewsanguoVigorSwap.LibraryHoverTips(),
 	];
 
 	public override CardAssetProfile AssetProfile => new(
@@ -52,7 +55,7 @@ public sealed class Wine : ModCardTemplate
 			?? throw new InvalidOperationException("Wine requires an active combat.");
 
 		await PlayerCmd.GainEnergy((int)DynamicVars.Energy.BaseValue, Owner);
-		await PowerCmd.Apply<VigorPower>(
+		await NewsanguoVigorSwap.ApplyVigorOrDrunkenMight(
 			choiceContext,
 			Owner.Creature,
 			DynamicVars[nameof(VigorPower)].BaseValue,
@@ -65,6 +68,11 @@ public sealed class Wine : ModCardTemplate
 			1,
 			upgraded: false,
 			Owner);
+	}
+
+	protected override void AddExtraArgsToDescription(LocString description)
+	{
+		NewsanguoVigorSwap.AddCombatNote(description, this);
 	}
 
 	protected override void OnUpgrade()

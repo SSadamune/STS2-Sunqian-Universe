@@ -9,9 +9,29 @@ namespace Squ;
 public static class SquCommonL10n
 {
 	public const string AnnotationTitleKey = "SUNQIAN_UNIVERSE_COMMON.ANNOTATION.title";
+	public const string NewsanguoVigorSwapHoverTitleKey =
+		"SUNQIAN_UNIVERSE_COMMON.NEWSANGUO_VIGOR_SWAP.hoverTitle";
+	public const string NewsanguoVigorSwapLibraryHoverKey =
+		"SUNQIAN_UNIVERSE_COMMON.NEWSANGUO_VIGOR_SWAP.libraryHover";
+	public const string NewsanguoCombatNoteKey =
+		"SUNQIAN_UNIVERSE_COMMON.NEWSANGUO_VIGOR_SWAP.combatNote";
+	public const string NewsanguoCombatPowerNoteKey =
+		"SUNQIAN_UNIVERSE_COMMON.NEWSANGUO_VIGOR_SWAP.combatPowerNote";
 
 	public static string Table =>
 		RitsuLibFramework.GetI18NLocTableId(SquMod.ModId, SquMod.CommonL10nStem);
 
 	public static LocString AnnotationTitle() => new(Table, AnnotationTitleKey);
+
+	public static LocString NewsanguoVigorSwapHoverTitle() =>
+		new(Table, NewsanguoVigorSwapHoverTitleKey);
+
+	public static LocString NewsanguoVigorSwapLibraryHover() =>
+		new(Table, NewsanguoVigorSwapLibraryHoverKey);
+
+	public static LocString NewsanguoCombatNote() =>
+		new(Table, NewsanguoCombatNoteKey);
+
+	public static LocString NewsanguoCombatPowerNote() =>
+		new(Table, NewsanguoCombatPowerNoteKey);
 }

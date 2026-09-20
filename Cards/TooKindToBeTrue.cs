@@ -47,7 +47,11 @@ public sealed class TooKindToBeTrue : ModCardTemplate
 				yield break;
 			}
 
-			yield return HoverTipFactory.FromCard(GetCharacterBasicDefend(Owner) ?? ModelDb.Card<DefendLongtao>(), upgrade: true);
+			// 图鉴规范卡不可变，访问 Owner 会 AssertMutable；无主人时回退到龙套防御。
+			Player? owner = IsMutable ? Owner : null;
+			yield return HoverTipFactory.FromCard(
+				GetCharacterBasicDefend(owner) ?? ModelDb.Card<DefendLongtao>(),
+				upgrade: true);
 		}
 	}
 

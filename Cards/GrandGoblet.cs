@@ -4,10 +4,12 @@ using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.HoverTips;
+using MegaCrit.Sts2.Core.Localization;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.Models.Powers;
 using Squ.Audio;
 using Squ.Character;
+using Squ.Interop;
 using Squ.Powers;
 using STS2RitsuLib.Interop.AutoRegistration;
 using STS2RitsuLib.Scaffolding.Content;
@@ -31,7 +33,8 @@ public sealed class GrandGoblet : ModCardTemplate
 	protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
 	[
 		HoverTipFactory.ForEnergy(this),
-		HoverTipFactory.FromPower<VigorPower>(),
+		..NewsanguoVigorSwap.GrantedPowerHoverTips(this),
+		..NewsanguoVigorSwap.LibraryHoverTips(),
 	];
 
 	public override CardAssetProfile AssetProfile => new(
@@ -51,6 +54,11 @@ public sealed class GrandGoblet : ModCardTemplate
 			DynamicVars[nameof(VigorPower)].BaseValue,
 			Owner.Creature,
 			this);
+	}
+
+	protected override void AddExtraArgsToDescription(LocString description)
+	{
+		NewsanguoVigorSwap.AddCombatNote(description, this);
 	}
 
 	protected override void OnUpgrade()
