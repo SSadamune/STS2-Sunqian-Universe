@@ -16,6 +16,11 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="STS2.RitsuLib" Version="0.4.58" />
+    <!-- 与 newsanguo 对齐：0.6.x 起 RitsuLib 拆成多程序集，必须与玩家安装的运行时同版本。
+         用 [0.6.2] 精确锁定（写成 0.6.2 会被 NuGet 当成最低版本，可能拉到不兼容的更新）。
+         框架本体由 mods/STS2-RitsuLib 提供，不随本 mod 分发。 -->
+    <PackageReference Include="STS2.RitsuLib" Version="[0.6.2]">
+      <ExcludeAssets>runtime</ExcludeAssets>
+    </PackageReference>
   </ItemGroup>
 </Project>
