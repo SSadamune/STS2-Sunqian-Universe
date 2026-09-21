@@ -156,7 +156,8 @@ public sealed class DigRaid : ModCardTemplate
 	}
 
 	/// <summary>
-	/// 灼烧预览包含当前活力，再走火种/好火等给予层数修正；BaseValue 保持印面数值以便标绿。
+	/// 手牌灼烧预览包含当前活力，再走火种/好火等给予层数修正；BaseValue 保持印面数值以便标绿。
+	/// 抽牌堆/弃牌堆不显示活力加成。
 	/// </summary>
 	private sealed class VigorBoostedBurningVar : PowerVar<BurningPower>
 	{
@@ -177,7 +178,7 @@ public sealed class DigRaid : ModCardTemplate
 				return;
 			}
 
-			decimal amount = BaseValue + SquVigorSnapshot.GetAmount(owner);
+			decimal amount = BaseValue + SquVigorSnapshot.GetAmountForCardPreview(card);
 			if (!runGlobalHooks || card.CombatState is not { } combatState)
 			{
 				PreviewValue = amount;

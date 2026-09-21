@@ -1,6 +1,9 @@
+using System;
 using System.Collections.Generic;
+using System.Reflection;
 using System.Threading.Tasks;
 using Godot;
+using HarmonyLib;
 using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.Entities.Creatures;
@@ -23,6 +26,25 @@ namespace Squ.Powers;
 [RegisterPower]
 public sealed class KeepVigorPower : ModPowerTemplate
 {
+	private static readonly Type? VigorInternalDataType =
+		AccessTools.Inner(typeof(VigorPower), "Data");
+
+	private static readonly MethodInfo? GetInternalDataMethod =
+		VigorInternalDataType is null
+			? null
+			: AccessTools.Method(typeof(PowerModel), "GetInternalData", System.Type.EmptyTypes)
+				?.MakeGenericMethod(VigorInternalDataType);
+
+	private static readonly FieldInfo? CommandToModifyField =
+		VigorInternalDataType is null
+			? null
+			: AccessTools.Field(VigorInternalDataType, "commandToModify");
+
+	private static readonly FieldInfo? AmountWhenAttackStartedField =
+		VigorInternalDataType is null
+			? null
+			: AccessTools.Field(VigorInternalDataType, "amountWhenAttackStarted");
+
 	private bool _isRefunding;
 
 	public override PowerType Type => PowerType.Buff;
@@ -50,7 +72,7 @@ public sealed class KeepVigorPower : ModPowerTemplate
 		if (_isRefunding
 			|| Owner.IsDead
 			|| Amount <= 0m
-			|| power is not VigorPower
+			|| power is not VigorPower vigor
 			|| power.Owner != Owner
 			|| amount >= 0m)
 		{
@@ -67,6 +89,10 @@ public sealed class KeepVigorPower : ModPowerTemplate
 				-amount,
 				Owner,
 				cardSource);
+
+			// 原版活力会把「本段攻击」绑在打出的那张牌上；消耗后层数为 0，其它牌预览自然归零。
+			// 退回层数后若不解开绑定，ModifyDamageAdditive 会对非绑定牌返回 0，手牌打击便不再吃活力。
+			ClearVigorAttackBinding(vigor);
 		}
 		finally
 		{
@@ -88,5 +114,28 @@ public sealed class KeepVigorPower : ModPowerTemplate
 
 		Flash();
 		await PowerCmd.Decrement(this);
+	}
+
+	/// <summary>
+	/// 清掉 <see cref="VigorPower"/> 在 <c>BeforeAttack</c> 写入的攻击绑定，
+	/// 让退回后的活力能再次作用于任意攻击牌。
+	/// </summary>
+	private static void ClearVigorAttackBinding(VigorPower vigor)
+	{
+		if (GetInternalDataMethod is null
+			|| CommandToModifyField is null
+			|| AmountWhenAttackStartedField is null)
+		{
+			return;
+		}
+
+		object? data = GetInternalDataMethod.Invoke(vigor, null);
+		if (data is null)
+		{
+			return;
+		}
+
+		CommandToModifyField.SetValue(data, null);
+		AmountWhenAttackStartedField.SetValue(data, 0);
 	}
 }

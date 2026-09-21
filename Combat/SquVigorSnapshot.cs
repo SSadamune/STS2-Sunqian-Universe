@@ -1,5 +1,6 @@
 using System.Threading.Tasks;
 using MegaCrit.Sts2.Core.Commands;
+using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.Entities.Creatures;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.Models;
@@ -17,6 +18,14 @@ public static class SquVigorSnapshot
 {
 	public static int GetAmount(Creature creature) =>
 		creature.GetPower<VigorPower>() is { Amount: > 0 } vigor ? vigor.Amount : 0;
+
+	/// <summary>
+	/// 卡面绿字只在手牌或打出过程中计入活力，与原版攻击伤害预览一致。
+	/// </summary>
+	public static int GetAmountForCardPreview(CardModel card) =>
+		card.Pile?.Type is PileType.Hand or PileType.Play && card.Owner?.Creature is { } owner
+			? GetAmount(owner)
+			: 0;
 
 	/// <summary>
 	/// Spends all current <see cref="VigorPower"/> through <see cref="PowerCmd.ModifyAmount"/>,

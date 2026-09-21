@@ -77,8 +77,8 @@ public sealed class KeepEnjoying : ModCardTemplate
 	}
 
 	/// <summary>
-	/// 卡面格挡预览包含当前活力；<see cref="DynamicVar.BaseValue"/> 保持印面数值，
-	/// 这样 <c>{Block:diff()}</c> 才能把加成后的数字标绿。
+	/// 手牌格挡预览包含当前活力；<see cref="DynamicVar.BaseValue"/> 保持印面数值，
+	/// 这样 <c>{Block:diff()}</c> 才能把加成后的数字标绿。抽牌堆/弃牌堆不显示该加成。
 	/// </summary>
 	private sealed class VigorBlockVar : BlockVar
 	{
@@ -99,7 +99,7 @@ public sealed class KeepEnjoying : ModCardTemplate
 				return;
 			}
 
-			decimal amount = BaseValue + SquVigorSnapshot.GetAmount(owner);
+			decimal amount = BaseValue + SquVigorSnapshot.GetAmountForCardPreview(card);
 			if (!runGlobalHooks || card.CombatState is not { } combatState)
 			{
 				PreviewValue = amount;

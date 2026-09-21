@@ -66,6 +66,8 @@ public sealed class Denied : ModCardTemplate
 	{
 		ArgumentNullException.ThrowIfNull(cardPlay.Target, "cardPlay.Target");
 
+		SquSfx.Play(SquSfx.DeniedEvent);
+
 		_isApplyingOwnDebuff = true;
 		try
 		{
@@ -231,7 +233,8 @@ public sealed class Denied : ModCardTemplate
 		}
 
 		_returnToHandReady = false;
-		SquSfx.Play(SquSfx.DeniedEvent);
+		// TODO: 回手专用音效就绪后恢复播放。
+		// SquSfx.Play(SquSfx.DeniedEvent);
 		await CardPileCmd.Add(this, PileType.Hand);
 	}
 
