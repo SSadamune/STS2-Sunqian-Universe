@@ -1,4 +1,8 @@
 {
+  "SUNQIAN_UNIVERSE_CARDTAG_SCRIPT.title": "Script",
+  "SUNQIAN_UNIVERSE_CARDTAG_SCRIPT.description": "Gain a Script (if you already have one, the previous Script ends).",
+  "SUNQIAN_UNIVERSE_CARDTAG_BURNING.title": "Burning",
+  "SUNQIAN_UNIVERSE_CARDTAG_BURNING.description": "A card that can apply [gold]Burning[/gold].",
   "SUNQIAN_UNIVERSE_KEYWORD_SCRIPT.title": "Script",
   "SUNQIAN_UNIVERSE_KEYWORD_SCRIPT.description": "A special type of status. When you gain a new Script status, the previous Script [gold]ends[/gold].",
   "SUNQIAN_UNIVERSE_KEYWORD_DOOM_KILL_THRESHOLD.title": "Doom kill threshold",
@@ -24,5 +28,7 @@
   "SUNQIAN_UNIVERSE_KEYWORD_CHARGE.description": "If this card is in your Hand, its [gold]Charge[/gold] effect triggers when the conditions are met. The effect is reset after this card is played.",
   "SUNQIAN_UNIVERSE_KEYWORD_CHARGE.cardDescription": "\n[gold]{Title}[/gold]: {Effect}",
   "SUNQIAN_UNIVERSE_KEYWORD_ENTHRALLED.title": "Enthralled",
-  "SUNQIAN_UNIVERSE_KEYWORD_ENTHRALLED.description": "If this is in your [gold]Hand[/gold], you must play cards with [gold]Enthralled[/gold] first."
+  "SUNQIAN_UNIVERSE_KEYWORD_ENTHRALLED.description": "If this is in your [gold]Hand[/gold], you must play cards with [gold]Enthralled[/gold] first.",
+  "SUNQIAN_UNIVERSE_KEYWORD_WRAP.title": "Wrap",
+  "SUNQIAN_UNIVERSE_KEYWORD_WRAP.description": "When you play this card, if you have a [gold]Script[/gold], end it and resolve the Wrap effect."
 }

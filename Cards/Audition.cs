@@ -9,6 +9,7 @@ using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Models;
 using Squ;
 using Squ.Character;
+using Squ.Script;
 using STS2RitsuLib.Interop.AutoRegistration;
 using STS2RitsuLib.Scaffolding.Content;
 
@@ -23,16 +24,20 @@ public sealed class Audition : ModCardTemplate
 
 	public override IEnumerable<CardKeyword> CanonicalKeywords =>
 	[
-		CardKeyword.Exhaust,
+		SquKeywords.Wrap,
 	];
 
 	protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
 	[
 		HoverTipFactory.FromKeyword(SquKeywords.Script),
+		HoverTipFactory.FromKeyword(CardKeyword.Retain),
 	];
 
 	public override CardAssetProfile AssetProfile => new(
 		PortraitPath: "res://images/cards/Audition.png");
+
+	protected override bool ShouldGlowGoldInternal =>
+		SquKeywords.ShouldGlowForWrap(this);
 
 	public Audition()
 		: base(1, CardType.Skill, CardRarity.Common, TargetType.Self)
@@ -41,6 +46,8 @@ public sealed class Audition : ModCardTemplate
 
 	protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
 	{
+		bool wrap = await ScriptSystem.TryConsumeWrapAsync(Owner.Creature);
+
 		List<CardModel> scriptCards = BuildDistinctScriptCards(ScriptCardCount);
 		if (IsUpgraded)
 		{
@@ -54,6 +61,10 @@ public sealed class Audition : ModCardTemplate
 		foreach (CardModel card in scriptCards)
 		{
 			await CardPileCmd.AddGeneratedCardToCombat(card, PileType.Hand, Owner);
+			if (wrap && card.Pile?.Type == PileType.Hand)
+			{
+				CardCmd.ApplySingleTurnRetain(card);
+			}
 		}
 	}
 

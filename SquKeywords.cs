@@ -76,6 +76,11 @@ public static class SquKeywords
 
 	public static readonly CardKeyword Enthralled = EnthralledId.GetModCardKeyword();
 
+	public static readonly string WrapId = ModContentRegistry
+		.GetQualifiedKeywordId(SquMod.ModId, "wrap");
+
+	public static readonly CardKeyword Wrap = WrapId.GetModCardKeyword();
+
 	public static IHoverTip CreateWarFeedsWarHoverTip(CardModel card)
 	{
 		LocString title = ModKeywordRegistry.GetTitle(WarFeedsWarId);
@@ -130,4 +135,15 @@ public static class SquKeywords
 	public static bool HasEunuchMessage(this CardModel card) => card.Keywords.Contains(EunuchMessage);
 
 	public static bool HasEnthralled(this CardModel card) => card.Keywords.Contains(Enthralled);
+
+	public static bool HasWrap(this CardModel card) => card.Keywords.Contains(Wrap);
+
+	/// <summary>
+	/// 手牌中带「卸妆」的牌：当前有剧本时金色高光。
+	/// </summary>
+	public static bool ShouldGlowForWrap(CardModel card) =>
+		card.Pile?.Type == PileType.Hand
+		&& card.HasWrap()
+		&& card.Owner?.Creature is { } creature
+		&& global::Squ.Script.ScriptSystem.HasActiveScript(creature);
 }

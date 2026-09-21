@@ -22,12 +22,12 @@ public sealed class WrapUp : ModCardTemplate
 {
 	protected override IEnumerable<DynamicVar> CanonicalVars =>
 	[
-		new PowerVar<VigorPower>(4m),
+		new PowerVar<VigorPower>(3m),
 	];
 
 	public override IEnumerable<CardKeyword> CanonicalKeywords =>
 	[
-		CardKeyword.Exhaust,
+		SquKeywords.Wrap,
 	];
 
 	protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
@@ -39,6 +39,9 @@ public sealed class WrapUp : ModCardTemplate
 	public override CardAssetProfile AssetProfile => new(
 		PortraitPath: "res://images/cards/WrapUp.png");
 
+	protected override bool ShouldGlowGoldInternal =>
+		SquKeywords.ShouldGlowForWrap(this);
+
 	public WrapUp()
 		: base(0, CardType.Skill, CardRarity.Basic, TargetType.Self)
 	{
@@ -46,19 +49,24 @@ public sealed class WrapUp : ModCardTemplate
 
 	protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
 	{
-		await ScriptSystem.InvalidateScriptsAsync(Owner.Creature);
-
-		await PowerCmd.Apply<VigorPower>(
-			choiceContext,
-			Owner.Creature,
-			DynamicVars[nameof(VigorPower)].BaseValue,
-			Owner.Creature,
-			this);
+		bool wrap = await ScriptSystem.TryConsumeWrapAsync(Owner.Creature);
+		await ApplyVigor(choiceContext);
+		if (wrap)
+		{
+			await ApplyVigor(choiceContext);
+		}
 	}
 
 	protected override void OnUpgrade()
 	{
 		DynamicVars[nameof(VigorPower)].UpgradeValueBy(2m);
-		RemoveKeyword(CardKeyword.Exhaust);
 	}
+
+	private Task ApplyVigor(PlayerChoiceContext choiceContext) =>
+		PowerCmd.Apply<VigorPower>(
+			choiceContext,
+			Owner.Creature,
+			DynamicVars[nameof(VigorPower)].BaseValue,
+			Owner.Creature,
+			this);
 }

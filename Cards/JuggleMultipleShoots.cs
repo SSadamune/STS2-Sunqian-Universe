@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -28,7 +28,7 @@ public sealed class JuggleMultipleShoots : ModCardTemplate
 	private const int ChoiceCount = 3;
 
 	/// <summary>
-	/// 对龙套演员几乎无用的他角能力（辉星/锻造/君王之剑/小刀/奥斯提/魂/充能球等）。
+	/// 对龙套演员几乎无用的他角能力（辉星/锻造/君王之剑/小刀/奥斯提/魂/充能球/中毒增幅等）。
 	/// 明确保留：环绕轨道、熔炉、无尽刀刃、刀扇、雷暴、旋转工艺、暴涨。
 	/// </summary>
 	private static readonly HashSet<Type> ExcludedOtherCharacterPowers =
@@ -62,10 +62,18 @@ public sealed class JuggleMultipleShoots : ModCardTemplate
 		typeof(Defragment),
 		typeof(Thunder),
 		typeof(ConsumingShadow),
+		// 中毒增幅（自身不施加中毒）
+		typeof(Accelerant),
+		typeof(Outbreak),
 	];
 
 	private static readonly LocString SelectionPrompt =
 		new("cards", "SUNQIAN_UNIVERSE_CARD_JUGGLE_MULTIPLE_SHOOTS.selectionScreenPrompt");
+
+	public override IEnumerable<CardKeyword> CanonicalKeywords =>
+	[
+		SquKeywords.Wrap,
+	];
 
 	public override CardAssetProfile AssetProfile => new(
 		PortraitPath: "res://images/cards/JuggleMultipleShoots.png");
@@ -90,19 +98,15 @@ public sealed class JuggleMultipleShoots : ModCardTemplate
 	}
 
 	protected override bool ShouldGlowGoldInternal =>
-		Pile?.Type == PileType.Hand && ScriptSystem.HasActiveScript(Owner.Creature);
+		SquKeywords.ShouldGlowForWrap(this);
 
 	protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
 	{
-		if (!ScriptSystem.HasActiveScript(Owner.Creature))
-		{
-			return;
-		}
-
-		await ScriptSystem.InvalidateScriptsAsync(Owner.Creature);
+		bool wrap = await ScriptSystem.TryConsumeWrapAsync(Owner.Creature);
 
 		int remainingEnergy = Owner.PlayerCombatState?.Energy ?? 0;
-		List<CardModel> choices = BuildPowerChoices(remainingEnergy);
+		int energyBudget = remainingEnergy + (wrap ? 1 : 0);
+		List<CardModel> choices = BuildPowerChoices(energyBudget);
 		if (choices.Count == 0)
 		{
 			return;
@@ -117,6 +121,14 @@ public sealed class JuggleMultipleShoots : ModCardTemplate
 			}
 		}
 
+		if (wrap)
+		{
+			foreach (CardModel choice in choices)
+			{
+				ReduceCostThisCombat(choice);
+			}
+		}
+
 		CardModel? selected = await CardSelectCmd.FromChooseACardScreen(
 			choiceContext,
 			choices,
@@ -127,6 +139,17 @@ public sealed class JuggleMultipleShoots : ModCardTemplate
 		{
 			await CardPileCmd.AddGeneratedCardToCombat(selected, PileType.Hand, Owner);
 		}
+	}
+
+	private static void ReduceCostThisCombat(CardModel card)
+	{
+		if (card.EnergyCost.CostsX)
+		{
+			return;
+		}
+
+		card.EnergyCost.AddThisCombat(-1);
+		card.InvokeEnergyCostChanged();
 	}
 
 	private List<CardModel> BuildPowerChoices(int remainingEnergy)

@@ -1,6 +1,8 @@
 {
   "SUNQIAN_UNIVERSE_CARDTAG_SCRIPT.title": "剧本",
   "SUNQIAN_UNIVERSE_CARDTAG_SCRIPT.description": "获得剧本状态（若你已有剧本，则会令之前的剧本失效）。",
+  "SUNQIAN_UNIVERSE_CARDTAG_BURNING.title": "灼烧",
+  "SUNQIAN_UNIVERSE_CARDTAG_BURNING.description": "能给予[gold]灼烧[/gold]的牌。",
   "SUNQIAN_UNIVERSE_KEYWORD_SCRIPT.title": "剧本",
   "SUNQIAN_UNIVERSE_KEYWORD_SCRIPT.description": "一类特殊的状态；在你获得新的剧本状态时，旧的剧本状态将[gold]失效[/gold]。",
   "SUNQIAN_UNIVERSE_KEYWORD_DOOM_KILL_THRESHOLD.title": "灾厄斩杀线",
@@ -26,5 +28,7 @@
   "SUNQIAN_UNIVERSE_KEYWORD_CHARGE.description": "如果此牌在手牌中，当满足条件时将会触发[gold]蓄能[/gold]效果，该效果会在打出此牌后被重置。",
   "SUNQIAN_UNIVERSE_KEYWORD_CHARGE.cardDescription": "\n[gold]{Title}[/gold]：{Effect}",
   "SUNQIAN_UNIVERSE_KEYWORD_ENTHRALLED.title": "执迷",
-  "SUNQIAN_UNIVERSE_KEYWORD_ENTHRALLED.description": "如果此牌在你的[gold]手牌[/gold]中，你必须优先打出有[gold]执迷[/gold]的牌。"
+  "SUNQIAN_UNIVERSE_KEYWORD_ENTHRALLED.description": "如果此牌在你的[gold]手牌[/gold]中，你必须优先打出有[gold]执迷[/gold]的牌。",
+  "SUNQIAN_UNIVERSE_KEYWORD_WRAP.title": "卸妆",
+  "SUNQIAN_UNIVERSE_KEYWORD_WRAP.description": "打出此牌时，如果你有[gold]剧本[/gold]状态，则令其失效并执行卸妆效果。"
 }
