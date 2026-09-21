@@ -1,10 +1,12 @@
 #nullable enable
+using System;
 using STS2RitsuLib.Audio;
 
 namespace Squ.Character;
 
 /// <summary>
 /// 角色选择界面选中孙乾（显示 bg169 背景）时播放的 BGM。
+/// 选人曲是流式 MP3，不在 FMOD DSP 图里；开始播放时采样主音量与音乐总线，跟随游戏音量滑条。
 /// </summary>
 internal static class SunqianSelectBgm
 {
@@ -36,6 +38,7 @@ internal static class SunqianSelectBgm
 			AudioSource.StreamingResourceMusic(ResourcePath),
 			new AudioPlaybackOptions
 			{
+				Volume = SampleMusicVolume(),
 				Scope = AudioLifecycleScope.Manual,
 				Routing = new AudioRoutingOptions
 				{
@@ -82,5 +85,22 @@ internal static class SunqianSelectBgm
 	{
 		// 原版菜单负责这条 BGM；必须走原版唯一音乐槽，不能创建并遗失新的托管句柄。
 		GameFmod.Studio.PlayMusic(MenuMusicEventPath);
+	}
+
+	private static float SampleMusicVolume()
+	{
+		float master = SampleBusVolume(FmodStudioRouting.MasterBus);
+		float music = SampleBusVolume(FmodStudioRouting.MusicBus);
+		return master * music;
+	}
+
+	private static float SampleBusVolume(string busPath)
+	{
+		if (FmodStudioBusAccess.TryGetBus(busPath) == null)
+		{
+			return 1f;
+		}
+
+		return Math.Max(0f, FmodStudioBusAccess.TryGetVolume(busPath));
 	}
 }
