@@ -32,14 +32,14 @@ public sealed class DrinkingTableCulture : ModCardTemplate
 	protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
 	[
 		HoverTipFactory.FromKeyword(SquKeywords.Enthralled),
-		HoverTipFactory.FromCard<Wine>(),
+		HoverTipFactory.FromCard<Wine>(true),
 	];
 
 	public override CardAssetProfile AssetProfile => new(
 		PortraitPath: "res://images/cards/DrinkingTableCulture.png");
 
 	public DrinkingTableCulture()
-		: base(1, CardType.Skill, CardRarity.Uncommon, SquTargetTypes.AnyOtherPlayer)
+		: base(0, CardType.Skill, CardRarity.Uncommon, SquTargetTypes.AnyOtherPlayer)
 	{
 	}
 
@@ -55,21 +55,14 @@ public sealed class DrinkingTableCulture : ModCardTemplate
 		await GeneratedCombatCards.AddToHandInCombat<Wine>(
 			combatState,
 			targetPlayer,
-			upgraded: false,
-			Owner,
-			ApplyEnthralled);
-		await GeneratedCombatCards.AddToDrawPileInCombat<Wine>(
-			combatState,
-			targetPlayer,
-			1,
-			upgraded: false,
+			upgraded: true,
 			Owner,
 			ApplyEnthralled);
 	}
 
 	protected override void OnUpgrade()
 	{
-		EnergyCost.UpgradeBy(-1);
+		RemoveKeyword(CardKeyword.Exhaust);
 	}
 
 	private static void ApplyEnthralled(CardModel card) =>

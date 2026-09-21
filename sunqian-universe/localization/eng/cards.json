@@ -190,5 +190,5 @@
   "SUNQIAN_UNIVERSE_CARD_TOO_KIND_TO_BE_TRUE.title": "Too Kind to Be True",
   "SUNQIAN_UNIVERSE_CARD_TOO_KIND_TO_BE_TRUE.description": "[gold]Transform[/gold] an Attack into [gold]{IfUpgraded:show:Ultimate Defend|Defend+}[/gold].\nFor each unique Debuff you have, cards with \"Defend\" in their name gain {ExtraBlock:diff()} additional [gold]Block[/gold].",
   "SUNQIAN_UNIVERSE_CARD_DRINKING_TABLE_CULTURE.title": "Drinking Table Culture",
-  "SUNQIAN_UNIVERSE_CARD_DRINKING_TABLE_CULTURE.description": "Add a [gold]Wine[/gold] with [gold]Enthralled[/gold] into another player's [gold]Hand[/gold] and another into their [gold]Draw Pile[/gold]."
+  "SUNQIAN_UNIVERSE_CARD_DRINKING_TABLE_CULTURE.description": "Add a [gold]Wine+[/gold] with [gold]Enthralled[/gold] into an ally's [gold]Hand[/gold]."
 }

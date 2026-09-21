@@ -3,7 +3,9 @@ using System.Linq;
 using System.Threading.Tasks;
 using MegaCrit.Sts2.Core.Combat;
 using MegaCrit.Sts2.Core.Commands;
+using MegaCrit.Sts2.Core.Commands.Builders;
 using MegaCrit.Sts2.Core.Entities.Cards;
+using MegaCrit.Sts2.Core.Entities.Creatures;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.Models;
@@ -11,7 +13,8 @@ using MegaCrit.Sts2.Core.ValueProps;
 using Squ.Audio;
 using Squ.Character;
 using Squ.Combat;
-using Squ.Script;
+using STS2RitsuLib.Combat.AttackHits;
+using STS2RitsuLib.Combat.CardTargeting;
 using STS2RitsuLib.Interop.AutoRegistration;
 using STS2RitsuLib.Scaffolding.Content;
 
@@ -20,11 +23,15 @@ using STS2RitsuLib.Scaffolding.Content;
 namespace Squ.Cards;
 
 [RegisterCard(typeof(SunqianCardPool), StableEntryStem = "transparent_hole")]
-public sealed class TransparentHole : ModCardTemplate, IRandomEnemyTargetCount
+public sealed class TransparentHole : ModCardTemplate, IRandomEnemyTargetCount, IAttackHitHookListener
 {
 	public const int BaseDamage = 7;
 
 	private const float RepeatAttackDelaySeconds = 0.2f;
+
+	private AttackCommand? _cascadeAttack;
+
+	private int _cascadeInitialCount;
 
 	protected override bool HasEnergyCostX => true;
 
@@ -59,37 +66,61 @@ public sealed class TransparentHole : ModCardTemplate, IRandomEnemyTargetCount
 			return;
 		}
 
-		SquVigorSnapshot.AttackSequence vigorSequence = SquVigorSnapshot.BeginAttackSequence(Owner.Creature, this);
-
-		bool isFirstAttack = true;
-		while (targetCount > 0)
+		List<Creature> firstVolley = SquRandomEnemyTargeting.SelectRandomEnemies(this, targetCount);
+		if (firstVolley.Count == 0)
 		{
-			if (!isFirstAttack)
-			{
-				await Cmd.Wait(RepeatAttackDelaySeconds);
-			}
-
-			isFirstAttack = false;
-			PlayTransparentHoleSfx();
-			int hits = await SquRandomEnemyTargeting.ExecuteDistinctRandomEnemyDamage(
-				this,
-				choiceContext,
-				targetCount,
-				damagePerHit: vigorSequence.ResolveNextAttackDamage(),
-				cardPlay: cardPlay);
-			if (hits <= 0)
-			{
-				break;
-			}
-
-			int aliveEnemyCount = combatState.HittableEnemies.Count(creature => creature.IsAlive);
-			if (aliveEnemyCount >= targetCount)
-			{
-				break;
-			}
-
-			targetCount--;
+			return;
 		}
+
+		AttackCommand attack = DamageCmd.Attack(DynamicVars.Damage.BaseValue)
+			.FromCard(this, cardPlay)
+			.TargetingAllOpponents(combatState)
+			.TargetingFiltered(firstVolley)
+			.WithHitCount(targetCount)
+			.WithHitFx("vfx/vfx_attack_slash");
+
+		_cascadeAttack = attack;
+		_cascadeInitialCount = targetCount;
+		try
+		{
+			await attack.Execute(choiceContext);
+		}
+		finally
+		{
+			_cascadeAttack = null;
+		}
+	}
+
+	public Task BeforeAttackHit(AttackHitContext context)
+	{
+		if (context.Attack != _cascadeAttack)
+		{
+			return Task.CompletedTask;
+		}
+
+		PlayTransparentHoleSfx();
+		return Task.CompletedTask;
+	}
+
+	public async Task AfterAttackHit(AttackHitContext context)
+	{
+		if (context.Attack != _cascadeAttack)
+		{
+			return;
+		}
+
+		int previousTargetCount = _cascadeInitialCount - context.HitIndex;
+		int nextTargetCount = previousTargetCount - 1;
+		int aliveEnemyCount = context.CombatState.HittableEnemies.Count(creature => creature.IsAlive);
+		if (nextTargetCount <= 0 || aliveEnemyCount >= previousTargetCount)
+		{
+			context.Attack.TargetingFiltered([]);
+			return;
+		}
+
+		context.Attack.TargetingFiltered(
+			SquRandomEnemyTargeting.SelectRandomEnemies(this, nextTargetCount));
+		await Cmd.Wait(RepeatAttackDelaySeconds);
 	}
 
 	private void PlayTransparentHoleSfx()
