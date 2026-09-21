@@ -55,6 +55,7 @@ public static class SquMod
 			.CardKeywordOwnedByLocNamespace("counts_as_played")
 			.CardKeywordOwnedByLocNamespace("charge")
 			.CardKeywordOwnedByLocNamespace("wrap")
+			.CardKeywordOwnedByLocNamespace("strong_monster_encounter")
 			.CardKeywordOwnedByLocNamespace(
 				"enthralled",
 				iconPath: null,

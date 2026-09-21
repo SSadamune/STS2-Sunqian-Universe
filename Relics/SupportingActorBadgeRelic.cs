@@ -4,6 +4,7 @@ using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.Entities.Players;
 using MegaCrit.Sts2.Core.Entities.Relics;
+using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Nodes.CommonUi;
 using MegaCrit.Sts2.Core.Rewards;
@@ -33,6 +34,11 @@ public sealed class SupportingActorBadgeRelic : ModRelicTemplate
 		IconPath: "res://images/relics/SupportingActorBadgeRelic.png",
 		IconOutlinePath: "res://images/relics/SupportingActorBadgeRelicOutline.png",
 		BigIconPath: "res://images/relics/SupportingActorBadgeRelicBig.png");
+
+	protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
+	[
+		HoverTipFactory.FromKeyword(SquKeywords.StrongMonsterEncounter),
+	];
 
 	public override Task AfterRoomEntered(AbstractRoom room)
 	{

@@ -62,9 +62,7 @@ public sealed class KeepEnjoying : ModCardTemplate
 	protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
 	{
 		int spentVigor = await SquVigorSnapshot.SpendAll(choiceContext, Owner.Creature, this);
-		SquSfx.Play(spentVigor > 0
-			? SquSfx.KeepEnjoyingLetMeEnjoyEvent
-			: SquSfx.KeepEnjoyingKeepDancingEvent);
+		SquSfx.Play(SquSfx.KeepEnjoyingLetMeEnjoyEvent);
 		decimal block = DynamicVars.Block.BaseValue + spentVigor;
 		for (int i = 0; i < DynamicVars.Repeat.IntValue; i++)
 		{

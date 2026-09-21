@@ -30,5 +30,7 @@
   "SUNQIAN_UNIVERSE_KEYWORD_ENTHRALLED.title": "执迷",
   "SUNQIAN_UNIVERSE_KEYWORD_ENTHRALLED.description": "如果此牌在你的[gold]手牌[/gold]中，你必须优先打出有[gold]执迷[/gold]的牌。",
   "SUNQIAN_UNIVERSE_KEYWORD_WRAP.title": "卸妆",
-  "SUNQIAN_UNIVERSE_KEYWORD_WRAP.description": "打出此牌时，如果你有[gold]剧本[/gold]状态，则令其失效并执行卸妆效果。"
+  "SUNQIAN_UNIVERSE_KEYWORD_WRAP.description": "打出此牌时，如果你有[gold]剧本[/gold]状态，则令其失效并执行卸妆效果。",
+  "SUNQIAN_UNIVERSE_KEYWORD_STRONG_MONSTER_ENCOUNTER.title": "强怪遭遇战",
+  "SUNQIAN_UNIVERSE_KEYWORD_STRONG_MONSTER_ENCOUNTER.description": "如果你在每层打过较多数量的普通怪物遭遇战，则会开始出现较强的怪物组合，即「强怪遭遇战」：\n第一阶段是从第[blue]四[/blue]个开始；第二、三阶段是从第[blue]三[/blue]个开始。"
 }
