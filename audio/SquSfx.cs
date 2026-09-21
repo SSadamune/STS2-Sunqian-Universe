@@ -3,6 +3,7 @@ using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Helpers;
 using MegaCrit.Sts2.Core.Random;
 using MegaCrit.Sts2.Core.Runs;
+using Squ.Settings;
 using STS2RitsuLib.Audio;
 using STS2RitsuLib.RunRngs;
 
@@ -135,6 +136,60 @@ internal static class SquSfx
 	public const string StargazingWangYunEvent = "event:/sunqian_universe/sfx/夜观天象-王允";
 	public const string StargazingDongZhuoEvent = "event:/sunqian_universe/sfx/夜观天象-董卓";
 
+	public static readonly string[] VoiceChangeEvents =
+	[
+		VoiceChangeYearsAgoEvent,
+		VoiceChangeObviousEvent,
+		VoiceChangeTheseWordsEvent,
+		VoiceChangeVolumeWrongEvent,
+	];
+
+	public static readonly string[] FlyingFireMeteorEvents =
+	[
+		FlyingFireMeteor1Event,
+		FlyingFireMeteor2Event,
+		FlyingFireMeteor3Event,
+		FlyingFireMeteor4Event,
+	];
+
+	public static readonly string[] TransparentHoleEvents =
+	[
+		TransparentHoleGuanYuEvent,
+		TransparentHoleZhouYuEvent,
+		TransparentHoleMaChaoEvent,
+		TransparentHoleLuBuEvent,
+		TransparentHoleYuanShuEvent,
+	];
+
+	public static readonly string[] TwoWordPoetTriggerEvents =
+	[
+		TwoWordHowToRelieveWorryEvent,
+		TwoWordBitterDaysEvent,
+		TwoWordOnlyDukangEvent,
+		TwoWordUnforgettableWorryEvent,
+		TwoWordGenerousAndStrongEvent,
+		TwoWordLikeMorningDewEvent,
+	];
+
+	public static readonly string[] TwoWordPoetEvents =
+	[
+		TwoWordWineAndSongEvent,
+		..TwoWordPoetTriggerEvents,
+	];
+
+	public static readonly string[] BurnAfterReadingTriggerEvents =
+	[
+		BurnAfterReadingTriggerBurnOneEvent,
+		BurnAfterReadingTriggerBurnAllEvent,
+		BurnAfterReadingTriggerEmptyStudyEvent,
+	];
+
+	public static readonly string[] BurnAfterReadingEvents =
+	[
+		BurnAfterReadingPlayEvent,
+		..BurnAfterReadingTriggerEvents,
+	];
+
 	public static void Register()
 	{
 		FmodStudioDeferredBankRegistration.RegisterBank(BankPath);
@@ -143,7 +198,7 @@ internal static class SquSfx
 
 	public static void Play(string eventPath)
 	{
-		SfxCmd.Play(eventPath);
+		SfxCmd.Play(eventPath, SquSettings.SfxLinearMultiplier);
 	}
 
 	/// <summary>
@@ -157,7 +212,7 @@ internal static class SquSfx
 			return;
 		}
 
-		GameFmod.Studio.PlayOneShot(eventPath);
+		GameFmod.Studio.PlayOneShot(eventPath, SquSettings.SfxLinearMultiplier);
 	}
 
 	/// <summary>

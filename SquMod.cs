@@ -12,6 +12,7 @@ using Squ.Combat;
 using Squ.Interop;
 using Squ.Relics;
 using Squ.Script;
+using Squ.Settings;
 using STS2RitsuLib;
 using STS2RitsuLib.Interop;
 using STS2RitsuLib.Keywords;
@@ -40,6 +41,7 @@ public static class SquMod
 		ModTypeDiscoveryHub.RegisterModAssembly(ModId, assembly);
 		SunqianSelectBgm.Register();
 		SquSfx.Register();
+		SquSettingsPage.Register();
 
 		RitsuLibFramework.CreateContentPack(ModId)
 			.CharacterStarterRelic<SunqianCharacter, BoxLunchRelic>(1)

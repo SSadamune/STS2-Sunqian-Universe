@@ -3,5 +3,20 @@
   "SUNQIAN_UNIVERSE_COMMON.NEWSANGUO_VIGOR_SWAP.hoverTitle": "补充说明",
   "SUNQIAN_UNIVERSE_COMMON.NEWSANGUO_VIGOR_SWAP.libraryHover": "此效果对于「新三国mod」角色不提供活力，改为提供[gold]酒力[/gold]。",
   "SUNQIAN_UNIVERSE_COMMON.NEWSANGUO_VIGOR_SWAP.combatNote": "你不以此法获得活力，改为获得等量[gold]酒力[/gold]。",
-  "SUNQIAN_UNIVERSE_COMMON.NEWSANGUO_VIGOR_SWAP.combatPowerNote": "此角色以此法获得[gold]酒力[/gold]，而非活力。"
+  "SUNQIAN_UNIVERSE_COMMON.NEWSANGUO_VIGOR_SWAP.combatPowerNote": "此角色以此法获得[gold]酒力[/gold]，而非活力。",
+  "SUNQIAN_UNIVERSE_COMMON.SETTINGS.modDisplayName": "孙乾宇宙",
+  "SUNQIAN_UNIVERSE_COMMON.SETTINGS.pageTitle": "音效",
+  "SUNQIAN_UNIVERSE_COMMON.SETTINGS.pageDescription": "调整本模组音效音量，叠加在游戏「音效」音量之上。",
+  "SUNQIAN_UNIVERSE_COMMON.SETTINGS.sectionSfxTitle": "音效音量",
+  "SUNQIAN_UNIVERSE_COMMON.SETTINGS.sfxVolumeLabel": "模组音效音量",
+  "SUNQIAN_UNIVERSE_COMMON.SETTINGS.previewSfxLabel": "试听音效",
+  "SUNQIAN_UNIVERSE_COMMON.SETTINGS.previewSfx.play": "播放",
+  "SUNQIAN_UNIVERSE_COMMON.SETTINGS.previewSfx.eat": "吃什么，是啊",
+  "SUNQIAN_UNIVERSE_COMMON.SETTINGS.previewSfx.yiling": "夷陵好火",
+  "SUNQIAN_UNIVERSE_COMMON.SETTINGS.previewSfx.xiliang": "西凉野人",
+  "SUNQIAN_UNIVERSE_COMMON.SETTINGS.previewSfx.cybertron": "赛博坦之力",
+  "SUNQIAN_UNIVERSE_COMMON.SETTINGS.previewSfx.voice": "变声期",
+  "SUNQIAN_UNIVERSE_COMMON.SETTINGS.previewSfx.meteor": "飞火流星",
+  "SUNQIAN_UNIVERSE_COMMON.SETTINGS.previewSfx.hole": "透明窟窿",
+  "SUNQIAN_UNIVERSE_COMMON.SETTINGS.previewSfx.poet": "二言诗人剧本"
 }

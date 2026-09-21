@@ -97,14 +97,7 @@ public sealed class ScriptTwoWordPoetPower : StackableScriptPowerTemplate
 		}
 
 		Flash();
-		SquSfx.PlayRandom(
-			combatState.RunState,
-			SquSfx.TwoWordHowToRelieveWorryEvent,
-			SquSfx.TwoWordBitterDaysEvent,
-			SquSfx.TwoWordOnlyDukangEvent,
-			SquSfx.TwoWordUnforgettableWorryEvent,
-			SquSfx.TwoWordGenerousAndStrongEvent,
-			SquSfx.TwoWordLikeMorningDewEvent);
+		SquSfx.PlayRandom(combatState.RunState, SquSfx.TwoWordPoetTriggerEvents);
 
 		AttackCommand attack = DamageCmd.Attack(Amount)
 			.Unpowered()

@@ -129,12 +129,7 @@ public sealed class FireNova : ModCardTemplate, IRandomEnemyTargetCount
 		CardPlay cardPlay,
 		decimal? damage = null)
 	{
-		SquSfx.PlayRandom(
-			RunState,
-			SquSfx.FlyingFireMeteor1Event,
-			SquSfx.FlyingFireMeteor2Event,
-			SquSfx.FlyingFireMeteor3Event,
-			SquSfx.FlyingFireMeteor4Event);
+		SquSfx.PlayRandom(RunState, SquSfx.FlyingFireMeteorEvents);
 		await DamageCmd.Attack(damage ?? DynamicVars.Damage.BaseValue)
 			.FromCard(this, cardPlay)
 			.Targeting(target)

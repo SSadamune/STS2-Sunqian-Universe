@@ -56,12 +56,7 @@ public sealed class VoiceChange : ModCardTemplate
 
 	protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
 	{
-		SquSfx.PlayRandom(
-			RunState,
-			SquSfx.VoiceChangeYearsAgoEvent,
-			SquSfx.VoiceChangeObviousEvent,
-			SquSfx.VoiceChangeTheseWordsEvent,
-			SquSfx.VoiceChangeVolumeWrongEvent);
+		SquSfx.PlayRandom(RunState, SquSfx.VoiceChangeEvents);
 		await CreatureCmd.GainBlock(Owner.Creature, DynamicVars.Block, cardPlay);
 
 		CardPile exhaustPile = PileType.Exhaust.GetPile(Owner);

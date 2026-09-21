@@ -125,13 +125,7 @@ public sealed class TransparentHole : ModCardTemplate, IRandomEnemyTargetCount, 
 
 	private void PlayTransparentHoleSfx()
 	{
-		SquSfx.PlayRandom(
-			RunState,
-			SquSfx.TransparentHoleGuanYuEvent,
-			SquSfx.TransparentHoleZhouYuEvent,
-			SquSfx.TransparentHoleMaChaoEvent,
-			SquSfx.TransparentHoleLuBuEvent,
-			SquSfx.TransparentHoleYuanShuEvent);
+		SquSfx.PlayRandom(RunState, SquSfx.TransparentHoleEvents);
 	}
 
 	private int ResolveTargetCount()
