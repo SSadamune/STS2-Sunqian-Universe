@@ -25,10 +25,10 @@ namespace Squ.Cards;
 [RegisterCard(typeof(SunqianCardPool), StableEntryStem = "monster_hunting_method")]
 public sealed class MonsterHuntingMethod : ModCardTemplate
 {
-	public const decimal BaseRegen = 3m;
-	public const decimal UpgradedRegen = 4m;
-	public const decimal BaseVigor = 6m;
-	public const decimal UpgradedVigor = 10m;
+	public const decimal BaseRegen = 4m;
+	public const decimal UpgradedRegen = 5m;
+	public const decimal BaseVigor = 10m;
+	public const decimal UpgradedVigor = 15m;
 
 	protected override IEnumerable<DynamicVar> CanonicalVars =>
 	[

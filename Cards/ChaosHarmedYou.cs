@@ -10,11 +10,16 @@ using MegaCrit.Sts2.Core.Entities.Creatures;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.Hooks;
 using MegaCrit.Sts2.Core.HoverTips;
+using MegaCrit.Sts2.Core.Localization;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
+using MegaCrit.Sts2.Core.Models;
+using MegaCrit.Sts2.Core.Models.Powers;
 using MegaCrit.Sts2.Core.ValueProps;
+using Squ;
 using Squ.Audio;
 using Squ.Character;
 using Squ.Combat;
+using Squ.Powers;
 using STS2RitsuLib.Interop.AutoRegistration;
 using STS2RitsuLib.Scaffolding.Content;
 
@@ -27,21 +32,47 @@ public sealed class ChaosHarmedYou : ModCardTemplate
 {
 	public const decimal BaseDamage = 21m;
 	public const decimal UpgradedDamage = 28m;
-	private const int BaseDrawOnKill = 2;
-	private const int UpgradedDrawOnKill = 3;
+	private const int DrawOnKill = 1;
+	private const int UpgradedDrawOnKill = 2;
+	private const int BaseEnergyOnKill = 1;
+	private const int UpgradedEnergyOnKill = 2;
 
 	private static readonly ValueProp DamageProps = ValueProp.Move | ValueProp.Unpowered;
 
 	protected override IEnumerable<DynamicVar> CanonicalVars =>
 	[
 		new DamageVar(BaseDamage, DamageProps),
-		new CardsVar(BaseDrawOnKill),
+		new CardsVar(DrawOnKill),
+		new EnergyVar(BaseEnergyOnKill),
 	];
 
-	protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
-	[
-		HoverTipFactory.FromKeyword(Squ.SquKeywords.Environmental),
-	];
+	protected override IEnumerable<IHoverTip> AdditionalHoverTips
+	{
+		get
+		{
+			List<IHoverTip> tips =
+			[
+				HoverTipFactory.FromKeyword(SquKeywords.Environmental),
+				HoverTipFactory.ForEnergy(this),
+			];
+			if (!ShouldShowAttackPlayNote())
+			{
+				return tips;
+			}
+
+			if (Owner.Creature.GetPower<LethalityPower>() is { Amount: > 0 })
+			{
+				tips.Add(HoverTipFactory.FromPower<LethalityPower>());
+			}
+
+			if (Owner.Creature.GetPower<KeepVigorPower>() is { Amount: > 0 })
+			{
+				tips.Add(HoverTipFactory.FromPower<KeepVigorPower>());
+			}
+
+			return tips;
+		}
+	}
 
 	public override CardAssetProfile AssetProfile => new(
 		PortraitPath: "res://images/cards/ChaosHarmedYou.png");
@@ -93,13 +124,42 @@ public sealed class ChaosHarmedYou : ModCardTemplate
 		if (attackCommand.Results.SelectMany(results => results).Any(result => result.WasTargetKilled))
 		{
 			await CardPileCmd.Draw(choiceContext, DynamicVars.Cards.BaseValue, Owner);
+			await PlayerCmd.GainEnergy((int)DynamicVars.Energy.BaseValue, Owner);
 		}
 	}
 
 	protected override void OnUpgrade()
 	{
 		DynamicVars.Damage.UpgradeValueBy(UpgradedDamage - BaseDamage);
-		DynamicVars.Cards.UpgradeValueBy(UpgradedDrawOnKill - BaseDrawOnKill);
+		DynamicVars.Cards.UpgradeValueBy(UpgradedDrawOnKill - DrawOnKill);
+		DynamicVars.Energy.UpgradeValueBy(UpgradedEnergyOnKill - BaseEnergyOnKill);
+	}
+
+	protected override void AddExtraArgsToDescription(LocString description)
+	{
+		if (!ShouldShowAttackPlayNote())
+		{
+			description.Add("AttackPlayNote", string.Empty);
+			return;
+		}
+
+		SquKeywords.AddNestedLoc(
+			description,
+			"AttackPlayNote",
+			new LocString("cards", Id.Entry + ".attackPlayNote"));
+	}
+
+	internal static bool DoesNotConsumeAttackPlayTracking(CardModel? card) => card is ChaosHarmedYou;
+
+	private bool ShouldShowAttackPlayNote()
+	{
+		if (!IsInCombat || Owner.Creature is not { } creature)
+		{
+			return false;
+		}
+
+		return creature.GetPower<LethalityPower>() is { Amount: > 0 }
+			|| creature.GetPower<KeepVigorPower>() is { Amount: > 0 };
 	}
 
 	private bool WouldKill(ICombatState combatState, Creature enemy)

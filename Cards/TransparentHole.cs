@@ -27,17 +27,24 @@ public sealed class TransparentHole : ModCardTemplate, IRandomEnemyTargetCount, 
 {
 	public const int BaseDamage = 7;
 
-	private const float RepeatAttackDelaySeconds = 0.2f;
+	private const float RepeatAttackDelaySeconds = 0.3f;
+
+	public const decimal CascadeDamageMultiplier = 0.3m;
+
+	private const string CascadeDamageMultiplierVarName = "CascadeDamageMultiplier";
 
 	private AttackCommand? _cascadeAttack;
 
 	private int _cascadeInitialCount;
+
+	private decimal _cascadeDamage;
 
 	protected override bool HasEnergyCostX => true;
 
 	protected override IEnumerable<DynamicVar> CanonicalVars =>
 	[
 		new DamageVar(BaseDamage, ValueProp.Move),
+		new DynamicVar(CascadeDamageMultiplierVarName, CascadeDamageMultiplier * 100m),
 	];
 
 	public override CardAssetProfile AssetProfile => new(
@@ -81,6 +88,7 @@ public sealed class TransparentHole : ModCardTemplate, IRandomEnemyTargetCount, 
 
 		_cascadeAttack = attack;
 		_cascadeInitialCount = targetCount;
+		_cascadeDamage = DynamicVars.Damage.BaseValue;
 		try
 		{
 			await attack.Execute(choiceContext);
@@ -99,6 +107,7 @@ public sealed class TransparentHole : ModCardTemplate, IRandomEnemyTargetCount, 
 		}
 
 		PlayTransparentHoleSfx();
+		context.Damage = _cascadeDamage;
 		return Task.CompletedTask;
 	}
 
@@ -118,6 +127,7 @@ public sealed class TransparentHole : ModCardTemplate, IRandomEnemyTargetCount, 
 			return;
 		}
 
+		_cascadeDamage = decimal.Floor(_cascadeDamage * (1m + CascadeDamageMultiplier));
 		context.Attack.TargetingFiltered(
 			SquRandomEnemyTargeting.SelectRandomEnemies(this, nextTargetCount));
 		await Cmd.Wait(RepeatAttackDelaySeconds);

@@ -19,24 +19,26 @@ using STS2RitsuLib.Scaffolding.Content;
 namespace Squ.Cards;
 
 /// <summary>
-/// 何疑魏：造成伤害并获得力量；因虚无被消耗后获得格挡与虚弱。
+/// 何疑魏：造成伤害并获得力量；因虚无被消耗后获得格挡和虚弱。
 /// </summary>
 [RegisterCard(typeof(SunqianCardPool), StableEntryStem = "why_doubt_wei")]
 public sealed class WhyDoubtWei : ModCardTemplate
 {
 	public const decimal BaseDamage = 14m;
 	public const decimal UpgradedDamage = 17m;
-	public const decimal BlockAmount = 7m;
+	public const decimal BaseBlock = 14m;
+	public const decimal UpgradedBlock = 17m;
 	public const decimal BaseStrength = 2m;
 	public const decimal UpgradedStrength = 3m;
-	public const decimal WeakAmount = 2m;
+	public const decimal BaseWeak = 2m;
+	public const decimal UpgradedWeak = 1m;
 
 	protected override IEnumerable<DynamicVar> CanonicalVars =>
 	[
 		new DamageVar(BaseDamage, ValueProp.Move),
-		new BlockVar(BlockAmount, ValueProp.Move),
+		new BlockVar(BaseBlock, ValueProp.Move),
 		new PowerVar<StrengthPower>(BaseStrength),
-		new PowerVar<WeakPower>(WeakAmount),
+		new PowerVar<WeakPower>(BaseWeak),
 	];
 
 	public override IEnumerable<CardKeyword> CanonicalKeywords =>
@@ -103,17 +105,23 @@ public sealed class WhyDoubtWei : ModCardTemplate
 			SquSfx.WhyDoubtWeiTooCautiousEvent,
 			SquSfx.WhyDoubtWeiSoCautiousEvent);
 		await CreatureCmd.GainBlock(Owner.Creature, DynamicVars.Block, cardPlay: null);
-		await PowerCmd.Apply<WeakPower>(
-			choiceContext,
-			Owner.Creature,
-			DynamicVars[nameof(WeakPower)].BaseValue,
-			Owner.Creature,
-			this);
+		decimal weak = DynamicVars[nameof(WeakPower)].BaseValue;
+		if (weak > 0m)
+		{
+			await PowerCmd.Apply<WeakPower>(
+				choiceContext,
+				Owner.Creature,
+				weak,
+				Owner.Creature,
+				this);
+		}
 	}
 
 	protected override void OnUpgrade()
 	{
 		DynamicVars.Damage.UpgradeValueBy(UpgradedDamage - BaseDamage);
+		DynamicVars.Block.UpgradeValueBy(UpgradedBlock - BaseBlock);
 		DynamicVars[nameof(StrengthPower)].UpgradeValueBy(UpgradedStrength - BaseStrength);
+		DynamicVars[nameof(WeakPower)].UpgradeValueBy(UpgradedWeak - BaseWeak);
 	}
 }

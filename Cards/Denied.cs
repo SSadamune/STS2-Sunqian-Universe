@@ -58,7 +58,7 @@ public sealed class Denied : ModCardTemplate
 		PortraitPath: "res://images/cards/Denied.png");
 
 	public Denied()
-		: base(0, CardType.Skill, CardRarity.Uncommon, TargetType.AnyEnemy)
+		: base(0, CardType.Skill, CardRarity.Common, TargetType.AnyEnemy)
 	{
 	}
 

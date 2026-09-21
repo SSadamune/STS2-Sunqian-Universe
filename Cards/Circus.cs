@@ -23,8 +23,8 @@ namespace Squ.Cards;
 [RegisterCard(typeof(SunqianCardPool), StableEntryStem = "circus")]
 public sealed class Circus : ModCardTemplate
 {
-	public const decimal CanonicalDamage = 9m;
-	public const decimal UpgradedDamage = 12m;
+	public const decimal CanonicalDamage = 10m;
+	public const decimal UpgradedDamage = 13m;
 	public const decimal CanonicalDexterity = 2m;
 	public const decimal UpgradedDexterity = 3m;
 

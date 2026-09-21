@@ -24,7 +24,7 @@ public sealed class StarryNightStrike : ModCardTemplate
 {
 	protected override IEnumerable<DynamicVar> CanonicalVars =>
 	[
-		new DamageVar(6m, ValueProp.Move),
+		new DamageVar(7m, ValueProp.Move),
 	];
 
 	protected override HashSet<CardTag> CanonicalTags => [CardTag.Strike];

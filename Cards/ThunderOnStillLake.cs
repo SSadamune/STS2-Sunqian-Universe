@@ -21,7 +21,7 @@ using STS2RitsuLib.Scaffolding.Content;
 namespace Squ.Cards;
 
 /// <summary>
-/// 平湖惊雷：保留。对所有敌人造成伤害（未升级 5 费 1，升级后 4 费 7）。
+/// 平湖惊雷：保留。对所有敌人造成伤害两次（未升级 5 费 1，升级后 4 费 5）。
 /// 蓄能：被攻击时降费；消耗活力后增加等量伤害。打出后解除。
 /// </summary>
 [RegisterCard(typeof(SunqianCardPool), StableEntryStem = "thunder_on_still_lake")]
@@ -29,7 +29,9 @@ public sealed class ThunderOnStillLake : ChargeCardTemplate
 {
 	public const decimal CanonicalDamage = 1m;
 
-	public const decimal UpgradedDamage = 10m;
+	public const decimal UpgradedDamage = 5m;
+
+	public const int CanonicalHits = 2;
 
 	public const int CanonicalCost = 5;
 
@@ -44,6 +46,7 @@ public sealed class ThunderOnStillLake : ChargeCardTemplate
 	protected override IEnumerable<DynamicVar> CanonicalVars =>
 	[
 		new DamageVar(CanonicalDamage, ValueProp.Move),
+		new RepeatVar(CanonicalHits),
 	];
 
 	public override IEnumerable<CardKeyword> CanonicalKeywords =>
@@ -81,6 +84,7 @@ public sealed class ThunderOnStillLake : ChargeCardTemplate
 		await DamageCmd.Attack(DynamicVars.Damage.BaseValue)
 			.FromCard(this, cardPlay)
 			.TargetingAllOpponents(CombatState)
+			.WithHitCount(DynamicVars.Repeat.IntValue)
 			.WithHitFx("vfx/vfx_attack_slash")
 			.Execute(choiceContext);
 	}

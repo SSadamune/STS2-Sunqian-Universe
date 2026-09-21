@@ -22,7 +22,7 @@ using STS2RitsuLib.Scaffolding.Content;
 namespace Squ.Relics;
 
 /// <summary>
-/// 提词器：每消耗三张剧本牌抽两张牌（参考 Joss Paper）。
+/// 提词器：每有 2 张剧本牌被消耗（无论是否因打出），抽两张牌。
 /// </summary>
 [RegisterRelic(typeof(SunqianRelicPool), StableEntryStem = "teleprompter")]
 public sealed class TeleprompterRelic : ScriptRelicTemplate
@@ -92,7 +92,7 @@ public sealed class TeleprompterRelic : ScriptRelicTemplate
 
 	protected override IEnumerable<DynamicVar> CanonicalVars =>
 	[
-		new DynamicVar(ScriptAmountKey, 3m),
+		new DynamicVar(ScriptAmountKey, 2m),
 		new CardsVar(2),
 	];
 

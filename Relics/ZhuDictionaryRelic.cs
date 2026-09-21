@@ -22,7 +22,7 @@ using STS2RitsuLib.Scaffolding.Content;
 namespace Squ.Relics;
 
 /// <summary>
-/// 《朱氏词典》：获得剧本牌时将其升级；每场战斗开始时将一张随机升级剧本牌加入手牌。
+/// 《朱氏词典》：获得剧本牌时将其升级；每场战斗开始时将一张随机升级剧本牌加入手牌，本回合免费。
 /// </summary>
 [RegisterRelic(typeof(SunqianRelicPool), StableEntryStem = "zhu_dictionary")]
 public sealed class ZhuDictionaryRelic : ScriptRelicTemplate
@@ -64,6 +64,7 @@ public sealed class ZhuDictionaryRelic : ScriptRelicTemplate
 
 		Flash();
 		await CardPileCmd.AddGeneratedCardToCombat(scriptCard, PileType.Hand, Owner);
+		scriptCard.EnergyCost.SetThisTurn(0);
 	}
 
 	public override bool TryModifyCardRewardOptionsLate(

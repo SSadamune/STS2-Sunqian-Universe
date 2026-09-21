@@ -11,6 +11,7 @@ using Squ.Character;
 using Squ.Combat;
 using Squ.Interop;
 using Squ.Relics;
+using Squ.RunData;
 using Squ.Script;
 using Squ.Settings;
 using STS2RitsuLib;
@@ -80,6 +81,7 @@ public static class SquMod
 
 		CardDrawPlayRateTracker.Initialize();
 		RunReloadCount.Initialize();
+		DailyWageRunData.Initialize();
 		ScriptSystem.Initialize();
 		RitsuLibFramework.SubscribeLifecycle<CombatEndedEvent>(_ => WarFeedsWarResolutionTracker.ClearCombat());
 

@@ -94,5 +94,8 @@
   "SUNQIAN_UNIVERSE_POWER_BUDDY_LONGTAODI_POWER.smartDescription": "After you play the 3rd card each turn, draw [blue]{Amount}[/blue] {Amount:plural:card|cards}.",
   "SUNQIAN_UNIVERSE_POWER_TOO_KIND_TO_BE_TRUE_POWER.title": "Too Kind to Be True",
   "SUNQIAN_UNIVERSE_POWER_TOO_KIND_TO_BE_TRUE_POWER.description": "For each unique Debuff you have, cards with \"Defend\" in their name gain [blue]{Amount}[/blue] additional [gold]Block[/gold].",
-  "SUNQIAN_UNIVERSE_POWER_TOO_KIND_TO_BE_TRUE_POWER.smartDescription": "For each unique Debuff you have, cards with \"Defend\" in their name gain [blue]{Amount}[/blue] additional [gold]Block[/gold]."
+  "SUNQIAN_UNIVERSE_POWER_TOO_KIND_TO_BE_TRUE_POWER.smartDescription": "For each unique Debuff you have, cards with \"Defend\" in their name gain [blue]{Amount}[/blue] additional [gold]Block[/gold].",
+  "SUNQIAN_UNIVERSE_POWER_KEEP_VIGOR_POWER.title": "Keep Vigor",
+  "SUNQIAN_UNIVERSE_POWER_KEEP_VIGOR_POWER.description": "Whenever you spend [gold]Vigor[/gold], gain that much [gold]Vigor[/gold]. After you play an [gold]Attack[/gold], lose 1 [gold]Keep Vigor[/gold].",
+  "SUNQIAN_UNIVERSE_POWER_KEEP_VIGOR_POWER.smartDescription": "Whenever you spend [gold]Vigor[/gold], gain that much [gold]Vigor[/gold]. After you play [blue]{Amount}[/blue] [gold]Attack[/gold] {Amount:plural:card|cards}, lose this effect."
 }

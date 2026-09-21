@@ -67,10 +67,9 @@ public sealed class ArmInjuryWindmill : ModCardTemplate
 			Owner.Creature,
 			this);
 
-		await GeneratedCombatCards.AddToDrawPileInCombat<Wound>(
+		await GeneratedCombatCards.AddToHandInCombat<Wound>(
 			combatState,
 			Owner,
-			1,
 			upgraded: false,
 			Owner);
 	}
