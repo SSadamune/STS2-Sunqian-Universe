@@ -125,7 +125,7 @@ public sealed class DigRaid : ModCardTemplate
 			bool runGlobalHooks)
 		{
 			decimal amount = BaseValue;
-			if (card.IsUpgraded)
+			if (card.IsUpgraded && card.Pile?.Type is PileType.Hand or PileType.Play)
 			{
 				amount += GetTinderAmount(card.Owner?.Creature);
 			}

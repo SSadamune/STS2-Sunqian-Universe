@@ -32,5 +32,7 @@
   "SUNQIAN_UNIVERSE_KEYWORD_WRAP.title": "Wrap",
   "SUNQIAN_UNIVERSE_KEYWORD_WRAP.description": "When you play this card, if you have a [gold]Script[/gold], end it and resolve the Wrap effect.",
   "SUNQIAN_UNIVERSE_KEYWORD_STRONG_MONSTER_ENCOUNTER.title": "Strong Monster Encounter",
-  "SUNQIAN_UNIVERSE_KEYWORD_STRONG_MONSTER_ENCOUNTER.description": "The first few normal monster encounters in each Act only use weaker monster combinations: the first [blue]three[/blue] in Act 1, and the first [blue]two[/blue] in Acts 2 and 3.\nLater normal monster encounters begin using stronger combinations—these are [gold]Strong Monster Encounters[/gold]."
+  "SUNQIAN_UNIVERSE_KEYWORD_STRONG_MONSTER_ENCOUNTER.description": "The first few normal monster encounters in each Act only use weaker monster combinations: the first [blue]three[/blue] in Act 1, and the first [blue]two[/blue] in Acts 2 and 3.\nLater normal monster encounters begin using stronger combinations—these are [gold]Strong Monster Encounters[/gold].",
+  "SUNQIAN_UNIVERSE_KEYWORD_SLIGHT_REVISION.title": "Slight Revision",
+  "SUNQIAN_UNIVERSE_KEYWORD_SLIGHT_REVISION.description": "You can right-click this card while it is in your Hand to transform it into a specific other card.\nNote: This operation is usually irreversible for the rest of this combat."
 }

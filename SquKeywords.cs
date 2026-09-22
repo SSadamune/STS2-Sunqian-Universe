@@ -87,6 +87,11 @@ public static class SquKeywords
 	public static readonly CardKeyword StrongMonsterEncounter =
 		StrongMonsterEncounterId.GetModCardKeyword();
 
+	public static readonly string SlightRevisionId = ModContentRegistry
+		.GetQualifiedKeywordId(SquMod.ModId, "slight_revision");
+
+	public static readonly CardKeyword SlightRevision = SlightRevisionId.GetModCardKeyword();
+
 	public static IHoverTip CreateWarFeedsWarHoverTip(CardModel card)
 	{
 		LocString title = ModKeywordRegistry.GetTitle(WarFeedsWarId);

@@ -1,9 +1,11 @@
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Godot;
 using MegaCrit.Sts2.Core.Combat;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.Entities.Creatures;
 using MegaCrit.Sts2.Core.Entities.Powers;
+using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Models;
 using Squ.Audio;
 using Squ.Combat;
@@ -26,6 +28,12 @@ public sealed class LoudSecretPlotPower : ModPowerTemplate
 	public override PowerStackType StackType => PowerStackType.Counter;
 
 	public override Color AmountLabelColor => PowerModel._normalAmountLabelColor;
+
+	protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
+	[
+		..base.AdditionalHoverTips,
+		HoverTipFactory.FromKeyword(SquKeywords.MultiTarget),
+	];
 
 	public override PowerAssetProfile AssetProfile => new(
 		IconPath: "res://images/powers/LoudSecretPlotPower.png",

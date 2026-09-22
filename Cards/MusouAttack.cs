@@ -13,6 +13,7 @@ using MegaCrit.Sts2.Core.Models.Powers;
 using MegaCrit.Sts2.Core.ValueProps;
 using Squ.Audio;
 using Squ.Character;
+using Squ.Combat;
 using STS2RitsuLib.Interop.AutoRegistration;
 using STS2RitsuLib.Scaffolding.Content;
 
@@ -59,12 +60,15 @@ public sealed class MusouAttack : ModCardTemplate
 	{
 		ArgumentNullException.ThrowIfNull(CombatState, nameof(CombatState));
 
+		decimal dexterityBonus = GetDexterityBonus(this);
 		SquSfx.Play(SquSfx.MusouAttackThoughtLuBuEvent);
-		await DamageCmd.Attack(DynamicVars.Damage.BaseValue + GetDexterityBonus(this))
+		await DamageCmd.Attack(DynamicVars.Damage.BaseValue + dexterityBonus)
 			.FromCard(this, cardPlay)
 			.TargetingAllOpponents(CombatState)
 			.WithHitFx("vfx/vfx_attack_slash")
 			.Execute(choiceContext);
+
+		CardValueRetain.TryAddBaseDamage(this, dexterityBonus);
 	}
 
 	protected override void OnUpgrade()
@@ -110,7 +114,11 @@ public sealed class MusouAttack : ModCardTemplate
 			Creature? target,
 			bool runGlobalHooks)
 		{
-			decimal amount = BaseValue + GetDexterityBonus(card);
+			decimal amount = BaseValue;
+			if (card.Pile?.Type is PileType.Hand or PileType.Play)
+			{
+				amount += GetDexterityBonus(card);
+			}
 			if (!runGlobalHooks || card.CombatState is not { } combatState)
 			{
 				PreviewValue = amount;

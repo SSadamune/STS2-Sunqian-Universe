@@ -24,7 +24,7 @@ public sealed class ArmInjuryWindmill : ModCardTemplate
 {
 	private const int BaseDrawCount = 2;
 	private const int UpgradedDrawCount = 3;
-	private const decimal StatAmount = 2m;
+	private const decimal StatAmount = 3m;
 
 	protected override IEnumerable<DynamicVar> CanonicalVars =>
 	[
