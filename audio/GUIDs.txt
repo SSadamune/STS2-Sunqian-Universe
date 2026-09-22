@@ -47,6 +47,7 @@
 {438a8ab6-7ed2-435a-9f37-6797691135a0} event:/sunqian_universe/sfx/光剑刺杀-拔刀
 {542eca1e-4347-4fac-97b0-073eff87cedd} event:/sunqian_universe/sfx/光剑刺杀-激光
 {3cf5479e-59e7-4157-a775-cdc0fee8d893} event:/sunqian_universe/sfx/再来撒野
+{834de0fa-aa95-4767-b591-064a377fb5a5} event:/sunqian_universe/sfx/劳逸结合-我打了一辈子仗就不能享受享受吗
 {4033daf5-e1a1-41f2-b4d0-ab3a8ab8a259} event:/sunqian_universe/sfx/化骨绵掌
 {ee369cdd-67fc-4edb-9ced-6cb15c071654} event:/sunqian_universe/sfx/叉出去-走
 {39b2f1f6-05de-4db5-95b7-14eb117ca968} event:/sunqian_universe/sfx/叉出去-起来
@@ -95,7 +96,6 @@
 {f873e3cf-3bfb-4547-a7b8-e0916b1442f9} event:/sunqian_universe/sfx/稍作修改-好方略，不过我想稍作修改
 {1ba1aa01-3f0b-4671-8afb-8ba1c04969de} event:/sunqian_universe/sfx/竟然不许
 {639dc942-2347-4014-a068-b9f6142dc7d6} event:/sunqian_universe/sfx/箭幕
-{952a0fab-ffcf-499f-a37e-69bfcb8af795} event:/sunqian_universe/sfx/继续享受-我打了一辈子仗就不能享受享受吗
 {ae68d8ad-b2fa-4b1f-bdb0-86c39de22e75} event:/sunqian_universe/sfx/自刎归天
 {7ca7864b-ae89-48cc-8cc2-780ea0855b22} event:/sunqian_universe/sfx/行刑官-弓箭手准备
 {73024157-f158-417b-81e5-7ba747ca505b} event:/sunqian_universe/sfx/行刑官-放箭

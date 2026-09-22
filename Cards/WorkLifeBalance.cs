@@ -22,11 +22,11 @@ using STS2RitsuLib.Scaffolding.Content;
 namespace Squ.Cards;
 
 /// <summary>
-/// 继续享受：获得格挡，并像攻击牌一样消耗活力来增加格挡。
+/// 劳逸结合：获得格挡，并像攻击牌一样消耗活力来增加格挡。
 /// 活力减少走 <see cref="PowerCmd.ModifyAmount"/>，因此平湖惊雷等监听仍会触发。
 /// </summary>
-[RegisterCard(typeof(SunqianCardPool), StableEntryStem = "keep_enjoying")]
-public sealed class KeepEnjoying : ModCardTemplate
+[RegisterCard(typeof(SunqianCardPool), StableEntryStem = "work_life_balance")]
+public sealed class WorkLifeBalance : ModCardTemplate
 {
 	public const decimal CanonicalBlock = 8m;
 	public const decimal UpgradedBlock = 4m;
@@ -49,12 +49,12 @@ public sealed class KeepEnjoying : ModCardTemplate
 	];
 
 	public override CardAssetProfile AssetProfile => new(
-		PortraitPath: "res://images/cards/KeepEnjoying.png");
+		PortraitPath: "res://images/cards/WorkLifeBalance.png");
 
 	protected override bool ShouldGlowGoldInternal =>
 		Owner?.Creature != null && SquVigorSnapshot.GetAmount(Owner.Creature) > 0;
 
-	public KeepEnjoying()
+	public WorkLifeBalance()
 		: base(1, CardType.Skill, CardRarity.Common, TargetType.Self)
 	{
 	}
@@ -62,7 +62,7 @@ public sealed class KeepEnjoying : ModCardTemplate
 	protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
 	{
 		int spentVigor = await SquVigorSnapshot.SpendAll(choiceContext, Owner.Creature, this);
-		SquSfx.Play(SquSfx.KeepEnjoyingLetMeEnjoyEvent);
+		SquSfx.Play(SquSfx.WorkLifeBalanceLetMeEnjoyEvent);
 		decimal block = DynamicVars.Block.BaseValue + spentVigor;
 		for (int i = 0; i < DynamicVars.Repeat.IntValue; i++)
 		{

@@ -120,7 +120,7 @@ internal static class SquSfx
 	public const string RuthlessStrikeDontForceMeEvent = "event:/sunqian_universe/sfx/无情打击-可别逼我使出无情剑来";
 	public const string RuthlessStrikeSwordSoundEvent = "event:/sunqian_universe/sfx/无情打击-剑声";
 	public const string KeepPlayingKeepDancingEvent = "event:/sunqian_universe/sfx/接着奏乐接着舞-接着奏乐接着舞";
-	public const string KeepEnjoyingLetMeEnjoyEvent = "event:/sunqian_universe/sfx/继续享受-我打了一辈子仗就不能享受享受吗";
+	public const string WorkLifeBalanceLetMeEnjoyEvent = "event:/sunqian_universe/sfx/劳逸结合-我打了一辈子仗就不能享受享受吗";
 	public const string BurnAfterReadingPlayEvent = "event:/sunqian_universe/sfx/阅后即焚-读完一卷烧一卷，全部读完则全部烧尽";
 	public const string BurnAfterReadingTriggerBurnOneEvent = "event:/sunqian_universe/sfx/阅后即焚-读完一卷烧一卷";
 	public const string BurnAfterReadingTriggerBurnAllEvent = "event:/sunqian_universe/sfx/阅后即焚-全部读完则全部烧尽";
