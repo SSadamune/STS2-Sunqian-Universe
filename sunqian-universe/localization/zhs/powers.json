@@ -47,7 +47,7 @@
   "SUNQIAN_UNIVERSE_POWER_UNEXTINGUISHED_POWER.description": "在若干回合内，该生物的[gold]灼烧[/gold]不会熄灭。",
   "SUNQIAN_UNIVERSE_POWER_UNEXTINGUISHED_POWER.smartDescription": "在[blue]{Amount}[/blue]个回合内，[gold]灼烧[/gold]不会熄灭。",
   "SUNQIAN_UNIVERSE_POWER_CHICKEN_FOOT_CHEESE_STRIKE_POWER.title": "鸡脚芝士",
-  "SUNQIAN_UNIVERSE_POWER_CHICKEN_FOOT_CHEESE_STRIKE_POWER.smartDescription": "[blue]{Amount}[/blue]回合内，你的[gold]打击[/gold]的目标改为「随机两名敌人」。",
+  "SUNQIAN_UNIVERSE_POWER_CHICKEN_FOOT_CHEESE_STRIKE_POWER.smartDescription": "[blue]{Amount}[/blue]回合内，你的[gold]打击[/gold]多造成一次伤害且目标改为「随机两名敌人」。",
   "SUNQIAN_UNIVERSE_POWER_SCRIPT_EXECUTION_COMMANDER_POWER.title": "可叠层剧本：行刑指挥官",
   "SUNQIAN_UNIVERSE_POWER_SCRIPT_EXECUTION_COMMANDER_POWER.smartDescription": "若仅有一名敌人，你的[gold]群体目标[/gold]攻击牌伤害增加[blue]{Amount}[/blue]%。",
   "SUNQIAN_UNIVERSE_POWER_SCRIPT_EXECUTIONER_POWER.title": "剧本：刽子手",

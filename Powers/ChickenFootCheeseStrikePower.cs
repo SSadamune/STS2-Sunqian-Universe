@@ -36,6 +36,7 @@ public sealed class ChickenFootCheeseStrikePower : ModPowerTemplate
 		BigIconPath: "res://images/powers/ChickenFootCheeseStrikePowerBig.png");
 
 	public const int RedirectRandomEnemyCount = 2;
+	public const int RedirectHitCountPerTarget = 2;
 
 	public static bool ShouldRedirectBasicStrike(CardModel card)
 	{

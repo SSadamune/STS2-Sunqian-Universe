@@ -85,6 +85,7 @@ public static class SquMod
 		RunReloadCount.Initialize();
 		DailyWageRunData.Initialize();
 		ScriptSystem.Initialize();
+		SlightRevisionSystem.Initialize();
 		RitsuLibFramework.SubscribeLifecycle<CombatEndedEvent>(_ => WarFeedsWarResolutionTracker.ClearCombat());
 
 		var harmony = new Harmony($"{ModId}.patches");

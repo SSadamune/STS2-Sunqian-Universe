@@ -24,5 +24,6 @@ public static class SquBasicStrikeRedirect
 			card,
 			choiceContext,
 			ChickenFootCheeseStrikePower.RedirectRandomEnemyCount,
+			hitCountPerTarget: ChickenFootCheeseStrikePower.RedirectHitCountPerTarget,
 			cardPlay: cardPlay);
 }

@@ -12,7 +12,6 @@ using Squ.Audio;
 using Squ.Character;
 using Squ.Combat;
 using Squ.Powers;
-using STS2RitsuLib.Interactions.RightClick;
 using STS2RitsuLib.Interop.AutoRegistration;
 using STS2RitsuLib.Scaffolding.Content;
 
@@ -25,7 +24,7 @@ namespace Squ.Cards;
 /// 右键「稍作修改」后，变为旧版升级效果的火焰流星雨。
 /// </summary>
 [RegisterCard(typeof(SunqianCardPool), StableEntryStem = "fire_nova")]
-public sealed class FireNova : ModCardTemplate, IRandomEnemyTargetCount, IModRightClickableCard
+public sealed class FireNova : SlightRevisionCardTemplate<FireMeteorShower>, IRandomEnemyTargetCount
 {
 	public const int DamageAmount = 4;
 	public const int BurningStacks = 5;
@@ -40,16 +39,11 @@ public sealed class FireNova : ModCardTemplate, IRandomEnemyTargetCount, IModRig
 
 	protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
 	[
+		..base.AdditionalHoverTips,
 		HoverTipFactory.FromPower<BurningPower>(),
-		..HoverTipFactory.FromCardWithCardHoverTips<FireMeteorShower>(IsUpgraded),
 	];
 
 	protected override HashSet<CardTag> CanonicalTags => [SquCardTags.Burning];
-
-	public override IEnumerable<CardKeyword> CanonicalKeywords =>
-	[
-		SquKeywords.SlightRevision,
-	];
 
 	public override CardAssetProfile AssetProfile => new(
 		PortraitPath: "res://images/cards/FireNova.png");
@@ -102,25 +96,4 @@ public sealed class FireNova : ModCardTemplate, IRandomEnemyTargetCount, IModRig
 		DynamicVars[nameof(BurningPower)].UpgradeValueBy(UpgradedBurningStacks - BurningStacks);
 	}
 
-	public bool CanHandleRightClickLocal(ModRightClickContext context) =>
-		context.Player == Owner
-		&& Pile?.Type == PileType.Hand
-		&& IsTransformable;
-
-	public async Task OnRightClick(ModRightClickExecutionContext context)
-	{
-		if (Pile?.Type != PileType.Hand || !IsTransformable || CardScope is not { } cardScope)
-		{
-			return;
-		}
-
-		CardModel replacement = cardScope.CreateCard<FireMeteorShower>(Owner);
-		if (IsUpgraded)
-		{
-			replacement.UpgradeInternal();
-			replacement.FinalizeUpgradeInternal();
-		}
-
-		await CardCmd.Transform(this, replacement);
-	}
 }

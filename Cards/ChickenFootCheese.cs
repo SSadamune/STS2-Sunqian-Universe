@@ -3,7 +3,9 @@ using System.Threading.Tasks;
 using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
+using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
+using MegaCrit.Sts2.Core.Models.CardPools;
 using MegaCrit.Sts2.Core.ValueProps;
 using Squ.Character;
 using Squ.Combat;
@@ -29,6 +31,11 @@ public sealed class ChickenFootCheese : ModCardTemplate, IRandomEnemyTargetCount
 	[
 		new DamageVar(BaseDamage, ValueProp.Move),
 		new PowerVar<ChickenFootCheeseStrikePower>(BaseTurns),
+	];
+
+	protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
+	[
+		..HoverTipFactory.FromCardWithCardHoverTips<ChickenFootCheeseStrikePreview>(IsUpgraded),
 	];
 
 	public override CardAssetProfile AssetProfile => new(

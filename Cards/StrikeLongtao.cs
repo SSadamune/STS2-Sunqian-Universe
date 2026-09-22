@@ -4,10 +4,12 @@ using System.Threading.Tasks;
 using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
+using MegaCrit.Sts2.Core.Localization;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.ValueProps;
 using Squ.Character;
 using Squ.Combat;
+using Squ.Powers;
 using STS2RitsuLib.Interop.AutoRegistration;
 using STS2RitsuLib.Scaffolding.Content;
 
@@ -52,5 +54,17 @@ public sealed class StrikeLongtao : ModCardTemplate
 	protected override void OnUpgrade()
 	{
 		DynamicVars.Damage.UpgradeValueBy(3m);
+	}
+
+	protected override void AddExtraArgsToDescription(LocString description)
+	{
+		string bodyKey = Pile?.Type == PileType.Hand
+			&& ChickenFootCheeseStrikePower.ShouldRedirectBasicStrike(this)
+			? "chickenFootCheeseBody"
+			: "normalBody";
+		SquKeywords.AddNestedLoc(
+			description,
+			"BodyText",
+			new LocString("cards", Id.Entry + "." + bodyKey));
 	}
 }

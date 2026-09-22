@@ -6,11 +6,13 @@ using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.HoverTips;
+using MegaCrit.Sts2.Core.Localization;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.Cards;
 using Squ.Audio;
 using Squ.Character;
+using Squ.Combat;
 using Squ.Powers;
 using STS2RitsuLib.Interop.AutoRegistration;
 using STS2RitsuLib.Scaffolding.Content;
@@ -38,6 +40,8 @@ public sealed class TooKindToBeTrue : ModCardTemplate
 	protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
 	[
 		HoverTipFactory.Static(StaticHoverTip.Block),
+		new HoverTip(SquCommonL10n.AnnotationTitle(), new LocString("cards", Id.Entry + ".annotation")),
+		HoverTipFactory.FromKeyword(SquKeywords.SlightRevision),
 		..HoverTipFactory.FromCardWithCardHoverTips<UltimateDefend>(IsUpgraded),
 	];
 
@@ -60,9 +64,9 @@ public sealed class TooKindToBeTrue : ModCardTemplate
 			IsTransformableAttack,
 			this)).FirstOrDefault();
 
-		if (attack is { IsTransformable: true })
+		if (attack is not null)
 		{
-			await TransformAttack(attack);
+			SlightRevisionSystem.GrantUltimateDefend(attack, IsUpgraded);
 		}
 
 		await PowerCmd.Apply<TooKindToBeTruePower>(
@@ -78,23 +82,8 @@ public sealed class TooKindToBeTrue : ModCardTemplate
 		DynamicVars[ExtraBlockKey].UpgradeValueBy(UpgradedExtraBlockPerDebuff - ExtraBlockPerDebuff);
 	}
 
-	private async Task TransformAttack(CardModel original)
-	{
-		if (original.CardScope is not { } cardScope)
-		{
-			return;
-		}
-
-		CardModel replacement = cardScope.CreateCard<UltimateDefend>(original.Owner);
-		if (IsUpgraded)
-		{
-			replacement.UpgradeInternal();
-			replacement.FinalizeUpgradeInternal();
-		}
-
-		await CardCmd.Transform(original, replacement);
-	}
-
 	private static bool IsTransformableAttack(CardModel card) =>
-		card.Type == CardType.Attack && card.IsTransformable;
+		card.Type == CardType.Attack
+		&& card.IsTransformable
+		&& !card.Keywords.Contains(SquKeywords.SlightRevision);
 }

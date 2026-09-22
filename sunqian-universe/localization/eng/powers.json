@@ -47,7 +47,7 @@
   "SUNQIAN_UNIVERSE_POWER_TOO_SMART_TO_BE_REAL_POWER.description": "If you play an [gold]Exhaust[/gold] card in a turn, draw additional cards at the start of your next turn.",
   "SUNQIAN_UNIVERSE_POWER_TOO_SMART_TO_BE_REAL_POWER.smartDescription": "If you play an [gold]Exhaust[/gold] card in a turn, draw [blue]{Amount}[/blue] additional {Amount:plural:card|cards} at the start of your next turn.",
   "SUNQIAN_UNIVERSE_POWER_CHICKEN_FOOT_CHEESE_STRIKE_POWER.title": "Chicken Foot Cheese",
-  "SUNQIAN_UNIVERSE_POWER_CHICKEN_FOOT_CHEESE_STRIKE_POWER.smartDescription": "For {Amount} {Amount:plural:turn|turns}, [gold]Strike[/gold] cards you play target 2 random enemies instead.",
+  "SUNQIAN_UNIVERSE_POWER_CHICKEN_FOOT_CHEESE_STRIKE_POWER.smartDescription": "For {Amount} {Amount:plural:turn|turns}, your [gold]Strike[/gold] cards deal damage one additional time and target 2 random enemies instead.",
   "SUNQIAN_UNIVERSE_POWER_SCRIPT_EXECUTION_COMMANDER_POWER.title": "Stackable Script: Execution Commander",
   "SUNQIAN_UNIVERSE_POWER_SCRIPT_EXECUTION_COMMANDER_POWER.smartDescription": "While only one enemy remains, your [gold]Multi-target[/gold] Attacks deal [blue]{Amount}[/blue]% more damage.",
   "SUNQIAN_UNIVERSE_POWER_SCRIPT_EXECUTIONER_POWER.title": "Script: Executioner",
