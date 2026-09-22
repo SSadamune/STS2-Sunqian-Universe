@@ -17,6 +17,7 @@ using Squ.Settings;
 using STS2RitsuLib;
 using STS2RitsuLib.Interop;
 using STS2RitsuLib.Keywords;
+using STS2RitsuLib.Models.Capabilities;
 using STS2RitsuLib.Utils;
 using STS2RitsuLib.Utils.Persistence;
 
@@ -82,6 +83,7 @@ public static class SquMod
 			.Apply();
 
 		CardDrawPlayRateTracker.Initialize();
+		RitsuLibFramework.RegisterModelCapability<SlightRevisionCapability>(ModId);
 		RunReloadCount.Initialize();
 		DailyWageRunData.Initialize();
 		ScriptSystem.Initialize();

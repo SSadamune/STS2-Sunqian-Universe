@@ -9,6 +9,7 @@ using MegaCrit.Sts2.Core.Entities.Creatures;
 using MegaCrit.Sts2.Core.Entities.Powers;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.Models;
+using Squ.Audio;
 using Squ.Combat;
 using STS2RitsuLib.Interop.AutoRegistration;
 using STS2RitsuLib.Scaffolding.Content;
@@ -51,6 +52,12 @@ public sealed class ChickenFootCheeseStrikePower : ModPowerTemplate
 		}
 
 		return card.Rarity == CardRarity.Basic && card.Tags.Contains(CardTag.Strike);
+	}
+
+	public void TriggerForRedirectedStrike()
+	{
+		Flash();
+		SquSfx.PlayRandom(CombatState?.RunState, SquSfx.ChickenFootCheeseEvents);
 	}
 
 	public override Task AfterApplied(Creature? applier, CardModel? cardSource)

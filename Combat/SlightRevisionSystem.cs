@@ -11,17 +11,16 @@ using MegaCrit.Sts2.Core.Models.Cards;
 using STS2RitsuLib;
 using STS2RitsuLib.Interactions.RightClick;
 using STS2RitsuLib.Keywords;
+using STS2RitsuLib.Models.Capabilities;
+using Squ.Audio;
 
 #nullable enable
 
 namespace Squ.Combat;
 
-/// <summary>Combat-only targets and shared UI/interaction behavior for Slight Revision.</summary>
+/// <summary>Shared interaction and intrinsic-card presentation behavior for Slight Revision.</summary>
 public static class SlightRevisionSystem
 {
-	private readonly record struct Revision(CardModel Target, bool TargetUpgraded);
-
-	private static readonly Dictionary<CardModel, Revision> GrantedRevisions = [];
 	private static IDisposable? _rightClickBinding;
 	private static bool _initialized;
 
@@ -29,8 +28,6 @@ public static class SlightRevisionSystem
 	{
 		if (_initialized) return;
 		_initialized = true;
-		RitsuLibFramework.SubscribeLifecycle<CombatStartingEvent>(_ => GrantedRevisions.Clear());
-		RitsuLibFramework.SubscribeLifecycle<CombatEndedEvent>(_ => GrantedRevisions.Clear());
 		_rightClickBinding = ModRightClickRegistry.Register<CardModel>(
 			SquMod.ModId, "granted_slight_revision", ExecuteGrantedRevision, priority: 1,
 			canHandleLocal: context => CanExecute(context.Player, context.Model as CardModel),
@@ -42,25 +39,19 @@ public static class SlightRevisionSystem
 
 	public static bool Grant(CardModel card, CardModel target, bool targetUpgraded)
 	{
-		if (card.Keywords.Contains(SquKeywords.SlightRevision)) return false;
-		GrantedRevisions[card] = new Revision(target, targetUpgraded);
+		if (card.Capability<SlightRevisionCapability>() is not null) return false;
+		card.GetOrCreateCapability<SlightRevisionCapability>().Configure(target, targetUpgraded);
 		CardCmd.ApplyKeyword(card, SquKeywords.SlightRevision);
 		return true;
 	}
 
-	public static void AddDescription(LocString description, CardModel target, bool targetUpgraded) =>
-		AddDescription(description, new Revision(target, targetUpgraded));
-
-	public static void AddGrantedDescription(LocString description, CardModel card)
+	public static void AddDescription(LocString description, CardModel target, bool targetUpgraded)
 	{
-		if (GrantedRevisions.TryGetValue(card, out Revision revision)) AddDescription(description, revision);
-		else description.Add("SlightRevisionText", string.Empty);
+		LocString text = new("card_keywords", "SUNQIAN_UNIVERSE_KEYWORD_SLIGHT_REVISION.cardDescription");
+		text.Add("Title", ModKeywordRegistry.GetTitle(SquKeywords.SlightRevisionId));
+		text.Add("TargetCardName", GetDisplayTitle(target, targetUpgraded));
+		SquKeywords.AddNestedLoc(description, "SlightRevisionText", text);
 	}
-
-	public static string GetGrantedDescriptionSuffix(CardModel card) =>
-		GrantedRevisions.TryGetValue(card, out Revision revision)
-			? GetDescriptionText(revision)
-			: string.Empty;
 
 	public static IEnumerable<IHoverTip> GetHoverTips(CardModel target, bool targetUpgraded) =>
 	[
@@ -68,35 +59,23 @@ public static class SlightRevisionSystem
 		..target.HoverTips,
 	];
 
-	public static IEnumerable<IHoverTip> GetGrantedHoverTips(CardModel card) =>
-		GrantedRevisions.TryGetValue(card, out Revision revision)
-			? GetHoverTips(revision.Target, revision.TargetUpgraded)
-			: [];
-
-	public static Task TransformAsync(
-		CardModel original, CardModel target, bool targetUpgraded) =>
-		TransformAsync(original, new Revision(target, targetUpgraded));
-
-	private static void AddDescription(LocString description, Revision revision)
+	public static async Task TransformAsync(CardModel original, CardModel target, bool targetUpgraded)
 	{
-		LocString text = new("card_keywords", "SUNQIAN_UNIVERSE_KEYWORD_SLIGHT_REVISION.cardDescription");
-		text.Add("Title", ModKeywordRegistry.GetTitle(SquKeywords.SlightRevisionId));
-		text.Add("TargetCardName", GetDisplayTitle(revision));
-		SquKeywords.AddNestedLoc(description, "SlightRevisionText", text);
+		if (original.CardScope is not { } scope) return;
+		SquSfx.Play(SquSfx.SlightRevisionEvent);
+		CardModel replacement = scope.CreateCard(target, original.Owner);
+		if (targetUpgraded)
+		{
+			replacement.UpgradeInternal();
+			replacement.FinalizeUpgradeInternal();
+		}
+		await CardCmd.Transform(original, replacement);
 	}
 
-	private static string GetDescriptionText(Revision revision)
+	public static string GetDisplayTitle(CardModel target, bool targetUpgraded)
 	{
-		LocString text = new("card_keywords", "SUNQIAN_UNIVERSE_KEYWORD_SLIGHT_REVISION.cardDescription");
-		text.Add("Title", ModKeywordRegistry.GetTitle(SquKeywords.SlightRevisionId));
-		text.Add("TargetCardName", GetDisplayTitle(revision));
-		return text.GetFormattedText();
-	}
-
-	private static string GetDisplayTitle(Revision revision)
-	{
-		CardModel display = revision.Target.ToMutable();
-		if (revision.TargetUpgraded)
+		CardModel display = target.ToMutable();
+		if (targetUpgraded)
 		{
 			display.UpgradeInternal();
 			display.FinalizeUpgradeInternal();
@@ -106,24 +85,14 @@ public static class SlightRevisionSystem
 
 	private static bool CanExecute(Player player, CardModel? card) =>
 		card is not null && card.Owner == player && card.Pile?.Type == PileType.Hand
-		&& card.IsTransformable && GrantedRevisions.ContainsKey(card);
+		&& card.IsTransformable && card.Capability<SlightRevisionCapability>() is not null;
 
 	private static async Task ExecuteGrantedRevision(ModRightClickExecutionContext context)
 	{
-		if (context.Model is not CardModel original || !CanExecute(context.Player, original)
-			|| !GrantedRevisions.Remove(original, out Revision revision)) return;
-		await TransformAsync(original, revision);
+		if (context.Model is not CardModel original || !CanExecute(context.Player, original)) return;
+		SlightRevisionCapability? revision = original.Capability<SlightRevisionCapability>();
+		if (revision is null) return;
+		await TransformAsync(original, revision.Target, revision.TargetUpgraded);
 	}
 
-	private static async Task TransformAsync(CardModel original, Revision revision)
-	{
-		if (original.CardScope is not { } scope) return;
-		CardModel replacement = scope.CreateCard(revision.Target, original.Owner);
-		if (revision.TargetUpgraded)
-		{
-			replacement.UpgradeInternal();
-			replacement.FinalizeUpgradeInternal();
-		}
-		await CardCmd.Transform(original, replacement);
-	}
 }

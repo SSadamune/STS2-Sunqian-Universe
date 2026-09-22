@@ -119,7 +119,7 @@ internal static class SquSfx
 	public const string MusouAttackThoughtLuBuEvent = "event:/sunqian_universe/sfx/无双乱舞-我原本以为吕布";
 	public const string RuthlessStrikeDontForceMeEvent = "event:/sunqian_universe/sfx/无情打击-可别逼我使出无情剑来";
 	public const string RuthlessStrikeSwordSoundEvent = "event:/sunqian_universe/sfx/无情打击-剑声";
-	public const string KeepEnjoyingKeepDancingEvent = "event:/sunqian_universe/sfx/继续享受-接着奏乐接着舞";
+	public const string KeepPlayingKeepDancingEvent = "event:/sunqian_universe/sfx/接着奏乐接着舞-接着奏乐接着舞";
 	public const string KeepEnjoyingLetMeEnjoyEvent = "event:/sunqian_universe/sfx/继续享受-我打了一辈子仗就不能享受享受吗";
 	public const string BurnAfterReadingPlayEvent = "event:/sunqian_universe/sfx/阅后即焚-读完一卷烧一卷，全部读完则全部烧尽";
 	public const string BurnAfterReadingTriggerBurnOneEvent = "event:/sunqian_universe/sfx/阅后即焚-读完一卷烧一卷";
@@ -136,6 +136,13 @@ internal static class SquSfx
 	public const string StargazingWangYunEvent = "event:/sunqian_universe/sfx/夜观天象-王允";
 	public const string StargazingDongZhuoEvent = "event:/sunqian_universe/sfx/夜观天象-董卓";
 
+	public const string ChickenFootCheeseXuShuEvent = "event:/sunqian_universe/sfx/鸡脚芝士-徐庶";
+	public const string ChickenFootCheeseTaoQianEvent = "event:/sunqian_universe/sfx/鸡脚芝士-陶谦";
+	public const string ChickenFootCheeseLiuBeiEvent = "event:/sunqian_universe/sfx/鸡脚芝士-刘备";
+	public const string ChickenFootCheeseChenGongEvent = "event:/sunqian_universe/sfx/鸡脚芝士-陈宫";
+	public const string ChickenFootCheeseWangPingEvent = "event:/sunqian_universe/sfx/鸡脚芝士-王平";
+	public const string SlightRevisionEvent = "event:/sunqian_universe/sfx/稍作修改-好方略，不过我想稍作修改";
+
 	public static readonly string[] VoiceChangeEvents =
 	[
 		VoiceChangeYearsAgoEvent,
@@ -150,6 +157,14 @@ internal static class SquSfx
 		FlyingFireMeteor2Event,
 		FlyingFireMeteor3Event,
 		FlyingFireMeteor4Event,
+	];
+
+	public static readonly string[] ChickenFootCheeseEvents =
+	[
+		ChickenFootCheeseXuShuEvent,
+		ChickenFootCheeseTaoQianEvent,
+		ChickenFootCheeseLiuBeiEvent,
+		ChickenFootCheeseWangPingEvent,
 	];
 
 	public static readonly string[] TransparentHoleEvents =

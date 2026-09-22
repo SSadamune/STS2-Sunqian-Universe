@@ -7,6 +7,7 @@ using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.Models.CardPools;
 using MegaCrit.Sts2.Core.ValueProps;
+using Squ.Audio;
 using Squ.Character;
 using Squ.Combat;
 using Squ.Powers;
@@ -52,6 +53,7 @@ public sealed class ChickenFootCheese : ModCardTemplate, IRandomEnemyTargetCount
 
 	protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
 	{
+		SquSfx.Play(SquSfx.ChickenFootCheeseChenGongEvent);
 		await SquRandomEnemyTargeting.ExecuteDistinctRandomEnemyDamage(
 			this,
 			choiceContext,

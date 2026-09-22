@@ -77,6 +77,7 @@
 {12e32a1d-4b35-4662-af72-aa768810c34b} event:/sunqian_universe/sfx/换大盏-当浮一大白
 {b919b957-780f-4bd0-87ca-29b1e6d03468} event:/sunqian_universe/sfx/换大盏-换大盏
 {8cf1ccb8-75f6-4790-936a-4665fed4dc50} event:/sunqian_universe/sfx/掘地突袭
+{3089b3f5-906b-42bb-8172-fbf4a43130c0} event:/sunqian_universe/sfx/接着奏乐接着舞-接着奏乐接着舞
 {3233f9b6-47fc-4186-9753-fd60b7694eba} event:/sunqian_universe/sfx/无双乱舞-我原本以为吕布
 {422bc859-6769-4d75-a031-d476b5b2363c} event:/sunqian_universe/sfx/无双乱舞-我爱死他了
 {b83f1637-5192-4f24-a452-f5457118bb16} event:/sunqian_universe/sfx/无情打击-剑声
@@ -91,10 +92,10 @@
 {adef8aef-88ec-4baf-9e48-999915329fda} event:/sunqian_universe/sfx/生死不明-那就是死了
 {19a69e50-cedd-43c9-9634-513e9df4cb4d} event:/sunqian_universe/sfx/白银起义
 {659d1e33-3952-4c3b-83af-b660d59bf8a9} event:/sunqian_universe/sfx/称呼别人喜欢在后面带个啊
+{f873e3cf-3bfb-4547-a7b8-e0916b1442f9} event:/sunqian_universe/sfx/稍作修改-好方略，不过我想稍作修改
 {1ba1aa01-3f0b-4671-8afb-8ba1c04969de} event:/sunqian_universe/sfx/竟然不许
 {639dc942-2347-4014-a068-b9f6142dc7d6} event:/sunqian_universe/sfx/箭幕
 {952a0fab-ffcf-499f-a37e-69bfcb8af795} event:/sunqian_universe/sfx/继续享受-我打了一辈子仗就不能享受享受吗
-{794d1912-0b0b-4bce-b9ab-c2ae450974a5} event:/sunqian_universe/sfx/继续享受-接着奏乐接着舞
 {ae68d8ad-b2fa-4b1f-bdb0-86c39de22e75} event:/sunqian_universe/sfx/自刎归天
 {7ca7864b-ae89-48cc-8cc2-780ea0855b22} event:/sunqian_universe/sfx/行刑官-弓箭手准备
 {73024157-f158-417b-81e5-7ba747ca505b} event:/sunqian_universe/sfx/行刑官-放箭

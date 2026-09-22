@@ -16,14 +16,21 @@ public static class SquBasicStrikeRedirect
 	public static bool ShouldHandleInOnPlay(CardModel card) =>
 		ChickenFootCheeseStrikePower.ShouldRedirectBasicStrike(card);
 
-	public static Task ExecuteRedirectedBasicStrikeDamage(
+	public static async Task ExecuteRedirectedBasicStrikeDamage(
 		CardModel card,
 		PlayerChoiceContext choiceContext,
-		CardPlay? cardPlay = null) =>
-		SquRandomEnemyTargeting.ExecuteDistinctRandomEnemyDamage(
+		CardPlay? cardPlay = null)
+	{
+		if (card.Owner?.Creature?.GetPower<ChickenFootCheeseStrikePower>() is { } power)
+		{
+			power.TriggerForRedirectedStrike();
+		}
+
+		await SquRandomEnemyTargeting.ExecuteDistinctRandomEnemyDamage(
 			card,
 			choiceContext,
 			ChickenFootCheeseStrikePower.RedirectRandomEnemyCount,
 			hitCountPerTarget: ChickenFootCheeseStrikePower.RedirectHitCountPerTarget,
 			cardPlay: cardPlay);
+	}
 }

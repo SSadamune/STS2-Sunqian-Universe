@@ -34,6 +34,7 @@ public sealed class KnowWrongDenyWrong : ModCardTemplate
 	public override IEnumerable<CardKeyword> CanonicalKeywords =>
 	[
 		CardKeyword.Ethereal,
+		CardKeyword.Innate,
 	];
 
 	public override CardAssetProfile AssetProfile => new(
@@ -55,11 +56,6 @@ public sealed class KnowWrongDenyWrong : ModCardTemplate
 			.Targeting(cardPlay.Target)
 			.WithHitFx("vfx/vfx_attack_slash")
 			.Execute(choiceContext);
-	}
-
-	protected override void OnUpgrade()
-	{
-		AddKeyword(CardKeyword.Innate);
 	}
 
 	protected override void AddExtraArgsToDescription(LocString description)
@@ -86,7 +82,7 @@ public sealed class KnowWrongDenyWrong : ModCardTemplate
 
 	private void SyncDamageFromCache()
 	{
-		DynamicVars.Damage.BaseValue = RunReloadCount.Current;
+		DynamicVars.Damage.BaseValue = RunReloadCount.Current * (IsUpgraded ? 2 : 1);
 	}
 
 	private sealed class ReloadCountDamageVar : DamageVar
@@ -104,7 +100,7 @@ public sealed class KnowWrongDenyWrong : ModCardTemplate
 		{
 			if (card.IsMutable)
 			{
-				BaseValue = RunReloadCount.Current;
+				BaseValue = RunReloadCount.Current * (card.IsUpgraded ? 2 : 1);
 			}
 
 			base.UpdateCardPreview(card, previewMode, target, runGlobalHooks && card.IsInCombat);

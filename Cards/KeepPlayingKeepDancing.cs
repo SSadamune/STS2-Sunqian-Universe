@@ -46,7 +46,7 @@ public sealed class KeepPlayingKeepDancing : ModCardTemplate
 
 	protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
 	{
-		SquSfx.Play(SquSfx.KeepEnjoyingKeepDancingEvent);
+		SquSfx.Play(SquSfx.KeepPlayingKeepDancingEvent);
 
 		await PowerCmd.Apply<VigorPower>(
 			choiceContext,

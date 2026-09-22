@@ -35,5 +35,6 @@
   "SUNQIAN_UNIVERSE_KEYWORD_STRONG_MONSTER_ENCOUNTER.description": "如果你在每层打过较多数量的普通怪物遭遇战，则会开始出现较强的怪物组合，即「强怪遭遇战」：\n第一阶段是从第[blue]四[/blue]个开始；第二、三阶段是从第[blue]三[/blue]个开始。",
   "SUNQIAN_UNIVERSE_KEYWORD_SLIGHT_REVISION.title": "稍作修改",
   "SUNQIAN_UNIVERSE_KEYWORD_SLIGHT_REVISION.description": "你可以[gold]右键点击[/gold]手牌中的此牌，将其变化为特定的另一张牌。",
-  "SUNQIAN_UNIVERSE_KEYWORD_SLIGHT_REVISION.cardDescription": "\n[gold]{Title}[/gold]：[gold]{TargetCardName}[/gold]。"
+  "SUNQIAN_UNIVERSE_KEYWORD_SLIGHT_REVISION.cardDescription": "\n[gold]{Title}[/gold]：[gold]{TargetCardName}[/gold]。",
+  "SUNQIAN_UNIVERSE_KEYWORD_SLIGHT_REVISION.cardDescriptionFragment": "[gold]{Title}[/gold]：[gold]{TargetCardName}[/gold]。"
 }
