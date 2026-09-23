@@ -46,19 +46,33 @@ public static class SquSettingsPage
 				}),
 			static () => SquSfxPreview.DefaultId);
 
-	private static readonly IModSettingsValueBinding<NeutralPotionModificationMode> NeutralPotionModificationBinding =
-		new DefaultModSettingsValueBinding<NeutralPotionModificationMode>(
-			new ModSettingsValueBinding<SquSettings, NeutralPotionModificationMode>(
+	private static readonly IModSettingsValueBinding<NeutralContentPermissionMode> NeutralPotionModificationBinding =
+		new DefaultModSettingsValueBinding<NeutralContentPermissionMode>(
+			new ModSettingsValueBinding<SquSettings, NeutralContentPermissionMode>(
 				SquMod.ModId,
 				SquSettings.DataKey,
 				SaveScope.Global,
 				static s => Enum.IsDefined(s.NeutralPotionModification)
 					? s.NeutralPotionModification
-					: SquSettings.DefaultNeutralPotionModificationMode,
+					: SquSettings.DefaultNeutralContentPermissionMode,
 				static (s, v) => s.NeutralPotionModification = Enum.IsDefined(v)
 					? v
-					: SquSettings.DefaultNeutralPotionModificationMode),
-			static () => SquSettings.DefaultNeutralPotionModificationMode);
+					: SquSettings.DefaultNeutralContentPermissionMode),
+			static () => SquSettings.DefaultNeutralContentPermissionMode);
+
+	private static readonly IModSettingsValueBinding<NeutralContentPermissionMode> NeutralCardRegistrationBinding =
+		new DefaultModSettingsValueBinding<NeutralContentPermissionMode>(
+			new ModSettingsValueBinding<SquSettings, NeutralContentPermissionMode>(
+				SquMod.ModId,
+				SquSettings.DataKey,
+				SaveScope.Global,
+				static s => Enum.IsDefined(s.NeutralCardRegistration)
+					? s.NeutralCardRegistration
+					: SquSettings.DefaultNeutralContentPermissionMode,
+				static (s, v) => s.NeutralCardRegistration = Enum.IsDefined(v)
+					? v
+					: SquSettings.DefaultNeutralContentPermissionMode),
+			static () => SquSettings.DefaultNeutralContentPermissionMode);
 
 	public static void Register()
 	{
@@ -105,11 +119,23 @@ public static class SquSettingsPage
 							binding: NeutralPotionModificationBinding,
 							options:
 							[
-								new(NeutralPotionModificationMode.Allow, Loc("SUNQIAN_UNIVERSE_COMMON.SETTINGS.neutralPotionModification.allow", "允许")),
-								new(NeutralPotionModificationMode.WhenModCharacterPresent, Loc("SUNQIAN_UNIVERSE_COMMON.SETTINGS.neutralPotionModification.whenModCharacterPresent", "有本模组角色时允许")),
-								new(NeutralPotionModificationMode.Deny, Loc("SUNQIAN_UNIVERSE_COMMON.SETTINGS.neutralPotionModification.deny", "不允许")),
+								new(NeutralContentPermissionMode.Allow, Loc("SUNQIAN_UNIVERSE_COMMON.SETTINGS.neutralPotionModification.allow", "允许")),
+								new(NeutralContentPermissionMode.WhenModCharacterPresent, Loc("SUNQIAN_UNIVERSE_COMMON.SETTINGS.neutralPotionModification.whenModCharacterPresent", "有本模组角色时允许")),
+								new(NeutralContentPermissionMode.Deny, Loc("SUNQIAN_UNIVERSE_COMMON.SETTINGS.neutralPotionModification.deny", "不允许")),
 							],
 							description: Loc("SUNQIAN_UNIVERSE_COMMON.SETTINGS.neutralPotionModificationDescription", "控制本模组是否覆写中立药水的效果。"),
+							presentation: ModSettingsChoicePresentation.Dropdown)
+						.AddChoice(
+							id: "neutral_card_registration",
+							label: Loc("SUNQIAN_UNIVERSE_COMMON.SETTINGS.neutralCardRegistrationLabel", "允许添加中立卡牌"),
+							binding: NeutralCardRegistrationBinding,
+							options:
+							[
+								new(NeutralContentPermissionMode.Allow, Loc("SUNQIAN_UNIVERSE_COMMON.SETTINGS.neutralPotionModification.allow", "允许")),
+								new(NeutralContentPermissionMode.WhenModCharacterPresent, Loc("SUNQIAN_UNIVERSE_COMMON.SETTINGS.neutralPotionModification.whenModCharacterPresent", "有本模组角色时允许")),
+								new(NeutralContentPermissionMode.Deny, Loc("SUNQIAN_UNIVERSE_COMMON.SETTINGS.neutralPotionModification.deny", "不允许")),
+							],
+							description: Loc("SUNQIAN_UNIVERSE_COMMON.SETTINGS.neutralCardRegistrationDescription", "是否允许本模组向中立牌池添加卡牌（例如「哀兵必胜」）。"),
 							presentation: ModSettingsChoicePresentation.Dropdown);
 				});
 		});

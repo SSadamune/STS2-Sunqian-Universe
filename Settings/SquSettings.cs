@@ -16,8 +16,8 @@ public sealed class SquSettings
 	public const int MaxSfxVolumePercent = 100;
 	public const int DefaultSfxVolumePercent = 50;
 
-	public const NeutralPotionModificationMode DefaultNeutralPotionModificationMode =
-		NeutralPotionModificationMode.WhenModCharacterPresent;
+	public const NeutralContentPermissionMode DefaultNeutralContentPermissionMode =
+		NeutralContentPermissionMode.WhenModCharacterPresent;
 
 	/// <summary>
 	/// 100% 时的线性倍率，也是实例音量在削波前大致还能往上走的上限。
@@ -38,8 +38,11 @@ public sealed class SquSettings
 
 	public string PreviewSfxId { get; set; } = SquSfxPreview.DefaultId;
 
-	public NeutralPotionModificationMode NeutralPotionModification { get; set; } =
-		DefaultNeutralPotionModificationMode;
+	public NeutralContentPermissionMode NeutralPotionModification { get; set; } =
+		DefaultNeutralContentPermissionMode;
+
+	public NeutralContentPermissionMode NeutralCardRegistration { get; set; } =
+		DefaultNeutralContentPermissionMode;
 
 	/// <summary>
 	/// 传给 <c>SfxCmd.Play</c> 的线性倍率。设置 50% 为 0 dB，100% 为 <see cref="PeakSfxGain"/>。

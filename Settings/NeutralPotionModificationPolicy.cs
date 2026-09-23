@@ -8,7 +8,7 @@ using STS2RitsuLib.Data;
 
 namespace Squ.Settings;
 
-public enum NeutralPotionModificationMode
+public enum NeutralContentPermissionMode
 {
 	Allow,
 	WhenModCharacterPresent,
@@ -24,14 +24,14 @@ public static class NeutralPotionModificationPolicy
 	{
 		ArgumentNullException.ThrowIfNull(potion);
 
-		NeutralPotionModificationMode mode = ModDataStore.For(SquMod.ModId)
+		NeutralContentPermissionMode mode = ModDataStore.For(SquMod.ModId)
 			.Get<SquSettings>(SquSettings.DataKey)
 			.NeutralPotionModification;
 
 		return mode switch
 		{
-			NeutralPotionModificationMode.Allow => true,
-			NeutralPotionModificationMode.WhenModCharacterPresent => HasModCharacter(potion),
+			NeutralContentPermissionMode.Allow => true,
+			NeutralContentPermissionMode.WhenModCharacterPresent => HasModCharacter(potion),
 			_ => false,
 		};
 	}

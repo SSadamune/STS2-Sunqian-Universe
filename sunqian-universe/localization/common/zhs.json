@@ -24,5 +24,7 @@
   "SUNQIAN_UNIVERSE_COMMON.SETTINGS.neutralPotionModificationDescription": "是否允许本模组修改中立药水的效果（例如火焰药水改为给予灼烧）。",
   "SUNQIAN_UNIVERSE_COMMON.SETTINGS.neutralPotionModification.allow": "允许",
   "SUNQIAN_UNIVERSE_COMMON.SETTINGS.neutralPotionModification.whenModCharacterPresent": "有本模组角色时允许",
-  "SUNQIAN_UNIVERSE_COMMON.SETTINGS.neutralPotionModification.deny": "不允许"
+  "SUNQIAN_UNIVERSE_COMMON.SETTINGS.neutralPotionModification.deny": "不允许",
+  "SUNQIAN_UNIVERSE_COMMON.SETTINGS.neutralCardRegistrationLabel": "允许添加中立卡牌",
+  "SUNQIAN_UNIVERSE_COMMON.SETTINGS.neutralCardRegistrationDescription": "是否允许本模组向中立牌池添加卡牌（例如「哀兵必胜」）。"
 }
