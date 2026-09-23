@@ -200,5 +200,6 @@
   "SUNQIAN_UNIVERSE_CARD_TOO_KIND_TO_BE_TRUE.description": "Give an Attack [gold]Slight Revision[/gold]: [gold]{IfUpgraded:show:Ultimate Defend+|Ultimate Defend}[/gold].\nFor each unique Debuff you have, cards with \"Defend\" in their name gain {ExtraBlock:diff()} additional [gold]Block[/gold].",
   "SUNQIAN_UNIVERSE_CARD_TOO_KIND_TO_BE_TRUE.annotation": "Cards that already have [gold]Slight Revision[/gold] cannot gain it again.",
   "SUNQIAN_UNIVERSE_CARD_DRINKING_TABLE_CULTURE.title": "Drinking Table Culture",
-  "SUNQIAN_UNIVERSE_CARD_DRINKING_TABLE_CULTURE.description": "Add a [gold]Wine+[/gold] with [gold]Enthralled[/gold] into an ally's [gold]Hand[/gold]."
+  "SUNQIAN_UNIVERSE_CARD_DRINKING_TABLE_CULTURE.description": "Add a [gold]Wine+[/gold] with [gold]Enthralled[/gold] into an ally's [gold]Hand[/gold].",
+  "SUNQIAN_UNIVERSE_NIGHT_RAID_WUCHAO_STRIKE.descriptionFragment": "[green]Apply {NightRaidBurning:diff()} [gold]Burning[/gold] to the targeted enemy.[/green]"
 }

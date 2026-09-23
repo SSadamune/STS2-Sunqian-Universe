@@ -8,25 +8,27 @@ using MegaCrit.Sts2.Core.Entities.Creatures;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.Helpers;
 using MegaCrit.Sts2.Core.HoverTips;
+using MegaCrit.Sts2.Core.Localization;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.Potions;
 using MegaCrit.Sts2.Core.Nodes.Rooms;
 using MegaCrit.Sts2.Core.Nodes.Vfx;
 using MegaCrit.Sts2.Core.ValueProps;
 using Squ.Powers;
+using Squ.Settings;
 
 #nullable enable
 
 namespace Squ.Patches;
 
 /// <summary>
-/// 修改原版火焰药水：造成 10 点伤害并给予 6 层灼烧。
+/// 修改原版火焰药水：造成 2 点伤害并给予 12 层灼烧。
 /// </summary>
 [HarmonyPatch(typeof(FirePotion))]
 internal static class FirePotionBurningPatch
 {
-	public const decimal DamageAmount = 10m;
-	public const decimal BurningAmount = 6m;
+	public const decimal DamageAmount = 2m;
+	public const decimal BurningAmount = 12m;
 
 	[HarmonyPrefix]
 	[HarmonyPatch("OnUse")]
@@ -36,6 +38,11 @@ internal static class FirePotionBurningPatch
 		Creature? target,
 		ref Task __result)
 	{
+		if (!NeutralPotionModificationPolicy.ShouldApply(__instance))
+		{
+			return true;
+		}
+
 		__result = OnUseAsync(__instance, choiceContext, target);
 		return false;
 	}
@@ -70,7 +77,7 @@ internal static class FirePotionExtraHoverTipsPatch
 {
 	private static void Postfix(PotionModel __instance, ref IEnumerable<IHoverTip> __result)
 	{
-		if (__instance is not FirePotion)
+		if (__instance is not FirePotion || !NeutralPotionModificationPolicy.ShouldApply(__instance))
 		{
 			return;
 		}
@@ -79,6 +86,25 @@ internal static class FirePotionExtraHoverTipsPatch
 		[
 			..__result,
 			HoverTipFactory.FromPower<BurningPower>(),
+			new HoverTip(
+				SquCommonL10n.AnnotationTitle(),
+				new LocString("potions", "SUNQIAN_UNIVERSE_FIRE_POTION_MODIFIED.annotation")),
 		];
+	}
+}
+
+[HarmonyPatch(typeof(PotionModel), "get_DynamicDescription")]
+internal static class FirePotionDescriptionPatch
+{
+	private static void Postfix(PotionModel __instance, ref LocString __result)
+	{
+		if (__instance is not FirePotion || !NeutralPotionModificationPolicy.ShouldApply(__instance))
+		{
+			return;
+		}
+
+		__result = new LocString("potions", "SUNQIAN_UNIVERSE_FIRE_POTION_MODIFIED.description");
+		__result.Add("Damage", FirePotionBurningPatch.DamageAmount);
+		__result.Add(nameof(BurningPower), FirePotionBurningPatch.BurningAmount);
 	}
 }

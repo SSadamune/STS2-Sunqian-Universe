@@ -84,10 +84,12 @@ public static class SquMod
 
 		CardDrawPlayRateTracker.Initialize();
 		RitsuLibFramework.RegisterModelCapability<SlightRevisionCapability>(ModId);
+		RitsuLibFramework.RegisterModelCapability<NightRaidWuchaoStrikeCapability>(ModId);
 		RunReloadCount.Initialize();
 		DailyWageRunData.Initialize();
 		ScriptSystem.Initialize();
 		SlightRevisionSystem.Initialize();
+		NightRaidWuchaoStrikeSystem.Initialize();
 		RitsuLibFramework.SubscribeLifecycle<CombatEndedEvent>(_ => WarFeedsWarResolutionTracker.ClearCombat());
 
 		var harmony = new Harmony($"{ModId}.patches");

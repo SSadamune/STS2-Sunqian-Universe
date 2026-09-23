@@ -46,6 +46,20 @@ public static class SquSettingsPage
 				}),
 			static () => SquSfxPreview.DefaultId);
 
+	private static readonly IModSettingsValueBinding<NeutralPotionModificationMode> NeutralPotionModificationBinding =
+		new DefaultModSettingsValueBinding<NeutralPotionModificationMode>(
+			new ModSettingsValueBinding<SquSettings, NeutralPotionModificationMode>(
+				SquMod.ModId,
+				SquSettings.DataKey,
+				SaveScope.Global,
+				static s => Enum.IsDefined(s.NeutralPotionModification)
+					? s.NeutralPotionModification
+					: SquSettings.DefaultNeutralPotionModificationMode,
+				static (s, v) => s.NeutralPotionModification = Enum.IsDefined(v)
+					? v
+					: SquSettings.DefaultNeutralPotionModificationMode),
+			static () => SquSettings.DefaultNeutralPotionModificationMode);
+
 	public static void Register()
 	{
 		ModDataStore.For(SquMod.ModId).Register<SquSettings>(
@@ -58,10 +72,10 @@ public static class SquSettingsPage
 		RitsuLibFramework.RegisterModSettings(SquMod.ModId, page =>
 		{
 			page.WithModDisplayName(Loc("SUNQIAN_UNIVERSE_COMMON.SETTINGS.modDisplayName", "孙乾宇宙"))
-				.WithTitle(Loc("SUNQIAN_UNIVERSE_COMMON.SETTINGS.pageTitle", "音效"))
+				.WithTitle(Loc("SUNQIAN_UNIVERSE_COMMON.SETTINGS.pageTitle", "模组设置"))
 				.WithDescription(Loc(
 					"SUNQIAN_UNIVERSE_COMMON.SETTINGS.pageDescription",
-					"调整本模组音效音量，叠加在游戏「音效」音量之上。"))
+					"调整孙乾宇宙的音效和游戏内容覆写。"))
 				.WithVisibleOnHostSurfaces(
 					ModSettingsHostSurface.MainMenu
 					| ModSettingsHostSurface.RunPause
@@ -81,6 +95,22 @@ public static class SquSettingsPage
 							"sfx_preview_clip",
 							Loc("SUNQIAN_UNIVERSE_COMMON.SETTINGS.previewSfxLabel", "试听音效"),
 							CreatePreviewSfxRow);
+				})
+				.AddSection("gameplay", section =>
+				{
+					section.WithTitle(Loc("SUNQIAN_UNIVERSE_COMMON.SETTINGS.sectionGameplayTitle", "游戏内容"))
+						.AddChoice(
+							id: "neutral_potion_modification",
+							label: Loc("SUNQIAN_UNIVERSE_COMMON.SETTINGS.neutralPotionModificationLabel", "允许修改中立药水"),
+							binding: NeutralPotionModificationBinding,
+							options:
+							[
+								new(NeutralPotionModificationMode.Allow, Loc("SUNQIAN_UNIVERSE_COMMON.SETTINGS.neutralPotionModification.allow", "允许")),
+								new(NeutralPotionModificationMode.WhenModCharacterPresent, Loc("SUNQIAN_UNIVERSE_COMMON.SETTINGS.neutralPotionModification.whenModCharacterPresent", "有本模组角色时允许")),
+								new(NeutralPotionModificationMode.Deny, Loc("SUNQIAN_UNIVERSE_COMMON.SETTINGS.neutralPotionModification.deny", "不允许")),
+							],
+							description: Loc("SUNQIAN_UNIVERSE_COMMON.SETTINGS.neutralPotionModificationDescription", "控制本模组是否覆写中立药水的效果。"),
+							presentation: ModSettingsChoicePresentation.Dropdown);
 				});
 		});
 	}

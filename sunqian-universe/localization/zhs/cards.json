@@ -200,5 +200,6 @@
   "SUNQIAN_UNIVERSE_CARD_TOO_KIND_TO_BE_TRUE.description": "令一张攻击牌获得「[gold]稍作修改[/gold]：[gold]{IfUpgraded:show:究极防御+|究极防御}[/gold]」。\n你每有一种负面状态，从名字中有「防御」的牌中额外获得{ExtraBlock:diff()}点[gold]格挡[/gold]。",
   "SUNQIAN_UNIVERSE_CARD_TOO_KIND_TO_BE_TRUE.annotation": "不会使已经拥有[gold]稍作修改[/gold]的牌再次获得。",
   "SUNQIAN_UNIVERSE_CARD_DRINKING_TABLE_CULTURE.title": "酒桌文化",
-  "SUNQIAN_UNIVERSE_CARD_DRINKING_TABLE_CULTURE.description": "将一张带有[gold]执迷[/gold]的[gold]酒+[/gold]加入队友的[gold]手牌[/gold]。"
+  "SUNQIAN_UNIVERSE_CARD_DRINKING_TABLE_CULTURE.description": "将一张带有[gold]执迷[/gold]的[gold]酒+[/gold]加入队友的[gold]手牌[/gold]。",
+  "SUNQIAN_UNIVERSE_NIGHT_RAID_WUCHAO_STRIKE.descriptionFragment": "[green]给予目标敌人{NightRaidBurning:diff()}点[gold]灼烧[/gold]。[/green]"
 }

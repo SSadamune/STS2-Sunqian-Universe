@@ -18,7 +18,8 @@ namespace Squ.Cards;
 [RegisterCard(typeof(SunqianCardPool), StableEntryStem = "portal")]
 public sealed class Portal : ModCardTemplate
 {
-	private const decimal ScryAmount = 3m;
+	private const decimal ScryAmount = 4m;
+	private const decimal UpgradedScryAmount = 5m;
 
 	protected override IEnumerable<DynamicVar> CanonicalVars =>
 	[
@@ -63,5 +64,10 @@ public sealed class Portal : ModCardTemplate
 		{
 			await CardPileCmd.Draw(choiceContext, Owner);
 		}
+	}
+
+	protected override void OnUpgrade()
+	{
+		DynamicVars[ScryVar.VarName].UpgradeValueBy(UpgradedScryAmount - ScryAmount);
 	}
 }

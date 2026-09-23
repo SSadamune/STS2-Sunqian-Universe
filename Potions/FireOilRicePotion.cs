@@ -17,27 +17,30 @@ using STS2RitsuLib.Scaffolding.Content;
 namespace Squ.Potions;
 
 /// <summary>
-/// 火油泡饭：给予灼烧，并将该敌人的灼烧熄灭概率调整为 0%。
+/// 火油泡饭：给予所有敌人灼烧与不熄。
 /// </summary>
 [RegisterPotion(typeof(SunqianPotionPool), StableEntryStem = "fire_oil_rice")]
 public sealed class FireOilRicePotion : ModPotionTemplate
 {
-	public const decimal BurningStacks = 12m;
+	public const decimal BurningStacks = 9m;
+	public const decimal UnextinguishedStacks = 2m;
 
 	public override PotionRarity Rarity => PotionRarity.Common;
 
 	public override PotionUsage Usage => PotionUsage.CombatOnly;
 
-	public override TargetType TargetType => TargetType.AnyEnemy;
+	public override TargetType TargetType => TargetType.AllEnemies;
 
 	protected override IEnumerable<DynamicVar> CanonicalVars =>
 	[
 		new PowerVar<BurningPower>(BurningStacks),
+		new PowerVar<UnextinguishedPower>(UnextinguishedStacks),
 	];
 
 	protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
 	[
 		HoverTipFactory.FromPower<BurningPower>(),
+		HoverTipFactory.FromPower<UnextinguishedPower>(),
 	];
 
 	public override PotionAssetProfile AssetProfile => new(
@@ -46,15 +49,21 @@ public sealed class FireOilRicePotion : ModPotionTemplate
 
 	protected override async Task OnUse(PlayerChoiceContext choiceContext, Creature? target)
 	{
-		AssertValidForTargetedPotion(target);
-
-		BurningPower? burning = await PowerCmd.Apply<BurningPower>(
-			choiceContext,
-			target,
-			DynamicVars[nameof(BurningPower)].BaseValue,
-			Owner.Creature,
-			null);
-
-		burning?.ReduceClearChanceTo(0f);
+		IReadOnlyList<Creature> enemies = Owner.Creature.CombatState!.HittableEnemies;
+		foreach (Creature enemy in enemies)
+		{
+			await PowerCmd.Apply<BurningPower>(
+				choiceContext,
+				enemy,
+				DynamicVars[nameof(BurningPower)].BaseValue,
+				Owner.Creature,
+				null);
+			await PowerCmd.Apply<UnextinguishedPower>(
+				choiceContext,
+				enemy,
+				DynamicVars[nameof(UnextinguishedPower)].BaseValue,
+				Owner.Creature,
+				null);
+		}
 	}
 }

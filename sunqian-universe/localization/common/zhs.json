@@ -5,8 +5,8 @@
   "SUNQIAN_UNIVERSE_COMMON.NEWSANGUO_VIGOR_SWAP.combatNote": "你不以此法获得活力，改为获得等量[gold]酒力[/gold]。",
   "SUNQIAN_UNIVERSE_COMMON.NEWSANGUO_VIGOR_SWAP.combatPowerNote": "此角色以此法获得[gold]酒力[/gold]，而非活力。",
   "SUNQIAN_UNIVERSE_COMMON.SETTINGS.modDisplayName": "孙乾宇宙",
-  "SUNQIAN_UNIVERSE_COMMON.SETTINGS.pageTitle": "音效",
-  "SUNQIAN_UNIVERSE_COMMON.SETTINGS.pageDescription": "调整本模组音效音量，叠加在游戏「音效」音量之上。",
+  "SUNQIAN_UNIVERSE_COMMON.SETTINGS.pageTitle": "模组设置",
+  "SUNQIAN_UNIVERSE_COMMON.SETTINGS.pageDescription": "调整孙乾宇宙的音效和游戏内容覆写。",
   "SUNQIAN_UNIVERSE_COMMON.SETTINGS.sectionSfxTitle": "音效音量",
   "SUNQIAN_UNIVERSE_COMMON.SETTINGS.sfxVolumeLabel": "模组音效音量",
   "SUNQIAN_UNIVERSE_COMMON.SETTINGS.previewSfxLabel": "试听音效",
@@ -18,5 +18,11 @@
   "SUNQIAN_UNIVERSE_COMMON.SETTINGS.previewSfx.voice": "变声期",
   "SUNQIAN_UNIVERSE_COMMON.SETTINGS.previewSfx.meteor": "飞火流星",
   "SUNQIAN_UNIVERSE_COMMON.SETTINGS.previewSfx.hole": "透明窟窿",
-  "SUNQIAN_UNIVERSE_COMMON.SETTINGS.previewSfx.poet": "二言诗人剧本"
+  "SUNQIAN_UNIVERSE_COMMON.SETTINGS.previewSfx.poet": "二言诗人剧本",
+  "SUNQIAN_UNIVERSE_COMMON.SETTINGS.sectionGameplayTitle": "游戏内容",
+  "SUNQIAN_UNIVERSE_COMMON.SETTINGS.neutralPotionModificationLabel": "允许修改中立药水",
+  "SUNQIAN_UNIVERSE_COMMON.SETTINGS.neutralPotionModificationDescription": "是否允许本模组修改中立药水的效果（例如火焰药水改为给予灼烧）。",
+  "SUNQIAN_UNIVERSE_COMMON.SETTINGS.neutralPotionModification.allow": "允许",
+  "SUNQIAN_UNIVERSE_COMMON.SETTINGS.neutralPotionModification.whenModCharacterPresent": "有本模组角色时允许",
+  "SUNQIAN_UNIVERSE_COMMON.SETTINGS.neutralPotionModification.deny": "不允许"
 }

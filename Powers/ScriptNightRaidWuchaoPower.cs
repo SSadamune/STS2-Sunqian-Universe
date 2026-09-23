@@ -10,6 +10,7 @@ using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.Models;
 using Squ.Cards;
+using Squ.Combat;
 using STS2RitsuLib.Interop.AutoRegistration;
 using STS2RitsuLib.Scaffolding.Content;
 
@@ -42,6 +43,10 @@ public sealed class ScriptNightRaidWuchaoPower : StackableScriptPowerTemplate
 	protected override void OnStackedFrom(CardModel? cardSource)
 	{
 		SyncDisplayVars();
+		if (Owner.Player is { } player)
+		{
+			NightRaidWuchaoStrikeSystem.EnsureCapabilities(player);
+		}
 	}
 
 	public override Task AfterPowerAmountChanged(

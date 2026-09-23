@@ -5,8 +5,8 @@
   "SUNQIAN_UNIVERSE_COMMON.NEWSANGUO_VIGOR_SWAP.combatNote": "You do not gain Vigor this way, and instead gain an equal amount of [gold]Drunken Might[/gold].",
   "SUNQIAN_UNIVERSE_COMMON.NEWSANGUO_VIGOR_SWAP.combatPowerNote": "This character gains [gold]Drunken Might[/gold] this way, instead of Vigor.",
   "SUNQIAN_UNIVERSE_COMMON.SETTINGS.modDisplayName": "Sunqian Universe",
-  "SUNQIAN_UNIVERSE_COMMON.SETTINGS.pageTitle": "Audio",
-  "SUNQIAN_UNIVERSE_COMMON.SETTINGS.pageDescription": "Adjust this mod's sound-effect volume. This stacks on top of the game's SFX slider.",
+  "SUNQIAN_UNIVERSE_COMMON.SETTINGS.pageTitle": "Mod Settings",
+  "SUNQIAN_UNIVERSE_COMMON.SETTINGS.pageDescription": "Adjust Sunqian Universe audio and gameplay overrides.",
   "SUNQIAN_UNIVERSE_COMMON.SETTINGS.sectionSfxTitle": "Sound Effects",
   "SUNQIAN_UNIVERSE_COMMON.SETTINGS.sfxVolumeLabel": "Mod SFX Volume",
   "SUNQIAN_UNIVERSE_COMMON.SETTINGS.previewSfxLabel": "Preview Sound",
@@ -18,5 +18,11 @@
   "SUNQIAN_UNIVERSE_COMMON.SETTINGS.previewSfx.voice": "Voice Change",
   "SUNQIAN_UNIVERSE_COMMON.SETTINGS.previewSfx.meteor": "Fire Nova",
   "SUNQIAN_UNIVERSE_COMMON.SETTINGS.previewSfx.hole": "Transparent Hole",
-  "SUNQIAN_UNIVERSE_COMMON.SETTINGS.previewSfx.poet": "Two-Word Poet Script"
+  "SUNQIAN_UNIVERSE_COMMON.SETTINGS.previewSfx.poet": "Two-Word Poet Script",
+  "SUNQIAN_UNIVERSE_COMMON.SETTINGS.sectionGameplayTitle": "Gameplay",
+  "SUNQIAN_UNIVERSE_COMMON.SETTINGS.neutralPotionModificationLabel": "Allow Neutral Potion Changes",
+  "SUNQIAN_UNIVERSE_COMMON.SETTINGS.neutralPotionModificationDescription": "Whether to allow this mod to modify the effects of neutral potions (for example, changing Fire Potion to apply Burning).",
+  "SUNQIAN_UNIVERSE_COMMON.SETTINGS.neutralPotionModification.allow": "Allow",
+  "SUNQIAN_UNIVERSE_COMMON.SETTINGS.neutralPotionModification.whenModCharacterPresent": "Allow with Mod Character",
+  "SUNQIAN_UNIVERSE_COMMON.SETTINGS.neutralPotionModification.deny": "Do Not Allow"
 }
