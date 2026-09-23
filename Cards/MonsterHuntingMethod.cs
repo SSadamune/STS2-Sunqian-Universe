@@ -11,7 +11,7 @@ using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.Models.Powers;
 using Squ.Audio;
 using Squ.Character;
-using STS2RitsuLib.Combat.CardTargeting;
+using Squ.Combat;
 using STS2RitsuLib.Interop.AutoRegistration;
 using STS2RitsuLib.Scaffolding.Content;
 
@@ -20,7 +20,7 @@ using STS2RitsuLib.Scaffolding.Content;
 namespace Squ.Cards;
 
 /// <summary>
-/// 过禽论：给予目标再生；若目标为敌人则获得活力，否则消耗本牌。
+/// 过禽论：给予目标再生；若目标为敌人则获得活力，若目标为玩家则消耗本牌。
 /// </summary>
 [RegisterCard(typeof(SunqianCardPool), StableEntryStem = "monster_hunting_method")]
 public sealed class MonsterHuntingMethod : ModCardTemplate
@@ -47,7 +47,7 @@ public sealed class MonsterHuntingMethod : ModCardTemplate
 		PortraitPath: "res://images/cards/MonsterHuntingMethod.png");
 
 	public MonsterHuntingMethod()
-		: base(1, CardType.Skill, CardRarity.Rare, CustomTargetType.Anyone)
+		: base(1, CardType.Skill, CardRarity.Rare, SquTargetTypes.AnyCreature)
 	{
 	}
 
@@ -56,7 +56,7 @@ public sealed class MonsterHuntingMethod : ModCardTemplate
 	/// </summary>
 	protected override CardLocation GetResultLocationForCardPlay()
 	{
-		if (CurrentTarget is { Side: not CombatSide.Enemy })
+		if (CurrentTarget is { IsPlayer: true })
 		{
 			return new CardLocation(Owner, PileType.Exhaust, CardPilePosition.Bottom);
 		}
@@ -78,7 +78,7 @@ public sealed class MonsterHuntingMethod : ModCardTemplate
 			Owner.Creature,
 			this);
 
-		if (target.Side == CombatSide.Enemy)
+		if (target.Side == CombatSide.Enemy && !target.IsPet)
 		{
 			await PowerCmd.Apply<VigorPower>(
 				choiceContext,
@@ -104,6 +104,10 @@ public sealed class MonsterHuntingMethod : ModCardTemplate
 		else if (target == Owner.Creature)
 		{
 			SquSfx.Play(SquSfx.MonsterHuntingMethodSelfEvent);
+		}
+		else if (target.IsPlayer)
+		{
+			SquSfx.Play(SquSfx.MonsterHuntingMethodOtherPlayerEvent);
 		}
 		else
 		{

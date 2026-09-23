@@ -108,6 +108,7 @@ internal static class SquSfx
 	public const string BlockFirefightingSageEvent = "event:/sunqian_universe/sfx/阻拦救火-先生奇人";
 	public const string MonsterHuntingMethodEnemyEvent = "event:/sunqian_universe/sfx/过禽论-若除禽兽";
 	public const string MonsterHuntingMethodSelfEvent = "event:/sunqian_universe/sfx/过禽论-与禽兽何异";
+	public const string MonsterHuntingMethodOtherPlayerEvent = "event:/sunqian_universe/sfx/过禽论-小女怕配不上吕将军";
 	public const string MonsterHuntingMethodOtherEvent = "event:/sunqian_universe/sfx/过禽论-义父要把我";
 	public const string KeepCalmHateCloudsJudgmentEvent = "event:/sunqian_universe/sfx/保持冷静-仇恨会使你丧失判断力";
 	public const string KeepCalmDoNotAngerEvent = "event:/sunqian_universe/sfx/保持冷静-不要愤怒愤怒会降低智慧";

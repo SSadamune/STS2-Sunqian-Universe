@@ -103,6 +103,7 @@
 {5b321257-e101-45be-9a8f-f9f7e05f5cdd} event:/sunqian_universe/sfx/贴身铠甲
 {cba96cfd-76a1-47f3-9f5d-60dd0ddf87d5} event:/sunqian_universe/sfx/过禽论-与禽兽何异
 {aa338823-cf29-4a84-820b-57fb9c9c26cf} event:/sunqian_universe/sfx/过禽论-义父要把我
+{09055287-691e-4e42-9a21-579af8135495} event:/sunqian_universe/sfx/过禽论-小女怕配不上吕将军
 {72f26b2b-79fb-445c-a837-62ec9e9458a1} event:/sunqian_universe/sfx/过禽论-老夫此计龌龊不堪
 {2a0a4080-4736-4d32-9afd-e665b47613de} event:/sunqian_universe/sfx/过禽论-若除禽兽
 {1904a434-7295-41fd-93e0-4a852013f54c} event:/sunqian_universe/sfx/透明窟窿-戳关羽
