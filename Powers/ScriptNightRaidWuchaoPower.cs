@@ -121,4 +121,13 @@ public sealed class ScriptNightRaidWuchaoPower : StackableScriptPowerTemplate
 
 	private void SyncDisplayVars() =>
 		DynamicVars[nameof(BurningPower)].BaseValue = Amount;
+
+	public override async Task AfterRemoved(Creature oldOwner)
+	{
+		await base.AfterRemoved(oldOwner);
+		if (oldOwner.Player is { } player)
+		{
+			NightRaidWuchaoStrikeSystem.RefreshOnTable(player);
+		}
+	}
 }

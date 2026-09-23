@@ -26,7 +26,8 @@ public sealed class NightRaidWuchaoStrikeCapability : CardCapability, ICardDescr
 
 	public IEnumerable<CardDescriptionFragment> GetDescriptionFragments(CardDescriptionContext context)
 	{
-		if (NightRaidWuchaoStrikeSystem.GetBaseBurning(context.Card) <= 0m)
+		if (context.PileType is not (PileType.Hand or PileType.Play)
+			|| NightRaidWuchaoStrikeSystem.GetBaseBurning(context.Card) <= 0m)
 		{
 			yield break;
 		}
@@ -38,7 +39,8 @@ public sealed class NightRaidWuchaoStrikeCapability : CardCapability, ICardDescr
 
 	public IEnumerable<IHoverTip> GetHoverTips(CardModel card)
 	{
-		if (NightRaidWuchaoStrikeSystem.GetBaseBurning(card) > 0m)
+		if (card.Pile?.Type is PileType.Hand or PileType.Play
+			&& NightRaidWuchaoStrikeSystem.GetBaseBurning(card) > 0m)
 		{
 			yield return HoverTipFactory.FromPower<BurningPower>();
 		}

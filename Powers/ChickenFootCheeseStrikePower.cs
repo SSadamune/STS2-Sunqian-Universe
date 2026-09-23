@@ -9,6 +9,7 @@ using MegaCrit.Sts2.Core.Entities.Creatures;
 using MegaCrit.Sts2.Core.Entities.Powers;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.Models;
+using MegaCrit.Sts2.Core.Nodes.Cards;
 using Squ.Audio;
 using Squ.Combat;
 using STS2RitsuLib.Interop.AutoRegistration;
@@ -54,6 +55,10 @@ public sealed class ChickenFootCheeseStrikePower : ModPowerTemplate
 		return card.Rarity == CardRarity.Basic && card.Tags.Contains(CardTag.Strike);
 	}
 
+	public static bool ShouldDisplayRedirectedBasicStrike(CardModel card) =>
+		ShouldRedirectBasicStrike(card)
+		&& card.Pile?.Type is PileType.Hand or PileType.Play;
+
 	public void TriggerForRedirectedStrike()
 	{
 		Flash();
@@ -63,7 +68,14 @@ public sealed class ChickenFootCheeseStrikePower : ModPowerTemplate
 	public override Task AfterApplied(Creature? applier, CardModel? cardSource)
 	{
 		SquStrikeRedirectPatches.EnsureApplied();
+		RefreshOnTable(Owner);
 		return Task.CompletedTask;
+	}
+
+	public override async Task AfterRemoved(Creature oldOwner)
+	{
+		await base.AfterRemoved(oldOwner);
+		RefreshOnTable(oldOwner);
 	}
 
 	public override async Task AfterSideTurnEnd(
@@ -78,5 +90,21 @@ public sealed class ChickenFootCheeseStrikePower : ModPowerTemplate
 
 		Flash();
 		await PowerCmd.TickDownDuration(this);
+	}
+
+	private static void RefreshOnTable(Creature owner)
+	{
+		if (owner.Player?.PlayerCombatState is not { } combatState)
+		{
+			return;
+		}
+
+		foreach (CardModel card in combatState.AllCards.Where(card =>
+			card.Rarity == CardRarity.Basic
+			&& card.Tags.Contains(CardTag.Strike)
+			&& card.Pile?.Type is PileType.Hand or PileType.Play))
+		{
+			NCard.FindOnTable(card)?.UpdateVisuals(card.Pile!.Type, CardPreviewMode.Normal);
+		}
 	}
 }

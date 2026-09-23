@@ -4,6 +4,7 @@ using System.Linq;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.Entities.Players;
 using MegaCrit.Sts2.Core.Models;
+using MegaCrit.Sts2.Core.Nodes.Cards;
 using Squ.Powers;
 using STS2RitsuLib;
 using STS2RitsuLib.Models.Capabilities;
@@ -46,6 +47,19 @@ public static class NightRaidWuchaoStrikeSystem
 		}
 	}
 
+	public static void RefreshOnTable(Player player)
+	{
+		if (player.PlayerCombatState is not { } combatState)
+		{
+			return;
+		}
+
+		foreach (CardModel card in combatState.AllCards.Where(IsOnTableStrike))
+		{
+			NCard.FindOnTable(card)?.UpdateVisuals(card.Pile!.Type, CardPreviewMode.Normal);
+		}
+	}
+
 	public static decimal GetBaseBurning(CardModel? card)
 	{
 		if (card is not { IsMutable: true } || !card.Tags.Contains(CardTag.Strike))
@@ -66,5 +80,14 @@ public static class NightRaidWuchaoStrikeSystem
 		{
 			card.GetOrCreateCapability<NightRaidWuchaoStrikeCapability>();
 		}
+
+		if (IsOnTableStrike(card))
+		{
+			NCard.FindOnTable(card)?.UpdateVisuals(card.Pile!.Type, CardPreviewMode.Normal);
+		}
 	}
+
+	private static bool IsOnTableStrike(CardModel card) =>
+		card.Tags.Contains(CardTag.Strike)
+		&& card.Pile?.Type is PileType.Hand or PileType.Play;
 }

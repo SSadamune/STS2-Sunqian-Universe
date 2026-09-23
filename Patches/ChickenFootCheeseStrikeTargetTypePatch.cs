@@ -13,7 +13,7 @@ internal static class ChickenFootCheeseStrikeTargetTypePatch
 {
 	private static void Postfix(CardModel __instance, ref TargetType __result)
 	{
-		if (ChickenFootCheeseStrikePower.ShouldRedirectBasicStrike(__instance))
+		if (ChickenFootCheeseStrikePower.ShouldDisplayRedirectedBasicStrike(__instance))
 		{
 			__result = SquTargetTypes.RandomEnemies;
 		}
