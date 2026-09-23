@@ -88,6 +88,7 @@
 {277d450e-51b3-416a-a78f-4b1b4c02aa8e} event:/sunqian_universe/sfx/朕不知兵
 {ca742ee5-99e2-40d3-a8c5-c5a3de703620} event:/sunqian_universe/sfx/水火无敌
 {cd280832-1db9-4aa7-a907-b5116acc6829} event:/sunqian_universe/sfx/炮轰赤壁-减攻
+{49cf55f8-5c29-4c9e-b5c4-f172bfa88f20} event:/sunqian_universe/sfx/炮轰赤壁-我笑猪哥愚蠢
 {a1f8c8a6-10ec-4ea5-82de-f78738ee6a1e} event:/sunqian_universe/sfx/炮轰赤壁-点火
 {fb6b5c93-ac46-4f27-9087-cbf43b84ddc0} event:/sunqian_universe/sfx/生死不明
 {adef8aef-88ec-4baf-9e48-999915329fda} event:/sunqian_universe/sfx/生死不明-那就是死了

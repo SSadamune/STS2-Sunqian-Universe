@@ -74,6 +74,7 @@ internal static class SquSfx
 	public const string EmperorKnowsNoWarEvent = "event:/sunqian_universe/sfx/朕不知兵";
 	public const string WaterFireInvincibleEvent = "event:/sunqian_universe/sfx/水火无敌";
 	public const string BombardChibiReduceAttackEvent = "event:/sunqian_universe/sfx/炮轰赤壁-减攻";
+	public const string BombardChibiRestoreEnergyEvent = "event:/sunqian_universe/sfx/炮轰赤壁-我笑猪哥愚蠢";
 	public const string BombardChibiIgniteEvent = "event:/sunqian_universe/sfx/炮轰赤壁-点火";
 	public const string FateUnknownEvent = "event:/sunqian_universe/sfx/生死不明";
 	public const string FateUnknownThatsDeathEvent = "event:/sunqian_universe/sfx/生死不明-那就是死了";
