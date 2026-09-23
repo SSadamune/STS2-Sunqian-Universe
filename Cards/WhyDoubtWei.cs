@@ -46,6 +46,8 @@ public sealed class WhyDoubtWei : ModCardTemplate
 		CardKeyword.Ethereal,
 	];
 
+	public override bool GainsBlock => true;
+
 	protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
 	[
 		HoverTipFactory.FromPower<StrengthPower>(),

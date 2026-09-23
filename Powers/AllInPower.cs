@@ -1,29 +1,36 @@
+#nullable enable
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Godot;
+using MegaCrit.Sts2.Core.Combat;
+using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.Entities.Creatures;
+using MegaCrit.Sts2.Core.Entities.Players;
 using MegaCrit.Sts2.Core.Entities.Powers;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
+using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.Models;
+using MegaCrit.Sts2.Core.Models.Powers;
 using MegaCrit.Sts2.Core.ValueProps;
+using Squ.Combat;
 using STS2RitsuLib.Interop.AutoRegistration;
 using STS2RitsuLib.Scaffolding.Content;
-
-#nullable enable
 
 namespace Squ.Powers;
 
 /// <summary>
-/// 倾巢而出（All In）：打出时若手牌中仅剩该攻击/技能牌，其造成的伤害与获得的格挡增加 <see cref="Amount"/>%。
-/// 层数叠加时 <see cref="Amount"/> 为各层加成百分比之和。
+/// 倾巢而出：若本回合未打出能获得格挡的技能牌，回合结束时对随机非爪牙敌人造成
+/// 本回合累计伤害乘以 <see cref="Amount"/>% 的伤害。倍率可叠加。
 /// </summary>
 [RegisterPower]
 public sealed class AllInPower : ModPowerTemplate
 {
 	public const decimal BaseBonusPercent = 50m;
 	public const decimal UpgradedBonusPercent = 75m;
-
-	private CardModel? _boostedCard;
+	public const string TurnDamageVarName = "TurnDamage";
 
 	public override PowerType Type => PowerType.Buff;
 
@@ -31,109 +38,83 @@ public sealed class AllInPower : ModPowerTemplate
 
 	public override Color AmountLabelColor => PowerModel._normalAmountLabelColor;
 
+	public bool Blocked => IsMutable && AllInTurnTracker.PlayedBlockSkill(Owner.Player);
+
+	protected override IEnumerable<DynamicVar> CanonicalVars =>
+	[
+		new DynamicVar(TurnDamageVarName, 0m),
+	];
+
 	public override PowerAssetProfile AssetProfile => new(
 		IconPath: "res://images/powers/AllInPower.png",
 		BigIconPath: "res://images/powers/AllInPowerBig.png");
 
-	public override Task BeforeCardPlayed(CardPlay cardPlay)
+	public override Task AfterApplied(Creature? applier, CardModel? cardSource)
 	{
-		// 新一轮出牌（含上一次多段出牌被战斗中断后的残留标记）。
-		if (cardPlay.PlayIndex == 0)
-		{
-			_boostedCard = null;
-		}
-
-		if (cardPlay.Card.Owner.Creature != Owner
-			|| cardPlay.PlayIndex != 0
-			|| !IsQualifyingCard(cardPlay.Card))
-		{
-			return Task.CompletedTask;
-		}
-
-		// 牌已离手；若打出前手牌仅此一张，此刻手牌应为空。
-		if (PileType.Hand.GetPile(cardPlay.Card.Owner).Cards.Count == 0)
-		{
-			_boostedCard = cardPlay.Card;
-		}
-
+		SyncTurnDamageVar();
 		return Task.CompletedTask;
 	}
 
-	public override Task AfterCardPlayedLate(PlayerChoiceContext choiceContext, CardPlay cardPlay)
-	{
-		if (cardPlay.Card == _boostedCard && IsFinalPlayIteration(cardPlay))
-		{
-			_boostedCard = null;
-		}
-
-		return Task.CompletedTask;
-	}
-
-	public override decimal ModifyDamageMultiplicative(
-		Creature? target,
+	public override Task AfterPowerAmountChanged(
+		PlayerChoiceContext choiceContext,
+		PowerModel power,
 		decimal amount,
-		ValueProp props,
-		Creature? dealer,
-		CardModel? card,
-		CardPlay? cardPlay)
+		Creature? applier,
+		CardModel? cardSource)
 	{
-		if (!ShouldBoost(card, dealer))
+		if (power == this)
 		{
-			return 1m;
+			SyncTurnDamageVar();
 		}
 
-		Flash();
-		return 1m + Amount / 100m;
+		return Task.CompletedTask;
 	}
 
-	public override decimal ModifyBlockMultiplicative(
-		Creature target,
-		decimal block,
-		ValueProp props,
-		CardModel? cardSource,
-		CardPlay? cardPlay)
+	public override async Task AfterSideTurnEndLate(
+		PlayerChoiceContext choiceContext,
+		CombatSide side,
+		IEnumerable<Creature> participants)
 	{
-		if (!ShouldBoost(cardSource, target))
+		if (side != Owner.Side || !participants.Contains(Owner) || Amount <= 0m)
 		{
-			return 1m;
+			return;
 		}
 
-		Flash();
-		return 1m + Amount / 100m;
+		Player? player = Owner.Player;
+		if (player is null)
+		{
+			return;
+		}
+
+		decimal damage = CalculateEndTurnDamage();
+		if (!AllInTurnTracker.PlayedBlockSkill(player) && damage > 0m)
+		{
+			List<Creature> targets = Owner.CombatState!.HittableEnemies
+				.Where(enemy => enemy.IsAlive && !enemy.HasPower<MinionPower>())
+				.ToList();
+			Creature? target = player.RunState.Rng.CombatTargets.NextItem(targets);
+			if (target is not null)
+			{
+				Flash();
+				await CreatureCmd.Damage(
+					choiceContext,
+					target,
+					damage,
+					ValueProp.Unpowered,
+					Owner,
+					cardSource: null,
+					cardPlay: null);
+			}
+		}
+
+		AllInTurnTracker.Reset(player);
 	}
 
-	private bool ShouldBoost(CardModel? card, Creature? actor)
+	internal decimal CalculateEndTurnDamage() =>
+		Math.Floor(AllInTurnTracker.GetTotalDamage(Owner.Player) * Amount / 100m);
+
+	internal void SyncTurnDamageVar()
 	{
-		if (card is null || actor != Owner || card.Owner != Owner.Player || !IsQualifyingCard(card))
-		{
-			return false;
-		}
-
-		// 打出结算：BeforeCardPlayed 已标记。
-		if (card == _boostedCard)
-		{
-			return true;
-		}
-
-		// 手牌预览：最后一张仍在手牌中。
-		CardPile hand = PileType.Hand.GetPile(card.Owner);
-		return hand.Cards.Count == 1 && hand.Cards[0] == card;
-	}
-
-	private static bool IsQualifyingCard(CardModel card) =>
-		card.Type is CardType.Attack or CardType.Skill;
-
-	/// <summary>
-	/// 仅在整次出牌（含仁义双剑等多段结算）的最后一击后清除加成标记。
-	/// <see cref="CardPlay.PlayCount"/> 异常为 0 时按单次出牌处理，避免标记泄漏。
-	/// </summary>
-	private static bool IsFinalPlayIteration(CardPlay cardPlay)
-	{
-		if (cardPlay.PlayCount <= 1)
-		{
-			return true;
-		}
-
-		return cardPlay.PlayIndex >= cardPlay.PlayCount - 1;
+		DynamicVars[TurnDamageVarName].BaseValue = CalculateEndTurnDamage();
 	}
 }
