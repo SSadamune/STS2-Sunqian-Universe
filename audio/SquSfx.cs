@@ -144,6 +144,32 @@ internal static class SquSfx
 	public const string ChickenFootCheeseChenGongEvent = "event:/sunqian_universe/sfx/鸡脚芝士-陈宫";
 	public const string ChickenFootCheeseWangPingEvent = "event:/sunqian_universe/sfx/鸡脚芝士-王平";
 	public const string SlightRevisionEvent = "event:/sunqian_universe/sfx/稍作修改-好方略，不过我想稍作修改";
+	public const string BasicStrikeCaoCaoEvent = "event:/sunqian_universe/sfx/打击-曹操";
+	public const string BasicStrikeLiuBeiEvent = "event:/sunqian_universe/sfx/打击-刘备";
+	public const string BasicDefendCaoCaoEvent = "event:/sunqian_universe/sfx/防御-曹操";
+	public const string BasicDefendLiuBeiEvent = "event:/sunqian_universe/sfx/防御-刘备";
+	public const string WineDrinkThisFlaskEvent = "event:/sunqian_universe/sfx/酒-喝下这壶酒";
+	public const string WineThirstyEvent = "event:/sunqian_universe/sfx/酒-我正渴着呢";
+	public const string WineOldHeroEvent = "event:/sunqian_universe/sfx/酒-酒是老英雄";
+
+	public static readonly string[] BasicStrikeEvents =
+	[
+		BasicStrikeCaoCaoEvent,
+		BasicStrikeLiuBeiEvent,
+	];
+
+	public static readonly string[] BasicDefendEvents =
+	[
+		BasicDefendCaoCaoEvent,
+		BasicDefendLiuBeiEvent,
+	];
+
+	public static readonly string[] WineEvents =
+	[
+		WineDrinkThisFlaskEvent,
+		WineThirstyEvent,
+		WineOldHeroEvent,
+	];
 
 	public static readonly string[] VoiceChangeEvents =
 	[

@@ -10,6 +10,7 @@ using MegaCrit.Sts2.Core.Localization;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.Models.Cards;
 using MegaCrit.Sts2.Core.Models.Powers;
+using Squ.Audio;
 using Squ.Character;
 using Squ.Interop;
 using Squ.Script;
@@ -51,6 +52,8 @@ public sealed class Wine : ModCardTemplate
 
 	protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
 	{
+		SquSfx.PlayRandom(RunState, SquSfx.WineEvents);
+
 		ICombatState combatState = CombatState
 			?? throw new InvalidOperationException("Wine requires an active combat.");
 

@@ -7,6 +7,7 @@ using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.Localization;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.ValueProps;
+using Squ.Audio;
 using Squ.Character;
 using Squ.Combat;
 using Squ.Powers;
@@ -39,6 +40,8 @@ public sealed class StrikeLongtao : ModCardTemplate
 
 	protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
 	{
+		SquSfx.PlayRandom(RunState, SquSfx.BasicStrikeEvents);
+
 		if (SquBasicStrikeRedirect.ShouldHandleInOnPlay(this))
 		{
 			await SquBasicStrikeRedirect.ExecuteRedirectedBasicStrikeDamage(this, choiceContext);
