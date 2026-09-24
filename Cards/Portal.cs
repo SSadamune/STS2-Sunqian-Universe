@@ -18,8 +18,8 @@ namespace Squ.Cards;
 [RegisterCard(typeof(SunqianCardPool), StableEntryStem = "portal")]
 public sealed class Portal : ModCardTemplate
 {
-	private const decimal ScryAmount = 4m;
-	private const decimal UpgradedScryAmount = 5m;
+	public const int ScryAmount = 4;
+	public const int UpgradedScryAmount = 5;
 
 	protected override IEnumerable<DynamicVar> CanonicalVars =>
 	[

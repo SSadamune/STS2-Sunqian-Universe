@@ -26,9 +26,9 @@ namespace Squ.Cards;
 [RegisterCard(typeof(SunqianCardPool), StableEntryStem = "human_transmutation")]
 public sealed class HumanTransmutation : ModCardTemplate
 {
-	private const int MaxExhaustCount = 3;
+	public const int MaxExhaustCount = 3;
 
-	private const int SlitherMinCost = 3;
+	public const int SlitherMinCost = 3;
 
 	private readonly record struct EnchantmentSpec(Type EnchantmentType, int Amount);
 

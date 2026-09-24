@@ -22,9 +22,9 @@ namespace Squ.Cards;
 [RegisterCard(typeof(SunqianCardPool), StableEntryStem = "arm_injury_windmill")]
 public sealed class ArmInjuryWindmill : ModCardTemplate
 {
-	private const int BaseDrawCount = 2;
-	private const int UpgradedDrawCount = 3;
-	private const decimal StatAmount = 3m;
+	public const int BaseDrawCount = 2;
+	public const int UpgradedDrawCount = 3;
+	public const int StatAmount = 3;
 
 	protected override IEnumerable<DynamicVar> CanonicalVars =>
 	[

@@ -26,8 +26,8 @@ namespace Squ.Cards;
 [RegisterCard(typeof(SunqianCardPool), StableEntryStem = "ruthless_strike")]
 public sealed class RuthlessStrike : ChargeCardTemplate
 {
-	public const decimal CanonicalDamage = 7m;
-	public const decimal UpgradedDamage = 9m;
+	public const int CanonicalDamage = 7;
+	public const int UpgradedDamage = 9;
 	public const int CanonicalHits = 1;
 
 	private static readonly ValueProp DamageProps = ValueProp.Move | ValueProp.Unblockable;

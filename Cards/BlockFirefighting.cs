@@ -28,11 +28,11 @@ namespace Squ.Cards;
 [RegisterCard(typeof(SunqianCardPool), StableEntryStem = "block_firefighting")]
 public sealed class BlockFirefighting : ModCardTemplate
 {
-	public const decimal WeakAmount = 1m;
-	public const decimal BaseBurning = 7m;
-	public const decimal UpgradedBurning = 9m;
-	public const decimal BaseUnextinguished = 2m;
-	public const decimal UpgradedUnextinguished = 3m;
+	public const int WeakAmount = 1;
+	public const int BaseBurning = 7;
+	public const int UpgradedBurning = 9;
+	public const int BaseUnextinguished = 2;
+	public const int UpgradedUnextinguished = 3;
 
 	protected override IEnumerable<DynamicVar> CanonicalVars =>
 	[

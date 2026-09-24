@@ -17,6 +17,8 @@ namespace Squ.Cards;
 [RegisterCard(typeof(TokenCardPool), StableEntryStem = "exactly_what_to_eat")]
 public sealed class ExactlyWhatToEat : ModCardTemplate
 {
+	public const int BaseDraw = 1;
+	public const int UpgradedDraw = 2;
 	public const int ExhaustCount = 1;
 
 	public override CardAssetProfile AssetProfile => new(
@@ -24,7 +26,7 @@ public sealed class ExactlyWhatToEat : ModCardTemplate
 
 	protected override IEnumerable<DynamicVar> CanonicalVars =>
 	[
-		new CardsVar(1),
+		new CardsVar(BaseDraw),
 	];
 
 	public override IEnumerable<CardKeyword> CanonicalKeywords =>
@@ -51,6 +53,6 @@ public sealed class ExactlyWhatToEat : ModCardTemplate
 
 	protected override void OnUpgrade()
 	{
-		DynamicVars.Cards.UpgradeValueBy(1m);
+		DynamicVars.Cards.UpgradeValueBy(UpgradedDraw - BaseDraw);
 	}
 }

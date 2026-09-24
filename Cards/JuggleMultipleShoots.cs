@@ -25,7 +25,7 @@ namespace Squ.Cards;
 [RegisterCard(typeof(SunqianCardPool), StableEntryStem = "juggle_multiple_shoots")]
 public sealed class JuggleMultipleShoots : ModCardTemplate
 {
-	private const int ChoiceCount = 3;
+	public const int ChoiceCount = 3;
 
 	/// <summary>
 	/// 对龙套演员几乎无用的他角能力（辉星/锻造/君王之剑/小刀/奥斯提/魂/充能球/中毒增幅等）。

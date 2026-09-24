@@ -21,10 +21,10 @@ namespace Squ.Cards;
 [RegisterCard(typeof(SunqianCardPool), StableEntryStem = "bowang_paradox_script")]
 public sealed class BowangParadoxScript : ScriptCardTemplate
 {
-	public const decimal BaseVigor = 6m;
-	public const decimal UpgradedVigor = 9m;
-	public const decimal BaseTinderStacks = 6m;
-	public const decimal UpgradedTinderStacks = 9m;
+	public const int BaseVigor = 6;
+	public const int UpgradedVigor = 9;
+	public const int BaseTinderStacks = 6;
+	public const int UpgradedTinderStacks = 9;
 
 	protected override IEnumerable<DynamicVar> CanonicalVars =>
 	[

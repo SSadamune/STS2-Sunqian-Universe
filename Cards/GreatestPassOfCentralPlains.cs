@@ -29,8 +29,8 @@ namespace Squ.Cards;
 [RegisterCard(typeof(SunqianCardPool), StableEntryStem = "greatest_pass_of_central_plains")]
 public sealed class GreatestPassOfCentralPlains : ModCardTemplate
 {
-	public const decimal BlockAmount = 18m;
-	public const decimal UpgradedBlockAmount = 36m;
+	public const int BlockAmount = 18;
+	public const int UpgradedBlockAmount = 36;
 
 	protected override IEnumerable<DynamicVar> CanonicalVars =>
 	[

@@ -18,8 +18,8 @@ namespace Squ.Cards;
 [RegisterCard(typeof(TokenCardPool), StableEntryStem = "shangfanggu_sigh")]
 public sealed class ShangfangguSigh : ModCardTemplate
 {
-	public const decimal BaseBonusPercent = 100m;
-	public const decimal UpgradedBonusPercent = 150m;
+	public const int BaseBonusPercent = 100;
+	public const int UpgradedBonusPercent = 150;
 
 	protected override IEnumerable<DynamicVar> CanonicalVars =>
 	[

@@ -28,8 +28,8 @@ namespace Squ.Cards;
 [RegisterCard(typeof(SunqianCardPool), StableEntryStem = "too_kind_to_be_true")]
 public sealed class TooKindToBeTrue : ModCardTemplate
 {
-	public const decimal ExtraBlockPerDebuff = 3m;
-	public const decimal UpgradedExtraBlockPerDebuff = 4m;
+	public const int ExtraBlockPerDebuff = 3;
+	public const int UpgradedExtraBlockPerDebuff = 4;
 	private const string ExtraBlockKey = "ExtraBlock";
 
 	protected override IEnumerable<DynamicVar> CanonicalVars =>

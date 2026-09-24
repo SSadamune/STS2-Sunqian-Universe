@@ -19,8 +19,8 @@ namespace Squ.Cards;
 [RegisterCard(typeof(TokenCardPool), StableEntryStem = "chicken_foot_cheese_strike_preview")]
 public sealed class ChickenFootCheeseStrikePreview : ModCardTemplate, IRandomEnemyTargetCount
 {
-	private const decimal BaseDamage = 6m;
-	private const decimal UpgradedDamage = 9m;
+	public const int BaseDamage = 6;
+	public const int UpgradedDamage = 9;
 
 	protected override IEnumerable<DynamicVar> CanonicalVars =>
 	[

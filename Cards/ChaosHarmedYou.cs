@@ -30,12 +30,12 @@ namespace Squ.Cards;
 [RegisterCard(typeof(SunqianCardPool), StableEntryStem = "chaos_harmed_you")]
 public sealed class ChaosHarmedYou : ModCardTemplate
 {
-	public const decimal BaseDamage = 21m;
-	public const decimal UpgradedDamage = 28m;
-	private const int DrawOnKill = 1;
-	private const int UpgradedDrawOnKill = 2;
-	private const int BaseEnergyOnKill = 1;
-	private const int UpgradedEnergyOnKill = 2;
+	public const int BaseDamage = 21;
+	public const int UpgradedDamage = 28;
+	public const int DrawOnKill = 1;
+	public const int UpgradedDrawOnKill = 2;
+	public const int BaseEnergyOnKill = 1;
+	public const int UpgradedEnergyOnKill = 2;
 
 	private static readonly ValueProp DamageProps = ValueProp.Move | ValueProp.Unpowered;
 

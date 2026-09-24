@@ -29,12 +29,13 @@ public sealed class FingerSnapStrike : ChargeCardTemplate
 	public const string MinCostVarName = "MinCost";
 	public const string MaxCostVarName = "MaxCost";
 
+	public const int RandomCostInclusiveMin = 0;
 	public const int RandomCostInclusiveMax = 2;
 
 	protected override IEnumerable<DynamicVar> CanonicalVars =>
 	[
 		new DamageVar(BaseDamage, ValueProp.Move),
-		new DynamicVar(MinCostVarName, 0),
+		new DynamicVar(MinCostVarName, RandomCostInclusiveMin),
 		new DynamicVar(MaxCostVarName, RandomCostInclusiveMax),
 	];
 

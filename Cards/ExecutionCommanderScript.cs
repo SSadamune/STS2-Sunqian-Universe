@@ -23,8 +23,8 @@ namespace Squ.Cards;
 public sealed class ExecutionCommanderScript : ScriptCardTemplate
 {
 	public const int GeneratedStrikeCount = 2;
-	public const decimal BaseBonusPercent = 50m;
-	public const decimal UpgradedBonusPercent = 100m;
+	public const int BaseBonusPercent = 50;
+	public const int UpgradedBonusPercent = 100;
 
 	private const string BonusPercentVarName = "BonusPercent";
 

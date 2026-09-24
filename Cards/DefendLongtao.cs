@@ -15,9 +15,12 @@ namespace Squ.Cards;
 [RegisterCharacterStarterCard(typeof(SunqianCharacter), 4)]
 public sealed class DefendLongtao : ModCardTemplate
 {
+	public const int BaseBlock = 5;
+	public const int UpgradedBlock = 8;
+
 	protected override IEnumerable<DynamicVar> CanonicalVars =>
 	[
-		new BlockVar(5m, ValueProp.Move),
+		new BlockVar(BaseBlock, ValueProp.Move),
 	];
 
 	protected override HashSet<CardTag> CanonicalTags => [CardTag.Defend];
@@ -39,6 +42,6 @@ public sealed class DefendLongtao : ModCardTemplate
 
 	protected override void OnUpgrade()
 	{
-		DynamicVars.Block.UpgradeValueBy(3m);
+		DynamicVars.Block.UpgradeValueBy(UpgradedBlock - BaseBlock);
 	}
 }

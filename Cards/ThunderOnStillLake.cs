@@ -27,9 +27,9 @@ namespace Squ.Cards;
 [RegisterCard(typeof(SunqianCardPool), StableEntryStem = "thunder_on_still_lake")]
 public sealed class ThunderOnStillLake : ChargeCardTemplate
 {
-	public const decimal CanonicalDamage = 1m;
+	public const int CanonicalDamage = 1;
 
-	public const decimal UpgradedDamage = 5m;
+	public const int UpgradedDamage = 5;
 
 	public const int CanonicalHits = 2;
 
@@ -39,9 +39,9 @@ public sealed class ThunderOnStillLake : ChargeCardTemplate
 
 	public const int EnergyReductionPerAttack = 1;
 
-	private const decimal ChopYourHeadDamage = 30m;
+	public const int ChopYourHeadDamage = 30;
 
-	private const decimal AsLongAsIBreatheDamage = 10m;
+	public const int AsLongAsIBreatheDamage = 10;
 
 	protected override IEnumerable<DynamicVar> CanonicalVars =>
 	[

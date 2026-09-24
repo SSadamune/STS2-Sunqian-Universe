@@ -24,10 +24,13 @@ namespace Squ.Cards;
 [RegisterCard(typeof(SunqianCardPool), StableEntryStem = "table_flip")]
 public sealed class TableFlip : ModCardTemplate
 {
+	public const int WeakAmount = 2;
+	public const int DamageAmount = 18;
+
 	protected override IEnumerable<DynamicVar> CanonicalVars =>
 	[
-		new PowerVar<WeakPower>(2),
-		new DamageVar(18m, ValueProp.Move),
+		new PowerVar<WeakPower>(WeakAmount),
+		new DamageVar(DamageAmount, ValueProp.Move),
 	];
 
 	protected override IEnumerable<IHoverTip> AdditionalHoverTips =>

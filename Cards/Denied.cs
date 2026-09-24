@@ -27,6 +27,11 @@ namespace Squ.Cards;
 [RegisterCard(typeof(SunqianCardPool), StableEntryStem = "denied")]
 public sealed class Denied : ModCardTemplate
 {
+	public const int BaseWeak = 1;
+	public const int UpgradedWeak = 2;
+	public const int BaseVulnerable = 1;
+	public const int UpgradedVulnerable = 2;
+
 	/// <summary>打出本牌施加 debuff 时为 true，避免触发自身的被动回手。</summary>
 	private bool _isApplyingOwnDebuff;
 
@@ -38,8 +43,8 @@ public sealed class Denied : ModCardTemplate
 
 	protected override IEnumerable<DynamicVar> CanonicalVars =>
 	[
-		new PowerVar<WeakPower>(1),
-		new PowerVar<VulnerablePower>(1),
+		new PowerVar<WeakPower>(BaseWeak),
+		new PowerVar<VulnerablePower>(BaseVulnerable),
 	];
 
 	protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
@@ -179,8 +184,8 @@ public sealed class Denied : ModCardTemplate
 
 	protected override void OnUpgrade()
 	{
-		DynamicVars[nameof(WeakPower)].UpgradeValueBy(1m);
-		DynamicVars[nameof(VulnerablePower)].UpgradeValueBy(1m);
+		DynamicVars[nameof(WeakPower)].UpgradeValueBy(UpgradedWeak - BaseWeak);
+		DynamicVars[nameof(VulnerablePower)].UpgradeValueBy(UpgradedVulnerable - BaseVulnerable);
 	}
 
 	private bool ShouldTrackDebuffApplication(

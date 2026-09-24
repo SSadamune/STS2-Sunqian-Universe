@@ -23,9 +23,9 @@ namespace Squ.Cards;
 [RegisterCard(typeof(SunqianCardPool), StableEntryStem = "open_defecation")]
 public sealed class OpenDefecation : ModCardTemplate
 {
-	private const int Threshold = 3;
-	private const decimal BaseDexterity = 3m;
-	private const decimal UpgradedDexterity = 4m;
+	public const int Threshold = 3;
+	public const int BaseDexterity = 3;
+	public const int UpgradedDexterity = 4;
 
 	protected override IEnumerable<DynamicVar> CanonicalVars =>
 	[

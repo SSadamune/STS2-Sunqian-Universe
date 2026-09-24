@@ -20,7 +20,7 @@ namespace Squ.Cards;
 [RegisterCard(typeof(SunqianCardPool), StableEntryStem = "audition")]
 public sealed class Audition : ModCardTemplate
 {
-	private const int ScriptCardCount = 3;
+	public const int ScriptCardCount = 3;
 
 	public override IEnumerable<CardKeyword> CanonicalKeywords =>
 	[

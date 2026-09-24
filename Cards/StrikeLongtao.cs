@@ -19,9 +19,12 @@ namespace Squ.Cards;
 [RegisterCharacterStarterCard(typeof(SunqianCharacter), 4)]
 public sealed class StrikeLongtao : ModCardTemplate
 {
+	public const int BaseDamage = 6;
+	public const int UpgradedDamage = 9;
+
 	protected override IEnumerable<DynamicVar> CanonicalVars =>
 	[
-		new DamageVar(6m, ValueProp.Move),
+		new DamageVar(BaseDamage, ValueProp.Move),
 	];
 
 	protected override HashSet<CardTag> CanonicalTags => [CardTag.Strike];
@@ -53,7 +56,7 @@ public sealed class StrikeLongtao : ModCardTemplate
 
 	protected override void OnUpgrade()
 	{
-		DynamicVars.Damage.UpgradeValueBy(3m);
+		DynamicVars.Damage.UpgradeValueBy(UpgradedDamage - BaseDamage);
 	}
 
 	protected override void AddExtraArgsToDescription(LocString description)

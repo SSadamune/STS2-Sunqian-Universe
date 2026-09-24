@@ -16,7 +16,7 @@ namespace Squ.Cards;
 [RegisterCard(typeof(SunqianCardPool), StableEntryStem = "benevolence_righteousness_dual_swords")]
 public sealed class BenevolenceRighteousnessDualSwords : ModCardTemplate
 {
-	public const decimal ExtraPlaysPerCard = 1m;
+	public const int ExtraPlaysPerCard = 1;
 
 	public override CardAssetProfile AssetProfile => new(
 		PortraitPath: "res://images/cards/BenevolenceRighteousnessDualSwords.png");

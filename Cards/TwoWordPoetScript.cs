@@ -24,7 +24,7 @@ namespace Squ.Cards;
 [RegisterCard(typeof(SunqianCardPool), StableEntryStem = "two_word_poet_script")]
 public sealed class TwoWordPoetScript : ScriptCardTemplate
 {
-	public const decimal CanonicalDamage = 2m;
+	public const int CanonicalDamage = 2;
 	public const int CanonicalHits = 2;
 
 	protected override IEnumerable<DynamicVar> CanonicalVars =>

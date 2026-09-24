@@ -28,8 +28,8 @@ namespace Squ.Cards;
 [RegisterCard(typeof(SunqianCardPool), StableEntryStem = "work_life_balance")]
 public sealed class WorkLifeBalance : ModCardTemplate
 {
-	public const decimal CanonicalBlock = 8m;
-	public const decimal UpgradedBlock = 4m;
+	public const int CanonicalBlock = 8;
+	public const int UpgradedBlock = 4;
 	public const int CanonicalRepeat = 1;
 	public const int UpgradedRepeat = 2;
 

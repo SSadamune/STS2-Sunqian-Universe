@@ -23,10 +23,10 @@ namespace Squ.Cards;
 [RegisterCard(typeof(SunqianCardPool), StableEntryStem = "circus")]
 public sealed class Circus : ModCardTemplate
 {
-	public const decimal CanonicalDamage = 10m;
-	public const decimal UpgradedDamage = 13m;
-	public const decimal CanonicalDexterity = 2m;
-	public const decimal UpgradedDexterity = 3m;
+	public const int CanonicalDamage = 10;
+	public const int UpgradedDamage = 13;
+	public const int CanonicalDexterity = 2;
+	public const int UpgradedDexterity = 3;
 
 	protected override IEnumerable<DynamicVar> CanonicalVars =>
 	[

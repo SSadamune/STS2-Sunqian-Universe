@@ -24,14 +24,14 @@ namespace Squ.Cards;
 [RegisterCard(typeof(SunqianCardPool), StableEntryStem = "why_doubt_wei")]
 public sealed class WhyDoubtWei : ModCardTemplate
 {
-	public const decimal BaseDamage = 14m;
-	public const decimal UpgradedDamage = 17m;
-	public const decimal BaseBlock = 14m;
-	public const decimal UpgradedBlock = 17m;
-	public const decimal BaseStrength = 2m;
-	public const decimal UpgradedStrength = 3m;
-	public const decimal BaseWeak = 2m;
-	public const decimal UpgradedWeak = 1m;
+	public const int BaseDamage = 14;
+	public const int UpgradedDamage = 17;
+	public const int BaseBlock = 14;
+	public const int UpgradedBlock = 17;
+	public const int BaseStrength = 2;
+	public const int UpgradedStrength = 3;
+	public const int BaseWeak = 2;
+	public const int UpgradedWeak = 1;
 
 	protected override IEnumerable<DynamicVar> CanonicalVars =>
 	[

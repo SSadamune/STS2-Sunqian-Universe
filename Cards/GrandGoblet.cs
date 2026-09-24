@@ -21,12 +21,13 @@ namespace Squ.Cards;
 [RegisterCard(typeof(SunqianCardPool), StableEntryStem = "grand_goblet")]
 public sealed class GrandGoblet : ModCardTemplate
 {
+	public const int EnergyGain = 1;
 	public const int BaseVigor = 3;
 	public const int UpgradedVigor = 6;
 
 	protected override IEnumerable<DynamicVar> CanonicalVars =>
 	[
-		new EnergyVar(1),
+		new EnergyVar(EnergyGain),
 		new PowerVar<VigorPower>(BaseVigor),
 	];
 

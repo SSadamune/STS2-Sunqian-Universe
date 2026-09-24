@@ -28,10 +28,10 @@ namespace Squ.Cards;
 [RegisterCard(typeof(SunqianCardPool), StableEntryStem = "musou_attack")]
 public sealed class MusouAttack : ModCardTemplate
 {
-	public const decimal CanonicalDamage = 17m;
-	public const decimal UpgradedDamage = 19m;
-	public const decimal CanonicalDexterityMultiplier = 3m;
-	public const decimal UpgradedDexterityMultiplier = 4m;
+	public const int CanonicalDamage = 17;
+	public const int UpgradedDamage = 19;
+	public const int CanonicalDexterityMultiplier = 3;
+	public const int UpgradedDexterityMultiplier = 4;
 
 	public const string DexterityMultVarName = "DexterityMult";
 

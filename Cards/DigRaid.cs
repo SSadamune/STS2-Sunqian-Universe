@@ -30,10 +30,10 @@ namespace Squ.Cards;
 [RegisterCard(typeof(SunqianCardPool), StableEntryStem = "dig_raid")]
 public sealed class DigRaid : ModCardTemplate
 {
-	public const decimal CanonicalDamage = 8m;
-	public const decimal UpgradedDamage = 11m;
-	public const decimal CanonicalBurning = 5m;
-	public const decimal UpgradedBurning = 7m;
+	public const int CanonicalDamage = 8;
+	public const int UpgradedDamage = 11;
+	public const int CanonicalBurning = 5;
+	public const int UpgradedBurning = 7;
 
 	private static readonly ValueProp DamageProps = ValueProp.Move | ValueProp.Unblockable;
 

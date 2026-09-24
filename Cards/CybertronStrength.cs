@@ -21,8 +21,8 @@ namespace Squ.Cards;
 [RegisterCard(typeof(SunqianCardPool), StableEntryStem = "cybertron_strength")]
 public sealed class CybertronStrength : ModCardTemplate
 {
-	public const decimal BaseBlock = 7m;
-	public const decimal UpgradedBlock = 9m;
+	public const int BaseBlock = 7;
+	public const int UpgradedBlock = 9;
 	public const int BaseBurningPerExtraBlock = 9;
 	public const int UpgradedBurningPerExtraBlock = 7;
 

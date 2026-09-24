@@ -23,13 +23,15 @@ namespace Squ.Cards;
 [RegisterCard(typeof(SunqianCardPool), StableEntryStem = "respect_elders")]
 public sealed class RespectElders : ModCardTemplate
 {
-	private const int BaseHitCount = 2;
-	private const int UpgradedHitCount = 3;
+	public const int DamageAmount = 7;
+	public const int BaseHitCount = 2;
+	public const int UpgradedHitCount = 3;
+
 	private const string CanMultiHitVarName = "CanMultiHit";
 
 	protected override IEnumerable<DynamicVar> CanonicalVars =>
 	[
-		new DamageVar(7m, ValueProp.Move),
+		new DamageVar(DamageAmount, ValueProp.Move),
 		new DynamicVar("HitCount", BaseHitCount),
 		ModCardVars.Computed(CanMultiHitVarName, 0,
 			(CardModel? card, Creature? target) =>

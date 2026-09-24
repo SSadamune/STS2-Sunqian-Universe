@@ -22,9 +22,12 @@ namespace Squ.Cards;
 [RegisterCard(typeof(SunqianCardPool), StableEntryStem = "starry_night_strike")]
 public sealed class StarryNightStrike : ModCardTemplate
 {
+	public const int BaseDamage = 7;
+	public const int UpgradedDamage = 10;
+
 	protected override IEnumerable<DynamicVar> CanonicalVars =>
 	[
-		new DamageVar(7m, ValueProp.Move),
+		new DamageVar(BaseDamage, ValueProp.Move),
 	];
 
 	protected override HashSet<CardTag> CanonicalTags => [CardTag.Strike];
@@ -60,6 +63,6 @@ public sealed class StarryNightStrike : ModCardTemplate
 
 	protected override void OnUpgrade()
 	{
-		DynamicVars.Damage.UpgradeValueBy(3m);
+		DynamicVars.Damage.UpgradeValueBy(UpgradedDamage - BaseDamage);
 	}
 }

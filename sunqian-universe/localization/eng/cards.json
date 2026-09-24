@@ -22,7 +22,7 @@
   "SUNQIAN_UNIVERSE_CARD_THE_ARROGANT_FALL.title": "The arrogant fall",
   "SUNQIAN_UNIVERSE_CARD_THE_ARROGANT_FALL.description": "Give an [gold]ANYONE[/gold] {Buff:diff()} [gold]Vigor[/gold] and [gold]Block[/gold]. At the start of its next turn, it gains {Debuff:diff()} [gold]Weak[/gold] and [gold]Vulnerable[/gold].",
   "SUNQIAN_UNIVERSE_CARD_WRAP_UP.title": "Wrap Up",
-  "SUNQIAN_UNIVERSE_CARD_WRAP_UP.description": "Gain {VigorPower:diff()} [gold]Vigor[/gold].\n[gold]Wrap[/gold]: Gain it an additional time.",
+  "SUNQIAN_UNIVERSE_CARD_WRAP_UP.description": "Gain {VigorPower:diff()} [gold]Vigor[/gold].\n[gold]Wrap[/gold]: Gain {WrapVigor:diff()} more [gold]Vigor[/gold].",
   "SUNQIAN_UNIVERSE_CARD_HUAGU_MIANZHANG.title": "Huagu Mianzhang",
   "SUNQIAN_UNIVERSE_CARD_HUAGU_MIANZHANG.description": "Deal {Damage:diff()} damage.\nThe enemy gains [gold]Doom[/gold] equal to the damage dealt at the start of each of its turns.",
   "SUNQIAN_UNIVERSE_CARD_JUGGLE_MULTIPLE_SHOOTS.title": "Juggle Multiple Shoots",

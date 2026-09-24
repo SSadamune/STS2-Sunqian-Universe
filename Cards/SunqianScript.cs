@@ -20,7 +20,7 @@ namespace Squ.Cards;
 [RegisterCharacterStarterCard(typeof(SunqianCharacter), 1)]
 public sealed class SunqianScript : ScriptCardTemplate
 {
-	private const decimal DexterityAmount = 2m;
+	public const int DexterityAmount = 2;
 
 	protected override IEnumerable<DynamicVar> CanonicalVars =>
 	[

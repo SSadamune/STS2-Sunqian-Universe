@@ -19,10 +19,10 @@ namespace Squ.Cards;
 [RegisterCard(typeof(SunqianCardPool), StableEntryStem = "self_decapitation_ascension")]
 public sealed class SelfDecapitationAscension : ModCardTemplate
 {
-	private const decimal BaseHpLoss = 11m;
-	private const decimal UpgradedHpLoss = 7m;
-	private const int DrawCount = 1;
-	private const decimal IntangibleAmount = 1m;
+	public const int BaseHpLoss = 11;
+	public const int UpgradedHpLoss = 7;
+	public const int DrawCount = 1;
+	public const int IntangibleAmount = 1;
 
 	protected override IEnumerable<DynamicVar> CanonicalVars =>
 	[

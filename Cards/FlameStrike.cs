@@ -20,8 +20,10 @@ namespace Squ.Cards;
 [RegisterCard(typeof(SunqianCardPool), StableEntryStem = "flame_strike")]
 public sealed class FlameStrike : ModCardTemplate
 {
-	public const decimal BaseDamage = 7m;
-	public const decimal BaseBurning = 3m;
+	public const int BaseDamage = 7;
+	public const int UpgradedDamage = 10;
+	public const int BaseBurning = 3;
+	public const int UpgradedBurning = 4;
 
 	protected override IEnumerable<DynamicVar> CanonicalVars =>
 	[
@@ -64,7 +66,7 @@ public sealed class FlameStrike : ModCardTemplate
 
 	protected override void OnUpgrade()
 	{
-		DynamicVars.Damage.UpgradeValueBy(3m);
-		DynamicVars[nameof(BurningPower)].UpgradeValueBy(1m);
+		DynamicVars.Damage.UpgradeValueBy(UpgradedDamage - BaseDamage);
+		DynamicVars[nameof(BurningPower)].UpgradeValueBy(UpgradedBurning - BaseBurning);
 	}
 }

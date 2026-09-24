@@ -22,7 +22,7 @@ namespace Squ.Cards;
 [RegisterCard(typeof(SunqianCardPool), StableEntryStem = "close_fitting_armor")]
 public sealed class CloseFittingArmor : ModCardTemplate
 {
-	private const decimal BasePlating = 3m;
+	public const int BasePlating = 3;
 
 	protected override IEnumerable<DynamicVar> CanonicalVars =>
 	[

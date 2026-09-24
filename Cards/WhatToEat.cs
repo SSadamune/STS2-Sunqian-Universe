@@ -18,6 +18,8 @@ namespace Squ.Cards;
 [RegisterCard(typeof(SunqianCardPool), StableEntryStem = "what_to_eat")]
 public sealed class WhatToEat : ModCardTemplate
 {
+	public const int BaseDraw = 2;
+	public const int UpgradedDraw = 3;
 	public const int ExhaustCount = 2;
 
 	public override CardAssetProfile AssetProfile => new(
@@ -25,7 +27,7 @@ public sealed class WhatToEat : ModCardTemplate
 
 	protected override IEnumerable<DynamicVar> CanonicalVars =>
 	[
-		new CardsVar(2),
+		new CardsVar(BaseDraw),
 	];
 
 	protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
@@ -57,6 +59,6 @@ public sealed class WhatToEat : ModCardTemplate
 
 	protected override void OnUpgrade()
 	{
-		DynamicVars.Cards.UpgradeValueBy(1m);
+		DynamicVars.Cards.UpgradeValueBy(UpgradedDraw - BaseDraw);
 	}
 }
