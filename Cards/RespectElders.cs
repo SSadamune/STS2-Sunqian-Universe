@@ -23,7 +23,7 @@ namespace Squ.Cards;
 [RegisterCard(typeof(SunqianCardPool), StableEntryStem = "respect_elders")]
 public sealed class RespectElders : ModCardTemplate
 {
-	public const int DamageAmount = 7;
+	public const int DamageAmount = 9;
 	public const int BaseHitCount = 2;
 	public const int UpgradedHitCount = 3;
 

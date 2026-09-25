@@ -85,6 +85,12 @@ public sealed class LoyaltyOverKin : ModCardTemplate
 		decimal strengthAmount = DynamicVars[nameof(StrengthPower)].BaseValue;
 		SquVigorSnapshot.AttackSequence vigorSequence = SquVigorSnapshot.BeginAttackSequence(Owner.Creature, this);
 
+		await DamageCmd.Attack(vigorSequence.ResolveNextAttackDamage())
+			.FromCard(this, cardPlay)
+			.Targeting(target)
+			.WithHitFx("vfx/vfx_attack_slash")
+			.Execute(choiceContext);
+
 		foreach (CardModel card in selected)
 		{
 			if (card.Pile?.Type != PileType.Draw)
@@ -94,6 +100,13 @@ public sealed class LoyaltyOverKin : ModCardTemplate
 
 			await CardCmd.Exhaust(choiceContext, card);
 
+			await PowerCmd.Apply<StrengthPower>(
+				choiceContext,
+				Owner.Creature,
+				strengthAmount,
+				Owner.Creature,
+				this);
+
 			if (target.IsAlive)
 			{
 				await DamageCmd.Attack(vigorSequence.ResolveNextAttackDamage())
@@ -102,13 +115,6 @@ public sealed class LoyaltyOverKin : ModCardTemplate
 					.WithHitFx("vfx/vfx_attack_slash")
 					.Execute(choiceContext);
 			}
-
-			await PowerCmd.Apply<StrengthPower>(
-				choiceContext,
-				Owner.Creature,
-				strengthAmount,
-				Owner.Creature,
-				this);
 		}
 	}
 

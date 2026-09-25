@@ -144,6 +144,7 @@ internal static class SquSfx
 	public const string ChickenFootCheeseChenGongEvent = "event:/sunqian_universe/sfx/鸡脚芝士-陈宫";
 	public const string ChickenFootCheeseWangPingEvent = "event:/sunqian_universe/sfx/鸡脚芝士-王平";
 	public const string SlightRevisionEvent = "event:/sunqian_universe/sfx/稍作修改-好方略，不过我想稍作修改";
+	public const string SunqianHurtEvent = "event:/sunqian_universe/sfx/孙乾-受击";
 	public const string BasicStrikeCaoCaoEvent = "event:/sunqian_universe/sfx/打击-曹操";
 	public const string BasicStrikeLiuBeiEvent = "event:/sunqian_universe/sfx/打击-刘备";
 	public const string BasicDefendCaoCaoEvent = "event:/sunqian_universe/sfx/防御-曹操";

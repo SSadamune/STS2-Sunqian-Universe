@@ -13,6 +13,8 @@
 {bfa231d3-c7a0-4395-bb21-4afdf4149043} bus:/master/sfx_ducking_big
 {ea805add-ecda-4cfb-a5c4-295d960f51e7} event:/sunqian_universe/sfx/一人坚守南郡城
 {634747f4-ee4c-41be-9d36-f9958a348430} event:/sunqian_universe/sfx/一把叫仁之剑，一把叫义之剑
+{d1d2c204-40c6-4184-89c4-c9e8c9332d62} event:/sunqian_universe/sfx/不怕酸-咱家不怕酸
+{83d78065-54a1-4a8e-a1b6-268c7e29423b} event:/sunqian_universe/sfx/不怕酸-说了不怕酸
 {dc6fbd79-f408-485e-bcc8-c071037f1394} event:/sunqian_universe/sfx/中原第一雄关
 {59f4eca2-a4c7-4992-9ebf-d8ac77d78652} event:/sunqian_universe/sfx/义之剑
 {26de34bd-22f5-4be3-8836-8c7b34eddbdc} event:/sunqian_universe/sfx/乱世害你-不是阿瞒害了你
@@ -64,6 +66,7 @@
 {f88e063e-0622-4b5c-a7e2-13c66980d840} event:/sunqian_universe/sfx/夜观天象-董卓
 {10189575-4fd1-4c12-aeab-dfb859667ae5} event:/sunqian_universe/sfx/大义灭亲
 {1fae88d6-0db5-4220-b506-40d4367e636b} event:/sunqian_universe/sfx/夷陵好火
+{9444a2c9-fa64-40e9-9882-800b762303d3} event:/sunqian_universe/sfx/孙乾-受击
 {c7401d0e-ca36-4fb2-8efd-5c6f6255d628} event:/sunqian_universe/sfx/家丁剧本-来人
 {0931c89d-1db8-4f2b-acf4-92d114c4f976} event:/sunqian_universe/sfx/尊老爱幼-不斩老幼
 {07376e4f-d455-483a-9c1c-827ed2a7bf87} event:/sunqian_universe/sfx/尊老爱幼-你太老了
@@ -75,6 +78,8 @@
 {0b3dc75a-46bb-4e30-ac7d-fbd666e94348} event:/sunqian_universe/sfx/怒掀帅案
 {f102970a-3482-4d08-95d3-8decb30a4c8d} event:/sunqian_universe/sfx/我们吃什么
 {7485a8e0-557b-4934-8fd0-252ec31a1b3e} event:/sunqian_universe/sfx/打击-刘备
+{95accabb-03b0-4ed5-98a4-7f5ef0bd1b73} event:/sunqian_universe/sfx/打击-奶龙
+{82f7bf36-824d-4298-bb8d-fbdbdbc4b6a5} event:/sunqian_universe/sfx/打击-张飞
 {52d4caa7-0aa5-41ce-990f-c5682c85a119} event:/sunqian_universe/sfx/打击-曹操
 {adb55ca6-8f3b-4736-bddc-c598dd033ce7} event:/sunqian_universe/sfx/换大盏-不会客气
 {12e32a1d-4b35-4662-af72-aa768810c34b} event:/sunqian_universe/sfx/换大盏-当浮一大白
@@ -116,6 +121,7 @@
 {567226dd-47f8-4fd6-8c9e-35f7f1a34557} event:/sunqian_universe/sfx/透明窟窿-捅袁术
 {4708c139-4558-45a5-998d-7a161cda0a45} event:/sunqian_universe/sfx/酒-喝下这壶酒
 {69688b5b-3f03-4770-a603-2aee01f11c72} event:/sunqian_universe/sfx/酒-我正渴着呢
+{92a03b1e-cc87-4788-b1d4-d4d114ca4cb8} event:/sunqian_universe/sfx/酒-进城喝酒去了
 {08e47bfc-b309-4b68-ae68-d2c07a9e1ae2} event:/sunqian_universe/sfx/酒-酒是老英雄
 {63f32692-99b8-4b38-b39f-2e486dab6725} event:/sunqian_universe/sfx/镜头补拍-为了表现他此时在场
 {20e67140-0b0a-463b-8fce-4c22a8f9bd68} event:/sunqian_universe/sfx/镜头补拍-好，好志气

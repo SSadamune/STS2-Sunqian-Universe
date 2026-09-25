@@ -155,7 +155,7 @@
   "SUNQIAN_UNIVERSE_CARD_CLOSE_FITTING_ARMOR.title": "Close-Fitting Armor",
   "SUNQIAN_UNIVERSE_CARD_CLOSE_FITTING_ARMOR.description": "Gain {PlatingPower:diff()} [gold]Plating[/gold]. This amount is increased by your [gold]Dexterity[/gold].",
   "SUNQIAN_UNIVERSE_CARD_LOYALTY_OVER_KIN.title": "Loyalty Over Kin",
-  "SUNQIAN_UNIVERSE_CARD_LOYALTY_OVER_KIN.description": "Exhaust the 2 cards in your draw pile with the highest play rate: for each, deal {Damage:diff()} damage and gain {StrengthPower:diff()} [gold]Strength[/gold].{TargetCards}",
+  "SUNQIAN_UNIVERSE_CARD_LOYALTY_OVER_KIN.description": "Deal {Damage:diff()} damage.\nExhaust the 2 cards in your draw pile with the highest play rate: for each card exhausted, gain {StrengthPower:diff()} [gold]Strength[/gold] and deal damage again.{TargetCards}",
   "SUNQIAN_UNIVERSE_CARD_LOYALTY_OVER_KIN.targetCards": "\n(Exhausts {Cards})",
   "SUNQIAN_UNIVERSE_CARD_LOYALTY_OVER_KIN.cardSeparator": ", ",
   "SUNQIAN_UNIVERSE_CARD_CELEBRATE_MOURNING.title": "Celebrate Mourning",
@@ -167,7 +167,7 @@
   "SUNQIAN_UNIVERSE_CARD_BURN_AFTER_READING.title": "Burn After Reading",
   "SUNQIAN_UNIVERSE_CARD_BURN_AFTER_READING.description": "After you play a card with [gold]Exhaust[/gold], gain {TinderPower:diff()} [gold]Tinder[/gold].",
   "SUNQIAN_UNIVERSE_CARD_DISTRIBUTED_SCREENWRITER.title": "Distributed Screenwriter",
-  "SUNQIAN_UNIVERSE_CARD_DISTRIBUTED_SCREENWRITER.description": "At the start of your turn, add a random {IfUpgraded:show:Upgraded |}[gold]Script[/gold] card into your [gold]Hand[/gold].",
+  "SUNQIAN_UNIVERSE_CARD_DISTRIBUTED_SCREENWRITER.description": "After drawing at the start of your turn, {IfUpgraded:show:draw 1 card, then |}transform a card in your [gold]Hand[/gold] into a random [gold]Script[/gold] card.",
   "SUNQIAN_UNIVERSE_CARD_KEEP_CALM.title": "Keep Calm",
   "SUNQIAN_UNIVERSE_CARD_KEEP_CALM.description": "Gain {Energy:energyIcons()}.{ChargeText}",
   "SUNQIAN_UNIVERSE_CARD_KEEP_CALM.chargeEffect": "When this card is Retained, the {energyPrefix:energyIcons(1)} it grants increases by {RetainBonus:diff()}. When you take unblocked attack damage, the accumulated {Energy:energyIcons()} is reset to 0 and you [gold]Gain Anger[/gold] equal to that amount.",
@@ -201,5 +201,9 @@
   "SUNQIAN_UNIVERSE_CARD_TOO_KIND_TO_BE_TRUE.annotation": "Cards that already have [gold]Slight Revision[/gold] cannot gain it again.",
   "SUNQIAN_UNIVERSE_CARD_DRINKING_TABLE_CULTURE.title": "Drinking Table Culture",
   "SUNQIAN_UNIVERSE_CARD_DRINKING_TABLE_CULTURE.description": "Add a [gold]Wine+[/gold] with [gold]Enthralled[/gold] into an ally's [gold]Hand[/gold].",
-  "SUNQIAN_UNIVERSE_NIGHT_RAID_WUCHAO_STRIKE.descriptionFragment": "[green]Apply {NightRaidBurning:diff()} [gold]Burning[/gold] to the targeted enemy.[/green]"
+  "SUNQIAN_UNIVERSE_NIGHT_RAID_WUCHAO_STRIKE.descriptionFragment": "[green]Apply {NightRaidBurning:diff()} [gold]Burning[/gold] to the targeted enemy.[/green]",
+  "SUNQIAN_UNIVERSE_CARD_NOT_AFRAID_OF_ACID.title": "I'm Not Afraid of Sourness",
+  "SUNQIAN_UNIVERSE_CARD_NOT_AFRAID_OF_ACID.description": "Deal {Damage:diff()} damage.\nFor {NotAfraidOfAcidPower:diff()} turns, ignore the effects of [gold]Vulnerable[/gold], [gold]Weak[/gold], and [gold]Frail[/gold].{SlightRevisionText}",
+  "SUNQIAN_UNIVERSE_CARD_SAID_NOT_AFRAID_OF_ACID.title": "I Said I'm Not Afraid of Sourness",
+  "SUNQIAN_UNIVERSE_CARD_SAID_NOT_AFRAID_OF_ACID.description": "Deal {Damage:diff()} damage.\nTransform all [gold]Unplayable[/gold] cards in your [gold]Hand[/gold] into [gold]{IfUpgraded:show:Wine+|Wine}[/gold]."
 }

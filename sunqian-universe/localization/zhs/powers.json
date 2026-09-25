@@ -86,9 +86,8 @@
   "SUNQIAN_UNIVERSE_POWER_BURN_AFTER_READING_POWER.description": "你打出有[gold]消耗[/gold]的牌后，获得[blue]{Amount}[/blue]层[gold]火种[/gold]。",
   "SUNQIAN_UNIVERSE_POWER_BURN_AFTER_READING_POWER.smartDescription": "你打出有[gold]消耗[/gold]的牌后，获得[blue]{Amount}[/blue]层[gold]火种[/gold]。",
   "SUNQIAN_UNIVERSE_POWER_DISTRIBUTED_SCREENWRITER_POWER.title": "分布式编剧",
-  "SUNQIAN_UNIVERSE_POWER_DISTRIBUTED_SCREENWRITER_POWER.description": "在你的回合开始时，将一张随机[gold]剧本[/gold]牌添加到你的[gold]手牌[/gold]。",
-  "SUNQIAN_UNIVERSE_POWER_DISTRIBUTED_SCREENWRITER_POWER.smartDescription": "在你的回合开始时，将[blue]{Amount}[/blue]张随机[gold]剧本[/gold]牌添加到你的[gold]手牌[/gold]。",
-  "SUNQIAN_UNIVERSE_POWER_DISTRIBUTED_SCREENWRITER_POWER.smartDescriptionUpgraded": "在你的回合开始时，将[blue]{Amount}[/blue]张随机升级过的[gold]剧本[/gold]牌添加到你的[gold]手牌[/gold]。",
+  "SUNQIAN_UNIVERSE_POWER_DISTRIBUTED_SCREENWRITER_POWER.description": "在你的回合开始后，将一张[gold]手牌[/gold]变化为随机的[gold]剧本[/gold]牌。",
+  "SUNQIAN_UNIVERSE_POWER_DISTRIBUTED_SCREENWRITER_POWER.smartDescription": "在你的回合开始后，{HasBonusDraw:cond:抽[blue]{BonusDrawCount}[/blue]张牌，然后|}将[blue]{Amount}[/blue]张[gold]手牌[/gold]分别变化为随机的[gold]剧本[/gold]牌。",
   "SUNQIAN_UNIVERSE_POWER_BUDDY_LONGTAODI_POWER.title": "好哥们龙套帝",
   "SUNQIAN_UNIVERSE_POWER_BUDDY_LONGTAODI_POWER.description": "当你每回合第3次打出牌后，抽[blue]{Amount}[/blue]张牌。",
   "SUNQIAN_UNIVERSE_POWER_BUDDY_LONGTAODI_POWER.smartDescription": "当你每回合第3次打出牌后，抽[blue]{Amount}[/blue]张牌。",
@@ -97,5 +96,8 @@
   "SUNQIAN_UNIVERSE_POWER_TOO_KIND_TO_BE_TRUE_POWER.smartDescription": "你每有一种负面状态，从名字中有「防御」的牌中额外获得[blue]{Amount}[/blue]点[gold]格挡[/gold]。",
   "SUNQIAN_UNIVERSE_POWER_KEEP_VIGOR_POWER.title": "活力保持",
   "SUNQIAN_UNIVERSE_POWER_KEEP_VIGOR_POWER.description": "你消耗[gold]活力[/gold]后获得等量[gold]活力[/gold]。你每打出一张攻击牌后，减少一层[gold]活力保持[/gold]。",
-  "SUNQIAN_UNIVERSE_POWER_KEEP_VIGOR_POWER.smartDescription": "你消耗[gold]活力[/gold]后获得等量[gold]活力[/gold]。你打出[blue]{Amount}[/blue]张攻击牌后失去此效果。"
+  "SUNQIAN_UNIVERSE_POWER_KEEP_VIGOR_POWER.smartDescription": "你消耗[gold]活力[/gold]后获得等量[gold]活力[/gold]。你打出[blue]{Amount}[/blue]张攻击牌后失去此效果。",
+  "SUNQIAN_UNIVERSE_POWER_NOT_AFRAID_OF_ACID_POWER.title": "不怕酸",
+  "SUNQIAN_UNIVERSE_POWER_NOT_AFRAID_OF_ACID_POWER.description": "无视[gold]易伤[/gold]、[gold]虚弱[/gold]和[gold]脆弱[/gold]的效果。",
+  "SUNQIAN_UNIVERSE_POWER_NOT_AFRAID_OF_ACID_POWER.smartDescription": "接下来的[blue]{Amount}[/blue]回合内，你无视[gold]易伤[/gold]、[gold]虚弱[/gold]和[gold]脆弱[/gold]的效果。"
 }

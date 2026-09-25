@@ -17,16 +17,20 @@ namespace Squ.Cards;
 [RegisterCard(typeof(SunqianCardPool), StableEntryStem = "distributed_screenwriter")]
 public sealed class DistributedScreenwriter : ModCardTemplate
 {
+	public const int BaseCost = 2;
+	public const int PowerAmount = 1;
+
 	protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
 	[
 		HoverTipFactory.FromKeyword(SquKeywords.Script),
+		HoverTipFactory.Static(StaticHoverTip.Transform),
 	];
 
 	public override CardAssetProfile AssetProfile => new(
 		PortraitPath: "res://images/cards/DistributedScreenwriter.png");
 
 	public DistributedScreenwriter()
-		: base(2, CardType.Power, CardRarity.Uncommon, TargetType.Self)
+		: base(BaseCost, CardType.Power, CardRarity.Rare, TargetType.Self)
 	{
 	}
 
@@ -35,8 +39,9 @@ public sealed class DistributedScreenwriter : ModCardTemplate
 		await PowerCmd.Apply<DistributedScreenwriterPower>(
 			choiceContext,
 			Owner.Creature,
-			1m,
+			PowerAmount,
 			Owner.Creature,
 			this);
 	}
+
 }
