@@ -100,5 +100,11 @@
   "SUNQIAN_UNIVERSE_POWER_KEEP_VIGOR_POWER.smartDescription": "你消耗[gold]活力[/gold]后获得等量[gold]活力[/gold]。你打出[blue]{Amount}[/blue]张攻击牌后失去此效果。",
   "SUNQIAN_UNIVERSE_POWER_NOT_AFRAID_OF_ACID_POWER.title": "不怕酸",
   "SUNQIAN_UNIVERSE_POWER_NOT_AFRAID_OF_ACID_POWER.description": "无视[gold]易伤[/gold]、[gold]虚弱[/gold]和[gold]脆弱[/gold]的效果。",
-  "SUNQIAN_UNIVERSE_POWER_NOT_AFRAID_OF_ACID_POWER.smartDescription": "接下来的[blue]{Amount}[/blue]回合内，你无视[gold]易伤[/gold]、[gold]虚弱[/gold]和[gold]脆弱[/gold]的效果。"
+  "SUNQIAN_UNIVERSE_POWER_NOT_AFRAID_OF_ACID_POWER.smartDescription": "接下来的[blue]{Amount}[/blue]回合内，你无视[gold]易伤[/gold]、[gold]虚弱[/gold]和[gold]脆弱[/gold]的效果。",
+  "SUNQIAN_UNIVERSE_POWER_CROSS_THE_RIVER_POWER.title": "吾亦过江",
+  "SUNQIAN_UNIVERSE_POWER_CROSS_THE_RIVER_POWER.description": "攻击牌受到两倍[gold]活力[/gold]加成。",
+  "SUNQIAN_UNIVERSE_POWER_CROSS_THE_RIVER_POWER.smartDescription": "接下来的[blue]{Amount}[/blue]回合内，你的攻击牌受到两倍[gold]活力[/gold]加成。",
+  "SUNQIAN_UNIVERSE_POWER_IRON_CHAIN_POWER.title": "铁索连环",
+  "SUNQIAN_UNIVERSE_POWER_IRON_CHAIN_POWER.description": "该敌人受到[gold]灼烧[/gold]伤害后，其余敌人受到等量[gold]环境伤害[/gold]。",
+  "SUNQIAN_UNIVERSE_POWER_IRON_CHAIN_POWER.smartDescription": "该敌人受到[gold]灼烧[/gold]伤害后，其余敌人受到等量[gold]环境伤害[/gold][blue]{Amount}[/blue]次。"
 }

@@ -100,5 +100,11 @@
   "SUNQIAN_UNIVERSE_POWER_KEEP_VIGOR_POWER.smartDescription": "Whenever you spend [gold]Vigor[/gold], gain that much [gold]Vigor[/gold]. After you play [blue]{Amount}[/blue] [gold]Attack[/gold] {Amount:plural:card|cards}, lose this effect.",
   "SUNQIAN_UNIVERSE_POWER_NOT_AFRAID_OF_ACID_POWER.title": "Not Afraid of Sourness",
   "SUNQIAN_UNIVERSE_POWER_NOT_AFRAID_OF_ACID_POWER.description": "Ignore the effects of [gold]Vulnerable[/gold], [gold]Weak[/gold], and [gold]Frail[/gold].",
-  "SUNQIAN_UNIVERSE_POWER_NOT_AFRAID_OF_ACID_POWER.smartDescription": "For the next [blue]{Amount}[/blue] turns, ignore the effects of [gold]Vulnerable[/gold], [gold]Weak[/gold], and [gold]Frail[/gold]."
+  "SUNQIAN_UNIVERSE_POWER_NOT_AFRAID_OF_ACID_POWER.smartDescription": "For the next [blue]{Amount}[/blue] turns, ignore the effects of [gold]Vulnerable[/gold], [gold]Weak[/gold], and [gold]Frail[/gold].",
+  "SUNQIAN_UNIVERSE_POWER_CROSS_THE_RIVER_POWER.title": "I Too Crossed the River",
+  "SUNQIAN_UNIVERSE_POWER_CROSS_THE_RIVER_POWER.description": "Attack cards receive twice the bonus from [gold]Vigor[/gold].",
+  "SUNQIAN_UNIVERSE_POWER_CROSS_THE_RIVER_POWER.smartDescription": "For the next [blue]{Amount}[/blue] turns, Attack cards receive twice the bonus from [gold]Vigor[/gold].",
+  "SUNQIAN_UNIVERSE_POWER_IRON_CHAIN_POWER.title": "Iron Chain",
+  "SUNQIAN_UNIVERSE_POWER_IRON_CHAIN_POWER.description": "Whenever this enemy takes [gold]Burning[/gold] damage, all other enemies take that much [gold]Environmental[/gold] damage.",
+  "SUNQIAN_UNIVERSE_POWER_IRON_CHAIN_POWER.smartDescription": "Whenever this enemy takes [gold]Burning[/gold] damage, all other enemies take that much [gold]Environmental[/gold] damage [blue]{Amount}[/blue] {Amount:plural:time|times}."
 }

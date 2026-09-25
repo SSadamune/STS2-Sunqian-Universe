@@ -5,6 +5,7 @@ using MegaCrit.Sts2.Core.Entities.Creatures;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.Powers;
+using Squ.Powers;
 
 #nullable enable
 
@@ -20,11 +21,24 @@ public static class SquVigorSnapshot
 		creature.GetPower<VigorPower>() is { Amount: > 0 } vigor ? vigor.Amount : 0;
 
 	/// <summary>
+	/// Returns the Vigor bonus actually granted to this card. 吾亦过江 doubles that bonus
+	/// for Attack cards, including non-damage effects that explicitly scale with Vigor.
+	/// </summary>
+	public static int GetEffectiveAmount(Creature creature, CardModel card)
+	{
+		int vigor = GetAmount(creature);
+		return card.Type == CardType.Attack
+			&& creature.GetPower<CrossTheRiverPower>() is { Amount: > 0 }
+				? vigor * 2
+				: vigor;
+	}
+
+	/// <summary>
 	/// 卡面绿字只在手牌或打出过程中计入活力，与原版攻击伤害预览一致。
 	/// </summary>
 	public static int GetAmountForCardPreview(CardModel card) =>
 		card.Pile?.Type is PileType.Hand or PileType.Play && card.Owner?.Creature is { } owner
-			? GetAmount(owner)
+			? GetEffectiveAmount(owner, card)
 			: 0;
 
 	/// <summary>
@@ -74,7 +88,7 @@ public static class SquVigorSnapshot
 		public AttackSequence(Creature dealer, CardModel card)
 		{
 			_card = card;
-			_vigorSnapshot = GetAmount(dealer);
+			_vigorSnapshot = GetEffectiveAmount(dealer, card);
 		}
 
 		public int VigorSnapshot => _vigorSnapshot;

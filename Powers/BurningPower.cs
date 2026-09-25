@@ -113,13 +113,20 @@ public sealed class BurningPower : ModPowerTemplate, IHealthBarForecastSource
 
 		PlayFiendFireDamageVfx(Owner);
 
-		await CreatureCmd.Damage(
+		IronChainPower? ironChain = Owner.GetPower<IronChainPower>();
+		IEnumerable<DamageResult> damageResults = await CreatureCmd.Damage(
 			new ThrowingPlayerChoiceContext(),
 			Owner,
 			Amount,
 			ValueProp.Unblockable | ValueProp.Unpowered,
 			null,
 			null);
+
+		if (ironChain is not null)
+		{
+			int damageDealt = damageResults.Sum(result => result.TotalDamage);
+			await ironChain.AfterBurningDamage(damageDealt);
+		}
 
 		if (!Owner.IsAlive)
 		{

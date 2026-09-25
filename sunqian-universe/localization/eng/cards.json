@@ -182,7 +182,7 @@
   "SUNQIAN_UNIVERSE_CARD_WORK_LIFE_BALANCE.title": "Work-Life Balance",
   "SUNQIAN_UNIVERSE_CARD_WORK_LIFE_BALANCE.description": "Gain {Block:diff()} [gold]Block[/gold]{IfUpgraded:show: twice|}. This Block is increased by [gold]Vigor[/gold].",
   "SUNQIAN_UNIVERSE_CARD_KEEP_PLAYING_KEEP_DANCING.title": "Keep Playing, Keep Dancing",
-  "SUNQIAN_UNIVERSE_CARD_KEEP_PLAYING_KEEP_DANCING.description": "Gain {VigorPower:diff()} [gold]Vigor[/gold] and {KeepVigorPower:diff()} [gold]Keep Vigor[/gold].",
+  "SUNQIAN_UNIVERSE_CARD_KEEP_PLAYING_KEEP_DANCING.description": "Gain {VigorPower:diff()} [gold]Vigor[/gold]. Your Vigor is not consumed until you play {KeepVigorPower:diff()} Attack {KeepVigorPower:plural:card|cards}.",
   "SUNQIAN_UNIVERSE_CARD_LASER_SWORD_ASSASSINATION.title": "Laser Sword Assassination",
   "SUNQIAN_UNIVERSE_CARD_LASER_SWORD_ASSASSINATION.description": "Deal {Damage:diff()} damage that [gold]ignores Block[/gold]. If the enemy does not intend to Attack, double this damage.",
   "SUNQIAN_UNIVERSE_CARD_MUSOU_ATTACK.title": "Musou Attack",
@@ -208,5 +208,14 @@
   "SUNQIAN_UNIVERSE_CARD_SAID_NOT_AFRAID_OF_ACID.description": "Deal {Damage:diff()} damage.\nTransform all [gold]Unplayable[/gold] cards in your [gold]Hand[/gold] into [gold]{IfUpgraded:show:Wine+|Wine}[/gold].",
   "SUNQIAN_UNIVERSE_CARD_SHARPEN_SWORD_FOR_DECADES.title": "Sharpening the Sword for Years",
   "SUNQIAN_UNIVERSE_CARD_SHARPEN_SWORD_FOR_DECADES.description": "[gold]Forge[/gold] {Forge:diff()}.\nAt the end of combat, this card retains bonuses to its [gold]Forge[/gold] value.{ChargeText}",
-  "SUNQIAN_UNIVERSE_CARD_SHARPEN_SWORD_FOR_DECADES.chargeEffect": "At the end of your turn, this card's [gold]Forge[/gold] value increases by {ChargeForge:diff()}."
+  "SUNQIAN_UNIVERSE_CARD_SHARPEN_SWORD_FOR_DECADES.chargeEffect": "At the end of your turn, this card's [gold]Forge[/gold] value increases by {ChargeForge:diff()}.",
+  "SUNQIAN_UNIVERSE_CARD_CROSS_THE_RIVER.title": "I Too Crossed the River",
+  "SUNQIAN_UNIVERSE_CARD_CROSS_THE_RIVER.description": "Gain {VigorPower:diff()} [gold]Vigor[/gold] and {VulnerablePower:diff()} [gold]Vulnerable[/gold].\nIf any enemy intends to Attack, your Attack cards receive twice the bonus from Vigor for {CrossTheRiverPower:diff()} turns.",
+  "SUNQIAN_UNIVERSE_CARD_WORRY_WITHOUT_WORRY.title": "Carefree Yet Concerned",
+  "SUNQIAN_UNIVERSE_CARD_WORRY_WITHOUT_WORRY.description": "Gain {Block:diff()} [gold]Block[/gold].\nNext turn, gain {BlockNextTurn:diff()} [gold]Block[/gold].\nIf no enemy intends to Attack, gain both next turn instead.",
+  "SUNQIAN_UNIVERSE_CARD_IRON_CHAIN_BOATS.title": "Chain the Boats",
+  "SUNQIAN_UNIVERSE_CARD_IRON_CHAIN_BOATS.description": "Choose an enemy. Whenever it takes [gold]Burning[/gold] damage, all other enemies take that much [gold]Environmental[/gold] damage.{SlightRevisionText}",
+  "SUNQIAN_UNIVERSE_CARD_RESCUE_FANCHENG.title": "Relieve Fancheng",
+  "SUNQIAN_UNIVERSE_CARD_RESCUE_FANCHENG.description": "Choose up to {Cards:diff()} cards from your Draw Pile. Enchant them with [gold]Sown[/gold] and remove [gold]Exhaust[/gold].",
+  "SUNQIAN_UNIVERSE_CARD_RESCUE_FANCHENG.selectionScreenPrompt": "Choose up to {Amount} cards to enchant with Sown and remove Exhaust"
 }

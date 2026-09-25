@@ -179,7 +179,7 @@
   "SUNQIAN_UNIVERSE_CARD_KNOW_WRONG_DENY_WRONG.currentDamage": "（{Damage:diff()}点）",
   "SUNQIAN_UNIVERSE_CARD_CIRCUS.title": "马戏",
   "SUNQIAN_UNIVERSE_CARD_CIRCUS.description": "造成{Damage:diff()}点伤害。\n在本回合获得{DexterityPower:diff()}点[gold]敏捷[/gold]。",
-  "SUNQIAN_UNIVERSE_CARD_WORK_LIFE_BALANCE.title": "WLB",
+  "SUNQIAN_UNIVERSE_CARD_WORK_LIFE_BALANCE.title": "劳逸结合",
   "SUNQIAN_UNIVERSE_CARD_WORK_LIFE_BALANCE.description": "获得{Block:diff()}点[gold]格挡[/gold]{IfUpgraded:show:两次|}，此格挡值受到[gold]活力[/gold]加成。",
   "SUNQIAN_UNIVERSE_CARD_KEEP_PLAYING_KEEP_DANCING.title": "接着奏乐接着舞",
   "SUNQIAN_UNIVERSE_CARD_KEEP_PLAYING_KEEP_DANCING.description": "获得{VigorPower:diff()}点[gold]活力[/gold]。你的活力不会被消耗，直到你打出{KeepVigorPower:diff()}张攻击牌后。",
@@ -208,5 +208,14 @@
   "SUNQIAN_UNIVERSE_CARD_SAID_NOT_AFRAID_OF_ACID.description": "造成{Damage:diff()}点伤害。\n将你[gold]手牌[/gold]中所有[gold]不能被打出[/gold]的牌变化为[gold]{IfUpgraded:show:酒+|酒}[/gold]。",
   "SUNQIAN_UNIVERSE_CARD_SHARPEN_SWORD_FOR_DECADES.title": "磨剑十几年",
   "SUNQIAN_UNIVERSE_CARD_SHARPEN_SWORD_FOR_DECADES.description": "[gold]铸造[/gold]{Forge:diff()}。\n每场战斗结束时，永久保留此牌的[gold]铸造[/gold]值加成。{ChargeText}",
-  "SUNQIAN_UNIVERSE_CARD_SHARPEN_SWORD_FOR_DECADES.chargeEffect": "回合结束时，[gold]铸造[/gold]值+{ChargeForge:diff()}。"
+  "SUNQIAN_UNIVERSE_CARD_SHARPEN_SWORD_FOR_DECADES.chargeEffect": "回合结束时，[gold]铸造[/gold]值+{ChargeForge:diff()}。",
+  "SUNQIAN_UNIVERSE_CARD_CROSS_THE_RIVER.title": "吾亦过江",
+  "SUNQIAN_UNIVERSE_CARD_CROSS_THE_RIVER.description": "获得{VigorPower:diff()}点[gold]活力[/gold]和{VulnerablePower:diff()}层[gold]易伤[/gold]。\n如果有意图为攻击的敌人，{CrossTheRiverPower:diff()}回合内你的攻击牌受到两倍活力加成。",
+  "SUNQIAN_UNIVERSE_CARD_WORRY_WITHOUT_WORRY.title": "无忧而虑",
+  "SUNQIAN_UNIVERSE_CARD_WORRY_WITHOUT_WORRY.description": "获得{Block:diff()}点[gold]格挡[/gold]。\n在下一回合获得{BlockNextTurn:diff()}点[gold]格挡[/gold]。\n如果没有意图为攻击的敌人，改为都在下一回合获得。",
+  "SUNQIAN_UNIVERSE_CARD_IRON_CHAIN_BOATS.title": "铁索连舟",
+  "SUNQIAN_UNIVERSE_CARD_IRON_CHAIN_BOATS.description": "选择一名敌人，其受到[gold]灼烧[/gold]伤害后，其余敌人受到等量[gold]环境伤害[/gold]。{SlightRevisionText}",
+  "SUNQIAN_UNIVERSE_CARD_RESCUE_FANCHENG.title": "解救樊城",
+  "SUNQIAN_UNIVERSE_CARD_RESCUE_FANCHENG.description": "从抽牌堆中选择至多{Cards:diff()}张牌，为它们附魔[gold]播种[/gold]并移去[gold]消耗[/gold]。",
+  "SUNQIAN_UNIVERSE_CARD_RESCUE_FANCHENG.selectionScreenPrompt": "选择至多{Amount}张牌，为它们附魔播种并移去消耗"
 }

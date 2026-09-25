@@ -24,8 +24,8 @@ namespace Squ.Cards;
 [RegisterCard(typeof(SunqianCardPool), StableEntryStem = "bombard_chibi_script")]
 public sealed class BombardChibiScript : ScriptCardTemplate
 {
-	public const int BaseBurning = 7;
-	public const int UpgradedBurning = 10;
+	public const int BaseBurning = 8;
+	public const int UpgradedBurning = 11;
 	public const string StrengthLossVarName = "StrengthLoss";
 
 	protected override IEnumerable<DynamicVar> CanonicalVars =>
@@ -52,7 +52,7 @@ public sealed class BombardChibiScript : ScriptCardTemplate
 		PortraitPath: "res://images/cards/BombardChibiScript.png");
 
 	public BombardChibiScript()
-		: base(3, CardType.Skill, CardRarity.Uncommon, TargetType.AllEnemies, true)
+		: base(3, CardType.Skill, CardRarity.Rare, TargetType.AllEnemies, true)
 	{
 	}
 

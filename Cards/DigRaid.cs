@@ -81,7 +81,7 @@ public sealed class DigRaid : ModCardTemplate
 
 		SquSfx.Play(SquSfx.DigRaidEvent);
 		Creature owner = Owner.Creature;
-		int vigor = SquVigorSnapshot.GetAmount(owner);
+		int vigor = SquVigorSnapshot.GetEffectiveAmount(owner, this);
 		decimal tinderBonus = IsUpgraded ? GetTinderAmount(owner) : 0m;
 
 		await DamageCmd.Attack(DynamicVars.Damage.BaseValue + tinderBonus)
