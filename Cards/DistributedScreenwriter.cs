@@ -36,12 +36,17 @@ public sealed class DistributedScreenwriter : ModCardTemplate
 
 	protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
 	{
-		await PowerCmd.Apply<DistributedScreenwriterPower>(
+		DistributedScreenwriterPower? power = await PowerCmd.Apply<DistributedScreenwriterPower>(
 			choiceContext,
 			Owner.Creature,
 			PowerAmount,
 			Owner.Creature,
 			this);
+
+		if (IsUpgraded)
+		{
+			power?.RecordUpgradedPlay();
+		}
 	}
 
 }

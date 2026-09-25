@@ -7,7 +7,9 @@ using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
+using MegaCrit.Sts2.Core.Models.Powers;
 using MegaCrit.Sts2.Core.ValueProps;
+using Squ.Audio;
 using Squ.Character;
 using Squ.Combat;
 using Squ.Powers;
@@ -35,6 +37,9 @@ public sealed class NotAfraidOfAcid : SlightRevisionCardTemplate<SaidNotAfraidOf
 	[
 		..base.AdditionalHoverTips,
 		HoverTipFactory.FromPower<NotAfraidOfAcidPower>(),
+		HoverTipFactory.FromPower<VulnerablePower>(),
+		HoverTipFactory.FromPower<WeakPower>(),
+		HoverTipFactory.FromPower<FrailPower>(),
 	];
 
 	public override CardAssetProfile AssetProfile => new(
@@ -48,6 +53,7 @@ public sealed class NotAfraidOfAcid : SlightRevisionCardTemplate<SaidNotAfraidOf
 	protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
 	{
 		ArgumentNullException.ThrowIfNull(cardPlay.Target, nameof(cardPlay.Target));
+		SquSfx.Play(SquSfx.NotAfraidOfAcidEvent);
 
 		await DamageCmd.Attack(DynamicVars.Damage.BaseValue)
 			.FromCard(this, cardPlay)

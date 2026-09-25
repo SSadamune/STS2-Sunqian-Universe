@@ -5,14 +5,12 @@ using System.Threading.Tasks;
 using Godot;
 using MegaCrit.Sts2.Core.Combat;
 using MegaCrit.Sts2.Core.Commands;
-using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.Entities.Creatures;
 using MegaCrit.Sts2.Core.Entities.Powers;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.Powers;
-using MegaCrit.Sts2.Core.ValueProps;
 using STS2RitsuLib.Interop.AutoRegistration;
 using STS2RitsuLib.Scaffolding.Content;
 
@@ -41,62 +39,6 @@ public sealed class NotAfraidOfAcidPower : ModPowerTemplate
 		HoverTipFactory.FromPower<FrailPower>(),
 	];
 
-	public override decimal ModifyDamageMultiplicative(
-		Creature? target,
-		decimal amount,
-		ValueProp props,
-		Creature? dealer,
-		CardModel? cardSource,
-		CardPlay? cardPlay)
-	{
-		decimal multiplier = 1m;
-
-		if (target == Owner && Owner.GetPower<VulnerablePower>() is { Amount: > 0 } vulnerable)
-		{
-			multiplier *= Reciprocal(vulnerable.ModifyDamageMultiplicative(
-				target, amount, props, dealer, cardSource, cardPlay));
-		}
-
-		if (dealer == Owner && Owner.GetPower<WeakPower>() is { Amount: > 0 } weak)
-		{
-			multiplier *= Reciprocal(weak.ModifyDamageMultiplicative(
-				target, amount, props, dealer, cardSource, cardPlay));
-		}
-
-		return multiplier;
-	}
-
-	public override decimal ModifyBlockMultiplicative(
-		Creature target,
-		decimal block,
-		ValueProp props,
-		CardModel? cardSource,
-		CardPlay? cardPlay)
-	{
-		if (target != Owner || Owner.GetPower<FrailPower>() is not { Amount: > 0 } frail)
-		{
-			return 1m;
-		}
-
-		return Reciprocal(frail.ModifyBlockMultiplicative(
-			target, block, props, cardSource, cardPlay));
-	}
-
-	public override Task AfterModifyingDamageAmount(CardModel? cardSource)
-	{
-		Flash();
-		return Task.CompletedTask;
-	}
-
-	public override Task AfterModifyingBlockAmount(
-		decimal modifiedBlock,
-		CardModel? cardSource,
-		CardPlay? cardPlay)
-	{
-		Flash();
-		return Task.CompletedTask;
-	}
-
 	public override async Task AfterSideTurnEnd(
 		PlayerChoiceContext choiceContext,
 		CombatSide side,
@@ -109,7 +51,4 @@ public sealed class NotAfraidOfAcidPower : ModPowerTemplate
 
 		await PowerCmd.TickDownDuration(this);
 	}
-
-	private static decimal Reciprocal(decimal multiplier) =>
-		multiplier == 0m ? 1m : 1m / multiplier;
 }

@@ -5,7 +5,6 @@ using Godot;
 using MegaCrit.Sts2.Core.CardSelection;
 using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
-using MegaCrit.Sts2.Core.Entities.Creatures;
 using MegaCrit.Sts2.Core.Entities.Players;
 using MegaCrit.Sts2.Core.Entities.Powers;
 using MegaCrit.Sts2.Core.Factories;
@@ -14,7 +13,6 @@ using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.Models;
 using Squ;
-using Squ.Cards;
 using STS2RitsuLib.Interop.AutoRegistration;
 using STS2RitsuLib.Scaffolding.Content;
 
@@ -29,8 +27,7 @@ namespace Squ.Powers;
 [RegisterPower]
 public sealed class DistributedScreenwriterPower : ModPowerTemplate
 {
-	public const string BonusDrawCountVarName = "BonusDrawCount";
-	public const string HasBonusDrawVarName = "HasBonusDraw";
+	public const string DrawCardsVarName = "DrawCards";
 
 	public override PowerType Type => PowerType.Buff;
 
@@ -44,9 +41,13 @@ public sealed class DistributedScreenwriterPower : ModPowerTemplate
 
 	protected override IEnumerable<DynamicVar> CanonicalVars =>
 	[
-		new DynamicVar(BonusDrawCountVarName, 0m),
-		new BoolVar(HasBonusDrawVarName),
+		new DynamicVar(DrawCardsVarName, 0m),
 	];
+
+	protected override string SmartDescriptionLocKey =>
+		DynamicVars[DrawCardsVarName].BaseValue > 0m
+			? Id.Entry + ".smartDescriptionWithDraw"
+			: base.SmartDescriptionLocKey;
 
 	protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
 	[
@@ -54,22 +55,9 @@ public sealed class DistributedScreenwriterPower : ModPowerTemplate
 		HoverTipFactory.Static(StaticHoverTip.Transform),
 	];
 
-	public override Task AfterPowerAmountChanged(
-		PlayerChoiceContext choiceContext,
-		PowerModel power,
-		decimal amount,
-		Creature? applier,
-		CardModel? cardSource)
+	public void RecordUpgradedPlay()
 	{
-		if (power == this
-			&& amount > 0m
-			&& cardSource is DistributedScreenwriter { IsUpgraded: true })
-		{
-			DynamicVars[BonusDrawCountVarName].BaseValue++;
-			((BoolVar)DynamicVars[HasBonusDrawVarName]).BoolVal = true;
-		}
-
-		return Task.CompletedTask;
+		DynamicVars[DrawCardsVarName].BaseValue++;
 	}
 
 	public override async Task AfterPlayerTurnStart(
@@ -82,10 +70,10 @@ public sealed class DistributedScreenwriterPower : ModPowerTemplate
 		}
 
 		Flash();
-		int bonusDrawCount = DynamicVars[BonusDrawCountVarName].IntValue;
-		if (bonusDrawCount > 0)
+		int drawCards = DynamicVars[DrawCardsVarName].IntValue;
+		if (drawCards > 0)
 		{
-			await CardPileCmd.Draw(choiceContext, bonusDrawCount, player);
+			await CardPileCmd.Draw(choiceContext, drawCards, player);
 		}
 
 		CardSelectorPrefs prefs = new(CardSelectorPrefs.TransformSelectionPrompt, Amount);

@@ -27,6 +27,8 @@ internal static class SquSfx
 	public const string KnowWrongDenyWrongEvent = "event:/sunqian_universe/sfx/何谓人主，那就是知错改错不认错";
 	public const string RespectEldersTooOldEvent = "event:/sunqian_universe/sfx/尊老爱幼-你太老了";
 	public const string RespectEldersSpareTheYoungAndOldEvent = "event:/sunqian_universe/sfx/尊老爱幼-不斩老幼";
+	public const string NotAfraidOfAcidEvent = "event:/sunqian_universe/sfx/不怕酸-咱家不怕酸";
+	public const string SaidNotAfraidOfAcidEvent = "event:/sunqian_universe/sfx/不怕酸-说了不怕酸";
 	public const string RighteousnessSwordEvent = "event:/sunqian_universe/sfx/义之剑";
 	public const string ChaosHarmedYouNotAmanEvent = "event:/sunqian_universe/sfx/乱世害你-不是阿瞒害了你";
 	public const string ChaosHarmedYouNotDieInVainEvent = "event:/sunqian_universe/sfx/乱世害你-不能白死";
@@ -147,16 +149,21 @@ internal static class SquSfx
 	public const string SunqianHurtEvent = "event:/sunqian_universe/sfx/孙乾-受击";
 	public const string BasicStrikeCaoCaoEvent = "event:/sunqian_universe/sfx/打击-曹操";
 	public const string BasicStrikeLiuBeiEvent = "event:/sunqian_universe/sfx/打击-刘备";
+	public const string BasicStrikeNailongEvent = "event:/sunqian_universe/sfx/打击-奶龙";
+	public const string BasicStrikeZhangFeiEvent = "event:/sunqian_universe/sfx/打击-张飞";
 	public const string BasicDefendCaoCaoEvent = "event:/sunqian_universe/sfx/防御-曹操";
 	public const string BasicDefendLiuBeiEvent = "event:/sunqian_universe/sfx/防御-刘备";
 	public const string WineDrinkThisFlaskEvent = "event:/sunqian_universe/sfx/酒-喝下这壶酒";
 	public const string WineThirstyEvent = "event:/sunqian_universe/sfx/酒-我正渴着呢";
 	public const string WineOldHeroEvent = "event:/sunqian_universe/sfx/酒-酒是老英雄";
+	public const string WineWentIntoTownEvent = "event:/sunqian_universe/sfx/酒-进城喝酒去了";
 
 	public static readonly string[] BasicStrikeEvents =
 	[
 		BasicStrikeCaoCaoEvent,
 		BasicStrikeLiuBeiEvent,
+		BasicStrikeNailongEvent,
+		BasicStrikeZhangFeiEvent,
 	];
 
 	public static readonly string[] BasicDefendEvents =
@@ -170,6 +177,7 @@ internal static class SquSfx
 		WineDrinkThisFlaskEvent,
 		WineThirstyEvent,
 		WineOldHeroEvent,
+		WineWentIntoTownEvent,
 	];
 
 	public static readonly string[] VoiceChangeEvents =
