@@ -29,6 +29,7 @@ public sealed class ArmInjuryWindmill : ModCardTemplate
 	protected override IEnumerable<DynamicVar> CanonicalVars =>
 	[
 		new CardsVar(BaseDrawCount),
+		new DynamicVar(nameof(StatAmount), StatAmount),
 	];
 
 	protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
@@ -56,14 +57,14 @@ public sealed class ArmInjuryWindmill : ModCardTemplate
 		await PowerCmd.Apply<TempDexFromArmInjuryWindmillPower>(
 			choiceContext,
 			Owner.Creature,
-			StatAmount,
+			DynamicVars[nameof(StatAmount)].BaseValue,
 			Owner.Creature,
 			this);
 
 		await PowerCmd.Apply<TempStrFromArmInjuryWindmillPower>(
 			choiceContext,
 			Owner.Creature,
-			StatAmount,
+			DynamicVars[nameof(StatAmount)].BaseValue,
 			Owner.Creature,
 			this);
 

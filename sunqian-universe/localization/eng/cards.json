@@ -86,7 +86,7 @@
   "SUNQIAN_UNIVERSE_CARD_GOLDEN_UPRISING.description": "Spend {Gold:diff()} [gold]Gold[/gold]. Put {Cards:diff()} cards from your [gold]Draw Pile[/gold] into your [gold]Hand[/gold].{IfUpgraded:show:\nThis combat, this card's Gold cost increases by [blue]5[/blue].|}",
   "SUNQIAN_UNIVERSE_CARD_GOLDEN_UPRISING.selectionScreenPrompt": "Choose {Amount} cards to put into your Hand.",
   "SUNQIAN_UNIVERSE_CARD_SUNQIAN_SCRIPT.title": "Sunqian Script",
-  "SUNQIAN_UNIVERSE_CARD_SUNQIAN_SCRIPT.description": "Gain 2 [gold]Dexterity[/gold] this turn.\n[gold]Script[/gold]: When this [gold]Script[/gold] ends, draw {IfUpgraded:show:2|1} {IfUpgraded:show:cards|card}.",
+  "SUNQIAN_UNIVERSE_CARD_SUNQIAN_SCRIPT.description": "Gain {DexterityPower:diff()} [gold]Dexterity[/gold] this turn.\n[gold]Script[/gold]: When this [gold]Script[/gold] ends, draw {IfUpgraded:show:2|1} {IfUpgraded:show:cards|card}.",
   "SUNQIAN_UNIVERSE_CARD_BUDDY_TANGXIAOHU.title": "Buddy Tangxiaohu",
   "SUNQIAN_UNIVERSE_CARD_BUDDY_TANGXIAOHU.description": "After you play a [gold]Script[/gold] card, gain {Block:diff()} [gold]Block[/gold].",
   "SUNQIAN_UNIVERSE_CARD_TRANSPARENT_HOLE.title": "Transparent Hole",
@@ -117,7 +117,7 @@
   "SUNQIAN_UNIVERSE_CARD_WINE.title": "Wine",
   "SUNQIAN_UNIVERSE_CARD_WINE.description": "Gain {Energy:energyIcons()} and {VigorPower:diff()} [gold]Vigor[/gold].\nAdd a [gold]Dazed[/gold] into your [gold]Draw Pile[/gold].{NewsanguoCombatNote}",
   "SUNQIAN_UNIVERSE_CARD_ARM_INJURY_WINDMILL.title": "Arm Injury Windmill",
-  "SUNQIAN_UNIVERSE_CARD_ARM_INJURY_WINDMILL.description": "Draw {Cards:diff()} {Cards:plural:card|cards}.\nGain 2 [gold]Dexterity[/gold] and 2 [gold]Strength[/gold] this turn.\nAdd a [gold]Wound[/gold] into your [gold]Hand[/gold].",
+  "SUNQIAN_UNIVERSE_CARD_ARM_INJURY_WINDMILL.description": "Draw {Cards:diff()} {Cards:plural:card|cards}.\nGain {StatAmount:diff()} [gold]Dexterity[/gold] and [gold]Strength[/gold] this turn.\nAdd a [gold]Wound[/gold] into your [gold]Hand[/gold].",
   "SUNQIAN_UNIVERSE_CARD_ALL_IN.title": "All In",
   "SUNQIAN_UNIVERSE_CARD_ALL_IN.description": "At the end of each turn, if you have not played a [gold]Skill[/gold] that can gain [gold]Block[/gold], deal {IfUpgraded:show:75|50}% of the damage you dealt this turn to the enemy with the highest HP. If tied, hit all tied enemies.",
   "SUNQIAN_UNIVERSE_CARD_SELF_DECAPITATION_ASCENSION.title": "Self Decapitation, Return to Heaven!",
@@ -205,5 +205,8 @@
   "SUNQIAN_UNIVERSE_CARD_NOT_AFRAID_OF_ACID.title": "I'm Not Afraid of Sourness",
   "SUNQIAN_UNIVERSE_CARD_NOT_AFRAID_OF_ACID.description": "Deal {Damage:diff()} damage.\nFor {NotAfraidOfAcidPower:diff()} turns, ignore the effects of [gold]Vulnerable[/gold], [gold]Weak[/gold], and [gold]Frail[/gold].{SlightRevisionText}",
   "SUNQIAN_UNIVERSE_CARD_SAID_NOT_AFRAID_OF_ACID.title": "I Said I'm Not Afraid of Sourness",
-  "SUNQIAN_UNIVERSE_CARD_SAID_NOT_AFRAID_OF_ACID.description": "Deal {Damage:diff()} damage.\nTransform all [gold]Unplayable[/gold] cards in your [gold]Hand[/gold] into [gold]{IfUpgraded:show:Wine+|Wine}[/gold]."
+  "SUNQIAN_UNIVERSE_CARD_SAID_NOT_AFRAID_OF_ACID.description": "Deal {Damage:diff()} damage.\nTransform all [gold]Unplayable[/gold] cards in your [gold]Hand[/gold] into [gold]{IfUpgraded:show:Wine+|Wine}[/gold].",
+  "SUNQIAN_UNIVERSE_CARD_SHARPEN_SWORD_FOR_DECADES.title": "Sharpening the Sword for Years",
+  "SUNQIAN_UNIVERSE_CARD_SHARPEN_SWORD_FOR_DECADES.description": "[gold]Forge[/gold] {Forge:diff()}.\nAt the end of combat, this card retains bonuses to its [gold]Forge[/gold] value.{ChargeText}",
+  "SUNQIAN_UNIVERSE_CARD_SHARPEN_SWORD_FOR_DECADES.chargeEffect": "At the end of your turn, this card's [gold]Forge[/gold] value increases by {ChargeForge:diff()}."
 }

@@ -22,7 +22,7 @@ namespace Squ.Potions;
 [RegisterPotion(typeof(SunqianPotionPool), StableEntryStem = "fire_oil_rice")]
 public sealed class FireOilRicePotion : ModPotionTemplate
 {
-	public const decimal BurningStacks = 9m;
+	public const decimal BurningStacks = 7m;
 	public const decimal UnextinguishedStacks = 2m;
 
 	public override PotionRarity Rarity => PotionRarity.Common;

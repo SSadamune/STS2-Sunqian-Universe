@@ -20,11 +20,12 @@ namespace Squ.Cards;
 [RegisterCharacterStarterCard(typeof(SunqianCharacter), 1)]
 public sealed class SunqianScript : ScriptCardTemplate
 {
-	public const int DexterityAmount = 2;
+	public const int BaseDexterity = 2;
+	public const int UpgradedDexterity = 3;
 
 	protected override IEnumerable<DynamicVar> CanonicalVars =>
 	[
-		new PowerVar<DexterityPower>(DexterityAmount),
+		new PowerVar<DexterityPower>(BaseDexterity),
 	];
 
 	protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
@@ -50,7 +51,7 @@ public sealed class SunqianScript : ScriptCardTemplate
 		await PowerCmd.Apply<TempDexFromSunqianScriptPower>(
 			choiceContext,
 			Owner.Creature,
-			DexterityAmount,
+			DynamicVars[nameof(DexterityPower)].BaseValue,
 			Owner.Creature,
 			this);
 
@@ -60,5 +61,11 @@ public sealed class SunqianScript : ScriptCardTemplate
 			1m,
 			Owner.Creature,
 			this);
+	}
+
+	protected override void OnUpgrade()
+	{
+		DynamicVars[nameof(DexterityPower)]
+			.UpgradeValueBy(UpgradedDexterity - BaseDexterity);
 	}
 }

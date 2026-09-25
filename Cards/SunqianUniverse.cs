@@ -19,13 +19,14 @@ namespace Squ.Cards;
 [RegisterCard(typeof(SunqianCardPool), StableEntryStem = "sunqian_universe")]
 public sealed class SunqianUniverse : ModCardTemplate
 {
-	public const int DexterityAmount = 2;
+	public const int BaseDexterity = 2;
+	public const int UpgradedDexterity = 3;
 	public const int BaseDraw = 1;
 	public const int UpgradedDraw = 2;
 
 	protected override IEnumerable<DynamicVar> CanonicalVars =>
 	[
-		new PowerVar<DexterityPower>(DexterityAmount),
+		new PowerVar<DexterityPower>(BaseDexterity),
 		new CardsVar(BaseDraw),
 	];
 
@@ -62,6 +63,8 @@ public sealed class SunqianUniverse : ModCardTemplate
 
 	protected override void OnUpgrade()
 	{
+		DynamicVars[nameof(DexterityPower)]
+			.UpgradeValueBy(UpgradedDexterity - BaseDexterity);
 		DynamicVars.Cards.UpgradeValueBy(UpgradedDraw - BaseDraw);
 	}
 }

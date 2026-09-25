@@ -19,9 +19,9 @@ namespace Squ.Cards;
 [RegisterCard(typeof(SunqianCardPool), StableEntryStem = "keep_playing_keep_dancing")]
 public sealed class KeepPlayingKeepDancing : ModCardTemplate
 {
-	public const int BaseVigor = 3;
-	public const int BaseKeepVigor = 2;
-	public const int UpgradedKeepVigor = 3;
+	public const int BaseVigor = 4;
+	public const int BaseKeepVigor = 1;
+	public const int UpgradedKeepVigor = 2;
 
 	protected override IEnumerable<DynamicVar> CanonicalVars =>
 	[
