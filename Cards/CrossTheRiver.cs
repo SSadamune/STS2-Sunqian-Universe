@@ -45,6 +45,8 @@ public sealed class CrossTheRiver : ModCardTemplate
 	public override CardAssetProfile AssetProfile => new(
 		PortraitPath: "res://images/cards/CrossTheRiver.png");
 
+	protected override bool ShouldGlowGoldInternal => HasAttackingEnemy();
+
 	public CrossTheRiver()
 		: base(1, CardType.Skill, CardRarity.Rare, TargetType.Self)
 	{
@@ -67,8 +69,7 @@ public sealed class CrossTheRiver : ModCardTemplate
 			owner,
 			this);
 
-		if (CombatState?.HittableEnemies.Any(enemy =>
-			enemy.IsAlive && SquEnemyIntent.IntendsToAttack(enemy)) == true)
+		if (HasAttackingEnemy())
 		{
 			await PowerCmd.Apply<CrossTheRiverPower>(
 				choiceContext,
@@ -85,4 +86,8 @@ public sealed class CrossTheRiver : ModCardTemplate
 		DynamicVars[nameof(CrossTheRiverPower)]
 			.UpgradeValueBy(UpgradedDuration - BaseDuration);
 	}
+
+	private bool HasAttackingEnemy() =>
+		CombatState?.HittableEnemies.Any(enemy =>
+			enemy.IsAlive && SquEnemyIntent.IntendsToAttack(enemy)) == true;
 }

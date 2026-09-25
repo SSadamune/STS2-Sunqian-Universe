@@ -9,6 +9,7 @@ using MegaCrit.Sts2.Core.Entities.Powers;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Models;
+using MegaCrit.Sts2.Core.Models.Powers;
 using MegaCrit.Sts2.Core.ValueProps;
 using Squ.Audio;
 using STS2RitsuLib.Interop.AutoRegistration;
@@ -20,6 +21,9 @@ namespace Squ.Powers;
 [RegisterPower]
 public sealed class IronChainPower : ModPowerTemplate
 {
+	private static readonly PowerModel ChainsOfBindingPowerTemplate =
+		ModelDb.Power<ChainsOfBindingPower>();
+
 	public override PowerType Type => PowerType.Debuff;
 
 	public override PowerStackType StackType => PowerStackType.Counter;
@@ -27,8 +31,8 @@ public sealed class IronChainPower : ModPowerTemplate
 	public override Color AmountLabelColor => PowerModel._normalAmountLabelColor;
 
 	public override PowerAssetProfile AssetProfile => new(
-		IconPath: "res://images/atlases/power_atlas.sprites/chains_of_binding.tres",
-		BigIconPath: "res://images/powers/chains_of_binding.png");
+		IconPath: ChainsOfBindingPowerTemplate.PackedIconPath,
+		BigIconPath: ChainsOfBindingPowerTemplate.ResolvedBigIconPath);
 
 	protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
 	[

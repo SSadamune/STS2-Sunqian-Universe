@@ -43,6 +43,9 @@ public sealed class WorryWithoutWorry : ModCardTemplate
 	public override CardAssetProfile AssetProfile => new(
 		PortraitPath: "res://images/cards/WorryWithoutWorry.png");
 
+	protected override bool ShouldGlowGoldInternal =>
+		IsInCombat && !HasAttackingEnemy();
+
 	public WorryWithoutWorry()
 		: base(1, CardType.Skill, CardRarity.Common, TargetType.Self)
 	{
