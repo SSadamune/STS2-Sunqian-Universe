@@ -43,7 +43,7 @@ public sealed class ExactlyWhatToEat : ModCardTemplate
 	{
 		SquSfx.Play(SquSfx.ExactlyWhatToEatEvent);
 		int drawCount = DynamicVars.Cards.IntValue;
-		await EatSomethingCardLogic.DrawAndExhaustFromHandAsync(
+		await EatSomethingCardLogic.ExhaustFromHandAndDrawAsync(
 			choiceContext,
 			Owner,
 			this,

@@ -15,34 +15,35 @@ namespace Squ.Script;
 
 internal static class EatSomethingCardLogic
 {
-	public static async Task DrawAndExhaustFromHandAsync(
+	public static async Task ExhaustFromHandAndDrawAsync(
 		PlayerChoiceContext choiceContext,
 		Player player,
 		CardModel source,
 		int drawCount,
 		int exhaustCount)
 	{
+		if (exhaustCount > 0)
+		{
+			CardSelectorPrefs prefs = new(
+				CardSelectorPrefs.ExhaustSelectionPrompt,
+				exhaustCount,
+				exhaustCount);
+			IEnumerable<CardModel> toExhaust = await CardSelectCmd.FromHand(
+				choiceContext,
+				player,
+				prefs,
+				null,
+				source);
+
+			foreach (CardModel card in toExhaust)
+			{
+				await CardCmd.Exhaust(choiceContext, card);
+			}
+		}
+
 		if (drawCount > 0)
 		{
 			await CardPileCmd.Draw(choiceContext, drawCount, player);
-		}
-
-		if (exhaustCount <= 0)
-		{
-			return;
-		}
-
-		CardSelectorPrefs prefs = new(CardSelectorPrefs.ExhaustSelectionPrompt, exhaustCount, exhaustCount);
-		IEnumerable<CardModel> toExhaust = await CardSelectCmd.FromHand(
-			choiceContext,
-			player,
-			prefs,
-			null,
-			source);
-
-		foreach (CardModel card in toExhaust)
-		{
-			await CardCmd.Exhaust(choiceContext, card);
 		}
 	}
 

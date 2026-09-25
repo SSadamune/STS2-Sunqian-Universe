@@ -11,6 +11,7 @@ using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.CardPools;
 using MegaCrit.Sts2.Core.Models.Enchantments;
+using Squ.Audio;
 using STS2RitsuLib.Interop.AutoRegistration;
 using STS2RitsuLib.Scaffolding.Content;
 
@@ -52,6 +53,7 @@ public sealed class FarmingGeneral : ModCardTemplate
 
 	protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
 	{
+		SquSfx.Play(SquSfx.FarmingGeneralEvent);
 		IEnumerable<CardModel> selectedCards = await CardSelectCmd.FromCombatPile(
 			choiceContext,
 			PileType.Draw.GetPile(Owner),

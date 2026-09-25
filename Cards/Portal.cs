@@ -43,11 +43,10 @@ public sealed class Portal : ModCardTemplate
 	{
 		SquSfx.PlayRandom(
 			RunState,
+			SquSfx.PortalXiliangAllianceEvent,
 			SquSfx.PortalChanganMeiwuEvent,
-			SquSfx.PortalYuanShaoXuzhouEvent,
 			SquSfx.PortalJizhouJingzhouEvent,
-			SquSfx.PortalGansuHenanEvent,
-			SquSfx.PortalXiliangChenliuEvent);
+			SquSfx.PortalGansuHenanEvent);
 		await ScryCmd.Execute(choiceContext, this);
 
 		CardModel? drawn = await CardPileCmd.Draw(choiceContext, Owner);

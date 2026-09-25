@@ -7,6 +7,7 @@ using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
+using Squ.Audio;
 using Squ.Character;
 using Squ.Combat;
 using Squ.Powers;
@@ -46,6 +47,7 @@ public sealed class IronChainBoats : SlightRevisionCardTemplate<FarmingGeneral>
 	protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
 	{
 		ArgumentNullException.ThrowIfNull(cardPlay.Target, nameof(cardPlay.Target));
+		SquSfx.Play(SquSfx.IronChainBoatsPlayEvent);
 		await PowerCmd.Apply<IronChainPower>(
 			choiceContext,
 			cardPlay.Target,

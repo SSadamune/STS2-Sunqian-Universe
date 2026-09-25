@@ -68,7 +68,7 @@ public sealed class FireNova : SlightRevisionCardTemplate<FireMeteorShower>, IRa
 		Creature target = targets[0];
 		SquVigorSnapshot.AttackSequence vigorSequence =
 			SquVigorSnapshot.BeginAttackSequence(Owner.Creature, this);
-		SquSfx.PlayRandom(RunState, SquSfx.FlyingFireMeteorEvents);
+		SquSfx.Play(SquSfx.FlyingFireMeteorArtifactEvent);
 		await DamageCmd.Attack(vigorSequence.ResolveNextAttackDamage())
 			.FromCard(this, cardPlay)
 			.Targeting(target)

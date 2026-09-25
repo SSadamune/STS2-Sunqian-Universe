@@ -44,7 +44,7 @@ public sealed class WhatToEat : ModCardTemplate
 	protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
 	{
 		SquSfx.Play(SquSfx.WhatDoWeEatEvent);
-		await EatSomethingCardLogic.DrawAndExhaustFromHandAsync(
+		await EatSomethingCardLogic.ExhaustFromHandAndDrawAsync(
 			choiceContext,
 			Owner,
 			this,

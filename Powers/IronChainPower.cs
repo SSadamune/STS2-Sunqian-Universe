@@ -10,6 +10,7 @@ using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.ValueProps;
+using Squ.Audio;
 using STS2RitsuLib.Interop.AutoRegistration;
 using STS2RitsuLib.Scaffolding.Content;
 
@@ -43,6 +44,7 @@ public sealed class IronChainPower : ModPowerTemplate
 		}
 
 		Flash();
+		SquSfx.Play(SquSfx.IronChainBoatsTriggerEvent);
 		List<Creature> otherEnemies = Owner.CombatState!.HittableEnemies
 			.Where(enemy => enemy != Owner && enemy.IsAlive)
 			.ToList();

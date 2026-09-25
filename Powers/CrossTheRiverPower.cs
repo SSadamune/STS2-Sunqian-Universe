@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Godot;
 using MegaCrit.Sts2.Core.Combat;
 using MegaCrit.Sts2.Core.Commands;
+using MegaCrit.Sts2.Core.Commands.Builders;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.Entities.Creatures;
 using MegaCrit.Sts2.Core.Entities.Powers;
@@ -13,6 +14,7 @@ using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.Powers;
 using MegaCrit.Sts2.Core.ValueProps;
+using Squ.Audio;
 using STS2RitsuLib.Interop.AutoRegistration;
 using STS2RitsuLib.Scaffolding.Content;
 
@@ -29,13 +31,26 @@ public sealed class CrossTheRiverPower : ModPowerTemplate
 	public override Color AmountLabelColor => PowerModel._normalAmountLabelColor;
 
 	public override PowerAssetProfile AssetProfile => new(
-		IconPath: "res://images/powers/KeepVigorPower.png",
-		BigIconPath: "res://images/powers/KeepVigorPowerBig.png");
+		IconPath: "res://images/powers/CrossTheRiverPower.png",
+		BigIconPath: "res://images/powers/CrossTheRiverPowerBig.png");
 
 	protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
 	[
 		HoverTipFactory.FromPower<VigorPower>(),
 	];
+
+	public override Task BeforeAttack(AttackCommand command)
+	{
+		if (command.Attacker == Owner
+			&& command.DamageProps.IsPoweredAttack()
+			&& command.ModelSource is CardModel { Type: CardType.Attack }
+			&& Owner.GetPower<VigorPower>() is { Amount: > 0 })
+		{
+			SquSfx.PlayRandom(CombatState?.RunState, SquSfx.CrossTheRiverTriggerEvents);
+		}
+
+		return Task.CompletedTask;
+	}
 
 	public override decimal ModifyDamageAdditive(
 		Creature? target,

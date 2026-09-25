@@ -31,11 +31,8 @@
 {54c28a9e-23c8-467a-9134-c7c2e62bdb68} event:/sunqian_universe/sfx/仁义-仁义才能征服天下人心
 {91ef17ac-32b2-45f0-8639-2bb6d11f3f09} event:/sunqian_universe/sfx/仁之剑
 {c9bc6e2e-6108-4c91-953a-ba9dad3f2b50} event:/sunqian_universe/sfx/传送门-冀州和荆州有空间通道
-{138a95d2-7e7f-44ed-9475-087351c3fe1f} event:/sunqian_universe/sfx/传送门-冀州韩馥占据荆州当阳
 {5b64ddfc-20fb-4712-b30b-eb05519d5377} event:/sunqian_universe/sfx/传送门-星夜从甘肃杀到河南
-{b5aefd8c-3a2a-4eda-bfd9-410da64cc0cb} event:/sunqian_universe/sfx/传送门-荆州刘表占冀州的城池
-{76123c37-b3ec-4199-bf96-43f4b5f91a6d} event:/sunqian_universe/sfx/传送门-袁绍兵发徐州
-{d8deef0f-77f0-49ca-a919-22cdbcf07a6f} event:/sunqian_universe/sfx/传送门-西凉太守来陈留会盟
+{9ea29e18-261d-449f-a19d-1c55c6bb5352} event:/sunqian_universe/sfx/传送门-西凉太守马腾亲自率军来陈留城会盟
 {7f9ee073-a015-4cf4-91c7-9442677d45d5} event:/sunqian_universe/sfx/传送门-长安和堳坞之间有传送门
 {7f1175f4-1cfc-4c02-8b84-a752a279f4be} event:/sunqian_universe/sfx/何疑魏-丞相太过于谨小慎微了
 {93a94d02-5377-48d7-b7df-d91c1c65917f} event:/sunqian_universe/sfx/何疑魏-想不到丞相竟是这般谨慎
@@ -49,6 +46,13 @@
 {438a8ab6-7ed2-435a-9f37-6797691135a0} event:/sunqian_universe/sfx/光剑刺杀-拔刀
 {542eca1e-4347-4fac-97b0-073eff87cedd} event:/sunqian_universe/sfx/光剑刺杀-激光
 {3cf5479e-59e7-4157-a775-cdc0fee8d893} event:/sunqian_universe/sfx/再来撒野
+{cb93a65f-ad3b-4447-b740-12a81b468348} event:/sunqian_universe/sfx/制式基地车-Lets set up shop
+{e1000fff-d8cc-4fba-a6ba-8f5138cfa762} event:/sunqian_universe/sfx/制式基地车-MCV reporting in
+{347873f7-fd99-4fd8-bdcd-4e14e5fde7b4} event:/sunqian_universe/sfx/制式基地车-Yes comrade
+{73c6debb-da3e-4095-ab3f-932a623518d7} event:/sunqian_universe/sfx/制式基地车-as quickly as possible
+{f48a39f8-cfef-42c5-a44a-12929b019a8f} event:/sunqian_universe/sfx/制式基地车-deploy
+{de097c6f-fe6d-4d92-a959-7c36677aa30f} event:/sunqian_universe/sfx/制式基地车-location is key
+{490b8679-d45c-435b-b6a7-fd32af89eb1d} event:/sunqian_universe/sfx/制式基地车-wanna set up over there
 {834de0fa-aa95-4767-b591-064a377fb5a5} event:/sunqian_universe/sfx/劳逸结合-我打了一辈子仗就不能享受享受吗
 {4033daf5-e1a1-41f2-b4d0-ab3a8ab8a259} event:/sunqian_universe/sfx/化骨绵掌
 {ee369cdd-67fc-4edb-9ced-6cb15c071654} event:/sunqian_universe/sfx/叉出去-走
@@ -58,6 +62,9 @@
 {2f952604-ddc5-4925-be78-55e2c20c2913} event:/sunqian_universe/sfx/变声期-这个多年前，明显有变声期
 {34bd8133-b692-4101-b620-1c4f07f8bbfd} event:/sunqian_universe/sfx/变声期-这几个字儿明显是变声期啊
 {0aa3243b-5119-4bf7-8a6a-072c0534aa2b} event:/sunqian_universe/sfx/变声期-音量不对
+{7b8349ca-609a-4bda-8578-84f43af006d9} event:/sunqian_universe/sfx/吾亦过江-直捣东吴建业
+{3caa82e7-290b-478b-8e30-326a03858af0} event:/sunqian_universe/sfx/吾亦过江-连孙权一起拿了
+{18e16c94-042a-4500-afb2-43819bb703d8} event:/sunqian_universe/sfx/吾亦过江-那好啊，他过江我也过江
 {6de1432d-a5e0-412f-849a-f58941f1a9ab} event:/sunqian_universe/sfx/哪家的鹰犬
 {880314bd-44ae-48f0-a56f-1579ca6ad9f8} event:/sunqian_universe/sfx/国贼董卓
 {25f87d38-dcce-42b8-acf2-fd369148d02a} event:/sunqian_universe/sfx/多智袁术-为何追杀
@@ -88,6 +95,8 @@
 {3089b3f5-906b-42bb-8172-fbf4a43130c0} event:/sunqian_universe/sfx/接着奏乐接着舞-接着奏乐接着舞
 {3233f9b6-47fc-4186-9753-fd60b7694eba} event:/sunqian_universe/sfx/无双乱舞-我原本以为吕布
 {422bc859-6769-4d75-a031-d476b5b2363c} event:/sunqian_universe/sfx/无双乱舞-我爱死他了
+{b02c95c5-e13d-490b-ba40-3ee72beb756f} event:/sunqian_universe/sfx/无忧而虑-孔明在犹豫什么？丞相自己也说不清楚
+{47ebe93e-de92-484f-849f-8574b51df59c} event:/sunqian_universe/sfx/无忧而虑-而让我忧虑的却是，我不知道这危险是从何而来
 {b83f1637-5192-4f24-a452-f5457118bb16} event:/sunqian_universe/sfx/无情打击-剑声
 {2ad9175d-3e66-4d48-a995-dc5c0f0b6575} event:/sunqian_universe/sfx/无情打击-可别逼我使出无情剑来
 {f192248d-cad0-4781-adcc-8a20d2dc8b06} event:/sunqian_universe/sfx/是啊吃什么
@@ -100,6 +109,8 @@
 {fb6b5c93-ac46-4f27-9087-cbf43b84ddc0} event:/sunqian_universe/sfx/生死不明
 {adef8aef-88ec-4baf-9e48-999915329fda} event:/sunqian_universe/sfx/生死不明-那就是死了
 {19a69e50-cedd-43c9-9634-513e9df4cb4d} event:/sunqian_universe/sfx/白银起义
+{f33ea8e2-cbde-4079-bff1-6d7a3de50ca9} event:/sunqian_universe/sfx/磨剑十几年-我挥剑只有一次，可磨剑磨了十几年呐！
+{9c585106-b323-486a-b967-2f694e2dca3c} event:/sunqian_universe/sfx/种地将军-曹操真是老糊涂了
 {659d1e33-3952-4c3b-83af-b660d59bf8a9} event:/sunqian_universe/sfx/称呼别人喜欢在后面带个啊
 {f873e3cf-3bfb-4547-a7b8-e0916b1442f9} event:/sunqian_universe/sfx/稍作修改-好方略，不过我想稍作修改
 {1ba1aa01-3f0b-4671-8afb-8ba1c04969de} event:/sunqian_universe/sfx/竟然不许
@@ -123,6 +134,8 @@
 {69688b5b-3f03-4770-a603-2aee01f11c72} event:/sunqian_universe/sfx/酒-我正渴着呢
 {92a03b1e-cc87-4788-b1d4-d4d114ca4cb8} event:/sunqian_universe/sfx/酒-进城喝酒去了
 {08e47bfc-b309-4b68-ae68-d2c07a9e1ae2} event:/sunqian_universe/sfx/酒-酒是老英雄
+{c3b61069-4f7f-4a60-8747-b44191b9d1c1} event:/sunqian_universe/sfx/铁索连舟-将所有战船用铁索连为一体
+{b38989d7-cfab-41c0-bc97-525d7edf52bc} event:/sunqian_universe/sfx/铁索连舟-登船交战，大展神威
 {63f32692-99b8-4b38-b39f-2e486dab6725} event:/sunqian_universe/sfx/镜头补拍-为了表现他此时在场
 {20e67140-0b0a-463b-8fce-4c22a8f9bd68} event:/sunqian_universe/sfx/镜头补拍-好，好志气
 {6a0ee6da-c0c9-401f-8dc3-21d34d9c9453} event:/sunqian_universe/sfx/镜头补拍-说明赵云没来
@@ -150,10 +163,14 @@
 {0352d615-e415-4e76-85f0-db4ac39a759a} event:/sunqian_universe/sfx/隔岸观火-三弟快快住口
 {724bad7d-daae-4223-a179-57f961211f50} event:/sunqian_universe/sfx/隔岸观火-放肆，还不快跪下
 {ffe619e9-9bda-419c-97e0-a43c7b7be578} event:/sunqian_universe/sfx/隔岸观火-翼德，不可出言不逊
+{0060b530-b0bc-47d4-ac87-f98d4e4dc7d1} event:/sunqian_universe/sfx/飞火流星-有这等神物
 {9de43e87-b9f6-4e68-90a3-eb124f7ef062} event:/sunqian_universe/sfx/飞火流星1
 {17eb9846-0a3a-4ae9-934a-89d69d955a7b} event:/sunqian_universe/sfx/飞火流星2
 {4a44dd86-1451-4572-b733-3ef0d783d9df} event:/sunqian_universe/sfx/飞火流星3
 {b3c7f392-5475-4c1c-9c60-bb6d62e6eb90} event:/sunqian_universe/sfx/飞火流星4
+{c268414c-b646-4f6b-b0e3-25c8a58c8d0f} event:/sunqian_universe/sfx/马戏-不去玩杂耍真可惜了
+{35a3e806-d6e4-41ce-9551-d8de3383f754} event:/sunqian_universe/sfx/马戏-乖乖，站起来了
+{8b8b4c48-9bcb-494a-b09e-1d6a474e0543} event:/sunqian_universe/sfx/马戏-看一种很新的打戏
 {919a9e1d-2499-4cc0-953d-bf44f1258b47} event:/sunqian_universe/sfx/鸡脚芝士-刘备
 {f471f0f3-f440-46a3-99f7-8a7bf5d5efda} event:/sunqian_universe/sfx/鸡脚芝士-徐庶
 {c71ab1d1-5c15-41c3-865a-574618065025} event:/sunqian_universe/sfx/鸡脚芝士-王平

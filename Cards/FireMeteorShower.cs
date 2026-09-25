@@ -73,6 +73,7 @@ public sealed class FireMeteorShower : ModCardTemplate, IRandomEnemyTargetCount
 
 		SquVigorSnapshot.AttackSequence vigorSequence =
 			SquVigorSnapshot.BeginAttackSequence(Owner.Creature, this);
+		SquSfx.PlayRandom(RunState, SquSfx.FlyingFireMeteorEvents);
 
 		foreach (Creature damageTarget in damageTargets)
 		{
@@ -81,7 +82,6 @@ public sealed class FireMeteorShower : ModCardTemplate, IRandomEnemyTargetCount
 				continue;
 			}
 
-			SquSfx.PlayRandom(RunState, SquSfx.FlyingFireMeteorEvents);
 			await DamageCmd.Attack(vigorSequence.ResolveNextAttackDamage())
 				.FromCard(this, cardPlay)
 				.Targeting(damageTarget)

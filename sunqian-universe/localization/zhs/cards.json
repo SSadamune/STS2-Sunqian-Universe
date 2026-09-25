@@ -211,7 +211,7 @@
   "SUNQIAN_UNIVERSE_CARD_SHARPEN_SWORD_FOR_DECADES.chargeEffect": "回合结束时，[gold]铸造[/gold]值+{ChargeForge:diff()}。",
   "SUNQIAN_UNIVERSE_CARD_CROSS_THE_RIVER.title": "吾亦过江",
   "SUNQIAN_UNIVERSE_CARD_CROSS_THE_RIVER.description": "获得{VigorPower:diff()}点[gold]活力[/gold]和{VulnerablePower:diff()}层[gold]易伤[/gold]。\n如果有意图为攻击的敌人，{CrossTheRiverPower:diff()}回合内你的攻击牌受到两倍活力加成。",
-  "SUNQIAN_UNIVERSE_CARD_WORRY_WITHOUT_WORRY.title": "无忧而虑",
+  "SUNQIAN_UNIVERSE_CARD_WORRY_WITHOUT_WORRY.title": "孔明的忧郁",
   "SUNQIAN_UNIVERSE_CARD_WORRY_WITHOUT_WORRY.description": "获得{Block:diff()}点[gold]格挡[/gold]。\n在下一回合获得{BlockNextTurn:diff()}点[gold]格挡[/gold]。\n如果没有意图为攻击的敌人，改为都在下一回合获得。",
   "SUNQIAN_UNIVERSE_CARD_IRON_CHAIN_BOATS.title": "铁索连舟",
   "SUNQIAN_UNIVERSE_CARD_IRON_CHAIN_BOATS.description": "选择一名敌人，其受到[gold]灼烧[/gold]伤害后，其余敌人受到等量[gold]环境伤害[/gold]。{SlightRevisionText}",

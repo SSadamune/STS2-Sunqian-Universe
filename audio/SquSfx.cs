@@ -48,9 +48,8 @@ internal static class SquSfx
 	public const string ForkOutGetUpEvent = "event:/sunqian_universe/sfx/叉出去-起来";
 	public const string PortalJizhouJingzhouEvent = "event:/sunqian_universe/sfx/传送门-冀州和荆州有空间通道";
 	public const string PortalGansuHenanEvent = "event:/sunqian_universe/sfx/传送门-星夜从甘肃杀到河南";
-	public const string PortalYuanShaoXuzhouEvent = "event:/sunqian_universe/sfx/传送门-袁绍兵发徐州";
-	public const string PortalXiliangChenliuEvent = "event:/sunqian_universe/sfx/传送门-西凉太守来陈留会盟";
 	public const string PortalChanganMeiwuEvent = "event:/sunqian_universe/sfx/传送门-长安和堳坞之间有传送门";
+	public const string PortalXiliangAllianceEvent = "event:/sunqian_universe/sfx/传送门-西凉太守马腾亲自率军来陈留城会盟";
 	public const string VoiceChangeObviousEvent = "event:/sunqian_universe/sfx/变声期-有个很明显的变声期";
 	public const string VoiceChangeYearsAgoEvent = "event:/sunqian_universe/sfx/变声期-这个多年前，明显有变声期";
 	public const string VoiceChangeTheseWordsEvent = "event:/sunqian_universe/sfx/变声期-这几个字儿明显是变声期啊";
@@ -106,6 +105,26 @@ internal static class SquSfx
 	public const string FlyingFireMeteor2Event = "event:/sunqian_universe/sfx/飞火流星2";
 	public const string FlyingFireMeteor3Event = "event:/sunqian_universe/sfx/飞火流星3";
 	public const string FlyingFireMeteor4Event = "event:/sunqian_universe/sfx/飞火流星4";
+	public const string FlyingFireMeteorArtifactEvent = "event:/sunqian_universe/sfx/飞火流星-有这等神物";
+	public const string CrossTheRiverPlayEvent = "event:/sunqian_universe/sfx/吾亦过江-那好啊，他过江我也过江";
+	public const string CrossTheRiverDirectJianyeEvent = "event:/sunqian_universe/sfx/吾亦过江-直捣东吴建业";
+	public const string CrossTheRiverCaptureSunQuanEvent = "event:/sunqian_universe/sfx/吾亦过江-连孙权一起拿了";
+	public const string IronChainBoatsPlayEvent = "event:/sunqian_universe/sfx/铁索连舟-将所有战船用铁索连为一体";
+	public const string IronChainBoatsTriggerEvent = "event:/sunqian_universe/sfx/铁索连舟-登船交战，大展神威";
+	public const string FarmingGeneralEvent = "event:/sunqian_universe/sfx/种地将军-曹操真是老糊涂了";
+	public const string WorryWithoutWorryHesitationEvent = "event:/sunqian_universe/sfx/无忧而虑-孔明在犹豫什么？丞相自己也说不清楚";
+	public const string WorryWithoutWorryUnknownDangerEvent = "event:/sunqian_universe/sfx/无忧而虑-而让我忧虑的却是，我不知道这危险是从何而来";
+	public const string SharpenSwordForDecadesEvent = "event:/sunqian_universe/sfx/磨剑十几年-我挥剑只有一次，可磨剑磨了十几年呐！";
+	public const string CircusNewFightEvent = "event:/sunqian_universe/sfx/马戏-看一种很新的打戏";
+	public const string CircusStandUpEvent = "event:/sunqian_universe/sfx/马戏-乖乖，站起来了";
+	public const string CircusAcrobaticsEvent = "event:/sunqian_universe/sfx/马戏-不去玩杂耍真可惜了";
+	public const string StandardBaseVehicleDeployEvent = "event:/sunqian_universe/sfx/制式基地车-deploy";
+	public const string StandardBaseVehicleSetUpShopEvent = "event:/sunqian_universe/sfx/制式基地车-Lets set up shop";
+	public const string StandardBaseVehicleReportingInEvent = "event:/sunqian_universe/sfx/制式基地车-MCV reporting in";
+	public const string StandardBaseVehicleYesComradeEvent = "event:/sunqian_universe/sfx/制式基地车-Yes comrade";
+	public const string StandardBaseVehicleQuicklyEvent = "event:/sunqian_universe/sfx/制式基地车-as quickly as possible";
+	public const string StandardBaseVehicleLocationKeyEvent = "event:/sunqian_universe/sfx/制式基地车-location is key";
+	public const string StandardBaseVehicleOverThereEvent = "event:/sunqian_universe/sfx/制式基地车-wanna set up over there";
 	public const string GoldenUprisingEvent = "event:/sunqian_universe/sfx/黄金起义";
 	public const string BlockFirefightingDoNotDisturbEvent = "event:/sunqian_universe/sfx/阻拦救火-不可惊扰";
 	public const string BlockFirefightingSageEvent = "event:/sunqian_universe/sfx/阻拦救火-先生奇人";
@@ -194,6 +213,35 @@ internal static class SquSfx
 		FlyingFireMeteor2Event,
 		FlyingFireMeteor3Event,
 		FlyingFireMeteor4Event,
+	];
+
+	public static readonly string[] CrossTheRiverTriggerEvents =
+	[
+		CrossTheRiverDirectJianyeEvent,
+		CrossTheRiverCaptureSunQuanEvent,
+	];
+
+	public static readonly string[] WorryWithoutWorryEvents =
+	[
+		WorryWithoutWorryHesitationEvent,
+		WorryWithoutWorryUnknownDangerEvent,
+	];
+
+	public static readonly string[] CircusEvents =
+	[
+		CircusNewFightEvent,
+		CircusStandUpEvent,
+		CircusAcrobaticsEvent,
+	];
+
+	public static readonly string[] StandardBaseVehicleReturnEvents =
+	[
+		StandardBaseVehicleSetUpShopEvent,
+		StandardBaseVehicleReportingInEvent,
+		StandardBaseVehicleYesComradeEvent,
+		StandardBaseVehicleQuicklyEvent,
+		StandardBaseVehicleLocationKeyEvent,
+		StandardBaseVehicleOverThereEvent,
 	];
 
 	public static readonly string[] ChickenFootCheeseEvents =
