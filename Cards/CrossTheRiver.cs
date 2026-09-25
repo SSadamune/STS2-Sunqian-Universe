@@ -23,7 +23,7 @@ public sealed class CrossTheRiver : ModCardTemplate
 {
 	public const int BaseVigor = 7;
 	public const int UpgradedVigor = 9;
-	public const int VulnerableAmount = 2;
+	public const int VulnerableAmount = 1;
 	public const int BaseDuration = 2;
 	public const int UpgradedDuration = 3;
 
@@ -40,6 +40,9 @@ public sealed class CrossTheRiver : ModCardTemplate
 		HoverTipFactory.FromPower<VulnerablePower>(),
 		HoverTipFactory.FromPower<CrossTheRiverPower>(),
 	];
+
+	public override CardAssetProfile AssetProfile => new(
+		PortraitPath: "res://images/cards/CrossTheRiver.png");
 
 	public CrossTheRiver()
 		: base(1, CardType.Skill, CardRarity.Rare, TargetType.Self)

@@ -22,13 +22,13 @@ using Squ.Settings;
 namespace Squ.Patches;
 
 /// <summary>
-/// 修改原版火焰药水：造成 2 点伤害并给予 12 层灼烧。
+/// 修改原版火焰药水：造成 2 点伤害并给予 14 层灼烧。
 /// </summary>
 [HarmonyPatch(typeof(FirePotion))]
 internal static class FirePotionBurningPatch
 {
 	public const decimal DamageAmount = 2m;
-	public const decimal BurningAmount = 12m;
+	public const decimal BurningAmount = 14m;
 
 	[HarmonyPrefix]
 	[HarmonyPatch("OnUse")]

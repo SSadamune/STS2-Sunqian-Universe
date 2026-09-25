@@ -26,8 +26,8 @@ public sealed class IronChainPower : ModPowerTemplate
 	public override Color AmountLabelColor => PowerModel._normalAmountLabelColor;
 
 	public override PowerAssetProfile AssetProfile => new(
-		IconPath: "res://images/powers/BurningPower.png",
-		BigIconPath: "res://images/powers/BurningPowerBig.png");
+		IconPath: "res://images/atlases/power_atlas.sprites/chains_of_binding.tres",
+		BigIconPath: "res://images/powers/chains_of_binding.png");
 
 	protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
 	[

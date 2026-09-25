@@ -21,15 +21,18 @@ public abstract class SlightRevisionCardTemplate<TTarget> : ModCardTemplate, IMo
 
 	public override IEnumerable<CardKeyword> CanonicalKeywords => [SquKeywords.SlightRevision];
 
+	/// <summary>Whether Slight Revision should create an upgraded target card.</summary>
+	protected virtual bool IsSlightRevisionTargetUpgraded => IsUpgraded;
+
 	protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
-		SlightRevisionSystem.GetHoverTips(ModelDb.Card<TTarget>(), IsUpgraded);
+		SlightRevisionSystem.GetHoverTips(ModelDb.Card<TTarget>(), IsSlightRevisionTargetUpgraded);
 
 	protected override void AddExtraArgsToDescription(LocString description) =>
-		SlightRevisionSystem.AddDescription(description, ModelDb.Card<TTarget>(), IsUpgraded);
+		SlightRevisionSystem.AddDescription(description, ModelDb.Card<TTarget>(), IsSlightRevisionTargetUpgraded);
 
 	public bool CanHandleRightClickLocal(ModRightClickContext context) =>
 		context.Player == Owner && Pile?.Type == PileType.Hand && IsTransformable;
 
 	public Task OnRightClick(ModRightClickExecutionContext context) =>
-		SlightRevisionSystem.TransformAsync(this, ModelDb.Card<TTarget>(), IsUpgraded);
+		SlightRevisionSystem.TransformAsync(this, ModelDb.Card<TTarget>(), IsSlightRevisionTargetUpgraded);
 }

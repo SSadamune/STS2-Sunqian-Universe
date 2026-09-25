@@ -16,15 +16,15 @@ using STS2RitsuLib.Scaffolding.Content;
 
 namespace Squ.Cards;
 
-/// <summary>解救樊城：从抽牌堆选择至多两（三）张可播种或带消耗的牌，并分别处理其可用效果。</summary>
-[RegisterCard(typeof(TokenCardPool), StableEntryStem = "rescue_fancheng")]
-public sealed class RescueFancheng : ModCardTemplate
+/// <summary>种地将军：从抽牌堆选择至多两（三）张可播种或带消耗的牌，并分别处理其可用效果。</summary>
+[RegisterCard(typeof(TokenCardPool), StableEntryStem = "farming_general")]
+public sealed class FarmingGeneral : ModCardTemplate
 {
 	public const int BaseMaxCards = 2;
 	public const int UpgradedMaxCards = 3;
 
 	private static readonly LocString SelectionPrompt =
-		new("cards", "SUNQIAN_UNIVERSE_CARD_RESCUE_FANCHENG.selectionScreenPrompt");
+		new("cards", "SUNQIAN_UNIVERSE_CARD_FARMING_GENERAL.selectionScreenPrompt");
 
 	public override IEnumerable<CardKeyword> CanonicalKeywords =>
 	[
@@ -42,7 +42,10 @@ public sealed class RescueFancheng : ModCardTemplate
 		new CardsVar(BaseMaxCards),
 	];
 
-	public RescueFancheng()
+	public override CardAssetProfile AssetProfile => new(
+		PortraitPath: "res://images/cards/FarmingGeneral.png");
+
+	public FarmingGeneral()
 		: base(1, CardType.Skill, CardRarity.Rare, TargetType.Self)
 	{
 	}

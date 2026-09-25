@@ -215,7 +215,7 @@
   "SUNQIAN_UNIVERSE_CARD_WORRY_WITHOUT_WORRY.description": "Gain {Block:diff()} [gold]Block[/gold].\nNext turn, gain {BlockNextTurn:diff()} [gold]Block[/gold].\nIf no enemy intends to Attack, gain both next turn instead.",
   "SUNQIAN_UNIVERSE_CARD_IRON_CHAIN_BOATS.title": "Chain the Boats",
   "SUNQIAN_UNIVERSE_CARD_IRON_CHAIN_BOATS.description": "Choose an enemy. Whenever it takes [gold]Burning[/gold] damage, all other enemies take that much [gold]Environmental[/gold] damage.{SlightRevisionText}",
-  "SUNQIAN_UNIVERSE_CARD_RESCUE_FANCHENG.title": "Relieve Fancheng",
-  "SUNQIAN_UNIVERSE_CARD_RESCUE_FANCHENG.description": "Choose up to {Cards:diff()} cards from your Draw Pile. Enchant them with [gold]Sown[/gold] and remove [gold]Exhaust[/gold].",
-  "SUNQIAN_UNIVERSE_CARD_RESCUE_FANCHENG.selectionScreenPrompt": "Choose up to {Amount} cards to enchant with Sown and remove Exhaust"
+  "SUNQIAN_UNIVERSE_CARD_FARMING_GENERAL.title": "Farming General",
+  "SUNQIAN_UNIVERSE_CARD_FARMING_GENERAL.description": "Choose up to {Cards:diff()} cards from your Draw Pile. Enchant them with [gold]Sown[/gold] and remove [gold]Exhaust[/gold].",
+  "SUNQIAN_UNIVERSE_CARD_FARMING_GENERAL.selectionScreenPrompt": "Choose up to {Amount} cards to enchant with Sown and remove Exhaust"
 }

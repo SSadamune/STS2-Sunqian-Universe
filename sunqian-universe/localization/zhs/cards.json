@@ -215,7 +215,7 @@
   "SUNQIAN_UNIVERSE_CARD_WORRY_WITHOUT_WORRY.description": "获得{Block:diff()}点[gold]格挡[/gold]。\n在下一回合获得{BlockNextTurn:diff()}点[gold]格挡[/gold]。\n如果没有意图为攻击的敌人，改为都在下一回合获得。",
   "SUNQIAN_UNIVERSE_CARD_IRON_CHAIN_BOATS.title": "铁索连舟",
   "SUNQIAN_UNIVERSE_CARD_IRON_CHAIN_BOATS.description": "选择一名敌人，其受到[gold]灼烧[/gold]伤害后，其余敌人受到等量[gold]环境伤害[/gold]。{SlightRevisionText}",
-  "SUNQIAN_UNIVERSE_CARD_RESCUE_FANCHENG.title": "解救樊城",
-  "SUNQIAN_UNIVERSE_CARD_RESCUE_FANCHENG.description": "从抽牌堆中选择至多{Cards:diff()}张牌，为它们附魔[gold]播种[/gold]并移去[gold]消耗[/gold]。",
-  "SUNQIAN_UNIVERSE_CARD_RESCUE_FANCHENG.selectionScreenPrompt": "选择至多{Amount}张牌，为它们附魔播种并移去消耗"
+  "SUNQIAN_UNIVERSE_CARD_FARMING_GENERAL.title": "种地将军",
+  "SUNQIAN_UNIVERSE_CARD_FARMING_GENERAL.description": "从抽牌堆中选择至多{Cards:diff()}张牌，为它们附魔[gold]播种[/gold]并移去[gold]消耗[/gold]。",
+  "SUNQIAN_UNIVERSE_CARD_FARMING_GENERAL.selectionScreenPrompt": "选择至多{Amount}张牌，为它们附魔播种并移去消耗"
 }

@@ -7,7 +7,6 @@ using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.Entities.Creatures;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.Hooks;
-using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.Powers;
@@ -40,10 +39,8 @@ public sealed class WorryWithoutWorry : ModCardTemplate
 		new BlockVar(NextTurnBlockVar, NextTurnBlock, BlockProps),
 	];
 
-	protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
-	[
-		HoverTipFactory.FromPower<BlockNextTurnPower>(),
-	];
+	public override CardAssetProfile AssetProfile => new(
+		PortraitPath: "res://images/cards/WorryWithoutWorry.png");
 
 	public WorryWithoutWorry()
 		: base(1, CardType.Skill, CardRarity.Common, TargetType.Self)
@@ -53,8 +50,7 @@ public sealed class WorryWithoutWorry : ModCardTemplate
 	protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
 	{
 		Creature owner = Owner.Creature;
-		bool enemyIntendsToAttack = CombatState?.HittableEnemies.Any(enemy =>
-			enemy.IsAlive && SquEnemyIntent.IntendsToAttack(enemy)) == true;
+		bool enemyIntendsToAttack = HasAttackingEnemy();
 
 		if (enemyIntendsToAttack)
 		{
@@ -102,4 +98,8 @@ public sealed class WorryWithoutWorry : ModCardTemplate
 		DynamicVars[NextTurnBlockVar]
 			.UpgradeValueBy(UpgradedNextTurnBlock - NextTurnBlock);
 	}
+
+	private bool HasAttackingEnemy() =>
+		CombatState?.HittableEnemies.Any(enemy =>
+			enemy.IsAlive && SquEnemyIntent.IntendsToAttack(enemy)) == true;
 }
