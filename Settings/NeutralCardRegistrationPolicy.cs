@@ -38,7 +38,7 @@ public static class NeutralCardRegistrationPolicy
 	}
 
 	private static bool IsAffectedCard(CardModel card) =>
-		card is TheGrievingPrevail or TheArrogantFall;
+		card is TheGrievingPrevail or TheArrogantFall or KnowWrongDenyWrong;
 
 	[HarmonyPatch(typeof(CardPoolModel), nameof(CardPoolModel.GetUnlockedCards))]
 	private static class GetUnlockedCardsPatch
