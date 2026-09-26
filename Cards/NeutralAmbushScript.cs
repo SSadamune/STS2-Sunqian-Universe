@@ -44,7 +44,7 @@ public sealed class NeutralAmbushScript : ScriptCardTemplate
 		PortraitPath: "res://images/cards/NeutralAmbushScript.png");
 
 	public NeutralAmbushScript()
-		: base(1, CardType.Skill, CardRarity.Common, TargetType.Self, false)
+		: base(1, CardType.Skill, CardRarity.Uncommon, TargetType.Self, false)
 	{
 	}
 

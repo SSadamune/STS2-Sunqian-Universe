@@ -50,7 +50,7 @@ public sealed class ExecutionCommanderScript : ScriptCardTemplate
 		PortraitPath: "res://images/cards/ExecutionCommanderScript.png");
 
 	public ExecutionCommanderScript()
-		: base(1, CardType.Skill, CardRarity.Uncommon, TargetType.Self, false)
+		: base(1, CardType.Skill, CardRarity.Common, TargetType.Self, false)
 	{
 	}
 

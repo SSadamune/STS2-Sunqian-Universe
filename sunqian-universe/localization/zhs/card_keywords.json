@@ -6,7 +6,7 @@
   "SUNQIAN_UNIVERSE_KEYWORD_SCRIPT.title": "剧本",
   "SUNQIAN_UNIVERSE_KEYWORD_SCRIPT.description": "一类特殊的状态；在你获得新的剧本状态时，旧的剧本状态将[gold]失效[/gold]。",
   "SUNQIAN_UNIVERSE_KEYWORD_DOOM_KILL_THRESHOLD.title": "灾厄斩杀线",
-  "SUNQIAN_UNIVERSE_KEYWORD_DOOM_KILL_THRESHOLD.description": "该敌人生命值减去[gold]中毒[/gold]、[gold]灼烧[/gold]与[gold]灾厄[/gold]层数后的剩余值。",
+  "SUNQIAN_UNIVERSE_KEYWORD_DOOM_KILL_THRESHOLD.description": "表示该敌人再失去多少生命值后将死于[gold]灾厄[/gold]。\n即，其当前生命值减去[gold]中毒[/gold]、[gold]灼烧[/gold]与[gold]灾厄[/gold]层数后的剩余值。",
   "SUNQIAN_UNIVERSE_KEYWORD_STACKABLE_SCRIPT.title": "可叠层",
   "SUNQIAN_UNIVERSE_KEYWORD_STACKABLE_SCRIPT.description": "再次获得同名的[gold]剧本[/gold]能力时，不会使当前[gold]剧本[/gold]失效，改为层数叠加（保留升级效果）。",
   "SUNQIAN_UNIVERSE_KEYWORD_MULTI_TARGET.title": "群体目标",

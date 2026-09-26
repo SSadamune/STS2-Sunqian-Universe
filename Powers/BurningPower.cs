@@ -16,6 +16,7 @@ using MegaCrit.Sts2.Core.Nodes.Rooms;
 using MegaCrit.Sts2.Core.Nodes.Vfx;
 using MegaCrit.Sts2.Core.Random;
 using MegaCrit.Sts2.Core.ValueProps;
+using Squ.Combat;
 using Squ.Relics;
 using STS2RitsuLib.Combat.HealthBars;
 using STS2RitsuLib.Interop.AutoRegistration;
@@ -171,7 +172,7 @@ public sealed class BurningPower : ModPowerTemplate, IHealthBarForecastSource
 
 	public IEnumerable<HealthBarForecastSegment> GetHealthBarForecastSegments(HealthBarForecastContext context) =>
 		HealthBarForecasts.Single(
-			Amount,
+			SquTurnStartDamageForecast.Calculate(context.Creature).BurningDamage,
 			BurningLethalColor,
 			HealthBarForecastGrowthDirection.FromRight);
 
