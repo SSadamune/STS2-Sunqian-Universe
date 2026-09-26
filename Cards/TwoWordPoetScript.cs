@@ -13,6 +13,7 @@ using MegaCrit.Sts2.Core.ValueProps;
 using Squ;
 using Squ.Audio;
 using Squ.Character;
+using Squ.Combat;
 using Squ.Powers;
 using STS2RitsuLib.Interop.AutoRegistration;
 using STS2RitsuLib.Scaffolding.Content;
@@ -105,7 +106,10 @@ public sealed class TwoWordPoetScript : ScriptCardTemplate
 			bool runGlobalHooks)
 		{
 			BaseValue = card.DynamicVars.Damage.BaseValue;
-			base.UpdateCardPreview(card, previewMode, target: null, runGlobalHooks);
+			using (AllInResolutionTracker.SuppressBonus())
+			{
+				base.UpdateCardPreview(card, previewMode, target: null, runGlobalHooks);
+			}
 			if (runGlobalHooks && card.Owner?.Creature is { } dealer)
 			{
 				PreviewValue = ScriptTwoWordPoetPower.CalculateSnapshotDamagePerHit(card, dealer);

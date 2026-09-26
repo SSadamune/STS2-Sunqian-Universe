@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -14,6 +15,7 @@ using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.ValueProps;
 using Squ.Audio;
 using Squ.Cards;
+using Squ.Combat;
 using STS2RitsuLib.Interop.AutoRegistration;
 using STS2RitsuLib.Scaffolding.Content;
 
@@ -53,6 +55,7 @@ public sealed class ScriptTwoWordPoetPower : StackableScriptPowerTemplate
 	public static decimal CalculateSnapshotDamagePerHit(CardModel card, Creature dealer)
 	{
 		DamageVar damageVar = card.DynamicVars.Damage;
+		using IDisposable suppression = AllInResolutionTracker.SuppressBonus();
 		return Hook.ModifyDamage(
 			card.Owner.RunState,
 			card.CombatState,

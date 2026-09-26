@@ -72,6 +72,11 @@ public sealed class AllInPower : ModPowerTemplate
 
 	private bool ShouldApplyTo(CardModel? card)
 	{
+		if (AllInResolutionTracker.IsBonusSuppressed)
+		{
+			return false;
+		}
+
 		if (AllInResolutionTracker.IsUpdatingCardPreview)
 		{
 			if (card?.Pile?.Type == PileType.Play

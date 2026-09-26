@@ -31,7 +31,9 @@ public sealed class NightRaidWuchaoScript : ScriptCardTemplate
 
 	protected override IEnumerable<DynamicVar> CanonicalVars =>
 	[
-		new PowerVar<BurningPower>(BaseBurning),
+		// This is the fixed amount stored in the Script power, not Burning applied by this card.
+		// A PowerVar<BurningPower> would incorrectly include Burning-given modifiers in its preview.
+		new DynamicVar(nameof(BurningPower), BaseBurning),
 	];
 
 	public override IEnumerable<CardKeyword> CanonicalKeywords =>

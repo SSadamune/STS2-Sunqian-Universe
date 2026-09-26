@@ -39,9 +39,23 @@ public static class AllInResolutionTracker
 	private static readonly Dictionary<ulong, Stack<ResolutionScope>> ActiveScopes = [];
 	[ThreadStatic]
 	private static int _cardPreviewDepth;
+	[ThreadStatic]
+	private static int _bonusSuppressionDepth;
 	private static bool _initialized;
 
 	public static bool IsUpdatingCardPreview => _cardPreviewDepth > 0;
+
+	/// <summary>
+	/// True while calculating a value that is only stored for a later effect rather than dealt or
+	/// applied during the current card resolution.
+	/// </summary>
+	public static bool IsBonusSuppressed => _bonusSuppressionDepth > 0;
+
+	public static IDisposable SuppressBonus()
+	{
+		_bonusSuppressionDepth++;
+		return new BonusSuppressionScope();
+	}
 
 	public static void Initialize()
 	{
@@ -86,6 +100,22 @@ public static class AllInResolutionTracker
 	{
 		SpendSnapshots.Clear();
 		ActiveScopes.Clear();
+	}
+
+	private sealed class BonusSuppressionScope : IDisposable
+	{
+		private bool _disposed;
+
+		public void Dispose()
+		{
+			if (_disposed)
+			{
+				return;
+			}
+
+			_disposed = true;
+			_bonusSuppressionDepth--;
+		}
 	}
 
 	private static void CaptureSpendSnapshot(CardModel card)
