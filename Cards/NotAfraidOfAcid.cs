@@ -36,7 +36,6 @@ public sealed class NotAfraidOfAcid : SlightRevisionCardTemplate<SaidNotAfraidOf
 	protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
 	[
 		..base.AdditionalHoverTips,
-		HoverTipFactory.FromPower<NotAfraidOfAcidPower>(),
 		HoverTipFactory.FromPower<VulnerablePower>(),
 		HoverTipFactory.FromPower<WeakPower>(),
 		HoverTipFactory.FromPower<FrailPower>(),

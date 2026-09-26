@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
+using MegaCrit.Sts2.Core.HoverTips;
 using Squ.Character;
 using Squ.Powers;
 using STS2RitsuLib.Interop.AutoRegistration;
@@ -18,8 +19,13 @@ public sealed class AllIn : ModCardTemplate
 	public override CardAssetProfile AssetProfile => new(
 		PortraitPath: "res://images/cards/AllIn.png");
 
+	protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
+	[
+		HoverTipFactory.FromPower<BurningPower>(),
+	];
+
 	public AllIn()
-		: base(1, CardType.Power, CardRarity.Uncommon, TargetType.Self)
+		: base(1, CardType.Power, CardRarity.Rare, TargetType.Self)
 	{
 	}
 

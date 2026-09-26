@@ -47,7 +47,6 @@ public sealed class BlockFirefighting : ModCardTemplate
 	[
 		HoverTipFactory.FromPower<BurningPower>(),
 		HoverTipFactory.FromPower<WeakPower>(),
-		HoverTipFactory.FromPower<UnextinguishedPower>(),
 	];
 
 	public override CardAssetProfile AssetProfile => new(

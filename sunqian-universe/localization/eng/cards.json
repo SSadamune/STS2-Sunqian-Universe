@@ -119,7 +119,7 @@
   "SUNQIAN_UNIVERSE_CARD_ARM_INJURY_WINDMILL.title": "Arm Injury Windmill",
   "SUNQIAN_UNIVERSE_CARD_ARM_INJURY_WINDMILL.description": "Draw {Cards:diff()} {Cards:plural:card|cards}.\nGain {StatAmount:diff()} [gold]Dexterity[/gold] and [gold]Strength[/gold] this turn.\nAdd a [gold]Wound[/gold] into your [gold]Hand[/gold].",
   "SUNQIAN_UNIVERSE_CARD_ALL_IN.title": "All In",
-  "SUNQIAN_UNIVERSE_CARD_ALL_IN.description": "At the end of each turn, if you have not played a [gold]Skill[/gold] that can gain [gold]Block[/gold], deal {IfUpgraded:show:75|50}% of the damage you dealt this turn to the enemy with the highest HP. If tied, hit all tied enemies.",
+  "SUNQIAN_UNIVERSE_CARD_ALL_IN.description": "If a card you play spends your last {energyPrefix:energyIcons(1)}, increase all damage and [gold]Burning[/gold] you inflict by {IfUpgraded:show:50|30}% while that card resolves.",
   "SUNQIAN_UNIVERSE_CARD_SELF_DECAPITATION_ASCENSION.title": "Self Decapitation, Return to Heaven!",
   "SUNQIAN_UNIVERSE_CARD_SELF_DECAPITATION_ASCENSION.description": "Lose {HpLoss:diff()} HP.\nDraw {Cards:diff()} {Cards:plural:card|cards}.\nGain {IntangiblePower:diff()} [gold]Intangible[/gold].",
   "SUNQIAN_UNIVERSE_CARD_BENEVOLENCE_RIGHTEOUSNESS_DUAL_SWORDS.title": "Benevolence & Righteousness Dual Swords",

@@ -39,7 +39,6 @@ public sealed class CrossTheRiver : ModCardTemplate
 	[
 		HoverTipFactory.FromPower<VigorPower>(),
 		HoverTipFactory.FromPower<VulnerablePower>(),
-		HoverTipFactory.FromPower<CrossTheRiverPower>(),
 	];
 
 	public override CardAssetProfile AssetProfile => new(

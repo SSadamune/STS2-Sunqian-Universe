@@ -28,7 +28,6 @@ public sealed class ShangfangguSigh : ModCardTemplate
 
 	protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
 	[
-		HoverTipFactory.FromPower<GoodFirePower>(),
 		HoverTipFactory.FromPower<BurningPower>(),
 	];
 

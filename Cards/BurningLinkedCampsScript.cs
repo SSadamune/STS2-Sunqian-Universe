@@ -33,7 +33,6 @@ public sealed class BurningLinkedCampsScript : ScriptCardTemplate
 	[
 		..HoverTipFactory.FromPowerWithPowerHoverTips<TinderPower>(
 			(int)DynamicVars[nameof(TinderPower)].BaseValue),
-		HoverTipFactory.FromPower<BurningPower>(),
 		HoverTipFactory.FromCard<Burn>(),
 		HoverTipFactory.FromCard<ShangfangguSigh>(IsUpgraded),
 	];

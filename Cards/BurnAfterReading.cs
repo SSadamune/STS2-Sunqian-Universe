@@ -31,7 +31,6 @@ public sealed class BurnAfterReading : ModCardTemplate
 		HoverTipFactory.FromKeyword(CardKeyword.Exhaust),
 		..HoverTipFactory.FromPowerWithPowerHoverTips<TinderPower>(
 			(int)DynamicVars[nameof(TinderPower)].BaseValue),
-		HoverTipFactory.FromPower<BurningPower>(),
 	];
 
 	public override CardAssetProfile AssetProfile => new(

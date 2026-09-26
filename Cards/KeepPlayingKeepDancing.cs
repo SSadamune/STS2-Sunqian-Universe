@@ -32,8 +32,6 @@ public sealed class KeepPlayingKeepDancing : ModCardTemplate
 	protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
 	[
 		HoverTipFactory.FromPower<VigorPower>(),
-		..HoverTipFactory.FromPowerWithPowerHoverTips<KeepVigorPower>(
-			(int)DynamicVars[nameof(KeepVigorPower)].BaseValue),
 	];
 
 	public override CardAssetProfile AssetProfile => new(
