@@ -19,6 +19,10 @@ public static class SquCommonL10n
 		"SUNQIAN_UNIVERSE_COMMON.NEWSANGUO_VIGOR_SWAP.combatPowerNote";
 	public const string ScrySelectionPromptWithSourceKey =
 		"SUNQIAN_UNIVERSE_COMMON.SCRY.selectionPromptWithSource";
+	public const string NeutralCardAddedAnnotationKey =
+		"SUNQIAN_UNIVERSE_COMMON.NEUTRAL_CARD_ADDED.annotation";
+	public const string NeutralPotionModifiedAnnotationKey =
+		"SUNQIAN_UNIVERSE_COMMON.NEUTRAL_POTION_MODIFIED.annotation";
 
 	public static string Table =>
 		RitsuLibFramework.GetI18NLocTableId(SquMod.ModId, SquMod.CommonL10nStem);
@@ -39,4 +43,10 @@ public static class SquCommonL10n
 
 	public static LocString ScrySelectionPromptWithSource() =>
 		new(Table, ScrySelectionPromptWithSourceKey);
+
+	public static LocString NeutralCardAddedAnnotation() =>
+		new(Table, NeutralCardAddedAnnotationKey);
+
+	public static LocString NeutralPotionModifiedAnnotation() =>
+		new(Table, NeutralPotionModifiedAnnotationKey);
 }

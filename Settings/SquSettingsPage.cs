@@ -54,11 +54,11 @@ public static class SquSettingsPage
 				SaveScope.Global,
 				static s => Enum.IsDefined(s.NeutralPotionModification)
 					? s.NeutralPotionModification
-					: SquSettings.DefaultNeutralContentPermissionMode,
+					: SquSettings.DefaultNeutralPotionModificationMode,
 				static (s, v) => s.NeutralPotionModification = Enum.IsDefined(v)
 					? v
-					: SquSettings.DefaultNeutralContentPermissionMode),
-			static () => SquSettings.DefaultNeutralContentPermissionMode);
+					: SquSettings.DefaultNeutralPotionModificationMode),
+			static () => SquSettings.DefaultNeutralPotionModificationMode);
 
 	private static readonly IModSettingsValueBinding<NeutralContentPermissionMode> NeutralCardRegistrationBinding =
 		new DefaultModSettingsValueBinding<NeutralContentPermissionMode>(
@@ -68,11 +68,11 @@ public static class SquSettingsPage
 				SaveScope.Global,
 				static s => Enum.IsDefined(s.NeutralCardRegistration)
 					? s.NeutralCardRegistration
-					: SquSettings.DefaultNeutralContentPermissionMode,
+					: SquSettings.DefaultNeutralCardRegistrationMode,
 				static (s, v) => s.NeutralCardRegistration = Enum.IsDefined(v)
 					? v
-					: SquSettings.DefaultNeutralContentPermissionMode),
-			static () => SquSettings.DefaultNeutralContentPermissionMode);
+					: SquSettings.DefaultNeutralCardRegistrationMode),
+			static () => SquSettings.DefaultNeutralCardRegistrationMode);
 
 	public static void Register()
 	{

@@ -1,5 +1,7 @@
 {
   "SUNQIAN_UNIVERSE_COMMON.ANNOTATION.title": "Tips",
+  "SUNQIAN_UNIVERSE_COMMON.NEUTRAL_CARD_ADDED.annotation": "此牌由模组「孙乾宇宙」添加至中立牌池。你可以在「Mod设置(RitsuLib)」中拒绝添加这些卡牌。",
+  "SUNQIAN_UNIVERSE_COMMON.NEUTRAL_POTION_MODIFIED.annotation": "此中立药水的效果受到模组「孙乾宇宙」的影响而改变。你可以在「Mod设置(RitsuLib)」中拒绝此类修改。",
   "SUNQIAN_UNIVERSE_COMMON.NEWSANGUO_VIGOR_SWAP.hoverTitle": "※模组联动",
   "SUNQIAN_UNIVERSE_COMMON.NEWSANGUO_VIGOR_SWAP.libraryHover": "此效果对于「新三国mod」角色不提供活力，改为提供[gold]酒力[/gold]。",
   "SUNQIAN_UNIVERSE_COMMON.NEWSANGUO_VIGOR_SWAP.combatNote": "你不以此法获得活力，改为获得等量[gold]酒力[/gold]。",
@@ -22,7 +24,7 @@
   "SUNQIAN_UNIVERSE_COMMON.SETTINGS.previewSfx.poet": "二言诗人剧本",
   "SUNQIAN_UNIVERSE_COMMON.SETTINGS.sectionGameplayTitle": "游戏内容",
   "SUNQIAN_UNIVERSE_COMMON.SETTINGS.neutralPotionModificationLabel": "允许修改中立药水",
-  "SUNQIAN_UNIVERSE_COMMON.SETTINGS.neutralPotionModificationDescription": "是否允许本模组修改中立药水的效果（例如火焰药水改为给予灼烧）。",
+  "SUNQIAN_UNIVERSE_COMMON.SETTINGS.neutralPotionModificationDescription": "是否允许本模组修改中立药水的效果（例如「火焰药水」改为给予灼烧）。",
   "SUNQIAN_UNIVERSE_COMMON.SETTINGS.neutralPotionModification.allow": "允许",
   "SUNQIAN_UNIVERSE_COMMON.SETTINGS.neutralPotionModification.whenModCharacterPresent": "有本模组角色时允许",
   "SUNQIAN_UNIVERSE_COMMON.SETTINGS.neutralPotionModification.deny": "不允许",

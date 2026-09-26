@@ -5,6 +5,5 @@
   "SUNQIAN_UNIVERSE_POTION_PEIGUO_BREW.description": "Gain {Energy:energyIcons()} and [blue]{VigorPower}[/blue] [gold]Vigor[/gold].\nCan also be thrown at the [gold]Merchant[/gold] for [blue]{Gold}[/blue] [gold]Gold[/gold].{NewsanguoCombatNote}",
   "SUNQIAN_UNIVERSE_POTION_FIRE_OIL_RICE.title": "Fire Oil Rice",
   "SUNQIAN_UNIVERSE_POTION_FIRE_OIL_RICE.description": "Apply [blue]{BurningPower}[/blue] [gold]Burning[/gold] to all enemies that will not be [gold]extinguished[/gold] for [blue]{UnextinguishedPower}[/blue] turns.",
-  "SUNQIAN_UNIVERSE_FIRE_POTION_MODIFIED.description": "Deal [blue]{Damage}[/blue] damage. Apply [blue]{BurningPower}[/blue] [gold]Burning[/gold].",
-  "SUNQIAN_UNIVERSE_FIRE_POTION_MODIFIED.annotation": "This effect has been changed by the “Sunqian Universe” mod. You can disable this change in “Mod Settings (RitsuLib)”."
+  "SUNQIAN_UNIVERSE_FIRE_POTION_MODIFIED.description": "Deal [blue]{Damage}[/blue] damage. Apply [blue]{BurningPower}[/blue] [gold]Burning[/gold]."
 }

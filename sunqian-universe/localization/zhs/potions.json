@@ -5,6 +5,5 @@
   "SUNQIAN_UNIVERSE_POTION_PEIGUO_BREW.description": "获得{Energy:energyIcons()}和[blue]{VigorPower}[/blue]点[gold]活力[/gold]。\n也可以投掷给[gold]商人[/gold]换取[blue]{Gold}[/blue][gold]金币[/gold]。{NewsanguoCombatNote}",
   "SUNQIAN_UNIVERSE_POTION_FIRE_OIL_RICE.title": "火油泡饭",
   "SUNQIAN_UNIVERSE_POTION_FIRE_OIL_RICE.description": "给予所有敌人[blue]{BurningPower}[/blue]层[gold]灼烧[/gold]且[blue]{UnextinguishedPower}[/blue]回合内不会[gold]熄灭[/gold]。",
-  "SUNQIAN_UNIVERSE_FIRE_POTION_MODIFIED.description": "造成[blue]{Damage}[/blue]点伤害。给予[blue]{BurningPower}[/blue]层[gold]灼烧[/gold]。",
-  "SUNQIAN_UNIVERSE_FIRE_POTION_MODIFIED.annotation": "此效果受到模组「孙乾宇宙」的影响而改变，你可以在「Mod设置(RitsuLib)」中拒绝此修改。"
+  "SUNQIAN_UNIVERSE_FIRE_POTION_MODIFIED.description": "造成[blue]{Damage}[/blue]点伤害。给予[blue]{BurningPower}[/blue]层[gold]灼烧[/gold]。"
 }

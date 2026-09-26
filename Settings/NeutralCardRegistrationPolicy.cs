@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using HarmonyLib;
+using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.CardPools;
 using MegaCrit.Sts2.Core.Runs;
@@ -39,6 +40,26 @@ public static class NeutralCardRegistrationPolicy
 
 	private static bool IsAffectedCard(CardModel card) =>
 		card is TheGrievingPrevail or TheArrogantFall or KnowWrongDenyWrong;
+
+	[HarmonyPatch(typeof(CardModel), "get_HoverTips")]
+	private static class AffectedCardHoverTipsPatch
+	{
+		private static void Postfix(CardModel __instance, ref IEnumerable<IHoverTip> __result)
+		{
+			if (!IsAffectedCard(__instance) || !ShouldInclude())
+			{
+				return;
+			}
+
+			__result =
+			[
+				..__result,
+				new HoverTip(
+					SquCommonL10n.AnnotationTitle(),
+					SquCommonL10n.NeutralCardAddedAnnotation()),
+			];
+		}
+	}
 
 	[HarmonyPatch(typeof(CardPoolModel), nameof(CardPoolModel.GetUnlockedCards))]
 	private static class GetUnlockedCardsPatch

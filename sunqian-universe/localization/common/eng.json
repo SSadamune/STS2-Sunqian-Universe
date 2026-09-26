@@ -1,5 +1,7 @@
 {
   "SUNQIAN_UNIVERSE_COMMON.ANNOTATION.title": "* Supplemental Notes",
+  "SUNQIAN_UNIVERSE_COMMON.NEUTRAL_CARD_ADDED.annotation": "This card was added to the neutral card pool by the “Sunqian Universe” mod. You can disable these neutral card additions in “Mod Settings (RitsuLib)”.",
+  "SUNQIAN_UNIVERSE_COMMON.NEUTRAL_POTION_MODIFIED.annotation": "This neutral potion's effect has been changed by the “Sunqian Universe” mod. You can disable these changes in “Mod Settings (RitsuLib)”.",
   "SUNQIAN_UNIVERSE_COMMON.NEWSANGUO_VIGOR_SWAP.hoverTitle": "Note",
   "SUNQIAN_UNIVERSE_COMMON.NEWSANGUO_VIGOR_SWAP.libraryHover": "This effect grants [gold]Drunken Might[/gold] instead of Vigor to characters from the New Three Kingdoms mod.",
   "SUNQIAN_UNIVERSE_COMMON.NEWSANGUO_VIGOR_SWAP.combatNote": "You do not gain Vigor this way, and instead gain an equal amount of [gold]Drunken Might[/gold].",

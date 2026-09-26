@@ -88,7 +88,7 @@ internal static class FirePotionExtraHoverTipsPatch
 			HoverTipFactory.FromPower<BurningPower>(),
 			new HoverTip(
 				SquCommonL10n.AnnotationTitle(),
-				new LocString("potions", "SUNQIAN_UNIVERSE_FIRE_POTION_MODIFIED.annotation")),
+				SquCommonL10n.NeutralPotionModifiedAnnotation()),
 		];
 	}
 }
