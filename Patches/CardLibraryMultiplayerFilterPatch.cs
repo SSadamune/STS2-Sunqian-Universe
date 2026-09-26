@@ -9,6 +9,34 @@ using MegaCrit.Sts2.Core.Nodes.CommonUi;
 
 namespace Squ.Patches;
 
+internal static class CardLibraryMultiplayerPreviewState
+{
+	// The card library resets this tickbox to checked whenever it opens.
+	public static bool ShowMultiplayerCards { get; set; } = true;
+}
+
+/// <summary>Keeps canonical card descriptions in sync with the card-library multiplayer tickbox.</summary>
+[HarmonyPatch(typeof(NCardLibrary), "ToggleFilterMultiplayerCards")]
+internal static class CardLibraryMultiplayerDescriptionTogglePatch
+{
+	[HarmonyPostfix]
+	private static void Postfix(NTickbox __0)
+	{
+		CardLibraryMultiplayerPreviewState.ShowMultiplayerCards = __0.IsTicked;
+	}
+}
+
+/// <summary>Mirrors the card library's default checked state each time the submenu opens.</summary>
+[HarmonyPatch(typeof(NCardLibrary), nameof(NCardLibrary.OnSubmenuOpened))]
+internal static class CardLibraryMultiplayerDescriptionOpenPatch
+{
+	[HarmonyPostfix]
+	private static void Postfix()
+	{
+		CardLibraryMultiplayerPreviewState.ShowMultiplayerCards = true;
+	}
+}
+
 /// <summary>
 /// 勾选「多人模式卡牌」时，原版图鉴只会显示多人专属卡，不会隐藏单人专属卡。
 /// 这里在勾选时额外过滤掉 <see cref="CardMultiplayerConstraint.SingleplayerOnly"/>。

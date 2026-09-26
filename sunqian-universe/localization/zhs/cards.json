@@ -38,7 +38,7 @@
   "SUNQIAN_UNIVERSE_CARD_JUGGLE_MULTIPLE_SHOOTS.annotation": "你剩余的{energyPrefix:energyIcons(1)}越多，就有更大的概率出现高耗能的备选能力牌。\n部分强绑定其他角色机制的能力牌不会成为备选。",
   "SUNQIAN_UNIVERSE_CARD_JUGGLE_MULTIPLE_SHOOTS.selectionScreenPrompt": "选择一张牌。",
   "SUNQIAN_UNIVERSE_CARD_WHAT_TO_EAT.title": "吃什么",
-  "SUNQIAN_UNIVERSE_CARD_WHAT_TO_EAT.description": "[gold]消耗[/gold]2张牌。\n抽{Cards:diff()}张牌。\n将1张[gold]{IfUpgraded:show:是啊，吃什么+|是啊，吃什么}[/gold]加入每名其他玩家的[gold]手牌[/gold]。",
+  "SUNQIAN_UNIVERSE_CARD_WHAT_TO_EAT.description": "[gold]消耗[/gold]2张牌。\n抽{Cards:diff()}张牌。{IsMultiplayer:\n将1张[gold]{IfUpgraded:show:是啊，吃什么+|是啊，吃什么}[/gold]加入每名其他玩家的[gold]手牌[/gold]。|}",
   "SUNQIAN_UNIVERSE_CARD_EXACTLY_WHAT_TO_EAT.title": "是啊，吃什么",
   "SUNQIAN_UNIVERSE_CARD_EXACTLY_WHAT_TO_EAT.description": "[gold]消耗[/gold]1张牌。\n抽{Cards:diff()}张牌。",
   "SUNQIAN_UNIVERSE_CARD_VOICE_CHANGE.title": "变声期",

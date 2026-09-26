@@ -206,18 +206,16 @@ public sealed class JuggleMultipleShoots : ModCardTemplate
 
 	private static (int Lower, int Upper) GetSlotCostBounds(int slotIndex, int remainingEnergy)
 	{
-		(int rawLower, int rawUpper) = slotIndex switch
+		int lower = slotIndex switch
 		{
-			0 => (remainingEnergy, remainingEnergy),
-			1 => (remainingEnergy - 1, remainingEnergy),
-			2 => (0, remainingEnergy),
+			0 => Math.Min(remainingEnergy, 3),
+			1 => Math.Min(remainingEnergy - 1, 2),
+			2 => 0,
 			_ => throw new ArgumentOutOfRangeException(nameof(slotIndex)),
 		};
 
-		return (ClampLowerBound(rawLower), ClampUpperBound(rawUpper));
+		return (lower, ClampUpperBound(remainingEnergy));
 	}
-
-	private static int ClampLowerBound(int rawLower) => Math.Min(rawLower, 3);
 
 	private static int ClampUpperBound(int rawUpper) =>
 		rawUpper <= 0 ? 1 : rawUpper;

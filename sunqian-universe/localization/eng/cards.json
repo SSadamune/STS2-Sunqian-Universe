@@ -68,7 +68,7 @@
   "SUNQIAN_UNIVERSE_CARD_TOO_SMART_TO_BE_REAL.title": "Too Smart to Be Real",
   "SUNQIAN_UNIVERSE_CARD_TOO_SMART_TO_BE_REAL.description": "If you play an [gold]Exhaust[/gold] card this turn, draw {Cards:diff()} {Cards:plural:card|cards} at the start of your next turn.",
   "SUNQIAN_UNIVERSE_CARD_WHAT_TO_EAT.title": "What to Eat",
-  "SUNQIAN_UNIVERSE_CARD_WHAT_TO_EAT.description": "Draw {Cards:diff()} cards. [gold]Exhaust[/gold] 2 cards.\nAdd 1 [gold]{IfUpgraded:show:Exactly, What to Eat+|Exactly, What to Eat}[/gold] into each other player's [gold]Hand[/gold].",
+  "SUNQIAN_UNIVERSE_CARD_WHAT_TO_EAT.description": "[gold]Exhaust[/gold] 2 cards.\nDraw {Cards:diff()} cards.{IsMultiplayer:\nAdd 1 [gold]{IfUpgraded:show:Exactly, What to Eat+|Exactly, What to Eat}[/gold] into each other player's [gold]Hand[/gold].|}",
   "SUNQIAN_UNIVERSE_CARD_EXACTLY_WHAT_TO_EAT.title": "Exactly, What to Eat",
   "SUNQIAN_UNIVERSE_CARD_EXACTLY_WHAT_TO_EAT.description": "Draw {Cards:diff()} cards. [gold]Exhaust[/gold] 1 card.",
   "SUNQIAN_UNIVERSE_CARD_AUDITION.title": "Audition",
