@@ -77,7 +77,7 @@
   "SUNQIAN_UNIVERSE_CARD_CHICKEN_FOOT_CHEESE_STRIKE_PREVIEW.title": "打击",
   "SUNQIAN_UNIVERSE_CARD_CHICKEN_FOOT_CHEESE_STRIKE_PREVIEW.description": "对随机两名敌人造成{Damage:diff()}点伤害两次。",
   "SUNQIAN_UNIVERSE_CARD_TOO_SMART_TO_BE_REAL.title": "多智近妖",
-  "SUNQIAN_UNIVERSE_CARD_TOO_SMART_TO_BE_REAL.description": "如果你本回合打出过[gold]消耗[/gold]牌，下回合开始时抽{Cards:diff()}张牌。",
+  "SUNQIAN_UNIVERSE_CARD_TOO_SMART_TO_BE_REAL.description": "如果你本回合打出过有[gold]消耗[/gold]的牌，下回合开始时抽{Cards:diff()}张牌。",
   "SUNQIAN_UNIVERSE_CARD_AUDITION.title": "试镜",
   "SUNQIAN_UNIVERSE_CARD_AUDITION.description": "将3张随机{IfUpgraded:show:升级过的|}[gold]剧本[/gold]牌加入你的[gold]手牌[/gold]。\n[gold]卸妆[/gold]：这些牌在本回合[gold]保留[/gold]。",
   "SUNQIAN_UNIVERSE_CARD_HUMAN_TRANSMUTATION.title": "人体炼成",
@@ -143,7 +143,7 @@
   "SUNQIAN_UNIVERSE_CARD_NIGHT_RAID_WUCHAO_SCRIPT.title": "夜袭乌巢剧本",
   "SUNQIAN_UNIVERSE_CARD_NIGHT_RAID_WUCHAO_SCRIPT.description": "将两张打出后[gold]消耗[/gold]的[gold]{IfUpgraded:show:星夜打击+|星夜打击}[/gold]加入[gold]手牌[/gold]。\n[gold]可叠层剧本[/gold]：名字中有「打击」的牌额外给予{BurningPower:diff()}点[gold]灼烧[/gold]。",
   "SUNQIAN_UNIVERSE_CARD_PORTAL.title": "传送门",
-  "SUNQIAN_UNIVERSE_CARD_PORTAL.description": "[gold]预见[/gold]{Scry}。抽1张牌。\n如果抽到的是[gold]攻击[/gold]牌，对随机目标打出{IfUpgraded:show:并再抽1张牌|}。",
+  "SUNQIAN_UNIVERSE_CARD_PORTAL.description": "[gold]预见[/gold]{Scry:diff()}。抽1张牌。\n如果抽到的是[gold]攻击[/gold]牌，对随机目标打出。",
   "SUNQIAN_UNIVERSE_CARD_LINK_TO_HEAVEN.title": "天意连接",
   "SUNQIAN_UNIVERSE_CARD_LINK_TO_HEAVEN.description": "每回合开始时[gold]预见[/gold][blue]3[/blue]。被丢弃的牌将改为被[gold]消耗[/gold]，如果是[gold]攻击[/gold]/[gold]技能[/gold]/[gold]能力[/gold]牌，你本回合获得[blue]3[/blue]点[gold]力量[/gold]/[blue]2[/blue]点[gold]敏捷[/gold]/{energyPrefix:energyIcons(1)}。",
   "SUNQIAN_UNIVERSE_CARD_BLITZKRIEG.title": "闪电战",
@@ -190,7 +190,7 @@
   "SUNQIAN_UNIVERSE_CARD_BUDDY_LONGTAODI.title": "好哥们龙套帝",
   "SUNQIAN_UNIVERSE_CARD_BUDDY_LONGTAODI.description": "当你每回合第3次打出牌后，抽{Cards:diff()}张牌。",
   "SUNQIAN_UNIVERSE_CARD_STARGAZING.title": "夜观天象",
-  "SUNQIAN_UNIVERSE_CARD_STARGAZING.description": "当此牌进入[gold]弃牌堆[/gold]时，[gold]预见[/gold]{InCombat:{Scry}|N}{InCombat:，此数值为敌人和玩家的总数且至多为5。|。（N为敌人和玩家的总数且至多为5）}",
+  "SUNQIAN_UNIVERSE_CARD_STARGAZING.description": "当此牌进入[gold]弃牌堆[/gold]时，[gold]预见[/gold]{Scry:diff()}。",
   "SUNQIAN_UNIVERSE_CARD_GREATEST_PASS_OF_CENTRAL_PLAINS.title": "中原第一雄关",
   "SUNQIAN_UNIVERSE_CARD_GREATEST_PASS_OF_CENTRAL_PLAINS.description": "「此攻击牌不愧为能造成{IfUpgraded:show:巨量|大量}[gold]格挡[/gold]的[blue]药水[/blue]。」",
   "SUNQIAN_UNIVERSE_CARD_GREATEST_PASS_OF_CENTRAL_PLAINS.annotation": "此牌会在战斗开始时进入手牌、在被打出后从你的牌组中[red]移除[/red]。\n此牌的实际效果为：视为对目标玩家使用「[blue]给予{Block:diff()}点[gold]格挡[/gold][/blue]」的药水。",
@@ -217,5 +217,7 @@
   "SUNQIAN_UNIVERSE_CARD_IRON_CHAIN_BOATS.description": "选择一名敌人，其受到[gold]灼烧[/gold]伤害后，其余敌人受到等量[gold]环境伤害[/gold]。{SlightRevisionText}",
   "SUNQIAN_UNIVERSE_CARD_FARMING_GENERAL.title": "种地将军",
   "SUNQIAN_UNIVERSE_CARD_FARMING_GENERAL.description": "从抽牌堆中选择至多{Cards:diff()}张牌，为它们附魔[gold]播种[/gold]并移去[gold]消耗[/gold]。",
-  "SUNQIAN_UNIVERSE_CARD_FARMING_GENERAL.selectionScreenPrompt": "选择至多{Amount}张牌，为它们附魔播种并移去消耗"
+  "SUNQIAN_UNIVERSE_CARD_FARMING_GENERAL.selectionScreenPrompt": "选择至多{Amount}张牌，为它们附魔播种并移去消耗",
+  "SUNQIAN_UNIVERSE_CARD_STARLIGHT_SWORD_SAINT.title": "星光剑圣",
+  "SUNQIAN_UNIVERSE_CARD_STARLIGHT_SWORD_SAINT.description": "造成{Damage:diff()}点伤害。\n[gold]预见[/gold]{Scry:diff()}，被丢弃的牌将改为被[gold]消耗[/gold]。"
 }

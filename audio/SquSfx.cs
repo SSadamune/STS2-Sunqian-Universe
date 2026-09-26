@@ -50,6 +50,9 @@ internal static class SquSfx
 	public const string PortalGansuHenanEvent = "event:/sunqian_universe/sfx/传送门-星夜从甘肃杀到河南";
 	public const string PortalChanganMeiwuEvent = "event:/sunqian_universe/sfx/传送门-长安和堳坞之间有传送门";
 	public const string PortalXiliangAllianceEvent = "event:/sunqian_universe/sfx/传送门-西凉太守马腾亲自率军来陈留城会盟";
+	public const string PortalYellowRiverRunanEvent = "event:/sunqian_universe/sfx/传送门-黄河渡向北八十里是汝南郡";
+	public const string StarlightSwordSaintPlayEvent = "event:/sunqian_universe/sfx/星光剑圣-星光下自刎";
+	public const string StarlightSwordSaintExhaustEvent = "event:/sunqian_universe/sfx/星光剑圣-恨天";
 	public const string VoiceChangeObviousEvent = "event:/sunqian_universe/sfx/变声期-有个很明显的变声期";
 	public const string VoiceChangeYearsAgoEvent = "event:/sunqian_universe/sfx/变声期-这个多年前，明显有变声期";
 	public const string VoiceChangeTheseWordsEvent = "event:/sunqian_universe/sfx/变声期-这几个字儿明显是变声期啊";

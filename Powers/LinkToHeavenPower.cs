@@ -66,7 +66,12 @@ public sealed class LinkToHeavenPower : ModPowerTemplate
 		}
 
 		Flash();
-		await ScryCmd.Execute(choiceContext, player, (int)Amount, HandleChosenCard);
+		await ScryCmd.Execute(
+			choiceContext,
+			player,
+			(int)Amount,
+			HandleChosenCard,
+			source: Title);
 	}
 
 	private async Task HandleChosenCard(PlayerChoiceContext choiceContext, CardModel card)

@@ -20,12 +20,12 @@ namespace Squ.Cards;
 [RegisterCard(typeof(SunqianCardPool), StableEntryStem = "executioner_script")]
 public sealed class ExecutionerScript : ScriptCardTemplate
 {
-	public const int BaseVigor = 2;
-	public const int UpgradedVigor = 4;
+	public const int BaseVigor = 3;
+	public const int UpgradedVigor = 5;
 
 	public const int VulnerableAmount = 2;
 
-	public const int UpgradedVulnerableAmount = 4;
+	public const int UpgradedVulnerableAmount = 3;
 
 	protected override IEnumerable<DynamicVar> CanonicalVars =>
 	[

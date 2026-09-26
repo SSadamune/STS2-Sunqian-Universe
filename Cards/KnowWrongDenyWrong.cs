@@ -41,7 +41,7 @@ public sealed class KnowWrongDenyWrong : ModCardTemplate
 		PortraitPath: "res://images/cards/KnowWrongDenyWrong.png");
 
 	public KnowWrongDenyWrong()
-		: base(1, CardType.Attack, CardRarity.Common, TargetType.AnyEnemy)
+		: base(1, CardType.Attack, CardRarity.Uncommon, TargetType.AnyEnemy)
 	{
 	}
 

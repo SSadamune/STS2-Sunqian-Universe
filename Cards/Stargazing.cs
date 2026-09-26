@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -20,19 +19,20 @@ using STS2RitsuLib.Scaffolding.Content;
 namespace Squ.Cards;
 
 /// <summary>
-/// 夜观天象：不能被打出。进入弃牌堆时预见，数量为场上玩家与敌人总数（至多 5）。
+/// 夜观天象：不能被打出。进入弃牌堆时预见 3（升级后 5）。
 /// 移动钩子统一记录入弃牌堆事件；有弃牌上下文时立即结算，否则延后至当前阵营回合结束。
 /// </summary>
 [RegisterCard(typeof(SunqianCardPool), StableEntryStem = "stargazing")]
 public sealed class Stargazing : ModCardTemplate
 {
-	public const int MaxScry = 5;
+	public const int ScryAmount = 3;
+	public const int UpgradedScryAmount = 5;
 
 	private int _pendingDiscardPileEntries;
 
 	protected override IEnumerable<DynamicVar> CanonicalVars =>
 	[
-		new CreatureCountScryVar(),
+		new ScryVar(ScryAmount),
 	];
 
 	public override IEnumerable<CardKeyword> CanonicalKeywords =>
@@ -40,8 +40,6 @@ public sealed class Stargazing : ModCardTemplate
 		CardKeyword.Unplayable,
 		SquKeywords.Scry,
 	];
-
-	public override int MaxUpgradeLevel => 0;
 
 	public override CardAssetProfile AssetProfile => new(
 		PortraitPath: "res://images/cards/Stargazing.png");
@@ -120,47 +118,11 @@ public sealed class Stargazing : ModCardTemplate
 			SquSfx.StargazingWangYunEvent,
 			SquSfx.StargazingDongZhuoEvent);
 
-		int amount = GetScryAmount(this);
-		if (amount <= 0)
-		{
-			return Task.CompletedTask;
-		}
-
-		return ScryCmd.Execute(choiceContext, Owner, amount);
+		return ScryCmd.Execute(choiceContext, this);
 	}
 
-	private static int GetScryAmount(CardModel card)
+	protected override void OnUpgrade()
 	{
-		if (card.CombatState is not { } combatState)
-		{
-			return 0;
-		}
-
-		int count = combatState.Players.Count + combatState.Enemies.Count;
-		return Math.Min(MaxScry, count);
-	}
-
-	private sealed class CreatureCountScryVar : DynamicVar
-	{
-		public CreatureCountScryVar()
-			: base(ScryVar.VarName, 0m)
-		{
-		}
-
-		public override void UpdateCardPreview(
-			CardModel card,
-			CardPreviewMode previewMode,
-			Creature? target,
-			bool runGlobalHooks)
-		{
-			int amount = GetScryAmount(card);
-			BaseValue = amount;
-			if (runGlobalHooks)
-			{
-				amount = ScryHook.ModifyScryAmount(card.Owner, amount, out _);
-			}
-
-			PreviewValue = amount;
-		}
+		DynamicVars[ScryVar.VarName].UpgradeValueBy(UpgradedScryAmount - ScryAmount);
 	}
 }

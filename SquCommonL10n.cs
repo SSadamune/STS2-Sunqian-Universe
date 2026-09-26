@@ -17,6 +17,8 @@ public static class SquCommonL10n
 		"SUNQIAN_UNIVERSE_COMMON.NEWSANGUO_VIGOR_SWAP.combatNote";
 	public const string NewsanguoCombatPowerNoteKey =
 		"SUNQIAN_UNIVERSE_COMMON.NEWSANGUO_VIGOR_SWAP.combatPowerNote";
+	public const string ScrySelectionPromptWithSourceKey =
+		"SUNQIAN_UNIVERSE_COMMON.SCRY.selectionPromptWithSource";
 
 	public static string Table =>
 		RitsuLibFramework.GetI18NLocTableId(SquMod.ModId, SquMod.CommonL10nStem);
@@ -34,4 +36,7 @@ public static class SquCommonL10n
 
 	public static LocString NewsanguoCombatPowerNote() =>
 		new(Table, NewsanguoCombatPowerNoteKey);
+
+	public static LocString ScrySelectionPromptWithSource() =>
+		new(Table, ScrySelectionPromptWithSourceKey);
 }

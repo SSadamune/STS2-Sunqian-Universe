@@ -10,6 +10,7 @@ using MegaCrit.Sts2.Core.Entities.Multiplayer;
 using MegaCrit.Sts2.Core.Entities.Players;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.Hooks;
+using MegaCrit.Sts2.Core.Localization;
 using MegaCrit.Sts2.Core.Models;
 
 #nullable enable
@@ -41,18 +42,26 @@ public static class ScryCmd
 	/// </summary>
 	public static Task<ScryResult> Execute(PlayerChoiceContext choiceContext, CardModel card)
 	{
-		return Execute(choiceContext, card.Owner, card.DynamicVars.Scry().IntValue);
+		return Execute(
+			choiceContext,
+			card.Owner,
+			card.DynamicVars.Scry().IntValue,
+			source: card.TitleLocString);
 	}
 
 	/// <param name="onCardChosen">
 	/// 若提供，被玩家选中的每张牌改由此回调处理（例如改为消耗而非丢弃），
 	/// 调用方需自行负责该牌的去向；不提供时使用默认的丢弃行为。
 	/// </param>
+	/// <param name="source">
+	/// 可选的预见来源名称（例如卡牌或能力的标题）；提供后会显示在玩家选择提示中。
+	/// </param>
 	public static async Task<ScryResult> Execute(
 		PlayerChoiceContext choiceContext,
 		Player player,
 		int amount,
-		Func<PlayerChoiceContext, CardModel, Task>? onCardChosen = null)
+		Func<PlayerChoiceContext, CardModel, Task>? onCardChosen = null,
+		LocString? source = null)
 	{
 		var modifiedAmount = ScryHook.ModifyScryAmount(player, amount, out var modifiers);
 		await ScryHook.AfterModifyingScryAmount(choiceContext, player, modifiers, amount, modifiedAmount);
@@ -66,8 +75,9 @@ public static class ScryCmd
 		var cardsToScry = drawPile.Cards.Take(modifiedAmount).ToList();
 		if (cardsToScry.Count == 0) return ScryResult.Empty;
 
+		LocString selectionPrompt = CreateSelectionPrompt(source);
 		var prefs = new CardSelectorPrefs(
-			CardSelectorPrefs.DiscardSelectionPrompt,
+			selectionPrompt,
 			0,
 			cardsToScry.Count);
 
@@ -91,6 +101,18 @@ public static class ScryCmd
 
 		await ScryHook.AfterScryed(choiceContext, player, modifiedAmount, cardsToDiscard.Count, cardsToDiscard);
 		return new ScryResult(cardsToDiscard);
+	}
+
+	private static LocString CreateSelectionPrompt(LocString? source)
+	{
+		if (source == null)
+		{
+			return CardSelectorPrefs.DiscardSelectionPrompt;
+		}
+
+		LocString prompt = SquCommonL10n.ScrySelectionPromptWithSource();
+		prompt.Add("Source", source);
+		return prompt;
 	}
 
 	private static async Task DiscardSelectedCards(

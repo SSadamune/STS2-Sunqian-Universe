@@ -34,6 +34,7 @@
 {5b64ddfc-20fb-4712-b30b-eb05519d5377} event:/sunqian_universe/sfx/传送门-星夜从甘肃杀到河南
 {9ea29e18-261d-449f-a19d-1c55c6bb5352} event:/sunqian_universe/sfx/传送门-西凉太守马腾亲自率军来陈留城会盟
 {7f9ee073-a015-4cf4-91c7-9442677d45d5} event:/sunqian_universe/sfx/传送门-长安和堳坞之间有传送门
+{1a7d0307-745e-417a-bb98-674d5694876e} event:/sunqian_universe/sfx/传送门-黄河渡向北八十里是汝南郡
 {7f1175f4-1cfc-4c02-8b84-a752a279f4be} event:/sunqian_universe/sfx/何疑魏-丞相太过于谨小慎微了
 {93a94d02-5377-48d7-b7df-d91c1c65917f} event:/sunqian_universe/sfx/何疑魏-想不到丞相竟是这般谨慎
 {071e84b9-12e0-4b35-bc7e-c0a39c0d69cb} event:/sunqian_universe/sfx/何疑魏-魏延早就把三军看成他自己的了
@@ -99,6 +100,8 @@
 {47ebe93e-de92-484f-849f-8574b51df59c} event:/sunqian_universe/sfx/无忧而虑-而让我忧虑的却是，我不知道这危险是从何而来
 {b83f1637-5192-4f24-a452-f5457118bb16} event:/sunqian_universe/sfx/无情打击-剑声
 {2ad9175d-3e66-4d48-a995-dc5c0f0b6575} event:/sunqian_universe/sfx/无情打击-可别逼我使出无情剑来
+{e9b9f497-1972-483b-b040-ebf8e8728395} event:/sunqian_universe/sfx/星光剑圣-恨天
+{17b0e855-6889-4959-89ee-2c5ec550bbd2} event:/sunqian_universe/sfx/星光剑圣-星光下自刎
 {f192248d-cad0-4781-adcc-8a20d2dc8b06} event:/sunqian_universe/sfx/是啊吃什么
 {697db058-db22-4e5f-b107-a32690e0f631} event:/sunqian_universe/sfx/曹操哭丧
 {277d450e-51b3-416a-a78f-4b1b4c02aa8e} event:/sunqian_universe/sfx/朕不知兵

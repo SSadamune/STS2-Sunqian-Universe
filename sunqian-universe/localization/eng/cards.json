@@ -143,7 +143,7 @@
   "SUNQIAN_UNIVERSE_CARD_NIGHT_RAID_WUCHAO_SCRIPT.title": "Night Raid on Wuchao Script",
   "SUNQIAN_UNIVERSE_CARD_NIGHT_RAID_WUCHAO_SCRIPT.description": "Add 2 [gold]{IfUpgraded:show:Starry Night Strike+|Starry Night Strike}[/gold] that [gold]Exhaust[/gold] when played into your [gold]Hand[/gold].\n[gold]Stackable Script[/gold]: Cards with \"Strike\" in their name apply {BurningPower:diff()} additional [gold]Burning[/gold].",
   "SUNQIAN_UNIVERSE_CARD_PORTAL.title": "Portal",
-  "SUNQIAN_UNIVERSE_CARD_PORTAL.description": "[gold]Scry[/gold] {Scry}. Draw a card.\nIf it is an [gold]Attack[/gold], play it at a random target{IfUpgraded:show: and draw another card|}.",
+  "SUNQIAN_UNIVERSE_CARD_PORTAL.description": "[gold]Scry[/gold] {Scry:diff()}. Draw a card.\nIf it is an [gold]Attack[/gold], play it at a random target.",
   "SUNQIAN_UNIVERSE_CARD_LINK_TO_HEAVEN.title": "Link to Heaven",
   "SUNQIAN_UNIVERSE_CARD_LINK_TO_HEAVEN.description": "At the start of each turn, [gold]Scry[/gold] [blue]3[/blue]. Cards not kept are [gold]Exhausted[/gold] instead. For each Attack/Skill/Power exhausted this way, gain [blue]3[/blue] [gold]Strength[/gold]/[blue]2[/blue] [gold]Dexterity[/gold]/{energyPrefix:energyIcons(1)} this turn.",
   "SUNQIAN_UNIVERSE_CARD_BLITZKRIEG.title": "Blitzkrieg",
@@ -190,7 +190,7 @@
   "SUNQIAN_UNIVERSE_CARD_BUDDY_LONGTAODI.title": "Buddy Longtaodi",
   "SUNQIAN_UNIVERSE_CARD_BUDDY_LONGTAODI.description": "After you play the 3rd card each turn, draw {Cards:diff()} {Cards:plural:card|cards}.",
   "SUNQIAN_UNIVERSE_CARD_STARGAZING.title": "Stargazing",
-  "SUNQIAN_UNIVERSE_CARD_STARGAZING.description": "When this card enters your [gold]Discard Pile[/gold], [gold]Scry[/gold] {InCombat:{Scry}|N}{InCombat:. This number is the total of enemies and players, up to 5.| (N is the total of enemies and players, up to 5.)}",
+  "SUNQIAN_UNIVERSE_CARD_STARGAZING.description": "When this card enters your [gold]Discard Pile[/gold], [gold]Scry[/gold] {Scry:diff()}.",
   "SUNQIAN_UNIVERSE_CARD_GREATEST_PASS_OF_CENTRAL_PLAINS.title": "Greatest Pass of the Central Plains",
   "SUNQIAN_UNIVERSE_CARD_GREATEST_PASS_OF_CENTRAL_PLAINS.description": "This is a “[blue]Potion[/blue]” capable of granting {IfUpgraded:show:a massive|a large} amount of [gold]Block[/gold].",
   "SUNQIAN_UNIVERSE_CARD_GREATEST_PASS_OF_CENTRAL_PLAINS.annotation": "This card enters your Hand at the start of combat and is [red]removed[/red] from your Deck after it is played.\nThis card counts as using a potion on the target player with the effect “[blue]Grant {Block:diff()} [gold]Block[/gold][/blue].”",
@@ -217,5 +217,7 @@
   "SUNQIAN_UNIVERSE_CARD_IRON_CHAIN_BOATS.description": "Choose an enemy. Whenever it takes [gold]Burning[/gold] damage, all other enemies take that much [gold]Environmental[/gold] damage.{SlightRevisionText}",
   "SUNQIAN_UNIVERSE_CARD_FARMING_GENERAL.title": "Farming General",
   "SUNQIAN_UNIVERSE_CARD_FARMING_GENERAL.description": "Choose up to {Cards:diff()} cards from your Draw Pile. Enchant them with [gold]Sown[/gold] and remove [gold]Exhaust[/gold].",
-  "SUNQIAN_UNIVERSE_CARD_FARMING_GENERAL.selectionScreenPrompt": "Choose up to {Amount} cards to enchant with Sown and remove Exhaust"
+  "SUNQIAN_UNIVERSE_CARD_FARMING_GENERAL.selectionScreenPrompt": "Choose up to {Amount} cards to enchant with Sown and remove Exhaust",
+  "SUNQIAN_UNIVERSE_CARD_STARLIGHT_SWORD_SAINT.title": "Starlight Sword Saint",
+  "SUNQIAN_UNIVERSE_CARD_STARLIGHT_SWORD_SAINT.description": "Deal {Damage:diff()} damage.\n[gold]Scry[/gold] {Scry:diff()}. Cards discarded this way are [gold]Exhausted[/gold] instead."
 }
