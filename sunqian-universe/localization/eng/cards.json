@@ -218,6 +218,6 @@
   "SUNQIAN_UNIVERSE_CARD_FARMING_GENERAL.title": "Farming General",
   "SUNQIAN_UNIVERSE_CARD_FARMING_GENERAL.description": "Choose up to {Cards:diff()} cards from your Draw Pile. Enchant them with [gold]Sown[/gold] and remove [gold]Exhaust[/gold].",
   "SUNQIAN_UNIVERSE_CARD_FARMING_GENERAL.selectionScreenPrompt": "Choose up to {Amount} cards to enchant with Sown and remove Exhaust",
-  "SUNQIAN_UNIVERSE_CARD_STARLIGHT_SWORD_SAINT.title": "Starlight Sword Saint",
-  "SUNQIAN_UNIVERSE_CARD_STARLIGHT_SWORD_SAINT.description": "Deal {Damage:diff()} damage.\n[gold]Scry[/gold] {Scry:diff()}. Cards discarded this way are [gold]Exhausted[/gold] instead."
+  "SUNQIAN_UNIVERSE_CARD_HATE_THE_HEAVENS_STRIKE.title": "Hate the Heavens Strike",
+  "SUNQIAN_UNIVERSE_CARD_HATE_THE_HEAVENS_STRIKE.description": "Deal {Damage:diff()} damage.\n[gold]Scry[/gold] {Scry:diff()}. Cards discarded this way are [gold]Exhausted[/gold] instead."
 }

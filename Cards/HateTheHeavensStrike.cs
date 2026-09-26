@@ -17,8 +17,8 @@ using STS2RitsuLib.Scaffolding.Content;
 
 namespace Squ.Cards;
 
-[RegisterCard(typeof(SunqianCardPool), StableEntryStem = "starlight_sword_saint")]
-public sealed class StarlightSwordSaint : ModCardTemplate
+[RegisterCard(typeof(SunqianCardPool), StableEntryStem = "hate_the_heavens_strike")]
+public sealed class HateTheHeavensStrike : ModCardTemplate
 {
 	public const int DamageAmount = 11;
 	public const int UpgradedDamageAmount = 14;
@@ -36,15 +36,17 @@ public sealed class StarlightSwordSaint : ModCardTemplate
 		SquKeywords.Scry,
 	];
 
+	protected override HashSet<CardTag> CanonicalTags => [CardTag.Strike];
+
 	protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
 	[
 		HoverTipFactory.FromKeyword(CardKeyword.Exhaust),
 	];
 
 	public override CardAssetProfile AssetProfile => new(
-		PortraitPath: "res://images/cards/StarlightSwordSaint.png");
+		PortraitPath: "res://images/cards/HateTheHeavensStrike.png");
 
-	public StarlightSwordSaint()
+	public HateTheHeavensStrike()
 		: base(1, CardType.Attack, CardRarity.Common, TargetType.AnyEnemy)
 	{
 	}
@@ -52,7 +54,7 @@ public sealed class StarlightSwordSaint : ModCardTemplate
 	protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
 	{
 		ArgumentNullException.ThrowIfNull(cardPlay.Target, nameof(cardPlay.Target));
-		SquSfx.Play(SquSfx.StarlightSwordSaintPlayEvent);
+		SquSfx.Play(SquSfx.HateTheHeavensStrikePlayEvent);
 
 		await DamageCmd.Attack(DynamicVars.Damage.BaseValue)
 			.FromCard(this, cardPlay)
@@ -69,7 +71,7 @@ public sealed class StarlightSwordSaint : ModCardTemplate
 
 		if (scryResult.Discarded.Count > 0)
 		{
-			SquSfx.Play(SquSfx.StarlightSwordSaintExhaustEvent);
+			SquSfx.PlayRandom(RunState, SquSfx.HateTheHeavensStrikeExhaustEvents);
 		}
 	}
 

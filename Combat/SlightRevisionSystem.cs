@@ -1,37 +1,90 @@
 using System;
 using System.Collections.Generic;
+using System.Text.Json;
 using System.Threading.Tasks;
 using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
+using MegaCrit.Sts2.Core.Entities.Multiplayer;
 using MegaCrit.Sts2.Core.Entities.Players;
 using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Localization;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.Cards;
+using MegaCrit.Sts2.Core.Runs;
 using STS2RitsuLib;
 using STS2RitsuLib.Interactions.RightClick;
 using STS2RitsuLib.Keywords;
 using STS2RitsuLib.Models.Capabilities;
+using STS2RitsuLib.Networking.ManagedActions;
 using Squ.Audio;
 
 #nullable enable
 
 namespace Squ.Combat;
 
+internal interface ISlightRevisionSource
+{
+	CardModel SlightRevisionTarget { get; }
+
+	bool SlightRevisionTargetUpgraded { get; }
+}
+
 /// <summary>Shared interaction and intrinsic-card presentation behavior for Slight Revision.</summary>
 public static class SlightRevisionSystem
 {
-	private static IDisposable? _rightClickBinding;
+	private readonly record struct SlightRevisionPayload(
+		uint CombatCardIndex,
+		string OriginalId,
+		string TargetId,
+		bool TargetUpgraded);
+
+	private sealed class SlightRevisionRightClickHandler : IModRightClickHandler
+	{
+		// Consume Slight Revision before RitsuLib's generic model-identity handler.
+		// NetCombatCard is the same stable locator used by vanilla multiplayer card actions.
+		public int Priority => 100;
+
+		public bool TryHandle(ModRightClickContext context)
+		{
+			if (context.Model is not CardModel card
+				|| !CanExecute(context.Player, card)
+				|| !TryGetRevision(card, out CardModel target, out bool targetUpgraded))
+			{
+				return false;
+			}
+
+			NetCombatCard netCard = NetCombatCard.FromModel(card);
+			SlightRevisionPayload payload = new(
+				netCard.CombatCardIndex,
+				card.Id.ToString(),
+				target.Id.ToString(),
+				targetUpgraded);
+
+			return RitsuLibManagedNetActions.Request(
+				RunManager.Instance,
+				SlightRevisionAction,
+				payload,
+				context.Player.NetId);
+		}
+	}
+
+	private static readonly RitsuLibManagedNetActionDescriptor<SlightRevisionPayload> SlightRevisionAction = new(
+		SquMod.ModId,
+		"slight_revision",
+		static payload => JsonSerializer.SerializeToUtf8Bytes(payload),
+		static bytes => JsonSerializer.Deserialize<SlightRevisionPayload>(bytes),
+		ExecuteSyncedRevision,
+		GameActionType.CombatPlayPhaseOnly);
+
+	private static readonly SlightRevisionRightClickHandler RightClickHandler = new();
 	private static bool _initialized;
 
 	public static void Initialize()
 	{
 		if (_initialized) return;
 		_initialized = true;
-		_rightClickBinding = ModRightClickRegistry.Register<CardModel>(
-			SquMod.ModId, "granted_slight_revision", ExecuteGrantedRevision, priority: 1,
-			canHandleLocal: context => CanExecute(context.Player, context.Model as CardModel),
-			canExecute: context => CanExecute(context.Player, context.Model as CardModel));
+		RitsuLibManagedNetActions.Register(SlightRevisionAction);
+		ModRightClickRegistry.Register(RightClickHandler);
 	}
 
 	public static bool GrantUltimateDefend(CardModel card, bool upgraded) =>
@@ -85,14 +138,46 @@ public static class SlightRevisionSystem
 
 	private static bool CanExecute(Player player, CardModel? card) =>
 		card is not null && card.Owner == player && card.Pile?.Type == PileType.Hand
-		&& card.IsTransformable && card.Capability<SlightRevisionCapability>() is not null;
+		&& card.IsTransformable;
 
-	private static async Task ExecuteGrantedRevision(ModRightClickExecutionContext context)
+	private static bool TryGetRevision(CardModel card, out CardModel target, out bool targetUpgraded)
 	{
-		if (context.Model is not CardModel original || !CanExecute(context.Player, original)) return;
-		SlightRevisionCapability? revision = original.Capability<SlightRevisionCapability>();
-		if (revision is null) return;
-		await TransformAsync(original, revision.Target, revision.TargetUpgraded);
+		if (card is ISlightRevisionSource source)
+		{
+			target = source.SlightRevisionTarget;
+			targetUpgraded = source.SlightRevisionTargetUpgraded;
+			return true;
+		}
+
+		if (card.Capability<SlightRevisionCapability>() is { } revision)
+		{
+			target = revision.Target;
+			targetUpgraded = revision.TargetUpgraded;
+			return true;
+		}
+
+		target = null!;
+		targetUpgraded = false;
+		return false;
+	}
+
+	private static async Task ExecuteSyncedRevision(
+		RitsuLibManagedNetActionContext<SlightRevisionPayload> context)
+	{
+		SlightRevisionPayload payload = context.Message;
+		// Resolve independently on every peer only when the queued action executes.
+		CardModel? original = NetCombatCard
+			.ForTesting(payload.CombatCardIndex)
+			.ToCardModelOrNull();
+		if (original is null
+			|| original.Id != ModelId.Deserialize(payload.OriginalId)
+			|| !CanExecute(context.Player, original))
+		{
+			return;
+		}
+
+		CardModel target = ModelDb.GetById<CardModel>(ModelId.Deserialize(payload.TargetId));
+		await TransformAsync(original, target, payload.TargetUpgraded);
 	}
 
 }

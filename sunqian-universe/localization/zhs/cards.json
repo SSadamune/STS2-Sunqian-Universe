@@ -218,6 +218,6 @@
   "SUNQIAN_UNIVERSE_CARD_FARMING_GENERAL.title": "种地将军",
   "SUNQIAN_UNIVERSE_CARD_FARMING_GENERAL.description": "从抽牌堆中选择至多{Cards:diff()}张牌，为它们附魔[gold]播种[/gold]并移去[gold]消耗[/gold]。",
   "SUNQIAN_UNIVERSE_CARD_FARMING_GENERAL.selectionScreenPrompt": "选择至多{Amount}张牌，为它们附魔播种并移去消耗",
-  "SUNQIAN_UNIVERSE_CARD_STARLIGHT_SWORD_SAINT.title": "星光剑圣",
-  "SUNQIAN_UNIVERSE_CARD_STARLIGHT_SWORD_SAINT.description": "造成{Damage:diff()}点伤害。\n[gold]预见[/gold]{Scry:diff()}，被丢弃的牌将改为被[gold]消耗[/gold]。"
+  "SUNQIAN_UNIVERSE_CARD_HATE_THE_HEAVENS_STRIKE.title": "恨天打击",
+  "SUNQIAN_UNIVERSE_CARD_HATE_THE_HEAVENS_STRIKE.description": "造成{Damage:diff()}点伤害。\n[gold]预见[/gold]{Scry:diff()}，被丢弃的牌将改为被[gold]消耗[/gold]。"
 }

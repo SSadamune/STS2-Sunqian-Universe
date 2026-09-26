@@ -84,6 +84,10 @@
 {5423043d-d233-444b-ba63-e15a4e20ea30} event:/sunqian_universe/sfx/弹指打击-取董贼首级
 {e877f801-8783-4fa5-b960-ce4e1da130c0} event:/sunqian_universe/sfx/忽近忽远
 {0b3dc75a-46bb-4e30-ac7d-fbd666e94348} event:/sunqian_universe/sfx/怒掀帅案
+{303ea8e9-7522-46de-902a-8087643175f8} event:/sunqian_universe/sfx/恨天打击-上苍无道未尽其才
+{171405b1-4c68-4e80-bec0-4e5cbdc92be9} event:/sunqian_universe/sfx/恨天打击-天不助我助尔曹
+{5a504523-5524-45fd-aab8-23d4ee422a22} event:/sunqian_universe/sfx/恨天打击-天意助曹不助袁
+{c2761732-16a7-4dd6-a8a8-8a82ef55612e} event:/sunqian_universe/sfx/恨天打击-恨天
 {f102970a-3482-4d08-95d3-8decb30a4c8d} event:/sunqian_universe/sfx/我们吃什么
 {7485a8e0-557b-4934-8fd0-252ec31a1b3e} event:/sunqian_universe/sfx/打击-刘备
 {95accabb-03b0-4ed5-98a4-7f5ef0bd1b73} event:/sunqian_universe/sfx/打击-奶龙
@@ -100,8 +104,6 @@
 {47ebe93e-de92-484f-849f-8574b51df59c} event:/sunqian_universe/sfx/无忧而虑-而让我忧虑的却是，我不知道这危险是从何而来
 {b83f1637-5192-4f24-a452-f5457118bb16} event:/sunqian_universe/sfx/无情打击-剑声
 {2ad9175d-3e66-4d48-a995-dc5c0f0b6575} event:/sunqian_universe/sfx/无情打击-可别逼我使出无情剑来
-{e9b9f497-1972-483b-b040-ebf8e8728395} event:/sunqian_universe/sfx/星光剑圣-恨天
-{17b0e855-6889-4959-89ee-2c5ec550bbd2} event:/sunqian_universe/sfx/星光剑圣-星光下自刎
 {f192248d-cad0-4781-adcc-8a20d2dc8b06} event:/sunqian_universe/sfx/是啊吃什么
 {697db058-db22-4e5f-b107-a32690e0f631} event:/sunqian_universe/sfx/曹操哭丧
 {277d450e-51b3-416a-a78f-4b1b4c02aa8e} event:/sunqian_universe/sfx/朕不知兵
