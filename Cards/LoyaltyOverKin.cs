@@ -54,10 +54,25 @@ public sealed class LoyaltyOverKin : ModCardTemplate
 		CardKeyword.Ethereal,
 	];
 
-	protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
-	[
-		HoverTipFactory.FromPower<StrengthPower>(),
-	];
+	protected override IEnumerable<IHoverTip> AdditionalHoverTips
+	{
+		get
+		{
+			List<IHoverTip> tips = [HoverTipFactory.FromPower<StrengthPower>()];
+			List<CardModel> previewTargets = GetDescriptionPreviewTargets();
+			IHoverTip? targetTip = CreateTargetCardsHoverTip(previewTargets);
+			if (targetTip != null)
+			{
+				tips.Add(targetTip);
+				foreach (CardModel target in previewTargets)
+				{
+					tips.Add(HoverTipFactory.FromCard(target));
+				}
+			}
+
+			return tips;
+		}
+	}
 
 	public override CardAssetProfile AssetProfile => new(
 		PortraitPath: "res://images/cards/LoyaltyOverKin.png");
@@ -123,18 +138,16 @@ public sealed class LoyaltyOverKin : ModCardTemplate
 		DynamicVars[nameof(StrengthPower)].UpgradeValueBy(UpgradedStrength - BaseStrength);
 	}
 
-	protected override void AddExtraArgsToDescription(LocString description)
+	private IHoverTip? CreateTargetCardsHoverTip(IReadOnlyList<CardModel> previewTargets)
 	{
-		List<CardModel> previewTargets = GetDescriptionPreviewTargets();
 		if (previewTargets.Count == 0)
 		{
-			description.Add("TargetCards", string.Empty);
-			return;
+			return null;
 		}
 
-		var clause = new LocString("cards", Id.Entry + ".targetCards");
-		clause.Add("Cards", FormatCardList(previewTargets));
-		description.Add("TargetCards", clause);
+		LocString description = new("cards", Id.Entry + ".targetCards");
+		description.Add("Cards", FormatCardList(previewTargets));
+		return new HoverTip(SquCommonL10n.AnnotationTitle(), description);
 	}
 
 	private List<CardModel> GetDescriptionPreviewTargets()
