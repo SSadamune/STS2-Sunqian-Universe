@@ -45,7 +45,10 @@ public sealed class ThunderOnStillLake : ChargeCardTemplate
 
 	protected override IEnumerable<DynamicVar> CanonicalVars =>
 	[
-		new DamageVar(CanonicalDamage, ValueProp.Move),
+		new ChargedDamageVar(
+			CanonicalDamage,
+			ValueProp.Move,
+			card => card.IsUpgraded ? UpgradedDamage : CanonicalDamage),
 		new RepeatVar(CanonicalHits),
 	];
 

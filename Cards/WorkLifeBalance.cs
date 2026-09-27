@@ -33,7 +33,10 @@ public sealed class WorkLifeBalance : ChargeCardTemplate
 
 	protected override IEnumerable<DynamicVar> CanonicalVars =>
 	[
-		new BlockVar(CanonicalBlock, BlockProps),
+		new ChargedBlockVar(
+			CanonicalBlock,
+			BlockProps,
+			card => card.IsUpgraded ? UpgradedBlock : CanonicalBlock),
 		new RepeatVar(CanonicalRepeat),
 	];
 

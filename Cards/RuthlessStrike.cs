@@ -35,7 +35,7 @@ public sealed class RuthlessStrike : ChargeCardTemplate
 	protected override IEnumerable<DynamicVar> CanonicalVars =>
 	[
 		new DamageVar(CanonicalDamage, DamageProps),
-		new RepeatVar(CanonicalHits),
+		new ChargedRepeatVar(CanonicalHits, _ => CanonicalHits),
 	];
 
 	protected override HashSet<CardTag> CanonicalTags => [CardTag.Strike];

@@ -7,7 +7,9 @@ using MegaCrit.Sts2.Core.Entities.Creatures;
 using MegaCrit.Sts2.Core.Entities.Players;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.Helpers;
+using MegaCrit.Sts2.Core.Hooks;
 using MegaCrit.Sts2.Core.Localization;
+using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.Cards;
 using MegaCrit.Sts2.Core.Nodes.Cards;
@@ -26,6 +28,137 @@ namespace Squ.Cards;
 /// </summary>
 public abstract class ChargeCardTemplate : ModCardTemplate
 {
+	/// <summary>
+	/// Dynamic variables whose mutable base value contains combat-only Charge must compare their
+	/// preview against the printed value, rather than against that mutable base value.
+	/// </summary>
+	protected sealed class ChargedEnergyVar(int value, Func<CardModel, decimal> printedValue) : EnergyVar(value)
+	{
+		public override void UpdateCardPreview(
+			CardModel card,
+			CardPreviewMode previewMode,
+			Creature? target,
+			bool runGlobalHooks)
+		{
+			EnchantedValue = printedValue(card);
+			PreviewValue = BaseValue;
+		}
+	}
+
+	protected sealed class ChargedCardsVar(int value, Func<CardModel, decimal> printedValue) : CardsVar(value)
+	{
+		public override void UpdateCardPreview(
+			CardModel card,
+			CardPreviewMode previewMode,
+			Creature? target,
+			bool runGlobalHooks)
+		{
+			EnchantedValue = printedValue(card);
+			PreviewValue = BaseValue;
+		}
+	}
+
+	protected sealed class ChargedRepeatVar(int value, Func<CardModel, decimal> printedValue) : RepeatVar(value)
+	{
+		public override void UpdateCardPreview(
+			CardModel card,
+			CardPreviewMode previewMode,
+			Creature? target,
+			bool runGlobalHooks)
+		{
+			EnchantedValue = printedValue(card);
+			PreviewValue = BaseValue;
+		}
+	}
+
+	protected sealed class ChargedDamageVar(
+		decimal value,
+		ValueProp props,
+		Func<CardModel, decimal> printedValue) : DamageVar(value, props)
+	{
+		public override void UpdateCardPreview(
+			CardModel card,
+			CardPreviewMode previewMode,
+			Creature? target,
+			bool runGlobalHooks)
+		{
+			decimal printed = ApplyEnchantment(card, printedValue(card));
+			decimal preview = ApplyEnchantment(card, BaseValue);
+			EnchantedValue = printed;
+
+			if (runGlobalHooks)
+			{
+				preview = Hook.ModifyDamage(
+					card.Owner.RunState,
+					card.CombatState,
+					target,
+					card.Owner.Creature,
+					BaseValue,
+					Props,
+					card,
+					null,
+					ModifyDamageHookType.All,
+					previewMode,
+					out _);
+			}
+
+			PreviewValue = preview;
+		}
+
+		private decimal ApplyEnchantment(CardModel card, decimal value)
+		{
+			if (card.Enchantment is not { } enchantment)
+			{
+				return value;
+			}
+
+			value += enchantment.EnchantDamageAdditive(value, Props);
+			return value * enchantment.EnchantDamageMultiplicative(value, Props);
+		}
+	}
+
+	protected sealed class ChargedBlockVar(
+		decimal value,
+		ValueProp props,
+		Func<CardModel, decimal> printedValue) : BlockVar(value, props)
+	{
+		public override void UpdateCardPreview(
+			CardModel card,
+			CardPreviewMode previewMode,
+			Creature? target,
+			bool runGlobalHooks)
+		{
+			decimal printed = ApplyEnchantment(card, printedValue(card));
+			decimal preview = ApplyEnchantment(card, BaseValue);
+			EnchantedValue = printed;
+
+			if (runGlobalHooks && card.CombatState is { } combatState)
+			{
+				preview = Hook.ModifyBlock(
+					combatState,
+					card.Owner.Creature,
+					BaseValue,
+					Props,
+					card,
+					null,
+					out _);
+			}
+
+			PreviewValue = preview;
+		}
+
+		private static decimal ApplyEnchantment(CardModel card, decimal value)
+		{
+			if (card.Enchantment is not { } enchantment)
+			{
+				return value;
+			}
+
+			value += enchantment.EnchantBlockAdditive(value);
+			return value * enchantment.EnchantBlockMultiplicative(value);
+		}
+	}
+
 	public readonly record struct ChargeHooks(
 		Func<PlayerChoiceContext, Task>? OnRetained,
 		Func<PlayerChoiceContext, PowerModel, decimal, Creature?, CardModel?, Task>? OnPowerAmountChanged,

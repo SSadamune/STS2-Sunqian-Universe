@@ -29,7 +29,7 @@ public sealed class SendHorseWithoutHay : ChargeCardTemplate
 
 	protected override IEnumerable<DynamicVar> CanonicalVars =>
 	[
-		new CardsVar(CanonicalDraw),
+		new ChargedCardsVar(CanonicalDraw, _ => CanonicalDraw),
 	];
 
 	protected override string ChargeEffectLocKey => Id.Entry + ".chargeEffect";
