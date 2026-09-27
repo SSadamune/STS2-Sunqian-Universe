@@ -27,15 +27,18 @@ namespace Squ.Cards;
 [RegisterCard(typeof(SunqianCardPool), StableEntryStem = "ruthless_strike")]
 public sealed class RuthlessStrike : ChargeCardTemplate
 {
-	public const int CanonicalDamage = 11;
-	public const int CanonicalHits = 1;
+	public const int CanonicalDamage = 9;
+	public const int BaseHits = 1;
+	public const int UpgradedHits = 2;
 
 	private static readonly ValueProp DamageProps = ValueProp.Move | ValueProp.Unblockable;
 
 	protected override IEnumerable<DynamicVar> CanonicalVars =>
 	[
 		new DamageVar(CanonicalDamage, DamageProps),
-		new ChargedRepeatVar(CanonicalHits, _ => CanonicalHits),
+		new ChargedRepeatVar(
+			BaseHits,
+			card => GetCanonicalHits(card)),
 	];
 
 	protected override HashSet<CardTag> CanonicalTags => [CardTag.Strike];
@@ -83,7 +86,7 @@ public sealed class RuthlessStrike : ChargeCardTemplate
 
 	protected override void OnUpgrade()
 	{
-		AddKeyword(CardKeyword.Retain);
+		DynamicVars.Repeat.UpgradeValueBy(UpgradedHits - BaseHits);
 	}
 
 	public override Task AfterCardExhausted(
@@ -125,7 +128,7 @@ public sealed class RuthlessStrike : ChargeCardTemplate
 
 	private bool ShouldShowChargedDescription()
 	{
-		// 图鉴规范卡不可变；仅战斗中的可变实例在蓄能已叠加后改写描述。
+		// 图鉴与战斗外预览使用印面描述；仅战斗中实际蓄能后显示动态攻击次数。
 		if (!IsMutable
 			|| RunState is null
 			|| !CombatManager.Instance.IsInProgress
@@ -144,4 +147,9 @@ public sealed class RuthlessStrike : ChargeCardTemplate
 		DynamicVars.Repeat.BaseValue = CanonicalHits;
 		RefreshCardVisuals();
 	}
+
+	private int CanonicalHits => GetCanonicalHits(this);
+
+	private static int GetCanonicalHits(CardModel card) =>
+		card.IsUpgraded ? UpgradedHits : BaseHits;
 }

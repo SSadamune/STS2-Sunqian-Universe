@@ -24,8 +24,8 @@ namespace Squ.Cards;
 [RegisterCard(typeof(SunqianCardPool), StableEntryStem = "work_life_balance")]
 public sealed class WorkLifeBalance : ChargeCardTemplate
 {
-	public const int CanonicalBlock = 4;
-	public const int UpgradedBlock = 3;
+	public const int CanonicalBlock = 5;
+	public const int UpgradedBlock = 4;
 	public const int CanonicalRepeat = 2;
 	public const int UpgradedRepeat = 3;
 
@@ -60,7 +60,7 @@ public sealed class WorkLifeBalance : ChargeCardTemplate
 	protected override bool ShouldGlowGoldInternal => DynamicVars.Block.BaseValue > PrintedBlock;
 
 	public WorkLifeBalance()
-		: base(1, CardType.Skill, CardRarity.Common, TargetType.Self)
+		: base(1, CardType.Skill, CardRarity.Uncommon, TargetType.Self)
 	{
 	}
 
