@@ -46,7 +46,7 @@ public sealed class ScriptBurningLinkedCampsPower : ScriptPowerTemplate
 
 	protected override object InitInternalData() => new Data();
 
-	public override Task AfterApplied(Creature? applier, CardModel? cardSource)
+	protected override Task OnScriptApplied(Creature? applier, CardModel? cardSource)
 	{
 		bool upgraded = cardSource is BurningLinkedCampsScript { IsUpgraded: true };
 		Data data = GetInternalData<Data>();

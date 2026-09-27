@@ -1,12 +1,10 @@
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using MegaCrit.Sts2.Core.Entities.Creatures;
 using MegaCrit.Sts2.Core.Entities.Powers;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Models;
-using Squ.Script;
 using STS2RitsuLib.Scaffolding.Content;
 
 #nullable enable
@@ -28,23 +26,10 @@ public abstract class StackableScriptPowerTemplate : ScriptPowerTemplate
 		HoverTipFactory.FromKeyword(SquKeywords.StackableScript),
 	];
 
-	public override async Task BeforeApplied(
-		Creature target,
-		decimal amount,
-		Creature? applier,
-		CardModel? cardSource)
-	{
-		System.Type powerType = GetType();
-		foreach (ScriptPowerTemplate active in target.Powers.OfType<ScriptPowerTemplate>().ToList())
-		{
-			if (active.GetType() != powerType)
-			{
-				await ScriptSystem.RemoveScriptPowerAsync(active);
-			}
-		}
-	}
+	protected override bool ShouldReplaceActiveScript(ScriptPowerTemplate active) =>
+		active.GetType() != GetType();
 
-	public override Task AfterApplied(Creature? applier, CardModel? cardSource)
+	protected override Task OnScriptApplied(Creature? applier, CardModel? cardSource)
 	{
 		OnStackedFrom(cardSource);
 		return Task.CompletedTask;

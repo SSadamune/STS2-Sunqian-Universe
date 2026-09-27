@@ -68,7 +68,7 @@ public sealed class ScriptExecutionerPower : ScriptPowerTemplate
 	protected override string SmartDescriptionLocKey =>
 		base.Id.Entry + ".smartDescription";
 
-	public override Task AfterApplied(Creature? applier, CardModel? cardSource)
+	protected override Task OnScriptApplied(Creature? applier, CardModel? cardSource)
 	{
 		GetInternalData<Data>().RestoreEnergy = true;
 		return Task.CompletedTask;

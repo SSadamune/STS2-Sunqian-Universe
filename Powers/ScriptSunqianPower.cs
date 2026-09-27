@@ -34,7 +34,7 @@ public sealed class ScriptSunqianPower : ScriptPowerTemplate
 
 	protected override object InitInternalData() => new Data();
 
-	public override Task AfterApplied(Creature? applier, CardModel? cardSource)
+	protected override Task OnScriptApplied(Creature? applier, CardModel? cardSource)
 	{
 		int drawOnLift = cardSource is SunqianScript { IsUpgraded: true } ? 2 : 1;
 		GetInternalData<Data>().DrawOnLift = drawOnLift;

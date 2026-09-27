@@ -20,7 +20,7 @@ namespace Squ.Powers;
 
 /// <summary>
 /// 博望悖论剧本：失效时，获得一次性的火种层数，并丢弃手牌中所有能造成灼烧的牌。
-/// 火种的具体层数在打出时（<see cref="AfterApplied"/>）根据牌是否已升级快照到内部数据，
+/// 火种的具体层数在打出时（<see cref="OnScriptApplied"/>）根据牌是否已升级快照到内部数据，
 /// 失效结算（<see cref="AfterRemoved"/>）时直接读取快照值，不依赖届时的 DynamicVars 状态。
 /// </summary>
 [RegisterPower]
@@ -48,7 +48,7 @@ public sealed class ScriptBowangParadoxPower : ScriptPowerTemplate
 		HoverTipFactory.FromPower<BurningPower>(),
 	];
 
-	public override Task AfterApplied(Creature? applier, CardModel? cardSource)
+	protected override Task OnScriptApplied(Creature? applier, CardModel? cardSource)
 	{
 		decimal stacks = cardSource is BowangParadoxScript { IsUpgraded: true }
 			? BowangParadoxScript.UpgradedTinderStacks

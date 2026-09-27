@@ -44,7 +44,7 @@ public sealed class ScriptServantPower : ScriptPowerTemplate
 
 	protected override object InitInternalData() => new Data();
 
-	public override Task AfterApplied(Creature? applier, CardModel? cardSource)
+	protected override Task OnScriptApplied(Creature? applier, CardModel? cardSource)
 	{
 		bool upgraded = cardSource is ServantScript { IsUpgraded: true };
 		Data data = GetInternalData<Data>();
