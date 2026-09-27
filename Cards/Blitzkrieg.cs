@@ -83,7 +83,10 @@ public sealed class Blitzkrieg : ModCardTemplate
 				.WithHitFx("vfx/vfx_attack_slash")
 				.Execute(choiceContext);
 
-			await PlayAllStrikesAndBlitzkriegFromPiles(choiceContext, cardPlay.Target);
+			using (AttackVigorResolution.SuppressNestedAttackConsumption(Owner))
+			{
+				await PlayAllStrikesAndBlitzkriegFromPiles(choiceContext, cardPlay.Target);
+			}
 		}
 		finally
 		{

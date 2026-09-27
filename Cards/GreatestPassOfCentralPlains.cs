@@ -29,8 +29,8 @@ namespace Squ.Cards;
 [RegisterCard(typeof(SunqianCardPool), StableEntryStem = "greatest_pass_of_central_plains")]
 public sealed class GreatestPassOfCentralPlains : ModCardTemplate
 {
-	public const int BlockAmount = 18;
-	public const int UpgradedBlockAmount = 36;
+	public const int BlockAmount = 16;
+	public const int UpgradedBlockAmount = 32;
 
 	protected override IEnumerable<DynamicVar> CanonicalVars =>
 	[
@@ -40,7 +40,7 @@ public sealed class GreatestPassOfCentralPlains : ModCardTemplate
 	public override IEnumerable<CardKeyword> CanonicalKeywords =>
 	[
 		CardKeyword.Retain,
-		CardKeyword.Exhaust,
+		SquKeywords.WarFeedsWar,
 	];
 
 	public override bool GainsBlock => true;
@@ -54,7 +54,7 @@ public sealed class GreatestPassOfCentralPlains : ModCardTemplate
 	];
 
 	public GreatestPassOfCentralPlains()
-		: base(0, CardType.Attack, CardRarity.Rare, SquTargetTypes.AnyPlayer)
+		: base(0, CardType.Power, CardRarity.Rare, SquTargetTypes.AnyPlayer)
 	{
 	}
 
@@ -74,6 +74,7 @@ public sealed class GreatestPassOfCentralPlains : ModCardTemplate
 	{
 		ArgumentNullException.ThrowIfNull(cardPlay.Target, nameof(cardPlay.Target));
 
+		WarFeedsWarResolutionTracker.RecordPlayed(this);
 		SquSfx.Play(SquSfx.GreatestPassOfCentralPlainsEvent);
 
 		PotionModel potionProxy = ModelDb.Potion<BlockPotion>().ToMutable();

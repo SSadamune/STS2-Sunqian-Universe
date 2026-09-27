@@ -1,9 +1,6 @@
-using System;
 using System.Collections.Generic;
-using System.Reflection;
 using System.Threading.Tasks;
 using Godot;
-using HarmonyLib;
 using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.Entities.Creatures;
@@ -13,6 +10,7 @@ using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.Powers;
 using Squ.Cards;
+using Squ.Combat;
 using STS2RitsuLib.Interop.AutoRegistration;
 using STS2RitsuLib.Scaffolding.Content;
 
@@ -21,31 +19,24 @@ using STS2RitsuLib.Scaffolding.Content;
 namespace Squ.Powers;
 
 /// <summary>
-/// 活力保持：消耗活力后立刻获得等量活力。层数仅在攻击牌结算后减少。
+/// Tracks each root Attack as one complete play. It consumes one stack even if no Vigor was
+/// available, then restores exactly the Vigor spent by that Attack after its final play resolves.
+/// Nested Attacks inside an <see cref="AttackVigorResolution"/> suppression scope do neither.
 /// </summary>
 [RegisterPower]
 public sealed class KeepVigorPower : ModPowerTemplate
 {
-	private static readonly Type? VigorInternalDataType =
-		AccessTools.Inner(typeof(VigorPower), "Data");
+	private sealed class Data
+	{
+		public Dictionary<CardModel, AttackPlayTrack> ActivePlays { get; } = [];
 
-	private static readonly MethodInfo? GetInternalDataMethod =
-		VigorInternalDataType is null
-			? null
-			: AccessTools.Method(typeof(PowerModel), "GetInternalData", System.Type.EmptyTypes)
-				?.MakeGenericMethod(VigorInternalDataType);
+		public List<CardModel> ActivePlayOrder { get; } = [];
+	}
 
-	private static readonly FieldInfo? CommandToModifyField =
-		VigorInternalDataType is null
-			? null
-			: AccessTools.Field(VigorInternalDataType, "commandToModify");
-
-	private static readonly FieldInfo? AmountWhenAttackStartedField =
-		VigorInternalDataType is null
-			? null
-			: AccessTools.Field(VigorInternalDataType, "amountWhenAttackStarted");
-
-	private bool _isRefunding;
+	private sealed class AttackPlayTrack
+	{
+		public decimal VigorSpent { get; set; }
+	}
 
 	public override PowerType Type => PowerType.Buff;
 
@@ -62,80 +53,93 @@ public sealed class KeepVigorPower : ModPowerTemplate
 		HoverTipFactory.FromPower<VigorPower>(),
 	];
 
-	public override async Task AfterPowerAmountChanged(
+	protected override object InitInternalData() => new Data();
+
+	public override Task BeforeCardPlayed(CardPlay cardPlay)
+	{
+		if (Owner.IsDead
+			|| Amount <= 0m
+			|| cardPlay.PlayIndex != 0
+			|| cardPlay.Card.Owner.Creature != Owner
+			|| cardPlay.Card.Type != CardType.Attack
+			|| ChaosHarmedYou.DoesNotConsumeAttackPlayTracking(cardPlay.Card)
+			|| AttackVigorResolution.IsNestedAttackConsumptionSuppressed(Owner.Player))
+		{
+			return Task.CompletedTask;
+		}
+
+		Data data = GetInternalData<Data>();
+		data.ActivePlays[cardPlay.Card] = new AttackPlayTrack();
+		data.ActivePlayOrder.Remove(cardPlay.Card);
+		data.ActivePlayOrder.Add(cardPlay.Card);
+		return Task.CompletedTask;
+	}
+
+	public override Task AfterPowerAmountChanged(
 		PlayerChoiceContext choiceContext,
 		PowerModel power,
 		decimal amount,
 		Creature? applier,
 		CardModel? cardSource)
 	{
-		if (_isRefunding
-			|| Owner.IsDead
-			|| Amount <= 0m
-			|| power is not VigorPower vigor
+		if (Owner.IsDead
+			|| power is not VigorPower
 			|| power.Owner != Owner
-			|| amount >= 0m)
+			|| amount >= 0m
+			|| AttackVigorResolution.IsNestedAttackConsumptionSuppressed(Owner.Player))
 		{
-			return;
+			return Task.CompletedTask;
 		}
 
-		_isRefunding = true;
-		try
+		Data data = GetInternalData<Data>();
+		for (int i = data.ActivePlayOrder.Count - 1; i >= 0; i--)
 		{
-			Flash();
-			await PowerCmd.Apply<VigorPower>(
-				choiceContext,
-				Owner,
-				-amount,
-				Owner,
-				cardSource);
+			CardModel activeCard = data.ActivePlayOrder[i];
+			if (data.ActivePlays.TryGetValue(activeCard, out AttackPlayTrack? track))
+			{
+				track.VigorSpent += -amount;
+				break;
+			}
+		}
 
-			// 原版活力会把「本段攻击」绑在打出的那张牌上；消耗后层数为 0，其它牌预览自然归零。
-			// 退回层数后若不解开绑定，ModifyDamageAdditive 会对非绑定牌返回 0，手牌打击便不再吃活力。
-			ClearVigorAttackBinding(vigor);
-		}
-		finally
-		{
-			_isRefunding = false;
-		}
+		return Task.CompletedTask;
 	}
 
-	public override async Task AfterCardPlayed(PlayerChoiceContext choiceContext, CardPlay cardPlay)
+	public override async Task AfterCardPlayedLate(
+		PlayerChoiceContext choiceContext,
+		CardPlay cardPlay)
 	{
-		if (Owner.IsDead
-			|| Amount <= 0m
-			|| Owner.Player is not { } player
-			|| cardPlay.Card.Owner != player
-			|| cardPlay.Card.Type != CardType.Attack
-			|| ChaosHarmedYou.DoesNotConsumeAttackPlayTracking(cardPlay.Card))
+		if (cardPlay.Card.Owner.Creature != Owner
+			|| cardPlay.PlayIndex != cardPlay.PlayCount - 1)
 		{
 			return;
 		}
 
+		Data data = GetInternalData<Data>();
+		if (!data.ActivePlays.Remove(cardPlay.Card, out AttackPlayTrack? track))
+		{
+			return;
+		}
+
+		data.ActivePlayOrder.Remove(cardPlay.Card);
 		Flash();
 		await PowerCmd.Decrement(this);
-	}
 
-	/// <summary>
-	/// 清掉 <see cref="VigorPower"/> 在 <c>BeforeAttack</c> 写入的攻击绑定，
-	/// 让退回后的活力能再次作用于任意攻击牌。
-	/// </summary>
-	private static void ClearVigorAttackBinding(VigorPower vigor)
-	{
-		if (GetInternalDataMethod is null
-			|| CommandToModifyField is null
-			|| AmountWhenAttackStartedField is null)
+		if (Owner.IsDead || track.VigorSpent <= 0m)
 		{
 			return;
 		}
 
-		object? data = GetInternalDataMethod.Invoke(vigor, null);
-		if (data is null)
-		{
-			return;
-		}
+		await PowerCmd.Apply<VigorPower>(
+			choiceContext,
+			Owner,
+			track.VigorSpent,
+			Owner,
+			cardPlay.Card);
 
-		CommandToModifyField.SetValue(data, null);
-		AmountWhenAttackStartedField.SetValue(data, 0);
+		if (Owner.GetPower<VigorPower>() is { } restoredVigor)
+		{
+			AttackVigorResolution.ClearVigorAttackBinding(restoredVigor);
+		}
 	}
 }

@@ -1,19 +1,13 @@
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
-using MegaCrit.Sts2.Core.Combat;
 using MegaCrit.Sts2.Core.Commands;
-using MegaCrit.Sts2.Core.Entities.Cards;
-using MegaCrit.Sts2.Core.Entities.Creatures;
 using MegaCrit.Sts2.Core.Entities.Relics;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.Helpers;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
-using MegaCrit.Sts2.Core.Models;
-using MegaCrit.Sts2.Core.Rooms;
 using MegaCrit.Sts2.Core.Saves.Runs;
-using Squ;
 using Squ.Character;
+using Squ.Script;
 using STS2RitsuLib.Interop.AutoRegistration;
 using STS2RitsuLib.Scaffolding.Content;
 
@@ -22,18 +16,16 @@ using STS2RitsuLib.Scaffolding.Content;
 namespace Squ.Relics;
 
 /// <summary>
-/// 提词器：每有 2 张剧本牌被消耗（无论是否因打出），抽两张牌。
+/// 提词器：每有 3 次剧本失效，抽两张牌。
 /// </summary>
 [RegisterRelic(typeof(SunqianRelicPool), StableEntryStem = "teleprompter")]
-public sealed class TeleprompterRelic : ScriptRelicTemplate
+public sealed class TeleprompterRelic : ScriptRelicTemplate, IScriptLiftHandler
 {
 	private const string ScriptAmountKey = "ScriptAmount";
 
 	private bool _isActivating;
 
 	private int _scriptsExhausted;
-
-	private int _etherealCount;
 
 	public override string FlashSfx => "event:/sfx/ui/relic_activate_draw";
 
@@ -80,19 +72,9 @@ public sealed class TeleprompterRelic : ScriptRelicTemplate
 		}
 	}
 
-	private int EtherealCount
-	{
-		get => _etherealCount;
-		set
-		{
-			AssertMutable();
-			_etherealCount = value;
-		}
-	}
-
 	protected override IEnumerable<DynamicVar> CanonicalVars =>
 	[
-		new DynamicVar(ScriptAmountKey, 2m),
+		new DynamicVar(ScriptAmountKey, 3m),
 		new CardsVar(2),
 	];
 
@@ -101,45 +83,10 @@ public sealed class TeleprompterRelic : ScriptRelicTemplate
 		IconOutlinePath: "res://images/relics/TeleprompterRelicOutline.png",
 		BigIconPath: "res://images/relics/TeleprompterRelicBig.png");
 
-	public override async Task AfterCardExhausted(
-		PlayerChoiceContext choiceContext,
-		CardModel card,
-		bool causedByEthereal)
+	public async Task OnScriptLiftAsync(ScriptLiftContext context)
 	{
-		if (card.Owner != Owner || !IsScriptCard(card))
-		{
-			return;
-		}
-
-		if (causedByEthereal)
-		{
-			EtherealCount++;
-			return;
-		}
-
 		ScriptsExhausted++;
-		await DrawIfThresholdMet(choiceContext);
-	}
-
-	public override async Task AfterSideTurnEnd(
-		PlayerChoiceContext choiceContext,
-		CombatSide side,
-		IEnumerable<Creature> participants)
-	{
-		if (!participants.Contains(Owner.Creature))
-		{
-			return;
-		}
-
-		ScriptsExhausted += EtherealCount;
-		EtherealCount = 0;
-		await DrawIfThresholdMet(choiceContext);
-	}
-
-	public override Task AfterCombatEnd(CombatRoom room)
-	{
-		EtherealCount = 0;
-		return Task.CompletedTask;
+		await DrawIfThresholdMet(context.ChoiceContext);
 	}
 
 	private async Task DrawIfThresholdMet(PlayerChoiceContext choiceContext)
@@ -163,6 +110,4 @@ public sealed class TeleprompterRelic : ScriptRelicTemplate
 		await Cmd.Wait(1f);
 		IsActivating = false;
 	}
-
-	private static bool IsScriptCard(CardModel card) => card.Tags.Contains(SquCardTags.Script);
 }
