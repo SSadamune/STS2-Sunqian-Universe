@@ -23,6 +23,11 @@ public sealed class EunuchScript : ScriptCardTemplate
 	public const int BaseDraw = 2;
 	public const int UpgradedDraw = 3;
 
+	private List<CardModel>? _drawnCardsForCurrentPlay;
+
+	internal IReadOnlyList<CardModel> DrawnCardsForCurrentPlay =>
+		_drawnCardsForCurrentPlay ?? [];
+
 	protected override IEnumerable<DynamicVar> CanonicalVars =>
 	[
 		new CardsVar(BaseDraw),
@@ -55,13 +60,20 @@ public sealed class EunuchScript : ScriptCardTemplate
 			DynamicVars.Cards.BaseValue,
 			Owner)).ToList();
 
-		await PowerCmd.Apply<ScriptEunuchPower>(
-			choiceContext,
-			Owner.Creature,
-			1m,
-			Owner.Creature,
-			this);
-		ScriptEunuchPower.MarkDrawnCards(drawn);
+		try
+		{
+			_drawnCardsForCurrentPlay = drawn;
+			await PowerCmd.Apply<ScriptEunuchPower>(
+				choiceContext,
+				Owner.Creature,
+				1m,
+				Owner.Creature,
+				this);
+		}
+		finally
+		{
+			_drawnCardsForCurrentPlay = null;
+		}
 	}
 
 	protected override void OnUpgrade()

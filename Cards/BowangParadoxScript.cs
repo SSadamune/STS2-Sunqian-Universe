@@ -37,6 +37,7 @@ public sealed class BowangParadoxScript : ScriptCardTemplate
 		HoverTipFactory.FromPower<VigorPower>(),
 		HoverTipFactory.FromPower<TinderPower>(),
 		HoverTipFactory.FromPower<BurningPower>(),
+		HoverTipFactory.FromKeyword(CardKeyword.Retain),
 	];
 
 	public override IEnumerable<CardKeyword> CanonicalKeywords =>
@@ -63,7 +64,7 @@ public sealed class BowangParadoxScript : ScriptCardTemplate
 			this);
 
 		List<CardModel> attackCards = PileType.Hand.GetPile(Owner).Cards
-			.Where(card => card.Type == CardType.Attack)
+			.Where(card => card.Type == CardType.Attack && !card.ShouldRetainThisTurn)
 			.ToList();
 		if (attackCards.Count > 0)
 		{

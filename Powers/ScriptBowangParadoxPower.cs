@@ -46,6 +46,7 @@ public sealed class ScriptBowangParadoxPower : ScriptPowerTemplate
 	[
 		HoverTipFactory.FromPower<TinderPower>(),
 		HoverTipFactory.FromPower<BurningPower>(),
+		HoverTipFactory.FromKeyword(CardKeyword.Retain),
 	];
 
 	protected override Task OnScriptApplied(Creature? applier, CardModel? cardSource)
@@ -74,7 +75,7 @@ public sealed class ScriptBowangParadoxPower : ScriptPowerTemplate
 				null);
 
 			List<CardModel> burningCards = PileType.Hand.GetPile(player).Cards
-				.Where(SquCardTags.AppliesBurning)
+				.Where(card => SquCardTags.AppliesBurning(card) && !card.ShouldRetainThisTurn)
 				.ToList();
 			if (burningCards.Count > 0)
 			{
