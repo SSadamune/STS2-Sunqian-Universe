@@ -71,6 +71,11 @@ public static class SquKeywords
 
 	public static readonly CardKeyword Charge = ChargeId.GetModCardKeyword();
 
+	public static readonly string FamilyId = ModContentRegistry
+		.GetQualifiedKeywordId(SquMod.ModId, "family");
+
+	public static readonly CardKeyword Family = FamilyId.GetModCardKeyword();
+
 	public static readonly string EnthralledId = ModContentRegistry
 		.GetQualifiedKeywordId(SquMod.ModId, "enthralled");
 
@@ -147,6 +152,8 @@ public static class SquKeywords
 	public static bool HasEunuchMessage(this CardModel card) => card.Keywords.Contains(EunuchMessage);
 
 	public static bool HasEnthralled(this CardModel card) => card.Keywords.Contains(Enthralled);
+
+	public static bool HasFamily(this CardModel card) => card.Keywords.Contains(Family);
 
 	public static bool HasWrap(this CardModel card) => card.Keywords.Contains(Wrap);
 

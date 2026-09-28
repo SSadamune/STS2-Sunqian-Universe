@@ -96,17 +96,18 @@ public sealed class CelebrateMourning : ModCardTemplate
 			return;
 		}
 
-		if (!CardDrawPlayRateTracker.WasAmongHighestPlayRateDeckCardsBeforeExhaust(
+		List<CardModel> candidates = GetOtherPlayRateCandidates(card);
+		if (!CardDrawPlayRateTracker.IsAmongHighestPlayRateCards(
 			    Owner,
 			    card,
+			    candidates,
 			    windowSize: PlayRateWindow,
-			    includeCurrentCombat: IncludeCurrentCombat,
-			    exclude: IsCelebrateMourning))
+			    includeCurrentCombat: IncludeCurrentCombat))
 		{
 			return;
 		}
 
-		HashSet<CardModel> highest = GetHighestOtherPlayRateDeckCards();
+		HashSet<CardModel> highest = GetHighestOtherPlayRateCards(candidates);
 
 		CardDrawPlayRateTracker.LogCurrentState(
 			Owner,
@@ -130,9 +131,33 @@ public sealed class CelebrateMourning : ModCardTemplate
 			return [];
 		}
 
-		return GetHighestOtherPlayRateDeckCards()
+		return GetHighestOtherPlayRateCards(GetOtherPlayRateCandidates())
 			.OrderBy(card => card.Title, System.StringComparer.Ordinal)
 			.ToList();
+	}
+
+	private List<CardModel> GetOtherPlayRateCandidates(CardModel? exhaustedCard = null)
+	{
+		List<CardModel> candidates = PileType.Deck.GetPile(Owner).Cards
+			.Where(card => !IsCelebrateMourning(card))
+			.ToList();
+		if (Owner.PlayerCombatState is { } playerCombatState)
+		{
+			candidates.AddRange(playerCombatState.AllCards.Where(card =>
+				card.DeckVersion is null
+				&& card.HasFamily()
+				&& card.Pile?.Type is PileType.Hand or PileType.Draw or PileType.Discard or PileType.Play));
+		}
+
+		if (exhaustedCard is { } exhausted
+			&& exhausted.DeckVersion is null
+			&& exhausted.HasFamily()
+			&& !candidates.Contains(exhausted))
+		{
+			candidates.Add(exhausted);
+		}
+
+		return candidates;
 	}
 
 	private IHoverTip? CreateReturnTriggerHoverTip(IReadOnlyList<CardModel> triggerTargets)
@@ -147,12 +172,12 @@ public sealed class CelebrateMourning : ModCardTemplate
 		return new HoverTip(SquCommonL10n.AnnotationTitle(), description);
 	}
 
-	private HashSet<CardModel> GetHighestOtherPlayRateDeckCards() =>
-		CardDrawPlayRateTracker.GetHighestPlayRateDeckCards(
+	private HashSet<CardModel> GetHighestOtherPlayRateCards(IEnumerable<CardModel> candidates) =>
+		CardDrawPlayRateTracker.GetHighestPlayRateCards(
 			Owner,
+			candidates,
 			windowSize: PlayRateWindow,
-			includeCurrentCombat: IncludeCurrentCombat,
-			exclude: IsCelebrateMourning);
+			includeCurrentCombat: IncludeCurrentCombat);
 
 	private string FormatCardList(IReadOnlyList<CardModel> cards)
 	{

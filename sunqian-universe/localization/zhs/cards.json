@@ -220,5 +220,13 @@
   "SUNQIAN_UNIVERSE_CARD_FARMING_GENERAL.description": "从抽牌堆中选择至多{Cards:diff()}张牌，为它们附魔[gold]播种[/gold]并移去[gold]消耗[/gold]。",
   "SUNQIAN_UNIVERSE_CARD_FARMING_GENERAL.selectionScreenPrompt": "选择至多{Amount}张牌，为它们附魔播种并移去消耗",
   "SUNQIAN_UNIVERSE_CARD_HATE_THE_HEAVENS_STRIKE.title": "恨天打击",
-  "SUNQIAN_UNIVERSE_CARD_HATE_THE_HEAVENS_STRIKE.description": "造成{Damage:diff()}点伤害。\n[gold]预见[/gold]{Scry:diff()}，被丢弃的牌将改为被[gold]消耗[/gold]。"
+  "SUNQIAN_UNIVERSE_CARD_HATE_THE_HEAVENS_STRIKE.description": "造成{Damage:diff()}点伤害。\n[gold]预见[/gold]{Scry:diff()}，被丢弃的牌将改为被[gold]消耗[/gold]。",
+  "SUNQIAN_UNIVERSE_CARD_NEVER_HAD_THESE.title": "只当从来就没有这些",
+  "SUNQIAN_UNIVERSE_CARD_NEVER_HAD_THESE.description": "从三张「[gold]家人[/gold]」牌中选择一张加入[gold]手牌[/gold]，其余加入[gold]抽牌堆[/gold]。\n每有一张[gold]家人[/gold]被[gold]消耗[/gold]，你获得{energyPrefix:energyIcons(1)}和[blue]1[/blue]点[gold]敏捷[/gold]。",
+  "SUNQIAN_UNIVERSE_CARD_NEXT_OF_KIN.title": "至亲",
+  "SUNQIAN_UNIVERSE_CARD_NEXT_OF_KIN.description": "这张牌被丢弃时，抽{Cards:diff()}张牌。",
+  "SUNQIAN_UNIVERSE_CARD_LOYAL_SERVANT.title": "忠仆",
+  "SUNQIAN_UNIVERSE_CARD_LOYAL_SERVANT.description": "这张牌被丢弃时，获得{Block:diff()}点[gold]格挡[/gold]。",
+  "SUNQIAN_UNIVERSE_CARD_BELOVED_PET.title": "爱宠",
+  "SUNQIAN_UNIVERSE_CARD_BELOVED_PET.description": "[gold]召唤[/gold]{Summon:diff()}。"
 }

@@ -36,5 +36,7 @@
   "SUNQIAN_UNIVERSE_KEYWORD_SLIGHT_REVISION.title": "稍作修改",
   "SUNQIAN_UNIVERSE_KEYWORD_SLIGHT_REVISION.description": "你可以[gold]右键点击[/gold]手牌中的此牌，将其变化为特定的另一张牌。",
   "SUNQIAN_UNIVERSE_KEYWORD_SLIGHT_REVISION.cardDescription": "\n[gold]{Title}[/gold]：[gold]{TargetCardName}[/gold]。",
-  "SUNQIAN_UNIVERSE_KEYWORD_SLIGHT_REVISION.cardDescriptionFragment": "[gold]{Title}[/gold]：[gold]{TargetCardName}[/gold]。"
+  "SUNQIAN_UNIVERSE_KEYWORD_SLIGHT_REVISION.cardDescriptionFragment": "[gold]{Title}[/gold]：[gold]{TargetCardName}[/gold]。",
+  "SUNQIAN_UNIVERSE_KEYWORD_FAMILY.title": "家人",
+  "SUNQIAN_UNIVERSE_KEYWORD_FAMILY.description": "当需要计算[gold]打出率[/gold]时，这张牌的[gold]打出率[/gold]视为[blue]100%[/blue]。"
 }

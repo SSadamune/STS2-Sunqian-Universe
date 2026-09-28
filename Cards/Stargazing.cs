@@ -45,7 +45,7 @@ public sealed class Stargazing : ModCardTemplate
 		PortraitPath: "res://images/cards/Stargazing.png");
 
 	public Stargazing()
-		: base(0, CardType.Skill, CardRarity.Uncommon, TargetType.None)
+		: base(-1, CardType.Skill, CardRarity.Uncommon, TargetType.None)
 	{
 	}
 

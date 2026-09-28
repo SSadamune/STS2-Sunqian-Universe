@@ -72,6 +72,7 @@ public static class CardDrawPlayRateTracker
 
 	/// <summary>
 	/// 从抽牌堆中选出打出率最高的至多 <paramref name="count"/> 张牌。
+	/// 「家人」的打出率视为 100%；与实际打出率 100% 的牌并列时，家人优先。
 	/// 分母为 0 时视为打出率 0；率相同则优先从手牌打出次数更多者，再按获得顺序、身份键、抽牌堆位置。
 	/// </summary>
 	public static List<CardModel> SelectHighestPlayRateFromDrawPile(
@@ -99,6 +100,7 @@ public static class CardDrawPlayRateTracker
 			CardModel identity = ResolveIdentityCard(card) ?? card;
 			ranked.Add(new RankedDrawCard(
 				card,
+				card.HasFamily(),
 				playFromHandCount,
 				handEntryCount,
 				identity.FloorAddedToDeck ?? int.MaxValue,
@@ -121,16 +123,34 @@ public static class CardDrawPlayRateTracker
 
 	/// <summary>
 	/// 返回牌组中打出率最高的全部卡牌（并列全收）。
+	/// 「家人」按 100% 参与比较，因此与实际打出率 100% 的牌并列最高。
 	/// 分母为 0 时视为打出率 0；可通过 <paramref name="exclude"/> 排除若干牌。
 	/// </summary>
 	public static HashSet<CardModel> GetHighestPlayRateDeckCards(
 		Player player,
 		int windowSize = MaxStoredCombats,
 		bool includeCurrentCombat = false,
+		Func<CardModel, bool>? exclude = null) =>
+		GetHighestPlayRateCards(
+			player,
+			PileType.Deck.GetPile(player).Cards,
+			windowSize,
+			includeCurrentCombat,
+			exclude);
+
+	/// <summary>
+	/// 从任意候选集合中返回有效打出率最高的全部卡牌（并列全收）。
+	/// 原始历史统计保持不变；「家人」仅在这一规则层被视为 100%。
+	/// </summary>
+	public static HashSet<CardModel> GetHighestPlayRateCards(
+		Player player,
+		IEnumerable<CardModel> candidates,
+		int windowSize = MaxStoredCombats,
+		bool includeCurrentCombat = false,
 		Func<CardModel, bool>? exclude = null)
 	{
 		List<(CardModel Card, int PlayCount, int Denominator)> ranked = [];
-		foreach (CardModel card in PileType.Deck.GetPile(player).Cards)
+		foreach (CardModel card in candidates)
 		{
 			if (exclude?.Invoke(card) == true)
 			{
@@ -155,14 +175,26 @@ public static class CardDrawPlayRateTracker
 		(CardModel Card, int PlayCount, int Denominator) best = ranked[0];
 		foreach ((CardModel Card, int PlayCount, int Denominator) entry in ranked)
 		{
-			if (CompareRate(entry.PlayCount, entry.Denominator, best.PlayCount, best.Denominator) > 0)
+			if (CompareEffectiveRate(
+					entry.Card.HasFamily(),
+					entry.PlayCount,
+					entry.Denominator,
+					best.Card.HasFamily(),
+					best.PlayCount,
+					best.Denominator) > 0)
 			{
 				best = entry;
 			}
 		}
 
 		return ranked
-			.Where(entry => CompareRate(entry.PlayCount, entry.Denominator, best.PlayCount, best.Denominator) == 0)
+			.Where(entry => CompareEffectiveRate(
+				entry.Card.HasFamily(),
+				entry.PlayCount,
+				entry.Denominator,
+				best.Card.HasFamily(),
+				best.PlayCount,
+				best.Denominator) == 0)
 			.Select(entry => entry.Card)
 			.ToHashSet();
 	}
@@ -195,6 +227,44 @@ public static class CardDrawPlayRateTracker
 		bool includeCurrentCombat = false,
 		Func<CardModel, bool>? exclude = null)
 	{
+		List<CardModel> candidates = PileType.Deck.GetPile(player).Cards.ToList();
+		if (card.HasFamily() && ResolveIdentityCard(card) is null)
+		{
+			candidates.Add(card);
+		}
+
+		return IsAmongHighestPlayRateCards(
+			player,
+			card,
+			candidates,
+			windowSize,
+			includeCurrentCombat,
+			exclude);
+	}
+
+	/// <summary>
+	/// 判断卡牌是否属于给定候选集合的有效打出率最高档。
+	/// 对牌组卡牌按稳定身份匹配，对战斗生成牌按实例匹配。
+	/// </summary>
+	public static bool IsAmongHighestPlayRateCards(
+		Player player,
+		CardModel card,
+		IEnumerable<CardModel> candidates,
+		int windowSize = MaxStoredCombats,
+		bool includeCurrentCombat = false,
+		Func<CardModel, bool>? exclude = null)
+	{
+		HashSet<CardModel> highest = GetHighestPlayRateCards(
+			player,
+			candidates,
+			windowSize,
+			includeCurrentCombat,
+			exclude);
+		if (highest.Contains(card))
+		{
+			return true;
+		}
+
 		CardModel? identity = ResolveIdentityCard(card);
 		if (identity is null)
 		{
@@ -202,11 +272,6 @@ public static class CardDrawPlayRateTracker
 		}
 
 		string targetKey = GetIdentityKey(identity);
-		HashSet<CardModel> highest = GetHighestPlayRateDeckCards(
-			player,
-			windowSize,
-			includeCurrentCombat,
-			exclude);
 
 		foreach (CardModel deckCard in highest)
 		{
@@ -658,12 +723,42 @@ public static class CardDrawPlayRateTracker
 		return left.CompareTo(right);
 	}
 
+	private static int CompareEffectiveRate(
+		bool isFamilyA,
+		int playA,
+		int denominatorA,
+		bool isFamilyB,
+		int playB,
+		int denominatorB) =>
+		CompareRate(
+			isFamilyA ? 1 : playA,
+			isFamilyA ? 1 : denominatorA,
+			isFamilyB ? 1 : playB,
+			isFamilyB ? 1 : denominatorB);
+
 	private static int CompareRankedDrawCards(RankedDrawCard left, RankedDrawCard right)
 	{
-		int rateCmp = CompareRate(left.PlayFromHandCount, left.Denominator, right.PlayFromHandCount, right.Denominator);
+		int rateCmp = CompareEffectiveRate(
+			left.IsFamily,
+			left.PlayFromHandCount,
+			left.Denominator,
+			right.IsFamily,
+			right.PlayFromHandCount,
+			right.Denominator);
 		if (rateCmp != 0)
 		{
 			return -rateCmp;
+		}
+
+		int familyCmp = left.IsFamily.CompareTo(right.IsFamily);
+		if (familyCmp != 0)
+		{
+			return -familyCmp;
+		}
+
+		if (left.IsFamily)
+		{
+			return CompareRankedDrawCardTieBreakers(left, right);
 		}
 
 		int playCmp = left.PlayFromHandCount.CompareTo(right.PlayFromHandCount);
@@ -672,6 +767,11 @@ public static class CardDrawPlayRateTracker
 			return -playCmp;
 		}
 
+		return CompareRankedDrawCardTieBreakers(left, right);
+	}
+
+	private static int CompareRankedDrawCardTieBreakers(RankedDrawCard left, RankedDrawCard right)
+	{
 		int floorCmp = left.Floor.CompareTo(right.Floor);
 		if (floorCmp != 0)
 		{
@@ -763,6 +863,7 @@ public static class CardDrawPlayRateTracker
 			CardModel identity = ResolveIdentityCard(deckCard) ?? deckCard;
 			ranked.Add(new RankedDeckCard(
 				deckCard,
+				deckCard.HasFamily(),
 				playFromHandCount,
 				handEntryCount,
 				GetIdentityKey(identity)));
@@ -897,10 +998,27 @@ public static class CardDrawPlayRateTracker
 
 	private static int CompareRankedDeckCards(RankedDeckCard left, RankedDeckCard right)
 	{
-		int rateCmp = CompareRate(left.PlayFromHandCount, left.HandEntryCount, right.PlayFromHandCount, right.HandEntryCount);
+		int rateCmp = CompareEffectiveRate(
+			left.IsFamily,
+			left.PlayFromHandCount,
+			left.HandEntryCount,
+			right.IsFamily,
+			right.PlayFromHandCount,
+			right.HandEntryCount);
 		if (rateCmp != 0)
 		{
 			return -rateCmp;
+		}
+
+		int familyCmp = left.IsFamily.CompareTo(right.IsFamily);
+		if (familyCmp != 0)
+		{
+			return -familyCmp;
+		}
+
+		if (left.IsFamily)
+		{
+			return string.CompareOrdinal(left.IdentityKey, right.IdentityKey);
 		}
 
 		int playCmp = left.PlayFromHandCount.CompareTo(right.PlayFromHandCount);
@@ -914,12 +1032,14 @@ public static class CardDrawPlayRateTracker
 
 	private readonly record struct RankedDeckCard(
 		CardModel Card,
+		bool IsFamily,
 		int PlayFromHandCount,
 		int HandEntryCount,
 		string IdentityKey);
 
 	private readonly record struct RankedDrawCard(
 		CardModel Card,
+		bool IsFamily,
 		int PlayFromHandCount,
 		int Denominator,
 		int Floor,

@@ -55,6 +55,11 @@ public static class SquMod
 			.CardKeywordOwnedByLocNamespace("scry")
 			.CardKeywordOwnedByLocNamespace("counts_as_played")
 			.CardKeywordOwnedByLocNamespace("charge")
+			.CardKeywordOwnedByLocNamespace(
+				"family",
+				iconPath: null,
+				ModKeywordCardDescriptionPlacement.BeforeCardDescription,
+				includeInCardHoverTip: true)
 			.CardKeywordOwnedByLocNamespace("wrap")
 			.CardKeywordOwnedByLocNamespace("strong_monster_encounter")
 			.CardKeywordOwnedByLocNamespace("slight_revision")

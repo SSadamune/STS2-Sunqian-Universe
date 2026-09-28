@@ -220,5 +220,13 @@
   "SUNQIAN_UNIVERSE_CARD_FARMING_GENERAL.description": "Choose up to {Cards:diff()} cards from your Draw Pile. Enchant them with [gold]Sown[/gold] and remove [gold]Exhaust[/gold].",
   "SUNQIAN_UNIVERSE_CARD_FARMING_GENERAL.selectionScreenPrompt": "Choose up to {Amount} cards to enchant with Sown and remove Exhaust",
   "SUNQIAN_UNIVERSE_CARD_HATE_THE_HEAVENS_STRIKE.title": "Hate the Heavens Strike",
-  "SUNQIAN_UNIVERSE_CARD_HATE_THE_HEAVENS_STRIKE.description": "Deal {Damage:diff()} damage.\n[gold]Scry[/gold] {Scry:diff()}. Cards discarded this way are [gold]Exhausted[/gold] instead."
+  "SUNQIAN_UNIVERSE_CARD_HATE_THE_HEAVENS_STRIKE.description": "Deal {Damage:diff()} damage.\n[gold]Scry[/gold] {Scry:diff()}. Cards discarded this way are [gold]Exhausted[/gold] instead.",
+  "SUNQIAN_UNIVERSE_CARD_NEVER_HAD_THESE.title": "Never Had These",
+  "SUNQIAN_UNIVERSE_CARD_NEVER_HAD_THESE.description": "Choose 1 of 3 [gold]Family[/gold] cards to add to your [gold]Hand[/gold]. Add the others to your [gold]Draw Pile[/gold].\nWhenever a [gold]Family[/gold] card is [gold]Exhausted[/gold], gain {energyPrefix:energyIcons(1)} and [blue]1[/blue] [gold]Dexterity[/gold].",
+  "SUNQIAN_UNIVERSE_CARD_NEXT_OF_KIN.title": "Next of Kin",
+  "SUNQIAN_UNIVERSE_CARD_NEXT_OF_KIN.description": "When this card is discarded, draw {Cards:diff()} {Cards:plural:card|cards}.",
+  "SUNQIAN_UNIVERSE_CARD_LOYAL_SERVANT.title": "Loyal Servant",
+  "SUNQIAN_UNIVERSE_CARD_LOYAL_SERVANT.description": "When this card is discarded, gain {Block:diff()} [gold]Block[/gold].",
+  "SUNQIAN_UNIVERSE_CARD_BELOVED_PET.title": "Beloved Pet",
+  "SUNQIAN_UNIVERSE_CARD_BELOVED_PET.description": "[gold]Summon[/gold] {Summon:diff()}."
 }
