@@ -24,6 +24,10 @@ public sealed class NeverHadThesePower : ModPowerTemplate
 
 	public override Color AmountLabelColor => PowerModel._normalAmountLabelColor;
 
+	public override PowerAssetProfile AssetProfile => new(
+		IconPath: "res://images/powers/NeverHadThesePower.png",
+		BigIconPath: "res://images/powers/NeverHadThesePowerBig.png");
+
 	protected override IEnumerable<string> RegisteredKeywordIds => [SquKeywords.FamilyId];
 
 	protected override IEnumerable<IHoverTip> AdditionalHoverTips =>

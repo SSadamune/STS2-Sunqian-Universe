@@ -30,6 +30,12 @@
 {5170d31e-7a65-4c21-b013-cc2883924040} event:/sunqian_universe/sfx/仁义-仁义也分大仁小仁
 {54c28a9e-23c8-467a-9134-c7c2e62bdb68} event:/sunqian_universe/sfx/仁义-仁义才能征服天下人心
 {91ef17ac-32b2-45f0-8639-2bb6d11f3f09} event:/sunqian_universe/sfx/仁之剑
+{a760c050-4d69-4653-8255-247ed79ab88d} event:/sunqian_universe/sfx/从来没有这些-从来没有这些
+{bfcc1e0b-5ae9-4482-93ab-fba716762858} event:/sunqian_universe/sfx/从来没有这些-爱侣-先生请快上车
+{f0c71181-2a39-4de2-91ed-c84fc3b187a3} event:/sunqian_universe/sfx/从来没有这些-爱侣-小乔，上酒
+{d63c41df-d2ee-417f-a529-b4a6123bf575} event:/sunqian_universe/sfx/从来没有这些-至亲-不够，远远不够
+{a369ab36-4102-4b80-be5a-a5bcdc063d5c} event:/sunqian_universe/sfx/从来没有这些-至亲-孩儿不孝啊
+{09022d2f-fba2-4826-b72e-4c80ae2cf645} event:/sunqian_universe/sfx/从来没有这些-萌宠-各个有情有义
 {c9bc6e2e-6108-4c91-953a-ba9dad3f2b50} event:/sunqian_universe/sfx/传送门-冀州和荆州有空间通道
 {5b64ddfc-20fb-4712-b30b-eb05519d5377} event:/sunqian_universe/sfx/传送门-星夜从甘肃杀到河南
 {9ea29e18-261d-449f-a19d-1c55c6bb5352} event:/sunqian_universe/sfx/传送门-西凉太守马腾亲自率军来陈留城会盟
@@ -105,7 +111,6 @@
 {b83f1637-5192-4f24-a452-f5457118bb16} event:/sunqian_universe/sfx/无情打击-剑声
 {2ad9175d-3e66-4d48-a995-dc5c0f0b6575} event:/sunqian_universe/sfx/无情打击-可别逼我使出无情剑来
 {f192248d-cad0-4781-adcc-8a20d2dc8b06} event:/sunqian_universe/sfx/是啊吃什么
-{697db058-db22-4e5f-b107-a32690e0f631} event:/sunqian_universe/sfx/曹操哭丧
 {277d450e-51b3-416a-a78f-4b1b4c02aa8e} event:/sunqian_universe/sfx/朕不知兵
 {ca742ee5-99e2-40d3-a8c5-c5a3de703620} event:/sunqian_universe/sfx/水火无敌
 {cd280832-1db9-4aa7-a907-b5116acc6829} event:/sunqian_universe/sfx/炮轰赤壁-减攻

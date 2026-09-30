@@ -51,6 +51,7 @@
   "SUNQIAN_UNIVERSE_CARD_DENIED.description": "Apply {WeakPower:diff()} [gold]Weak[/gold] and {VulnerablePower:diff()} [gold]Vulnerable[/gold].\nWhen a debuff you apply is blocked by [gold]Artifact[/gold], return this to your [gold]Hand[/gold].",
   "SUNQIAN_UNIVERSE_CARD_WATER_FIRE_INVINCIBLE.title": "Water-Fire Invincible",
   "SUNQIAN_UNIVERSE_CARD_WATER_FIRE_INVINCIBLE.description": "Deal {Damage:diff()} damage. Apply [gold]Burning[/gold] equal to damage dealt. Gain [gold]Block[/gold] equal to [gold]Burning[/gold] applied.",
+  "SUNQIAN_UNIVERSE_CARD_WATER_FIRE_INVINCIBLE.annotation": "If no [gold]Burning[/gold] is applied this way, gain [gold]Block[/gold] equal to the damage dealt instead.",
   "SUNQIAN_UNIVERSE_CARD_TABLE_FLIP.title": "Table Flip",
   "SUNQIAN_UNIVERSE_CARD_TABLE_FLIP.description": "Deal {Damage:diff()} damage to ALL enemies and apply {WeakPower:diff()} [gold]Weak[/gold] to them. Then, at the start of your turn, if no enemy has [gold]Weak[/gold], return this card to your [gold]Hand[/gold].",
   "SUNQIAN_UNIVERSE_CARD_LOUD_SECRET_PLOT.title": "Loud Secret Plot",
@@ -225,8 +226,8 @@
   "SUNQIAN_UNIVERSE_CARD_NEVER_HAD_THESE.description": "Choose 1 of 3 [gold]Family[/gold] cards to add to your [gold]Hand[/gold]. Add the others to your [gold]Draw Pile[/gold].\nWhenever a [gold]Family[/gold] card is [gold]Exhausted[/gold], gain {energyPrefix:energyIcons(1)} and [blue]1[/blue] [gold]Dexterity[/gold].",
   "SUNQIAN_UNIVERSE_CARD_NEXT_OF_KIN.title": "Next of Kin",
   "SUNQIAN_UNIVERSE_CARD_NEXT_OF_KIN.description": "When this card is discarded, draw {Cards:diff()} {Cards:plural:card|cards}.",
-  "SUNQIAN_UNIVERSE_CARD_LOYAL_SERVANT.title": "Loyal Servant",
-  "SUNQIAN_UNIVERSE_CARD_LOYAL_SERVANT.description": "When this card is discarded, gain {Block:diff()} [gold]Block[/gold].",
-  "SUNQIAN_UNIVERSE_CARD_BELOVED_PET.title": "Beloved Pet",
-  "SUNQIAN_UNIVERSE_CARD_BELOVED_PET.description": "[gold]Summon[/gold] {Summon:diff()}."
+  "SUNQIAN_UNIVERSE_CARD_BELOVED_PARTNER.title": "Beloved Partner",
+  "SUNQIAN_UNIVERSE_CARD_BELOVED_PARTNER.description": "When this card is discarded, gain {RegenPower:diff()} [gold]Regen[/gold] and {Block:diff()} [gold]Block[/gold].",
+  "SUNQIAN_UNIVERSE_CARD_CUTE_PET.title": "Cute Pet",
+  "SUNQIAN_UNIVERSE_CARD_CUTE_PET.description": "[gold]Summon[/gold] {Summon:diff()}."
 }

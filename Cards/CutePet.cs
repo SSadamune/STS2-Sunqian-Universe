@@ -7,18 +7,23 @@ using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.CardPools;
+using Squ.Audio;
 using STS2RitsuLib.Interop.AutoRegistration;
+using STS2RitsuLib.Scaffolding.Content;
 
 #nullable enable
 
 namespace Squ.Cards;
 
-[RegisterCard(typeof(TokenCardPool), StableEntryStem = "beloved_pet")]
-public sealed class BelovedPet : FamilyCardTemplate
+[RegisterCard(typeof(TokenCardPool), StableEntryStem = "cute_pet")]
+public sealed class CutePet : FamilyCardTemplate
 {
 	public const int SummonAmount = 6;
 
-	public BelovedPet()
+	public override CardAssetProfile AssetProfile => new(
+		PortraitPath: "res://images/cards/CutePet.png");
+
+	public CutePet()
 		: base(0)
 	{
 	}
@@ -26,6 +31,8 @@ public sealed class BelovedPet : FamilyCardTemplate
 	protected override int BlockAmount => 0;
 
 	protected override int DrawCards => 0;
+
+	protected override string ExhaustSfxEvent => SquSfx.NeverHadTheseCutePetExhaustEvent;
 
 	protected override IEnumerable<DynamicVar> CanonicalVars =>
 	[

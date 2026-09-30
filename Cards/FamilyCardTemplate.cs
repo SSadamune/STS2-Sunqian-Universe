@@ -10,6 +10,7 @@ using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.ValueProps;
+using Squ.Audio;
 using STS2RitsuLib.Scaffolding.Content;
 
 #nullable enable
@@ -29,6 +30,10 @@ public abstract class FamilyCardTemplate : ModCardTemplate
 	protected abstract int BlockAmount { get; }
 
 	protected abstract int DrawCards { get; }
+
+	protected virtual string? DiscardSfxEvent => null;
+
+	protected virtual string? ExhaustSfxEvent => null;
 
 	protected override IEnumerable<DynamicVar> CanonicalVars
 	{
@@ -67,6 +72,9 @@ public abstract class FamilyCardTemplate : ModCardTemplate
 	protected override Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay) =>
 		Task.CompletedTask;
 
+	protected virtual Task ResolveAdditionalDiscard(PlayerChoiceContext choiceContext) =>
+		Task.CompletedTask;
+
 	public override Task AfterCardChangedPiles(
 		CardModel card,
 		PileType oldPileType,
@@ -90,6 +98,19 @@ public abstract class FamilyCardTemplate : ModCardTemplate
 		}
 
 		return ResolveOneDiscard(choiceContext);
+	}
+
+	public override Task AfterCardExhausted(
+		PlayerChoiceContext choiceContext,
+		CardModel card,
+		bool causedByEthereal)
+	{
+		if (card == this && ExhaustSfxEvent is { } eventPath)
+		{
+			SquSfx.Play(eventPath);
+		}
+
+		return Task.CompletedTask;
 	}
 
 	public override async Task AfterSideTurnEnd(
@@ -125,6 +146,13 @@ public abstract class FamilyCardTemplate : ModCardTemplate
 	private async Task ResolveOneDiscard(PlayerChoiceContext choiceContext)
 	{
 		_pendingDiscards--;
+		if (DiscardSfxEvent is { } eventPath)
+		{
+			SquSfx.Play(eventPath);
+		}
+
+		await ResolveAdditionalDiscard(choiceContext);
+
 		if (BlockAmount > 0)
 		{
 			await CreatureCmd.GainBlock(Owner.Creature, DynamicVars.Block, cardPlay: null);

@@ -64,6 +64,7 @@
   "SUNQIAN_UNIVERSE_CARD_ONE_MAN_ONE_CITY.description": "获得{PlatingPower:diff()}层[gold]覆甲[/gold]。\n[gold]剧本[/gold]：你的[gold]覆甲[/gold]触发后，损失1层并额外触发1次。",
   "SUNQIAN_UNIVERSE_CARD_WATER_FIRE_INVINCIBLE.title": "水火无敌",
   "SUNQIAN_UNIVERSE_CARD_WATER_FIRE_INVINCIBLE.description": "造成{Damage:diff()}点伤害。给予等量于所造成伤害的[gold]灼烧[/gold]。获得等量于所造成[gold]灼烧[/gold]的[gold]格挡[/gold]。",
+  "SUNQIAN_UNIVERSE_CARD_WATER_FIRE_INVINCIBLE.annotation": "如果未以此法给予[gold]灼烧[/gold]，则改为获得等量于所造成伤害的[gold]格挡[/gold]。",
   "SUNQIAN_UNIVERSE_CARD_LOUD_SECRET_PLOT.title": "大声密谋",
   "SUNQIAN_UNIVERSE_CARD_LOUD_SECRET_PLOT.description": "如果仅有一名敌人，你的[gold]群体目标[/gold]攻击牌或技能牌额外打出一次。",
   "SUNQIAN_UNIVERSE_CARD_FINGER_SNAP_STRIKE.title": "弹指打击",
@@ -225,8 +226,8 @@
   "SUNQIAN_UNIVERSE_CARD_NEVER_HAD_THESE.description": "从三张「[gold]家人[/gold]」牌中选择一张加入[gold]手牌[/gold]，其余加入[gold]抽牌堆[/gold]。\n每有一张[gold]家人[/gold]被[gold]消耗[/gold]，你获得{energyPrefix:energyIcons(1)}和[blue]1[/blue]点[gold]敏捷[/gold]。",
   "SUNQIAN_UNIVERSE_CARD_NEXT_OF_KIN.title": "至亲",
   "SUNQIAN_UNIVERSE_CARD_NEXT_OF_KIN.description": "这张牌被丢弃时，抽{Cards:diff()}张牌。",
-  "SUNQIAN_UNIVERSE_CARD_LOYAL_SERVANT.title": "忠仆",
-  "SUNQIAN_UNIVERSE_CARD_LOYAL_SERVANT.description": "这张牌被丢弃时，获得{Block:diff()}点[gold]格挡[/gold]。",
-  "SUNQIAN_UNIVERSE_CARD_BELOVED_PET.title": "爱宠",
-  "SUNQIAN_UNIVERSE_CARD_BELOVED_PET.description": "[gold]召唤[/gold]{Summon:diff()}。"
+  "SUNQIAN_UNIVERSE_CARD_BELOVED_PARTNER.title": "爱侣",
+  "SUNQIAN_UNIVERSE_CARD_BELOVED_PARTNER.description": "这张牌被丢弃时，获得{RegenPower:diff()}层[gold]再生[/gold]和{Block:diff()}点[gold]格挡[/gold]。",
+  "SUNQIAN_UNIVERSE_CARD_CUTE_PET.title": "萌宠",
+  "SUNQIAN_UNIVERSE_CARD_CUTE_PET.description": "[gold]召唤[/gold]{Summon:diff()}。"
 }

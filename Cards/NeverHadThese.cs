@@ -7,6 +7,7 @@ using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.Powers;
+using Squ.Audio;
 using Squ.Character;
 using Squ.Powers;
 using Squ.Script;
@@ -25,8 +26,8 @@ public sealed class NeverHadThese : ModCardTemplate
 	protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
 	[
 		HoverTipFactory.FromCard<NextOfKin>(),
-		HoverTipFactory.FromCard<LoyalServant>(),
-		HoverTipFactory.FromCard<BelovedPet>(),
+		HoverTipFactory.FromCard<BelovedPartner>(),
+		HoverTipFactory.FromCard<CutePet>(),
 		HoverTipFactory.FromPower<DexterityPower>(),
 	];
 
@@ -40,6 +41,8 @@ public sealed class NeverHadThese : ModCardTemplate
 
 	protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
 	{
+		SquSfx.Play(SquSfx.NeverHadThesePlayEvent);
+
 		if (CombatState is not { } combatState)
 		{
 			return;
@@ -48,8 +51,8 @@ public sealed class NeverHadThese : ModCardTemplate
 		List<CardModel> choices =
 		[
 			GeneratedCombatCards.CreateInCombat<NextOfKin>(combatState, Owner, upgraded: false),
-			GeneratedCombatCards.CreateInCombat<LoyalServant>(combatState, Owner, upgraded: false),
-			GeneratedCombatCards.CreateInCombat<BelovedPet>(combatState, Owner, upgraded: false),
+			GeneratedCombatCards.CreateInCombat<BelovedPartner>(combatState, Owner, upgraded: false),
+			GeneratedCombatCards.CreateInCombat<CutePet>(combatState, Owner, upgraded: false),
 		];
 
 		CardModel? selected = await CardSelectCmd.FromChooseACardScreen(
