@@ -105,13 +105,9 @@ public sealed class MonsterHuntingMethod : ModCardTemplate
 		{
 			SquSfx.Play(SquSfx.MonsterHuntingMethodSelfEvent);
 		}
-		else if (target.IsPlayer)
-		{
-			SquSfx.Play(SquSfx.MonsterHuntingMethodOtherPlayerEvent);
-		}
 		else
 		{
-			SquSfx.Play(SquSfx.MonsterHuntingMethodOtherEvent);
+			SquSfx.Play(SquSfx.MonsterHuntingMethodOtherTargetEvent);
 		}
 	}
 }

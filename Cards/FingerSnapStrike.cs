@@ -24,8 +24,8 @@ namespace Squ.Cards;
 [RegisterCard(typeof(SunqianCardPool), StableEntryStem = "finger_snap_strike")]
 public sealed class FingerSnapStrike : ChargeCardTemplate
 {
-	public const int BaseDamage = 11;
-	public const int UpgradedDamage = 15;
+	public const int BaseDamage = 13;
+	public const int UpgradedDamage = 18;
 	public const string MinCostVarName = "MinCost";
 	public const string MaxCostVarName = "MaxCost";
 

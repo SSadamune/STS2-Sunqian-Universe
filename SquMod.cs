@@ -93,6 +93,7 @@ public static class SquMod
 		RitsuLibFramework.RegisterModelCapability<NightRaidWuchaoStrikeCapability>(ModId);
 		RunReloadCount.Initialize();
 		DailyWageRunData.Initialize();
+		SelfDecapitationReviveData.Initialize();
 		ScriptSystem.Initialize();
 		SlightRevisionSystem.Initialize();
 		NightRaidWuchaoStrikeSystem.Initialize();

@@ -1,32 +1,30 @@
 #nullable enable
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.Entities.Creatures;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.Hooks;
+using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.Powers;
 using MegaCrit.Sts2.Core.ValueProps;
 using Squ.Audio;
 using Squ.Character;
-using Squ.Combat;
 using STS2RitsuLib.Interop.AutoRegistration;
 using STS2RitsuLib.Scaffolding.Content;
 
 namespace Squ.Cards;
 
-/// <summary>无忧而虑：视敌方攻击意图决定第一段格挡立即获得还是延迟到下一回合。</summary>
+/// <summary>诸葛孔明的忧虑：升级后可在敌人均无攻击意图时保留格挡至下一回合。</summary>
 [RegisterCard(typeof(SunqianCardPool), StableEntryStem = "worry_without_worry")]
 public sealed class WorryWithoutWorry : ModCardTemplate
 {
-	public const int ImmediateBlock = 5;
-	public const int UpgradedImmediateBlock = 8;
-	public const int NextTurnBlock = 10;
-	public const int UpgradedNextTurnBlock = 13;
+	public const int ImmediateBlock = 3;
+	public const int NextTurnBlock = 12;
+	public const int BlurAmount = 1;
 
 	private const string NextTurnBlockVar = "BlockNextTurn";
 
@@ -38,13 +36,16 @@ public sealed class WorryWithoutWorry : ModCardTemplate
 	[
 		new BlockVar(ImmediateBlock, BlockProps),
 		new BlockVar(NextTurnBlockVar, NextTurnBlock, BlockProps),
+		new PowerVar<BlurPower>(BlurAmount),
+	];
+
+	protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
+	[
+		HoverTipFactory.FromPower<BlurPower>(),
 	];
 
 	public override CardAssetProfile AssetProfile => new(
 		PortraitPath: "res://images/cards/WorryWithoutWorry.png");
-
-	protected override bool ShouldGlowGoldInternal =>
-		IsInCombat && !HasAttackingEnemy();
 
 	public WorryWithoutWorry()
 		: base(1, CardType.Skill, CardRarity.Common, TargetType.Self)
@@ -55,24 +56,22 @@ public sealed class WorryWithoutWorry : ModCardTemplate
 	{
 		SquSfx.PlayRandom(RunState, SquSfx.WorryWithoutWorryEvents);
 		Creature owner = Owner.Creature;
-		bool enemyIntendsToAttack = HasAttackingEnemy();
-
-		if (enemyIntendsToAttack)
-		{
-			await CreatureCmd.GainBlock(owner, DynamicVars.Block, cardPlay);
-		}
-		else
-		{
-			await ApplyBlockNextTurn(
-				choiceContext,
-				DynamicVars.Block,
-				cardPlay);
-		}
+		await CreatureCmd.GainBlock(owner, DynamicVars.Block, cardPlay);
 
 		await ApplyBlockNextTurn(
 			choiceContext,
 			(BlockVar)DynamicVars[NextTurnBlockVar],
 			cardPlay);
+
+		if (IsUpgraded)
+		{
+			await PowerCmd.Apply<BlurPower>(
+				choiceContext,
+				owner,
+				DynamicVars[nameof(BlurPower)].BaseValue,
+				owner,
+				this);
+		}
 	}
 
 	private async Task ApplyBlockNextTurn(
@@ -97,14 +96,4 @@ public sealed class WorryWithoutWorry : ModCardTemplate
 			this);
 	}
 
-	protected override void OnUpgrade()
-	{
-		DynamicVars.Block.UpgradeValueBy(UpgradedImmediateBlock - ImmediateBlock);
-		DynamicVars[NextTurnBlockVar]
-			.UpgradeValueBy(UpgradedNextTurnBlock - NextTurnBlock);
-	}
-
-	private bool HasAttackingEnemy() =>
-		CombatState?.HittableEnemies.Any(enemy =>
-			enemy.IsAlive && SquEnemyIntent.IntendsToAttack(enemy)) == true;
 }

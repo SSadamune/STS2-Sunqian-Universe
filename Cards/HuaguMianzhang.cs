@@ -23,7 +23,8 @@ namespace Squ.Cards;
 [RegisterCard(typeof(SunqianCardPool))]
 public sealed class HuaguMianzhang : ModCardTemplate
 {
-	public const int BaseDamage = 5;
+	public const int BaseDamage = 6;
+	public const int UpgradedDamage = 9;
 
 	protected override IEnumerable<DynamicVar> CanonicalVars =>
 	[
@@ -73,6 +74,6 @@ public sealed class HuaguMianzhang : ModCardTemplate
 
 	protected override void OnUpgrade()
 	{
-		EnergyCost.UpgradeBy(-1);
+		DynamicVars.Damage.UpgradeValueBy(UpgradedDamage - BaseDamage);
 	}
 }

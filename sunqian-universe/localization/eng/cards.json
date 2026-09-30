@@ -121,8 +121,8 @@
   "SUNQIAN_UNIVERSE_CARD_ARM_INJURY_WINDMILL.description": "Draw {Cards:diff()} {Cards:plural:card|cards}.\nGain {StatAmount:diff()} [gold]Dexterity[/gold] and [gold]Strength[/gold] this turn.\nAdd a [gold]Wound[/gold] into your [gold]Hand[/gold].",
   "SUNQIAN_UNIVERSE_CARD_ALL_IN.title": "All In",
   "SUNQIAN_UNIVERSE_CARD_ALL_IN.description": "If a card you play spends your last {energyPrefix:energyIcons(1)}, increase all damage and [gold]Burning[/gold] you inflict by {IfUpgraded:show:50|30}% while that card resolves.",
-  "SUNQIAN_UNIVERSE_CARD_SELF_DECAPITATION_ASCENSION.title": "Self Decapitation, Return to Heaven!",
-  "SUNQIAN_UNIVERSE_CARD_SELF_DECAPITATION_ASCENSION.description": "Lose {HpLoss:diff()} HP.\nDraw {Cards:diff()} {Cards:plural:card|cards}.\nGain {IntangiblePower:diff()} [gold]Intangible[/gold].",
+  "SUNQIAN_UNIVERSE_CARD_SELF_DECAPITATION_ASCENSION.title": "Self-Decapitation, Return to Heaven",
+  "SUNQIAN_UNIVERSE_CARD_SELF_DECAPITATION_ASCENSION.description": "Lose all HP. After combat, regain that much HP.\nEach ally gains {IntangiblePower:diff()} [gold]Intangible[/gold] and {IfUpgraded:show:X+1|X} [gold]Energy[/gold], then draws {IfUpgraded:show:X+1|X} cards.{HasRevivalItem:\n[purple]Does not trigger Fairy in a Bottle or Lizard Tail.[/purple]|}",
   "SUNQIAN_UNIVERSE_CARD_BENEVOLENCE_RIGHTEOUSNESS_DUAL_SWORDS.title": "Benevolence & Righteousness Dual Swords",
   "SUNQIAN_UNIVERSE_CARD_BENEVOLENCE_RIGHTEOUSNESS_DUAL_SWORDS.description": "Cards with \"Strike\" in their name are played an additional 1 time.",
   "SUNQIAN_UNIVERSE_CARD_RUTHLESS_STRIKE.title": "Ruthless Strike",
@@ -214,7 +214,7 @@
   "SUNQIAN_UNIVERSE_CARD_CROSS_THE_RIVER.title": "I Too Crossed the River",
   "SUNQIAN_UNIVERSE_CARD_CROSS_THE_RIVER.description": "Gain {VigorPower:diff()} [gold]Vigor[/gold] and {VulnerablePower:diff()} [gold]Vulnerable[/gold].\nIf any enemy intends to Attack, your Attack cards receive twice the bonus from Vigor for {CrossTheRiverPower:diff()} turns.",
   "SUNQIAN_UNIVERSE_CARD_WORRY_WITHOUT_WORRY.title": "Carefree Yet Concerned",
-  "SUNQIAN_UNIVERSE_CARD_WORRY_WITHOUT_WORRY.description": "Gain {Block:diff()} [gold]Block[/gold].\nNext turn, gain {BlockNextTurn:diff()} [gold]Block[/gold].\nIf no enemy intends to Attack, gain both next turn instead.",
+  "SUNQIAN_UNIVERSE_CARD_WORRY_WITHOUT_WORRY.description": "Gain {Block:diff()} [gold]Block[/gold].\nNext turn, gain {BlockNextTurn:diff()} [gold]Block[/gold].{IfUpgraded:show:\nYour Block is not removed at the start of your next turn.|}",
   "SUNQIAN_UNIVERSE_CARD_IRON_CHAIN_BOATS.title": "Chain the Boats",
   "SUNQIAN_UNIVERSE_CARD_IRON_CHAIN_BOATS.description": "Choose an enemy. Whenever it takes [gold]Burning[/gold] damage, all other enemies take that much [gold]Environmental[/gold] damage.{SlightRevisionText}",
   "SUNQIAN_UNIVERSE_CARD_FARMING_GENERAL.title": "Farming General",
@@ -227,7 +227,9 @@
   "SUNQIAN_UNIVERSE_CARD_NEXT_OF_KIN.title": "Next of Kin",
   "SUNQIAN_UNIVERSE_CARD_NEXT_OF_KIN.description": "When this card is discarded, draw {Cards:diff()} {Cards:plural:card|cards}.",
   "SUNQIAN_UNIVERSE_CARD_BELOVED_PARTNER.title": "Beloved Partner",
-  "SUNQIAN_UNIVERSE_CARD_BELOVED_PARTNER.description": "When this card is discarded, gain {RegenPower:diff()} [gold]Regen[/gold] and {Block:diff()} [gold]Block[/gold].",
+  "SUNQIAN_UNIVERSE_CARD_BELOVED_PARTNER.description": "When this card is discarded, gain {VigorPower:diff()} [gold]Vigor[/gold] and {Block:diff()} [gold]Block[/gold].",
   "SUNQIAN_UNIVERSE_CARD_CUTE_PET.title": "Cute Pet",
-  "SUNQIAN_UNIVERSE_CARD_CUTE_PET.description": "[gold]Summon[/gold] {Summon:diff()}."
+  "SUNQIAN_UNIVERSE_CARD_CUTE_PET.description": "[gold]Summon[/gold] {Summon:diff()}.",
+  "SUNQIAN_UNIVERSE_CARD_THE_BACKUPS_BACKUP.title": "The Backup's Backup",
+  "SUNQIAN_UNIVERSE_CARD_THE_BACKUPS_BACKUP.description": "Choose an ally. Each of you chooses 1 of 3 cards from the other's [gold]Deck[/gold] and adds a copy of it to their own [gold]Hand[/gold]."
 }

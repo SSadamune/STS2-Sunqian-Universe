@@ -17,7 +17,7 @@ namespace Squ.Cards;
 [RegisterCard(typeof(TokenCardPool), StableEntryStem = "beloved_partner")]
 public sealed class BelovedPartner : FamilyCardTemplate
 {
-	public const int RegenerationAmount = 2;
+	public const int VigorAmount = 3;
 
 	public override CardAssetProfile AssetProfile => new(
 		PortraitPath: "res://images/cards/BelovedPartner.png");
@@ -28,13 +28,13 @@ public sealed class BelovedPartner : FamilyCardTemplate
 
 	protected override IEnumerable<DynamicVar> CanonicalVars =>
 	[
-		new PowerVar<RegenPower>(RegenerationAmount),
+		new PowerVar<VigorPower>(VigorAmount),
 		.. base.CanonicalVars,
 	];
 
 	protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
 	[
-		HoverTipFactory.FromPower<RegenPower>(),
+		HoverTipFactory.FromPower<VigorPower>(),
 		.. base.AdditionalHoverTips,
 	];
 
@@ -43,10 +43,10 @@ public sealed class BelovedPartner : FamilyCardTemplate
 	protected override string ExhaustSfxEvent => SquSfx.NeverHadTheseBelovedPartnerExhaustEvent;
 
 	protected override Task ResolveAdditionalDiscard(PlayerChoiceContext choiceContext) =>
-		PowerCmd.Apply<RegenPower>(
+		PowerCmd.Apply<VigorPower>(
 			choiceContext,
 			Owner.Creature,
-			DynamicVars[nameof(RegenPower)].BaseValue,
+			DynamicVars[nameof(VigorPower)].BaseValue,
 			Owner.Creature,
 			this);
 }
