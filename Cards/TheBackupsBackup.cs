@@ -88,9 +88,14 @@ public sealed class TheBackupsBackup : ModCardTemplate
 		Player recipient)
 	{
 		CardRarity[] allowed = IsUpgraded ? UpgradedDiscoverableRarities : BaseDiscoverableRarities;
-		List<CardModel> options = sourceDeckOwner.Deck.Cards
-			.Where(card => allowed.Contains(card.Rarity))
-			.ToList();
+		List<CardModel> options = [];
+		foreach (CardModel card in sourceDeckOwner.Deck.Cards)
+		{
+			if (IsAllowedRarity(card.Rarity, allowed))
+			{
+				options.Add(card);
+			}
+		}
 		sourceDeckOwner.RunState.Rng.CombatCardGeneration.Shuffle(options);
 		if (options.Count > ChoiceCount)
 		{
@@ -147,14 +152,25 @@ public sealed class TheBackupsBackup : ModCardTemplate
 			return [];
 		}
 
-		HashSet<CardModel> offered = options.Select(card => card.CanonicalInstance).ToHashSet();
-		List<CardModel> pool = sourceDeckOwner.Character.CardPool
-			.GetUnlockedCards(
-				sourceDeckOwner.UnlockState,
-				sourceDeckOwner.RunState.CardMultiplayerConstraint)
-			.Where(card => allowed.Contains(card.Rarity) && !offered.Contains(card.CanonicalInstance))
-			.DistinctBy(card => card.CanonicalInstance)
-			.ToList();
+		HashSet<CardModel> offered = [];
+		foreach (CardModel card in options)
+		{
+			offered.Add(card.CanonicalInstance);
+		}
+
+		List<CardModel> pool = [];
+		foreach (CardModel card in sourceDeckOwner.Character.CardPool.GetUnlockedCards(
+			sourceDeckOwner.UnlockState,
+			sourceDeckOwner.RunState.CardMultiplayerConstraint))
+		{
+			CardModel canonical = card.CanonicalInstance;
+			if (!IsAllowedRarity(card.Rarity, allowed) || offered.Contains(canonical) || !pool.TrueForAll(existing => existing.CanonicalInstance != canonical))
+			{
+				continue;
+			}
+
+			pool.Add(card);
+		}
 		if (pool.Count == 0)
 		{
 			return [];
@@ -166,6 +182,19 @@ public sealed class TheBackupsBackup : ModCardTemplate
 			.ToList();
 		options.AddRange(fillers);
 		return fillers;
+	}
+
+	private static bool IsAllowedRarity(CardRarity rarity, CardRarity[] allowed)
+	{
+		for (int i = 0; i < allowed.Length; i++)
+		{
+			if (allowed[i] == rarity)
+			{
+				return true;
+			}
+		}
+
+		return false;
 	}
 
 	private IHoverTip CreateHiddenResolutionTip()

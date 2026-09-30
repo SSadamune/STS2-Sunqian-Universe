@@ -35,7 +35,7 @@
   "SUNQIAN_UNIVERSE_CARD_TWO_WORD_POET_SCRIPT.description": "{IfUpgraded:show:对所有敌人|对一名敌人}造成{Damage:diff()}点伤害{Repeat:diff()}次。\n[gold]可叠层剧本[/gold]：每回合开始时，{IfUpgraded:show:对所有敌人|随机对敌人}造成{SnapshotDamage:diff()}点伤害{Repeat:diff()}次。",
   "SUNQIAN_UNIVERSE_CARD_JUGGLE_MULTIPLE_SHOOTS.title": "轧戏",
   "SUNQIAN_UNIVERSE_CARD_JUGGLE_MULTIPLE_SHOOTS.description": "从3张其他角色的{IfUpgraded:show:升级后的|}[gold]能力[/gold]牌中选择1张加入[gold]手牌[/gold]。\n[gold]卸妆[/gold]：此能力牌耗能-1。",
-  "SUNQIAN_UNIVERSE_CARD_JUGGLE_MULTIPLE_SHOOTS.annotation": "你剩余的{energyPrefix:energyIcons(1)}越多，就有更大的概率出现高耗能的备选能力牌。\n部分强绑定其他角色机制的能力牌不会成为备选。",
+  "SUNQIAN_UNIVERSE_CARD_JUGGLE_MULTIPLE_SHOOTS.annotation": "你剩余的{energyPrefix:energyIcons(1)}越多，就更容易发现高耗能的牌。\n部分强绑定其他角色机制的能力牌不会被发现。",
   "SUNQIAN_UNIVERSE_CARD_JUGGLE_MULTIPLE_SHOOTS.selectionScreenPrompt": "选择一张牌。",
   "SUNQIAN_UNIVERSE_CARD_WHAT_TO_EAT.title": "吃什么",
   "SUNQIAN_UNIVERSE_CARD_WHAT_TO_EAT.description": "[gold]消耗[/gold]2张牌。\n抽{Cards:diff()}张牌。{IsMultiplayer:\n将1张[gold]{IfUpgraded:show:是啊，吃什么+|是啊，吃什么}[/gold]加入每名盟友的[gold]手牌[/gold]。|}",
@@ -83,7 +83,7 @@
   "SUNQIAN_UNIVERSE_CARD_AUDITION.description": "将3张随机{IfUpgraded:show:升级过的|}[gold]剧本[/gold]牌加入你的[gold]手牌[/gold]。\n[gold]卸妆[/gold]：这些牌在本回合[gold]保留[/gold]。",
   "SUNQIAN_UNIVERSE_CARD_HUMAN_TRANSMUTATION.title": "人体炼成",
   "SUNQIAN_UNIVERSE_CARD_HUMAN_TRANSMUTATION.description": "消耗至多3张牌，从等量张任意角色的随机{IfUpgraded:show:[gold]升级过[/gold]的|}被[gold]附魔[/gold]的攻击牌中选择一张加入[gold]手牌[/gold]。",
-  "SUNQIAN_UNIVERSE_CARD_HUMAN_TRANSMUTATION.rarityNote": "被消耗的卡牌的稀有度将决定备选攻击牌的稀有度和附魔类型。\n部分强绑定其他角色机制的攻击牌不会成为备选。",
+  "SUNQIAN_UNIVERSE_CARD_HUMAN_TRANSMUTATION.rarityNote": "消耗的牌的稀有度将决定发现的牌的稀有度和附魔类型。\n部分强绑定其他角色机制的攻击牌不会被发现。",
   "SUNQIAN_UNIVERSE_CARD_EXECUTION_COMMANDER_SCRIPT.title": "行刑指挥官剧本",
   "SUNQIAN_UNIVERSE_CARD_EXECUTION_COMMANDER_SCRIPT.description": "将两张[gold]{IfUpgraded:show:箭幕打击+|箭幕打击}[/gold]加入[gold]手牌[/gold]。\n[gold]可叠层剧本[/gold]：如果仅有一名敌人，你的[gold]群体目标[/gold]攻击牌伤害增加{BonusPercent:diff()}%。",
   "SUNQIAN_UNIVERSE_CARD_EXECUTIONER_SCRIPT.title": "刽子手剧本",
@@ -232,6 +232,8 @@
   "SUNQIAN_UNIVERSE_CARD_CUTE_PET.description": "[gold]召唤[/gold]{Summon:diff()}。",
   "SUNQIAN_UNIVERSE_CARD_THE_BACKUPS_BACKUP.title": "龙套的替身",
   "SUNQIAN_UNIVERSE_CARD_THE_BACKUPS_BACKUP.description": "选择一名盟友。你与其分别从对方[gold]卡组[/gold]的{IfUpgraded:show:稀有度至少为[blue]罕见[/blue]的|}3张牌中选择1张，将该牌的复制加入自己的[gold]手牌[/gold]。",
-  "SUNQIAN_UNIVERSE_CARD_THE_BACKUPS_BACKUP.hidden": "只会发现稀有度为普通/[blue]罕见[/blue]/[gold]稀有[/gold]/[pink]先古[/pink]/[green]事件[/green]的牌。\n如果符合要求的牌不足3张，则用该角色的卡池填满选项。",
-  "SUNQIAN_UNIVERSE_CARD_THE_BACKUPS_BACKUP.hiddenUpgraded": "只会发现稀有度为[blue]罕见[/blue]/[gold]稀有[/gold]/[pink]先古[/pink]/[green]事件[/green]的牌。\n如果符合要求的牌不足3张，则用该角色的卡池填满选项。"
+  "SUNQIAN_UNIVERSE_CARD_THE_BACKUPS_BACKUP.hidden": "只会发现稀有度为[grey]普通[/grey]/[blue]罕见[/blue]/[gold]稀有[/gold]/[pink]先古[/pink]/[green]事件[/green]的牌。\n如果符合要求的牌不足3张，则用该角色的卡池填满选项。",
+  "SUNQIAN_UNIVERSE_CARD_THE_BACKUPS_BACKUP.hiddenUpgraded": "只会发现稀有度为[blue]罕见[/blue]/[gold]稀有[/gold]/[pink]先古[/pink]/[green]事件[/green]的牌。\n如果符合要求的牌不足3张，则用该角色的卡池填满选项。",
+  "SUNQIAN_UNIVERSE_CARD_THIRD_UNCLE_FOURTH_UNCLE.title": "三叔四伯",
+  "SUNQIAN_UNIVERSE_CARD_THIRD_UNCLE_FOURTH_UNCLE.description": "从[gold]抽牌堆[/gold]和[gold]弃牌堆[/gold]中，将花费{energyPrefix:energyIcons(1)}彼此不同的各一张牌加入[gold]手牌[/gold]。在本回合打乱这些牌的花费。"
 }
