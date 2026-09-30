@@ -38,7 +38,7 @@
   "SUNQIAN_UNIVERSE_CARD_JUGGLE_MULTIPLE_SHOOTS.annotation": "你剩余的{energyPrefix:energyIcons(1)}越多，就有更大的概率出现高耗能的备选能力牌。\n部分强绑定其他角色机制的能力牌不会成为备选。",
   "SUNQIAN_UNIVERSE_CARD_JUGGLE_MULTIPLE_SHOOTS.selectionScreenPrompt": "选择一张牌。",
   "SUNQIAN_UNIVERSE_CARD_WHAT_TO_EAT.title": "吃什么",
-  "SUNQIAN_UNIVERSE_CARD_WHAT_TO_EAT.description": "[gold]消耗[/gold]2张牌。\n抽{Cards:diff()}张牌。{IsMultiplayer:\n将1张[gold]{IfUpgraded:show:是啊，吃什么+|是啊，吃什么}[/gold]加入每名其他玩家的[gold]手牌[/gold]。|}",
+  "SUNQIAN_UNIVERSE_CARD_WHAT_TO_EAT.description": "[gold]消耗[/gold]2张牌。\n抽{Cards:diff()}张牌。{IsMultiplayer:\n将1张[gold]{IfUpgraded:show:是啊，吃什么+|是啊，吃什么}[/gold]加入每名盟友的[gold]手牌[/gold]。|}",
   "SUNQIAN_UNIVERSE_CARD_EXACTLY_WHAT_TO_EAT.title": "是啊，吃什么",
   "SUNQIAN_UNIVERSE_CARD_EXACTLY_WHAT_TO_EAT.description": "[gold]消耗[/gold]1张牌。\n抽{Cards:diff()}张牌。",
   "SUNQIAN_UNIVERSE_CARD_VOICE_CHANGE.title": "变声期",
@@ -91,7 +91,7 @@
   "SUNQIAN_UNIVERSE_CARD_SALVO_STRIKE.title": "箭幕打击",
   "SUNQIAN_UNIVERSE_CARD_SALVO_STRIKE.description": "对随机三名敌人各造成{Damage:diff()}点伤害。",
   "SUNQIAN_UNIVERSE_CARD_GOLDEN_UPRISING.title": "黄金起义",
-  "SUNQIAN_UNIVERSE_CARD_GOLDEN_UPRISING.description": "花费{Gold:diff()}[gold]金币[/gold]，将你[gold]抽牌堆[/gold]中的{Cards:diff()}张牌放入你的[gold]手牌[/gold]。{IfUpgraded:show:\n在本场战斗中此牌花费的金币+5。|}",
+  "SUNQIAN_UNIVERSE_CARD_GOLDEN_UPRISING.description": "花费{Gold:diff()}[gold]金币[/gold]，将你[gold]抽牌堆[/gold]中的{Cards:diff()}张牌放入你的[gold]手牌[/gold]。{IfUpgraded:show:\n此牌花费的金币+[blue]{GoldIncrease}[/blue]。|}",
   "SUNQIAN_UNIVERSE_CARD_GOLDEN_UPRISING.selectionScreenPrompt": "选择{Amount}张牌放入你的手牌。",
   "SUNQIAN_UNIVERSE_CARD_BUDDY_TANGXIAOHU.title": "好哥们唐小虎",
   "SUNQIAN_UNIVERSE_CARD_BUDDY_TANGXIAOHU.description": "你打出[gold]剧本[/gold]牌后，获得{Block:diff()}点[gold]格挡[/gold]。",
@@ -150,7 +150,7 @@
   "SUNQIAN_UNIVERSE_CARD_BLITZKRIEG.title": "闪电战",
   "SUNQIAN_UNIVERSE_CARD_BLITZKRIEG.description": "造成{Damage:diff()}点伤害。\n对该敌人打出[gold]手牌[/gold]和[gold]抽牌堆[/gold]所有的[gold]打击[/gold]和[gold]闪电战[/gold]。",
   "SUNQIAN_UNIVERSE_CARD_MONSTER_HUNTING_METHOD.title": "过禽论",
-  "SUNQIAN_UNIVERSE_CARD_MONSTER_HUNTING_METHOD.description": "给予一个生物{RegenPower:diff()}层[gold]再生[/gold]。\n如果目标是：敌方，则你获得{VigorPower:diff()}点[gold]活力[/gold]；玩家，则[gold]消耗[/gold]此牌。",
+  "SUNQIAN_UNIVERSE_CARD_MONSTER_HUNTING_METHOD.description": "给予一个生物{RegenPower:diff()}层[gold]再生[/gold]。\n如果目标是：敌人，则你获得{VigorPower:diff()}点[gold]活力[/gold]；玩家，则[gold]消耗[/gold]此牌。",
   "SUNQIAN_UNIVERSE_CARD_BOWANG_PARADOX_SCRIPT.title": "博望悖论剧本",
   "SUNQIAN_UNIVERSE_CARD_BOWANG_PARADOX_SCRIPT.description": "获得{VigorPower:diff()}点[gold]活力[/gold]。\n丢弃所有非[gold]保留[/gold]的[gold]攻击[/gold]牌。\n[gold]剧本[/gold]：失效时，获得{TinderPower:diff()}层[gold]火种[/gold]，丢弃所有非[gold]保留[/gold]的[gold]灼烧[/gold]牌。",
   "SUNQIAN_UNIVERSE_CARD_CLOSE_FITTING_ARMOR.title": "贴身铠甲",
@@ -231,5 +231,7 @@
   "SUNQIAN_UNIVERSE_CARD_CUTE_PET.title": "萌宠",
   "SUNQIAN_UNIVERSE_CARD_CUTE_PET.description": "[gold]召唤[/gold]{Summon:diff()}。",
   "SUNQIAN_UNIVERSE_CARD_THE_BACKUPS_BACKUP.title": "龙套的替身",
-  "SUNQIAN_UNIVERSE_CARD_THE_BACKUPS_BACKUP.description": "选择一名盟友。你与其分别从对方[gold]卡组[/gold]中的3张牌中选择1张，将该牌的复制加入自己的[gold]手牌[/gold]。"
+  "SUNQIAN_UNIVERSE_CARD_THE_BACKUPS_BACKUP.description": "选择一名盟友。你与其分别从对方[gold]卡组[/gold]的{IfUpgraded:show:稀有度至少为[blue]罕见[/blue]的|}3张牌中选择1张，将该牌的复制加入自己的[gold]手牌[/gold]。",
+  "SUNQIAN_UNIVERSE_CARD_THE_BACKUPS_BACKUP.hidden": "只会发现稀有度为普通/[blue]罕见[/blue]/[gold]稀有[/gold]/[pink]先古[/pink]/[green]事件[/green]的牌。\n如果符合要求的牌不足3张，则用该角色的卡池填满选项。",
+  "SUNQIAN_UNIVERSE_CARD_THE_BACKUPS_BACKUP.hiddenUpgraded": "只会发现稀有度为[blue]罕见[/blue]/[gold]稀有[/gold]/[pink]先古[/pink]/[green]事件[/green]的牌。\n如果符合要求的牌不足3张，则用该角色的卡池填满选项。"
 }

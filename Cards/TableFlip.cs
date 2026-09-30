@@ -24,7 +24,7 @@ namespace Squ.Cards;
 [RegisterCard(typeof(SunqianCardPool), StableEntryStem = "table_flip")]
 public sealed class TableFlip : ModCardTemplate
 {
-	public const int WeakAmount = 2;
+	public const int WeakAmount = 3;
 	public const int DamageAmount = 18;
 
 	protected override IEnumerable<DynamicVar> CanonicalVars =>

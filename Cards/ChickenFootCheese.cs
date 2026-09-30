@@ -22,7 +22,7 @@ namespace Squ.Cards;
 public sealed class ChickenFootCheese : ModCardTemplate, IRandomEnemyTargetCount
 {
 	public const int BaseDamage = 4;
-	public const int UpgradedDamage = 6;
+	public const int UpgradedDamage = 5;
 	public const int BaseTurns = 2;
 	public const int UpgradedTurns = 3;
 	public const int RandomEnemyTargetCount = 2;

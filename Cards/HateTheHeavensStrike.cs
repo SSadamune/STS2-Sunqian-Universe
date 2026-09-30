@@ -22,8 +22,8 @@ public sealed class HateTheHeavensStrike : ModCardTemplate
 {
 	public const int DamageAmount = 11;
 	public const int UpgradedDamageAmount = 14;
-	public const int ScryAmount = 1;
-	public const int UpgradedScryAmount = 2;
+	public const int ScryAmount = 2;
+	public const int UpgradedScryAmount = 3;
 
 	protected override IEnumerable<DynamicVar> CanonicalVars =>
 	[
