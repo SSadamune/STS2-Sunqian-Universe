@@ -235,5 +235,5 @@
   "SUNQIAN_UNIVERSE_CARD_THE_BACKUPS_BACKUP.hidden": "只会发现稀有度为[grey]普通[/grey]/[blue]罕见[/blue]/[gold]稀有[/gold]/[pink]先古[/pink]/[green]事件[/green]的牌。\n如果符合要求的牌不足3张，则用该角色的卡池填满选项。",
   "SUNQIAN_UNIVERSE_CARD_THE_BACKUPS_BACKUP.hiddenUpgraded": "只会发现稀有度为[blue]罕见[/blue]/[gold]稀有[/gold]/[pink]先古[/pink]/[green]事件[/green]的牌。\n如果符合要求的牌不足3张，则用该角色的卡池填满选项。",
   "SUNQIAN_UNIVERSE_CARD_THIRD_UNCLE_FOURTH_UNCLE.title": "三叔四伯",
-  "SUNQIAN_UNIVERSE_CARD_THIRD_UNCLE_FOURTH_UNCLE.description": "从[gold]抽牌堆[/gold]和[gold]弃牌堆[/gold]中，将花费{energyPrefix:energyIcons(1)}彼此不同的各一张牌加入[gold]手牌[/gold]。在本回合打乱这些牌的花费。"
+  "SUNQIAN_UNIVERSE_CARD_THIRD_UNCLE_FOURTH_UNCLE.description": "从[gold]抽牌堆[/gold]和[gold]弃牌堆[/gold]中，将每种耗能的各一张牌加入[gold]手牌[/gold]。在本回合打乱这些牌的耗能。"
 }
