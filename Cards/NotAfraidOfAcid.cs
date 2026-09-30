@@ -30,7 +30,7 @@ public sealed class NotAfraidOfAcid : SlightRevisionCardTemplate<SaidNotAfraidOf
 	protected override IEnumerable<DynamicVar> CanonicalVars =>
 	[
 		new DamageVar(BaseDamage, ValueProp.Move),
-		new PowerVar<NotAfraidOfAcidPower>(BaseDuration),
+		new PowerVar<AcidEtchResistancePower>(BaseDuration),
 	];
 
 	protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
@@ -60,10 +60,10 @@ public sealed class NotAfraidOfAcid : SlightRevisionCardTemplate<SaidNotAfraidOf
 			.WithHitFx("vfx/vfx_attack_slash")
 			.Execute(choiceContext);
 
-		await PowerCmd.Apply<NotAfraidOfAcidPower>(
+		await PowerCmd.Apply<AcidEtchResistancePower>(
 			choiceContext,
 			Owner.Creature,
-			DynamicVars[nameof(NotAfraidOfAcidPower)].BaseValue,
+			DynamicVars[nameof(AcidEtchResistancePower)].BaseValue,
 			Owner.Creature,
 			this);
 	}
@@ -71,7 +71,7 @@ public sealed class NotAfraidOfAcid : SlightRevisionCardTemplate<SaidNotAfraidOf
 	protected override void OnUpgrade()
 	{
 		DynamicVars.Damage.UpgradeValueBy(UpgradedDamage - BaseDamage);
-		DynamicVars[nameof(NotAfraidOfAcidPower)]
+		DynamicVars[nameof(AcidEtchResistancePower)]
 			.UpgradeValueBy(UpgradedDuration - BaseDuration);
 	}
 }

@@ -13,12 +13,13 @@ using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.CardPools;
 using MegaCrit.Sts2.Core.ValueProps;
 using Squ.Audio;
+using Squ.Script;
 using STS2RitsuLib.Interop.AutoRegistration;
 using STS2RitsuLib.Scaffolding.Content;
 
 namespace Squ.Cards;
 
-/// <summary>由《咱家不怕酸》的「稍作修改」产生：攻击后将一张不能被打出的牌变化为酒。</summary>
+/// <summary>由《咱家不怕酸》的「稍作修改」产生：攻击后消耗不能被打出的牌，并获得等量的酒。</summary>
 [RegisterCard(typeof(TokenCardPool), StableEntryStem = "said_not_afraid_of_acid")]
 public sealed class SaidNotAfraidOfAcid : ModCardTemplate
 {
@@ -32,6 +33,7 @@ public sealed class SaidNotAfraidOfAcid : ModCardTemplate
 
 	protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
 	[
+		HoverTipFactory.FromKeyword(CardKeyword.Exhaust),
 		HoverTipFactory.FromKeyword(CardKeyword.Unplayable),
 		HoverTipFactory.FromCard<Wine>(IsUpgraded),
 	];
@@ -58,28 +60,26 @@ public sealed class SaidNotAfraidOfAcid : ModCardTemplate
 		ICombatState combatState = CombatState
 			?? throw new InvalidOperationException("SaidNotAfraidOfAcid requires an active combat.");
 		List<CardModel> unplayableCards = PileType.Hand.GetPile(Owner).Cards
-			.Where(IsTransformableUnplayable)
+			.Where(card => card.Keywords.Contains(CardKeyword.Unplayable))
 			.ToList();
-		List<CardTransformation> transformations = [];
 
 		foreach (CardModel unplayableCard in unplayableCards)
 		{
-			CardModel wine = combatState.CreateCard<Wine>(Owner);
-			if (IsUpgraded)
-			{
-				CardCmd.Upgrade(wine);
-			}
-			transformations.Add(new CardTransformation(unplayableCard, wine));
+			await CardCmd.Exhaust(choiceContext, unplayableCard);
 		}
 
-		await CardCmd.Transform(transformations, null);
+		for (int i = 0; i < unplayableCards.Count; i++)
+		{
+			await GeneratedCombatCards.AddToHandInCombat<Wine>(
+				combatState,
+				Owner,
+				IsUpgraded,
+				Owner);
+		}
 	}
 
 	protected override void OnUpgrade()
 	{
 		DynamicVars.Damage.UpgradeValueBy(UpgradedDamage - BaseDamage);
 	}
-
-	private static bool IsTransformableUnplayable(CardModel card) =>
-		card.IsTransformable && card.Keywords.Contains(CardKeyword.Unplayable);
 }

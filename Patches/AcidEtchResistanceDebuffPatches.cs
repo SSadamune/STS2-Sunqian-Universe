@@ -7,14 +7,14 @@ using Squ.Powers;
 namespace Squ.Patches;
 
 /// <summary>
-/// 《不怕酸》保留易伤、虚弱、脆弱本身及其正常获得和倒计时，
+/// 《酸蚀抗性》保留易伤、虚弱、脆弱本身及其正常获得和倒计时，
 /// 但让这些原版能力的数值倍率直接变为 1。
 /// </summary>
-internal static class NotAfraidOfAcidDebuffPatches
+internal static class AcidEtchResistanceDebuffPatches
 {
 	public static bool IgnoreWhenProtected(PowerModel debuff, ref decimal result)
 	{
-		if (debuff.Owner.GetPower<NotAfraidOfAcidPower>() is not { Amount: > 0 })
+		if (debuff.Owner.GetPower<AcidEtchResistancePower>() is not { Amount: > 0 })
 		{
 			return true;
 		}
@@ -25,22 +25,22 @@ internal static class NotAfraidOfAcidDebuffPatches
 }
 
 [HarmonyPatch(typeof(WeakPower), nameof(WeakPower.ModifyDamageMultiplicative))]
-internal static class NotAfraidOfAcidWeakPatch
+internal static class AcidEtchResistanceWeakPatch
 {
 	private static bool Prefix(WeakPower __instance, ref decimal __result) =>
-		NotAfraidOfAcidDebuffPatches.IgnoreWhenProtected(__instance, ref __result);
+		AcidEtchResistanceDebuffPatches.IgnoreWhenProtected(__instance, ref __result);
 }
 
 [HarmonyPatch(typeof(VulnerablePower), nameof(VulnerablePower.ModifyDamageMultiplicative))]
-internal static class NotAfraidOfAcidVulnerablePatch
+internal static class AcidEtchResistanceVulnerablePatch
 {
 	private static bool Prefix(VulnerablePower __instance, ref decimal __result) =>
-		NotAfraidOfAcidDebuffPatches.IgnoreWhenProtected(__instance, ref __result);
+		AcidEtchResistanceDebuffPatches.IgnoreWhenProtected(__instance, ref __result);
 }
 
 [HarmonyPatch(typeof(FrailPower), nameof(FrailPower.ModifyBlockMultiplicative))]
-internal static class NotAfraidOfAcidFrailPatch
+internal static class AcidEtchResistanceFrailPatch
 {
 	private static bool Prefix(FrailPower __instance, ref decimal __result) =>
-		NotAfraidOfAcidDebuffPatches.IgnoreWhenProtected(__instance, ref __result);
+		AcidEtchResistanceDebuffPatches.IgnoreWhenProtected(__instance, ref __result);
 }

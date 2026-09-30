@@ -17,10 +17,10 @@ using STS2RitsuLib.Scaffolding.Content;
 namespace Squ.Powers;
 
 /// <summary>
-/// 不怕酸：保留易伤、虚弱与脆弱本身及其正常获得/倒计时，只抵消它们的数值倍率。
+/// 酸蚀抗性：保留易伤、虚弱与脆弱本身及其正常获得/倒计时，只抵消它们的数值倍率。
 /// </summary>
 [RegisterPower]
-public sealed class NotAfraidOfAcidPower : ModPowerTemplate
+public sealed class AcidEtchResistancePower : ModPowerTemplate
 {
 	public override PowerType Type => PowerType.Buff;
 
@@ -29,8 +29,8 @@ public sealed class NotAfraidOfAcidPower : ModPowerTemplate
 	public override Color AmountLabelColor => PowerModel._normalAmountLabelColor;
 
 	public override PowerAssetProfile AssetProfile => new(
-		IconPath: "res://images/powers/NotAfraidOfAcidPower.png",
-		BigIconPath: "res://images/powers/NotAfraidOfAcidPowerBig.png");
+		IconPath: "res://images/powers/AcidEtchResistancePower.png",
+		BigIconPath: "res://images/powers/AcidEtchResistancePowerBig.png");
 
 	protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
 	[
