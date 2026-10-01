@@ -9,6 +9,7 @@ using MegaCrit.Sts2.Core.Localization;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Nodes.Cards;
 using MegaCrit.Sts2.Core.Random;
+using Squ.Audio;
 using Squ.Character;
 using STS2RitsuLib.Interop.AutoRegistration;
 using STS2RitsuLib.Scaffolding.Content;
@@ -20,8 +21,8 @@ namespace Squ.Cards;
 /// <summary>
 /// 三叔四伯：从抽牌堆和弃牌堆按不同能量花费各取一张入手牌，并在本回合打乱这些非 X 费牌的花费。
 /// </summary>
-[RegisterCard(typeof(SunqianCardPool), StableEntryStem = "third_uncle_fourth_uncle")]
-public sealed class ThirdUncleFourthUncle : ModCardTemplate
+[RegisterCard(typeof(SunqianCardPool), StableEntryStem = "little_third_big_fourth")]
+public sealed class LittleThirdBigFourth : ModCardTemplate
 {
 	private const int XCostGroup = int.MaxValue;
 
@@ -31,15 +32,16 @@ public sealed class ThirdUncleFourthUncle : ModCardTemplate
 	];
 
 	public override CardAssetProfile AssetProfile => new(
-		PortraitPath: "res://images/cards/ThirdUncleFourthUncle.png");
+		PortraitPath: "res://images/cards/LittleThirdBigFourth.png");
 
-	public ThirdUncleFourthUncle()
+	public LittleThirdBigFourth()
 		: base(1, CardType.Skill, CardRarity.Rare, TargetType.Self)
 	{
 	}
 
 	protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
 	{
+		SquSfx.Play(SquSfx.LittleThirdBigFourthEvent);
 		List<CardModel> moved = await MoveDistinctCostCardsToHand();
 		ShuffleCostsThisTurn(moved.Where(card => !card.EnergyCost.CostsX).ToList());
 	}

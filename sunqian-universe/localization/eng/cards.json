@@ -232,8 +232,8 @@
   "SUNQIAN_UNIVERSE_CARD_CUTE_PET.description": "[gold]Summon[/gold] {Summon:diff()}.",
   "SUNQIAN_UNIVERSE_CARD_THE_BACKUPS_BACKUP.title": "The Backup's Backup",
   "SUNQIAN_UNIVERSE_CARD_THE_BACKUPS_BACKUP.description": "Choose an ally. Each of you chooses 1 of 3 cards{IfUpgraded:show: of at least [blue]Uncommon[/blue] rarity|} from the other's [gold]Deck[/gold] and adds a copy of it to their own [gold]Hand[/gold].",
-  "SUNQIAN_UNIVERSE_CARD_THE_BACKUPS_BACKUP.hidden": "Only cards of Common/[blue]Uncommon[/blue]/[gold]Rare[/gold]/[pink]Ancient[/pink]/[green]Event[/green] rarity can be found.\nIf fewer than 3 cards of the required rarity are in that deck, fill the remaining options with cards of those rarities from that character's card pool.",
+  "SUNQIAN_UNIVERSE_CARD_THE_BACKUPS_BACKUP.hidden": "Only cards of [color=#BFBFBF]Common[/color]/[blue]Uncommon[/blue]/[gold]Rare[/gold]/[pink]Ancient[/pink]/[green]Event[/green] rarity can be found.\nIf fewer than 3 cards of the required rarity are in that deck, fill the remaining options with cards of those rarities from that character's card pool.",
   "SUNQIAN_UNIVERSE_CARD_THE_BACKUPS_BACKUP.hiddenUpgraded": "Only cards of [blue]Uncommon[/blue]/[gold]Rare[/gold]/[pink]Ancient[/pink]/[green]Event[/green] rarity can be found.\nIf fewer than 3 cards of the required rarity are in that deck, fill the remaining options with cards of those rarities from that character's card pool.",
-  "SUNQIAN_UNIVERSE_CARD_THIRD_UNCLE_FOURTH_UNCLE.title": "Third Uncle, Fourth Uncle",
-  "SUNQIAN_UNIVERSE_CARD_THIRD_UNCLE_FOURTH_UNCLE.description": "Add one card of each Energy cost from your [gold]Draw Pile[/gold] and [gold]Discard Pile[/gold] to your [gold]Hand[/gold]. Shuffle these cards' Energy costs this turn."
+  "SUNQIAN_UNIVERSE_CARD_LITTLE_THIRD_BIG_FOURTH.title": "Little Third, Big Fourth",
+  "SUNQIAN_UNIVERSE_CARD_LITTLE_THIRD_BIG_FOURTH.description": "Add one card of each Energy cost from your [gold]Draw Pile[/gold] and [gold]Discard Pile[/gold] to your [gold]Hand[/gold]. Shuffle these cards' Energy costs this turn."
 }

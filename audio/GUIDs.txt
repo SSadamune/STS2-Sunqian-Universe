@@ -13,6 +13,7 @@
 {bfa231d3-c7a0-4395-bb21-4afdf4149043} bus:/master/sfx_ducking_big
 {ea805add-ecda-4cfb-a5c4-295d960f51e7} event:/sunqian_universe/sfx/一人坚守南郡城
 {634747f4-ee4c-41be-9d36-f9958a348430} event:/sunqian_universe/sfx/一把叫仁之剑，一把叫义之剑
+{a4c8543f-c171-4d7a-9266-728953ec401a} event:/sunqian_universe/sfx/三叔四伯-三叔四伯，不必多礼
 {d1d2c204-40c6-4184-89c4-c9e8c9332d62} event:/sunqian_universe/sfx/不怕酸-咱家不怕酸
 {83d78065-54a1-4a8e-a1b6-268c7e29423b} event:/sunqian_universe/sfx/不怕酸-说了不怕酸
 {dc6fbd79-f408-485e-bcc8-c071037f1394} event:/sunqian_universe/sfx/中原第一雄关
@@ -52,7 +53,6 @@
 {5cc59de0-a502-422d-9c6e-5f49371478f5} event:/sunqian_universe/sfx/保持冷静-徐州原本就是我哒
 {438a8ab6-7ed2-435a-9f37-6797691135a0} event:/sunqian_universe/sfx/光剑刺杀-拔刀
 {542eca1e-4347-4fac-97b0-073eff87cedd} event:/sunqian_universe/sfx/光剑刺杀-激光
-{3cf5479e-59e7-4157-a775-cdc0fee8d893} event:/sunqian_universe/sfx/再来撒野
 {cb93a65f-ad3b-4447-b740-12a81b468348} event:/sunqian_universe/sfx/制式基地车-Lets set up shop
 {e1000fff-d8cc-4fba-a6ba-8f5138cfa762} event:/sunqian_universe/sfx/制式基地车-MCV reporting in
 {347873f7-fd99-4fd8-bdcd-4e14e5fde7b4} event:/sunqian_universe/sfx/制式基地车-Yes comrade
@@ -81,6 +81,7 @@
 {10189575-4fd1-4c12-aeab-dfb859667ae5} event:/sunqian_universe/sfx/大义灭亲
 {1fae88d6-0db5-4220-b506-40d4367e636b} event:/sunqian_universe/sfx/夷陵好火
 {9444a2c9-fa64-40e9-9882-800b762303d3} event:/sunqian_universe/sfx/孙乾-受击
+{38a251e5-2f5a-4353-8240-237c197da5d7} event:/sunqian_universe/sfx/孙乾宇宙-孙乾变化万千，以各种形态登场
 {c7401d0e-ca36-4fb2-8efd-5c6f6255d628} event:/sunqian_universe/sfx/家丁剧本-来人
 {0931c89d-1db8-4f2b-acf4-92d114c4f976} event:/sunqian_universe/sfx/尊老爱幼-不斩老幼
 {07376e4f-d455-483a-9c1c-827ed2a7bf87} event:/sunqian_universe/sfx/尊老爱幼-你太老了
@@ -89,7 +90,9 @@
 {07bc4d91-3669-4807-a668-764196686014} event:/sunqian_universe/sfx/弹指打击-剩下一小片江山
 {5423043d-d233-444b-ba63-e15a4e20ea30} event:/sunqian_universe/sfx/弹指打击-取董贼首级
 {e877f801-8783-4fa5-b960-ce4e1da130c0} event:/sunqian_universe/sfx/忽近忽远
-{0b3dc75a-46bb-4e30-ac7d-fbd666e94348} event:/sunqian_universe/sfx/怒掀帅案
+{7047a789-cdda-4cb5-8325-6b023fc9bbc2} event:/sunqian_universe/sfx/怒掀帅案-再来撒野
+{6b61ad98-c812-472a-ba1e-41f0fad3da8c} event:/sunqian_universe/sfx/怒掀帅案-哼
+{e8067242-d721-4a7f-bafc-53777fe485b6} event:/sunqian_universe/sfx/怒掀帅案-舍不得帅案
 {303ea8e9-7522-46de-902a-8087643175f8} event:/sunqian_universe/sfx/恨天打击-上苍无道未尽其才
 {171405b1-4c68-4e80-bec0-4e5cbdc92be9} event:/sunqian_universe/sfx/恨天打击-天不助我助尔曹
 {5a504523-5524-45fd-aab8-23d4ee422a22} event:/sunqian_universe/sfx/恨天打击-天意助曹不助袁
@@ -187,6 +190,8 @@
 {75e2180e-8c73-4511-89b9-900ad456594a} event:/sunqian_universe/sfx/鸡脚芝士-陈宫
 {56495cf1-8efe-4365-964d-3471bffaed2a} event:/sunqian_universe/sfx/鸡脚芝士-陶谦
 {a8190c02-7973-438d-8f3c-c4e9527f5bcf} event:/sunqian_universe/sfx/黄金起义
+{3ca5ef82-9ab1-4e82-ad01-0b3e10200b23} event:/sunqian_universe/sfx/龙套的替身-孙乾由简雍来演
+{278dab66-989d-494d-a121-c66ff0d6dd85} event:/sunqian_universe/sfx/龙套的替身-让简雍来演孙乾，孙乾演刀斧手
 {06cefc2c-7055-44b5-af2e-7652cd2414d6} parameter:/Progress
 {a36ba432-c5b1-44ff-b5e4-12f654cfa067} parameter:/sfx_duck
 {9fd4e212-6c2e-4b45-8a4b-942284c71171} parameter:/sfx_duck_big

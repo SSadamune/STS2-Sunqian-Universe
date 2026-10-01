@@ -108,7 +108,7 @@ public sealed class TroubleAgainPower : ModPowerTemplate
 		}
 
 		Flash();
-		SquSfx.Play(SquSfx.RunWildAgainEvent);
+		SquSfx.Play(SquSfx.TableFlipRunWildAgainEvent);
 		await ReturnTrackedCardAndRemoveAsync(choiceContext);
 	}
 

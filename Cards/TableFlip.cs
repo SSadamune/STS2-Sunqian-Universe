@@ -51,7 +51,8 @@ public sealed class TableFlip : ModCardTemplate
 		ICombatState? combatState = CombatState;
 		ArgumentNullException.ThrowIfNull(combatState, nameof(combatState));
 
-		SquSfx.Play(SquSfx.SlamTheCommandDeskEvent);
+		await SquSfx.PlayAndWait(SquSfx.TableFlipReluctantEvent, maxSeconds: 3f);
+		SquSfx.Play(SquSfx.TableFlipHumEvent);
 
 		decimal weakAmount = DynamicVars[nameof(WeakPower)].BaseValue;
 

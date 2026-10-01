@@ -1,8 +1,12 @@
 #nullable enable
+using System.Threading.Tasks;
+using Godot;
+using MegaCrit.Sts2.Core.Combat;
 using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Helpers;
 using MegaCrit.Sts2.Core.Random;
 using MegaCrit.Sts2.Core.Runs;
+using MegaCrit.Sts2.Core.TestSupport;
 using Squ.Settings;
 using STS2RitsuLib.Audio;
 using STS2RitsuLib.RunRngs;
@@ -72,6 +76,9 @@ internal static class SquSfx
 	public const string FingerStrikeDongZhuoHeadEvent = "event:/sunqian_universe/sfx/弹指打击-取董贼首级";
 	public const string NearAndFarEvent = "event:/sunqian_universe/sfx/忽近忽远";
 	public const string SlamTheCommandDeskEvent = "event:/sunqian_universe/sfx/怒掀帅案";
+	public const string TableFlipReluctantEvent = "event:/sunqian_universe/sfx/怒掀帅案-舍不得帅案";
+	public const string TableFlipHumEvent = "event:/sunqian_universe/sfx/怒掀帅案-哼";
+	public const string TableFlipRunWildAgainEvent = "event:/sunqian_universe/sfx/怒掀帅案-再来撒野";
 	public const string WhatDoWeEatEvent = "event:/sunqian_universe/sfx/我们吃什么";
 	public const string BiggerGobletEvent = "event:/sunqian_universe/sfx/换大盏-换大盏";
 	public const string BiggerGobletWontBePoliteEvent = "event:/sunqian_universe/sfx/换大盏-不会客气";
@@ -176,6 +183,10 @@ internal static class SquSfx
 	public const string ChickenFootCheeseWangPingEvent = "event:/sunqian_universe/sfx/鸡脚芝士-王平";
 	public const string SlightRevisionEvent = "event:/sunqian_universe/sfx/稍作修改-好方略，不过我想稍作修改";
 	public const string SunqianHurtEvent = "event:/sunqian_universe/sfx/孙乾-受击";
+	public const string SunqianUniverseManyFormsEvent = "event:/sunqian_universe/sfx/孙乾宇宙-孙乾变化万千，以各种形态登场";
+	public const string LittleThirdBigFourthEvent = "event:/sunqian_universe/sfx/三叔四伯-三叔四伯，不必多礼";
+	public const string TheBackupsBackupJianYongPlaysSunqianEvent = "event:/sunqian_universe/sfx/龙套的替身-孙乾由简雍来演";
+	public const string TheBackupsBackupSunqianPlaysExecutionerEvent = "event:/sunqian_universe/sfx/龙套的替身-让简雍来演孙乾，孙乾演刀斧手";
 	public const string BasicStrikeCaoCaoEvent = "event:/sunqian_universe/sfx/打击-曹操";
 	public const string BasicStrikeLiuBeiEvent = "event:/sunqian_universe/sfx/打击-刘备";
 	public const string BasicStrikeNailongEvent = "event:/sunqian_universe/sfx/打击-奶龙";
@@ -186,6 +197,12 @@ internal static class SquSfx
 	public const string WineThirstyEvent = "event:/sunqian_universe/sfx/酒-我正渴着呢";
 	public const string WineOldHeroEvent = "event:/sunqian_universe/sfx/酒-酒是老英雄";
 	public const string WineWentIntoTownEvent = "event:/sunqian_universe/sfx/酒-进城喝酒去了";
+
+	public static readonly string[] TheBackupsBackupEvents =
+	[
+		TheBackupsBackupJianYongPlaysSunqianEvent,
+		TheBackupsBackupSunqianPlaysExecutionerEvent,
+	];
 
 	public static readonly string[] BasicStrikeEvents =
 	[
@@ -317,6 +334,110 @@ internal static class SquSfx
 	public static void Play(string eventPath)
 	{
 		SfxCmd.Play(eventPath, SquSettings.SfxLinearMultiplier);
+	}
+
+	/// <summary>
+	/// 创建 FMOD 事件实例并等到它停止后再返回。
+	/// <see cref="SfxCmd.Play"/> 是一次性播放，拿不到结束时机。
+	/// 超过 <paramref name="maxSeconds"/> 仍未停止时，打断该实例并返回。
+	/// </summary>
+	public static async Task PlayAndWait(string eventPath, float maxSeconds = 30f)
+	{
+		if (NonInteractiveMode.IsActive || TestMode.IsOn || CombatManager.Instance.IsEnding)
+		{
+			return;
+		}
+
+		float volume = SquSettings.SfxLinearMultiplier;
+		if (volume <= 0f)
+		{
+			return;
+		}
+
+		GodotObject? instance = FmodStudioEventInstances.TryCreate(eventPath);
+		if (instance == null)
+		{
+			Play(eventPath);
+			return;
+		}
+
+		try
+		{
+			instance.Call("set_volume", volume);
+		}
+		catch (System.Exception)
+		{
+			// 实例仍以事件默认音量播放。
+		}
+
+		if (!FmodStudioEventInstances.TryStart(instance))
+		{
+			FmodStudioEventInstances.TryRelease(instance);
+			Play(eventPath);
+			return;
+		}
+
+		const float pollSeconds = 0.05f;
+		float elapsed = 0f;
+		bool seenActive = false;
+		while (elapsed < maxSeconds && !CombatManager.Instance.IsEnding)
+		{
+			await WaitRealtime(pollSeconds);
+			elapsed += pollSeconds;
+
+			if (!TryGetPlaybackState(instance, out int state))
+			{
+				break;
+			}
+
+			// PLAYING / SUSTAINING / STARTING / STOPPING
+			if (state is 0 or 1 or 3 or 4)
+			{
+				seenActive = true;
+			}
+
+			// STOPPED。先见到播放中，避免刚 start 时误判成已经结束。
+			if (seenActive && state == 2)
+			{
+				break;
+			}
+		}
+
+		if (!TryGetPlaybackState(instance, out int finalState) || finalState != 2)
+		{
+			FmodStudioEventInstances.TryStop(instance, allowFadeOut: false);
+		}
+
+		FmodStudioEventInstances.TryRelease(instance);
+	}
+
+	private static bool TryGetPlaybackState(GodotObject instance, out int state)
+	{
+		state = -1;
+		try
+		{
+			Variant result = instance.Call("get_playback_state");
+			state = result.AsInt32();
+			return true;
+		}
+		catch (System.Exception)
+		{
+			return false;
+		}
+	}
+
+	private static async Task WaitRealtime(float seconds)
+	{
+		if (seconds <= 0f || NonInteractiveMode.IsActive)
+		{
+			return;
+		}
+
+		SceneTree tree = (SceneTree)Engine.GetMainLoop();
+		SceneTreeTimer timer = tree.CreateTimer(seconds, true, true, false);
+		TaskCompletionSource tcs = new(TaskCreationOptions.RunContinuationsAsynchronously);
+		timer.Timeout += () => tcs.TrySetResult();
+		await tcs.Task;
 	}
 
 	/// <summary>

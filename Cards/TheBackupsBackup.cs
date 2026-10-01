@@ -12,6 +12,7 @@ using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Localization;
 using MegaCrit.Sts2.Core.Models;
 using Squ;
+using Squ.Audio;
 using Squ.Character;
 using Squ.Combat;
 using STS2RitsuLib.Interop.AutoRegistration;
@@ -51,6 +52,9 @@ public sealed class TheBackupsBackup : ModCardTemplate
 		CreateHiddenResolutionTip(),
 	];
 
+	public override CardAssetProfile AssetProfile => new(
+		PortraitPath: "res://images/cards/TheBackupsBackup.png");
+
 	public TheBackupsBackup()
 		: base(0, CardType.Skill, CardRarity.Uncommon, SquTargetTypes.AnyOtherPlayer)
 	{
@@ -59,6 +63,7 @@ public sealed class TheBackupsBackup : ModCardTemplate
 	protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
 	{
 		ArgumentNullException.ThrowIfNull(cardPlay.Target, nameof(cardPlay.Target));
+		SquSfx.PlayRandom(RunState, SquSfx.TheBackupsBackupEvents);
 
 		ICombatState combatState = CombatState
 			?? throw new InvalidOperationException("TheBackupsBackup requires an active combat.");
