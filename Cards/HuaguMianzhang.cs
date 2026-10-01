@@ -23,8 +23,8 @@ namespace Squ.Cards;
 [RegisterCard(typeof(SunqianCardPool))]
 public sealed class HuaguMianzhang : ModCardTemplate
 {
-	public const int BaseDamage = 6;
-	public const int UpgradedDamage = 9;
+	public const int BaseDamage = 4;
+	public const int UpgradedDamage = 7;
 
 	protected override IEnumerable<DynamicVar> CanonicalVars =>
 	[
@@ -40,7 +40,7 @@ public sealed class HuaguMianzhang : ModCardTemplate
 		PortraitPath: "res://images/cards/HuaguMianzhang.png");
 
 	public HuaguMianzhang()
-		: base(1, CardType.Attack, CardRarity.Rare, TargetType.AnyEnemy)
+		: base(0, CardType.Attack, CardRarity.Rare, TargetType.AnyEnemy)
 	{
 	}
 

@@ -15,9 +15,9 @@ using STS2RitsuLib.Scaffolding.Content;
 
 namespace Squ.Cards;
 
-/// <summary>鸡脚芝士悬停提示中展示的强化版打击；不进入任何卡池。</summary>
-[RegisterCard(typeof(TokenCardPool), StableEntryStem = "chicken_foot_cheese_strike_preview")]
-public sealed class ChickenFootCheeseStrikePreview : ModCardTemplate, IRandomEnemyTargetCount
+/// <summary>鸡脚芝士剧本悬停提示中展示的强化版打击；不进入任何卡池。</summary>
+[RegisterCard(typeof(TokenCardPool), StableEntryStem = "chicken_foot_cheese_script_strike_preview")]
+public sealed class ChickenFootCheeseScriptStrikePreview : ModCardTemplate, IRandomEnemyTargetCount
 {
 	public const int BaseDamage = 6;
 	public const int UpgradedDamage = 9;
@@ -34,19 +34,19 @@ public sealed class ChickenFootCheeseStrikePreview : ModCardTemplate, IRandomEne
 
 	public override TargetType TargetType => SquTargetTypes.RandomEnemies;
 
-	public ChickenFootCheeseStrikePreview()
+	public ChickenFootCheeseScriptStrikePreview()
 		: base(1, CardType.Attack, CardRarity.Basic, TargetType.AnyEnemy)
 	{
 	}
 
-	public int GetRandomEnemyTargetCount() => ChickenFootCheeseStrikePower.RedirectRandomEnemyCount;
+	public int GetRandomEnemyTargetCount() => ScriptChickenFootCheesePower.RedirectRandomEnemyCount;
 
 	protected override Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay) =>
 		SquRandomEnemyTargeting.ExecuteDistinctRandomEnemyDamage(
 			this,
 			choiceContext,
 			GetRandomEnemyTargetCount(),
-			hitCountPerTarget: ChickenFootCheeseStrikePower.RedirectHitCountPerTarget,
+			hitCountPerTarget: ScriptChickenFootCheesePower.RedirectHitCountPerTarget,
 			cardPlay: cardPlay);
 
 	protected override void OnUpgrade() =>

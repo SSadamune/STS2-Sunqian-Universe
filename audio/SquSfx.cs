@@ -176,11 +176,11 @@ internal static class SquSfx
 	public const string StargazingWangYunEvent = "event:/sunqian_universe/sfx/夜观天象-王允";
 	public const string StargazingDongZhuoEvent = "event:/sunqian_universe/sfx/夜观天象-董卓";
 
-	public const string ChickenFootCheeseXuShuEvent = "event:/sunqian_universe/sfx/鸡脚芝士-徐庶";
-	public const string ChickenFootCheeseTaoQianEvent = "event:/sunqian_universe/sfx/鸡脚芝士-陶谦";
-	public const string ChickenFootCheeseLiuBeiEvent = "event:/sunqian_universe/sfx/鸡脚芝士-刘备";
-	public const string ChickenFootCheeseChenGongEvent = "event:/sunqian_universe/sfx/鸡脚芝士-陈宫";
-	public const string ChickenFootCheeseWangPingEvent = "event:/sunqian_universe/sfx/鸡脚芝士-王平";
+	public const string ChickenFootCheeseScriptXuShuEvent = "event:/sunqian_universe/sfx/鸡脚芝士-徐庶";
+	public const string ChickenFootCheeseScriptTaoQianEvent = "event:/sunqian_universe/sfx/鸡脚芝士-陶谦";
+	public const string ChickenFootCheeseScriptLiuBeiEvent = "event:/sunqian_universe/sfx/鸡脚芝士-刘备";
+	public const string ChickenFootCheeseScriptChenGongEvent = "event:/sunqian_universe/sfx/鸡脚芝士-陈宫";
+	public const string ChickenFootCheeseScriptWangPingEvent = "event:/sunqian_universe/sfx/鸡脚芝士-王平";
 	public const string SlightRevisionEvent = "event:/sunqian_universe/sfx/稍作修改-好方略，不过我想稍作修改";
 	public const string SunqianHurtEvent = "event:/sunqian_universe/sfx/孙乾-受击";
 	public const string SunqianUniverseManyFormsEvent = "event:/sunqian_universe/sfx/孙乾宇宙-孙乾变化万千，以各种形态登场";
@@ -279,12 +279,12 @@ internal static class SquSfx
 		StandardBaseVehicleOverThereEvent,
 	];
 
-	public static readonly string[] ChickenFootCheeseEvents =
+	public static readonly string[] ChickenFootCheeseScriptEvents =
 	[
-		ChickenFootCheeseXuShuEvent,
-		ChickenFootCheeseTaoQianEvent,
-		ChickenFootCheeseLiuBeiEvent,
-		ChickenFootCheeseWangPingEvent,
+		ChickenFootCheeseScriptXuShuEvent,
+		ChickenFootCheeseScriptTaoQianEvent,
+		ChickenFootCheeseScriptLiuBeiEvent,
+		ChickenFootCheeseScriptWangPingEvent,
 	];
 
 	public static readonly string[] TransparentHoleEvents =

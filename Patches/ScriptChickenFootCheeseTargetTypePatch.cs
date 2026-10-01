@@ -9,11 +9,11 @@ using Squ.Powers;
 namespace Squ.Patches;
 
 [HarmonyPatch(typeof(CardModel), "get_TargetType")]
-internal static class ChickenFootCheeseStrikeTargetTypePatch
+internal static class ScriptChickenFootCheeseTargetTypePatch
 {
 	private static void Postfix(CardModel __instance, ref TargetType __result)
 	{
-		if (ChickenFootCheeseStrikePower.ShouldDisplayRedirectedBasicStrike(__instance))
+		if (ScriptChickenFootCheesePower.ShouldDisplayRedirectedBasicStrike(__instance))
 		{
 			__result = SquTargetTypes.RandomEnemies;
 		}

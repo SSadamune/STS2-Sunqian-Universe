@@ -65,8 +65,8 @@ public sealed class StrikeLongtao : ModCardTemplate
 	protected override void AddExtraArgsToDescription(LocString description)
 	{
 		string bodyKey = Pile?.Type == PileType.Hand
-			&& ChickenFootCheeseStrikePower.ShouldRedirectBasicStrike(this)
-			? "chickenFootCheeseBody"
+			&& ScriptChickenFootCheesePower.ShouldRedirectBasicStrike(this)
+			? "chickenFootCheeseScriptBody"
 			: "normalBody";
 		SquKeywords.AddNestedLoc(
 			description,

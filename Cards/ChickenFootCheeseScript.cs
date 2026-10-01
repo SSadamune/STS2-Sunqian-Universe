@@ -7,6 +7,7 @@ using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.Models.CardPools;
 using MegaCrit.Sts2.Core.ValueProps;
+using Squ;
 using Squ.Audio;
 using Squ.Character;
 using Squ.Combat;
@@ -18,42 +19,46 @@ using STS2RitsuLib.Scaffolding.Content;
 
 namespace Squ.Cards;
 
-[RegisterCard(typeof(SunqianCardPool), StableEntryStem = "chicken_foot_cheese")]
-public sealed class ChickenFootCheese : ModCardTemplate, IRandomEnemyTargetCount
+[RegisterCard(typeof(SunqianCardPool), StableEntryStem = "chicken_foot_cheese_script")]
+public sealed class ChickenFootCheeseScript : ScriptCardTemplate, IRandomEnemyTargetCount
 {
-	public const int BaseDamage = 4;
-	public const int UpgradedDamage = 5;
-	public const int BaseTurns = 2;
-	public const int UpgradedTurns = 3;
+	public const int BaseDamage = 6;
+	public const int UpgradedDamage = 9;
 	public const int RandomEnemyTargetCount = 2;
 	public const int HitCountPerTarget = 2;
 
 	protected override IEnumerable<DynamicVar> CanonicalVars =>
 	[
 		new DamageVar(BaseDamage, ValueProp.Move),
-		new PowerVar<ChickenFootCheeseStrikePower>(BaseTurns),
+	];
+
+	public override IEnumerable<CardKeyword> CanonicalKeywords =>
+	[
+		SquKeywords.Script,
+		CardKeyword.Exhaust,
 	];
 
 	protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
 	[
-		..HoverTipFactory.FromCardWithCardHoverTips<ChickenFootCheeseStrikePreview>(IsUpgraded),
+		..HoverTipFactory.FromCardWithCardHoverTips<ChickenFootCheeseScriptStrikePreview>(IsUpgraded),
+		HoverTipFactory.FromPower<ScriptChickenFootCheesePower>(),
 	];
 
 	public override CardAssetProfile AssetProfile => new(
-		PortraitPath: "res://images/cards/ChickenFootCheese.png");
+		PortraitPath: "res://images/cards/ChickenFootCheeseScript.png");
 
 	public override TargetType TargetType => SquTargetTypes.RandomEnemies;
 
-	public ChickenFootCheese()
-		: base(1, CardType.Attack, CardRarity.Common, TargetType.AnyEnemy)
+	public ChickenFootCheeseScript()
+		: base(1, CardType.Attack, CardRarity.Common, TargetType.AnyEnemy, true)
 	{
 	}
 
 	public int GetRandomEnemyTargetCount() => RandomEnemyTargetCount;
 
-	protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
+	protected override async Task PlayScriptAsync(PlayerChoiceContext choiceContext, CardPlay cardPlay)
 	{
-		SquSfx.Play(SquSfx.ChickenFootCheeseChenGongEvent);
+		SquSfx.Play(SquSfx.ChickenFootCheeseScriptChenGongEvent);
 		await SquRandomEnemyTargeting.ExecuteDistinctRandomEnemyDamage(
 			this,
 			choiceContext,
@@ -61,10 +66,10 @@ public sealed class ChickenFootCheese : ModCardTemplate, IRandomEnemyTargetCount
 			hitCountPerTarget: HitCountPerTarget,
 			cardPlay: cardPlay);
 
-		await PowerCmd.Apply<ChickenFootCheeseStrikePower>(
+		await PowerCmd.Apply<ScriptChickenFootCheesePower>(
 			choiceContext,
 			Owner.Creature,
-			DynamicVars[nameof(ChickenFootCheeseStrikePower)].BaseValue,
+			1m,
 			Owner.Creature,
 			this);
 	}
@@ -72,6 +77,5 @@ public sealed class ChickenFootCheese : ModCardTemplate, IRandomEnemyTargetCount
 	protected override void OnUpgrade()
 	{
 		DynamicVars.Damage.UpgradeValueBy(UpgradedDamage - BaseDamage);
-		DynamicVars[nameof(ChickenFootCheeseStrikePower)].UpgradeValueBy(UpgradedTurns - BaseTurns);
 	}
 }

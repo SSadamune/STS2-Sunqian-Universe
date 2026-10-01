@@ -64,9 +64,9 @@ public static class SquRandomEnemyTargeting
 			return 0;
 		}
 
-		if (ChickenFootCheeseStrikePower.ShouldRedirectBasicStrike(card))
+		if (ScriptChickenFootCheesePower.ShouldRedirectBasicStrike(card))
 		{
-			return ChickenFootCheeseStrikePower.RedirectRandomEnemyCount;
+			return ScriptChickenFootCheesePower.RedirectRandomEnemyCount;
 		}
 
 		if (card is IRandomEnemyTargetCount provider)
