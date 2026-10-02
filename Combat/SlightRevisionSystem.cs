@@ -22,7 +22,11 @@ using Squ.Audio;
 
 namespace Squ.Combat;
 
-internal interface ISlightRevisionSource
+/// <summary>
+/// 可由硬引用本模组的外部卡牌实现，使其作为固有的「稍作修改」来源参与统一右键逻辑。
+/// 使用可选依赖的模组应改用公开 API 附加 <see cref="SlightRevisionCapability"/>。
+/// </summary>
+public interface ISlightRevisionSource
 {
 	CardModel SlightRevisionTarget { get; }
 
@@ -47,24 +51,12 @@ public static class SlightRevisionSystem
 		public bool TryHandle(ModRightClickContext context)
 		{
 			if (context.Model is not CardModel card
-				|| !CanExecute(context.Player, card)
-				|| !TryGetRevision(card, out CardModel target, out bool targetUpgraded))
+				|| !RequestRevision(context.Player, card))
 			{
 				return false;
 			}
 
-			NetCombatCard netCard = NetCombatCard.FromModel(card);
-			SlightRevisionPayload payload = new(
-				netCard.CombatCardIndex,
-				card.Id.ToString(),
-				target.Id.ToString(),
-				targetUpgraded);
-
-			return RitsuLibManagedNetActions.Request(
-				RunManager.Instance,
-				SlightRevisionAction,
-				payload,
-				context.Player.NetId);
+			return true;
 		}
 	}
 
@@ -92,10 +84,23 @@ public static class SlightRevisionSystem
 
 	public static bool Grant(CardModel card, CardModel target, bool targetUpgraded)
 	{
-		if (card.Capability<SlightRevisionCapability>() is not null) return false;
-		card.GetOrCreateCapability<SlightRevisionCapability>().Configure(target, targetUpgraded);
-		CardCmd.ApplyKeyword(card, SquKeywords.SlightRevision);
+		Set(card, target, targetUpgraded);
 		return true;
+	}
+
+	/// <summary>
+	/// 为可变卡牌附加或更新「稍作修改」。Capability 会随卡牌克隆、存档及联机状态同步。
+	/// </summary>
+	public static void Set(CardModel card, CardModel target, bool targetUpgraded)
+	{
+		ArgumentNullException.ThrowIfNull(card);
+		ArgumentNullException.ThrowIfNull(target);
+
+		card.GetOrCreateCapability<SlightRevisionCapability>().Configure(target, targetUpgraded);
+		if (!card.Keywords.Contains(SquKeywords.SlightRevision))
+		{
+			CardCmd.ApplyKeyword(card, SquKeywords.SlightRevision);
+		}
 	}
 
 	public static void AddDescription(LocString description, CardModel target, bool targetUpgraded)
@@ -136,19 +141,14 @@ public static class SlightRevisionSystem
 		return display.Title;
 	}
 
-	private static bool CanExecute(Player player, CardModel? card) =>
+	public static bool CanExecute(Player player, CardModel? card) =>
 		card is not null && card.Owner == player && card.Pile?.Type == PileType.Hand
-		&& card.IsTransformable;
+		&& card.IsTransformable && TryGetRevision(card, out _, out _);
 
-	private static bool TryGetRevision(CardModel card, out CardModel target, out bool targetUpgraded)
+	public static bool TryGetRevision(CardModel card, out CardModel target, out bool targetUpgraded)
 	{
-		if (card is ISlightRevisionSource source)
-		{
-			target = source.SlightRevisionTarget;
-			targetUpgraded = source.SlightRevisionTargetUpgraded;
-			return true;
-		}
-
+		// A granted capability is the single mutable Slight Revision slot. It must win over
+		// an intrinsic source so granting Slight Revision again replaces the old target.
 		if (card.Capability<SlightRevisionCapability>() is { } revision)
 		{
 			target = revision.Target;
@@ -156,9 +156,41 @@ public static class SlightRevisionSystem
 			return true;
 		}
 
+		if (card is ISlightRevisionSource source)
+		{
+			target = source.SlightRevisionTarget;
+			targetUpgraded = source.SlightRevisionTargetUpgraded;
+			return true;
+		}
+
 		target = null!;
 		targetUpgraded = false;
 		return false;
+	}
+
+	/// <summary>
+	/// 请求执行卡牌的「稍作修改」。成功请求会进入 RitsuLib 联机动作队列，并在所有端同步结算。
+	/// </summary>
+	public static bool RequestRevision(Player player, CardModel card)
+	{
+		if (!CanExecute(player, card)
+			|| !TryGetRevision(card, out CardModel target, out bool targetUpgraded))
+		{
+			return false;
+		}
+
+		NetCombatCard netCard = NetCombatCard.FromModel(card);
+		SlightRevisionPayload payload = new(
+			netCard.CombatCardIndex,
+			card.Id.ToString(),
+			target.Id.ToString(),
+			targetUpgraded);
+
+		return RitsuLibManagedNetActions.Request(
+			RunManager.Instance,
+			SlightRevisionAction,
+			payload,
+			player.NetId);
 	}
 
 	private static async Task ExecuteSyncedRevision(
@@ -171,13 +203,15 @@ public static class SlightRevisionSystem
 			.ToCardModelOrNull();
 		if (original is null
 			|| original.Id != ModelId.Deserialize(payload.OriginalId)
-			|| !CanExecute(context.Player, original))
+			|| !CanExecute(context.Player, original)
+			|| !TryGetRevision(original, out CardModel target, out bool targetUpgraded)
+			|| target.Id != ModelId.Deserialize(payload.TargetId)
+			|| targetUpgraded != payload.TargetUpgraded)
 		{
 			return;
 		}
 
-		CardModel target = ModelDb.GetById<CardModel>(ModelId.Deserialize(payload.TargetId));
-		await TransformAsync(original, target, payload.TargetUpgraded);
+		await TransformAsync(original, target, targetUpgraded);
 	}
 
 }

@@ -6,7 +6,6 @@ using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.HoverTips;
-using MegaCrit.Sts2.Core.Localization;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.Cards;
@@ -39,7 +38,6 @@ public sealed class TooKindToBeTrue : ModCardTemplate
 
 	protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
 	[
-		new HoverTip(SquCommonL10n.AnnotationTitle(), new LocString("cards", Id.Entry + ".annotation")),
 		HoverTipFactory.FromKeyword(SquKeywords.SlightRevision),
 		..HoverTipFactory.FromCardWithCardHoverTips<UltimateDefend>(IsUpgraded),
 	];
@@ -83,6 +81,5 @@ public sealed class TooKindToBeTrue : ModCardTemplate
 
 	private static bool IsTransformableAttack(CardModel card) =>
 		card.Type == CardType.Attack
-		&& card.IsTransformable
-		&& !card.Keywords.Contains(SquKeywords.SlightRevision);
+		&& card.IsTransformable;
 }

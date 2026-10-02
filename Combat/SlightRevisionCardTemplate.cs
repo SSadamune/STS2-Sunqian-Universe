@@ -4,6 +4,7 @@ using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Localization;
 using MegaCrit.Sts2.Core.Models;
+using STS2RitsuLib.Models.Capabilities;
 using STS2RitsuLib.Scaffolding.Content;
 
 #nullable enable
@@ -27,9 +28,24 @@ public abstract class SlightRevisionCardTemplate<TTarget> : ModCardTemplate, ISl
 	bool ISlightRevisionSource.SlightRevisionTargetUpgraded => IsSlightRevisionTargetUpgraded;
 
 	protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
-		SlightRevisionSystem.GetHoverTips(ModelDb.Card<TTarget>(), IsSlightRevisionTargetUpgraded);
+		this.Capability<SlightRevisionCapability>() is null
+			? SlightRevisionSystem.GetHoverTips(ModelDb.Card<TTarget>(), IsSlightRevisionTargetUpgraded)
+			: [];
 
-	protected override void AddExtraArgsToDescription(LocString description) =>
-		SlightRevisionSystem.AddDescription(description, ModelDb.Card<TTarget>(), IsSlightRevisionTargetUpgraded);
+	protected override void AddExtraArgsToDescription(LocString description)
+	{
+		if (this.Capability<SlightRevisionCapability>() is null)
+		{
+			SlightRevisionSystem.AddDescription(
+				description,
+				ModelDb.Card<TTarget>(),
+				IsSlightRevisionTargetUpgraded);
+			return;
+		}
+
+		// The capability contributes the replacement text. Clear the intrinsic template's
+		// placeholder so the previous target is not displayed a second time.
+		description.Add("SlightRevisionText", "");
+	}
 
 }

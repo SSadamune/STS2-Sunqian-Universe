@@ -1,15 +1,19 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using MegaCrit.Sts2.Core.Combat;
 using MegaCrit.Sts2.Core.Commands;
+using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.Entities.Characters;
 using MegaCrit.Sts2.Core.Entities.Creatures;
 using MegaCrit.Sts2.Core.Entities.Players;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.HoverTips;
+using MegaCrit.Sts2.Core.Localization;
 using MegaCrit.Sts2.Core.Models;
 using Squ.Character;
+using Squ.Combat;
 using Squ.Powers;
 using Squ.Script;
 
@@ -139,4 +143,75 @@ public static class SunqianUniversePublicApi
 	/// <summary>取得该玩家本回合已触发的剧本失效次数。</summary>
 	public static int GetScriptLiftsThisTurn(Player? player) =>
 		player is null ? 0 : ScriptSystem.GetScriptLiftsThisTurn(player);
+
+	/// <summary>「稍作修改」关键词的稳定限定 ID。</summary>
+	public static string SlightRevisionKeywordId => SquKeywords.SlightRevisionId;
+
+	/// <summary>取得「稍作修改」关键词。</summary>
+	public static CardKeyword SlightRevisionKeyword => SquKeywords.SlightRevision;
+
+	/// <summary>创建「稍作修改」关键词的悬停说明。</summary>
+	public static IHoverTip CreateSlightRevisionHoverTip() =>
+		HoverTipFactory.FromKeyword(SquKeywords.SlightRevision);
+
+	/// <summary>
+	/// 为可变卡牌赋予「稍作修改」。卡牌已有固有或动态配置时，新的目标会覆盖旧目标；
+	/// 关键词和 capability 始终只保留一份。
+	/// </summary>
+	public static bool GrantSlightRevision(
+		CardModel card,
+		CardModel target,
+		bool targetUpgraded = false) =>
+		SlightRevisionSystem.Grant(card, target, targetUpgraded);
+
+	/// <summary>
+	/// 为可变卡牌附加或更新「稍作修改」。此方法会添加关键词和可持久化 capability；
+	/// 之后右键该手牌会自动使用本模组的联机同步逻辑变为目标牌。
+	/// </summary>
+	public static void SetSlightRevision(
+		CardModel card,
+		CardModel target,
+		bool targetUpgraded = false) =>
+		SlightRevisionSystem.Set(card, target, targetUpgraded);
+
+	/// <summary>判断卡牌是否具有可执行的「稍作修改」配置。</summary>
+	public static bool HasSlightRevision(CardModel? card) =>
+		card is not null && SlightRevisionSystem.TryGetRevision(card, out _, out _);
+
+	/// <summary>取得「稍作修改」的目标牌规范实例；没有配置时返回 null。</summary>
+	public static CardModel? GetSlightRevisionTarget(CardModel? card) =>
+		card is not null
+		&& SlightRevisionSystem.TryGetRevision(card, out CardModel target, out _)
+			? target
+			: null;
+
+	/// <summary>目标牌是否会以升级状态生成；没有配置时返回 false。</summary>
+	public static bool IsSlightRevisionTargetUpgraded(CardModel? card) =>
+		card is not null
+		&& SlightRevisionSystem.TryGetRevision(card, out _, out bool targetUpgraded)
+		&& targetUpgraded;
+
+	/// <summary>当前玩家现在是否可以对指定手牌执行「稍作修改」。</summary>
+	public static bool CanExecuteSlightRevision(Player player, CardModel? card) =>
+		SlightRevisionSystem.CanExecute(player, card);
+
+	/// <summary>
+	/// 请求执行「稍作修改」。返回是否成功进入联机动作队列；通常无需手动调用，
+	/// 因为本模组的全局右键处理器会自动处理已配置的卡牌。
+	/// </summary>
+	public static bool RequestSlightRevision(Player player, CardModel card) =>
+		SlightRevisionSystem.RequestRevision(player, card);
+
+	/// <summary>把固有「稍作修改」的说明文本参数添加到卡牌描述。</summary>
+	public static void AddSlightRevisionDescription(
+		LocString description,
+		CardModel target,
+		bool targetUpgraded = false) =>
+		SlightRevisionSystem.AddDescription(description, target, targetUpgraded);
+
+	/// <summary>取得固有「稍作修改」应展示的目标牌悬停说明。</summary>
+	public static IEnumerable<IHoverTip> GetSlightRevisionHoverTips(
+		CardModel target,
+		bool targetUpgraded = false) =>
+		SlightRevisionSystem.GetHoverTips(target, targetUpgraded);
 }
