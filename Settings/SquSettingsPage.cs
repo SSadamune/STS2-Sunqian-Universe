@@ -2,6 +2,7 @@
 using System;
 using System.Linq;
 using Godot;
+using Squ.RunData;
 using STS2RitsuLib;
 using STS2RitsuLib.Data;
 using STS2RitsuLib.Settings;
@@ -52,12 +53,8 @@ public static class SquSettingsPage
 				SquMod.ModId,
 				SquSettings.DataKey,
 				SaveScope.Global,
-				static s => Enum.IsDefined(s.NeutralPotionModification)
-					? s.NeutralPotionModification
-					: SquSettings.DefaultNeutralPotionModificationMode,
-				static (s, v) => s.NeutralPotionModification = Enum.IsDefined(v)
-					? v
-					: SquSettings.DefaultNeutralPotionModificationMode),
+				static s => ContentSettingsRunData.DisplayedPotionMode(s),
+				static (s, v) => ContentSettingsRunData.TryWriteLocalPotionMode(s, v)),
 			static () => SquSettings.DefaultNeutralPotionModificationMode);
 
 	private static readonly IModSettingsValueBinding<NeutralContentPermissionMode> NeutralCardRegistrationBinding =
@@ -66,12 +63,8 @@ public static class SquSettingsPage
 				SquMod.ModId,
 				SquSettings.DataKey,
 				SaveScope.Global,
-				static s => Enum.IsDefined(s.NeutralCardRegistration)
-					? s.NeutralCardRegistration
-					: SquSettings.DefaultNeutralCardRegistrationMode,
-				static (s, v) => s.NeutralCardRegistration = Enum.IsDefined(v)
-					? v
-					: SquSettings.DefaultNeutralCardRegistrationMode),
+				static s => ContentSettingsRunData.DisplayedCardMode(s),
+				static (s, v) => ContentSettingsRunData.TryWriteLocalCardMode(s, v)),
 			static () => SquSettings.DefaultNeutralCardRegistrationMode);
 
 	public static void Register()
@@ -113,6 +106,7 @@ public static class SquSettingsPage
 				.AddSection("gameplay", section =>
 				{
 					section.WithTitle(Loc("SUNQIAN_UNIVERSE_COMMON.SETTINGS.sectionGameplayTitle", "游戏内容"))
+						.WithEnabledWhen(static () => !ContentSettingsRunData.IsReadOnly)
 						.AddChoice(
 							id: "neutral_potion_modification",
 							label: Loc("SUNQIAN_UNIVERSE_COMMON.SETTINGS.neutralPotionModificationLabel", "允许修改中立药水"),

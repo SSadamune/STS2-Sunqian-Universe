@@ -4,7 +4,7 @@ using System.Linq;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Runs;
 using Squ.Character;
-using STS2RitsuLib.Data;
+using Squ.RunData;
 
 namespace Squ.Settings;
 
@@ -24,9 +24,8 @@ public static class NeutralPotionModificationPolicy
 	{
 		ArgumentNullException.ThrowIfNull(potion);
 
-		NeutralContentPermissionMode mode = ModDataStore.For(SquMod.ModId)
-			.Get<SquSettings>(SquSettings.DataKey)
-			.NeutralPotionModification;
+		NeutralContentPermissionMode mode =
+			ContentSettingsRunData.NeutralPotionModification;
 
 		return mode switch
 		{

@@ -349,11 +349,6 @@ internal static class SquSfx
 		}
 
 		float volume = SquSettings.SfxLinearMultiplier;
-		if (volume <= 0f)
-		{
-			return;
-		}
-
 		GodotObject? instance = FmodStudioEventInstances.TryCreate(eventPath);
 		if (instance == null)
 		{

@@ -8,7 +8,7 @@ using MegaCrit.Sts2.Core.Models.CardPools;
 using MegaCrit.Sts2.Core.Runs;
 using Squ.Cards;
 using Squ.Character;
-using STS2RitsuLib.Data;
+using Squ.RunData;
 
 namespace Squ.Settings;
 
@@ -20,9 +20,8 @@ public static class NeutralCardRegistrationPolicy
 {
 	public static bool ShouldInclude()
 	{
-		NeutralContentPermissionMode mode = ModDataStore.For(SquMod.ModId)
-			.Get<SquSettings>(SquSettings.DataKey)
-			.NeutralCardRegistration;
+		NeutralContentPermissionMode mode =
+			ContentSettingsRunData.NeutralCardRegistration;
 
 		return mode switch
 		{

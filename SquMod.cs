@@ -90,6 +90,7 @@ public static class SquMod
 		AllInResolutionTracker.Initialize();
 		RitsuLibFramework.RegisterModelCapability<SlightRevisionCapability>(ModId);
 		RitsuLibFramework.RegisterModelCapability<NightRaidWuchaoStrikeCapability>(ModId);
+		ContentSettingsRunData.Initialize();
 		RunReloadCount.Initialize();
 		DailyWageRunData.Initialize();
 		SelfDecapitationReviveData.Initialize();
