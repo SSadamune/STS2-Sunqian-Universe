@@ -11,6 +11,7 @@
 {25843eb8-0f79-4253-aed6-bee1449d8e7e} bus:/master/sfx/chorus
 {9062adad-d974-41ef-b812-79c56bb6c25f} bus:/master/sfx_ducking_bass
 {bfa231d3-c7a0-4395-bb21-4afdf4149043} bus:/master/sfx_ducking_big
+{8362a1ef-2add-48c3-85e9-287078234c4e} event:/sunqian_universe/music/SongOfGuanYu
 {ea805add-ecda-4cfb-a5c4-295d960f51e7} event:/sunqian_universe/sfx/一人坚守南郡城
 {634747f4-ee4c-41be-9d36-f9958a348430} event:/sunqian_universe/sfx/一把叫仁之剑，一把叫义之剑
 {a4c8543f-c171-4d7a-9266-728953ec401a} event:/sunqian_universe/sfx/三叔四伯-三叔四伯，不必多礼

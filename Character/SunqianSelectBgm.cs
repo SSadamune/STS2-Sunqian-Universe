@@ -1,61 +1,48 @@
 #nullable enable
-using System;
+using Godot;
 using STS2RitsuLib.Audio;
 
 namespace Squ.Character;
 
 /// <summary>
 /// 角色选择界面选中孙乾（显示 bg169 背景）时播放的 BGM。
-/// 选人曲是流式 MP3，不在 FMOD DSP 图里；开始播放时采样主音量与音乐总线，跟随游戏音量滑条。
+/// 音乐由模组 FMOD Bank 提供，并路由到游戏的 music 总线。
 /// </summary>
 internal static class SunqianSelectBgm
 {
-	public const string ResourcePath = "res://audio/music/SongOfGuanYu.mp3";
+	public const string EventPath = "event:/sunqian_universe/music/SongOfGuanYu";
 
 	private const string MenuMusicEventPath = "event:/music/menu_update";
-	private const string Channel = "sunqian_select_bgm";
 
-	private static AudioMusicHandle? _music;
-
-	public static void Register()
-	{
-		FmodStudioStreamingFiles.TryPreloadResourceAsStreamingMusic(ResourcePath);
-	}
+	private static GodotObject? _music;
 
 	public static void Play()
 	{
-		if (_music is { IsValid: true })
+		if (_music != null)
 		{
 			return;
 		}
 
-		StopOurMusic();
-
-		// 流式 MP3 不会替换原版 Studio 菜单曲，先让出原版音乐槽，避免叠音。
+		// 孙乾选人曲接管菜单音乐时，先停止原版唯一音乐槽，避免叠音。
 		GameFmod.Studio.StopMusic();
 
-		AudioMusicHandle? handle = GameAudioService.Shared.PlayMusic(
-			AudioSource.StreamingResourceMusic(ResourcePath),
-			new AudioPlaybackOptions
-			{
-				Volume = SampleMusicVolume(),
-				Scope = AudioLifecycleScope.Manual,
-				Routing = new AudioRoutingOptions
-				{
-					Channel = Channel,
-					ChannelMode = AudioChannelMode.ReplaceExisting,
-				},
-			});
-
-		if (handle is not { IsValid: true })
+		GodotObject? instance = FmodStudioEventInstances.TryCreate(EventPath);
+		if (instance == null)
 		{
-			handle?.Dispose();
-			_music = null;
+			SquMod.Logger.Error($"[Audio] Failed to create Sunqian select BGM event: {EventPath}");
 			PlayVanillaMenuMusic();
 			return;
 		}
 
-		_music = handle;
+		if (!FmodStudioEventInstances.TryStart(instance))
+		{
+			FmodStudioEventInstances.TryRelease(instance);
+			SquMod.Logger.Error($"[Audio] Failed to start Sunqian select BGM event: {EventPath}");
+			PlayVanillaMenuMusic();
+			return;
+		}
+
+		_music = instance;
 	}
 
 	public static void RestoreMenuIfPlaying()
@@ -76,31 +63,20 @@ internal static class SunqianSelectBgm
 
 	private static void StopOurMusic()
 	{
-		_music?.TryStop();
-		_music?.Dispose();
+		GodotObject? instance = _music;
 		_music = null;
+		if (instance == null)
+		{
+			return;
+		}
+
+		FmodStudioEventInstances.TryStop(instance, allowFadeOut: false);
+		FmodStudioEventInstances.TryRelease(instance);
 	}
 
 	private static void PlayVanillaMenuMusic()
 	{
 		// 原版菜单负责这条 BGM；必须走原版唯一音乐槽，不能创建并遗失新的托管句柄。
 		GameFmod.Studio.PlayMusic(MenuMusicEventPath);
-	}
-
-	private static float SampleMusicVolume()
-	{
-		float master = SampleBusVolume(FmodStudioRouting.MasterBus);
-		float music = SampleBusVolume(FmodStudioRouting.MusicBus);
-		return master * music;
-	}
-
-	private static float SampleBusVolume(string busPath)
-	{
-		if (FmodStudioBusAccess.TryGetBus(busPath) == null)
-		{
-			return 1f;
-		}
-
-		return Math.Max(0f, FmodStudioBusAccess.TryGetVolume(busPath));
 	}
 }

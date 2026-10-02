@@ -41,7 +41,6 @@ public static class SquMod
 		SquTargetTypes.Register();
 		RitsuLibFramework.EnsureGodotScriptsRegistered(assembly, Logger);
 		ModTypeDiscoveryHub.RegisterModAssembly(ModId, assembly);
-		SunqianSelectBgm.Register();
 		SquSfx.Register();
 		SquSettingsPage.Register();
 
