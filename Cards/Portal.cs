@@ -47,7 +47,8 @@ public sealed class Portal : ModCardTemplate
 			SquSfx.PortalChanganMeiwuEvent,
 			SquSfx.PortalJizhouJingzhouEvent,
 			SquSfx.PortalGansuHenanEvent,
-			SquSfx.PortalYellowRiverRunanEvent);
+			SquSfx.PortalYellowRiverRunanEvent,
+			SquSfx.PortalZiwuValleyEvent);
 		await ScryCmd.Execute(choiceContext, this);
 
 		CardModel? drawn = await CardPileCmd.Draw(choiceContext, Owner);

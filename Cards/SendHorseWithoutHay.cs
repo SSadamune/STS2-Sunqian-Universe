@@ -6,6 +6,7 @@ using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.Models;
 using Squ;
+using Squ.Audio;
 using Squ.Character;
 using STS2RitsuLib.Interop.AutoRegistration;
 using STS2RitsuLib.Scaffolding.Content;
@@ -56,6 +57,11 @@ public sealed class SendHorseWithoutHay : ChargeCardTemplate
 
 	protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
 	{
+		if (IsCharged)
+		{
+			SquSfx.Play(SquSfx.SendHorseWithoutHayPlayChargedEvent);
+		}
+
 		await CardPileCmd.Draw(choiceContext, DynamicVars.Cards.IntValue, Owner);
 	}
 
@@ -77,8 +83,14 @@ public sealed class SendHorseWithoutHay : ChargeCardTemplate
 			return Task.CompletedTask;
 		}
 
+		bool wasCharged = IsCharged;
 		_spentEnergy += energySpent;
 		RefreshDrawnCards();
+		if (!wasCharged && IsCharged)
+		{
+			SquSfx.Play(SquSfx.SendHorseWithoutHayChargedEvent);
+		}
+
 		return Task.CompletedTask;
 	}
 

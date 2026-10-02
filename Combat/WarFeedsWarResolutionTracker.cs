@@ -45,6 +45,7 @@ public static class WarFeedsWarResolutionTracker
 		}
 
 		bool offeredBlitzkriegReward = false;
+		bool offeredGreatestPassReward = false;
 
 		foreach (Player player in room.CombatState.Players)
 		{
@@ -68,12 +69,21 @@ public static class WarFeedsWarResolutionTracker
 				{
 					offeredBlitzkriegReward = true;
 				}
+				else if (cardId == ModelDb.Card<GreatestPassOfCentralPlains>().Id)
+				{
+					offeredGreatestPassReward = true;
+				}
 			}
 		}
 
 		if (offeredBlitzkriegReward)
 		{
 			SquSfx.PlayDuringCombatEnd(SquSfx.BlitzkriegThreeHoursBreakJingzhouEvent);
+		}
+
+		if (offeredGreatestPassReward)
+		{
+			SquSfx.PlayDuringCombatEnd(SquSfx.GreatestPassOfCentralPlainsCombatRewardEvent);
 		}
 	}
 

@@ -8,6 +8,7 @@ using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Models.Cards;
 using Squ;
+using Squ.Audio;
 using Squ.Character;
 using Squ.Powers;
 using Squ.Script;
@@ -50,6 +51,7 @@ public sealed class NeutralAmbushScript : ScriptCardTemplate
 
 	protected override async Task PlayScriptAsync(PlayerChoiceContext choiceContext, CardPlay cardPlay)
 	{
+		SquSfx.Play(SquSfx.NeutralAmbushPlayEvent);
 		Player player = Owner;
 		ICombatState combatState = player.Creature.CombatState
 			?? throw new System.InvalidOperationException("NeutralAmbushScript requires an active combat.");

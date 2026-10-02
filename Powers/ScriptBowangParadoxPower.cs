@@ -10,6 +10,7 @@ using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.Models;
 using Squ;
+using Squ.Audio;
 using Squ.Cards;
 using STS2RitsuLib.Interop.AutoRegistration;
 using STS2RitsuLib.Scaffolding.Content;
@@ -61,6 +62,7 @@ public sealed class ScriptBowangParadoxPower : ScriptPowerTemplate
 
 	public override async Task AfterRemoved(Creature oldOwner)
 	{
+		SquSfx.Play(SquSfx.BowangParadoxRemovedEvent);
 		decimal stacks = GetInternalData<Data>().TinderStacks;
 		Player? player = oldOwner.Player;
 		if (stacks > 0 && player is not null)

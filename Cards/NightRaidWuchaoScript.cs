@@ -9,6 +9,7 @@ using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using Squ;
+using Squ.Audio;
 using Squ.Character;
 using Squ.Powers;
 using Squ.Script;
@@ -60,6 +61,7 @@ public sealed class NightRaidWuchaoScript : ScriptCardTemplate
 
 	protected override async Task PlayScriptAsync(PlayerChoiceContext choiceContext, CardPlay cardPlay)
 	{
+		SquSfx.PlayRandom(RunState, SquSfx.NightRaidWuchaoPlayEvents);
 		Player player = Owner;
 		ICombatState combatState = player.Creature.CombatState
 			?? throw new InvalidOperationException("NightRaidWuchaoScript requires an active combat.");

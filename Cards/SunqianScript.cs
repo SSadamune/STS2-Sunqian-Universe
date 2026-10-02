@@ -7,7 +7,9 @@ using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.Models.Powers;
 using Squ;
+using Squ.Audio;
 using Squ.Character;
+using Squ.Combat;
 using Squ.Powers;
 using STS2RitsuLib.Interop.AutoRegistration;
 using STS2RitsuLib.Scaffolding.Content;
@@ -48,6 +50,19 @@ public sealed class SunqianScript : ScriptCardTemplate
 
 	protected override async Task PlayScriptAsync(PlayerChoiceContext choiceContext, CardPlay cardPlay)
 	{
+		CardDrawPlayRateTracker.TryGetStats(
+			Owner,
+			this,
+			CardDrawPlayRateTracker.MaxStoredCombats,
+			includeCurrentCombat: false,
+			out int playFromHandCount,
+			out int handEntryCount);
+		bool frequentlyPlayed = handEntryCount > 0
+			&& (long)playFromHandCount * 2 >= handEntryCount;
+		SquSfx.Play(frequentlyPlayed
+			? SquSfx.SunqianScriptFrequentAppearanceEvent
+			: SquSfx.SunqianScriptRareTrueFormEvent);
+
 		await PowerCmd.Apply<TempDexFromSunqianScriptPower>(
 			choiceContext,
 			Owner.Creature,

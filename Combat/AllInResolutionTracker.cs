@@ -9,6 +9,7 @@ using MegaCrit.Sts2.Core.Combat;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.Entities.Players;
 using MegaCrit.Sts2.Core.Models;
+using Squ.Audio;
 using Squ.Powers;
 using STS2RitsuLib;
 
@@ -165,6 +166,7 @@ public static class AllInResolutionTracker
 			Player = card.Owner,
 			BonusPercent = power.Amount,
 		};
+		SquSfx.PlayRandom(card.Owner.RunState, SquSfx.AllInTriggerEvents);
 
 		if (!ActiveScopes.TryGetValue(scope.Player.NetId, out Stack<ResolutionScope>? scopes))
 		{

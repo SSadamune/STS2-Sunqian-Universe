@@ -7,6 +7,7 @@ using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.Models.Powers;
 using Squ;
+using Squ.Audio;
 using Squ.Character;
 using Squ.Script;
 using STS2RitsuLib.Interop.AutoRegistration;
@@ -57,6 +58,7 @@ public sealed class WrapUp : ModCardTemplate
 
 	protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
 	{
+		SquSfx.PlayRandom(RunState, SquSfx.WrapUpEvents);
 		bool wrap = await ScriptSystem.TryConsumeWrapAsync(Owner.Creature);
 		await ApplyVigor(choiceContext, DynamicVars[nameof(VigorPower)].BaseValue);
 		if (wrap)

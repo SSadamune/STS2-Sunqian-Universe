@@ -52,7 +52,7 @@ public sealed class TooKindToBeTrue : ModCardTemplate
 
 	protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
 	{
-		SquSfx.Play(SquSfx.TooKindToBeTrueEvent);
+		SquSfx.PlayRandom(RunState, SquSfx.TooKindToBeTruePlayEvents);
 		CardSelectorPrefs prefs = new(CardSelectorPrefs.TransformSelectionPrompt, 1);
 		CardModel? attack = (await CardSelectCmd.FromHand(
 			choiceContext,

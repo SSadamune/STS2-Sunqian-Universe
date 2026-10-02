@@ -7,6 +7,7 @@ using MegaCrit.Sts2.Core.Entities.Players;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.Models;
+using Squ.Audio;
 using Squ.Cards;
 using STS2RitsuLib.Interop.AutoRegistration;
 using STS2RitsuLib.Scaffolding.Content;
@@ -44,6 +45,7 @@ public sealed class ScriptSunqianPower : ScriptPowerTemplate
 
 	public override async Task AfterRemoved(Creature oldOwner)
 	{
+		SquSfx.Play(SquSfx.SunqianScriptRemovedEvent);
 		int drawOnLift = GetInternalData<Data>().DrawOnLift;
 		Player? player = oldOwner.Player;
 		if (drawOnLift > 0 && player is not null)

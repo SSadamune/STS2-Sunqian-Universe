@@ -8,6 +8,7 @@ using MegaCrit.Sts2.Core.Entities.Players;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Models;
+using Squ.Audio;
 using Squ.Character;
 using Squ.Combat;
 using Squ.Script;
@@ -46,6 +47,7 @@ public sealed class DrinkingTableCulture : ModCardTemplate
 	protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
 	{
 		ArgumentNullException.ThrowIfNull(cardPlay.Target, nameof(cardPlay.Target));
+		SquSfx.Play(SquSfx.DrinkingTableCultureEvent);
 
 		ICombatState combatState = CombatState
 			?? throw new InvalidOperationException("DrinkingTableCulture requires an active combat.");

@@ -69,7 +69,9 @@ public sealed class FingerSnapStrike : ChargeCardTemplate
 		SquSfx.PlayRandom(
 			RunState,
 			SquSfx.FingerStrikeDongZhuoHeadEvent,
-			SquSfx.FingerStrikeRemainingLandEvent);
+			SquSfx.FingerStrikeRemainingLandEvent,
+			SquSfx.FingerStrikeInstantHeadEvent,
+			SquSfx.FingerStrikeDestroyXiliangArmyEvent);
 		await DamageCmd.Attack(DynamicVars.Damage.BaseValue)
 			.FromCard(this, cardPlay)
 			.Targeting(cardPlay.Target)

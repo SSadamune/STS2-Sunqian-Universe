@@ -6,6 +6,7 @@ using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.Cards;
+using Squ.Audio;
 using Squ.Cards;
 using STS2RitsuLib.Interop.AutoRegistration;
 using STS2RitsuLib.Scaffolding.Content;
@@ -37,6 +38,7 @@ public sealed class ScriptNeutralAmbushPower : ScriptPowerTemplate
 			return;
 		}
 
+		SquSfx.Play(SquSfx.NeutralAmbushTriggerEvent);
 		Flash();
 		await CardCmd.AutoPlay(choiceContext, card, null);
 	}
