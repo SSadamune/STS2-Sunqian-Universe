@@ -93,7 +93,7 @@ public sealed class JuggleMultipleShoots : ModCardTemplate
 	];
 
 	public JuggleMultipleShoots()
-		: base(0, CardType.Skill, CardRarity.Uncommon, TargetType.Self)
+		: base(1, CardType.Skill, CardRarity.Uncommon, TargetType.Self)
 	{
 	}
 

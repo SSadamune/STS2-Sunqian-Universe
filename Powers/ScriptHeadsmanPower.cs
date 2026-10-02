@@ -18,7 +18,7 @@ using STS2RitsuLib.Scaffolding.Content;
 namespace Squ.Powers;
 
 /// <summary>
-/// 刽子手剧本：持有者的攻击牌本次打出（含仁义双股剑等原地重放带来的所有额外结算）
+/// 刀斧手剧本：持有者的攻击牌本次打出（含仁义双股剑等原地重放带来的所有额外结算）
 /// 期间只要击杀过至少一个敌人，在这次打出彻底结束后恢复一次其消耗的活力与能量。
 /// 无论中途杀死了几个敌人、经历了几次 <see cref="CardPlay.PlayIndex"/>，都只在
 /// 最后一次结算完成后统一恢复一次——“打出时记录，打出后恢复”，而不是每次击杀各自恢复。
@@ -26,7 +26,7 @@ namespace Squ.Powers;
 /// 否则会出现“环境伤害杀敌后白送一份活力”的问题；能量恢复不受此限制。
 /// </summary>
 [RegisterPower]
-public sealed class ScriptExecutionerPower : ScriptPowerTemplate
+public sealed class ScriptHeadsmanPower : ScriptPowerTemplate
 {
 	private sealed class Data
 	{
@@ -60,8 +60,8 @@ public sealed class ScriptExecutionerPower : ScriptPowerTemplate
 	}
 
 	public override PowerAssetProfile AssetProfile => new(
-		IconPath: "res://images/powers/ScriptExecutionerPower.png",
-		BigIconPath: "res://images/powers/ScriptExecutionerPowerBig.png");
+		IconPath: "res://images/powers/ScriptHeadsmanPower.png",
+		BigIconPath: "res://images/powers/ScriptHeadsmanPowerBig.png");
 
 	protected override object InitInternalData() => new Data();
 

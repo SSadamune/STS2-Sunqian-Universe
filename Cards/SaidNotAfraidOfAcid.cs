@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using MegaCrit.Sts2.Core.CardSelection;
 using MegaCrit.Sts2.Core.Combat;
 using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
@@ -19,7 +20,7 @@ using STS2RitsuLib.Scaffolding.Content;
 
 namespace Squ.Cards;
 
-/// <summary>由《咱家不怕酸》的「稍作修改」产生：攻击后消耗不能被打出的牌，并获得等量的酒。</summary>
+/// <summary>由《咱家不怕酸》的「稍作修改」产生：攻击后消耗任意张不能被打出的手牌，并获得等量的酒。</summary>
 [RegisterCard(typeof(TokenCardPool), StableEntryStem = "said_not_afraid_of_acid")]
 public sealed class SaidNotAfraidOfAcid : ModCardTemplate
 {
@@ -59,16 +60,30 @@ public sealed class SaidNotAfraidOfAcid : ModCardTemplate
 
 		ICombatState combatState = CombatState
 			?? throw new InvalidOperationException("SaidNotAfraidOfAcid requires an active combat.");
-		List<CardModel> unplayableCards = PileType.Hand.GetPile(Owner).Cards
-			.Where(card => card.Keywords.Contains(CardKeyword.Unplayable))
-			.ToList();
-
-		foreach (CardModel unplayableCard in unplayableCards)
+		int unplayableCount = PileType.Hand.GetPile(Owner).Cards
+			.Count(card => card.Keywords.Contains(CardKeyword.Unplayable));
+		if (unplayableCount == 0)
 		{
-			await CardCmd.Exhaust(choiceContext, unplayableCard);
+			return;
 		}
 
-		for (int i = 0; i < unplayableCards.Count; i++)
+		CardSelectorPrefs prefs = new(
+			CardSelectorPrefs.ExhaustSelectionPrompt,
+			minCount: 0,
+			maxCount: unplayableCount);
+		List<CardModel> selected = (await CardSelectCmd.FromHand(
+			choiceContext,
+			Owner,
+			prefs,
+			static card => card.Keywords.Contains(CardKeyword.Unplayable),
+			this)).ToList();
+
+		foreach (CardModel selectedCard in selected)
+		{
+			await CardCmd.Exhaust(choiceContext, selectedCard);
+		}
+
+		for (int i = 0; i < selected.Count; i++)
 		{
 			await GeneratedCombatCards.AddToHandInCombat<Wine>(
 				combatState,

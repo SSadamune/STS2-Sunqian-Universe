@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using MegaCrit.Sts2.Core.Combat;
+using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.Entities.Creatures;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
@@ -19,7 +20,7 @@ using STS2RitsuLib.Scaffolding.Content;
 namespace Squ.Cards;
 
 /// <summary>
-/// 夜观天象：不能被打出。进入弃牌堆时预见 3（升级后 5）。
+/// 夜观天象：不能被打出。抽到此牌时抽 1 张牌；进入弃牌堆时预见 3（升级后 5）。
 /// 移动钩子统一记录入弃牌堆事件；有弃牌上下文时立即结算，否则延后至当前阵营回合结束。
 /// </summary>
 [RegisterCard(typeof(SunqianCardPool), StableEntryStem = "stargazing")]
@@ -57,14 +58,30 @@ public sealed class Stargazing : ModCardTemplate
 		PileType oldPileType,
 		AbstractModel? clonedBy)
 	{
-		if (card == this
-			&& oldPileType != PileType.Discard
-			&& Pile?.Type == PileType.Discard)
+		if (card != this)
+		{
+			return Task.CompletedTask;
+		}
+
+		if (oldPileType != PileType.Discard && Pile?.Type == PileType.Discard)
 		{
 			_pendingDiscardPileEntries++;
 		}
 
 		return Task.CompletedTask;
+	}
+
+	public override Task AfterCardDrawn(
+		PlayerChoiceContext choiceContext,
+		CardModel card,
+		bool fromHandDraw)
+	{
+		if (card != this)
+		{
+			return Task.CompletedTask;
+		}
+
+		return DrawOne(choiceContext);
 	}
 
 	public override Task AfterCardDiscarded(PlayerChoiceContext choiceContext, CardModel card)
@@ -107,6 +124,16 @@ public sealed class Stargazing : ModCardTemplate
 				await card.ConsumeOneDiscardPileEntry(choiceContext);
 			}
 		}
+	}
+
+	private Task DrawOne(PlayerChoiceContext choiceContext)
+	{
+		if (CombatManager.Instance.IsOverOrEnding || Owner is null)
+		{
+			return Task.CompletedTask;
+		}
+
+		return CardPileCmd.Draw(choiceContext, 1, Owner);
 	}
 
 	private Task ConsumeOneDiscardPileEntry(PlayerChoiceContext choiceContext)

@@ -186,7 +186,7 @@ internal static class SquSfx
 	public const string SunqianUniverseManyFormsEvent = "event:/sunqian_universe/sfx/孙乾宇宙-孙乾变化万千，以各种形态登场";
 	public const string LittleThirdBigFourthEvent = "event:/sunqian_universe/sfx/三叔四伯-三叔四伯，不必多礼";
 	public const string TheBackupsBackupJianYongPlaysSunqianEvent = "event:/sunqian_universe/sfx/龙套的替身-孙乾由简雍来演";
-	public const string TheBackupsBackupSunqianPlaysExecutionerEvent = "event:/sunqian_universe/sfx/龙套的替身-让简雍来演孙乾，孙乾演刀斧手";
+	public const string TheBackupsBackupSunqianPlaysHeadsmanEvent = "event:/sunqian_universe/sfx/龙套的替身-让简雍来演孙乾，孙乾演刀斧手";
 	public const string BasicStrikeCaoCaoEvent = "event:/sunqian_universe/sfx/打击-曹操";
 	public const string BasicStrikeLiuBeiEvent = "event:/sunqian_universe/sfx/打击-刘备";
 	public const string BasicStrikeNailongEvent = "event:/sunqian_universe/sfx/打击-奶龙";
@@ -201,7 +201,7 @@ internal static class SquSfx
 	public static readonly string[] TheBackupsBackupEvents =
 	[
 		TheBackupsBackupJianYongPlaysSunqianEvent,
-		TheBackupsBackupSunqianPlaysExecutionerEvent,
+		TheBackupsBackupSunqianPlaysHeadsmanEvent,
 	];
 
 	public static readonly string[] BasicStrikeEvents =

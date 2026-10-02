@@ -17,8 +17,8 @@ using STS2RitsuLib.Scaffolding.Content;
 
 namespace Squ.Cards;
 
-[RegisterCard(typeof(SunqianCardPool), StableEntryStem = "executioner_script")]
-public sealed class ExecutionerScript : ScriptCardTemplate
+[RegisterCard(typeof(SunqianCardPool), StableEntryStem = "headsman_script")]
+public sealed class HeadsmanScript : ScriptCardTemplate
 {
 	public const int BaseVigor = 3;
 	public const int UpgradedVigor = 5;
@@ -46,9 +46,9 @@ public sealed class ExecutionerScript : ScriptCardTemplate
 	];
 
 	public override CardAssetProfile AssetProfile => new(
-		PortraitPath: "res://images/cards/ExecutionerScript.png");
+		PortraitPath: "res://images/cards/HeadsmanScript.png");
 
-	public ExecutionerScript()
+	public HeadsmanScript()
 		: base(1, CardType.Skill, CardRarity.Common, TargetType.AnyEnemy, true)
 	{
 	}
@@ -71,7 +71,7 @@ public sealed class ExecutionerScript : ScriptCardTemplate
 			Owner.Creature,
 			this);
 
-		await PowerCmd.Apply<ScriptExecutionerPower>(
+		await PowerCmd.Apply<ScriptHeadsmanPower>(
 			choiceContext,
 			Owner.Creature,
 			1m,
