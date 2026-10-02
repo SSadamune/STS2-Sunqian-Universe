@@ -23,9 +23,7 @@ namespace Squ.Cards;
 public sealed class ChickenFootCheeseScript : ScriptCardTemplate, IRandomEnemyTargetCount
 {
 	public const int BaseDamage = 6;
-	public const int UpgradedDamage = 9;
 	public const int RandomEnemyTargetCount = 2;
-	public const int HitCountPerTarget = 2;
 
 	protected override IEnumerable<DynamicVar> CanonicalVars =>
 	[
@@ -41,7 +39,6 @@ public sealed class ChickenFootCheeseScript : ScriptCardTemplate, IRandomEnemyTa
 	protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
 	[
 		..HoverTipFactory.FromCardWithCardHoverTips<ChickenFootCheeseScriptStrikePreview>(IsUpgraded),
-		HoverTipFactory.FromPower<ScriptChickenFootCheesePower>(),
 	];
 
 	public override CardAssetProfile AssetProfile => new(
@@ -63,7 +60,9 @@ public sealed class ChickenFootCheeseScript : ScriptCardTemplate, IRandomEnemyTa
 			this,
 			choiceContext,
 			RandomEnemyTargetCount,
-			hitCountPerTarget: HitCountPerTarget,
+			hitCountPerTarget: IsUpgraded
+				? ScriptChickenFootCheesePower.UpgradedHitCount
+				: ScriptChickenFootCheesePower.BaseHitCount,
 			cardPlay: cardPlay);
 
 		await PowerCmd.Apply<ScriptChickenFootCheesePower>(
@@ -74,8 +73,4 @@ public sealed class ChickenFootCheeseScript : ScriptCardTemplate, IRandomEnemyTa
 			this);
 	}
 
-	protected override void OnUpgrade()
-	{
-		DynamicVars.Damage.UpgradeValueBy(UpgradedDamage - BaseDamage);
-	}
 }

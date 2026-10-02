@@ -15,16 +15,32 @@ namespace Squ.Powers;
 
 /// <summary>
 /// 「剧本：鸡脚芝士」：剧本存续期间，基础 <see cref="CardTag.Strike"/> 牌改为随机两名敌人目标。
+/// 强化过的剧本使每次伤害变为三次。
 /// </summary>
 [RegisterPower]
 public sealed class ScriptChickenFootCheesePower : ScriptPowerTemplate
 {
+	private sealed class Data
+	{
+		public int HitCountPerTarget = BaseHitCount;
+	}
+
 	public override PowerAssetProfile AssetProfile => new(
 		IconPath: "res://images/powers/ScriptChickenFootCheesePower.png",
 		BigIconPath: "res://images/powers/ScriptChickenFootCheesePowerBig.png");
 
 	public const int RedirectRandomEnemyCount = 2;
-	public const int RedirectHitCountPerTarget = 2;
+	public const int BaseHitCount = 2;
+	public const int UpgradedHitCount = 3;
+
+	public int HitCountPerTarget => GetInternalData<Data>().HitCountPerTarget;
+
+	protected override string SmartDescriptionLocKey =>
+		HitCountPerTarget >= UpgradedHitCount
+			? base.Id.Entry + ".smartDescriptionUpgraded"
+			: base.SmartDescriptionLocKey;
+
+	protected override object InitInternalData() => new Data();
 
 	public static bool ShouldRedirectBasicStrike(CardModel card)
 	{
@@ -53,6 +69,8 @@ public sealed class ScriptChickenFootCheesePower : ScriptPowerTemplate
 
 	protected override Task OnScriptApplied(Creature? applier, CardModel? cardSource)
 	{
+		int hits = cardSource is { IsUpgraded: true } ? UpgradedHitCount : BaseHitCount;
+		GetInternalData<Data>().HitCountPerTarget = hits;
 		SquStrikeRedirectPatches.EnsureApplied();
 		RefreshOnTable(Owner);
 		return Task.CompletedTask;

@@ -21,16 +21,15 @@ public static class SquBasicStrikeRedirect
 		PlayerChoiceContext choiceContext,
 		CardPlay? cardPlay = null)
 	{
-		if (card.Owner?.Creature?.GetPower<ScriptChickenFootCheesePower>() is { } power)
-		{
-			power.TriggerForRedirectedStrike();
-		}
+		ScriptChickenFootCheesePower? power =
+			card.Owner?.Creature?.GetPower<ScriptChickenFootCheesePower>();
+		power?.TriggerForRedirectedStrike();
 
 		await SquRandomEnemyTargeting.ExecuteDistinctRandomEnemyDamage(
 			card,
 			choiceContext,
 			ScriptChickenFootCheesePower.RedirectRandomEnemyCount,
-			hitCountPerTarget: ScriptChickenFootCheesePower.RedirectHitCountPerTarget,
+			hitCountPerTarget: power?.HitCountPerTarget ?? ScriptChickenFootCheesePower.BaseHitCount,
 			cardPlay: cardPlay);
 	}
 }

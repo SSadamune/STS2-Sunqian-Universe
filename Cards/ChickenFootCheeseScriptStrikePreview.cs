@@ -20,7 +20,6 @@ namespace Squ.Cards;
 public sealed class ChickenFootCheeseScriptStrikePreview : ModCardTemplate, IRandomEnemyTargetCount
 {
 	public const int BaseDamage = 6;
-	public const int UpgradedDamage = 9;
 
 	protected override IEnumerable<DynamicVar> CanonicalVars =>
 	[
@@ -46,9 +45,8 @@ public sealed class ChickenFootCheeseScriptStrikePreview : ModCardTemplate, IRan
 			this,
 			choiceContext,
 			GetRandomEnemyTargetCount(),
-			hitCountPerTarget: ScriptChickenFootCheesePower.RedirectHitCountPerTarget,
+			hitCountPerTarget: IsUpgraded
+				? ScriptChickenFootCheesePower.UpgradedHitCount
+				: ScriptChickenFootCheesePower.BaseHitCount,
 			cardPlay: cardPlay);
-
-	protected override void OnUpgrade() =>
-		DynamicVars.Damage.UpgradeValueBy(UpgradedDamage - BaseDamage);
 }
