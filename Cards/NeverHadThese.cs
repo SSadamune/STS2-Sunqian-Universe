@@ -5,6 +5,7 @@ using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.HoverTips;
+using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.Powers;
 using Squ.Audio;
@@ -21,7 +22,14 @@ namespace Squ.Cards;
 [RegisterCard(typeof(SunqianCardPool), StableEntryStem = "never_had_these")]
 public sealed class NeverHadThese : ModCardTemplate
 {
-	public const int PowerAmount = 1;
+	public const int EnergyGain = 1;
+	public const int BaseDexterityGain = 1;
+	public const int UpgradedDexterityGain = 2;
+
+	protected override IEnumerable<DynamicVar> CanonicalVars =>
+	[
+		new PowerVar<DexterityPower>(BaseDexterityGain),
+	];
 
 	protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
 	[
@@ -81,13 +89,14 @@ public sealed class NeverHadThese : ModCardTemplate
 		await PowerCmd.Apply<NeverHadThesePower>(
 			choiceContext,
 			Owner.Creature,
-			PowerAmount,
+			EnergyGain,
 			Owner.Creature,
 			this);
 	}
 
 	protected override void OnUpgrade()
 	{
-		EnergyCost.UpgradeBy(-1);
+		DynamicVars[nameof(DexterityPower)].UpgradeValueBy(
+			UpgradedDexterityGain - BaseDexterityGain);
 	}
 }

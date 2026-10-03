@@ -3,11 +3,14 @@ using System.Threading.Tasks;
 using Godot;
 using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
+using MegaCrit.Sts2.Core.Entities.Creatures;
 using MegaCrit.Sts2.Core.Entities.Powers;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.HoverTips;
+using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.Powers;
+using Squ.Cards;
 using STS2RitsuLib.Interop.AutoRegistration;
 using STS2RitsuLib.Scaffolding.Content;
 
@@ -18,6 +21,11 @@ namespace Squ.Powers;
 [RegisterPower]
 public sealed class NeverHadThesePower : ModPowerTemplate
 {
+	protected override IEnumerable<DynamicVar> CanonicalVars =>
+	[
+		new PowerVar<DexterityPower>(0),
+	];
+
 	public override PowerType Type => PowerType.Buff;
 
 	public override PowerStackType StackType => PowerStackType.Counter;
@@ -34,6 +42,27 @@ public sealed class NeverHadThesePower : ModPowerTemplate
 	[
 		HoverTipFactory.FromPower<DexterityPower>(),
 	];
+
+	public override Task AfterApplied(Creature? applier, CardModel? cardSource)
+	{
+		AddDexterityFrom(cardSource);
+		return Task.CompletedTask;
+	}
+
+	public override Task AfterPowerAmountChanged(
+		PlayerChoiceContext choiceContext,
+		PowerModel power,
+		decimal amount,
+		Creature? applier,
+		CardModel? cardSource)
+	{
+		if (power == this && amount > 0m)
+		{
+			AddDexterityFrom(cardSource);
+		}
+
+		return Task.CompletedTask;
+	}
 
 	public override async Task AfterCardExhausted(
 		PlayerChoiceContext choiceContext,
@@ -54,8 +83,16 @@ public sealed class NeverHadThesePower : ModPowerTemplate
 		await PowerCmd.Apply<DexterityPower>(
 			choiceContext,
 			Owner,
-			Amount,
+			DynamicVars[nameof(DexterityPower)].BaseValue,
 			Owner,
 			card);
+	}
+
+	private void AddDexterityFrom(CardModel? cardSource)
+	{
+		decimal amount = cardSource is NeverHadThese { IsUpgraded: true }
+			? NeverHadThese.UpgradedDexterityGain
+			: NeverHadThese.BaseDexterityGain;
+		DynamicVars[nameof(DexterityPower)].BaseValue += amount;
 	}
 }

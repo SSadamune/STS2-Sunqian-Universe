@@ -109,6 +109,6 @@
   "SUNQIAN_UNIVERSE_POWER_IRON_CHAIN_POWER.description": "该敌人受到[gold]灼烧[/gold]伤害后，其余敌人受到等量[gold]环境伤害[/gold]。",
   "SUNQIAN_UNIVERSE_POWER_IRON_CHAIN_POWER.smartDescription": "该敌人受到[gold]灼烧[/gold]伤害后，其余敌人受到等量[gold]环境伤害[/gold][blue]{Amount}[/blue]次。",
   "SUNQIAN_UNIVERSE_POWER_NEVER_HAD_THESE_POWER.title": "没有这些",
-  "SUNQIAN_UNIVERSE_POWER_NEVER_HAD_THESE_POWER.description": "每有一张[gold]家人[/gold]被[gold]消耗[/gold]，你获得{Amount:energyIcons()}和[blue]{Amount}[/blue]点[gold]敏捷[/gold]。",
-  "SUNQIAN_UNIVERSE_POWER_NEVER_HAD_THESE_POWER.smartDescription": "每有一张[gold]家人[/gold]被[gold]消耗[/gold]，你获得{Amount:energyIcons()}和[blue]{Amount}[/blue]点[gold]敏捷[/gold]。"
+  "SUNQIAN_UNIVERSE_POWER_NEVER_HAD_THESE_POWER.description": "每有一张[gold]家人[/gold]被[gold]消耗[/gold]，你获得{Amount:energyIcons()}和[blue]{DexterityPower:diff()}[/blue]点[gold]敏捷[/gold]。",
+  "SUNQIAN_UNIVERSE_POWER_NEVER_HAD_THESE_POWER.smartDescription": "每有一张[gold]家人[/gold]被[gold]消耗[/gold]，你获得{Amount:energyIcons()}和[blue]{DexterityPower:diff()}[/blue]点[gold]敏捷[/gold]。"
 }

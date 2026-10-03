@@ -27,7 +27,8 @@ public sealed class GoldenUprising : ModCardTemplate
 {
 	public const int BaseGoldCost = 10;
 	public const int GoldEscalationPerPlay = 10;
-	public const int CardPickCount = 2;
+	public const int BaseCardPickCount = 2;
+	public const int UpgradedCardPickCount = 3;
 	public const string GoldIncreaseVarName = "GoldIncrease";
 
 	private static readonly LocString SelectionPrompt =
@@ -36,13 +37,14 @@ public sealed class GoldenUprising : ModCardTemplate
 	protected override IEnumerable<DynamicVar> CanonicalVars =>
 	[
 		new GoldVar(BaseGoldCost),
-		new CardsVar(CardPickCount),
+		new CardsVar(BaseCardPickCount),
 		new DynamicVar(GoldIncreaseVarName, GoldEscalationPerPlay),
 	];
 
 	public override IEnumerable<CardKeyword> CanonicalKeywords =>
 	[
 		CardKeyword.Exhaust,
+		CardKeyword.Innate,
 	];
 
 	public override CardAssetProfile AssetProfile => new(
@@ -89,7 +91,7 @@ public sealed class GoldenUprising : ModCardTemplate
 
 	protected override void OnUpgrade()
 	{
-		RemoveKeyword(CardKeyword.Exhaust);
+		DynamicVars.Cards.UpgradeValueBy(UpgradedCardPickCount - BaseCardPickCount);
 	}
 
 	/// <summary>
@@ -99,6 +101,6 @@ public sealed class GoldenUprising : ModCardTemplate
 	{
 		int drawCount = PileType.Draw.GetPile(Owner).Cards.Count;
 		int handSpace = CardPile.MaxCardsInHand - PileType.Hand.GetPile(Owner).Cards.Count;
-		return Math.Min(CardPickCount, Math.Min(drawCount, handSpace));
+		return Math.Min(DynamicVars.Cards.IntValue, Math.Min(drawCount, handSpace));
 	}
 }

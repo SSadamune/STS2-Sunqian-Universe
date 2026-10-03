@@ -109,6 +109,6 @@
   "SUNQIAN_UNIVERSE_POWER_IRON_CHAIN_POWER.description": "Whenever this enemy takes [gold]Burning[/gold] damage, all other enemies take that much [gold]Environmental[/gold] damage.",
   "SUNQIAN_UNIVERSE_POWER_IRON_CHAIN_POWER.smartDescription": "Whenever this enemy takes [gold]Burning[/gold] damage, all other enemies take that much [gold]Environmental[/gold] damage [blue]{Amount}[/blue] {Amount:plural:time|times}.",
   "SUNQIAN_UNIVERSE_POWER_NEVER_HAD_THESE_POWER.title": "Never Had These",
-  "SUNQIAN_UNIVERSE_POWER_NEVER_HAD_THESE_POWER.description": "Whenever a [gold]Family[/gold] card is [gold]Exhausted[/gold], gain {Amount:energyIcons()} and [blue]{Amount}[/blue] [gold]Dexterity[/gold].",
-  "SUNQIAN_UNIVERSE_POWER_NEVER_HAD_THESE_POWER.smartDescription": "Whenever a [gold]Family[/gold] card is [gold]Exhausted[/gold], gain {Amount:energyIcons()} and [blue]{Amount}[/blue] [gold]Dexterity[/gold]."
+  "SUNQIAN_UNIVERSE_POWER_NEVER_HAD_THESE_POWER.description": "Whenever a [gold]Family[/gold] card is [gold]Exhausted[/gold], gain {Amount:energyIcons()} and [blue]{DexterityPower:diff()}[/blue] [gold]Dexterity[/gold].",
+  "SUNQIAN_UNIVERSE_POWER_NEVER_HAD_THESE_POWER.smartDescription": "Whenever a [gold]Family[/gold] card is [gold]Exhausted[/gold], gain {Amount:energyIcons()} and [blue]{DexterityPower:diff()}[/blue] [gold]Dexterity[/gold]."
 }

@@ -30,6 +30,9 @@ public sealed class MonsterHuntingMethod : ModCardTemplate
 	public const int BaseVigor = 10;
 	public const int UpgradedVigor = 15;
 
+	public override CardMultiplayerConstraint MultiplayerConstraint =>
+		CardMultiplayerConstraint.MultiplayerOnly;
+
 	protected override IEnumerable<DynamicVar> CanonicalVars =>
 	[
 		new PowerVar<RegenPower>(BaseRegen),
