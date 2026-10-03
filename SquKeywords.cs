@@ -101,8 +101,7 @@ public static class SquKeywords
 	{
 		LocString title = ModKeywordRegistry.GetTitle(WarFeedsWarId);
 		LocString description = new("card_keywords", "SUNQIAN_UNIVERSE_KEYWORD_WAR_FEEDS_WAR.cardHover");
-		CardModel canonical = ModelDb.GetById<CardModel>(card.Id);
-		description.Add("CardName", canonical.Title);
+		description.Add("CardName", card.Title);
 		return new HoverTip(title, description, icon: null);
 	}
 

@@ -30,7 +30,7 @@ namespace Squ.Cards;
 public sealed class GreatestPassOfCentralPlains : ModCardTemplate
 {
 	public const int BlockAmount = 16;
-	public const int UpgradedBlockAmount = 32;
+	public const int UpgradedBlockAmount = 24;
 
 	protected override IEnumerable<DynamicVar> CanonicalVars =>
 	[
