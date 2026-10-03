@@ -43,7 +43,11 @@ public sealed class CelebrateMourning : ModCardTemplate
 	{
 		get
 		{
-			List<IHoverTip> tips = [HoverTipFactory.FromPower<VigorPower>()];
+			List<IHoverTip> tips =
+			[
+				HoverTipFactory.FromPower<VigorPower>(),
+				SquCommonL10n.PlayRateHoverTip(),
+			];
 			List<CardModel> triggerTargets = GetReturnTriggerTargets();
 			IHoverTip? triggerTip = CreateReturnTriggerHoverTip(triggerTargets);
 			if (triggerTip != null)

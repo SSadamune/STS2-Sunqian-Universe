@@ -1,3 +1,4 @@
+using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Localization;
 using STS2RitsuLib;
 
@@ -23,6 +24,10 @@ public static class SquCommonL10n
 		"SUNQIAN_UNIVERSE_COMMON.NEUTRAL_CARD_ADDED.annotation";
 	public const string NeutralPotionModifiedAnnotationKey =
 		"SUNQIAN_UNIVERSE_COMMON.NEUTRAL_POTION_MODIFIED.annotation";
+	public const string PlayRateTitleKey =
+		"SUNQIAN_UNIVERSE_COMMON.PLAY_RATE.title";
+	public const string PlayRateAnnotationKey =
+		"SUNQIAN_UNIVERSE_COMMON.PLAY_RATE.annotation";
 
 	public static string Table =>
 		RitsuLibFramework.GetI18NLocTableId(SquMod.ModId, SquMod.CommonL10nStem);
@@ -49,4 +54,9 @@ public static class SquCommonL10n
 
 	public static LocString NeutralPotionModifiedAnnotation() =>
 		new(Table, NeutralPotionModifiedAnnotationKey);
+
+	public static IHoverTip PlayRateHoverTip() =>
+		new HoverTip(
+			new LocString(Table, PlayRateTitleKey),
+			new LocString(Table, PlayRateAnnotationKey));
 }

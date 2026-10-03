@@ -61,8 +61,8 @@ public abstract class FamilyCardTemplate : ModCardTemplate
 
 	protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
 		BlockAmount > 0
-			? [HoverTipFactory.Static(StaticHoverTip.Block)]
-			: [];
+			? [SquCommonL10n.PlayRateHoverTip(), HoverTipFactory.Static(StaticHoverTip.Block)]
+			: [SquCommonL10n.PlayRateHoverTip()];
 
 	protected FamilyCardTemplate(int energyCost = -1)
 		: base(energyCost, CardType.Quest, CardRarity.Quest, TargetType.None, showInCardLibrary: false)

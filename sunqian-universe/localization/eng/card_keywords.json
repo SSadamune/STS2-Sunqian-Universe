@@ -38,5 +38,5 @@
   "SUNQIAN_UNIVERSE_KEYWORD_SLIGHT_REVISION.cardDescription": "\n[gold]{Title}[/gold]: [gold]{TargetCardName}[/gold].",
   "SUNQIAN_UNIVERSE_KEYWORD_SLIGHT_REVISION.cardDescriptionFragment": "[gold]{Title}[/gold]: [gold]{TargetCardName}[/gold].",
   "SUNQIAN_UNIVERSE_KEYWORD_FAMILY.title": "Family",
-  "SUNQIAN_UNIVERSE_KEYWORD_FAMILY.description": "When its play rate is needed, this card's play rate is treated as [blue]100%[/blue]."
+  "SUNQIAN_UNIVERSE_KEYWORD_FAMILY.description": "When its [gold]play rate[/gold] is needed, this card's [gold]play rate[/gold] is treated as [blue]100%[/blue]."
 }

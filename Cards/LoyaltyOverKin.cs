@@ -58,7 +58,11 @@ public sealed class LoyaltyOverKin : ModCardTemplate
 	{
 		get
 		{
-			List<IHoverTip> tips = [HoverTipFactory.FromPower<StrengthPower>()];
+			List<IHoverTip> tips =
+			[
+				HoverTipFactory.FromPower<StrengthPower>(),
+				SquCommonL10n.PlayRateHoverTip(),
+			];
 			List<CardModel> previewTargets = GetDescriptionPreviewTargets();
 			IHoverTip? targetTip = CreateTargetCardsHoverTip(previewTargets);
 			if (targetTip != null)
