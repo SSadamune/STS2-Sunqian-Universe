@@ -13,6 +13,7 @@ using MegaCrit.Sts2.Core.ValueProps;
 using Squ;
 using Squ.Audio;
 using Squ.Character;
+using Squ.Script;
 using STS2RitsuLib.Interop.AutoRegistration;
 using STS2RitsuLib.Scaffolding.Content;
 
@@ -41,7 +42,7 @@ public sealed class VoiceChange : ModCardTemplate
 
 	public override IEnumerable<CardKeyword> CanonicalKeywords =>
 	[
-		CardKeyword.Exhaust,
+		SquKeywords.Wrap,
 	];
 
 	protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
@@ -54,12 +55,21 @@ public sealed class VoiceChange : ModCardTemplate
 	{
 	}
 
+	protected override bool ShouldGlowGoldInternal =>
+		SquKeywords.ShouldGlowForWrap(this)
+		&& PileType.Exhaust.GetPile(Owner).Cards.Any(IsScriptCard);
+
 	protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
 	{
 		SquSfx.PlayRandom(RunState, SquSfx.VoiceChangeEvents);
 		await CreatureCmd.GainBlock(Owner.Creature, DynamicVars.Block, cardPlay);
 
 		CardPile exhaustPile = PileType.Exhaust.GetPile(Owner);
+		if (!exhaustPile.Cards.Any(IsScriptCard))
+		{
+			return;
+		}
+
 		CardSelectorPrefs prefs = new(SelectionPrompt, 1);
 		IEnumerable<CardModel> selected = await CardSelectCmd.FromCombatPile(
 			choiceContext,
@@ -71,19 +81,26 @@ public sealed class VoiceChange : ModCardTemplate
 		CardModel? scriptCard = selected.FirstOrDefault();
 		if (scriptCard?.Pile?.Type == PileType.Exhaust)
 		{
-			if (scriptCard.IsUpgradable)
+			bool wrap = await ScriptSystem.TryConsumeWrapAsync(Owner.Creature);
+			if (wrap && scriptCard.IsUpgradable)
 			{
 				CardCmd.Upgrade(scriptCard);
 			}
 
-			await CardPileCmd.Add(scriptCard, PileType.Draw, CardPilePosition.Top);
+			if (IsUpgraded)
+			{
+				await CardPileCmd.Add(scriptCard, PileType.Hand);
+			}
+			else
+			{
+				await CardPileCmd.Add(scriptCard, PileType.Draw, CardPilePosition.Top);
+			}
 		}
 	}
 
 	protected override void OnUpgrade()
 	{
 		DynamicVars.Block.UpgradeValueBy(UpgradedBlock - BaseBlock);
-		RemoveKeyword(CardKeyword.Exhaust);
 	}
 
 	private static bool IsScriptCard(CardModel card) =>
