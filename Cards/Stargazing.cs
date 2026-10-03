@@ -91,7 +91,9 @@ public sealed class Stargazing : ModCardTemplate
 			return Task.CompletedTask;
 		}
 
-		return ConsumeOneDiscardPileEntry(choiceContext);
+		return ConsumeOneDiscardPileEntry(
+			choiceContext,
+			preserveEndTurnReadiness: false);
 	}
 
 	public override async Task AfterSideTurnEnd(
@@ -121,7 +123,9 @@ public sealed class Stargazing : ModCardTemplate
 		{
 			while (card._pendingDiscardPileEntries > 0)
 			{
-				await card.ConsumeOneDiscardPileEntry(choiceContext);
+				await card.ConsumeOneDiscardPileEntry(
+					choiceContext,
+					preserveEndTurnReadiness: true);
 			}
 		}
 	}
@@ -136,7 +140,9 @@ public sealed class Stargazing : ModCardTemplate
 		return CardPileCmd.Draw(choiceContext, 1, Owner);
 	}
 
-	private Task ConsumeOneDiscardPileEntry(PlayerChoiceContext choiceContext)
+	private Task ConsumeOneDiscardPileEntry(
+		PlayerChoiceContext choiceContext,
+		bool preserveEndTurnReadiness)
 	{
 		_pendingDiscardPileEntries--;
 
@@ -145,7 +151,9 @@ public sealed class Stargazing : ModCardTemplate
 			SquSfx.StargazingWangYunEvent,
 			SquSfx.StargazingDongZhuoEvent);
 
-		return ScryCmd.Execute(choiceContext, this);
+		return preserveEndTurnReadiness
+			? ScryCmd.ExecuteDuringTurnEnd(choiceContext, this)
+			: ScryCmd.Execute(choiceContext, this);
 	}
 
 	protected override void OnUpgrade()

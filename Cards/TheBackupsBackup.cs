@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using MegaCrit.Sts2.Core.CardSelection;
 using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Combat;
 using MegaCrit.Sts2.Core.Entities.Cards;
@@ -26,6 +27,8 @@ namespace Squ.Cards;
 public sealed class TheBackupsBackup : ModCardTemplate
 {
 	private const int ChoiceCount = 3;
+	private static readonly LocString SelectionPrompt =
+		new("cards", "SUNQIAN_UNIVERSE_CARD_THE_BACKUPS_BACKUP.selectionScreenPrompt");
 
 	private static readonly CardRarity[] BaseDiscoverableRarities =
 	[
@@ -120,10 +123,12 @@ public sealed class TheBackupsBackup : ModCardTemplate
 			return;
 		}
 
-		CardModel? selected = await CardSelectCmd.FromChooseACardScreen(
+		IEnumerable<CardModel> selectedCards = await CardSelectCmd.FromSimpleGrid(
 			choiceContext,
 			options,
-			chooser);
+			chooser,
+			new CardSelectorPrefs(SelectionPrompt, 1));
+		CardModel? selected = selectedCards.FirstOrDefault();
 		if (selected is not null && fillers.Contains(selected))
 		{
 			await CardPileCmd.AddGeneratedCardToCombat(selected, PileType.Hand, Owner);

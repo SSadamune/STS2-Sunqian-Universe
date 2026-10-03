@@ -38,7 +38,7 @@
   "SUNQIAN_UNIVERSE_KEYWORD_SLIGHT_REVISION.cardDescription": "\n[gold]{Title}[/gold]：[gold]{TargetCardName}[/gold]。",
   "SUNQIAN_UNIVERSE_KEYWORD_SLIGHT_REVISION.cardDescriptionFragment": "[gold]{Title}[/gold]：[gold]{TargetCardName}[/gold]。",
   "SUNQIAN_UNIVERSE_KEYWORD_SUPREME_GENERAL.title": "上将军",
-  "SUNQIAN_UNIVERSE_KEYWORD_SUPREME_GENERAL.description": "在具有[gold]上将军[/gold]的牌的结算过程中，被自动打出的其它攻击牌视为具有此牌的[gold]活力[/gold]加成。",
+  "SUNQIAN_UNIVERSE_KEYWORD_SUPREME_GENERAL.description": "在具有[gold]上将军[/gold]牌的结算过程中，被自动打出的其它攻击牌视为具有[gold]上将军[/gold]的[gold]活力[/gold]加成。",
   "SUNQIAN_UNIVERSE_KEYWORD_FAMILY.title": "家人",
   "SUNQIAN_UNIVERSE_KEYWORD_FAMILY.description": "当需要计算[gold]打出率[/gold]时，这张牌的[gold]打出率[/gold]视为[blue]100%[/blue]。"
 }

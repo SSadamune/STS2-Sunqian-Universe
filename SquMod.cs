@@ -65,7 +65,7 @@ public static class SquMod
 			.CardKeywordOwnedByLocNamespace(
 				"supreme_general",
 				iconPath: null,
-				ModKeywordCardDescriptionPlacement.AfterCardDescription,
+				ModKeywordCardDescriptionPlacement.BeforeCardDescription,
 				includeInCardHoverTip: true)
 			.CardKeywordOwnedByLocNamespace(
 				"enthralled",

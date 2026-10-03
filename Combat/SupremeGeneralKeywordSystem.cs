@@ -132,14 +132,17 @@ public sealed class SupremeGeneralKeywordSystem : HookedSingletonModel
 		out decimal inheritedVigor)
 	{
 		inheritedVigor = 0m;
-		if (cardPlay is null
-			|| !cardPlay.IsAutoPlay
-			|| !ReferenceEquals(cardPlay.Card, card)
+		bool isAutoPlayedResolution = cardPlay is not null
+			? cardPlay.IsAutoPlay && ReferenceEquals(cardPlay.Card, card)
+			: card.Pile?.Type == PileType.Play
+				&& CardResolutionTracker.IsBeingAutoPlayed(card);
+
+		if (!isAutoPlayedResolution
 			|| card.Type != CardType.Attack
 			|| !CardResolutionTracker.TryGetOutermostCard(
-				cardPlay.Player,
+				card.Owner,
 				out CardModel outermostCard)
-			|| !TryGetOutermostWindow(cardPlay.Player.NetId, out ResolutionWindow window)
+			|| !TryGetOutermostWindow(card.Owner.NetId, out ResolutionWindow window)
 			|| window.ConsumedVigor <= 0m
 			|| !ReferenceEquals(outermostCard, window.RootCard)
 			|| ReferenceEquals(card, window.RootCard)
