@@ -151,6 +151,7 @@ public static class AllInResolutionTracker
 		ResourceInfo resources)
 	{
 		if (isAutoPlay
+			|| !CardResolutionTracker.IsOutermostResolution(card)
 			|| resources.EnergySpent <= 0
 			|| TryGetActiveBonus(card.Owner, out _)
 			|| !TryConsumeSpendSnapshot(card, out SpendSnapshot snapshot)

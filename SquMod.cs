@@ -92,6 +92,7 @@ public static class SquMod
 			.Apply();
 
 		CardDrawPlayRateTracker.Initialize();
+		CardResolutionTracker.Initialize();
 		AllInResolutionTracker.Initialize();
 		RitsuLibFramework.RegisterModelCapability<SlightRevisionCapability>(ModId);
 		RitsuLibFramework.RegisterModelCapability<NightRaidWuchaoStrikeCapability>(ModId);

@@ -51,7 +51,9 @@ public sealed class SupremeGeneralKeywordSystem : HookedSingletonModel
 
 	public override Task BeforeCardPlayed(CardPlay cardPlay)
 	{
-		if (cardPlay.IsAutoPlay || !cardPlay.Card.HasModKeyword(SquKeywords.SupremeGeneral))
+		if (cardPlay.IsAutoPlay
+			|| !CardResolutionTracker.IsOutermostCardPlay(cardPlay)
+			|| !cardPlay.Card.HasModKeyword(SquKeywords.SupremeGeneral))
 		{
 			return Task.CompletedTask;
 		}
@@ -113,20 +115,41 @@ public sealed class SupremeGeneralKeywordSystem : HookedSingletonModel
 		CardModel? cardSource,
 		CardPlay? cardPlay)
 	{
-		if (cardPlay is null
-			|| !cardPlay.IsAutoPlay
+		if (!props.IsPoweredAttack()
 			|| cardSource is null
-			|| cardSource.Type != CardType.Attack
-			|| !props.IsPoweredAttack()
-			|| !TryGetOutermostWindow(cardPlay.Player.NetId, out ResolutionWindow window)
-			|| window.ConsumedVigor <= 0m
-			|| ReferenceEquals(cardSource, window.RootCard)
-			|| dealer != window.RootCard.Owner.Creature)
+			|| !TryGetInheritedVigorBonus(cardSource, cardPlay, out decimal inheritedVigor)
+			|| dealer != cardSource.Owner.Creature)
 		{
 			return 0m;
 		}
 
-		return window.ConsumedVigor;
+		return inheritedVigor;
+	}
+
+	internal static bool TryGetInheritedVigorBonus(
+		CardModel card,
+		CardPlay? cardPlay,
+		out decimal inheritedVigor)
+	{
+		inheritedVigor = 0m;
+		if (cardPlay is null
+			|| !cardPlay.IsAutoPlay
+			|| !ReferenceEquals(cardPlay.Card, card)
+			|| card.Type != CardType.Attack
+			|| !CardResolutionTracker.TryGetOutermostCard(
+				cardPlay.Player,
+				out CardModel outermostCard)
+			|| !TryGetOutermostWindow(cardPlay.Player.NetId, out ResolutionWindow window)
+			|| window.ConsumedVigor <= 0m
+			|| !ReferenceEquals(outermostCard, window.RootCard)
+			|| ReferenceEquals(card, window.RootCard)
+			|| card.Owner != window.RootCard.Owner)
+		{
+			return false;
+		}
+
+		inheritedVigor = window.ConsumedVigor;
+		return true;
 	}
 
 	public override Task AfterCardPlayed(PlayerChoiceContext choiceContext, CardPlay cardPlay)

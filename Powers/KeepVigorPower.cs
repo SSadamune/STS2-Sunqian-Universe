@@ -19,9 +19,9 @@ using STS2RitsuLib.Scaffolding.Content;
 namespace Squ.Powers;
 
 /// <summary>
-/// Tracks each root Attack as one complete play. It consumes one stack even if no Vigor was
-/// available, then restores exactly the Vigor spent by that Attack after its final play resolves.
-/// Nested Attacks inside an <see cref="AttackVigorResolution"/> suppression scope do neither.
+/// Tracks each outermost Attack as one complete play. It consumes one stack even if no Vigor was
+/// available, then restores all Vigor spent during that Attack's complete nested resolution.
+/// Nested auto-played Attacks never consume additional Keep Vigor stacks.
 /// </summary>
 [RegisterPower]
 public sealed class KeepVigorPower : ModPowerTemplate
@@ -59,11 +59,11 @@ public sealed class KeepVigorPower : ModPowerTemplate
 	{
 		if (Owner.IsDead
 			|| Amount <= 0m
+			|| !CardResolutionTracker.IsOutermostCardPlay(cardPlay)
 			|| cardPlay.PlayIndex != 0
 			|| cardPlay.Card.Owner.Creature != Owner
 			|| cardPlay.Card.Type != CardType.Attack
-			|| ChaosHarmedYou.DoesNotConsumeAttackPlayTracking(cardPlay.Card)
-			|| AttackVigorResolution.IsNestedAttackConsumptionSuppressed(Owner.Player))
+			|| ChaosHarmedYou.DoesNotConsumeAttackPlayTracking(cardPlay.Card))
 		{
 			return Task.CompletedTask;
 		}
@@ -85,8 +85,7 @@ public sealed class KeepVigorPower : ModPowerTemplate
 		if (Owner.IsDead
 			|| power is not VigorPower
 			|| power.Owner != Owner
-			|| amount >= 0m
-			|| AttackVigorResolution.IsNestedAttackConsumptionSuppressed(Owner.Player))
+			|| amount >= 0m)
 		{
 			return Task.CompletedTask;
 		}

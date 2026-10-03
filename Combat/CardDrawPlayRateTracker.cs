@@ -547,7 +547,9 @@ public static class CardDrawPlayRateTracker
 			return;
 		}
 
-		if (newPile == PileType.Play && previousPile == PileType.Hand)
+		if (newPile == PileType.Play
+			&& previousPile == PileType.Hand
+			&& !CardResolutionTracker.IsBeingAutoPlayed(card))
 		{
 			runtime.Current.AddPlayFromHand(statsKey);
 		}

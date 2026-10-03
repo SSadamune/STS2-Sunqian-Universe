@@ -6,10 +6,12 @@ using MegaCrit.Sts2.Core.Commands.Builders;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.Entities.Creatures;
 using MegaCrit.Sts2.Core.Entities.Players;
+using MegaCrit.Sts2.Core.Entities.Powers;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.Powers;
 using MegaCrit.Sts2.Core.ValueProps;
+using Squ.Combat;
 using STS2RitsuLib.Interop.AutoRegistration;
 using STS2RitsuLib.Scaffolding.Content;
 
@@ -19,7 +21,8 @@ namespace Squ.Powers;
 
 /// <summary>
 /// 刀斧手剧本：持有者的攻击牌本次打出（含仁义双股剑等原地重放带来的所有额外结算）
-/// 期间只要击杀过至少一个敌人，在这次打出彻底结束后恢复一次其消耗的活力与能量。
+/// 期间只要自身或嵌套打出的攻击牌击杀过至少一个敌人，在这次打出彻底结束后恢复一次
+/// 整条结算链实际消耗的活力与最外层攻击牌消耗的能量。
 /// 无论中途杀死了几个敌人、经历了几次 <see cref="CardPlay.PlayIndex"/>，都只在
 /// 最后一次结算完成后统一恢复一次——“打出时记录，打出后恢复”，而不是每次击杀各自恢复。
 /// 活力恢复仍要求消耗活力的那次攻击吃到活力加成（<see cref="ValueProp.IsPoweredAttack"/>），
@@ -32,28 +35,16 @@ public sealed class ScriptHeadsmanPower : ScriptPowerTemplate
 	{
 		public bool RestoreEnergy;
 
-		public PendingAttack? Pending;
-
-		/// <summary>
-		/// 按 <see cref="CardModel"/> 引用为键，避免同一时刻嵌套打出的其它攻击牌
-		/// （例如闪电战对抽牌堆里其它牌的 AutoPlay）互相覆盖对方的记录。
-		/// </summary>
+		/// <summary>只为整条嵌套结算链最外层的攻击牌建立记录。</summary>
 		public Dictionary<CardModel, AttackPlayTrack> ActivePlays { get; } = [];
-	}
-
-	private sealed class PendingAttack
-	{
-		public required AttackCommand Command { get; init; }
-
-		public required CardModel Card { get; init; }
 	}
 
 	private sealed class AttackPlayTrack
 	{
 		public required int EnergySpent { get; init; }
 
-		/// <summary>本次打出期间，第一次吃到活力加成的攻击所消耗的活力层数；未消耗则为 null。</summary>
-		public int? VigorSpent { get; set; }
+		/// <summary>整条结算链中由攻击实际消耗的活力总量。</summary>
+		public decimal VigorSpent { get; set; }
 
 		/// <summary>本次打出期间是否至少击杀过一个敌人（不关心具体次数）。</summary>
 		public bool AnyKill { get; set; }
@@ -75,12 +66,15 @@ public sealed class ScriptHeadsmanPower : ScriptPowerTemplate
 	}
 
 	/// <summary>
-	/// 只在整次打出的第一次结算（<see cref="CardPlay.PlayIndex"/> == 0）时记录，
+	/// 只在最外层攻击牌整次打出的第一次结算（<see cref="CardPlay.PlayIndex"/> == 0）时记录，
 	/// 后续因重放而追加的结算不会重置已经累积的 <see cref="AttackPlayTrack"/>。
 	/// </summary>
 	public override Task BeforeCardPlayed(CardPlay cardPlay)
 	{
-		if (Owner.IsDead || cardPlay.Card.Type != CardType.Attack || cardPlay.PlayIndex != 0)
+		if (Owner.IsDead
+			|| !CardResolutionTracker.IsOutermostCardPlay(cardPlay)
+			|| cardPlay.Card.Type != CardType.Attack
+			|| cardPlay.PlayIndex != 0)
 		{
 			return Task.CompletedTask;
 		}
@@ -99,48 +93,14 @@ public sealed class ScriptHeadsmanPower : ScriptPowerTemplate
 	}
 
 	/// <summary>
-	/// 只用来在真正发生击杀时把结果记到对应的 <see cref="AttackPlayTrack"/> 上，
-	/// 不在此处恢复任何资源——恢复统一延后到 <see cref="AfterCardPlayedLate"/>。
+	/// 嵌套攻击造成的击杀统一记到最外层攻击牌，资源仍延后到
+	/// <see cref="AfterCardPlayedLate"/> 恢复。
 	/// </summary>
-	public override Task BeforeAttack(AttackCommand command)
-	{
-		if (Owner.IsDead || !TryGetQualifyingAttackCard(command, out CardModel? card))
-		{
-			return Task.CompletedTask;
-		}
-
-		Data data = GetInternalData<Data>();
-		data.Pending = new PendingAttack
-		{
-			Command = command,
-			Card = card,
-		};
-
-		if (data.ActivePlays.TryGetValue(card, out AttackPlayTrack? track)
-			&& track.VigorSpent is null
-			&& command.DamageProps.IsPoweredAttack()
-			&& Owner.GetPower<VigorPower>() is { Amount: > 0 } vigor)
-		{
-			// 只在本次打出期间第一次吃到活力加成时快照：活力本身会在这次攻击后自我清零，
-			// 之后的攻击即使还在同一次打出内，也不会再有活力可消耗。
-			track.VigorSpent = vigor.Amount;
-		}
-
-		return Task.CompletedTask;
-	}
-
 	public override Task AfterAttack(PlayerChoiceContext choiceContext, AttackCommand command)
 	{
-		Data data = GetInternalData<Data>();
-		PendingAttack? pending = data.Pending;
-		if (pending is null || pending.Command != command)
-		{
-			return Task.CompletedTask;
-		}
-
-		data.Pending = null;
-
-		if (Owner.IsDead)
+		if (Owner.IsDead
+			|| !TryGetQualifyingAttackCard(command, out _)
+			|| !TryGetRootTrack(out AttackPlayTrack? track))
 		{
 			return Task.CompletedTask;
 		}
@@ -148,11 +108,35 @@ public sealed class ScriptHeadsmanPower : ScriptPowerTemplate
 		bool killed = command.Results
 			.SelectMany(results => results)
 			.Any(result => result.WasTargetKilled);
-		if (killed && data.ActivePlays.TryGetValue(pending.Card, out AttackPlayTrack? track))
+		if (killed)
 		{
 			track.AnyKill = true;
 		}
 
+		return Task.CompletedTask;
+	}
+
+	/// <summary>
+	/// 依据实际的负向层数变化记录消耗，避免把“上将军”给予的模拟活力加成
+	/// 或被抑制的嵌套攻击误判为再次消耗活力。
+	/// </summary>
+	public override Task AfterPowerAmountChanged(
+		PlayerChoiceContext choiceContext,
+		PowerModel power,
+		decimal amount,
+		Creature? applier,
+		CardModel? cardSource)
+	{
+		if (Owner.IsDead
+			|| power is not VigorPower
+			|| power.Owner != Owner
+			|| amount >= 0m
+			|| !TryGetRootTrack(out AttackPlayTrack? track))
+		{
+			return Task.CompletedTask;
+		}
+
+		track.VigorSpent += -amount;
 		return Task.CompletedTask;
 	}
 
@@ -176,14 +160,18 @@ public sealed class ScriptHeadsmanPower : ScriptPowerTemplate
 
 		bool restored = false;
 
-		if (track.VigorSpent is int vigorSpent && vigorSpent > 0)
+		if (track.VigorSpent > 0m)
 		{
 			await PowerCmd.Apply<VigorPower>(
 				choiceContext,
 				Owner,
-				vigorSpent,
+				track.VigorSpent,
 				Owner,
 				cardPlay.Card);
+			if (Owner.GetPower<VigorPower>() is { } restoredVigor)
+			{
+				AttackVigorResolution.ClearVigorAttackBinding(restoredVigor);
+			}
 			restored = true;
 		}
 
@@ -219,5 +207,14 @@ public sealed class ScriptHeadsmanPower : ScriptPowerTemplate
 
 		card = cardSource;
 		return true;
+	}
+
+	private bool TryGetRootTrack(out AttackPlayTrack track)
+	{
+		track = null!;
+		return CardResolutionTracker.TryGetOutermostCard(Owner.Player, out CardModel rootCard)
+			&& rootCard.Type == CardType.Attack
+			&& rootCard.Owner.Creature == Owner
+			&& GetInternalData<Data>().ActivePlays.TryGetValue(rootCard, out track!);
 	}
 }
