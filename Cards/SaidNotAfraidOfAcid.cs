@@ -89,7 +89,8 @@ public sealed class SaidNotAfraidOfAcid : ModCardTemplate
 				combatState,
 				Owner,
 				IsUpgraded,
-				Owner);
+				Owner,
+				static card => card.AddKeyword(CardKeyword.Exhaust));
 		}
 	}
 

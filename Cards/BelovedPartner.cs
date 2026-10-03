@@ -26,6 +26,8 @@ public sealed class BelovedPartner : FamilyCardTemplate
 
 	protected override int DrawCards => 0;
 
+	protected override bool ResolvesEffectsWhenDiscarded => true;
+
 	protected override IEnumerable<DynamicVar> CanonicalVars =>
 	[
 		new PowerVar<VigorPower>(VigorAmount),

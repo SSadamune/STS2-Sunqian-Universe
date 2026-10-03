@@ -159,7 +159,6 @@ internal static class SquSfx
 	public const string NeverHadThesePlayEvent = "event:/sunqian_universe/sfx/从来没有这些-从来没有这些";
 	public const string NeverHadTheseBelovedPartnerDiscardEvent = "event:/sunqian_universe/sfx/从来没有这些-爱侣-小乔，上酒";
 	public const string NeverHadTheseBelovedPartnerExhaustEvent = "event:/sunqian_universe/sfx/从来没有这些-爱侣-先生请快上车";
-	public const string NeverHadTheseNextOfKinDiscardEvent = "event:/sunqian_universe/sfx/从来没有这些-至亲-不够，远远不够";
 	public const string NeverHadTheseNextOfKinExhaustEvent = "event:/sunqian_universe/sfx/从来没有这些-至亲-孩儿不孝啊";
 	public const string NeverHadTheseCutePetExhaustEvent = "event:/sunqian_universe/sfx/从来没有这些-萌宠-各个有情有义";
 	public const string KeepPlayingKeepDancingEvent = "event:/sunqian_universe/sfx/接着奏乐接着舞-接着奏乐接着舞";

@@ -23,19 +23,18 @@ namespace Squ.Cards;
 public sealed class NeverHadThese : ModCardTemplate
 {
 	public const int EnergyGain = 1;
-	public const int BaseDexterityGain = 1;
-	public const int UpgradedDexterityGain = 2;
+	public const int DexterityGain = 1;
 
 	protected override IEnumerable<DynamicVar> CanonicalVars =>
 	[
-		new PowerVar<DexterityPower>(BaseDexterityGain),
+		new PowerVar<DexterityPower>(DexterityGain),
 	];
 
 	protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
 	[
-		HoverTipFactory.FromCard<NextOfKin>(),
 		HoverTipFactory.FromCard<BelovedPartner>(),
 		HoverTipFactory.FromCard<CutePet>(),
+		HoverTipFactory.FromCard<NextOfKin>(),
 		HoverTipFactory.FromPower<DexterityPower>(),
 	];
 
@@ -43,7 +42,7 @@ public sealed class NeverHadThese : ModCardTemplate
 		PortraitPath: "res://images/cards/NeverHadThese.png");
 
 	public NeverHadThese()
-		: base(2, CardType.Power, CardRarity.Rare, TargetType.Self)
+		: base(1, CardType.Power, CardRarity.Rare, TargetType.Self)
 	{
 	}
 
@@ -58,9 +57,9 @@ public sealed class NeverHadThese : ModCardTemplate
 
 		List<CardModel> choices =
 		[
-			GeneratedCombatCards.CreateInCombat<NextOfKin>(combatState, Owner, upgraded: false),
 			GeneratedCombatCards.CreateInCombat<BelovedPartner>(combatState, Owner, upgraded: false),
 			GeneratedCombatCards.CreateInCombat<CutePet>(combatState, Owner, upgraded: false),
+			GeneratedCombatCards.CreateInCombat<NextOfKin>(combatState, Owner, upgraded: false),
 		];
 
 		CardModel? selected = await CardSelectCmd.FromChooseACardScreen(
@@ -96,7 +95,6 @@ public sealed class NeverHadThese : ModCardTemplate
 
 	protected override void OnUpgrade()
 	{
-		DynamicVars[nameof(DexterityPower)].UpgradeValueBy(
-			UpgradedDexterityGain - BaseDexterityGain);
+		AddKeyword(CardKeyword.Innate);
 	}
 }

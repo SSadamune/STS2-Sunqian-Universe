@@ -18,10 +18,10 @@ using STS2RitsuLib.Scaffolding.Content;
 namespace Squ.Cards;
 
 /// <summary>
-/// Shared discard handling for generated Family Quest cards. Explicit discards resolve through
+/// Shared metadata, keywords, dynamic variables, audio hooks, and optional discard handling for
+/// generated Family Quest cards. Explicit discard effects resolve through
 /// <see cref="AfterCardDiscarded"/> immediately. End-of-turn hand flushing has no discard context,
-/// so pile entries are queued and resolved after the flush; cards drawn by these effects therefore
-/// remain in hand.
+/// so pile entries are queued and resolved after the flush.
 /// </summary>
 public abstract class FamilyCardTemplate : ModCardTemplate
 {
@@ -30,6 +30,8 @@ public abstract class FamilyCardTemplate : ModCardTemplate
 	protected abstract int BlockAmount { get; }
 
 	protected abstract int DrawCards { get; }
+
+	protected virtual bool ResolvesEffectsWhenDiscarded => false;
 
 	protected virtual string? DiscardSfxEvent => null;
 
@@ -75,12 +77,18 @@ public abstract class FamilyCardTemplate : ModCardTemplate
 	protected virtual Task ResolveAdditionalDiscard(PlayerChoiceContext choiceContext) =>
 		Task.CompletedTask;
 
+	protected virtual Task ResolveAdditionalExhaust(
+		PlayerChoiceContext choiceContext,
+		bool causedByEthereal) =>
+		Task.CompletedTask;
+
 	public override Task AfterCardChangedPiles(
 		CardModel card,
 		PileType oldPileType,
 		AbstractModel? clonedBy)
 	{
-		if (card == this
+		if (ResolvesEffectsWhenDiscarded
+			&& card == this
 			&& oldPileType is PileType.Hand or PileType.Draw
 			&& Pile?.Type == PileType.Discard)
 		{
@@ -100,17 +108,22 @@ public abstract class FamilyCardTemplate : ModCardTemplate
 		return ResolveOneDiscard(choiceContext);
 	}
 
-	public override Task AfterCardExhausted(
+	public override async Task AfterCardExhausted(
 		PlayerChoiceContext choiceContext,
 		CardModel card,
 		bool causedByEthereal)
 	{
-		if (card == this && ExhaustSfxEvent is { } eventPath)
+		if (card != this)
+		{
+			return;
+		}
+
+		if (ExhaustSfxEvent is { } eventPath)
 		{
 			SquSfx.Play(eventPath);
 		}
 
-		return Task.CompletedTask;
+		await ResolveAdditionalExhaust(choiceContext, causedByEthereal);
 	}
 
 	public override async Task AfterSideTurnEnd(

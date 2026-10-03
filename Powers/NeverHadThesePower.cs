@@ -45,7 +45,7 @@ public sealed class NeverHadThesePower : ModPowerTemplate
 
 	public override Task AfterApplied(Creature? applier, CardModel? cardSource)
 	{
-		AddDexterityFrom(cardSource);
+		AddDexterityStack();
 		return Task.CompletedTask;
 	}
 
@@ -58,7 +58,7 @@ public sealed class NeverHadThesePower : ModPowerTemplate
 	{
 		if (power == this && amount > 0m)
 		{
-			AddDexterityFrom(cardSource);
+			AddDexterityStack();
 		}
 
 		return Task.CompletedTask;
@@ -88,11 +88,8 @@ public sealed class NeverHadThesePower : ModPowerTemplate
 			card);
 	}
 
-	private void AddDexterityFrom(CardModel? cardSource)
+	private void AddDexterityStack()
 	{
-		decimal amount = cardSource is NeverHadThese { IsUpgraded: true }
-			? NeverHadThese.UpgradedDexterityGain
-			: NeverHadThese.BaseDexterityGain;
-		DynamicVars[nameof(DexterityPower)].BaseValue += amount;
+		DynamicVars[nameof(DexterityPower)].BaseValue += NeverHadThese.DexterityGain;
 	}
 }
