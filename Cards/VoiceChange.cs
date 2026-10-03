@@ -13,7 +13,6 @@ using MegaCrit.Sts2.Core.ValueProps;
 using Squ;
 using Squ.Audio;
 using Squ.Character;
-using Squ.Script;
 using STS2RitsuLib.Interop.AutoRegistration;
 using STS2RitsuLib.Scaffolding.Content;
 
@@ -40,11 +39,6 @@ public sealed class VoiceChange : ModCardTemplate
 	public override CardAssetProfile AssetProfile => new(
 		PortraitPath: "res://images/cards/VoiceChange.png");
 
-	public override IEnumerable<CardKeyword> CanonicalKeywords =>
-	[
-		SquKeywords.Wrap,
-	];
-
 	protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
 	[
 		HoverTipFactory.FromKeyword(SquKeywords.Script),
@@ -54,10 +48,6 @@ public sealed class VoiceChange : ModCardTemplate
 		: base(1, CardType.Skill, CardRarity.Common, TargetType.Self)
 	{
 	}
-
-	protected override bool ShouldGlowGoldInternal =>
-		SquKeywords.ShouldGlowForWrap(this)
-		&& PileType.Exhaust.GetPile(Owner).Cards.Any(IsScriptCard);
 
 	protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
 	{
@@ -81,8 +71,7 @@ public sealed class VoiceChange : ModCardTemplate
 		CardModel? scriptCard = selected.FirstOrDefault();
 		if (scriptCard?.Pile?.Type == PileType.Exhaust)
 		{
-			bool wrap = await ScriptSystem.TryConsumeWrapAsync(Owner.Creature);
-			if (wrap && scriptCard.IsUpgradable)
+			if (scriptCard.IsUpgradable)
 			{
 				CardCmd.Upgrade(scriptCard);
 			}
