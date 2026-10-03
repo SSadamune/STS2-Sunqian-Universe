@@ -80,11 +80,13 @@ internal static class SquSfx
 	public const string TableFlipReluctantEvent = "event:/sunqian_universe/sfx/怒掀帅案-舍不得帅案";
 	public const string TableFlipHumEvent = "event:/sunqian_universe/sfx/怒掀帅案-哼";
 	public const string TableFlipRunWildAgainEvent = "event:/sunqian_universe/sfx/怒掀帅案-再来撒野";
-	public const string WhatDoWeEatEvent = "event:/sunqian_universe/sfx/我们吃什么";
+	public const string WhatDoWeEatEvent =
+		"event:/sunqian_universe/sfx/吃什么-你走了我们吃什么";
 	public const string BiggerGobletEvent = "event:/sunqian_universe/sfx/换大盏-换大盏";
 	public const string BiggerGobletWontBePoliteEvent = "event:/sunqian_universe/sfx/换大盏-不会客气";
 	public const string BiggerGobletToastEvent = "event:/sunqian_universe/sfx/换大盏-当浮一大白";
-	public const string ExactlyWhatToEatEvent = "event:/sunqian_universe/sfx/是啊吃什么";
+	public const string ExactlyWhatToEatEvent =
+		"event:/sunqian_universe/sfx/吃什么-吃什么是啊";
 	public const string EmperorKnowsNoWarEvent = "event:/sunqian_universe/sfx/朕不知兵";
 	public const string WaterFireInvincibleEvent = "event:/sunqian_universe/sfx/水火无敌";
 	public const string BombardChibiReduceAttackEvent = "event:/sunqian_universe/sfx/炮轰赤壁-减攻";

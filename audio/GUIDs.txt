@@ -85,6 +85,8 @@
 {2f952604-ddc5-4925-be78-55e2c20c2913} event:/sunqian_universe/sfx/变声期-这个多年前，明显有变声期
 {34bd8133-b692-4101-b620-1c4f07f8bbfd} event:/sunqian_universe/sfx/变声期-这几个字儿明显是变声期啊
 {0aa3243b-5119-4bf7-8a6a-072c0534aa2b} event:/sunqian_universe/sfx/变声期-音量不对
+{32d5ee1a-789d-4391-8da7-1708d82b053a} event:/sunqian_universe/sfx/吃什么-你走了我们吃什么
+{0119e57e-71cc-461a-8f6b-82e046661774} event:/sunqian_universe/sfx/吃什么-吃什么是啊
 {7b8349ca-609a-4bda-8578-84f43af006d9} event:/sunqian_universe/sfx/吾亦过江-直捣东吴建业
 {3caa82e7-290b-478b-8e30-326a03858af0} event:/sunqian_universe/sfx/吾亦过江-连孙权一起拿了
 {18e16c94-042a-4500-afb2-43819bb703d8} event:/sunqian_universe/sfx/吾亦过江-那好啊，他过江我也过江
@@ -115,6 +117,7 @@
 {07bc4d91-3669-4807-a668-764196686014} event:/sunqian_universe/sfx/弹指打击-剩下一小片江山
 {5423043d-d233-444b-ba63-e15a4e20ea30} event:/sunqian_universe/sfx/弹指打击-取董贼首级
 {2422b842-7aa1-4fc7-8a50-aa89f7e69e07} event:/sunqian_universe/sfx/弹指打击-弹指间取你首级
+{149146dd-b7df-4522-aebe-da506d2765c8} event:/sunqian_universe/sfx/弹指打击-董卓和西凉军弹指可灭
 {e877f801-8783-4fa5-b960-ce4e1da130c0} event:/sunqian_universe/sfx/忽近忽远
 {7047a789-cdda-4cb5-8325-6b023fc9bbc2} event:/sunqian_universe/sfx/怒掀帅案-再来撒野
 {6b61ad98-c812-472a-ba1e-41f0fad3da8c} event:/sunqian_universe/sfx/怒掀帅案-哼
@@ -123,7 +126,6 @@
 {171405b1-4c68-4e80-bec0-4e5cbdc92be9} event:/sunqian_universe/sfx/恨天打击-天不助我助尔曹
 {5a504523-5524-45fd-aab8-23d4ee422a22} event:/sunqian_universe/sfx/恨天打击-天意助曹不助袁
 {c2761732-16a7-4dd6-a8a8-8a82ef55612e} event:/sunqian_universe/sfx/恨天打击-恨天
-{f102970a-3482-4d08-95d3-8decb30a4c8d} event:/sunqian_universe/sfx/我们吃什么
 {d8744dce-8093-4fea-a26c-cacd9b26b30b} event:/sunqian_universe/sfx/打击-关羽
 {7485a8e0-557b-4934-8fd0-252ec31a1b3e} event:/sunqian_universe/sfx/打击-刘备
 {95accabb-03b0-4ed5-98a4-7f5ef0bd1b73} event:/sunqian_universe/sfx/打击-奶龙
@@ -156,7 +158,6 @@
 {52efc840-3686-4e89-8d2d-5c44a63362e2} event:/sunqian_universe/sfx/星夜打击-星夜追杀董贼
 {5fc21be5-ab07-46b0-82b6-ff3d16ef2d50} event:/sunqian_universe/sfx/星夜打击-星夜驰援于你
 {b68c8b92-2549-43f1-9695-0994e1ebfe34} event:/sunqian_universe/sfx/星夜打击-星夜驰援于我
-{f192248d-cad0-4781-adcc-8a20d2dc8b06} event:/sunqian_universe/sfx/是啊吃什么
 {277d450e-51b3-416a-a78f-4b1b4c02aa8e} event:/sunqian_universe/sfx/朕不知兵
 {ca742ee5-99e2-40d3-a8c5-c5a3de703620} event:/sunqian_universe/sfx/水火无敌
 {cd280832-1db9-4aa7-a907-b5116acc6829} event:/sunqian_universe/sfx/炮轰赤壁-减攻
