@@ -49,7 +49,11 @@ public sealed class Blitzkrieg : ModCardTemplate
 	protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
 		IsUpgraded ? [HoverTipFactory.FromKeyword(SquKeywords.Fit)] : [];
 
-	public override IEnumerable<CardKeyword> CanonicalKeywords => [SquKeywords.WarFeedsWar];
+	public override IEnumerable<CardKeyword> CanonicalKeywords =>
+	[
+		SquKeywords.WarFeedsWar,
+		SquKeywords.SupremeGeneral,
+	];
 
 	public override CardAssetProfile AssetProfile => new(
 		PortraitPath: "res://images/cards/Blitzkrieg.png");

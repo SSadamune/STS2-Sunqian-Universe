@@ -63,6 +63,11 @@ public static class SquMod
 			.CardKeywordOwnedByLocNamespace("strong_monster_encounter")
 			.CardKeywordOwnedByLocNamespace("slight_revision")
 			.CardKeywordOwnedByLocNamespace(
+				"supreme_general",
+				iconPath: null,
+				ModKeywordCardDescriptionPlacement.AfterCardDescription,
+				includeInCardHoverTip: true)
+			.CardKeywordOwnedByLocNamespace(
 				"enthralled",
 				iconPath: null,
 				ModKeywordCardDescriptionPlacement.BeforeCardDescription,

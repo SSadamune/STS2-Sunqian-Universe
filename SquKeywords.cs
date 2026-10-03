@@ -97,6 +97,11 @@ public static class SquKeywords
 
 	public static readonly CardKeyword SlightRevision = SlightRevisionId.GetModCardKeyword();
 
+	public static readonly string SupremeGeneralId = ModContentRegistry
+		.GetQualifiedKeywordId(SquMod.ModId, "supreme_general");
+
+	public static readonly CardKeyword SupremeGeneral = SupremeGeneralId.GetModCardKeyword();
+
 	public static IHoverTip CreateWarFeedsWarHoverTip(CardModel card)
 	{
 		LocString title = ModKeywordRegistry.GetTitle(WarFeedsWarId);

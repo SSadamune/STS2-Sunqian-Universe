@@ -37,6 +37,8 @@
   "SUNQIAN_UNIVERSE_KEYWORD_SLIGHT_REVISION.description": "You can right-click this card while it is in your Hand to transform it into a specific other card.\nGaining [gold]Slight Revision[/gold] again replaces the previous target.\nNote: This operation is usually irreversible for the rest of this combat.",
   "SUNQIAN_UNIVERSE_KEYWORD_SLIGHT_REVISION.cardDescription": "\n[gold]{Title}[/gold]: [gold]{TargetCardName}[/gold].",
   "SUNQIAN_UNIVERSE_KEYWORD_SLIGHT_REVISION.cardDescriptionFragment": "[gold]{Title}[/gold]: [gold]{TargetCardName}[/gold].",
+  "SUNQIAN_UNIVERSE_KEYWORD_SUPREME_GENERAL.title": "Supreme General",
+  "SUNQIAN_UNIVERSE_KEYWORD_SUPREME_GENERAL.description": "While a card with [gold]Supreme General[/gold] is resolving, other Attack cards it automatically plays are treated as having received its [gold]Vigor[/gold] bonus.",
   "SUNQIAN_UNIVERSE_KEYWORD_FAMILY.title": "Family",
   "SUNQIAN_UNIVERSE_KEYWORD_FAMILY.description": "When its [gold]play rate[/gold] is needed, this card's [gold]play rate[/gold] is treated as [blue]100%[/blue]."
 }
