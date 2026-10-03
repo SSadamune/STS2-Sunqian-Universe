@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
+using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.Models.CardPools;
 using Squ.Audio;
 using STS2RitsuLib.Interop.AutoRegistration;
@@ -20,9 +21,11 @@ public sealed class NextOfKin : FamilyCardTemplate
 	public override CardAssetProfile AssetProfile => new(
 		PortraitPath: "res://images/cards/NextOfKin.png");
 
-	protected override int BlockAmount => 0;
-
-	protected override int DrawCards => DrawAmount;
+	protected override IEnumerable<DynamicVar> CanonicalVars =>
+	[
+		new CardsVar(DrawAmount),
+		.. base.CanonicalVars,
+	];
 
 	public override IEnumerable<CardKeyword> CanonicalKeywords =>
 	[

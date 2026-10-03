@@ -18,7 +18,7 @@ namespace Squ.Cards;
 [RegisterCard(typeof(TokenCardPool), StableEntryStem = "cute_pet")]
 public sealed class CutePet : FamilyCardTemplate
 {
-	public const int SummonAmount = 6;
+	public const int SummonAmount = 4;
 
 	public override CardAssetProfile AssetProfile => new(
 		PortraitPath: "res://images/cards/CutePet.png");
@@ -27,10 +27,6 @@ public sealed class CutePet : FamilyCardTemplate
 		: base(0)
 	{
 	}
-
-	protected override int BlockAmount => 0;
-
-	protected override int DrawCards => 0;
 
 	protected override string ExhaustSfxEvent => SquSfx.NeverHadTheseCutePetExhaustEvent;
 
@@ -52,8 +48,8 @@ public sealed class CutePet : FamilyCardTemplate
 		SquKeywords.Family,
 	];
 
-	protected override Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
-	{
-		return OstyCmd.Summon(choiceContext, Owner, DynamicVars.Summon.BaseValue, this);
-	}
+	protected override Task ResolveAdditionalExhaust(
+		PlayerChoiceContext choiceContext,
+		bool causedByEthereal) =>
+		OstyCmd.Summon(choiceContext, Owner, DynamicVars.Summon.BaseValue, this);
 }

@@ -43,12 +43,6 @@ public sealed class NeverHadThesePower : ModPowerTemplate
 		HoverTipFactory.FromPower<DexterityPower>(),
 	];
 
-	public override Task AfterApplied(Creature? applier, CardModel? cardSource)
-	{
-		AddDexterityStack();
-		return Task.CompletedTask;
-	}
-
 	public override Task AfterPowerAmountChanged(
 		PlayerChoiceContext choiceContext,
 		PowerModel power,

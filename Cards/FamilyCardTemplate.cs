@@ -1,15 +1,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Combat;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.Entities.Creatures;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.HoverTips;
-using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.Models;
-using MegaCrit.Sts2.Core.ValueProps;
 using Squ.Audio;
 using STS2RitsuLib.Scaffolding.Content;
 
@@ -18,8 +15,8 @@ using STS2RitsuLib.Scaffolding.Content;
 namespace Squ.Cards;
 
 /// <summary>
-/// Shared metadata, keywords, dynamic variables, audio hooks, and optional discard handling for
-/// generated Family Quest cards. Explicit discard effects resolve through
+/// Shared metadata, keywords, audio hooks, and optional discard handling for generated Family
+/// Quest cards. Explicit discard effects resolve through
 /// <see cref="AfterCardDiscarded"/> immediately. End-of-turn hand flushing has no discard context,
 /// so pile entries are queued and resolved after the flush.
 /// </summary>
@@ -27,31 +24,11 @@ public abstract class FamilyCardTemplate : ModCardTemplate
 {
 	private int _pendingDiscards;
 
-	protected abstract int BlockAmount { get; }
-
-	protected abstract int DrawCards { get; }
-
 	protected virtual bool ResolvesEffectsWhenDiscarded => false;
 
 	protected virtual string? DiscardSfxEvent => null;
 
 	protected virtual string? ExhaustSfxEvent => null;
-
-	protected override IEnumerable<DynamicVar> CanonicalVars
-	{
-		get
-		{
-			if (BlockAmount > 0)
-			{
-				yield return new BlockVar(BlockAmount, ValueProp.Move);
-			}
-
-			if (DrawCards > 0)
-			{
-				yield return new CardsVar(DrawCards);
-			}
-		}
-	}
 
 	public override IEnumerable<CardKeyword> CanonicalKeywords =>
 	[
@@ -59,12 +36,8 @@ public abstract class FamilyCardTemplate : ModCardTemplate
 		SquKeywords.Family,
 	];
 
-	public override bool GainsBlock => BlockAmount > 0;
-
 	protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
-		BlockAmount > 0
-			? [SquCommonL10n.PlayRateHoverTip(), HoverTipFactory.Static(StaticHoverTip.Block)]
-			: [SquCommonL10n.PlayRateHoverTip()];
+		[SquCommonL10n.PlayRateHoverTip()];
 
 	protected FamilyCardTemplate(int energyCost = -1)
 		: base(energyCost, CardType.Quest, CardRarity.Quest, TargetType.None, showInCardLibrary: false)
@@ -165,15 +138,5 @@ public abstract class FamilyCardTemplate : ModCardTemplate
 		}
 
 		await ResolveAdditionalDiscard(choiceContext);
-
-		if (BlockAmount > 0)
-		{
-			await CreatureCmd.GainBlock(Owner.Creature, DynamicVars.Block, cardPlay: null);
-		}
-
-		if (DrawCards > 0)
-		{
-			await CardPileCmd.Draw(choiceContext, DynamicVars.Cards.BaseValue, Owner);
-		}
 	}
 }
