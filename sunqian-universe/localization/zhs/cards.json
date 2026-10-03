@@ -212,7 +212,7 @@
   "SUNQIAN_UNIVERSE_CARD_SHARPEN_SWORD_FOR_DECADES.description": "[gold]铸造[/gold]{Forge:diff()}。\n每场战斗结束时，永久保留此牌的[gold]铸造[/gold]值加成。{ChargeText}",
   "SUNQIAN_UNIVERSE_CARD_SHARPEN_SWORD_FOR_DECADES.chargeEffect": "回合结束时，[gold]铸造[/gold]值+{ChargeForge:diff()}。",
   "SUNQIAN_UNIVERSE_CARD_CROSS_THE_RIVER.title": "吾亦过江",
-  "SUNQIAN_UNIVERSE_CARD_CROSS_THE_RIVER.description": "获得{VigorPower:diff()}点[gold]活力[/gold]和{VulnerablePower:diff()}层[gold]易伤[/gold]。\n如果有意图为攻击的敌人，{CrossTheRiverPower:diff()}回合内你的攻击牌受到两倍[gold]活力[/gold]加成。",
+  "SUNQIAN_UNIVERSE_CARD_CROSS_THE_RIVER.description": "获得{VigorPower:diff()}点[gold]活力[/gold]和{VulnerablePower:diff()}层[gold]易伤[/gold]。\n如果有意图为攻击的敌人，{CrossTheRiverPower:diff()}回合内你的攻击牌受到两倍[gold]活力[/gold]和[gold]力量[/gold]加成。",
   "SUNQIAN_UNIVERSE_CARD_WORRY_WITHOUT_WORRY.title": "诸葛孔明的忧虑",
   "SUNQIAN_UNIVERSE_CARD_WORRY_WITHOUT_WORRY.description": "获得{Block:diff()}点[gold]格挡[/gold]。\n在下一回合获得{BlockNextTurn:diff()}点[gold]格挡[/gold]。{IfUpgraded:show:\n你的下一回合开始时[gold]格挡[/gold]不会消失。|}",
   "SUNQIAN_UNIVERSE_CARD_IRON_CHAIN_BOATS.title": "铁索连舟",

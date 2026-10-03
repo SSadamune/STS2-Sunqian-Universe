@@ -20,7 +20,7 @@ using STS2RitsuLib.Scaffolding.Content;
 
 namespace Squ.Powers;
 
-/// <summary>吾亦过江：攻击牌获得第二份活力加成。</summary>
+/// <summary>吾亦过江：攻击牌获得第二份活力与力量加成。</summary>
 [RegisterPower]
 public sealed class CrossTheRiverPower : ModPowerTemplate
 {
@@ -37,6 +37,7 @@ public sealed class CrossTheRiverPower : ModPowerTemplate
 	protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
 	[
 		HoverTipFactory.FromPower<VigorPower>(),
+		HoverTipFactory.FromPower<StrengthPower>(),
 	];
 
 	public override Task BeforeAttack(AttackCommand command)
@@ -44,7 +45,7 @@ public sealed class CrossTheRiverPower : ModPowerTemplate
 		if (command.Attacker == Owner
 			&& command.DamageProps.IsPoweredAttack()
 			&& command.ModelSource is CardModel { Type: CardType.Attack }
-			&& Owner.GetPower<VigorPower>() is { Amount: > 0 })
+			&& HasVigorOrStrengthModifier())
 		{
 			SquSfx.PlayRandom(CombatState?.RunState, SquSfx.CrossTheRiverTriggerEvents);
 		}
@@ -67,10 +68,17 @@ public sealed class CrossTheRiverPower : ModPowerTemplate
 			return 0m;
 		}
 
-		return Owner.GetPower<VigorPower>() is { Amount: > 0 } vigor
-			? vigor.Amount
-			: 0m;
+		return GetVigorAmount() + GetStrengthAmount();
 	}
+
+	private decimal GetVigorAmount() =>
+		Owner.GetPower<VigorPower>()?.Amount ?? 0m;
+
+	private decimal GetStrengthAmount() =>
+		Owner.GetPower<StrengthPower>()?.Amount ?? 0m;
+
+	private bool HasVigorOrStrengthModifier() =>
+		GetVigorAmount() != 0m || GetStrengthAmount() != 0m;
 
 	public override async Task AfterSideTurnEnd(
 		PlayerChoiceContext choiceContext,

@@ -212,7 +212,7 @@
   "SUNQIAN_UNIVERSE_CARD_SHARPEN_SWORD_FOR_DECADES.description": "[gold]Forge[/gold] {Forge:diff()}.\nAt the end of combat, this card retains bonuses to its [gold]Forge[/gold] value.{ChargeText}",
   "SUNQIAN_UNIVERSE_CARD_SHARPEN_SWORD_FOR_DECADES.chargeEffect": "At the end of your turn, this card's [gold]Forge[/gold] value increases by {ChargeForge:diff()}.",
   "SUNQIAN_UNIVERSE_CARD_CROSS_THE_RIVER.title": "I Too Crossed the River",
-  "SUNQIAN_UNIVERSE_CARD_CROSS_THE_RIVER.description": "Gain {VigorPower:diff()} [gold]Vigor[/gold] and {VulnerablePower:diff()} [gold]Vulnerable[/gold].\nIf any enemy intends to Attack, your Attack cards receive twice the bonus from Vigor for {CrossTheRiverPower:diff()} turns.",
+  "SUNQIAN_UNIVERSE_CARD_CROSS_THE_RIVER.description": "Gain {VigorPower:diff()} [gold]Vigor[/gold] and {VulnerablePower:diff()} [gold]Vulnerable[/gold].\nIf any enemy intends to Attack, your Attack cards receive twice the bonus from [gold]Vigor[/gold] and [gold]Strength[/gold] for {CrossTheRiverPower:diff()} turns.",
   "SUNQIAN_UNIVERSE_CARD_WORRY_WITHOUT_WORRY.title": "Carefree Yet Concerned",
   "SUNQIAN_UNIVERSE_CARD_WORRY_WITHOUT_WORRY.description": "Gain {Block:diff()} [gold]Block[/gold].\nNext turn, gain {BlockNextTurn:diff()} [gold]Block[/gold].{IfUpgraded:show:\nYour Block is not removed at the start of your next turn.|}",
   "SUNQIAN_UNIVERSE_CARD_IRON_CHAIN_BOATS.title": "Chain the Boats",

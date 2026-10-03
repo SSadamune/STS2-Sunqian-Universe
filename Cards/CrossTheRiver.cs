@@ -18,7 +18,7 @@ using STS2RitsuLib.Scaffolding.Content;
 
 namespace Squ.Cards;
 
-/// <summary>吾亦过江：获得活力与易伤，并在敌人准备攻击时暂时使攻击牌获得双倍活力加成。</summary>
+/// <summary>吾亦过江：获得活力与易伤，并在敌人准备攻击时暂时使攻击牌获得双倍活力与力量加成。</summary>
 [RegisterCard(typeof(SunqianCardPool), StableEntryStem = "cross_the_river")]
 public sealed class CrossTheRiver : ModCardTemplate
 {
@@ -38,6 +38,7 @@ public sealed class CrossTheRiver : ModCardTemplate
 	protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
 	[
 		HoverTipFactory.FromPower<VigorPower>(),
+		HoverTipFactory.FromPower<StrengthPower>(),
 		HoverTipFactory.FromPower<VulnerablePower>(),
 	];
 
