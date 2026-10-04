@@ -17,17 +17,17 @@ using MegaCrit.Sts2.Core.Models.Powers;
 using MegaCrit.Sts2.Core.ValueProps;
 using Squ;
 using Squ.Audio;
-using Squ.Character;
+// using Squ.Character;
 using Squ.Combat;
 using Squ.Powers;
-using STS2RitsuLib.Interop.AutoRegistration;
+// using STS2RitsuLib.Interop.AutoRegistration;
 using STS2RitsuLib.Scaffolding.Content;
 
 #nullable enable
 
 namespace Squ.Cards;
 
-[RegisterCard(typeof(SunqianCardPool), StableEntryStem = "chaos_harmed_you")]
+// [RegisterCard(typeof(SunqianCardPool), StableEntryStem = "chaos_harmed_you")]
 public sealed class ChaosHarmedYou : ModCardTemplate
 {
 	public const int BaseDamage = 21;

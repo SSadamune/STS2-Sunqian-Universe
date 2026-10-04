@@ -20,6 +20,7 @@
 {dc6fbd79-f408-485e-bcc8-c071037f1394} event:/sunqian_universe/sfx/中原第一雄关
 {ee40f0aa-c3d5-42fa-8bbf-1e6078e4ebdb} event:/sunqian_universe/sfx/中原第一雄关-进可攻退可守
 {4ddc73a4-e070-4818-a3fc-550e9ca12774} event:/sunqian_universe/sfx/中立伏兵-你等会，这是谁家的伏兵
+{8fefe937-0f7c-4a83-a506-8f46c2474a68} event:/sunqian_universe/sfx/中立伏兵-把滚木雷石投篮一样往下砸
 {fddfaeeb-4e62-48a1-a62c-d20ad4846aaf} event:/sunqian_universe/sfx/中立伏兵-这一路伏兵见人就打
 {d98b8cdf-e94a-48cb-b7d8-e9b9d94a3eb3} event:/sunqian_universe/sfx/中立伏兵-随机刷新的中立野怪
 {59f4eca2-a4c7-4992-9ebf-d8ac77d78652} event:/sunqian_universe/sfx/义之剑
@@ -164,6 +165,7 @@
 {49cf55f8-5c29-4c9e-b5c4-f172bfa88f20} event:/sunqian_universe/sfx/炮轰赤壁-我笑猪哥愚蠢
 {a1f8c8a6-10ec-4ea5-82de-f78738ee6a1e} event:/sunqian_universe/sfx/炮轰赤壁-点火
 {e8442e24-de22-497c-8cc6-67e0404b147b} event:/sunqian_universe/sfx/烈焰打击-我去放把火
+{0f9274af-61c1-412b-ab53-bdefa2fa533e} event:/sunqian_universe/sfx/焚城-汉宫生大火
 {fb6b5c93-ac46-4f27-9087-cbf43b84ddc0} event:/sunqian_universe/sfx/生死不明
 {adef8aef-88ec-4baf-9e48-999915329fda} event:/sunqian_universe/sfx/生死不明-那就是死了
 {19a69e50-cedd-43c9-9634-513e9df4cb4d} event:/sunqian_universe/sfx/白银起义
@@ -180,6 +182,8 @@
 {765b16d4-0c54-4cbd-b86e-166d628ac4da} event:/sunqian_universe/sfx/西凉野人
 {0a3ae5a7-1001-4f77-a791-7f337b10d72e} event:/sunqian_universe/sfx/试镜-每一个演好了都足以笑傲江湖
 {5b321257-e101-45be-9a8f-f9f7e05f5cdd} event:/sunqian_universe/sfx/贴身铠甲
+{c2f67bcd-3d2b-4236-ab39-abd9fda8d852} event:/sunqian_universe/sfx/迁都-迁入伊斯坦
+{7dd73c7c-19e4-4043-a0b7-8ff541355eac} event:/sunqian_universe/sfx/迁都-迁都入长安
 {cba96cfd-76a1-47f3-9f5d-60dd0ddf87d5} event:/sunqian_universe/sfx/过禽论-与禽兽何异
 {aa338823-cf29-4a84-820b-57fb9c9c26cf} event:/sunqian_universe/sfx/过禽论-义父要把我
 {09055287-691e-4e42-9a21-579af8135495} event:/sunqian_universe/sfx/过禽论-小女怕配不上吕将军

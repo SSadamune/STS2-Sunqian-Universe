@@ -181,6 +181,8 @@ internal static class SquSfx
 	public const string PortalZiwuValleyEvent = "event:/sunqian_universe/sfx/传送门-子午谷未必不可行";
 	public const string VoiceChangeTooMuchEvent = "event:/sunqian_universe/sfx/变声期-是不是有点过于变声期";
 	public const string VoiceChangeSubtitlesConflictEvent = "event:/sunqian_universe/sfx/变声期-字幕和语音打架";
+	public const string RelocateCapitalEvent = "event:/sunqian_universe/sfx/迁都-迁都入长安";
+	public const string RelocateCapitalHighVigorEvent = "event:/sunqian_universe/sfx/迁都-迁入伊斯坦";
 	public const string FingerStrikeInstantHeadEvent = "event:/sunqian_universe/sfx/弹指打击-弹指间取你首级";
 	public const string HuaguMianzhangTriggerEvent = "event:/sunqian_universe/sfx/化骨绵掌-喷血";
 	public const string TooKindToBeTrueFaultIsMineEvent = "event:/sunqian_universe/sfx/长厚似伪-错在于我，连累三军";
@@ -207,6 +209,7 @@ internal static class SquSfx
 	public const string EunuchScriptEvent = "event:/sunqian_universe/sfx/小黄门剧本-小公公，曹大人";
 	public const string HeadsmanScriptEvent = "event:/sunqian_universe/sfx/刀斧手-刀斧手听令";
 	public const string FlameStrikeEvent = "event:/sunqian_universe/sfx/烈焰打击-我去放把火";
+	public const string BurnCityEvent = "event:/sunqian_universe/sfx/焚城-汉宫生大火";
 	public const string NeutralAmbushPlayEvent = "event:/sunqian_universe/sfx/中立伏兵-你等会，这是谁家的伏兵";
 	public const string NeutralAmbushTriggerEvent = "event:/sunqian_universe/sfx/中立伏兵-这一路伏兵见人就打";
 	public const string NightRaidWuchaoRushOvernightEvent = "event:/sunqian_universe/sfx/夜袭乌巢-连夜杀奔";

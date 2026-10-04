@@ -201,6 +201,7 @@
   "SUNQIAN_UNIVERSE_CARD_WHY_DOUBT_WEI.description": "Deal {Damage:diff()} damage.\nGain {StrengthPower:diff()} [gold]Strength[/gold].\nWhen this card is Exhausted by [gold]Ethereal[/gold], gain {Block:diff()} [gold]Block[/gold] and {WeakPower:diff()} [gold]Weak[/gold].",
   "SUNQIAN_UNIVERSE_CARD_TOO_KIND_TO_BE_TRUE.title": "Too Kind to Be True",
   "SUNQIAN_UNIVERSE_CARD_TOO_KIND_TO_BE_TRUE.description": "Give an Attack [gold]Slight Revision[/gold]: [gold]{IfUpgraded:show:Ultimate Defend+|Ultimate Defend}[/gold].\nFor each unique Debuff you have, cards with \"Defend\" in their name gain {ExtraBlock:diff()} additional [gold]Block[/gold].",
+  "SUNQIAN_UNIVERSE_CARD_TOO_KIND_TO_BE_TRUE.slightRevisionReplacementTip": "If a card that already has [gold]Slight Revision[/gold] gains [gold]Slight Revision[/gold] again, its previous target is replaced.",
   "SUNQIAN_UNIVERSE_CARD_DRINKING_TABLE_CULTURE.title": "Drinking Table Culture",
   "SUNQIAN_UNIVERSE_CARD_DRINKING_TABLE_CULTURE.description": "Add a [gold]Wine+[/gold] with [gold]Enthralled[/gold] into an ally's [gold]Hand[/gold].",
   "SUNQIAN_UNIVERSE_NIGHT_RAID_WUCHAO_STRIKE.descriptionFragment": "[green]Apply {NightRaidBurning:diff()} [gold]Burning[/gold] to the targeted enemy.[/green]",
@@ -236,5 +237,9 @@
   "SUNQIAN_UNIVERSE_CARD_THE_BACKUPS_BACKUP.hidden": "Only cards of [color=#BFBFBF]Common[/color]/[blue]Uncommon[/blue]/[gold]Rare[/gold]/[pink]Ancient[/pink]/[green]Event[/green] rarity can be found.\nIf fewer than 3 cards of the required rarity are in that deck, fill the remaining options with cards of those rarities from that character's card pool.",
   "SUNQIAN_UNIVERSE_CARD_THE_BACKUPS_BACKUP.hiddenUpgraded": "Only cards of [blue]Uncommon[/blue]/[gold]Rare[/gold]/[pink]Ancient[/pink]/[green]Event[/green] rarity can be found.\nIf fewer than 3 cards of the required rarity are in that deck, fill the remaining options with cards of those rarities from that character's card pool.",
   "SUNQIAN_UNIVERSE_CARD_LITTLE_THIRD_BIG_FOURTH.title": "Little Third, Big Fourth",
-  "SUNQIAN_UNIVERSE_CARD_LITTLE_THIRD_BIG_FOURTH.description": "Add one card of each Energy cost from your [gold]Draw Pile[/gold] and [gold]Discard Pile[/gold] to your [gold]Hand[/gold]. Shuffle these cards' Energy costs this turn."
+  "SUNQIAN_UNIVERSE_CARD_LITTLE_THIRD_BIG_FOURTH.description": "Add one card of each Energy cost from your [gold]Draw Pile[/gold] and [gold]Discard Pile[/gold] to your [gold]Hand[/gold]. Shuffle these cards' Energy costs this turn.",
+  "SUNQIAN_UNIVERSE_CARD_RELOCATE_CAPITAL.title": "Relocate the Capital",
+  "SUNQIAN_UNIVERSE_CARD_RELOCATE_CAPITAL.description": "Deal {Damage:diff()} damage to ALL enemies.\nGain [gold]Block[/gold]{IfUpgraded:show: and [gold]Tinder[/gold]|} equal to the [gold]Vigor[/gold] spent by this card.{SlightRevisionText}",
+  "SUNQIAN_UNIVERSE_CARD_BURN_CITY.title": "Burn the City",
+  "SUNQIAN_UNIVERSE_CARD_BURN_CITY.description": "Apply {BurningPower:diff()} [gold]Burning[/gold] to ALL enemies twice."
 }
