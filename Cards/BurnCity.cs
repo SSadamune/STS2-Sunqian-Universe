@@ -23,9 +23,9 @@ namespace Squ.Cards;
 [RegisterCard(typeof(TokenCardPool), StableEntryStem = "burn_city")]
 public sealed class BurnCity : ModCardTemplate
 {
-	public const int BaseBurning = 4;
-	public const int UpgradedBurning = 6;
-	public const int RepeatCount = 2;
+	public const int BaseBurning = 5;
+	public const int BaseRepeatCount = 2;
+	public const int UpgradedRepeatCount = 3;
 
 	protected override IEnumerable<DynamicVar> CanonicalVars =>
 	[
@@ -59,7 +59,8 @@ public sealed class BurnCity : ModCardTemplate
 		decimal burning = DynamicVars[nameof(BurningPower)].BaseValue;
 		SquSfx.Play(SquSfx.BurnCityEvent);
 
-		for (int i = 0; i < RepeatCount; i++)
+		int repeatCount = IsUpgraded ? UpgradedRepeatCount : BaseRepeatCount;
+		for (int i = 0; i < repeatCount; i++)
 		{
 			foreach (Creature enemy in combatState.HittableEnemies)
 			{
@@ -80,6 +81,5 @@ public sealed class BurnCity : ModCardTemplate
 
 	protected override void OnUpgrade()
 	{
-		DynamicVars[nameof(BurningPower)].UpgradeValueBy(UpgradedBurning - BaseBurning);
 	}
 }

@@ -21,8 +21,8 @@ namespace Squ.Cards;
 [RegisterCard(typeof(SunqianCardPool), StableEntryStem = "flame_strike")]
 public sealed class FlameStrike : ModCardTemplate
 {
-	public const int BaseDamage = 7;
-	public const int UpgradedDamage = 10;
+	public const int BaseDamage = 6;
+	public const int UpgradedDamage = 8;
 	public const int BaseBurning = 3;
 	public const int UpgradedBurning = 4;
 
@@ -43,7 +43,7 @@ public sealed class FlameStrike : ModCardTemplate
 		PortraitPath: "res://images/cards/FlameStrike.png");
 
 	public FlameStrike()
-		: base(1, CardType.Attack, CardRarity.Common, TargetType.AnyEnemy)
+		: base(1, CardType.Attack, CardRarity.Uncommon, TargetType.AnyEnemy)
 	{
 	}
 
@@ -51,19 +51,25 @@ public sealed class FlameStrike : ModCardTemplate
 	{
 		ArgumentNullException.ThrowIfNull(cardPlay.Target, nameof(cardPlay.Target));
 		SquSfx.Play(SquSfx.FlameStrikeEvent);
+		bool targetWasBurning = cardPlay.Target.HasPower<BurningPower>();
 
 		await DamageCmd.Attack(DynamicVars.Damage.BaseValue)
+			.WithHitCount(targetWasBurning ? 2 : 1)
 			.FromCard(this, cardPlay)
 			.Targeting(cardPlay.Target)
 			.WithHitFx("vfx/vfx_attack_slash")
 			.Execute(choiceContext);
 
-		await PowerCmd.Apply<BurningPower>(
-			choiceContext,
-			cardPlay.Target,
-			DynamicVars[nameof(BurningPower)].BaseValue,
-			Owner.Creature,
-			this);
+		int burningApplications = targetWasBurning ? 1 : 2;
+		for (int i = 0; i < burningApplications; i++)
+		{
+			await PowerCmd.Apply<BurningPower>(
+				choiceContext,
+				cardPlay.Target,
+				DynamicVars[nameof(BurningPower)].BaseValue,
+				Owner.Creature,
+				this);
+		}
 	}
 
 	protected override void OnUpgrade()

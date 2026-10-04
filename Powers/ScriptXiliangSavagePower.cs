@@ -8,6 +8,7 @@ using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.Powers;
 using MegaCrit.Sts2.Core.ValueProps;
+using Squ.Cards;
 using Squ.Combat;
 using STS2RitsuLib.Interop.AutoRegistration;
 using STS2RitsuLib.Scaffolding.Content;
@@ -104,7 +105,8 @@ public sealed class ScriptXiliangSavagePower : ScriptPowerTemplate
 			return Task.CompletedTask;
 		}
 
-		bool retained = CardValueRetain.TryAddBaseDamage(pending.Card, vigorBonus);
+		bool retained = DigRaid.DamageReceivesVigor(pending.Card)
+			&& CardValueRetain.TryAddBaseDamage(pending.Card, vigorBonus);
 		if (pending.Card.DynamicVars.ContainsKey(BurningVarName))
 		{
 			QueueCardBonus(pending.Card, burning: vigorBonus);

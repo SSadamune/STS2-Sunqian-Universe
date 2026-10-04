@@ -26,9 +26,9 @@ namespace Squ.Cards;
 [RegisterCard(typeof(SunqianCardPool), StableEntryStem = "fire_nova")]
 public sealed class FireNova : SlightRevisionCardTemplate<FireMeteorShower>, IRandomEnemyTargetCount
 {
-	public const int DamageAmount = 4;
+	public const int DamageAmount = 3;
 	public const int BurningStacks = 5;
-	public const int UpgradedDamageAmount = 6;
+	public const int UpgradedDamageAmount = 4;
 	public const int UpgradedBurningStacks = 7;
 
 	protected override IEnumerable<DynamicVar> CanonicalVars =>
@@ -51,7 +51,7 @@ public sealed class FireNova : SlightRevisionCardTemplate<FireMeteorShower>, IRa
 	public override TargetType TargetType => SquTargetTypes.RandomEnemies;
 
 	public FireNova()
-		: base(1, CardType.Attack, CardRarity.Uncommon, TargetType.AnyEnemy)
+		: base(1, CardType.Attack, CardRarity.Common, TargetType.AnyEnemy)
 	{
 	}
 

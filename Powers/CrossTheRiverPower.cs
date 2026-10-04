@@ -15,6 +15,7 @@ using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.Powers;
 using MegaCrit.Sts2.Core.ValueProps;
 using Squ.Audio;
+using Squ.Cards;
 using STS2RitsuLib.Interop.AutoRegistration;
 using STS2RitsuLib.Scaffolding.Content;
 
@@ -44,8 +45,8 @@ public sealed class CrossTheRiverPower : ModPowerTemplate
 	{
 		if (command.Attacker == Owner
 			&& command.DamageProps.IsPoweredAttack()
-			&& command.ModelSource is CardModel { Type: CardType.Attack }
-			&& HasVigorOrStrengthModifier())
+			&& command.ModelSource is CardModel { Type: CardType.Attack } card
+			&& GetDamageModifier(card) != 0m)
 		{
 			SquSfx.PlayRandom(CombatState?.RunState, SquSfx.CrossTheRiverTriggerEvents);
 		}
@@ -68,17 +69,18 @@ public sealed class CrossTheRiverPower : ModPowerTemplate
 			return 0m;
 		}
 
-		return GetVigorAmount() + GetStrengthAmount();
+		return GetDamageModifier(card);
 	}
+
+	private decimal GetDamageModifier(CardModel card) =>
+		(DigRaid.DamageReceivesVigor(card) ? GetVigorAmount() : 0m)
+		+ GetStrengthAmount();
 
 	private decimal GetVigorAmount() =>
 		Owner.GetPower<VigorPower>()?.Amount ?? 0m;
 
 	private decimal GetStrengthAmount() =>
 		Owner.GetPower<StrengthPower>()?.Amount ?? 0m;
-
-	private bool HasVigorOrStrengthModifier() =>
-		GetVigorAmount() != 0m || GetStrengthAmount() != 0m;
 
 	public override async Task AfterSideTurnEnd(
 		PlayerChoiceContext choiceContext,

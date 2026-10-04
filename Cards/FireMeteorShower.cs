@@ -24,9 +24,9 @@ namespace Squ.Cards;
 [RegisterCard(typeof(TokenCardPool), StableEntryStem = "fire_meteor_shower")]
 public sealed class FireMeteorShower : ModCardTemplate, IRandomEnemyTargetCount
 {
-	public const int DamageAmount = 4;
+	public const int DamageAmount = 3;
 	public const int BurningStacks = 5;
-	public const int UpgradedDamageAmount = 6;
+	public const int UpgradedDamageAmount = 4;
 	public const int UpgradedBurningStacks = 7;
 
 	protected override bool HasEnergyCostX => true;

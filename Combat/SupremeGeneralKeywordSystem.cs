@@ -10,6 +10,7 @@ using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.Powers;
 using MegaCrit.Sts2.Core.Rooms;
 using MegaCrit.Sts2.Core.ValueProps;
+using Squ.Cards;
 using STS2RitsuLib.Interop.AutoRegistration;
 using STS2RitsuLib.Keywords;
 using STS2RitsuLib.Models;
@@ -117,6 +118,7 @@ public sealed class SupremeGeneralKeywordSystem : HookedSingletonModel
 	{
 		if (!props.IsPoweredAttack()
 			|| cardSource is null
+			|| !DigRaid.DamageReceivesVigor(cardSource)
 			|| !TryGetInheritedVigorBonus(cardSource, cardPlay, out decimal inheritedVigor)
 			|| dealer != cardSource.Owner.Creature)
 		{

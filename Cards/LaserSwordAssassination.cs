@@ -28,7 +28,8 @@ namespace Squ.Cards;
 public sealed class LaserSwordAssassination : ModCardTemplate
 {
 	public const int CanonicalDamage = 4;
-	public const int UpgradedDamage = 7;
+	public const int BaseDamageMultiplier = 2;
+	public const int UpgradedDamageMultiplier = 3;
 
 	internal static readonly ValueProp DamageProps = ValueProp.Move | ValueProp.Unblockable;
 
@@ -76,7 +77,7 @@ public sealed class LaserSwordAssassination : ModCardTemplate
 	{
 		ArgumentNullException.ThrowIfNull(cardPlay.Target, nameof(cardPlay.Target));
 
-		SquSfx.Play(ShouldDoubleDamage(cardPlay.Target)
+		SquSfx.Play(ShouldAmplifyDamage(cardPlay.Target)
 			? SquSfx.LaserSwordAssassinationLaserEvent
 			: SquSfx.LaserSwordAssassinationDrawEvent);
 
@@ -90,11 +91,13 @@ public sealed class LaserSwordAssassination : ModCardTemplate
 
 	protected override void OnUpgrade()
 	{
-		DynamicVars.Damage.UpgradeValueBy(UpgradedDamage - CanonicalDamage);
 	}
 
-	internal static bool ShouldDoubleDamage(Creature? target) =>
+	internal static bool ShouldAmplifyDamage(Creature? target) =>
 		target is { IsAlive: true } && !SquEnemyIntent.IntendsToAttack(target);
+
+	internal static decimal GetDamageMultiplier(CardModel card) =>
+		card.IsUpgraded ? UpgradedDamageMultiplier : BaseDamageMultiplier;
 
 	internal static bool IsUpdatingCardPreview { get; private set; }
 
@@ -125,9 +128,9 @@ public sealed class LaserSwordAssassination : ModCardTemplate
 				IsUpdatingCardPreview = false;
 			}
 
-			if (ShouldDoubleDamage(target))
+			if (ShouldAmplifyDamage(target))
 			{
-				PreviewValue *= 2m;
+				PreviewValue *= GetDamageMultiplier(card);
 			}
 		}
 	}

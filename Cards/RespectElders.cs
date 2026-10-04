@@ -81,14 +81,16 @@ public sealed class RespectElders : ModCardTemplate
 		{
 			var hitConfirm = new LocString("cards", Id.Entry + ".hitConfirm");
 			hitConfirm.Add(DynamicVars.Damage);
-			hitConfirm.Add(DynamicVars["HitCount"]);
+			hitConfirm.Add(new IfUpgradedVar(
+				IsUpgraded ? UpgradeDisplay.Upgraded : UpgradeDisplay.Normal));
 			description.Add("BodyText", hitConfirm);
 			return;
 		}
 
 		var bodyText = new LocString("cards", Id.Entry + ".normalBody");
 		bodyText.Add(DynamicVars.Damage);
-		bodyText.Add(DynamicVars["HitCount"]);
+		bodyText.Add(new IfUpgradedVar(
+			IsUpgraded ? UpgradeDisplay.Upgraded : UpgradeDisplay.Normal));
 		description.Add("BodyText", bodyText);
 	}
 

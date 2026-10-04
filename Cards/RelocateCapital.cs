@@ -26,7 +26,8 @@ namespace Squ.Cards;
 [RegisterCard(typeof(SunqianCardPool), StableEntryStem = "relocate_capital")]
 public sealed class RelocateCapital : SlightRevisionCardTemplate<BurnCity>
 {
-	public const int DamageAmount = 7;
+	public const int DamageAmount = 9;
+	public const int UpgradedDamageAmount = 12;
 	public const int HighVigorThreshold = 10;
 
 	protected override IEnumerable<DynamicVar> CanonicalVars =>
@@ -45,10 +46,7 @@ public sealed class RelocateCapital : SlightRevisionCardTemplate<BurnCity>
 
 			yield return HoverTipFactory.FromPower<VigorPower>();
 			yield return HoverTipFactory.Static(StaticHoverTip.Block);
-			if (IsUpgraded)
-			{
-				yield return HoverTipFactory.FromPower<TinderPower>();
-			}
+			yield return HoverTipFactory.FromPower<TinderPower>();
 		}
 	}
 
@@ -61,14 +59,13 @@ public sealed class RelocateCapital : SlightRevisionCardTemplate<BurnCity>
 		Owner?.Creature is Creature owner && SquVigorSnapshot.GetAmount(owner) > 0;
 
 	public RelocateCapital()
-		: base(1, CardType.Attack, CardRarity.Common, TargetType.AllEnemies)
+		: base(1, CardType.Attack, CardRarity.Uncommon, TargetType.AnyEnemy)
 	{
 	}
 
 	protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
 	{
-		ICombatState combatState = CombatState
-			?? throw new InvalidOperationException("RelocateCapital requires an active combat.");
+		ArgumentNullException.ThrowIfNull(cardPlay.Target, nameof(cardPlay.Target));
 		Creature owner = Owner.Creature;
 		int vigorBefore = SquVigorSnapshot.GetAmount(owner);
 		SquSfx.Play(vigorBefore >= HighVigorThreshold
@@ -77,7 +74,7 @@ public sealed class RelocateCapital : SlightRevisionCardTemplate<BurnCity>
 
 		await DamageCmd.Attack(DynamicVars.Damage.BaseValue)
 			.FromCard(this, cardPlay)
-			.TargetingAllOpponents(combatState)
+			.Targeting(cardPlay.Target)
 			.WithHitFx("vfx/vfx_attack_slash")
 			.Execute(choiceContext);
 
@@ -88,19 +85,16 @@ public sealed class RelocateCapital : SlightRevisionCardTemplate<BurnCity>
 		}
 
 		await CreatureCmd.GainBlock(owner, vigorSpent, ValueProp.Move, cardPlay);
-
-		if (IsUpgraded)
-		{
-			await PowerCmd.Apply<TinderPower>(
-				choiceContext,
-				owner,
-				vigorSpent,
-				owner,
-				this);
-		}
+		await PowerCmd.Apply<TinderPower>(
+			choiceContext,
+			owner,
+			vigorSpent,
+			owner,
+			this);
 	}
 
 	protected override void OnUpgrade()
 	{
+		DynamicVars.Damage.UpgradeValueBy(UpgradedDamageAmount - DamageAmount);
 	}
 }

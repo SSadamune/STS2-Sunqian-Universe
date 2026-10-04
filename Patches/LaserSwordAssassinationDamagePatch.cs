@@ -38,16 +38,16 @@ internal static class LaserSwordAssassinationDamagePatch
 	{
 		if (LaserSwordAssassination.IsUpdatingCardPreview
 			|| modifyDamageHookType != ModifyDamageHookType.All
-			|| cardSource is not LaserSwordAssassination)
+			|| cardSource is not LaserSwordAssassination assassination)
 		{
 			return;
 		}
 
-		if (!LaserSwordAssassination.ShouldDoubleDamage(target))
+		if (!LaserSwordAssassination.ShouldAmplifyDamage(target))
 		{
 			return;
 		}
 
-		__result *= 2m;
+		__result *= LaserSwordAssassination.GetDamageMultiplier(assassination);
 	}
 }

@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using MegaCrit.Sts2.Core.Combat;
 using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
@@ -20,8 +21,8 @@ namespace Squ.Cards;
 [RegisterCard(typeof(SunqianCardPool), StableEntryStem = "hate_the_heavens_strike")]
 public sealed class HateTheHeavensStrike : ModCardTemplate
 {
-	public const int DamageAmount = 11;
-	public const int UpgradedDamageAmount = 14;
+	public const int DamageAmount = 8;
+	public const int UpgradedDamageAmount = 11;
 	public const int ScryAmount = 2;
 	public const int UpgradedScryAmount = 3;
 
@@ -47,18 +48,19 @@ public sealed class HateTheHeavensStrike : ModCardTemplate
 		PortraitPath: "res://images/cards/HateTheHeavensStrike.png");
 
 	public HateTheHeavensStrike()
-		: base(1, CardType.Attack, CardRarity.Common, TargetType.AnyEnemy)
+		: base(1, CardType.Attack, CardRarity.Common, TargetType.AllEnemies)
 	{
 	}
 
 	protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
 	{
-		ArgumentNullException.ThrowIfNull(cardPlay.Target, nameof(cardPlay.Target));
+		ICombatState combatState = CombatState
+			?? throw new InvalidOperationException("HateTheHeavensStrike requires an active combat.");
 		SquSfx.Play(SquSfx.HateTheHeavensStrikePlayEvent);
 
 		await DamageCmd.Attack(DynamicVars.Damage.BaseValue)
 			.FromCard(this, cardPlay)
-			.Targeting(cardPlay.Target)
+			.TargetingAllOpponents(combatState)
 			.WithHitFx("vfx/vfx_attack_slash")
 			.Execute(choiceContext);
 
