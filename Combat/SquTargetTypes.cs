@@ -24,6 +24,8 @@ public static class SquTargetTypes
 
 	public static TargetType AnyCreature { get; private set; }
 
+	public static TargetType AnyRealEnemy { get; private set; }
+
 	public static void Register()
 	{
 		RandomEnemies = CustomTargetType.RegisterMultiTargetType(
@@ -56,6 +58,12 @@ public static class SquTargetTypes
 			SquMod.ModId,
 			"any_creature",
 			static creature => creature.IsAlive);
+
+		AnyRealEnemy = CustomTargetType.RegisterSingleTargetType(
+			SquMod.ModId,
+			"any_real_enemy",
+			static creature => creature is { IsAlive: true, IsEnemy: true }
+				&& !creature.IsSecondaryEnemy);
 	}
 
 	public static bool IsRandomEnemiesTarget(TargetType type) => type == RandomEnemies;

@@ -246,5 +246,9 @@
   "SUNQIAN_UNIVERSE_CARD_RELOCATE_CAPITAL.title": "迁都",
   "SUNQIAN_UNIVERSE_CARD_RELOCATE_CAPITAL.description": "造成{Damage:diff()}点伤害。\n根据消耗的[gold]活力[/gold]，获得等量的[gold]格挡[/gold]和[gold]火种[/gold]。{SlightRevisionText}",
   "SUNQIAN_UNIVERSE_CARD_BURN_CITY.title": "焚城",
-  "SUNQIAN_UNIVERSE_CARD_BURN_CITY.description": "给予所有敌人{BurningPower:diff()}层[gold]灼烧[/gold]{IfUpgraded:show:三|两}次。"
+  "SUNQIAN_UNIVERSE_CARD_BURN_CITY.description": "给予所有敌人{BurningPower:diff()}层[gold]灼烧[/gold]{IfUpgraded:show:三|两}次。",
+  "SUNQIAN_UNIVERSE_CARD_MUTATED_CENTAUR.title": "变异半人马",
+  "SUNQIAN_UNIVERSE_CARD_MUTATED_CENTAUR.description": "为一个不为爪牙的敌人召唤[gold]坐骑[/gold]。当该[gold]坐骑[/gold]受到伤害后，该敌人失去伤害值的{DamagePercent:diff()}%的生命。",
+  "SUNQIAN_UNIVERSE_CARD_MUTATED_CENTAUR.mountTitle": "坐骑",
+  "SUNQIAN_UNIVERSE_CARD_MUTATED_CENTAUR.mountDescription": "一个与指定敌人绑定的[gold]爪牙[/gold]。初始生命值为该敌人最大生命值的40%，且不会行动。"
 }

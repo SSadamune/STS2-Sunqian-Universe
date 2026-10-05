@@ -1,4 +1,6 @@
 {
+  "SUNQIAN_UNIVERSE_POWER_MUTATED_CENTAUR_LINK_POWER.title": "Mount Bond",
+  "SUNQIAN_UNIVERSE_POWER_MUTATED_CENTAUR_LINK_POWER.description": "When damaged, {EnemyName} loses HP equal to {DamagePercent}% of that damage.",
   "SUNQIAN_UNIVERSE_POWER_HUAGU_MIANZHANG_POWER.title": "Huagu Mianzhang",
   "SUNQIAN_UNIVERSE_POWER_HUAGU_MIANZHANG_POWER.description": "At the start of each turn, gain [blue]{Amount}[/blue] [gold]Doom[/gold].",
   "SUNQIAN_UNIVERSE_POWER_PHASING_POWER.title": "Phasing",

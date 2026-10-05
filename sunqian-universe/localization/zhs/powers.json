@@ -1,4 +1,6 @@
 {
+  "SUNQIAN_UNIVERSE_POWER_MUTATED_CENTAUR_LINK_POWER.title": "坐骑绑定",
+  "SUNQIAN_UNIVERSE_POWER_MUTATED_CENTAUR_LINK_POWER.description": "受到伤害时，{EnemyName}失去伤害值的{DamagePercent}%的生命。",
   "SUNQIAN_UNIVERSE_POWER_HUAGU_MIANZHANG_POWER.title": "化骨绵掌",
   "SUNQIAN_UNIVERSE_POWER_HUAGU_MIANZHANG_POWER.description": "回合开始时获得[blue]{Amount}[/blue][gold]灾厄[/gold]。",
   "SUNQIAN_UNIVERSE_POWER_PHASING_POWER.title": "忽近忽远",

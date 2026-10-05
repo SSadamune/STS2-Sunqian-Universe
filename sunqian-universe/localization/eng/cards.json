@@ -246,5 +246,9 @@
   "SUNQIAN_UNIVERSE_CARD_RELOCATE_CAPITAL.title": "Relocate the Capital",
   "SUNQIAN_UNIVERSE_CARD_RELOCATE_CAPITAL.description": "Deal {Damage:diff()} damage.\nGain [gold]Block[/gold] and [gold]Tinder[/gold] equal to the [gold]Vigor[/gold] spent by this card.{SlightRevisionText}",
   "SUNQIAN_UNIVERSE_CARD_BURN_CITY.title": "Burn the City",
-  "SUNQIAN_UNIVERSE_CARD_BURN_CITY.description": "Apply {BurningPower:diff()} [gold]Burning[/gold] to ALL enemies {IfUpgraded:show:three|two} times."
+  "SUNQIAN_UNIVERSE_CARD_BURN_CITY.description": "Apply {BurningPower:diff()} [gold]Burning[/gold] to ALL enemies {IfUpgraded:show:three|two} times.",
+  "SUNQIAN_UNIVERSE_CARD_MUTATED_CENTAUR.title": "Mutated Centaur",
+  "SUNQIAN_UNIVERSE_CARD_MUTATED_CENTAUR.description": "Summon a [gold]Mount[/gold] for a non-Minion enemy. Whenever the [gold]Mount[/gold] takes damage, that enemy loses HP equal to {DamagePercent:diff()}% of that damage.",
+  "SUNQIAN_UNIVERSE_CARD_MUTATED_CENTAUR.mountTitle": "Mount",
+  "SUNQIAN_UNIVERSE_CARD_MUTATED_CENTAUR.mountDescription": "A [gold]Minion[/gold] bound to the chosen enemy. It starts with HP equal to 40% of that enemy's Max HP and does not act."
 }
