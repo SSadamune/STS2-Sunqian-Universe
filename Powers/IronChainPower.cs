@@ -17,7 +17,7 @@ using STS2RitsuLib.Scaffolding.Content;
 
 namespace Squ.Powers;
 
-/// <summary>铁索连环：目标受到灼烧伤害后，按层数将实际伤害量作为环境伤害传给其余敌人。</summary>
+/// <summary>铁索连环：目标受到灼烧伤害后，按层数将实际伤害量作为环境伤害传给所有敌人。</summary>
 [RegisterPower]
 public sealed class IronChainPower : ModPowerTemplate
 {
@@ -49,14 +49,14 @@ public sealed class IronChainPower : ModPowerTemplate
 
 		Flash();
 		SquSfx.Play(SquSfx.IronChainBoatsTriggerEvent);
-		List<Creature> otherEnemies = Owner.CombatState!.HittableEnemies
-			.Where(enemy => enemy != Owner && enemy.IsAlive)
+		List<Creature> allEnemies = Owner.CombatState!.HittableEnemies
+			.Where(enemy => enemy.IsAlive)
 			.ToList();
-		if (otherEnemies.Count > 0)
+		if (allEnemies.Count > 0)
 		{
 			for (int repeat = 0; repeat < Amount; repeat++)
 			{
-				foreach (Creature enemy in otherEnemies.Where(enemy => enemy.IsAlive))
+				foreach (Creature enemy in allEnemies.Where(enemy => enemy.IsAlive))
 				{
 					await CreatureCmd.Damage(
 						new ThrowingPlayerChoiceContext(),

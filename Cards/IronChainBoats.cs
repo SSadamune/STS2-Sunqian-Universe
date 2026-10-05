@@ -15,7 +15,7 @@ using STS2RitsuLib.Scaffolding.Content;
 
 namespace Squ.Cards;
 
-/// <summary>铁索连舟：令目标后续受到的灼烧伤害扩散至其余敌人。</summary>
+/// <summary>铁索连舟：令目标后续受到的灼烧伤害扩散至所有敌人。</summary>
 [RegisterCard(typeof(TokenCardPool), StableEntryStem = "iron_chain_boats")]
 public sealed class IronChainBoats : ModCardTemplate
 {
