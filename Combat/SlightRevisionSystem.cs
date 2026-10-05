@@ -156,7 +156,8 @@ public static class SlightRevisionSystem
 			return true;
 		}
 
-		if (card is ISlightRevisionSource source)
+		if (card.Keywords.Contains(SquKeywords.SlightRevision)
+			&& card is ISlightRevisionSource source)
 		{
 			target = source.SlightRevisionTarget;
 			targetUpgraded = source.SlightRevisionTargetUpgraded;
