@@ -149,6 +149,30 @@ public sealed class SupremeGeneralKeywordSystem : HookedSingletonModel
 		TryGetInheritedVigorWindow(card, cardPlay, out ResolutionWindow window)
 		&& card.Owner == window.RootCard.Owner;
 
+	/// <summary>
+	/// Lets a non-damaging Supreme General root card consume Vigor as though it had issued its own
+	/// powered Attack, then exposes the amount actually consumed to its nested auto-played Attacks.
+	/// </summary>
+	internal static async Task ConsumeVigorForRootWithoutAttack(
+		PlayerChoiceContext choiceContext,
+		CardPlay cardPlay)
+	{
+		if (!TryGetOutermostWindow(cardPlay.Player.NetId, out ResolutionWindow window)
+			|| !ReferenceEquals(window.RootPlay, cardPlay))
+		{
+			return;
+		}
+
+		Creature owner = cardPlay.Player.Creature;
+		decimal vigorBefore = GetVigorAmount(owner);
+		await SquVigorSnapshot.SpendAll(choiceContext, owner, cardPlay.Card);
+		decimal consumed = vigorBefore - GetVigorAmount(owner);
+		if (consumed > 0m)
+		{
+			window.ConsumedVigor += consumed;
+		}
+	}
+
 	private static bool TryGetInheritedVigorWindow(
 		CardModel card,
 		CardPlay? cardPlay,

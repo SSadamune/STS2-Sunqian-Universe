@@ -8,11 +8,10 @@ using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.Entities.Creatures;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.HoverTips;
-using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.CardPools;
-using MegaCrit.Sts2.Core.ValueProps;
 using Squ.Character;
+using Squ.Combat;
 using Squ.Powers;
 using STS2RitsuLib.Interop.AutoRegistration;
 using STS2RitsuLib.Scaffolding.Content;
@@ -22,21 +21,13 @@ using STS2RitsuLib.Scaffolding.Content;
 namespace Squ.Cards;
 
 /// <summary>
-/// 兼职将军剧本：消耗 X 点能量，对目标造成伤害，并用同步战斗随机数从其它角色
-/// 的牌池中抽取 X 张非初始 Strike 牌，作为不存在的牌对该目标自动打出。
+/// 兼职将军剧本：消耗 X 点能量，并用同步战斗随机数从其它角色的牌池中抽取 X 张
+/// 非初始 Strike 牌，作为不存在的牌对指定目标自动打出。
 /// </summary>
 [RegisterCard(typeof(SunqianCardPool), StableEntryStem = "part_time_general_script")]
 public sealed class PartTimeGeneralScript : ScriptCardTemplate
 {
-	public const int BaseDamage = 5;
-	public const int UpgradedDamage = 8;
-
 	protected override bool HasEnergyCostX => true;
-
-	protected override IEnumerable<DynamicVar> CanonicalVars =>
-	[
-		new DamageVar(BaseDamage, ValueProp.Move),
-	];
 
 	public override IEnumerable<CardKeyword> CanonicalKeywords =>
 	[
@@ -68,16 +59,18 @@ public sealed class PartTimeGeneralScript : ScriptCardTemplate
 				"PartTimeGeneralScript requires an active combat.");
 		Creature target = cardPlay.Target;
 		int playCount = ResolveEnergyXValue();
-
-		await DamageCmd.Attack(DynamicVars.Damage.BaseValue)
-			.FromCard(this, cardPlay)
-			.Targeting(target)
-			.WithHitFx("vfx/vfx_attack_slash")
-			.Execute(choiceContext);
+		if (playCount > 0)
+		{
+			await SupremeGeneralKeywordSystem.ConsumeVigorForRootWithoutAttack(
+				choiceContext,
+				cardPlay);
+		}
 
 		List<CardModel> playedCards = [];
-		foreach (CardModel canonical in ChooseStrikeCards(playCount))
+		List<CardModel> strikeCards = ChooseStrikeCards(playCount);
+		for (int index = 0; index < strikeCards.Count; index++)
 		{
+			CardModel canonical = strikeCards[index];
 			CardModel source = combatState.CreateCard(canonical, Owner);
 			if (IsUpgraded && source.IsUpgradable)
 			{
@@ -91,8 +84,11 @@ public sealed class PartTimeGeneralScript : ScriptCardTemplate
 			await CardCmd.AutoPlay(
 				choiceContext,
 				autoPlayedCard,
-				target,
-				skipCardPileVisuals: true);
+				target);
+			if (index < strikeCards.Count - 1)
+			{
+				await Cmd.Wait(0.2f);
+			}
 		}
 
 		var scriptPower = (ScriptPartTimeGeneralPower)ModelDb
@@ -106,11 +102,6 @@ public sealed class PartTimeGeneralScript : ScriptCardTemplate
 			1m,
 			Owner.Creature,
 			this);
-	}
-
-	protected override void OnUpgrade()
-	{
-		DynamicVars.Damage.UpgradeValueBy(UpgradedDamage - BaseDamage);
 	}
 
 	private List<CardModel> ChooseStrikeCards(int count)

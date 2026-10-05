@@ -8,8 +8,8 @@ using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.Entities.Creatures;
 using MegaCrit.Sts2.Core.Entities.Players;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
-using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Localization;
+using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Nodes.Combat;
 using STS2RitsuLib.Interop.AutoRegistration;
@@ -26,6 +26,8 @@ namespace Squ.Powers;
 [RegisterPower]
 public sealed class ScriptPartTimeGeneralPower : ScriptPowerTemplate
 {
+	public const string RecordedCardsVarName = "RecordedCards";
+
 	private sealed record RecordedCard(ModelId Id, bool Upgraded);
 
 	private sealed class Data
@@ -40,20 +42,33 @@ public sealed class ScriptPartTimeGeneralPower : ScriptPowerTemplate
 		IconPath: "res://images/powers/ScriptPartTimeGeneralPower.png",
 		BigIconPath: "res://images/powers/ScriptPartTimeGeneralPowerBig.png");
 
-	protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
+	protected override IEnumerable<DynamicVar> CanonicalVars =>
 	[
-		HoverTipFactory.FromKeyword(SquKeywords.CountsAsPlayed),
+		new StringVar(RecordedCardsVarName, string.Empty),
 	];
+
+	protected override string SmartDescriptionLocKey =>
+		IsMutable && GetInternalData<Data>().PlayedCards.Count > 0
+			? Id.Entry + ".smartDescription"
+			: Id.Entry + ".smartDescriptionEmpty";
 
 	protected override object InitInternalData() => new Data();
 
 	internal void RecordPlayedCards(IEnumerable<CardModel> cards)
 	{
+		List<CardModel> cardList = cards.ToList();
 		Data data = GetInternalData<Data>();
-		foreach (CardModel card in cards)
+		foreach (CardModel card in cardList)
 		{
 			data.PlayedCards.Add(new RecordedCard(card.Id, card.IsUpgraded));
 		}
+
+		string separator = new LocString(
+			"powers",
+			Id.Entry + ".cardSeparator").GetFormattedText() ?? ", ";
+		((StringVar)DynamicVars[RecordedCardsVarName]).StringValue = string.Join(
+			separator,
+			cardList.Select(card => $"[gold]{card.Title}[/gold]"));
 	}
 
 	public override async Task AfterRemoved(Creature oldOwner)

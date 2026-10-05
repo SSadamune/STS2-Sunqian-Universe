@@ -252,5 +252,5 @@
   "SUNQIAN_UNIVERSE_CARD_MUTATED_CENTAUR.mountTitle": "Mount",
   "SUNQIAN_UNIVERSE_CARD_MUTATED_CENTAUR.mountDescription": "A [gold]Minion[/gold] bound to the chosen enemy. It starts with HP equal to 40% of that enemy's Max HP and does not act.",
   "SUNQIAN_UNIVERSE_CARD_PART_TIME_GENERAL_SCRIPT.title": "Part-Time General Script",
-  "SUNQIAN_UNIVERSE_CARD_PART_TIME_GENERAL_SCRIPT.description": "Deal {Damage:diff()} damage and [gold]Count as Playing[/gold] X {IfUpgraded:show:upgraded |}cards from other characters with \"Strike\" in their names.\n[gold]Script[/gold]: When this ends, add one of them to your [gold]Hand[/gold]."
+  "SUNQIAN_UNIVERSE_CARD_PART_TIME_GENERAL_SCRIPT.description": "[gold]Count as Playing[/gold] X {IfUpgraded:show:upgraded |}cards from other characters with \"Strike\" in their names.\n[gold]Script[/gold]: When this ends, add one of them to your [gold]Hand[/gold]."
 }

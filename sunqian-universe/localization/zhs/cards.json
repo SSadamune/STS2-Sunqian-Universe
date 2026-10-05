@@ -252,5 +252,5 @@
   "SUNQIAN_UNIVERSE_CARD_MUTATED_CENTAUR.mountTitle": "坐骑",
   "SUNQIAN_UNIVERSE_CARD_MUTATED_CENTAUR.mountDescription": "一个与指定敌人绑定的[gold]爪牙[/gold]。初始生命值为该敌人最大生命值的40%，且不会行动。",
   "SUNQIAN_UNIVERSE_CARD_PART_TIME_GENERAL_SCRIPT.title": "兼职将军剧本",
-  "SUNQIAN_UNIVERSE_CARD_PART_TIME_GENERAL_SCRIPT.description": "造成{Damage:diff()}点伤害并[gold]视为打出[/gold]X张其他角色的名字中有「打击」的{IfUpgraded:show:升级过的|}牌。\n[gold]剧本[/gold]：失效时，其中一张加入[gold]手牌[/gold]。"
+  "SUNQIAN_UNIVERSE_CARD_PART_TIME_GENERAL_SCRIPT.description": "[gold]视为打出[/gold]X张其他角色的名字中有「打击」的{IfUpgraded:show:升级过的|}牌。\n[gold]剧本[/gold]：失效时，其中一张加入[gold]手牌[/gold]。"
 }
