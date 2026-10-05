@@ -250,5 +250,7 @@
   "SUNQIAN_UNIVERSE_CARD_MUTATED_CENTAUR.title": "变异半人马",
   "SUNQIAN_UNIVERSE_CARD_MUTATED_CENTAUR.description": "为一个不为爪牙的敌人召唤[gold]坐骑[/gold]。当该[gold]坐骑[/gold]受到伤害后，该敌人失去伤害值的{DamagePercent:diff()}%的生命。",
   "SUNQIAN_UNIVERSE_CARD_MUTATED_CENTAUR.mountTitle": "坐骑",
-  "SUNQIAN_UNIVERSE_CARD_MUTATED_CENTAUR.mountDescription": "一个与指定敌人绑定的[gold]爪牙[/gold]。初始生命值为该敌人最大生命值的40%，且不会行动。"
+  "SUNQIAN_UNIVERSE_CARD_MUTATED_CENTAUR.mountDescription": "一个与指定敌人绑定的[gold]爪牙[/gold]。初始生命值为该敌人最大生命值的40%，且不会行动。",
+  "SUNQIAN_UNIVERSE_CARD_PART_TIME_GENERAL_SCRIPT.title": "兼职将军剧本",
+  "SUNQIAN_UNIVERSE_CARD_PART_TIME_GENERAL_SCRIPT.description": "造成{Damage:diff()}点伤害并[gold]视为打出[/gold]X张其他角色的名字中有「打击」的{IfUpgraded:show:升级过的|}牌。\n[gold]剧本[/gold]：失效时，其中一张加入[gold]手牌[/gold]。"
 }
