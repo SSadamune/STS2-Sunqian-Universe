@@ -10,6 +10,7 @@ using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.Entities.Creatures;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.Hooks;
+using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.ValueProps;
@@ -42,6 +43,12 @@ public sealed class ScriptTwoWordPoetPower : StackableScriptPowerTemplate
 	public override PowerAssetProfile AssetProfile => new(
 		IconPath: "res://images/powers/ScriptTwoWordPoetPower.png",
 		BigIconPath: "res://images/powers/ScriptTwoWordPoetPowerBig.png");
+
+	protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
+	[
+		..base.AdditionalHoverTips,
+		HoverTipFactory.FromKeyword(SquKeywords.Environmental),
+	];
 
 	protected override IEnumerable<DynamicVar> CanonicalVars =>
 	[

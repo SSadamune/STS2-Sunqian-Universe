@@ -20,7 +20,7 @@
   "SUNQIAN_UNIVERSE_POWER_SCRIPT_SUNQIAN_POWER.description": "此剧本失效时，抽[blue]1[/blue]张牌。",
   "SUNQIAN_UNIVERSE_POWER_SCRIPT_SUNQIAN_POWER.smartDescription": "此剧本结束时，抽[blue]{Cards:diff()}[/blue]张牌。",
   "SUNQIAN_UNIVERSE_POWER_SCRIPT_TWO_WORD_POET_POWER.title": "可叠层剧本：二言诗人",
-  "SUNQIAN_UNIVERSE_POWER_SCRIPT_TWO_WORD_POET_POWER.smartDescription": "每回合开始时，{TargetingDescription}造成[blue]{SnapshotDamage:diff()}[/blue]点伤害[blue]{Repeat:diff()}[/blue]次。",
+  "SUNQIAN_UNIVERSE_POWER_SCRIPT_TWO_WORD_POET_POWER.smartDescription": "每回合开始时，{TargetingDescription}造成[blue]{SnapshotDamage:diff()}[/blue]点[gold]环境伤害[/gold][blue]{Repeat:diff()}[/blue]次。",
   "SUNQIAN_UNIVERSE_POWER_LOUD_SECRET_PLOT_POWER.title": "大声密谋",
   "SUNQIAN_UNIVERSE_POWER_LOUD_SECRET_PLOT_POWER.description": "若仅有一名敌人，你的[gold]群体目标[/gold]攻击牌或技能牌额外打出[blue]{Amount}[/blue]次。",
   "SUNQIAN_UNIVERSE_POWER_LOUD_SECRET_PLOT_POWER.smartDescription": "若仅有一名敌人，你的[gold]群体目标[/gold]攻击牌或技能牌额外打出[blue]{Amount}[/blue]次。",

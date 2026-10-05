@@ -72,7 +72,7 @@ public sealed class SharpenSwordForDecades : ChargeCardTemplate
 		DynamicVars.Forge.BaseValue > BaseForge + RetainedForgeBonus;
 
 	public SharpenSwordForDecades()
-		: base(1, CardType.Skill, CardRarity.Rare, TargetType.Self)
+		: base(0, CardType.Skill, CardRarity.Rare, TargetType.Self)
 	{
 	}
 

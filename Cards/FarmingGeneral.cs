@@ -28,11 +28,6 @@ public sealed class FarmingGeneral : SlightRevisionCardTemplate<IronChainBoats>
 	private static readonly LocString SelectionPrompt =
 		new("cards", "SUNQIAN_UNIVERSE_CARD_FARMING_GENERAL.selectionScreenPrompt");
 
-	public override IEnumerable<CardKeyword> CanonicalKeywords =>
-	[
-		CardKeyword.Exhaust,
-	];
-
 	protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
 	[
 		..base.AdditionalHoverTips,
