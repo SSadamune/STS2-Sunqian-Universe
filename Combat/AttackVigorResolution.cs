@@ -11,8 +11,9 @@ using MegaCrit.Sts2.Core.Models.Powers;
 namespace Squ.Combat;
 
 /// <summary>
-/// Prevents an auto-played Attack from consuming Vigor when Supreme General already grants it the
-/// root card's spent Vigor bonus. Also exposes the shared cleanup needed after restoring Vigor.
+/// Prevents a same-owner auto-played Attack from consuming restored Vigor when Supreme General
+/// already grants it the root card's spent Vigor bonus. Cross-player auto-plays still use and
+/// consume the ally's own Vigor normally, in addition to the inherited bonus.
 /// </summary>
 public static class AttackVigorResolution
 {
@@ -55,10 +56,9 @@ public static class AttackVigorResolution
 		AttackCommand command)
 	{
 		if (command.ModelSource is not CardModel card
-			|| !SupremeGeneralKeywordSystem.TryGetInheritedVigorBonus(
+			|| !SupremeGeneralKeywordSystem.ShouldSuppressVigorConsumptionForInheritedAttack(
 				card,
-				command.CardPlay,
-				out _)
+				command.CardPlay)
 			|| !TryGetVigorData(vigor, out object? data)
 			|| CommandToModifyField!.GetValue(data) != command)
 		{

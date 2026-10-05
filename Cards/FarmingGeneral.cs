@@ -9,17 +9,18 @@ using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Localization;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.Models;
-using MegaCrit.Sts2.Core.Models.CardPools;
 using MegaCrit.Sts2.Core.Models.Enchantments;
 using Squ.Audio;
+using Squ.Character;
+using Squ.Combat;
 using STS2RitsuLib.Interop.AutoRegistration;
 using STS2RitsuLib.Scaffolding.Content;
 
 namespace Squ.Cards;
 
 /// <summary>种地将军：从抽牌堆选择至多两（三）张可播种或带消耗的牌，并分别处理其可用效果。</summary>
-[RegisterCard(typeof(TokenCardPool), StableEntryStem = "farming_general")]
-public sealed class FarmingGeneral : ModCardTemplate
+[RegisterCard(typeof(SunqianCardPool), StableEntryStem = "farming_general")]
+public sealed class FarmingGeneral : SlightRevisionCardTemplate<IronChainBoats>
 {
 	public const int BaseMaxCards = 2;
 	public const int UpgradedMaxCards = 3;
@@ -34,6 +35,7 @@ public sealed class FarmingGeneral : ModCardTemplate
 
 	protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
 	[
+		..base.AdditionalHoverTips,
 		..HoverTipFactory.FromEnchantment<Sown>(),
 		HoverTipFactory.FromKeyword(CardKeyword.Exhaust),
 	];
@@ -47,7 +49,7 @@ public sealed class FarmingGeneral : ModCardTemplate
 		PortraitPath: "res://images/cards/FarmingGeneral.png");
 
 	public FarmingGeneral()
-		: base(1, CardType.Skill, CardRarity.Rare, TargetType.Self)
+		: base(1, CardType.Power, CardRarity.Rare, TargetType.Self)
 	{
 	}
 

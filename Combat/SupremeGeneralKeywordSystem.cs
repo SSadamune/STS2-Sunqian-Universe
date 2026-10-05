@@ -134,21 +134,7 @@ public sealed class SupremeGeneralKeywordSystem : HookedSingletonModel
 		out decimal inheritedVigor)
 	{
 		inheritedVigor = 0m;
-		bool isAutoPlayedResolution = cardPlay is not null
-			? cardPlay.IsAutoPlay && ReferenceEquals(cardPlay.Card, card)
-			: card.Pile?.Type == PileType.Play
-				&& CardResolutionTracker.IsBeingAutoPlayed(card);
-
-		if (!isAutoPlayedResolution
-			|| card.Type != CardType.Attack
-			|| !CardResolutionTracker.TryGetOutermostCard(
-				card.Owner,
-				out CardModel outermostCard)
-			|| !TryGetOutermostWindow(card.Owner.NetId, out ResolutionWindow window)
-			|| window.ConsumedVigor <= 0m
-			|| !ReferenceEquals(outermostCard, window.RootCard)
-			|| ReferenceEquals(card, window.RootCard)
-			|| card.Owner != window.RootCard.Owner)
+		if (!TryGetInheritedVigorWindow(card, cardPlay, out ResolutionWindow window))
 		{
 			return false;
 		}
@@ -156,6 +142,78 @@ public sealed class SupremeGeneralKeywordSystem : HookedSingletonModel
 		inheritedVigor = window.ConsumedVigor;
 		return true;
 	}
+
+	internal static bool ShouldSuppressVigorConsumptionForInheritedAttack(
+		CardModel card,
+		CardPlay? cardPlay) =>
+		TryGetInheritedVigorWindow(card, cardPlay, out ResolutionWindow window)
+		&& card.Owner == window.RootCard.Owner;
+
+	private static bool TryGetInheritedVigorWindow(
+		CardModel card,
+		CardPlay? cardPlay,
+		out ResolutionWindow window)
+	{
+		window = null!;
+		bool isAutoPlayedResolution = cardPlay is not null
+			? cardPlay.IsAutoPlay && ReferenceEquals(cardPlay.Card, card)
+			: card.Pile?.Type == PileType.Play
+				&& CardResolutionTracker.IsBeingAutoPlayed(card);
+
+		if (!isAutoPlayedResolution || card.Type != CardType.Attack)
+		{
+			return false;
+		}
+
+		if (TryGetOutermostWindow(card.Owner.NetId, out ResolutionWindow sameOwnerWindow)
+			&& IsActiveInheritedVigorWindow(sameOwnerWindow, card))
+		{
+			window = sameOwnerWindow;
+			return true;
+		}
+
+		ResolutionWindow? crossOwnerWindow = null;
+		foreach ((ulong playerId, List<ResolutionWindow> windows) in WindowsByPlayer)
+		{
+			if (playerId == card.Owner.NetId || windows.Count == 0)
+			{
+				continue;
+			}
+
+			ResolutionWindow candidate = windows[0];
+			if (!IsActiveInheritedVigorWindow(candidate, card))
+			{
+				continue;
+			}
+
+			// More than one active cross-player window would be ambiguous. Do not grant a
+			// bonus instead of choosing a different root on different peers.
+			if (crossOwnerWindow is not null)
+			{
+				return false;
+			}
+
+			crossOwnerWindow = candidate;
+		}
+
+		if (crossOwnerWindow is null)
+		{
+			return false;
+		}
+
+		window = crossOwnerWindow;
+		return true;
+	}
+
+	private static bool IsActiveInheritedVigorWindow(
+		ResolutionWindow window,
+		CardModel childCard) =>
+		window.ConsumedVigor > 0m
+		&& !ReferenceEquals(childCard, window.RootCard)
+		&& CardResolutionTracker.TryGetOutermostCard(
+			window.RootCard.Owner,
+			out CardModel outermostCard)
+		&& ReferenceEquals(outermostCard, window.RootCard);
 
 	public override Task AfterCardPlayed(PlayerChoiceContext choiceContext, CardPlay cardPlay)
 	{
