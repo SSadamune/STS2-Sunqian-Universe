@@ -33,6 +33,8 @@ public sealed class GuanYuMartialVerPower : ModPowerTemplate
 		public decimal VigorSpent;
 
 		public bool RefundedThisTurn;
+
+		public Dictionary<CardModel, int> PendingEnergySpent { get; } = [];
 	}
 
 	public override PowerType Type => PowerType.Buff;
@@ -99,50 +101,61 @@ public sealed class GuanYuMartialVerPower : ModPowerTemplate
 		}
 
 		Data data = GetInternalData<Data>();
-		if (!ReferenceEquals(data.PendingAttack, cardPlay.Card))
+		data.PendingEnergySpent.Remove(cardPlay.Card, out int energySpent);
+
+		decimal vigorSpent = 0m;
+		if (ReferenceEquals(data.PendingAttack, cardPlay.Card))
+		{
+			vigorSpent = data.VigorSpent;
+			data.PendingAttack = null;
+			data.VigorSpent = 0m;
+			data.RefundedThisTurn = true;
+		}
+
+		if (Owner.IsDead)
 		{
 			return;
 		}
 
-		decimal vigorSpent = data.VigorSpent;
-		data.PendingAttack = null;
-		data.VigorSpent = 0m;
-		data.RefundedThisTurn = true;
-		if (Owner.IsDead || vigorSpent <= 0m)
+		if (vigorSpent > 0m)
 		{
-			return;
+			Flash();
+			await PowerCmd.Apply<VigorPower>(
+				choiceContext,
+				Owner,
+				vigorSpent,
+				Owner,
+				cardPlay.Card);
+			if (Owner.GetPower<VigorPower>() is { } restored)
+			{
+				AttackVigorResolution.ClearVigorAttackBinding(restored);
+			}
 		}
 
-		Flash();
-		await PowerCmd.Apply<VigorPower>(
-			choiceContext,
-			Owner,
-			vigorSpent,
-			Owner,
-			cardPlay.Card);
-		if (Owner.GetPower<VigorPower>() is { } restored)
+		if (Amount > 0 && energySpent > 0)
 		{
-			AttackVigorResolution.ClearVigorAttackBinding(restored);
+			Flash();
+			await PowerCmd.Apply<VigorPower>(
+				choiceContext,
+				Owner,
+				Amount * energySpent,
+				Owner,
+				cardPlay.Card);
 		}
 	}
 
-	public override async Task AfterEnergySpent(CardModel card, int amount)
+	public override Task AfterEnergySpent(CardModel card, int amount)
 	{
 		if (Owner.IsDead
 			|| Amount <= 0
 			|| amount <= 0
 			|| card.Owner?.Creature != Owner)
 		{
-			return;
+			return Task.CompletedTask;
 		}
 
-		Flash();
-		await PowerCmd.Apply<VigorPower>(
-			new ThrowingPlayerChoiceContext(),
-			Owner,
-			Amount * amount,
-			Owner,
-			card);
+		GetInternalData<Data>().PendingEnergySpent[card] = amount;
+		return Task.CompletedTask;
 	}
 
 	public override async Task AfterSideTurnStart(
@@ -159,6 +172,7 @@ public sealed class GuanYuMartialVerPower : ModPowerTemplate
 		data.PendingAttack = null;
 		data.VigorSpent = 0m;
 		data.RefundedThisTurn = false;
+		data.PendingEnergySpent.Clear();
 		await GuanDiFormChoice.OfferRechoiceAsync(this, combatState);
 	}
 
