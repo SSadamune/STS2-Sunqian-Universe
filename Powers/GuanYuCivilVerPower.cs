@@ -1,4 +1,6 @@
+using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 using Godot;
@@ -9,6 +11,7 @@ using MegaCrit.Sts2.Core.Entities.Creatures;
 using MegaCrit.Sts2.Core.Entities.Powers;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.HoverTips;
+using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.Powers;
 using MegaCrit.Sts2.Core.ValueProps;
@@ -25,17 +28,75 @@ namespace Squ.Powers;
 [RegisterPower]
 public sealed class GuanYuCivilVerPower : ModPowerTemplate
 {
+	private const string DexterityMagnitudeVarName = "DexterityMagnitude";
+
+	private const string HasDexterityVarName = "HasDexterity";
+
+	private const string DexterityPositiveVarName = "DexterityPositive";
+
+	public const string NormalFormsVarName = "NormalForms";
+
+	public const string UpgradedFormsVarName = "UpgradedForms";
+
+	private sealed class OwnerDexterityVar(string name, DexterityValue value)
+		: DynamicVar(name, 0)
+	{
+		private decimal CurrentValue
+		{
+			get
+			{
+				int dexterity = _owner is GuanYuCivilVerPower { IsMutable: true } power
+					? power.Owner.GetPower<DexterityPower>()?.Amount ?? 0
+					: 0;
+				return value switch
+				{
+					DexterityValue.Magnitude => Math.Abs(dexterity),
+					DexterityValue.HasAny => dexterity != 0 ? 1 : 0,
+					DexterityValue.IsPositive => dexterity > 0 ? 1 : 0,
+					_ => 0,
+				};
+			}
+		}
+
+		protected override decimal GetBaseValueForIConvertible() => CurrentValue;
+
+		public override string ToString() =>
+			((int)CurrentValue).ToString(CultureInfo.InvariantCulture);
+	}
+
+	private enum DexterityValue
+	{
+		Magnitude,
+		HasAny,
+		IsPositive,
+	}
+
 	public override PowerType Type => PowerType.Buff;
 
 	public override PowerStackType StackType => PowerStackType.Counter;
 
 	public override Color AmountLabelColor => PowerModel._normalAmountLabelColor;
 
-	public bool FormUpgraded { get; private set; }
+	protected override IEnumerable<DynamicVar> CanonicalVars =>
+	[
+		new OwnerDexterityVar(DexterityMagnitudeVarName, DexterityValue.Magnitude),
+		new OwnerDexterityVar(HasDexterityVarName, DexterityValue.HasAny),
+		new OwnerDexterityVar(DexterityPositiveVarName, DexterityValue.IsPositive),
+		new DynamicVar(NormalFormsVarName, 0),
+		new DynamicVar(UpgradedFormsVarName, 0),
+	];
+
+	public int NormalFormCount => DynamicVars[NormalFormsVarName].IntValue;
+
+	public int UpgradedFormCount => DynamicVars[UpgradedFormsVarName].IntValue;
+
+	public int FormCount => NormalFormCount + UpgradedFormCount;
+
+	public bool FormUpgraded => UpgradedFormCount > 0;
 
 	public override PowerAssetProfile AssetProfile => new(
-		IconPath: "res://images/powers/GuanDiFormPower.png",
-		BigIconPath: "res://images/powers/GuanDiFormPowerBig.png");
+		IconPath: "res://images/powers/GuanYuCivilVerPower.png",
+		BigIconPath: "res://images/powers/GuanYuCivilVerPowerBig.png");
 
 	protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
 	[
@@ -43,7 +104,11 @@ public sealed class GuanYuCivilVerPower : ModPowerTemplate
 		HoverTipFactory.Static(StaticHoverTip.Block),
 	];
 
-	public void SetFormUpgraded(bool upgraded) => FormUpgraded = upgraded;
+	public void SetFormCounts(int normalForms, int upgradedForms)
+	{
+		DynamicVars[NormalFormsVarName].BaseValue = normalForms;
+		DynamicVars[UpgradedFormsVarName].BaseValue = upgradedForms;
+	}
 
 	public override async Task AfterCardPlayed(PlayerChoiceContext choiceContext, CardPlay cardPlay)
 	{

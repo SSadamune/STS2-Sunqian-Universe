@@ -15,13 +15,12 @@ using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.Powers;
 using MegaCrit.Sts2.Core.ValueProps;
 using Squ.Audio;
-using Squ.Cards;
 using STS2RitsuLib.Interop.AutoRegistration;
 using STS2RitsuLib.Scaffolding.Content;
 
 namespace Squ.Powers;
 
-/// <summary>吾亦过江：攻击牌获得第二份活力与力量加成。</summary>
+/// <summary>吾亦过江：攻击牌额外获得 100% 的活力与力量加成。</summary>
 [RegisterPower]
 public sealed class CrossTheRiverPower : ModPowerTemplate
 {
@@ -45,8 +44,8 @@ public sealed class CrossTheRiverPower : ModPowerTemplate
 	{
 		if (command.Attacker == Owner
 			&& command.DamageProps.IsPoweredAttack()
-			&& command.ModelSource is CardModel { Type: CardType.Attack } card
-			&& GetDamageModifier(card) != 0m)
+			&& command.ModelSource is CardModel { Type: CardType.Attack }
+			&& GetDamageModifier() != 0m)
 		{
 			SquSfx.PlayRandom(CombatState?.RunState, SquSfx.CrossTheRiverTriggerEvents);
 		}
@@ -69,12 +68,11 @@ public sealed class CrossTheRiverPower : ModPowerTemplate
 			return 0m;
 		}
 
-		return GetDamageModifier(card);
+		return GetDamageModifier();
 	}
 
-	private decimal GetDamageModifier(CardModel card) =>
-		(DigRaid.DamageReceivesVigor(card) ? GetVigorAmount() : 0m)
-		+ GetStrengthAmount();
+	private decimal GetDamageModifier() =>
+		GetVigorAmount() + GetStrengthAmount();
 
 	private decimal GetVigorAmount() =>
 		Owner.GetPower<VigorPower>()?.Amount ?? 0m;

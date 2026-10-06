@@ -107,9 +107,6 @@ public sealed class DigRaid : ModCardTemplate
 	internal static decimal GetTinderAmount(Creature? creature) =>
 		creature?.GetPower<TinderPower>() is { Amount: > 0 } tinder ? tinder.Amount : 0m;
 
-	internal static bool DamageReceivesVigor(CardModel? card) =>
-		card is not DigRaid { IsUpgraded: true };
-
 	/// <summary>
 	/// 升级后伤害预览包含当前火种；BaseValue 保持印面数值以便标绿。
 	/// </summary>

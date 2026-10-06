@@ -21,16 +21,47 @@ public static class SquVigorSnapshot
 		creature.GetPower<VigorPower>() is { Amount: > 0 } vigor ? vigor.Amount : 0;
 
 	/// <summary>
-	/// Returns the Vigor bonus actually granted to this card. 吾亦过江 doubles that bonus
-	/// for Attack cards, including non-damage effects that explicitly scale with Vigor.
+	/// Returns the Vigor bonus actually granted to this card, including additive percentage
+	/// bonuses from 吾亦过江 and 活力增幅. This also covers non-damage effects that explicitly
+	/// scale with Vigor.
 	/// </summary>
 	public static int GetEffectiveAmount(Creature creature, CardModel card)
 	{
 		int vigor = GetAmount(creature);
-		return card.Type == CardType.Attack
-			&& creature.GetPower<CrossTheRiverPower>() is { Amount: > 0 }
-				? vigor * 2
-				: vigor;
+		if (card.Type != CardType.Attack || vigor <= 0)
+		{
+			return vigor;
+		}
+
+		return (int)ApplyBonusPercentage(creature, card, vigor);
+	}
+
+	/// <summary>
+	/// Applies additive Vigor bonus percentages to a snapshotted amount, including Vigor inherited
+	/// by Supreme General child Attacks after the original Vigor power has been consumed.
+	/// </summary>
+	public static decimal ApplyBonusPercentage(
+		Creature creature,
+		CardModel card,
+		decimal vigor)
+	{
+		if (card.Type != CardType.Attack || vigor <= 0m)
+		{
+			return vigor;
+		}
+
+		int bonusPercent = 0;
+		if (creature.GetPower<CrossTheRiverPower>() is { Amount: > 0 })
+		{
+			bonusPercent += 100;
+		}
+
+		if (creature.GetPower<VigorAmplificationPower>() is { } amplification)
+		{
+			bonusPercent += amplification.GetBonusPercentFor(card);
+		}
+
+		return vigor * (100 + bonusPercent) / 100m;
 	}
 
 	/// <summary>

@@ -19,22 +19,23 @@ using STS2RitsuLib.Scaffolding.Content;
 namespace Squ.Powers;
 
 /// <summary>
-/// Tracks each outermost Attack as one complete play. It consumes one stack even if no Vigor was
-/// available, then restores all Vigor spent during that Attack's complete nested resolution.
-/// Nested auto-played Attacks never consume additional Keep Vigor stacks.
+/// Tracks every Attack as its own play. Same-owner child Attacks inheriting Vigor from Supreme
+/// General neither consume a stack nor absorb another restoration.
 /// </summary>
 [RegisterPower]
-public sealed class KeepVigorPower : ModPowerTemplate
+public class KeepVigorPower : ModPowerTemplate
 {
 	private sealed class Data
 	{
-		public Dictionary<CardModel, AttackPlayTrack> ActivePlays { get; } = [];
-
-		public List<CardModel> ActivePlayOrder { get; } = [];
+		public List<AttackPlayTrack> ActiveAttacks { get; } = [];
 	}
 
 	private sealed class AttackPlayTrack
 	{
+		public required CardModel Card { get; init; }
+
+		public required bool ReservesStack { get; init; }
+
 		public decimal VigorSpent { get; set; }
 	}
 
@@ -58,20 +59,23 @@ public sealed class KeepVigorPower : ModPowerTemplate
 	public override Task BeforeCardPlayed(CardPlay cardPlay)
 	{
 		if (Owner.IsDead
-			|| Amount <= 0m
-			|| !CardResolutionTracker.IsOutermostCardPlay(cardPlay)
 			|| cardPlay.PlayIndex != 0
 			|| cardPlay.Card.Owner.Creature != Owner
-			|| cardPlay.Card.Type != CardType.Attack
-			|| ChaosHarmedYou.DoesNotConsumeAttackPlayTracking(cardPlay.Card))
+			|| cardPlay.Card.Type != CardType.Attack)
 		{
 			return Task.CompletedTask;
 		}
 
 		Data data = GetInternalData<Data>();
-		data.ActivePlays[cardPlay.Card] = new AttackPlayTrack();
-		data.ActivePlayOrder.Remove(cardPlay.Card);
-		data.ActivePlayOrder.Add(cardPlay.Card);
+		bool suppress = ChaosHarmedYou.DoesNotConsumeAttackPlayTracking(cardPlay.Card)
+			|| SupremeGeneralKeywordSystem.ShouldSuppressSameOwnerChildAttackResources(
+				cardPlay.Card,
+				cardPlay);
+		data.ActiveAttacks.Add(new AttackPlayTrack
+		{
+			Card = cardPlay.Card,
+			ReservesStack = !suppress && CountReservedStacks(data) < Amount,
+		});
 		return Task.CompletedTask;
 	}
 
@@ -91,13 +95,12 @@ public sealed class KeepVigorPower : ModPowerTemplate
 		}
 
 		Data data = GetInternalData<Data>();
-		for (int i = data.ActivePlayOrder.Count - 1; i >= 0; i--)
+		if (data.ActiveAttacks.Count > 0)
 		{
-			CardModel activeCard = data.ActivePlayOrder[i];
-			if (data.ActivePlays.TryGetValue(activeCard, out AttackPlayTrack? track))
+			AttackPlayTrack active = data.ActiveAttacks[^1];
+			if (active.ReservesStack)
 			{
-				track.VigorSpent += -amount;
-				break;
+				active.VigorSpent += -amount;
 			}
 		}
 
@@ -115,12 +118,19 @@ public sealed class KeepVigorPower : ModPowerTemplate
 		}
 
 		Data data = GetInternalData<Data>();
-		if (!data.ActivePlays.Remove(cardPlay.Card, out AttackPlayTrack? track))
+		int trackIndex = FindLastTrackIndex(data, cardPlay.Card);
+		if (trackIndex < 0)
 		{
 			return;
 		}
 
-		data.ActivePlayOrder.Remove(cardPlay.Card);
+		AttackPlayTrack track = data.ActiveAttacks[trackIndex];
+		data.ActiveAttacks.RemoveAt(trackIndex);
+		if (!track.ReservesStack)
+		{
+			return;
+		}
+
 		Flash();
 		await PowerCmd.Decrement(this);
 
@@ -140,5 +150,32 @@ public sealed class KeepVigorPower : ModPowerTemplate
 		{
 			AttackVigorResolution.ClearVigorAttackBinding(restoredVigor);
 		}
+	}
+
+	private static int CountReservedStacks(Data data)
+	{
+		int count = 0;
+		foreach (AttackPlayTrack track in data.ActiveAttacks)
+		{
+			if (track.ReservesStack)
+			{
+				count++;
+			}
+		}
+
+		return count;
+	}
+
+	private static int FindLastTrackIndex(Data data, CardModel card)
+	{
+		for (int i = data.ActiveAttacks.Count - 1; i >= 0; i--)
+		{
+			if (ReferenceEquals(data.ActiveAttacks[i].Card, card))
+			{
+				return i;
+			}
+		}
+
+		return -1;
 	}
 }

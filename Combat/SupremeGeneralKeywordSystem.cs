@@ -10,7 +10,6 @@ using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.Powers;
 using MegaCrit.Sts2.Core.Rooms;
 using MegaCrit.Sts2.Core.ValueProps;
-using Squ.Cards;
 using STS2RitsuLib.Interop.AutoRegistration;
 using STS2RitsuLib.Keywords;
 using STS2RitsuLib.Models;
@@ -118,7 +117,6 @@ public sealed class SupremeGeneralKeywordSystem : HookedSingletonModel
 	{
 		if (!props.IsPoweredAttack()
 			|| cardSource is null
-			|| !DigRaid.DamageReceivesVigor(cardSource)
 			|| !TryGetInheritedVigorBonus(cardSource, cardPlay, out decimal inheritedVigor)
 			|| dealer != cardSource.Owner.Creature)
 		{
@@ -134,19 +132,23 @@ public sealed class SupremeGeneralKeywordSystem : HookedSingletonModel
 		out decimal inheritedVigor)
 	{
 		inheritedVigor = 0m;
-		if (!TryGetInheritedVigorWindow(card, cardPlay, out ResolutionWindow window))
+		if (!TryGetSupremeGeneralChildWindow(card, cardPlay, out ResolutionWindow window)
+			|| window.ConsumedVigor <= 0m)
 		{
 			return false;
 		}
 
-		inheritedVigor = window.ConsumedVigor;
+		inheritedVigor = SquVigorSnapshot.ApplyBonusPercentage(
+			window.RootCard.Owner.Creature,
+			window.RootCard,
+			window.ConsumedVigor);
 		return true;
 	}
 
-	internal static bool ShouldSuppressVigorConsumptionForInheritedAttack(
+	internal static bool ShouldSuppressSameOwnerChildAttackResources(
 		CardModel card,
 		CardPlay? cardPlay) =>
-		TryGetInheritedVigorWindow(card, cardPlay, out ResolutionWindow window)
+		TryGetSupremeGeneralChildWindow(card, cardPlay, out ResolutionWindow window)
 		&& card.Owner == window.RootCard.Owner;
 
 	/// <summary>
@@ -173,7 +175,7 @@ public sealed class SupremeGeneralKeywordSystem : HookedSingletonModel
 		}
 	}
 
-	private static bool TryGetInheritedVigorWindow(
+	private static bool TryGetSupremeGeneralChildWindow(
 		CardModel card,
 		CardPlay? cardPlay,
 		out ResolutionWindow window)
@@ -190,7 +192,7 @@ public sealed class SupremeGeneralKeywordSystem : HookedSingletonModel
 		}
 
 		if (TryGetOutermostWindow(card.Owner.NetId, out ResolutionWindow sameOwnerWindow)
-			&& IsActiveInheritedVigorWindow(sameOwnerWindow, card))
+			&& IsActiveSupremeGeneralWindow(sameOwnerWindow, card))
 		{
 			window = sameOwnerWindow;
 			return true;
@@ -205,7 +207,7 @@ public sealed class SupremeGeneralKeywordSystem : HookedSingletonModel
 			}
 
 			ResolutionWindow candidate = windows[0];
-			if (!IsActiveInheritedVigorWindow(candidate, card))
+			if (!IsActiveSupremeGeneralWindow(candidate, card))
 			{
 				continue;
 			}
@@ -229,11 +231,10 @@ public sealed class SupremeGeneralKeywordSystem : HookedSingletonModel
 		return true;
 	}
 
-	private static bool IsActiveInheritedVigorWindow(
+	private static bool IsActiveSupremeGeneralWindow(
 		ResolutionWindow window,
 		CardModel childCard) =>
-		window.ConsumedVigor > 0m
-		&& !ReferenceEquals(childCard, window.RootCard)
+		!ReferenceEquals(childCard, window.RootCard)
 		&& CardResolutionTracker.TryGetOutermostCard(
 			window.RootCard.Owner,
 			out CardModel outermostCard)
