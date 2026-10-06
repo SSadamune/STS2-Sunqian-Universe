@@ -1,0 +1,18 @@
+---
+description: Tips 标题统一使用项目公共 Annotation 标题
+alwaysApply: true
+---
+
+# Tips 标题约定
+
+用户所说的「Tips」均指使用公共标题：
+
+```csharp
+SquCommonL10n.AnnotationTitle()
+```
+
+其本地化键为 `SUNQIAN_UNIVERSE_COMMON.ANNOTATION.title`。
+
+- 创建任何自定义 `HoverTip` 时，标题必须使用 `SquCommonL10n.AnnotationTitle()`。
+- 不得为 Tips 新增独立的 `*.title`、`*Title` 等本地化键。
+- 已有 Tips 若使用独立标题，应改为公共 Annotation 标题并删除冗余标题键。

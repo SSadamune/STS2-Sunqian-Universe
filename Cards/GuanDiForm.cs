@@ -37,6 +37,7 @@ public sealed class GuanDiForm : ModCardTemplate
 			choiceContext,
 			Owner,
 			this,
+			cardPlay.Resources.EnergySpent,
 			IsUpgraded,
 			canSkip: false);
 	}

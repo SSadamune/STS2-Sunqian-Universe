@@ -10,6 +10,7 @@ using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.Entities.Creatures;
 using MegaCrit.Sts2.Core.Entities.Powers;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
+using MegaCrit.Sts2.Core.Hooks;
 using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.Models;
@@ -24,7 +25,7 @@ using STS2RitsuLib.Scaffolding.Content;
 
 namespace Squ.Powers;
 
-/// <summary>文关羽：每打出一张技能牌，获得受到敏捷加成的格挡。</summary>
+/// <summary>文关羽：牌结算后按实际耗能获得仅受敏捷影响的格挡。</summary>
 [RegisterPower]
 public sealed class GuanYuCivilVerPower : ModPowerTemplate
 {
@@ -35,6 +36,11 @@ public sealed class GuanYuCivilVerPower : ModPowerTemplate
 	public const string NormalFormsVarName = "NormalForms";
 
 	public const string UpgradedFormsVarName = "UpgradedForms";
+
+	private sealed class Data
+	{
+		public Dictionary<CardModel, int> PendingEnergySpent { get; } = [];
+	}
 
 	private sealed class OwnerDexterityMagnitudeVar()
 		: DynamicVar(DexterityMagnitudeVarName, 0)
@@ -121,19 +127,52 @@ public sealed class GuanYuCivilVerPower : ModPowerTemplate
 		DynamicVars[UpgradedFormsVarName].BaseValue = upgradedForms;
 	}
 
-	public override async Task AfterCardPlayed(PlayerChoiceContext choiceContext, CardPlay cardPlay)
+	protected override object InitInternalData() => new Data();
+
+	public override async Task AfterCardPlayedLate(
+		PlayerChoiceContext choiceContext,
+		CardPlay cardPlay)
 	{
-		if (Owner.IsDead
-			|| Amount <= 0
-			|| !cardPlay.IsLastInSeries
-			|| cardPlay.Card.Owner.Creature != Owner
-			|| cardPlay.Card.Type != CardType.Skill)
+		if (!cardPlay.IsLastInSeries || cardPlay.Card.Owner.Creature != Owner)
+		{
+			return;
+		}
+
+		Data data = GetInternalData<Data>();
+		data.PendingEnergySpent.Remove(cardPlay.Card, out int energySpent);
+		if (Owner.IsDead || Amount <= 0 || energySpent <= 0)
+		{
+			return;
+		}
+
+		decimal blockPerEnergy = Math.Max(0, Amount + CurrentDexterity);
+		if (blockPerEnergy <= 0m)
 		{
 			return;
 		}
 
 		Flash();
-		await CreatureCmd.GainBlock(Owner, Amount, ValueProp.Move, cardPlay: null);
+		await GainDexterityOnlyBlockAsync(
+			Owner,
+			blockPerEnergy * energySpent,
+			cardPlay);
+	}
+
+	public override Task AfterEnergySpent(CardModel card, int energySpent)
+	{
+		TrackEnergySpent(card, energySpent);
+		return Task.CompletedTask;
+	}
+
+	public void TrackEnergySpent(CardModel card, int energySpent)
+	{
+		if (!Owner.IsDead
+			&& Amount > 0
+			&& energySpent > 0
+			&& card.Owner?.Creature == Owner)
+		{
+			GetInternalData<Data>().PendingEnergySpent[card] = energySpent;
+		}
 	}
 
 	public override async Task AfterSideTurnStart(
@@ -146,6 +185,51 @@ public sealed class GuanYuCivilVerPower : ModPowerTemplate
 			return;
 		}
 
+		GetInternalData<Data>().PendingEnergySpent.Clear();
 		await GuanDiFormChoice.OfferRechoiceAsync(this, combatState);
+	}
+
+	private static async Task GainDexterityOnlyBlockAsync(
+		Creature creature,
+		decimal blockAmount,
+		CardPlay cardPlay)
+	{
+		if (CombatManager.Instance.IsOverOrEnding
+			|| creature.IsDead
+			|| creature.CombatState is not { } combatState)
+		{
+			return;
+		}
+
+		ValueProp props = ValueProp.Unpowered;
+		await Hook.BeforeBlockGained(
+			combatState,
+			creature,
+			blockAmount,
+			props,
+			cardPlay.Card);
+		await Hook.AfterModifyingBlockAmount(
+			combatState,
+			blockAmount,
+			cardPlay.Card,
+			cardPlay,
+			Array.Empty<AbstractModel>());
+
+		SfxCmd.Play("event:/sfx/block_gain");
+		VfxCmd.PlayOnCreatureCenter(creature, "vfx/vfx_block");
+		creature.GainBlockInternal(blockAmount);
+		CombatManager.Instance.History.BlockGained(
+			combatState,
+			creature,
+			(int)blockAmount,
+			props,
+			cardPlay);
+		await Cmd.CustomScaledWait(0.1f, 0.25f);
+		await Hook.AfterBlockGained(
+			combatState,
+			creature,
+			blockAmount,
+			props,
+			cardPlay.Card);
 	}
 }

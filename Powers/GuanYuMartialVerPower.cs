@@ -94,18 +94,21 @@ public sealed class GuanYuMartialVerPower : ModPowerTemplate
 		}
 	}
 
-	public override Task AfterEnergySpent(CardModel card, int amount)
+	public override Task AfterEnergySpent(CardModel card, int energySpent)
 	{
-		if (Owner.IsDead
-			|| Amount <= 0
-			|| amount <= 0
-			|| card.Owner?.Creature != Owner)
-		{
-			return Task.CompletedTask;
-		}
-
-		GetInternalData<Data>().PendingEnergySpent[card] = amount;
+		TrackEnergySpent(card, energySpent);
 		return Task.CompletedTask;
+	}
+
+	public void TrackEnergySpent(CardModel card, int energySpent)
+	{
+		if (!Owner.IsDead
+			&& Amount > 0
+			&& energySpent > 0
+			&& card.Owner?.Creature == Owner)
+		{
+			GetInternalData<Data>().PendingEnergySpent[card] = energySpent;
+		}
 	}
 
 	public override async Task AfterSideTurnStart(

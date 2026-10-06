@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.HoverTips;
+using MegaCrit.Sts2.Core.Localization;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.Models.CardPools;
 using MegaCrit.Sts2.Core.Models.Powers;
@@ -33,6 +34,9 @@ public sealed class GuanYuMartialVer : ModCardTemplate
 	protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
 	[
 		HoverTipFactory.FromPower<VigorPower>(),
+		new HoverTip(
+			SquCommonL10n.AnnotationTitle(),
+			new LocString("cards", Id.Entry + ".energyTimingDescription")),
 	];
 
 	public override CardAssetProfile AssetProfile => new(
@@ -41,6 +45,12 @@ public sealed class GuanYuMartialVer : ModCardTemplate
 	public GuanYuMartialVer()
 		: base(-1, CardType.Power, CardRarity.Token, TargetType.Self)
 	{
+	}
+
+	public void SetFormTotals(int vigorPerEnergy, int vigorBonusMultiplier)
+	{
+		DynamicVars[nameof(VigorPower)].BaseValue = vigorPerEnergy;
+		DynamicVars[nameof(VigorAmplificationPower)].BaseValue = vigorBonusMultiplier;
 	}
 
 	protected override Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay) =>
