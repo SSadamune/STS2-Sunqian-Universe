@@ -28,33 +28,25 @@ namespace Squ.Powers;
 [RegisterPower]
 public sealed class GuanYuCivilVerPower : ModPowerTemplate
 {
+	private const string EffectiveBlockVarName = "EffectiveBlock";
+
 	private const string DexterityMagnitudeVarName = "DexterityMagnitude";
-
-	private const string HasDexterityVarName = "HasDexterity";
-
-	private const string DexterityPositiveVarName = "DexterityPositive";
 
 	public const string NormalFormsVarName = "NormalForms";
 
 	public const string UpgradedFormsVarName = "UpgradedForms";
 
-	private sealed class OwnerDexterityVar(string name, DexterityValue value)
-		: DynamicVar(name, 0)
+	private sealed class OwnerDexterityMagnitudeVar()
+		: DynamicVar(DexterityMagnitudeVarName, 0)
 	{
 		private decimal CurrentValue
 		{
 			get
 			{
-				int dexterity = _owner is GuanYuCivilVerPower { IsMutable: true } power
-					? power.Owner.GetPower<DexterityPower>()?.Amount ?? 0
+				int dexterity = _owner is GuanYuCivilVerPower power
+					? power.CurrentDexterity
 					: 0;
-				return value switch
-				{
-					DexterityValue.Magnitude => Math.Abs(dexterity),
-					DexterityValue.HasAny => dexterity != 0 ? 1 : 0,
-					DexterityValue.IsPositive => dexterity > 0 ? 1 : 0,
-					_ => 0,
-				};
+				return Math.Abs(dexterity);
 			}
 		}
 
@@ -64,11 +56,18 @@ public sealed class GuanYuCivilVerPower : ModPowerTemplate
 			((int)CurrentValue).ToString(CultureInfo.InvariantCulture);
 	}
 
-	private enum DexterityValue
+	private sealed class OwnerEffectiveBlockVar()
+		: DynamicVar(EffectiveBlockVarName, 0)
 	{
-		Magnitude,
-		HasAny,
-		IsPositive,
+		private decimal CurrentValue =>
+			_owner is GuanYuCivilVerPower power
+				? Math.Max(0, power.Amount + power.CurrentDexterity)
+				: 0;
+
+		protected override decimal GetBaseValueForIConvertible() => CurrentValue;
+
+		public override string ToString() =>
+			((int)CurrentValue).ToString(CultureInfo.InvariantCulture);
 	}
 
 	public override PowerType Type => PowerType.Buff;
@@ -77,14 +76,26 @@ public sealed class GuanYuCivilVerPower : ModPowerTemplate
 
 	public override Color AmountLabelColor => PowerModel._normalAmountLabelColor;
 
+	protected override string SmartDescriptionLocKey =>
+		CurrentDexterity switch
+		{
+			> 0 => base.SmartDescriptionLocKey + "Positive",
+			< 0 => base.SmartDescriptionLocKey + "Negative",
+			_ => base.SmartDescriptionLocKey,
+		};
+
 	protected override IEnumerable<DynamicVar> CanonicalVars =>
 	[
-		new OwnerDexterityVar(DexterityMagnitudeVarName, DexterityValue.Magnitude),
-		new OwnerDexterityVar(HasDexterityVarName, DexterityValue.HasAny),
-		new OwnerDexterityVar(DexterityPositiveVarName, DexterityValue.IsPositive),
+		new OwnerEffectiveBlockVar(),
+		new OwnerDexterityMagnitudeVar(),
 		new DynamicVar(NormalFormsVarName, 0),
 		new DynamicVar(UpgradedFormsVarName, 0),
 	];
+
+	private int CurrentDexterity =>
+		IsMutable && Owner is { } owner
+			? owner.GetPower<DexterityPower>()?.Amount ?? 0
+			: 0;
 
 	public int NormalFormCount => DynamicVars[NormalFormsVarName].IntValue;
 

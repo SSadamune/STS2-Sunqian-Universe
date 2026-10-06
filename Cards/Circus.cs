@@ -59,7 +59,7 @@ public sealed class Circus : ModCardTemplate
 			.WithHitFx("vfx/vfx_attack_slash")
 			.Execute(choiceContext);
 
-		await PowerCmd.Apply<TempDexFromCircusPower>(
+		await PowerCmd.Apply<TempDexPower>(
 			choiceContext,
 			Owner.Creature,
 			DynamicVars[nameof(DexterityPower)].BaseValue,

@@ -119,7 +119,7 @@ public sealed class PhasingPower : ModPowerTemplate
 			return Task.CompletedTask;
 		}
 
-		return PowerCmd.Apply<TempDexFromPhasingPower>(
+		return PowerCmd.Apply<TempDexPower>(
 			choiceContext,
 			target,
 			amount,

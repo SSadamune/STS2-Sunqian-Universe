@@ -56,7 +56,7 @@ public sealed class ArmInjuryWindmill : ModCardTemplate
 
 		await CardPileCmd.Draw(choiceContext, DynamicVars.Cards.IntValue, Owner);
 
-		await PowerCmd.Apply<TempDexFromArmInjuryWindmillPower>(
+		await PowerCmd.Apply<TempDexPower>(
 			choiceContext,
 			Owner.Creature,
 			DynamicVars[nameof(StatAmount)].BaseValue,

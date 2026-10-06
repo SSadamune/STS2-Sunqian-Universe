@@ -60,7 +60,7 @@ public sealed class OpenDefecation : ModCardTemplate
 		ICombatState? combatState = CombatState;
 		ArgumentNullException.ThrowIfNull(combatState, nameof(combatState));
 
-		await PowerCmd.Apply<TempDexFromOpenDefecationPower>(
+		await PowerCmd.Apply<TempDexPower>(
 			choiceContext,
 			Owner.Creature,
 			DynamicVars[nameof(DexterityPower)].BaseValue,

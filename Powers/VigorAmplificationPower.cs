@@ -28,7 +28,7 @@ namespace Squ.Powers;
 [RegisterPower]
 public sealed class VigorAmplificationPower : ModPowerTemplate
 {
-	public const int PercentPerForm = 100;
+	public const int BonusStacksPerForm = 1;
 
 	private sealed class Data
 	{
@@ -52,7 +52,7 @@ public sealed class VigorAmplificationPower : ModPowerTemplate
 
 	protected override object InitInternalData() => new Data();
 
-	public int GetBonusPercentFor(CardModel card)
+	public int GetBonusMultiplierFor(CardModel card)
 	{
 		if (Owner.IsDead
 			|| Amount <= 0
@@ -74,7 +74,7 @@ public sealed class VigorAmplificationPower : ModPowerTemplate
 		Data data = GetInternalData<Data>();
 		if (data.ActiveCard is not null
 			|| cardPlay.PlayIndex != 0
-			|| GetBonusPercentFor(cardPlay.Card) <= 0
+			|| GetBonusMultiplierFor(cardPlay.Card) <= 0
 			|| SupremeGeneralKeywordSystem.ShouldSuppressSameOwnerChildAttackResources(
 				cardPlay.Card,
 				cardPlay))
@@ -108,15 +108,17 @@ public sealed class VigorAmplificationPower : ModPowerTemplate
 		CardModel? card,
 		CardPlay? cardPlay)
 	{
+		int bonusMultiplier = card is null
+			? 0
+			: GetAppliedMultiplier(card, cardPlay);
 		if (dealer != Owner
-			|| card is null
-			|| !AppliesToActiveCard(card)
+			|| bonusMultiplier <= 0
 			|| !props.IsPoweredAttack())
 		{
 			return 0m;
 		}
 
-		return GetVigorAmount() * Amount / PercentPerForm;
+		return GetVigorAmount() * bonusMultiplier;
 	}
 
 	public override async Task AfterCardPlayedLate(
@@ -143,6 +145,19 @@ public sealed class VigorAmplificationPower : ModPowerTemplate
 
 	private bool AppliesToActiveCard(CardModel card) =>
 		ReferenceEquals(GetInternalData<Data>().ActiveCard, card);
+
+	private int GetAppliedMultiplier(CardModel card, CardPlay? cardPlay)
+	{
+		if (AppliesToActiveCard(card))
+		{
+			return Amount;
+		}
+
+		return cardPlay is null
+			&& card.Pile?.Type is PileType.Hand or PileType.Play
+				? GetBonusMultiplierFor(card)
+				: 0;
+	}
 
 	private decimal GetVigorAmount() =>
 		Owner.GetPower<VigorPower>()?.Amount ?? 0m;

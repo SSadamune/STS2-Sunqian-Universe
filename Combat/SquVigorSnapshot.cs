@@ -58,7 +58,7 @@ public static class SquVigorSnapshot
 
 		if (creature.GetPower<VigorAmplificationPower>() is { } amplification)
 		{
-			bonusPercent += amplification.GetBonusPercentFor(card);
+			bonusPercent += amplification.GetBonusMultiplierFor(card) * 100;
 		}
 
 		return vigor * (100 + bonusPercent) / 100m;

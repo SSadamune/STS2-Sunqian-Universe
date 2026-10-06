@@ -63,7 +63,7 @@ public sealed class SunqianScript : ScriptCardTemplate
 			? SquSfx.SunqianScriptFrequentAppearanceEvent
 			: SquSfx.SunqianScriptRareTrueFormEvent);
 
-		await PowerCmd.Apply<TempDexFromSunqianScriptPower>(
+		await PowerCmd.Apply<TempDexPower>(
 			choiceContext,
 			Owner.Creature,
 			DynamicVars[nameof(DexterityPower)].BaseValue,

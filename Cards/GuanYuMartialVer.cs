@@ -27,7 +27,7 @@ public sealed class GuanYuMartialVer : ModCardTemplate
 	protected override IEnumerable<DynamicVar> CanonicalVars =>
 	[
 		new PowerVar<VigorPower>(BaseVigorPerEnergy),
-		new PowerVar<VigorAmplificationPower>(VigorAmplificationPower.PercentPerForm),
+		new PowerVar<VigorAmplificationPower>(VigorAmplificationPower.BonusStacksPerForm),
 	];
 
 	protected override IEnumerable<IHoverTip> AdditionalHoverTips =>

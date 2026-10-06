@@ -205,7 +205,7 @@ public static class GuanDiFormChoice
 			await SetVigorAmplificationAsync(
 				choiceContext,
 				owner,
-				counts.Total * VigorAmplificationPower.PercentPerForm,
+				counts.Total * VigorAmplificationPower.BonusStacksPerForm,
 				source);
 		}
 		else if (source is not null)
@@ -213,7 +213,7 @@ public static class GuanDiFormChoice
 			await PowerCmd.Apply<VigorAmplificationPower>(
 				choiceContext,
 				owner,
-				VigorAmplificationPower.PercentPerForm,
+				VigorAmplificationPower.BonusStacksPerForm,
 				owner,
 				source);
 		}
@@ -225,7 +225,7 @@ public static class GuanDiFormChoice
 		SetVigorAmplificationAsync(
 			choiceContext,
 			power.Owner,
-			power.FormCount * VigorAmplificationPower.PercentPerForm,
+			power.FormCount * VigorAmplificationPower.BonusStacksPerForm,
 			source: null);
 
 	private static async Task SetVigorAmplificationAsync(
