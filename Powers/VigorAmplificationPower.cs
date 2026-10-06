@@ -23,7 +23,7 @@ using STS2RitsuLib.Scaffolding.Content;
 namespace Squ.Powers;
 
 /// <summary>
-/// 活力增幅：本回合下一张攻击牌获得额外的活力加成，多层叠加倍率而非作用牌数。
+/// 活力增幅：本回合下一张实际消耗活力的攻击牌获得额外活力加成，多层叠加倍率而非作用牌数。
 /// </summary>
 [RegisterPower]
 public sealed class VigorAmplificationPower : ModPowerTemplate
@@ -33,6 +33,8 @@ public sealed class VigorAmplificationPower : ModPowerTemplate
 	private sealed class Data
 	{
 		public CardModel? ActiveCard { get; set; }
+
+		public decimal VigorSpent { get; set; }
 	}
 
 	public override PowerType Type => PowerType.Buff;
@@ -83,6 +85,26 @@ public sealed class VigorAmplificationPower : ModPowerTemplate
 		}
 
 		data.ActiveCard = cardPlay.Card;
+		data.VigorSpent = 0m;
+		return Task.CompletedTask;
+	}
+
+	public override Task AfterPowerAmountChanged(
+		PlayerChoiceContext choiceContext,
+		PowerModel power,
+		decimal amount,
+		Creature? applier,
+		CardModel? cardSource)
+	{
+		if (!Owner.IsDead
+			&& power is VigorPower
+			&& power.Owner == Owner
+			&& amount < 0m
+			&& GetInternalData<Data>().ActiveCard is not null)
+		{
+			GetInternalData<Data>().VigorSpent += -amount;
+		}
+
 		return Task.CompletedTask;
 	}
 
@@ -125,8 +147,17 @@ public sealed class VigorAmplificationPower : ModPowerTemplate
 		PlayerChoiceContext choiceContext,
 		CardPlay cardPlay)
 	{
-		if (cardPlay.IsLastInSeries
-			&& ReferenceEquals(GetInternalData<Data>().ActiveCard, cardPlay.Card))
+		Data data = GetInternalData<Data>();
+		if (!cardPlay.IsLastInSeries
+			|| !ReferenceEquals(data.ActiveCard, cardPlay.Card))
+		{
+			return;
+		}
+
+		bool spentVigor = data.VigorSpent > 0m;
+		data.ActiveCard = null;
+		data.VigorSpent = 0m;
+		if (spentVigor)
 		{
 			await PowerCmd.Remove(this);
 		}

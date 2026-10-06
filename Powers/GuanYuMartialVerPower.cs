@@ -121,11 +121,7 @@ public sealed class GuanYuMartialVerPower : ModPowerTemplate
 			return;
 		}
 
-		Data data = GetInternalData<Data>();
-		data.PendingEnergySpent.Clear();
-		await GuanDiFormChoice.RefreshVigorAmplificationAsync(
-			new ThrowingPlayerChoiceContext(),
-			this);
+		GetInternalData<Data>().PendingEnergySpent.Clear();
 		await GuanDiFormChoice.OfferRechoiceAsync(this, combatState);
 	}
 }

@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
+using MegaCrit.Sts2.Core.Helpers;
 using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Localization;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
@@ -21,6 +22,8 @@ namespace Squ.Cards;
 public sealed class GuanYuCivilVer : ModCardTemplate
 {
 	public const int BlockPerEnergy = 2;
+
+	private const string UpgradeHighlightVarName = "UpgradeHighlight";
 
 	private sealed class DexterityOnlyBlockVar(decimal baseValue)
 		: BlockVar(baseValue, ValueProp.Unpowered)
@@ -42,6 +45,7 @@ public sealed class GuanYuCivilVer : ModCardTemplate
 	protected override IEnumerable<DynamicVar> CanonicalVars =>
 	[
 		new DexterityOnlyBlockVar(BlockPerEnergy),
+		new DynamicVar(UpgradeHighlightVarName, 0),
 	];
 
 	protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
@@ -49,9 +53,7 @@ public sealed class GuanYuCivilVer : ModCardTemplate
 		HoverTipFactory.FromCard<SunqianScript>(),
 		HoverTipFactory.FromPower<DexterityPower>(),
 		HoverTipFactory.Static(StaticHoverTip.Block),
-		new HoverTip(
-			SquCommonL10n.AnnotationTitle(),
-			new LocString("cards", Id.Entry + ".energyTimingDescription")),
+		CreateEnergyTimingHoverTip(),
 	];
 
 	public override CardAssetProfile AssetProfile => new(
@@ -64,6 +66,30 @@ public sealed class GuanYuCivilVer : ModCardTemplate
 
 	public void SetBlockPerEnergy(int blockPerEnergy) =>
 		DynamicVars.Block.BaseValue = blockPerEnergy;
+
+	private IHoverTip CreateEnergyTimingHoverTip()
+	{
+		LocString description = new("cards", Id.Entry + ".energyTimingDescription");
+		description.Add("energyPrefix", EnergyIconHelper.GetPrefix(this));
+		return new HoverTip(SquCommonL10n.AnnotationTitle(), description);
+	}
+
+	protected override void OnUpgrade() =>
+		DynamicVars[UpgradeHighlightVarName].UpgradeValueBy(0);
+
+	protected override void AddExtraArgsToDescription(LocString description)
+	{
+		if (!IsUpgraded)
+		{
+			description.Add("FreeUntilPlayedText", "");
+			return;
+		}
+
+		string suffix = DynamicVars[UpgradeHighlightVarName].WasJustUpgraded
+			? ".freeUntilPlayedPreview"
+			: ".freeUntilPlayed";
+		description.Add("FreeUntilPlayedText", new LocString("cards", Id.Entry + suffix));
+	}
 
 	protected override Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay) =>
 		Task.CompletedTask;

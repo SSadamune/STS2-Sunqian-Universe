@@ -1,13 +1,17 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using HarmonyLib;
 using MegaCrit.Sts2.Core.Combat;
 using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.Entities.Creatures;
 using MegaCrit.Sts2.Core.Entities.Players;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
+using MegaCrit.Sts2.Core.Localization;
 using MegaCrit.Sts2.Core.Models;
+using MegaCrit.Sts2.Core.Nodes.CommonUi;
+using MegaCrit.Sts2.Core.Nodes.Screens.CardSelection;
 using Squ.Cards;
 using Squ.Powers;
 
@@ -34,6 +38,9 @@ public static class GuanDiFormChoice
 
 	private static ICombatState? OfferedCombat;
 
+	private static readonly LocString SelectionScreenPrompt =
+		new("cards", "SUNQIAN_UNIVERSE_CARD_GUAN_DI_FORM.selectionScreenPrompt");
+
 	public static async Task OfferAsync(
 		PlayerChoiceContext choiceContext,
 		Player player,
@@ -47,20 +54,20 @@ public static class GuanDiFormChoice
 			return;
 		}
 
+		FormCounts optionCounts = GetFormCounts(player.Creature);
+		if (source is not null)
+		{
+			optionCounts = optionCounts.Add(upgraded);
+		}
+
 		CardModel guanYuCivilVer = combatState.CreateCard<GuanYuCivilVer>(player);
 		CardModel guanYuMartialVer = combatState.CreateCard<GuanYuMartialVer>(player);
-		if (upgraded)
+		if (optionCounts.Upgraded > 0)
 		{
 			guanYuCivilVer.UpgradeInternal();
 			guanYuCivilVer.FinalizeUpgradeInternal();
 			guanYuMartialVer.UpgradeInternal();
 			guanYuMartialVer.FinalizeUpgradeInternal();
-		}
-
-		FormCounts optionCounts = GetFormCounts(player.Creature);
-		if (source is not null)
-		{
-			optionCounts = optionCounts.Add(upgraded);
 		}
 
 		((GuanYuCivilVer)guanYuCivilVer).SetBlockPerEnergy(
@@ -92,6 +99,10 @@ public static class GuanDiFormChoice
 				source,
 				sourceEnergySpent,
 				upgraded);
+		}
+		else if (player.Creature.GetPower<GuanYuMartialVerPower>() is { } martial)
+		{
+			await RefreshVigorAmplificationAsync(choiceContext, martial);
 		}
 	}
 
@@ -185,7 +196,7 @@ public static class GuanDiFormChoice
 			power.TrackEnergySpent(source, sourceEnergySpent);
 		}
 		await PowerCmd.Remove<VigorAmplificationPower>(owner);
-		await FetchSunqianScriptAsync(player, upgraded);
+		await FetchSunqianScriptAsync(player, counts.Upgraded > 0);
 	}
 
 	private static async Task EnterGuanYuMartialVerAsync(
@@ -196,7 +207,6 @@ public static class GuanDiFormChoice
 		bool upgraded)
 	{
 		Creature owner = player.Creature;
-		bool wasMartial = owner.GetPower<GuanYuMartialVerPower>() is not null;
 		FormCounts counts = GetFormCounts(owner);
 		if (source is not null)
 		{
@@ -240,23 +250,11 @@ public static class GuanDiFormChoice
 		{
 			power.TrackEnergySpent(source, sourceEnergySpent);
 		}
-		if (!wasMartial)
-		{
-			await SetVigorAmplificationAsync(
-				choiceContext,
-				owner,
-				counts.Total * VigorAmplificationPower.BonusStacksPerForm,
-				source);
-		}
-		else if (source is not null)
-		{
-			await PowerCmd.Apply<VigorAmplificationPower>(
-				choiceContext,
-				owner,
-				VigorAmplificationPower.BonusStacksPerForm,
-				owner,
-				source);
-		}
+		await SetVigorAmplificationAsync(
+			choiceContext,
+			owner,
+			counts.Total * VigorAmplificationPower.BonusStacksPerForm,
+			source);
 	}
 
 	public static Task RefreshVigorAmplificationAsync(
@@ -319,7 +317,7 @@ public static class GuanDiFormChoice
 		return default;
 	}
 
-	private static async Task FetchSunqianScriptAsync(Player player, bool freeThisTurn)
+	private static async Task FetchSunqianScriptAsync(Player player, bool freeUntilPlayed)
 	{
 		CardModel? script =
 			FindScriptInPile(player, PileType.Draw)
@@ -334,9 +332,9 @@ public static class GuanDiFormChoice
 				.FirstOrDefault(card => card is SunqianScript);
 			if (scriptInHand is not null)
 			{
-				if (freeThisTurn)
+				if (freeUntilPlayed)
 				{
-					scriptInHand.EnergyCost.SetThisTurn(0);
+					scriptInHand.EnergyCost.SetUntilPlayed(0);
 				}
 
 				return;
@@ -348,9 +346,9 @@ public static class GuanDiFormChoice
 			}
 
 			script = combatState.CreateCard<SunqianScript>(player);
-			if (freeThisTurn)
+			if (freeUntilPlayed)
 			{
-				script.EnergyCost.SetThisTurn(0);
+				script.EnergyCost.SetUntilPlayed(0);
 			}
 
 			await CardPileCmd.AddGeneratedCardToCombat(script, PileType.Hand, player);
@@ -358,9 +356,9 @@ public static class GuanDiFormChoice
 		}
 
 		await CardPileCmd.Add(script, PileType.Hand);
-		if (freeThisTurn)
+		if (freeUntilPlayed)
 		{
-			script.EnergyCost.SetThisTurn(0);
+			script.EnergyCost.SetUntilPlayed(0);
 		}
 	}
 
@@ -374,5 +372,25 @@ public static class GuanDiFormChoice
 		return scripts.Count > 0
 			? player.RunState.Rng.CombatCardGeneration.NextItem(scripts)
 			: null;
+	}
+
+	[HarmonyPatch(typeof(NChooseACardSelectionScreen), nameof(NChooseACardSelectionScreen._Ready))]
+	private static class SelectionScreenTitlePatch
+	{
+		private static void Postfix(NChooseACardSelectionScreen __instance)
+		{
+			if (AccessTools.Field(typeof(NChooseACardSelectionScreen), "_cards")
+					.GetValue(__instance) is not IReadOnlyList<CardModel> cards
+				|| cards.Count != 2
+				|| !cards.Any(card => card is GuanYuCivilVer)
+				|| !cards.Any(card => card is GuanYuMartialVer)
+				|| AccessTools.Field(typeof(NChooseACardSelectionScreen), "_banner")
+					.GetValue(__instance) is not NCommonBanner banner)
+			{
+				return;
+			}
+
+			banner.label.SetTextAutoSize(SelectionScreenPrompt.GetRawText());
+		}
 	}
 }

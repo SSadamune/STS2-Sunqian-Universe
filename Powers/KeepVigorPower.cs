@@ -19,8 +19,9 @@ using STS2RitsuLib.Scaffolding.Content;
 namespace Squ.Powers;
 
 /// <summary>
-/// Tracks every Attack as its own play. Same-owner child Attacks inheriting Vigor from Supreme
-/// General neither consume a stack nor absorb another restoration.
+/// Tracks every Attack as its own play. A stack is spent only when that Attack actually consumes
+/// Vigor. Same-owner child Attacks inheriting Vigor from Supreme General neither consume a stack
+/// nor absorb another restoration.
 /// </summary>
 [RegisterPower]
 public class KeepVigorPower : ModPowerTemplate
@@ -126,7 +127,7 @@ public class KeepVigorPower : ModPowerTemplate
 
 		AttackPlayTrack track = data.ActiveAttacks[trackIndex];
 		data.ActiveAttacks.RemoveAt(trackIndex);
-		if (!track.ReservesStack)
+		if (!track.ReservesStack || track.VigorSpent <= 0m)
 		{
 			return;
 		}
@@ -134,7 +135,7 @@ public class KeepVigorPower : ModPowerTemplate
 		Flash();
 		await PowerCmd.Decrement(this);
 
-		if (Owner.IsDead || track.VigorSpent <= 0m)
+		if (Owner.IsDead)
 		{
 			return;
 		}
