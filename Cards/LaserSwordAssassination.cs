@@ -35,7 +35,7 @@ public sealed class LaserSwordAssassination : ModCardTemplate
 
 	protected override IEnumerable<DynamicVar> CanonicalVars =>
 	[
-		new DoublingDamageVar(),
+		new DamageVar(CanonicalDamage, DamageProps),
 	];
 
 	protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
@@ -99,39 +99,24 @@ public sealed class LaserSwordAssassination : ModCardTemplate
 	internal static decimal GetDamageMultiplier(CardModel card) =>
 		card.IsUpgraded ? UpgradedDamageMultiplier : BaseDamageMultiplier;
 
-	internal static bool IsUpdatingCardPreview { get; private set; }
-
 	/// <summary>
-	/// 指向非攻击意图的敌人时，预览伤害为力量/活力等加成之后再翻倍；
-	/// <see cref="DynamicVar.BaseValue"/> 保持印面数值，以便 <c>{Damage:diff()}</c> 标绿。
+	/// 让倍率参与 Hook.ModifyDamage 的乘算阶段，确保后续伤害上限仍能正确生效。
 	/// </summary>
-	private sealed class DoublingDamageVar : DamageVar
+	public override decimal ModifyDamageMultiplicative(
+		Creature? target,
+		decimal amount,
+		ValueProp props,
+		Creature? dealer,
+		CardModel? cardSource,
+		CardPlay? cardPlay)
 	{
-		public DoublingDamageVar()
-			: base(CanonicalDamage, DamageProps)
+		if (cardSource != this
+			|| !props.IsPoweredAttack()
+			|| !ShouldAmplifyDamage(target))
 		{
+			return 1m;
 		}
 
-		public override void UpdateCardPreview(
-			CardModel card,
-			CardPreviewMode previewMode,
-			Creature? target,
-			bool runGlobalHooks)
-		{
-			IsUpdatingCardPreview = true;
-			try
-			{
-				base.UpdateCardPreview(card, previewMode, target, runGlobalHooks);
-			}
-			finally
-			{
-				IsUpdatingCardPreview = false;
-			}
-
-			if (ShouldAmplifyDamage(target))
-			{
-				PreviewValue *= GetDamageMultiplier(card);
-			}
-		}
+		return GetDamageMultiplier(this);
 	}
 }
