@@ -14,6 +14,8 @@
 {8362a1ef-2add-48c3-85e9-287078234c4e} event:/sunqian_universe/music/SongOfGuanYu
 {ea805add-ecda-4cfb-a5c4-295d960f51e7} event:/sunqian_universe/sfx/一人坚守南郡城
 {634747f4-ee4c-41be-9d36-f9958a348430} event:/sunqian_universe/sfx/一把叫仁之剑，一把叫义之剑
+{650bebe4-93cd-4bb0-b3f1-bf9fbea6ec73} event:/sunqian_universe/sfx/七星刀-你以为它就是七星宝刀吗
+{af573f4c-65f2-4465-ac0e-e596753a6d24} event:/sunqian_universe/sfx/七星刀-削金断玉锐不可当
 {a4c8543f-c171-4d7a-9266-728953ec401a} event:/sunqian_universe/sfx/三叔四伯-三叔四伯，不必多礼
 {d1d2c204-40c6-4184-89c4-c9e8c9332d62} event:/sunqian_universe/sfx/不怕酸-咱家不怕酸
 {83d78065-54a1-4a8e-a1b6-268c7e29423b} event:/sunqian_universe/sfx/不怕酸-说了不怕酸

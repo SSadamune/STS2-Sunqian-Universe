@@ -152,6 +152,8 @@ internal static class SquSfx
 	public const string KeepCalmXuzhouWasMineEvent = "event:/sunqian_universe/sfx/保持冷静-徐州原本就是我哒";
 	public const string LaserSwordAssassinationDrawEvent = "event:/sunqian_universe/sfx/光剑刺杀-拔刀";
 	public const string LaserSwordAssassinationLaserEvent = "event:/sunqian_universe/sfx/光剑刺杀-激光";
+	public const string SevenStarDaggerEvent = "event:/sunqian_universe/sfx/七星刀-削金断玉锐不可当";
+	public const string FakeSevenStarDaggerEvent = "event:/sunqian_universe/sfx/七星刀-你以为它就是七星宝刀吗";
 	public const string DigRaidEvent = "event:/sunqian_universe/sfx/掘地突袭";
 	public const string MusouAttackThoughtLuBuEvent = "event:/sunqian_universe/sfx/无双乱舞-我原本以为吕布";
 	public const string RuthlessStrikeDontForceMeEvent = "event:/sunqian_universe/sfx/无情打击-可别逼我使出无情剑来";

@@ -31,5 +31,11 @@
   "SUNQIAN_UNIVERSE_RELIC_REUSED_PROPS.title": "复用素材",
   "SUNQIAN_UNIVERSE_RELIC_REUSED_PROPS.description": "拾起时，从你的牌组中选择至多两张有[gold]消耗[/gold]的[gold]剧本[/gold]牌，这些牌失去[gold]消耗[/gold]。",
   "SUNQIAN_UNIVERSE_RELIC_REUSED_PROPS.flavor": "再用一遍，没人会发现的…",
-  "SUNQIAN_UNIVERSE_RELIC_REUSED_PROPS.selectionScreenPrompt": "选择至多两张有[gold]消耗[/gold]的[gold]剧本[/gold]牌。"
+  "SUNQIAN_UNIVERSE_RELIC_REUSED_PROPS.selectionScreenPrompt": "选择至多两张有[gold]消耗[/gold]的[gold]剧本[/gold]牌。",
+  "SUNQIAN_UNIVERSE_RELIC_SEVEN_STAR_DAGGER.title": "七星宝刀",
+  "SUNQIAN_UNIVERSE_RELIC_SEVEN_STAR_DAGGER.description": "战斗开始时，获得一张具有[gold]保留[/gold]和[gold]锋利3[/gold]的[gold]光剑刺杀+[/gold]。",
+  "SUNQIAN_UNIVERSE_RELIC_SEVEN_STAR_DAGGER.flavor": "削金断玉，锐不可当！",
+  "SUNQIAN_UNIVERSE_RELIC_FAKE_SEVEN_STAR_DAGGER.title": "七星宝刀？？？",
+  "SUNQIAN_UNIVERSE_RELIC_FAKE_SEVEN_STAR_DAGGER.description": "在战斗中右键点击此遗物，[gold]视为打出[/gold]一张[gold]七星[/gold]，然后此遗物永久失效。",
+  "SUNQIAN_UNIVERSE_RELIC_FAKE_SEVEN_STAR_DAGGER.flavor": "你以为它就是七星宝刀吗？"
 }
