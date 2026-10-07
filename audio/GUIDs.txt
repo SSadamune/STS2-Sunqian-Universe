@@ -57,7 +57,6 @@
 {d89e9303-d781-48a1-bfb5-f32c19b79aa2} event:/sunqian_universe/sfx/何疑魏-有何不敢
 {071e84b9-12e0-4b35-bc7e-c0a39c0d69cb} event:/sunqian_universe/sfx/何疑魏-魏延早就把三军看成他自己的了
 {2cc64cd2-9834-438d-b17b-12cfbf7e7d48} event:/sunqian_universe/sfx/何谓人主，那就是知错改错不认错
-{6d9d9448-74e3-4bcf-898f-b932986f4bd1} event:/sunqian_universe/sfx/你是何人
 {d0a9b922-06a6-4e84-a7b7-0e9279836f77} event:/sunqian_universe/sfx/保持冷静-不要愤怒愤怒会降低智慧
 {289ff2dd-7a8a-41a5-abf0-6fa1dc8078e9} event:/sunqian_universe/sfx/保持冷静-仇恨会使你丧失判断力
 {51f2912e-5c1c-48eb-a93e-b7b8e8232f4f} event:/sunqian_universe/sfx/保持冷静-吕布一介匹夫
@@ -67,6 +66,9 @@
 {f02af414-8f79-491f-8523-faea6f2e462b} event:/sunqian_universe/sfx/倾巢而出-我们这回倾城而出
 {438a8ab6-7ed2-435a-9f37-6797691135a0} event:/sunqian_universe/sfx/光剑刺杀-拔刀
 {542eca1e-4347-4fac-97b0-073eff87cedd} event:/sunqian_universe/sfx/光剑刺杀-激光
+{5120aadf-d9f4-43eb-ab7a-81534b3d2efb} event:/sunqian_universe/sfx/关帝形态-你是何人
+{0ec1a28b-46e1-4d64-b290-e0a01a63c245} event:/sunqian_universe/sfx/关帝形态-文关羽孙乾
+{b393b56b-e331-438d-8359-16a62d217304} event:/sunqian_universe/sfx/关帝形态-武关羽周仓
 {ad1078ae-4a94-45d7-8de1-69caed49056b} event:/sunqian_universe/sfx/刀斧手-刀斧手听令
 {cb93a65f-ad3b-4447-b740-12a81b468348} event:/sunqian_universe/sfx/制式基地车-Lets set up shop
 {e1000fff-d8cc-4fba-a6ba-8f5138cfa762} event:/sunqian_universe/sfx/制式基地车-MCV reporting in

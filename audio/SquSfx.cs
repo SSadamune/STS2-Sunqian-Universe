@@ -45,7 +45,9 @@ internal static class SquSfx
 	public const string TwoWordLikeMorningDewEvent = "event:/sunqian_universe/sfx/二言-譬如朝露";
 	public const string HumanTransmutationEvent = "event:/sunqian_universe/sfx/人体炼成";
 	public const string BenevolenceSwordEvent = "event:/sunqian_universe/sfx/仁之剑";
-	public const string WhoAreYouEvent = "event:/sunqian_universe/sfx/你是何人";
+	public const string GuanDiFormWhoAreYouEvent = "event:/sunqian_universe/sfx/关帝形态-你是何人";
+	public const string GuanDiFormCivilSunqianEvent = "event:/sunqian_universe/sfx/关帝形态-文关羽孙乾";
+	public const string GuanDiFormMartialZhouCangEvent = "event:/sunqian_universe/sfx/关帝形态-武关羽周仓";
 	public const string RunWildAgainEvent = "event:/sunqian_universe/sfx/再来撒野";
 	public const string HuaguMianzhangEvent = "event:/sunqian_universe/sfx/化骨绵掌";
 	public const string ForkOutWalkEvent = "event:/sunqian_universe/sfx/叉出去-走";

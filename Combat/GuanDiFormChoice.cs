@@ -12,6 +12,7 @@ using MegaCrit.Sts2.Core.Localization;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Nodes.CommonUi;
 using MegaCrit.Sts2.Core.Nodes.Screens.CardSelection;
+using Squ.Audio;
 using Squ.Cards;
 using Squ.Powers;
 
@@ -77,6 +78,7 @@ public static class GuanDiFormChoice
 				+ optionCounts.Upgraded * GuanYuMartialVer.UpgradedVigorPerEnergy,
 			optionCounts.Total * VigorAmplificationPower.BonusStacksPerForm);
 
+		SquSfx.Play(SquSfx.GuanDiFormWhoAreYouEvent);
 		CardModel? chosen = await CardSelectCmd.FromChooseACardScreen(
 			choiceContext,
 			[guanYuCivilVer, guanYuMartialVer],
@@ -84,6 +86,7 @@ public static class GuanDiFormChoice
 			canSkip);
 		if (chosen is GuanYuCivilVer)
 		{
+			SquSfx.Play(SquSfx.GuanDiFormCivilSunqianEvent);
 			await EnterGuanYuCivilVerAsync(
 				choiceContext,
 				player,
@@ -93,6 +96,7 @@ public static class GuanDiFormChoice
 		}
 		else if (chosen is GuanYuMartialVer)
 		{
+			SquSfx.Play(SquSfx.GuanDiFormMartialZhouCangEvent);
 			await EnterGuanYuMartialVerAsync(
 				choiceContext,
 				player,

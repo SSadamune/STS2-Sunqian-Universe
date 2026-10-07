@@ -34,30 +34,45 @@ public sealed class HumanTransmutation : ModCardTemplate
 
 	private static readonly EnchantmentSpec SlitherSpec = new(typeof(Slither), 0);
 
-	private static readonly EnchantmentSpec[] CommonPool =
+	private static readonly EnchantmentSpec[] CommonTierPool =
 	[
-		new(typeof(Sharp), 3),
-		new(typeof(Swift), 2),
 		new(typeof(Vigorous), 6),
 		new(typeof(Steady), 0),
 		new(typeof(Inky), 0),
 	];
 
-	private static readonly EnchantmentSpec[] UncommonPool =
+	private static readonly EnchantmentSpec[] UncommonTierPool =
 	[
-		new(typeof(Swift), 3),
-		new(typeof(Sown), 1),
 		new(typeof(Momentum), 5),
 		new(typeof(Glam), 0),
 		new(typeof(Corrupted), 0),
 	];
 
-	private static readonly EnchantmentSpec[] RarePool =
+	private static readonly EnchantmentSpec[] RareTierPool =
 	[
 		new(typeof(Instinct), 0),
-		new(typeof(Sown), 2),
 		new(typeof(Spiral), 0),
+	];
+
+	private static readonly EnchantmentSpec[] CommonUniversalPool =
+	[
+		new(typeof(Sharp), 3),
+		new(typeof(Sown), 1),
+		new(typeof(Swift), 2),
+	];
+
+	private static readonly EnchantmentSpec[] UncommonUniversalPool =
+	[
+		new(typeof(Sharp), 5),
+		new(typeof(Sown), 1),
+		new(typeof(Swift), 3),
+	];
+
+	private static readonly EnchantmentSpec[] RareUniversalPool =
+	[
 		new(typeof(Sharp), 8),
+		new(typeof(Sown), 2),
+		new(typeof(Swift), 4),
 	];
 
 	protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
@@ -188,30 +203,50 @@ public sealed class HumanTransmutation : ModCardTemplate
 		HashSet<Type> usedTypes)
 	{
 		EnchantmentSpec spec = TryRollSlither(card, rng, usedTypes)
-			?? PickRaritySpec(
-				RollEnchantmentRarity(minimumRarity, highestTier, rng),
+			?? PickEnchantmentSpec(
+				minimumRarity,
+				highestTier,
 				rng,
 				usedTypes);
 		ApplySpec(card, spec);
 		usedTypes.Add(spec.EnchantmentType);
 	}
 
-	private static CardRarity RollEnchantmentRarity(
+	private static EnchantmentSpec PickEnchantmentSpec(
 		CardRarity minimumRarity,
 		int highestTier,
-		Rng rng)
+		Rng rng,
+		HashSet<Type> usedTypes)
 	{
 		int minimumTier = GetEnchantmentTier(minimumRarity);
-		int rolledTier = minimumTier == highestTier
-			? minimumTier
-			: rng.NextInt(minimumTier, highestTier + 1);
-		return rolledTier switch
+		List<EnchantmentSpec> pool = [];
+		for (int tier = minimumTier; tier <= highestTier; tier++)
 		{
-			2 => CardRarity.Uncommon,
-			3 => CardRarity.Rare,
-			_ => CardRarity.Common,
-		};
+			pool.AddRange(GetTierPool(tier));
+		}
+
+		pool.AddRange(GetUniversalPool(highestTier));
+
+		EnchantmentSpec[] unused = pool
+			.Where(spec => !usedTypes.Contains(spec.EnchantmentType))
+			.ToArray();
+		IEnumerable<EnchantmentSpec> candidates = unused.Length > 0 ? unused : pool;
+		return rng.NextItem(candidates);
 	}
+
+	private static EnchantmentSpec[] GetTierPool(int tier) => tier switch
+	{
+		2 => UncommonTierPool,
+		3 => RareTierPool,
+		_ => CommonTierPool,
+	};
+
+	private static EnchantmentSpec[] GetUniversalPool(int highestTier) => highestTier switch
+	{
+		2 => UncommonUniversalPool,
+		3 => RareUniversalPool,
+		_ => CommonUniversalPool,
+	};
 
 	private static int GetEnchantmentTier(CardRarity rarity) => rarity switch
 	{
@@ -241,24 +276,6 @@ public sealed class HumanTransmutation : ModCardTemplate
 		}
 
 		return SlitherSpec;
-	}
-
-	private static EnchantmentSpec PickRaritySpec(
-		CardRarity rarity,
-		Rng rng,
-		HashSet<Type> usedTypes)
-	{
-		EnchantmentSpec[] pool = rarity switch
-		{
-			CardRarity.Uncommon => UncommonPool,
-			CardRarity.Rare => RarePool,
-			_ => CommonPool,
-		};
-
-		EnchantmentSpec[] unused = pool
-			.Where(spec => !usedTypes.Contains(spec.EnchantmentType))
-			.ToArray();
-		return rng.NextItem(unused.Length > 0 ? unused : pool);
 	}
 
 	private static void ApplySpec(CardModel card, EnchantmentSpec spec)
