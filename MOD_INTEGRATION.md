@@ -22,6 +22,10 @@ public static class SunqianUniverseApiInterop
 {
     public static bool IsReady => false;
 
+    public static string CharacterMechanicBoundCardTagId => "";
+    public static CardTag CharacterMechanicBoundCardTag => default;
+    public static bool IsCharacterMechanicBound(CardModel? card) => false;
+
     public static bool IsSupportingActorCharacter(CharacterModel? character) => false;
     public static bool HasSupportingActorInCombat() => false;
 
@@ -75,6 +79,19 @@ public static class SunqianUniverseApiInterop
         bool targetUpgraded = false) => null!;
 }
 ```
+
+## 标记强绑定角色机制的卡牌
+
+外部模组可以把 `CharacterMechanicBoundCardTag` 加入卡牌的固有标签。被标记的牌不会被《轧戏》或《人体炼成》发现：
+
+```csharp
+protected override HashSet<CardTag> CanonicalTags =>
+    SunqianUniverseApiInterop.IsReady
+        ? [SunqianUniverseApiInterop.CharacterMechanicBoundCardTag]
+        : [];
+```
+
+采用硬依赖时，可以直接引用 `SunqianUniversePublicApi.CharacterMechanicBoundCardTag`。标签的稳定限定 ID 可从公开属性 `SunqianUniversePublicApi.CharacterMechanicBoundCardTagId` 取得；不希望硬引用程序集时，也可以使用同名 Interop 属性取得 ID。`IsCharacterMechanicBound` 可用于检查任意卡牌是否带有该标记。可选依赖调用方必须先检查 `IsReady`。
 
 本模组初始化时已调用 `ModTypeDiscoveryHub.RegisterModAssembly`。请始终先检查 `IsReady`，把未安装孙乾宇宙视为正常分支：
 

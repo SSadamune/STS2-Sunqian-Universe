@@ -280,6 +280,7 @@ public sealed class JuggleMultipleShoots : ModCardTemplate
 		&& card.Rarity is not CardRarity.Basic and not CardRarity.Ancient and not CardRarity.Event
 		&& !card.EnergyCost.CostsX
 		&& GetCanonicalEnergyCost(card) <= maxCost
+		&& !SquCardTags.IsCharacterMechanicBound(card)
 		&& !ExcludedOtherCharacterPowers.Contains(card.GetType());
 
 	private static int GetCanonicalEnergyCost(CardModel card) => card.EnergyCost.Canonical;

@@ -104,9 +104,13 @@ public sealed class HumanTransmutation : ModCardTemplate
 		Rng rng = Owner.RunState.Rng.CombatCardGeneration;
 		HashSet<Type> usedEnchantmentTypes = [];
 		List<CardModel> choices = [];
-		foreach (CardModel exhausted in toExhaust)
+		List<CardRarity> choiceRarities = toExhaust
+			.Select(exhausted => MapExhaustedRarity(exhausted.Rarity))
+			.ToList();
+		int highestEnchantmentTier = choiceRarities.Max(GetEnchantmentTier);
+
+		foreach (CardRarity rarity in choiceRarities)
 		{
-			CardRarity rarity = MapExhaustedRarity(exhausted.Rarity);
 			CardModel? attack = PickRandomAttackForRarity(rarity, rng);
 			if (attack is null)
 			{
@@ -119,7 +123,12 @@ public sealed class HumanTransmutation : ModCardTemplate
 				attack.FinalizeUpgradeInternal();
 			}
 
-			ApplyChoiceEnchantment(attack, rarity, rng, usedEnchantmentTypes);
+			ApplyChoiceEnchantment(
+				attack,
+				rarity,
+				highestEnchantmentTier,
+				rng,
+				usedEnchantmentTypes);
 			choices.Add(attack);
 		}
 
@@ -160,6 +169,7 @@ public sealed class HumanTransmutation : ModCardTemplate
 	private static bool IsEligibleAttack(CardModel card, CardRarity rarity) =>
 		card.Type == CardType.Attack
 		&& card.Rarity == rarity
+		&& !SquCardTags.IsCharacterMechanicBound(card)
 		&& !CostsStars(card)
 		&& !InvolvesOsty(card);
 
@@ -172,15 +182,43 @@ public sealed class HumanTransmutation : ModCardTemplate
 
 	private static void ApplyChoiceEnchantment(
 		CardModel card,
-		CardRarity rarity,
+		CardRarity minimumRarity,
+		int highestTier,
 		Rng rng,
 		HashSet<Type> usedTypes)
 	{
 		EnchantmentSpec spec = TryRollSlither(card, rng, usedTypes)
-			?? PickRaritySpec(rarity, rng, usedTypes);
+			?? PickRaritySpec(
+				RollEnchantmentRarity(minimumRarity, highestTier, rng),
+				rng,
+				usedTypes);
 		ApplySpec(card, spec);
 		usedTypes.Add(spec.EnchantmentType);
 	}
+
+	private static CardRarity RollEnchantmentRarity(
+		CardRarity minimumRarity,
+		int highestTier,
+		Rng rng)
+	{
+		int minimumTier = GetEnchantmentTier(minimumRarity);
+		int rolledTier = minimumTier == highestTier
+			? minimumTier
+			: rng.NextInt(minimumTier, highestTier + 1);
+		return rolledTier switch
+		{
+			2 => CardRarity.Uncommon,
+			3 => CardRarity.Rare,
+			_ => CardRarity.Common,
+		};
+	}
+
+	private static int GetEnchantmentTier(CardRarity rarity) => rarity switch
+	{
+		CardRarity.Uncommon => 2,
+		CardRarity.Rare => 3,
+		_ => 1,
+	};
 
 	private static EnchantmentSpec? TryRollSlither(
 		CardModel card,

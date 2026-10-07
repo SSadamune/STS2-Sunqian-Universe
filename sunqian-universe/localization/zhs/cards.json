@@ -87,7 +87,7 @@
   "SUNQIAN_UNIVERSE_CARD_AUDITION.description": "获得3张随机{IfUpgraded:show:升级过的|}[gold]剧本[/gold]牌。\n[gold]卸妆[/gold]：这些牌在本回合[gold]保留[/gold]。",
   "SUNQIAN_UNIVERSE_CARD_HUMAN_TRANSMUTATION.title": "人体炼成",
   "SUNQIAN_UNIVERSE_CARD_HUMAN_TRANSMUTATION.description": "消耗至多3张牌，从等量张任意角色的随机{IfUpgraded:show:[gold]升级过[/gold]的|}被[gold]附魔[/gold]的攻击牌中获得一张。",
-  "SUNQIAN_UNIVERSE_CARD_HUMAN_TRANSMUTATION.rarityNote": "消耗的牌的稀有度将决定发现的牌的稀有度和附魔类型。\n部分强绑定其他角色机制的攻击牌不会被发现。",
+  "SUNQIAN_UNIVERSE_CARD_HUMAN_TRANSMUTATION.rarityNote": "被消耗的牌的稀有度决定发现牌的稀有度和附魔类型。\n部分强绑定其他角色机制的攻击牌不会被发现。",
   "SUNQIAN_UNIVERSE_CARD_EXECUTION_COMMANDER_SCRIPT.title": "行刑指挥官剧本",
   "SUNQIAN_UNIVERSE_CARD_EXECUTION_COMMANDER_SCRIPT.description": "获得两张[gold]{IfUpgraded:show:箭幕打击+|箭幕打击}[/gold]。\n[gold]可叠层剧本[/gold]：如果仅有一名敌人，你的[gold]群体目标[/gold]攻击牌伤害增加{BonusPercent:diff()}%。",
   "SUNQIAN_UNIVERSE_CARD_HEADSMAN_SCRIPT.title": "刀斧手剧本",

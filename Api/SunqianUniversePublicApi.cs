@@ -31,6 +31,23 @@ public static class SunqianUniversePublicApi
 	/// <summary>API 已加载且可以调用。</summary>
 	public static bool IsReady => true;
 
+	/// <summary>
+	/// “强绑定角色机制”卡牌标签的稳定限定 ID。
+	/// 将对应标签加入卡牌后，该牌不会被《轧戏》或《人体炼成》发现。
+	/// </summary>
+	public static string CharacterMechanicBoundCardTagId =>
+		SquCardTags.CharacterMechanicBoundId;
+
+	/// <summary>
+	/// “强绑定角色机制”卡牌标签。外部卡牌可将它加入自己的 CanonicalTags。
+	/// </summary>
+	public static CardTag CharacterMechanicBoundCardTag =>
+		SquCardTags.CharacterMechanicBound;
+
+	/// <summary>判断卡牌是否被标记为强绑定所属角色机制。</summary>
+	public static bool IsCharacterMechanicBound(CardModel? card) =>
+		SquCardTags.IsCharacterMechanicBound(card);
+
 	/// <summary>判断角色是否为本模组的「龙套演员」。</summary>
 	public static bool IsSupportingActorCharacter(CharacterModel? character) =>
 		character is SunqianCharacter;
