@@ -24,19 +24,26 @@ using STS2RitsuLib.Scaffolding.Content;
 namespace Squ.Cards;
 
 /// <summary>
-/// 激光剑行刺：升级前造成无视格挡的伤害，升级后造成穿透伤害；
-/// 若目标意图不是攻击，则在力量、活力等加成之后将伤害翻倍。
+/// 光剑刺杀：可升级三次。第二次升级后改为穿透伤害，第三次升级后获得保留；
+/// 若目标意图不是攻击，则在力量、活力等加成之后将伤害变为两倍或三倍。
 /// </summary>
 [RegisterCard(typeof(SunqianCardPool), StableEntryStem = "laser_sword_assassination")]
 public sealed class LaserSwordAssassination : ModCardTemplate, IPenetratingDamageCard
 {
 	public const int CanonicalDamage = 4;
-	public const int DamageMultiplier = 3;
+	public const int MaximumUpgradeLevel = 3;
+	public const int CanonicalDamageMultiplier = 2;
+	public const int UpgradedDamageMultiplier = 3;
 	private const string IsAmplifiedVarName = "IsAmplified";
 
 	internal static readonly ValueProp DamageProps = ValueProp.Move | ValueProp.Unblockable;
 
-	public bool DealsPenetratingDamage => IsUpgraded;
+	public override int MaxUpgradeLevel => MaximumUpgradeLevel;
+
+	public override string Title =>
+		TitleLocString.GetFormattedText() + new string('+', CurrentUpgradeLevel);
+
+	public bool DealsPenetratingDamage => CurrentUpgradeLevel >= 2;
 
 	protected override IEnumerable<DynamicVar> CanonicalVars =>
 	[
@@ -52,9 +59,16 @@ public sealed class LaserSwordAssassination : ModCardTemplate, IPenetratingDamag
 		get
 		{
 			yield return HoverTipFactory.Static(StaticHoverTip.Block);
-			if (IsUpgraded)
+			if (DealsPenetratingDamage)
 			{
 				yield return HoverTipFactory.FromKeyword(SquKeywords.PiercingDamage);
+			}
+
+			if (!CombatManager.Instance.IsInProgress && IsUpgradable)
+			{
+				CardModel nextUpgrade = (CardModel)MutableClone();
+				nextUpgrade.UpgradeInternal();
+				yield return new CardHoverTip(nextUpgrade);
 			}
 		}
 	}
@@ -107,25 +121,56 @@ public sealed class LaserSwordAssassination : ModCardTemplate, IPenetratingDamag
 
 	protected override void OnUpgrade()
 	{
+		DynamicVars.Damage.UpgradeValueBy(1m);
+		if (CurrentUpgradeLevel == MaximumUpgradeLevel)
+		{
+			AddKeyword(CardKeyword.Retain);
+		}
 	}
 
 	protected override void AddExtraArgsToDescription(LocString description)
 	{
-		string bodyKey = DynamicVars[IsAmplifiedVarName].PreviewValue > 0m
-			? Id.Entry + ".amplifiedBody"
-			: Id.Entry + ".normalBody";
+		bool amplified = DynamicVars[IsAmplifiedVarName].PreviewValue > 0m;
+		bool tripleDamage = CurrentDamageMultiplier == UpgradedDamageMultiplier;
+		string bodyKey = (amplified, tripleDamage) switch
+		{
+			(true, true) => Id.Entry + ".amplifiedTripleBody",
+			(true, false) => Id.Entry + ".amplifiedDoubleBody",
+			(false, true) => Id.Entry + ".normalTripleBody",
+			_ => Id.Entry + ".normalDoubleBody",
+		};
 		var body = new LocString("cards", bodyKey);
 		body.Add(DynamicVars.Damage);
-		body.Add(new IfUpgradedVar(
-			IsUpgraded ? UpgradeDisplay.Upgraded : UpgradeDisplay.Normal));
+		body.Add(
+			"DamageType",
+			new LocString(
+				"cards",
+				Id.Entry + (DealsPenetratingDamage
+					? ".piercingDamage"
+					: ".unblockableDamage"))
+			.GetFormattedText());
+		body.Add("RemainingUpgradesText", GetRemainingUpgradesText());
 		description.Add("BodyText", body);
+	}
+
+	private string GetRemainingUpgradesText()
+	{
+		int remainingUpgrades = MaxUpgradeLevel - CurrentUpgradeLevel;
+		if (remainingUpgrades <= 0)
+		{
+			return string.Empty;
+		}
+
+		var text = new LocString("cards", Id.Entry + ".remainingUpgrades");
+		text.Add("Remaining", remainingUpgrades);
+		return text.GetFormattedText();
 	}
 
 	internal static bool ShouldAmplifyDamage(Creature? target) =>
 		target is { IsAlive: true } && !SquEnemyIntent.IntendsToAttack(target);
 
 	/// <summary>
-	/// 让固定三倍倍率参与 Hook.ModifyDamage 的乘算阶段；升级只改变是否穿透防御能力。
+	/// 让意图倍率参与 Hook.ModifyDamage 的乘算阶段，使力量、活力等先参与计算。
 	/// </summary>
 	public override decimal ModifyDamageMultiplicative(
 		Creature? target,
@@ -142,6 +187,10 @@ public sealed class LaserSwordAssassination : ModCardTemplate, IPenetratingDamag
 			return 1m;
 		}
 
-		return DamageMultiplier;
+		return CurrentDamageMultiplier;
 	}
+
+	private int CurrentDamageMultiplier => CurrentUpgradeLevel >= 1
+		? UpgradedDamageMultiplier
+		: CanonicalDamageMultiplier;
 }
