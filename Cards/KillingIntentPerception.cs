@@ -2,16 +2,23 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Godot;
 using MegaCrit.Sts2.Core.CardSelection;
 using MegaCrit.Sts2.Core.Combat;
 using MegaCrit.Sts2.Core.Commands;
+using MegaCrit.Sts2.Core.Context;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.Entities.Creatures;
 using MegaCrit.Sts2.Core.Entities.Players;
+using MegaCrit.Sts2.Core.GameActions;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.Localization;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.Models;
+using MegaCrit.Sts2.Core.Nodes.Combat;
+using MegaCrit.Sts2.Core.Nodes.Multiplayer;
+using MegaCrit.Sts2.Core.Nodes.Rooms;
+using MegaCrit.Sts2.Core.Runs;
 using MegaCrit.Sts2.Core.ValueProps;
 using Squ.Character;
 using Squ.Combat;
@@ -23,7 +30,8 @@ using STS2RitsuLib.Scaffolding.Content;
 namespace Squ.Cards;
 
 /// <summary>
-/// 杀意感知：攻击目标后，令盟友从手牌中选择至多一张可打出的攻击牌免费自动打出。
+/// 杀意感知：攻击所有敌人后，选择一名盟友；升级前随机、升级后由盟友选择一张攻击牌，
+/// 对随机敌人自动打出。
 /// 上将军会使这些跨玩家自动打出的攻击牌继承本牌实际消耗的活力加成。
 /// </summary>
 [RegisterCard(typeof(SunqianCardPool), StableEntryStem = "killing_intent_perception")]
@@ -52,73 +60,50 @@ public sealed class KillingIntentPerception : ModCardTemplate
 		PortraitPath: "res://images/cards/KillingIntentPerception.png");
 
 	public KillingIntentPerception()
-		: base(1, CardType.Attack, CardRarity.Uncommon, TargetType.AnyEnemy)
+		: base(1, CardType.Attack, CardRarity.Uncommon, TargetType.AllEnemies)
 	{
 	}
 
 	protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
 	{
-		ArgumentNullException.ThrowIfNull(cardPlay.Target, nameof(cardPlay.Target));
 		ICombatState combatState = CombatState
 			?? throw new InvalidOperationException(
 				"KillingIntentPerception requires an active combat.");
-		Creature target = cardPlay.Target;
 
 		await DamageCmd.Attack(DynamicVars.Damage.BaseValue)
 			.FromCard(this, cardPlay)
-			.Targeting(target)
+			.TargetingAllOpponents(combatState)
 			.WithHitFx("vfx/vfx_attack_slash")
 			.Execute(choiceContext);
 
-		if (!target.IsAlive)
+		if (combatState.PlayerCreatures.Count(creature => creature.IsAlive) <= 1
+			|| !combatState.HittableEnemies.Any(enemy => enemy.IsAlive))
 		{
 			return;
 		}
 
-		List<Player> allies = combatState.Players.Where(player =>
-			player != Owner
-			&& !player.Creature.IsDead)
-			.ToList();
-
-		if (!IsUpgraded)
+		Player? ally = await ChooseAlly();
+		if (ally is null || ally.Creature.IsDead)
 		{
-			List<Player> eligibleAllies = allies
-				.Where(player => GetPlayableAttacks(player).Count > 0)
-				.ToList();
-			if (eligibleAllies.Count == 0)
-			{
-				return;
-			}
-
-			Player? ally = Owner.RunState.Rng.CombatCardSelection
-				.NextItem(eligibleAllies);
-			if (ally is null)
-			{
-				return;
-			}
-
-			await ChooseAndAutoPlayAttack(choiceContext, ally, target);
 			return;
 		}
 
-		foreach (Player ally in allies)
+		CardModel? attack;
+		if (IsUpgraded)
 		{
-			if (!target.IsAlive)
-			{
-				break;
-			}
+			attack = await ChooseAttack(choiceContext, ally);
+		}
+		else
+		{
+			List<CardModel> playableAttacks = GetPlayableAttacks(ally);
+			attack = playableAttacks.Count > 0
+				? Owner.RunState.Rng.CombatCardSelection.NextItem(playableAttacks)
+				: null;
+		}
 
-			if (ally.Creature.IsDead)
-			{
-				continue;
-			}
-
-			if (GetPlayableAttacks(ally).Count == 0)
-			{
-				continue;
-			}
-
-			await ChooseAndAutoPlayAttack(choiceContext, ally, target);
+		if (attack is not null)
+		{
+			await CardCmd.AutoPlay(choiceContext, attack, null);
 		}
 	}
 
@@ -135,26 +120,63 @@ public sealed class KillingIntentPerception : ModCardTemplate
 	private static bool IsPlayableAttack(CardModel card) =>
 		card.Type == CardType.Attack && CanAutoPlayForFree(card);
 
-	private async Task ChooseAndAutoPlayAttack(
+	private async Task<CardModel?> ChooseAttack(
 		PlayerChoiceContext choiceContext,
-		Player ally,
-		Creature target)
+		Player ally)
 	{
+		if (GetPlayableAttacks(ally).Count == 0)
+		{
+			return null;
+		}
+
 		var prefs = new CardSelectorPrefs(SelectionPrompt, minCount: 0, maxCount: 1)
 		{
 			RequireManualConfirmation = true,
 		};
-		CardModel? selectedAttack = (await CardSelectCmd.FromHand(
+		return (await CardSelectCmd.FromHand(
 			choiceContext,
 			ally,
 			prefs,
 			IsPlayableAttack,
 			this)).FirstOrDefault();
-		if (selectedAttack is not null)
-		{
-			await CardCmd.AutoPlay(choiceContext, selectedAttack, target);
-		}
 	}
+
+	private async Task<Player?> ChooseAlly()
+	{
+		uint choiceId = RunManager.Instance.PlayerChoiceSynchronizer
+			.ReserveChoiceId(Owner);
+		if (LocalContext.IsMe(Owner))
+		{
+			Vector2 startPosition = NCombatRoom.Instance?
+				.GetCreatureNode(Owner.Creature)?.VfxSpawnPosition ?? Vector2.Zero;
+			NTargetManager targetManager = NTargetManager.Instance;
+			targetManager.StartTargeting(
+				TargetType.AnyAlly,
+				startPosition,
+				TargetMode.ClickMouseToTarget,
+				null,
+				null);
+			Player? selected = NodeToPlayer(await targetManager.SelectionFinished());
+			RunManager.Instance.PlayerChoiceSynchronizer.SyncLocalChoice(
+				Owner,
+				choiceId,
+				PlayerChoiceResult.FromPlayerId(selected?.NetId));
+			return selected;
+		}
+
+		ulong? selectedPlayerId = (await RunManager.Instance.PlayerChoiceSynchronizer
+			.WaitForRemoteChoice(Owner, choiceId)).AsPlayerId();
+		return selectedPlayerId.HasValue
+			? Owner.RunState.GetPlayer(selectedPlayerId.Value)
+			: null;
+	}
+
+	private static Player? NodeToPlayer(Node? node) => node switch
+	{
+		NCreature creatureNode => creatureNode.Entity.Player,
+		NMultiplayerPlayerState playerState => playerState.Player,
+		_ => null,
+	};
 
 	private static bool CanAutoPlayForFree(CardModel card)
 	{
