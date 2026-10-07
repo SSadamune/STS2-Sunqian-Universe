@@ -36,6 +36,8 @@ public sealed class LaserSwordAssassination : ModCardTemplate, IPenetratingDamag
 	public const int UpgradedDamageMultiplier = 3;
 	private const string IsAmplifiedVarName = "IsAmplified";
 
+	private bool IsUpgradePreview => UpgradePreviewType != CardUpgradePreviewType.None;
+
 	internal static readonly ValueProp DamageProps = ValueProp.Move | ValueProp.Unblockable;
 
 	public override int MaxUpgradeLevel => MaximumUpgradeLevel;
@@ -64,11 +66,31 @@ public sealed class LaserSwordAssassination : ModCardTemplate, IPenetratingDamag
 				yield return HoverTipFactory.FromKeyword(SquKeywords.PiercingDamage);
 			}
 
-			if (!CombatManager.Instance.IsInProgress && IsUpgradable)
+			if (IsUpgradePreview && CurrentUpgradeLevel >= MaximumUpgradeLevel)
 			{
-				CardModel nextUpgrade = (CardModel)MutableClone();
-				nextUpgrade.UpgradeInternal();
-				yield return new CardHoverTip(nextUpgrade);
+				yield return HoverTipFactory.FromKeyword(CardKeyword.Retain);
+			}
+
+			if (IsUpgradePreview
+				|| CombatManager.Instance.IsInProgress
+				|| CurrentUpgradeLevel >= MaximumUpgradeLevel)
+			{
+				yield break;
+			}
+
+			for (int level = CurrentUpgradeLevel + 1; level <= MaximumUpgradeLevel; level++)
+			{
+				LaserSwordAssassination preview = CreateUpgradePreview(level);
+				yield return new UpgradeLevelCardHoverTip(preview);
+				foreach (IHoverTip hoverTip in preview.HoverTips)
+				{
+					if (hoverTip is CardHoverTip)
+					{
+						continue;
+					}
+
+					yield return hoverTip;
+				}
 			}
 		}
 	}
@@ -141,14 +163,25 @@ public sealed class LaserSwordAssassination : ModCardTemplate, IPenetratingDamag
 		};
 		var body = new LocString("cards", bodyKey);
 		body.Add(DynamicVars.Damage);
+		bool highlightRetain = IsUpgradePreview && CurrentUpgradeLevel == MaximumUpgradeLevel;
+		string damageTypeKey = DealsPenetratingDamage && IsUpgradePreview && CurrentUpgradeLevel == 2
+			? ".piercingDamagePreview"
+			: DealsPenetratingDamage
+				? ".piercingDamage"
+				: ".unblockableDamage";
+		body.Add("DamageType", new LocString("cards", Id.Entry + damageTypeKey).GetFormattedText());
+		body.Add("TripleWord", PreviewText(".tripleWord", CurrentUpgradeLevel == 1));
+		body.Add("TripledWord", PreviewText(".tripledWord", CurrentUpgradeLevel == 1));
+		if (highlightRetain)
+		{
+			RemoveKeyword(CardKeyword.Retain);
+		}
+
 		body.Add(
-			"DamageType",
-			new LocString(
-				"cards",
-				Id.Entry + (DealsPenetratingDamage
-					? ".piercingDamage"
-					: ".unblockableDamage"))
-			.GetFormattedText());
+			"RetainPreviewLine",
+			highlightRetain
+				? new LocString("cards", Id.Entry + ".retainPreviewLine").GetFormattedText()
+				: string.Empty);
 		body.Add("RemainingUpgradesText", GetRemainingUpgradesText());
 		description.Add("BodyText", body);
 	}
@@ -193,4 +226,38 @@ public sealed class LaserSwordAssassination : ModCardTemplate, IPenetratingDamag
 	private int CurrentDamageMultiplier => CurrentUpgradeLevel >= 1
 		? UpgradedDamageMultiplier
 		: CanonicalDamageMultiplier;
+
+	private string PreviewText(string keyStem, bool highlight)
+	{
+		string suffix = IsUpgradePreview && highlight ? "Preview" : string.Empty;
+		return new LocString("cards", Id.Entry + keyStem + suffix).GetFormattedText();
+	}
+
+	private LaserSwordAssassination CreateUpgradePreview(int targetLevel)
+	{
+		var preview = (LaserSwordAssassination)MutableClone();
+		preview.UpgradePreviewType = CardUpgradePreviewType.Deck;
+		while (preview.CurrentUpgradeLevel < targetLevel)
+		{
+			preview.UpgradeInternal();
+		}
+
+		return preview;
+	}
+
+	/// <summary>
+	/// 原版 <see cref="CardHoverTip"/> 只要升级过，编号都只加一个加号，多级卡面会互相顶掉。
+	/// </summary>
+	private sealed class UpgradeLevelCardHoverTip : CardHoverTip, IHoverTip
+	{
+		private readonly string _id;
+
+		public UpgradeLevelCardHoverTip(LaserSwordAssassination card)
+			: base(card)
+		{
+			_id = $"{card.Id.Entry}+{card.CurrentUpgradeLevel}";
+		}
+
+		string IHoverTip.Id => _id;
+	}
 }

@@ -26,10 +26,8 @@ namespace Squ.Cards;
 public sealed class GoldenUprising : ModCardTemplate
 {
 	public const int BaseGoldCost = 10;
-	public const int GoldEscalationPerPlay = 10;
 	public const int BaseCardPickCount = 2;
 	public const int UpgradedCardPickCount = 3;
-	public const string GoldIncreaseVarName = "GoldIncrease";
 
 	private static readonly LocString SelectionPrompt =
 		new("cards", "SUNQIAN_UNIVERSE_CARD_GOLDEN_UPRISING.selectionScreenPrompt");
@@ -38,7 +36,6 @@ public sealed class GoldenUprising : ModCardTemplate
 	[
 		new GoldVar(BaseGoldCost),
 		new CardsVar(BaseCardPickCount),
-		new DynamicVar(GoldIncreaseVarName, GoldEscalationPerPlay),
 	];
 
 	public override IEnumerable<CardKeyword> CanonicalKeywords =>
@@ -81,11 +78,6 @@ public sealed class GoldenUprising : ModCardTemplate
 		foreach (CardModel card in selected)
 		{
 			await CardPileCmd.Add(card, PileType.Hand);
-		}
-
-		if (IsUpgraded)
-		{
-			DynamicVars.Gold.UpgradeValueBy(DynamicVars[GoldIncreaseVarName].BaseValue);
 		}
 	}
 
