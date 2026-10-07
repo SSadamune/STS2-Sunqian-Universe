@@ -41,6 +41,11 @@ public static class SquKeywords
 
 	public static readonly CardKeyword Environmental = EnvironmentalId.GetModCardKeyword();
 
+	public static readonly string PiercingDamageId = ModContentRegistry
+		.GetQualifiedKeywordId(SquMod.ModId, "piercing_damage");
+
+	public static readonly CardKeyword PiercingDamage = PiercingDamageId.GetModCardKeyword();
+
 	public static readonly string ScryId = ModContentRegistry
 		.GetQualifiedKeywordId(SquMod.ModId, "scry");
 

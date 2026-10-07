@@ -24,16 +24,16 @@ using STS2RitsuLib.Scaffolding.Content;
 namespace Squ.Cards;
 
 /// <summary>
-/// 掘地突袭：无视格挡伤害并给予灼烧。灼烧额外吃活力；升级后伤害与灼烧同时吃活力和火种。
+/// 掘地突袭：造成无视格挡的伤害并给予灼烧。灼烧额外吃活力。
 /// 卡面预览把加成写进 PreviewValue，印面 BaseValue 不变以便 :diff() 标绿。
 /// </summary>
 [RegisterCard(typeof(SunqianCardPool), StableEntryStem = "dig_raid")]
 public sealed class DigRaid : ModCardTemplate
 {
-	public const int CanonicalDamage = 8;
-	public const int UpgradedDamage = 11;
-	public const int CanonicalBurning = 5;
-	public const int UpgradedBurning = 7;
+	public const int CanonicalDamage = 7;
+	public const int UpgradedDamage = 10;
+	public const int CanonicalBurning = 7;
+	public const int UpgradedBurning = 10;
 
 	private static readonly ValueProp DamageProps = ValueProp.Move | ValueProp.Unblockable;
 

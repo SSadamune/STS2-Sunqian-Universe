@@ -7,6 +7,7 @@ using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.Entities.Creatures;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.HoverTips;
+using MegaCrit.Sts2.Core.Localization;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.ValueProps;
@@ -14,6 +15,7 @@ using Squ;
 using Squ.Audio;
 using Squ.Character;
 using Squ.Combat;
+using STS2RitsuLib.Cards.DynamicVars;
 using STS2RitsuLib.Interop.AutoRegistration;
 using STS2RitsuLib.Scaffolding.Content;
 
@@ -22,26 +24,40 @@ using STS2RitsuLib.Scaffolding.Content;
 namespace Squ.Cards;
 
 /// <summary>
-/// 激光剑行刺：无视格挡。若目标意图不是攻击，则在力量、活力等加成之后将伤害翻倍。
+/// 激光剑行刺：升级前造成无视格挡的伤害，升级后造成穿透伤害；
+/// 若目标意图不是攻击，则在力量、活力等加成之后将伤害翻倍。
 /// </summary>
 [RegisterCard(typeof(SunqianCardPool), StableEntryStem = "laser_sword_assassination")]
-public sealed class LaserSwordAssassination : ModCardTemplate
+public sealed class LaserSwordAssassination : ModCardTemplate, IPenetratingDamageCard
 {
 	public const int CanonicalDamage = 4;
-	public const int BaseDamageMultiplier = 2;
-	public const int UpgradedDamageMultiplier = 3;
+	public const int DamageMultiplier = 3;
+	private const string IsAmplifiedVarName = "IsAmplified";
 
 	internal static readonly ValueProp DamageProps = ValueProp.Move | ValueProp.Unblockable;
+
+	public bool DealsPenetratingDamage => IsUpgraded;
 
 	protected override IEnumerable<DynamicVar> CanonicalVars =>
 	[
 		new DamageVar(CanonicalDamage, DamageProps),
+		ModCardVars.Computed(
+			IsAmplifiedVarName,
+			0m,
+			(CardModel? card, Creature? target) => ShouldAmplifyDamage(target) ? 1m : 0m),
 	];
 
-	protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
-	[
-		HoverTipFactory.Static(StaticHoverTip.Block),
-	];
+	protected override IEnumerable<IHoverTip> AdditionalHoverTips
+	{
+		get
+		{
+			yield return HoverTipFactory.Static(StaticHoverTip.Block);
+			if (IsUpgraded)
+			{
+				yield return HoverTipFactory.FromKeyword(SquKeywords.PiercingDamage);
+			}
+		}
+	}
 
 	public override CardAssetProfile AssetProfile => new(
 		PortraitPath: "res://images/cards/LaserSwordAssassination.png");
@@ -93,14 +109,23 @@ public sealed class LaserSwordAssassination : ModCardTemplate
 	{
 	}
 
+	protected override void AddExtraArgsToDescription(LocString description)
+	{
+		string bodyKey = DynamicVars[IsAmplifiedVarName].PreviewValue > 0m
+			? Id.Entry + ".amplifiedBody"
+			: Id.Entry + ".normalBody";
+		var body = new LocString("cards", bodyKey);
+		body.Add(DynamicVars.Damage);
+		body.Add(new IfUpgradedVar(
+			IsUpgraded ? UpgradeDisplay.Upgraded : UpgradeDisplay.Normal));
+		description.Add("BodyText", body);
+	}
+
 	internal static bool ShouldAmplifyDamage(Creature? target) =>
 		target is { IsAlive: true } && !SquEnemyIntent.IntendsToAttack(target);
 
-	internal static decimal GetDamageMultiplier(CardModel card) =>
-		card.IsUpgraded ? UpgradedDamageMultiplier : BaseDamageMultiplier;
-
 	/// <summary>
-	/// 让倍率参与 Hook.ModifyDamage 的乘算阶段，确保后续伤害上限仍能正确生效。
+	/// 让固定三倍倍率参与 Hook.ModifyDamage 的乘算阶段；升级只改变是否穿透防御能力。
 	/// </summary>
 	public override decimal ModifyDamageMultiplicative(
 		Creature? target,
@@ -117,6 +142,6 @@ public sealed class LaserSwordAssassination : ModCardTemplate
 			return 1m;
 		}
 
-		return GetDamageMultiplier(this);
+		return DamageMultiplier;
 	}
 }

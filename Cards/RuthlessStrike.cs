@@ -22,16 +22,18 @@ using STS2RitsuLib.Scaffolding.Content;
 namespace Squ.Cards;
 
 /// <summary>
-/// 无情打击：无视格挡伤害。蓄能：手牌中每有一张己方牌被消耗，额外造成 1 次伤害。
+/// 无情打击：造成穿透伤害。蓄能：手牌中每有一张己方牌被消耗，额外造成 1 次伤害。
 /// </summary>
 [RegisterCard(typeof(SunqianCardPool), StableEntryStem = "ruthless_strike")]
-public sealed class RuthlessStrike : ChargeCardTemplate
+public sealed class RuthlessStrike : ChargeCardTemplate, IPenetratingDamageCard
 {
-	public const int CanonicalDamage = 9;
+	public const int CanonicalDamage = 8;
 	public const int BaseHits = 1;
 	public const int UpgradedHits = 2;
 
 	private static readonly ValueProp DamageProps = ValueProp.Move | ValueProp.Unblockable;
+
+	public bool DealsPenetratingDamage => true;
 
 	protected override IEnumerable<DynamicVar> CanonicalVars =>
 	[
@@ -46,6 +48,7 @@ public sealed class RuthlessStrike : ChargeCardTemplate
 	protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
 	[
 		HoverTipFactory.Static(StaticHoverTip.Block),
+		HoverTipFactory.FromKeyword(SquKeywords.PiercingDamage),
 		HoverTipFactory.FromKeyword(CardKeyword.Exhaust),
 	];
 

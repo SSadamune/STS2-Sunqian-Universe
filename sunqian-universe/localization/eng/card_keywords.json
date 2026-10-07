@@ -13,6 +13,8 @@
   "SUNQIAN_UNIVERSE_KEYWORD_MULTI_TARGET.description": "A card that targets ALL enemies or multiple random enemies is called a Multi-target card.",
   "SUNQIAN_UNIVERSE_KEYWORD_ENVIRONMENTAL.title": "Environmental",
   "SUNQIAN_UNIVERSE_KEYWORD_ENVIRONMENTAL.description": "This damage has no source and deals a fixed amount.",
+  "SUNQIAN_UNIVERSE_KEYWORD_PIERCING_DAMAGE.title": "Piercing Damage",
+  "SUNQIAN_UNIVERSE_KEYWORD_PIERCING_DAMAGE.description": "Ignores [gold]Block[/gold] and specific target-side damage reduction, damage caps, and HP-loss caps. Consumable defenses bypassed this way do not lose stacks.",
   "SUNQIAN_UNIVERSE_KEYWORD_SCRY.title": "Scry",
   "SUNQIAN_UNIVERSE_KEYWORD_SCRY.description": "Look at the top cards of your draw pile, then discard any number of them.",
   "SUNQIAN_UNIVERSE_KEYWORD_COUNTS_AS_PLAYED.title": "Counts as Played",
