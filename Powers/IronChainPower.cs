@@ -37,7 +37,6 @@ public sealed class IronChainPower : ModPowerTemplate
 	protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
 	[
 		HoverTipFactory.FromPower<BurningPower>(),
-		HoverTipFactory.FromKeyword(SquKeywords.Environmental),
 	];
 
 	public async Task AfterBurningDamage(int damageDealt)

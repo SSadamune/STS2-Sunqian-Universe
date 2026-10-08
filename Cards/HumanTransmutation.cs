@@ -52,6 +52,7 @@ public sealed class HumanTransmutation : ModCardTemplate
 	[
 		new(typeof(Instinct), 0),
 		new(typeof(Spiral), 0),
+		new(typeof(TezcatarasEmber), 0),
 	];
 
 	private static readonly EnchantmentSpec[] CommonUniversalPool =
@@ -343,6 +344,12 @@ public sealed class HumanTransmutation : ModCardTemplate
 		if (spec.EnchantmentType == typeof(Momentum))
 		{
 			Apply<Momentum>(card, spec.Amount);
+			return;
+		}
+
+		if (spec.EnchantmentType == typeof(TezcatarasEmber))
+		{
+			Apply<TezcatarasEmber>(card, spec.Amount);
 			return;
 		}
 

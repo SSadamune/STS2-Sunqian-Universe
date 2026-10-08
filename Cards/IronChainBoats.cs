@@ -33,7 +33,6 @@ public sealed class IronChainBoats : SlightRevisionCardTemplate<FarmingGeneral>
 	[
 		..base.AdditionalHoverTips,
 		HoverTipFactory.FromPower<BurningPower>(),
-		HoverTipFactory.FromKeyword(SquKeywords.Environmental),
 	];
 
 	public override CardAssetProfile AssetProfile => new(
