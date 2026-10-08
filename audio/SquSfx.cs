@@ -44,12 +44,14 @@ internal static class SquSfx
 	public const string TwoWordGenerousAndStrongEvent = "event:/sunqian_universe/sfx/二言-慨当以慷";
 	public const string TwoWordLikeMorningDewEvent = "event:/sunqian_universe/sfx/二言-譬如朝露";
 	public const string HumanTransmutationEvent = "event:/sunqian_universe/sfx/人体炼成";
+	public const string PartTimeGeneralShadowCloneEvent = "event:/sunqian_universe/sfx/兼职将军-哥们你还会影分身之术";
+	public const string PartTimeGeneralBothSidesEvent = "event:/sunqian_universe/sfx/兼职将军-需要在两边同时出场";
 	public const string BenevolenceSwordEvent = "event:/sunqian_universe/sfx/仁之剑";
 	public const string GuanDiFormWhoAreYouEvent = "event:/sunqian_universe/sfx/关帝形态-你是何人";
 	public const string GuanDiFormCivilSunqianEvent = "event:/sunqian_universe/sfx/关帝形态-文关羽孙乾";
 	public const string GuanDiFormMartialZhouCangEvent = "event:/sunqian_universe/sfx/关帝形态-武关羽周仓";
-	public const string RunWildAgainEvent = "event:/sunqian_universe/sfx/再来撒野";
 	public const string HuaguMianzhangEvent = "event:/sunqian_universe/sfx/化骨绵掌";
+	public const string HuaguMianzhangTriggerEvent = "event:/sunqian_universe/sfx/化骨绵掌-喷血";
 	public const string ForkOutWalkEvent = "event:/sunqian_universe/sfx/叉出去-走";
 	public const string ForkOutGetUpEvent = "event:/sunqian_universe/sfx/叉出去-起来";
 	public const string PortalJizhouJingzhouEvent = "event:/sunqian_universe/sfx/传送门-冀州和荆州有空间通道";
@@ -94,6 +96,7 @@ internal static class SquSfx
 	public const string BombardChibiReduceAttackEvent = "event:/sunqian_universe/sfx/炮轰赤壁-减攻";
 	public const string BombardChibiRestoreEnergyEvent = "event:/sunqian_universe/sfx/炮轰赤壁-我笑猪哥愚蠢";
 	public const string BombardChibiIgniteEvent = "event:/sunqian_universe/sfx/炮轰赤壁-点火";
+	public const string BombardChibiZhouYuPlanEvent = "event:/sunqian_universe/sfx/炮轰赤壁-赤壁鏖兵乃周瑜之谋";
 	public const string FateUnknownEvent = "event:/sunqian_universe/sfx/生死不明";
 	public const string FateUnknownThatsDeathEvent = "event:/sunqian_universe/sfx/生死不明-那就是死了";
 	public const string SilverUprisingEvent = "event:/sunqian_universe/sfx/白银起义";
@@ -188,7 +191,6 @@ internal static class SquSfx
 	public const string RelocateCapitalEvent = "event:/sunqian_universe/sfx/迁都-迁都入长安";
 	public const string RelocateCapitalHighVigorEvent = "event:/sunqian_universe/sfx/迁都-迁入伊斯坦";
 	public const string FingerStrikeInstantHeadEvent = "event:/sunqian_universe/sfx/弹指打击-弹指间取你首级";
-	public const string HuaguMianzhangTriggerEvent = "event:/sunqian_universe/sfx/化骨绵掌-喷血";
 	public const string TooKindToBeTrueFaultIsMineEvent = "event:/sunqian_universe/sfx/长厚似伪-错在于我，连累三军";
 	public const string TooKindToBeTrueNothingToDoWithYouEvent = "event:/sunqian_universe/sfx/长厚似伪-与列位断然无关";
 	public const string TooKindToBeTrueTriggerEvent = "event:/sunqian_universe/sfx/长厚似伪-为何老替他说话";
@@ -257,6 +259,7 @@ internal static class SquSfx
 	public const string BasicDefendGuanYuEvent = "event:/sunqian_universe/sfx/防御-关羽";
 	public const string WineDrinkThisFlaskEvent = "event:/sunqian_universe/sfx/酒-喝下这壶酒";
 	public const string WineThirstyEvent = "event:/sunqian_universe/sfx/酒-我正渴着呢";
+	public const string WineStillDrinkEvent = "event:/sunqian_universe/sfx/酒-还是喝酒吧";
 	public const string WineOldHeroEvent = "event:/sunqian_universe/sfx/酒-酒是老英雄";
 	public const string WineWentIntoTownEvent = "event:/sunqian_universe/sfx/酒-进城喝酒去了";
 
@@ -295,6 +298,7 @@ internal static class SquSfx
 	[
 		WineDrinkThisFlaskEvent,
 		WineThirstyEvent,
+		WineStillDrinkEvent,
 		WineOldHeroEvent,
 		WineWentIntoTownEvent,
 	];

@@ -21,7 +21,7 @@ public sealed class ScriptBombardChibiPower : ScriptPowerTemplate
 	{
 		if (oldOwner.Player is { } player)
 		{
-			SquSfx.Play(SquSfx.BombardChibiRestoreEnergyEvent);
+			SquSfx.Play(SquSfx.BombardChibiZhouYuPlanEvent);
 			await PlayerCmd.GainEnergy(1, player);
 		}
 

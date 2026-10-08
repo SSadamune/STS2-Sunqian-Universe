@@ -10,6 +10,7 @@ using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.CardPools;
+using Squ.Audio;
 using Squ.Character;
 using Squ.Combat;
 using Squ.Powers;
@@ -54,6 +55,7 @@ public sealed class PartTimeGeneralScript : ScriptCardTemplate
 		CardPlay cardPlay)
 	{
 		ArgumentNullException.ThrowIfNull(cardPlay.Target, nameof(cardPlay.Target));
+		SquSfx.Play(SquSfx.PartTimeGeneralShadowCloneEvent);
 		ICombatState combatState = CombatState
 			?? throw new InvalidOperationException(
 				"PartTimeGeneralScript requires an active combat.");

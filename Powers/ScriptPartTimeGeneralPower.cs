@@ -12,6 +12,7 @@ using MegaCrit.Sts2.Core.Localization;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Nodes.Combat;
+using Squ.Audio;
 using STS2RitsuLib.Interop.AutoRegistration;
 using STS2RitsuLib.Scaffolding.Content;
 
@@ -76,6 +77,7 @@ public sealed class ScriptPartTimeGeneralPower : ScriptPowerTemplate
 		if (oldOwner is { IsAlive: true, Player: { } player, CombatState: { } combatState }
 			&& !CombatManager.Instance.IsOverOrEnding)
 		{
+			SquSfx.Play(SquSfx.PartTimeGeneralBothSidesEvent);
 			await ChooseRecordedCard(combatState, player);
 		}
 

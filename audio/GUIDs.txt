@@ -69,6 +69,8 @@
 {5120aadf-d9f4-43eb-ab7a-81534b3d2efb} event:/sunqian_universe/sfx/关帝形态-你是何人
 {0ec1a28b-46e1-4d64-b290-e0a01a63c245} event:/sunqian_universe/sfx/关帝形态-文关羽孙乾
 {b393b56b-e331-438d-8359-16a62d217304} event:/sunqian_universe/sfx/关帝形态-武关羽周仓
+{485200ae-cd5f-40a5-9bc2-a67ae4f451d7} event:/sunqian_universe/sfx/兼职将军-哥们你还会影分身之术
+{9cecfc38-4c95-4eed-b9be-9b21665d39b2} event:/sunqian_universe/sfx/兼职将军-需要在两边同时出场
 {ad1078ae-4a94-45d7-8de1-69caed49056b} event:/sunqian_universe/sfx/刀斧手-刀斧手听令
 {cb93a65f-ad3b-4447-b740-12a81b468348} event:/sunqian_universe/sfx/制式基地车-Lets set up shop
 {e1000fff-d8cc-4fba-a6ba-8f5138cfa762} event:/sunqian_universe/sfx/制式基地车-MCV reporting in
@@ -79,6 +81,7 @@
 {490b8679-d45c-435b-b6a7-fd32af89eb1d} event:/sunqian_universe/sfx/制式基地车-wanna set up over there
 {834de0fa-aa95-4767-b591-064a377fb5a5} event:/sunqian_universe/sfx/劳逸结合-我打了一辈子仗就不能享受享受吗
 {4033daf5-e1a1-41f2-b4d0-ab3a8ab8a259} event:/sunqian_universe/sfx/化骨绵掌
+{659f9e9c-98a7-492c-88c1-f57a3a485516} event:/sunqian_universe/sfx/化骨绵掌-喷血
 {f26912ec-3353-455e-82d3-bb014cad100c} event:/sunqian_universe/sfx/博望悖论-你这辈子也等不到南面火起
 {8bceff62-1de5-4f60-b58b-5256fc8d16e0} event:/sunqian_universe/sfx/博望悖论-这一波人马根本就不存在
 {ee369cdd-67fc-4edb-9ced-6cb15c071654} event:/sunqian_universe/sfx/叉出去-走
@@ -168,6 +171,7 @@
 {cd280832-1db9-4aa7-a907-b5116acc6829} event:/sunqian_universe/sfx/炮轰赤壁-减攻
 {49cf55f8-5c29-4c9e-b5c4-f172bfa88f20} event:/sunqian_universe/sfx/炮轰赤壁-我笑猪哥愚蠢
 {a1f8c8a6-10ec-4ea5-82de-f78738ee6a1e} event:/sunqian_universe/sfx/炮轰赤壁-点火
+{34610d68-b49f-44da-ae59-3cf57d863fb7} event:/sunqian_universe/sfx/炮轰赤壁-赤壁鏖兵乃周瑜之谋
 {e8442e24-de22-497c-8cc6-67e0404b147b} event:/sunqian_universe/sfx/烈焰打击-我去放把火
 {0f9274af-61c1-412b-ab53-bdefa2fa533e} event:/sunqian_universe/sfx/焚城-汉宫生大火
 {fb6b5c93-ac46-4f27-9087-cbf43b84ddc0} event:/sunqian_universe/sfx/生死不明
@@ -200,6 +204,7 @@
 {567226dd-47f8-4fd6-8c9e-35f7f1a34557} event:/sunqian_universe/sfx/透明窟窿-捅袁术
 {4708c139-4558-45a5-998d-7a161cda0a45} event:/sunqian_universe/sfx/酒-喝下这壶酒
 {69688b5b-3f03-4770-a603-2aee01f11c72} event:/sunqian_universe/sfx/酒-我正渴着呢
+{3a764dd8-d1e5-4d1c-b19c-33b0d927f8d7} event:/sunqian_universe/sfx/酒-还是喝酒吧
 {92a03b1e-cc87-4788-b1d4-d4d114ca4cb8} event:/sunqian_universe/sfx/酒-进城喝酒去了
 {08e47bfc-b309-4b68-ae68-d2c07a9e1ae2} event:/sunqian_universe/sfx/酒-酒是老英雄
 {69b00818-2de6-4603-b58f-f7683c68c32d} event:/sunqian_universe/sfx/酒桌文化-你要不喝便是犯了军令
