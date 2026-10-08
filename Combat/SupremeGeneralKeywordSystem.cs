@@ -5,8 +5,10 @@ using HarmonyLib;
 using MegaCrit.Sts2.Core.Commands.Builders;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.Entities.Creatures;
+using MegaCrit.Sts2.Core.Entities.Enchantments;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.Models;
+using MegaCrit.Sts2.Core.Models.Enchantments;
 using MegaCrit.Sts2.Core.Models.Powers;
 using MegaCrit.Sts2.Core.Rooms;
 using MegaCrit.Sts2.Core.ValueProps;
@@ -20,7 +22,8 @@ namespace Squ.Combat;
 
 /// <summary>
 /// Implements the Supreme General keyword. The outermost manually played card owns the window;
-/// nested auto-plays can receive its spent Vigor, but cannot replace or amplify that window.
+/// nested auto-plays can receive its spent Vigor and Vigorous enchantment bonus, but cannot
+/// replace or amplify that window.
 /// </summary>
 [RegisterSingleton]
 public sealed class SupremeGeneralKeywordSystem : HookedSingletonModel
@@ -32,6 +35,8 @@ public sealed class SupremeGeneralKeywordSystem : HookedSingletonModel
 		public required CardModel RootCard { get; init; }
 
 		public decimal ConsumedVigor { get; set; }
+
+		public decimal VigorousEnchantmentBonus { get; init; }
 
 		public Dictionary<AttackCommand, decimal> VigorBeforeAttack { get; } = [];
 	}
@@ -69,6 +74,7 @@ public sealed class SupremeGeneralKeywordSystem : HookedSingletonModel
 		{
 			RootPlay = cardPlay,
 			RootCard = cardPlay.Card,
+			VigorousEnchantmentBonus = GetVigorousEnchantmentBonus(cardPlay.Card),
 		});
 
 		return Task.CompletedTask;
@@ -133,15 +139,20 @@ public sealed class SupremeGeneralKeywordSystem : HookedSingletonModel
 	{
 		inheritedVigor = 0m;
 		if (!TryGetSupremeGeneralChildWindow(card, cardPlay, out ResolutionWindow window)
-			|| window.ConsumedVigor <= 0m)
+			|| (window.ConsumedVigor <= 0m && window.VigorousEnchantmentBonus <= 0m))
 		{
 			return false;
 		}
 
-		inheritedVigor = SquVigorSnapshot.ApplyBonusPercentage(
-			window.RootCard.Owner.Creature,
-			window.RootCard,
-			window.ConsumedVigor);
+		if (window.ConsumedVigor > 0m)
+		{
+			inheritedVigor = SquVigorSnapshot.ApplyBonusPercentage(
+				window.RootCard.Owner.Creature,
+				window.RootCard,
+				window.ConsumedVigor);
+		}
+
+		inheritedVigor += window.VigorousEnchantmentBonus;
 		return true;
 	}
 
@@ -258,6 +269,15 @@ public sealed class SupremeGeneralKeywordSystem : HookedSingletonModel
 
 	private static decimal GetVigorAmount(Creature creature) =>
 		creature.GetPower<VigorPower>()?.Amount ?? 0m;
+
+	private static decimal GetVigorousEnchantmentBonus(CardModel card) =>
+		card.Enchantment is Vigorous
+		{
+			Status: EnchantmentStatus.Normal,
+			Amount: > 0,
+		} vigorous
+			? vigorous.Amount
+			: 0m;
 
 	private static bool TryGetOutermostWindow(
 		ulong playerId,

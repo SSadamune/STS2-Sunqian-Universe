@@ -149,7 +149,7 @@
   "SUNQIAN_UNIVERSE_CARD_RUTHLESS_STRIKE.chargedDescription": "造成{Damage:diff()}点[gold]穿透伤害[/gold]{Repeat:diff()}次。{ChargeText}",
   "SUNQIAN_UNIVERSE_CARD_RUTHLESS_STRIKE.chargeEffect": "你每有一张牌被[gold]消耗[/gold]，此牌多造成一次伤害。",
   "SUNQIAN_UNIVERSE_CARD_DIG_RAID.title": "掘地突袭",
-  "SUNQIAN_UNIVERSE_CARD_DIG_RAID.description": "造成{Damage:diff()}点[gold]无视格挡[/gold]的伤害。\n给予{BurningPower:diff()}层[gold]灼烧[/gold]。\n此灼烧值也受到[gold]活力[/gold]的加成。",
+  "SUNQIAN_UNIVERSE_CARD_DIG_RAID.description": "造成{Damage:diff()}点[gold]无视格挡[/gold]的伤害。\n给予{BurningPower:diff()}层[gold]灼烧[/gold]。\n此灼烧值{IfUpgraded:show:和伤害值同时|也}受到[gold]活力[/gold]{IfUpgraded:show:和[gold]火种[/gold]|}的加成。",
   "SUNQIAN_UNIVERSE_CARD_WATCH_FIRE_FROM_SHORE.title": "隔岸观火",
   "SUNQIAN_UNIVERSE_CARD_WATCH_FIRE_FROM_SHORE.description": "给予随机两名敌人各{BurningPower:diff()}层[gold]灼烧[/gold]。\n你获得{Block:diff()}点[gold]格挡[/gold]。",
   "SUNQIAN_UNIVERSE_CARD_BLOCK_FIREFIGHTING.title": "阻拦救火",

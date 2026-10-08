@@ -147,7 +147,7 @@
   "SUNQIAN_UNIVERSE_CARD_RUTHLESS_STRIKE.chargedDescription": "Deal {Damage:diff()} [gold]Piercing damage[/gold] {Repeat:diff()} times.{ChargeText}",
   "SUNQIAN_UNIVERSE_CARD_RUTHLESS_STRIKE.chargeEffect": "Whenever one of your cards is [gold]Exhausted[/gold], this card deals damage 1 additional time.",
   "SUNQIAN_UNIVERSE_CARD_DIG_RAID.title": "Dig Raid",
-  "SUNQIAN_UNIVERSE_CARD_DIG_RAID.description": "Deal {Damage:diff()} damage that [gold]ignores Block[/gold].\nApply {BurningPower:diff()} [gold]Burning[/gold].\nThis [gold]Burning[/gold] is also increased by [gold]Vigor[/gold].",
+  "SUNQIAN_UNIVERSE_CARD_DIG_RAID.description": "Deal {Damage:diff()} damage that [gold]ignores Block[/gold].\nApply {BurningPower:diff()} [gold]Burning[/gold].\n{IfUpgraded:show:This [gold]Burning[/gold] and damage are increased by [gold]Vigor[/gold] and [gold]Tinder[/gold].|This [gold]Burning[/gold] is also increased by [gold]Vigor[/gold].}",
   "SUNQIAN_UNIVERSE_CARD_WATCH_FIRE_FROM_SHORE.title": "Watch Fire from Afar",
   "SUNQIAN_UNIVERSE_CARD_WATCH_FIRE_FROM_SHORE.description": "Apply {BurningPower:diff()} [gold]Burning[/gold] to 2 random enemies.\nYou gain {Block:diff()} [gold]Block[/gold].",
   "SUNQIAN_UNIVERSE_CARD_BLOCK_FIREFIGHTING.title": "Block Firefighting",
