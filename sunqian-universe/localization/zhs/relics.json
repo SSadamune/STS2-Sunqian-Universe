@@ -19,7 +19,7 @@
   "SUNQIAN_UNIVERSE_RELIC_TELEPROMPTER.description": "你每有三次[gold]剧本[/gold]失效后，抽[blue]{Cards:diff()}[/blue]张牌。",
   "SUNQIAN_UNIVERSE_RELIC_TELEPROMPTER.flavor": "如果能标上拼音会更有用。",
   "SUNQIAN_UNIVERSE_RELIC_SUPPORTING_ACTOR_BADGE.title": "配角工牌",
-  "SUNQIAN_UNIVERSE_RELIC_SUPPORTING_ACTOR_BADGE.description": "[gold]强怪遭遇战[/gold]的战斗结束后，如精英战斗般获得[gold]遗物[/gold]奖励。\n第三层的倒数第二个Boss战斗结束后，获得一次[gold]升级[/gold]的[gold]稀有[/gold]卡牌奖励。",
+  "SUNQIAN_UNIVERSE_RELIC_SUPPORTING_ACTOR_BADGE.description": "[gold]强怪遭遇战[/gold]结束后，如精英遭遇战般获得战斗奖励。\n第三阶段的倒数第二个Boss战结束后，获得一瓶[gold]稀有药水[/gold]和一次[gold]稀有卡牌奖励[/gold]。",
   "SUNQIAN_UNIVERSE_RELIC_SUPPORTING_ACTOR_BADGE.flavor": "姓名栏被人为涂抹，无法看清…",
   "SUNQIAN_UNIVERSE_RELIC_DAILY_WAGE.title": "日结工资",
   "SUNQIAN_UNIVERSE_RELIC_DAILY_WAGE.description": "在你的回合结束时，若你本回合使用过[gold]剧本[/gold]牌，获得[blue]{Gold}[/blue][gold]金币[/gold]。{GoldEarnedLine}",

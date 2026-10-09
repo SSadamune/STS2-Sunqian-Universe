@@ -6,6 +6,7 @@ using MegaCrit.Sts2.Core.Rooms;
 using MegaCrit.Sts2.Core.Runs;
 using Squ.Audio;
 using Squ.Cards;
+using Squ.Relics;
 using Squ;
 
 #nullable enable
@@ -43,7 +44,9 @@ public static class WarFeedsWarResolutionTracker
 
 	public static void TryOfferCombatRewards(CombatRoom room)
 	{
-		if (room.RoomType is not RoomType.Elite and not RoomType.Boss)
+		bool isEliteOrBoss = room.RoomType is RoomType.Elite or RoomType.Boss;
+		bool isStrongMonsterEncounter = SupportingActorBadgeRelic.IsStrongMonsterEncounter(room);
+		if (!isEliteOrBoss && !isStrongMonsterEncounter)
 		{
 			return;
 		}
@@ -53,6 +56,11 @@ public static class WarFeedsWarResolutionTracker
 
 		foreach (Player player in room.CombatState.Players)
 		{
+			if (!isEliteOrBoss && player.GetRelic<SupportingActorBadgeRelic>() is null)
+			{
+				continue;
+			}
+
 			if (!PlayedCardsByPlayer.TryGetValue(
 				player.NetId,
 				out Dictionary<ModelId, bool>? playedCards))

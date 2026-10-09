@@ -1,12 +1,16 @@
+using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
-using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.Entities.Players;
+using MegaCrit.Sts2.Core.Entities.Potions;
 using MegaCrit.Sts2.Core.Entities.Relics;
+using MegaCrit.Sts2.Core.Factories;
 using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Nodes.CommonUi;
+using MegaCrit.Sts2.Core.Random;
 using MegaCrit.Sts2.Core.Rewards;
 using MegaCrit.Sts2.Core.Rooms;
 using MegaCrit.Sts2.Core.Runs;
@@ -19,14 +23,12 @@ using STS2RitsuLib.Scaffolding.Content;
 namespace Squ.Relics;
 
 /// <summary>
-/// 配角工牌：强怪池战斗额外遗物奖励；第三层双 Boss 的首场 Boss 战后获得升级稀有卡牌三选一。
+/// 配角工牌：强怪遭遇战使用精英战奖励；第三阶段双 Boss 的首战后获得稀有药水与稀有卡牌奖励。
 /// </summary>
 [RegisterRelic(typeof(SunqianRelicPool), StableEntryStem = "supporting_actor_badge")]
 public sealed class SupportingActorBadgeRelic : ModRelicTemplate
 {
 	private const int Act3Index = 2;
-
-	private bool _pendingUpgradedRareCardReward;
 
 	public override RelicRarity Rarity => RelicRarity.Uncommon;
 
@@ -48,73 +50,50 @@ public sealed class SupportingActorBadgeRelic : ModRelicTemplate
 
 	public override Task AfterCombatEnd(CombatRoom room)
 	{
-		if (IsStrongMonsterEncounter(room))
-		{
-			Flash();
-			room.AddExtraReward(Owner, new RelicReward(Owner));
-		}
-
-		if (IsAct3PenultimateBossFight(Owner.RunState, room))
-		{
-			_pendingUpgradedRareCardReward = true;
-		}
-
 		Status = RelicStatus.Normal;
 		return Task.CompletedTask;
 	}
 
-	public override CardCreationOptions ModifyCardRewardCreationOptions(
+	public override bool TryModifyRewards(
 		Player player,
-		CardCreationOptions options)
+		List<Reward> rewards,
+		AbstractRoom? room)
 	{
-		if (player != Owner || !_pendingUpgradedRareCardReward)
-		{
-			return options;
-		}
-
-		return options.WithRarityOdds(CardRarityOddsType.BossEncounter);
-	}
-
-	public override decimal ModifyCardRewardUpgradeOdds(Player player, CardModel card, decimal odds)
-	{
-		if (player == Owner && _pendingUpgradedRareCardReward)
-		{
-			return 1m;
-		}
-
-		return odds;
-	}
-
-	public override bool TryModifyCardRewardOptionsLate(
-		Player player,
-		List<CardCreationResult> cardRewardOptions,
-		CardCreationOptions creationOptions)
-	{
-		if (player != Owner || !_pendingUpgradedRareCardReward)
+		if (player != Owner
+			|| room is not CombatRoom combatRoom
+			|| !IsAct3PenultimateBossFight(player.RunState, combatRoom))
 		{
 			return false;
 		}
 
-		_pendingUpgradedRareCardReward = false;
 		Flash();
-
-		foreach (CardCreationResult entry in cardRewardOptions)
+		rewards.Add(CreateRarePotionReward(player));
+		if (!rewards.Any(reward => reward is CardReward))
 		{
-			CardModel card = entry.Card;
-			if (card.IsUpgradable && !card.IsUpgraded)
-			{
-				CardCmd.Upgrade(card, CardPreviewStyle.None);
-			}
+			rewards.Add(new CardReward(
+				CardCreationOptions.ForRoom(player, RoomType.Boss)
+					.WithFlags(CardCreationFlags.IsFromCombat),
+				3,
+				player));
 		}
 
 		return true;
+	}
+
+	private static PotionReward CreateRarePotionReward(Player player)
+	{
+		IEnumerable<PotionModel> rarePotions = PotionFactory.GetPotionOptions(player)
+			.Where(potion => potion.Rarity == PotionRarity.Rare);
+		PotionModel potion = player.PlayerRng.Rewards.NextItem(rarePotions)
+			?? throw new InvalidOperationException("No unlocked rare potion is available for 配角工牌.");
+		return new PotionReward(potion.ToMutable(), player);
 	}
 
 	private bool ShouldPulseInRoom(AbstractRoom room) =>
 		room is CombatRoom combat
 		&& (IsStrongMonsterEncounter(combat) || IsAct3PenultimateBossFight(Owner.RunState, combat));
 
-	private static bool IsStrongMonsterEncounter(CombatRoom room) =>
+	internal static bool IsStrongMonsterEncounter(CombatRoom room) =>
 		room.RoomType == RoomType.Monster && !room.Encounter.IsWeak;
 
 	private static bool IsAct3PenultimateBossFight(IRunState runState, CombatRoom room)
