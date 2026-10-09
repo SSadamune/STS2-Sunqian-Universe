@@ -127,5 +127,9 @@
   "SUNQIAN_UNIVERSE_POWER_IRON_CHAIN_POWER.smartDescription": "Whenever this enemy takes [gold]Burning[/gold] damage, all enemies take that much damage [blue]{Amount}[/blue] {Amount:plural:time|times}.",
   "SUNQIAN_UNIVERSE_POWER_NEVER_HAD_THESE_POWER.title": "Never Had These",
   "SUNQIAN_UNIVERSE_POWER_NEVER_HAD_THESE_POWER.description": "Whenever a [gold]Family[/gold] card is [gold]Exhausted[/gold], gain {Amount:energyIcons()} and [blue]{DexterityPower:diff()}[/blue] [gold]Dexterity[/gold].",
-  "SUNQIAN_UNIVERSE_POWER_NEVER_HAD_THESE_POWER.smartDescription": "Whenever a [gold]Family[/gold] card is [gold]Exhausted[/gold], gain {Amount:energyIcons()} and [blue]{DexterityPower:diff()}[/blue] [gold]Dexterity[/gold]."
+  "SUNQIAN_UNIVERSE_POWER_NEVER_HAD_THESE_POWER.smartDescription": "Whenever a [gold]Family[/gold] card is [gold]Exhausted[/gold], gain {Amount:energyIcons()} and [blue]{DexterityPower:diff()}[/blue] [gold]Dexterity[/gold].",
+  "SUNQIAN_UNIVERSE_POWER_FOUR_WHEELED_CART_POWER.title": "Four-Wheeled Cart",
+  "SUNQIAN_UNIVERSE_POWER_FOUR_WHEELED_CART_POWER.description": "Increases [gold]Strength[/gold] and [gold]Dexterity[/gold] by 2.\nAfter taking unblocked Attack damage, the [gold]Four-Wheeled Cart[/gold] transfers to the damage source and grants it {energyPrefix:energyIcons(1)}.",
+  "SUNQIAN_UNIVERSE_POWER_FOUR_WHEELED_CART_POWER.smartDescription": "Increases [gold]Strength[/gold] and [gold]Dexterity[/gold] by [blue]2[/blue].\nIf this creature takes unblocked Attack damage, the [gold]Four-Wheeled Cart[/gold] transfers to the damage source (after resolution). If the source is a player, they also gain {energyPrefix:energyIcons(1)}.",
+  "SUNQIAN_UNIVERSE_POWER_FOUR_WHEELED_CART_POWER.smartDescriptionMulti": "Each stack increases [gold]Strength[/gold] and [gold]Dexterity[/gold] by 2 ([blue]{GrantedStrength}[/blue] Strength and [blue]{GrantedDexterity}[/blue] Dexterity total).\nIf this creature takes unblocked Attack damage, transfer 1 stack of [gold]Four-Wheeled Cart[/gold] to the damage source (after resolution). If the source is a player, they also gain {energyPrefix:energyIcons(1)}."
 }
