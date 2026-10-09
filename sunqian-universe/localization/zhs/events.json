@@ -1,0 +1,11 @@
+{
+  "SUNQIAN_UNIVERSE_EVENT_UNFRIENDLY_VISITORS.title": "来者不善",
+  "SUNQIAN_UNIVERSE_EVENT_UNFRIENDLY_VISITORS.pages.INITIAL.description": "你遇到了一个正在拍摄的剧组。\n看见你，他们好像很开心：\n「你终于来了，我们正缺一个识字的来配音呢」。\n\n你半推半就地翻开了剧本：\n- 场景：「陈留大食堂」的门口\n- 前情：门卫（龙套甲）拦下志在夺取盟主之位的桃园三傻…\n\n请选择你想要配音的台词：",
+  "SUNQIAN_UNIVERSE_EVENT_UNFRIENDLY_VISITORS.pages.INITIAL.options.TAUNT.title": "小子，快去叫袁绍出来接驾！",
+  "SUNQIAN_UNIVERSE_EVENT_UNFRIENDLY_VISITORS.pages.INITIAL.options.TAUNT.description": "将一张[gold]防御[/gold]变化为[gold]挑衅[/gold]",
+  "SUNQIAN_UNIVERSE_EVENT_UNFRIENDLY_VISITORS.pages.INITIAL.options.SHRUG_IT_OFF.title": "刘什么？关什么？没听说过…",
+  "SUNQIAN_UNIVERSE_EVENT_UNFRIENDLY_VISITORS.pages.INITIAL.options.SHRUG_IT_OFF.description": "将一张[gold]防御[/gold]变化为[gold]耸肩无视[/gold]",
+  "SUNQIAN_UNIVERSE_EVENT_UNFRIENDLY_VISITORS.pages.INITIAL.options.SUCKER_PUNCH.title": "打你个不长眼的！",
+  "SUNQIAN_UNIVERSE_EVENT_UNFRIENDLY_VISITORS.pages.INITIAL.options.SUCKER_PUNCH.description": "将一张[gold]打击[/gold]变化为[gold]突然一拳[/gold]",
+  "SUNQIAN_UNIVERSE_EVENT_UNFRIENDLY_VISITORS.pages.RESULT.description": "你离开了片场，但抽象的剧情在脑海中挥之不去……"
+}

@@ -49,11 +49,11 @@ if ($godotProcess.ExitCode -ne 0) {
     Write-Warning "Godot exited with code $($godotProcess.ExitCode), but PCK was created."
 }
 
-Write-Host "Stripping trailing NULs from packed .import files..." -ForegroundColor Cyan
+Write-Host "Sanitizing packed resources..." -ForegroundColor Cyan
 $stripImportNuls = Join-Path $ProjectRoot "devtools\strip_pck_import_nuls.py"
 & python $stripImportNuls $pckPath
 if ($LASTEXITCODE -ne 0) {
-    throw "Failed to repair packed .import files"
+    throw "Failed to sanitize packed resources"
 }
 
 $files = @(

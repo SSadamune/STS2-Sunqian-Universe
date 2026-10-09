@@ -1,0 +1,11 @@
+{
+  "SUNQIAN_UNIVERSE_EVENT_UNFRIENDLY_VISITORS.title": "Trouble Approaches",
+  "SUNQIAN_UNIVERSE_EVENT_UNFRIENDLY_VISITORS.pages.INITIAL.description": "You come across a film crew in the middle of a shoot.\nThey seem delighted to see you: \"At last! We've been waiting for you. We need someone who can read to dub a few lines.\"\nWith some reluctance, you open the script:\n· Scene: Outside the \"Chenliu Grand Canteen\"\n· Previously: Sun Qian, playing the gate guard, has stopped the Peach Garden Trio, who are determined to seize the position of alliance leader...\nChoose the line you want to dub:",
+  "SUNQIAN_UNIVERSE_EVENT_UNFRIENDLY_VISITORS.pages.INITIAL.options.TAUNT.title": "Kid, go tell Yuan Shao to come out and receive us!",
+  "SUNQIAN_UNIVERSE_EVENT_UNFRIENDLY_VISITORS.pages.INITIAL.options.TAUNT.description": "Transform a [gold]Defend[/gold] into [gold]Taunt[/gold].",
+  "SUNQIAN_UNIVERSE_EVENT_UNFRIENDLY_VISITORS.pages.INITIAL.options.SHRUG_IT_OFF.title": "Liu who? Guan who? Never heard of them...",
+  "SUNQIAN_UNIVERSE_EVENT_UNFRIENDLY_VISITORS.pages.INITIAL.options.SHRUG_IT_OFF.description": "Transform a [gold]Defend[/gold] into [gold]Shrug It Off[/gold].",
+  "SUNQIAN_UNIVERSE_EVENT_UNFRIENDLY_VISITORS.pages.INITIAL.options.SUCKER_PUNCH.title": "I'll knock some sense into you!",
+  "SUNQIAN_UNIVERSE_EVENT_UNFRIENDLY_VISITORS.pages.INITIAL.options.SUCKER_PUNCH.description": "Transform a [gold]Strike[/gold] into [gold]Sucker Punch[/gold].",
+  "SUNQIAN_UNIVERSE_EVENT_UNFRIENDLY_VISITORS.pages.RESULT.description": "You leave the film crew behind, but the wondrous plot has given you new insight..."
+}

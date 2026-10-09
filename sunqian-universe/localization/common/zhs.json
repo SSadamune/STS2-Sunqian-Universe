@@ -31,5 +31,9 @@
   "SUNQIAN_UNIVERSE_COMMON.SETTINGS.neutralPotionModification.whenModCharacterPresent": "有本模组角色时允许",
   "SUNQIAN_UNIVERSE_COMMON.SETTINGS.neutralPotionModification.deny": "不允许",
   "SUNQIAN_UNIVERSE_COMMON.SETTINGS.neutralCardRegistrationLabel": "允许添加中立卡牌",
-  "SUNQIAN_UNIVERSE_COMMON.SETTINGS.neutralCardRegistrationDescription": "是否允许本模组向中立牌池添加卡牌（例如「哀兵必胜」）。"
+  "SUNQIAN_UNIVERSE_COMMON.SETTINGS.neutralCardRegistrationDescription": "是否允许本模组向中立牌池添加卡牌（例如「哀兵必胜」）。",
+  "SUNQIAN_UNIVERSE_COMMON.SETTINGS.neutralRelicRegistrationLabel": "允许添加中立遗物（施工中）",
+  "SUNQIAN_UNIVERSE_COMMON.SETTINGS.neutralRelicRegistrationDescription": "是否允许本模组添加中立遗物。此功能仍在施工中。",
+  "SUNQIAN_UNIVERSE_COMMON.SETTINGS.eventRegistrationLabel": "允许添加事件（施工中）",
+  "SUNQIAN_UNIVERSE_COMMON.SETTINGS.eventRegistrationDescription": "是否允许本模组添加事件。此功能仍在施工中。"
 }

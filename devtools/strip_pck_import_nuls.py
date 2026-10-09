@@ -1,8 +1,11 @@
 #!/usr/bin/env python3
-"""Strip trailing NULs from Godot-exported .import stubs inside a PCK.
+"""Sanitize Godot-exported resources inside a mod PCK.
 
 Godot's exporter writes those stubs with a trailing NUL, which makes
 ResourceFormatImporter fail (EOF / UTF-8 spam) when shop hovers load png paths.
+It can also include project-local script and UID caches. Loading those from a
+mod PCK overrides the base game's caches and prevents its C# classes from being
+resolved, so they must not be shipped with the mod.
 """
 
 from __future__ import annotations
@@ -17,6 +20,10 @@ PACK_FORMAT_V3 = 3
 PACK_REL_FILEBASE = 0x2
 PCK_PADDING = 16
 HEADER_SIZE = 104
+EXCLUDED_ENTRIES = {
+    ".godot/global_script_class_cache.cfg",
+    ".godot/uid_cache.bin",
+}
 
 
 def _pad(alignment: int, n: int) -> int:
@@ -108,14 +115,18 @@ def write_pck(
     path.write_bytes(payload)
 
 
-def fix_pck(pck_path: Path) -> int:
+def fix_pck(pck_path: Path) -> tuple[int, int]:
     ver, maj, minor, patch, flags, entries = read_pck(pck_path)
     if flags & ~PACK_REL_FILEBASE:
         raise ValueError(f"unsupported pack flags {flags:#x}")
 
     by_name: dict[str, bytes] = {}
     stripped = 0
+    excluded = 0
     for name, _flags, data in entries:
+        if name in EXCLUDED_ENTRIES:
+            excluded += 1
+            continue
         if name.endswith(".import"):
             cleaned = strip_trailing_nuls(data)
             if cleaned != data:
@@ -125,7 +136,7 @@ def fix_pck(pck_path: Path) -> int:
             by_name[name] = data
 
     write_pck(pck_path, maj, minor, patch, list(by_name.items()))
-    return stripped
+    return stripped, excluded
 
 
 def main() -> int:
@@ -133,8 +144,11 @@ def main() -> int:
         print("usage: strip_pck_import_nuls.py <pack.pck>", file=sys.stderr)
         return 2
     pck_path = Path(sys.argv[1])
-    stripped = fix_pck(pck_path)
-    print(f"Wrote {pck_path.name}: stripped NULs from {stripped} .import files")
+    stripped, excluded = fix_pck(pck_path)
+    print(
+        f"Wrote {pck_path.name}: stripped NULs from {stripped} .import files; "
+        f"removed {excluded} conflicting Godot cache files"
+    )
     return 0
 
 

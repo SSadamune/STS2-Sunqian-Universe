@@ -31,5 +31,9 @@
   "SUNQIAN_UNIVERSE_COMMON.SETTINGS.neutralPotionModification.whenModCharacterPresent": "Allow with Mod Character",
   "SUNQIAN_UNIVERSE_COMMON.SETTINGS.neutralPotionModification.deny": "Do Not Allow",
   "SUNQIAN_UNIVERSE_COMMON.SETTINGS.neutralCardRegistrationLabel": "Allow Adding Neutral Cards",
-  "SUNQIAN_UNIVERSE_COMMON.SETTINGS.neutralCardRegistrationDescription": "Whether to allow this mod to add cards to the neutral card pool (for example, The Grieving Prevail)."
+  "SUNQIAN_UNIVERSE_COMMON.SETTINGS.neutralCardRegistrationDescription": "Whether to allow this mod to add cards to the neutral card pool (for example, The Grieving Prevail).",
+  "SUNQIAN_UNIVERSE_COMMON.SETTINGS.neutralRelicRegistrationLabel": "Allow Adding Neutral Relics (Under Construction)",
+  "SUNQIAN_UNIVERSE_COMMON.SETTINGS.neutralRelicRegistrationDescription": "Whether to allow this mod to add neutral relics. This feature is still under construction.",
+  "SUNQIAN_UNIVERSE_COMMON.SETTINGS.eventRegistrationLabel": "Allow Adding Events (Under Construction)",
+  "SUNQIAN_UNIVERSE_COMMON.SETTINGS.eventRegistrationDescription": "Whether to allow this mod to add events. This feature is still under construction."
 }
