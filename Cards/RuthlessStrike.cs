@@ -47,7 +47,6 @@ public sealed class RuthlessStrike : ChargeCardTemplate, IPenetratingDamageCard
 
 	protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
 	[
-		HoverTipFactory.Static(StaticHoverTip.Block),
 		HoverTipFactory.FromKeyword(SquKeywords.PiercingDamage),
 		HoverTipFactory.FromKeyword(CardKeyword.Exhaust),
 	];

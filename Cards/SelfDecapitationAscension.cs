@@ -27,6 +27,7 @@ namespace Squ.Cards;
 public sealed class SelfDecapitationAscension : ModCardTemplate
 {
 	public const int IntangibleAmount = 1;
+	public const int UpgradedIntangibleAmount = 2;
 
 	protected override bool HasEnergyCostX => true;
 
@@ -84,6 +85,12 @@ public sealed class SelfDecapitationAscension : ModCardTemplate
 	protected override void AddExtraArgsToDescription(LocString description)
 	{
 		description.Add("HasRevivalItem", HasRevivalItem);
+	}
+
+	protected override void OnUpgrade()
+	{
+		DynamicVars[nameof(IntangiblePower)]
+			.UpgradeValueBy(UpgradedIntangibleAmount - IntangibleAmount);
 	}
 
 	private bool HasRevivalItem => IsMutable

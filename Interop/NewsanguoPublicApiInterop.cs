@@ -20,6 +20,10 @@ public static class NewsanguoPublicApiInterop
 {
 	public static bool IsReady => false;
 
+	public static bool IsCaoWeiCharacter(CharacterModel? character) => false;
+
+	public static bool IsShuHanCharacter(CharacterModel? character) => false;
+
 	public static bool IsNewsanguoCharacter(CharacterModel? character) => false;
 
 	public static Task ApplyDrunkenMight(

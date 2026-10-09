@@ -60,7 +60,6 @@ public sealed class LaserSwordAssassination : ModCardTemplate, IPenetratingDamag
 	{
 		get
 		{
-			yield return HoverTipFactory.Static(StaticHoverTip.Block);
 			if (DealsPenetratingDamage)
 			{
 				yield return HoverTipFactory.FromKeyword(SquKeywords.PiercingDamage);

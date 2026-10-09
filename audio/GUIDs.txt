@@ -167,6 +167,9 @@
 {5fc21be5-ab07-46b0-82b6-ff3d16ef2d50} event:/sunqian_universe/sfx/星夜打击-星夜驰援于你
 {b68c8b92-2549-43f1-9695-0994e1ebfe34} event:/sunqian_universe/sfx/星夜打击-星夜驰援于我
 {277d450e-51b3-416a-a78f-4b1b4c02aa8e} event:/sunqian_universe/sfx/朕不知兵
+{a036961c-fabb-450f-803c-4f8d760fca58} event:/sunqian_universe/sfx/来者不善-刘什么，关什么，没听说过，袁将军请你们了吗
+{a8267ac1-9784-49ad-b4eb-d3be28e7be2b} event:/sunqian_universe/sfx/来者不善-来者何人？快去叫袁绍出来接驾，我大哥前来会盟啦
+{f86a81fc-a4d1-447f-874b-881b56fac957} event:/sunqian_universe/sfx/来者不善-（突然一拳）打你个不长眼的！给我拿下
 {ca742ee5-99e2-40d3-a8c5-c5a3de703620} event:/sunqian_universe/sfx/水火无敌
 {cd280832-1db9-4aa7-a907-b5116acc6829} event:/sunqian_universe/sfx/炮轰赤壁-减攻
 {49cf55f8-5c29-4c9e-b5c4-f172bfa88f20} event:/sunqian_universe/sfx/炮轰赤壁-我笑猪哥愚蠢

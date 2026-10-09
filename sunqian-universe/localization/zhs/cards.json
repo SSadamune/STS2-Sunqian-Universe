@@ -234,7 +234,7 @@
   "SUNQIAN_UNIVERSE_CARD_TOO_KIND_TO_BE_TRUE.description": "令一张攻击牌获得「[gold]稍作修改[/gold]：[gold]{IfUpgraded:show:究极防御+|究极防御}[/gold]」。\n你每有一种负面状态，从名字中有「防御」的牌中额外获得{ExtraBlock:diff()}点[gold]格挡[/gold]。",
   "SUNQIAN_UNIVERSE_CARD_TOO_KIND_TO_BE_TRUE.slightRevisionReplacementTip": "如果已经有[gold]稍作修改[/gold]的牌再次获得[gold]稍作修改[/gold]，旧的将被替换。",
   "SUNQIAN_UNIVERSE_CARD_DRINKING_TABLE_CULTURE.title": "酒桌文化",
-  "SUNQIAN_UNIVERSE_CARD_DRINKING_TABLE_CULTURE.description": "队友获得一张带有[gold]执迷[/gold]的[gold]酒+[/gold]。",
+  "SUNQIAN_UNIVERSE_CARD_DRINKING_TABLE_CULTURE.description": "盟友获得一张带有[gold]执迷[/gold]的[gold]酒+[/gold]。",
   "SUNQIAN_UNIVERSE_NIGHT_RAID_WUCHAO_STRIKE.descriptionFragment": "[green]给予目标敌人{NightRaidBurning:diff()}点[gold]灼烧[/gold]。[/green]",
   "SUNQIAN_UNIVERSE_CARD_NOT_AFRAID_OF_ACID.title": "咱家不怕酸",
   "SUNQIAN_UNIVERSE_CARD_NOT_AFRAID_OF_ACID.description": "造成{Damage:diff()}点伤害。\n{AcidEtchResistancePower:diff()}回合内，[gold]易伤[/gold]、[gold]虚弱[/gold]和[gold]脆弱[/gold]对你无效。{SlightRevisionText}",

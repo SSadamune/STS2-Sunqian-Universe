@@ -92,6 +92,12 @@ internal static class SquSfx
 	public const string ExactlyWhatToEatEvent =
 		"event:/sunqian_universe/sfx/吃什么-吃什么是啊";
 	public const string EmperorKnowsNoWarEvent = "event:/sunqian_universe/sfx/朕不知兵";
+	public const string UnfriendlyVisitorsTauntEvent =
+		"event:/sunqian_universe/sfx/来者不善-来者何人？快去叫袁绍出来接驾，我大哥前来会盟啦";
+	public const string UnfriendlyVisitorsShrugItOffEvent =
+		"event:/sunqian_universe/sfx/来者不善-刘什么，关什么，没听说过，袁将军请你们了吗";
+	public const string UnfriendlyVisitorsSuckerPunchEvent =
+		"event:/sunqian_universe/sfx/来者不善-（突然一拳）打你个不长眼的！给我拿下";
 	public const string WaterFireInvincibleEvent = "event:/sunqian_universe/sfx/水火无敌";
 	public const string BombardChibiReduceAttackEvent = "event:/sunqian_universe/sfx/炮轰赤壁-减攻";
 	public const string BombardChibiRestoreEnergyEvent = "event:/sunqian_universe/sfx/炮轰赤壁-我笑猪哥愚蠢";
