@@ -1,4 +1,6 @@
 {
+  "SUNQIAN_UNIVERSE_CARD_METAMORPHOSIS.title": "Ever-Changing",
+  "SUNQIAN_UNIVERSE_CARD_METAMORPHOSIS.description": "Choose 1 of 3 potentially useful cards from other characters to add to your [gold]Hand[/gold].{IfUpgraded:show: The choices are [gold]Upgraded[/gold].|}\nYou can no longer obtain cards from that character through [gold]Ever-Changing[/gold]. The first time you play a card from that character each turn, gain {energyPrefix:energyIcons(1)}.",
   "SUNQIAN_UNIVERSE_CARD_CAT_IN_THE_BOX.title": "Cat in the Box",
   "SUNQIAN_UNIVERSE_CARD_CAT_IN_THE_BOX.description": "{BodyText}",
   "SUNQIAN_UNIVERSE_CARD_CAT_IN_THE_BOX.normalBody": "Apply {MinDoom:diff()}-{MaxDoom:diff()} [gold]Doom[/gold] at random. When you play this card, if that enemy's [gold]Doom kill threshold[/gold] is no greater than {MaxDoom:diff()}, kill it outright instead.",

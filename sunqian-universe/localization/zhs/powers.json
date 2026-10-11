@@ -1,4 +1,9 @@
 {
+  "SUNQIAN_UNIVERSE_POWER_METAMORPHOSIS_POWER.title": "千变万化",
+  "SUNQIAN_UNIVERSE_POWER_METAMORPHOSIS_POWER.description": "你不会从[gold]千变万化[/gold]中获得已记录角色的牌，且你每回合第一次打出已记录角色的牌时获得{energyPrefix:energyIcons(1)}。",
+  "SUNQIAN_UNIVERSE_POWER_METAMORPHOSIS_POWER.smartDescription": "你不会从[gold]千变万化[/gold]中获得下列角色的牌，且你每回合第一次打出下列角色的牌时获得{energyPrefix:energyIcons(1)}：\n{CharacterNames}",
+  "SUNQIAN_UNIVERSE_POWER_METAMORPHOSIS_POWER.smartDescriptionComplete": "你不会从[gold]千变万化[/gold]中获得下列角色的牌，且你每回合第一次打出下列角色的牌时获得{energyPrefix:energyIcons(1)}：\n{CharacterNames}[purple]\n千变万化只能获得中立卡牌，且玩家每回合第一次打出中立卡牌时也能获得{energyPrefix:energyIcons(1)}。[/purple]",
+  "SUNQIAN_UNIVERSE_POWER_METAMORPHOSIS_POWER.characterSeparator": "、",
   "SUNQIAN_UNIVERSE_POWER_MUTATED_CENTAUR_LINK_POWER.title": "坐骑绑定",
   "SUNQIAN_UNIVERSE_POWER_MUTATED_CENTAUR_LINK_POWER.description": "受到伤害时，{EnemyName}失去伤害值的{DamagePercent}%的生命。",
   "SUNQIAN_UNIVERSE_POWER_HUAGU_MIANZHANG_POWER.title": "化骨绵掌",
