@@ -1,5 +1,6 @@
 using System.Threading.Tasks;
 using MegaCrit.Sts2.Core.Entities.Creatures;
+using MegaCrit.Sts2.Core.Entities.Players;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Models;
@@ -35,4 +36,6 @@ public static class NewsanguoPublicApiInterop
 		bool silent = false) => Task.CompletedTask;
 
 	public static IHoverTip CreateDrunkenMightHoverTip() => null!;
+
+	public static int GetDrunkenMight(Player? player) => 0;
 }
