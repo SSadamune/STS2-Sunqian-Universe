@@ -14,6 +14,7 @@ using MegaCrit.Sts2.Core.ValueProps;
 using Squ;
 using Squ.Audio;
 using Squ.Character;
+using Squ.Combat;
 using Squ.Powers;
 using STS2RitsuLib.Cards.DynamicVars;
 using STS2RitsuLib.Interop.AutoRegistration;
@@ -78,12 +79,13 @@ public sealed class FlameStrike : ModCardTemplate
 			.WithHitCount(targetWasBurning ? 2 : 1)
 			.FromCard(this, cardPlay)
 			.Targeting(cardPlay.Target)
-			.WithHitFx("vfx/vfx_attack_slash")
+			.WithHitFx("vfx/vfx_attack_blunt")
 			.Execute(choiceContext);
 
 		int burningApplications = targetWasBurning ? 1 : 2;
 		for (int i = 0; i < burningApplications; i++)
 		{
+			SquHitVfx.FireBurst(cardPlay.Target);
 			await PowerCmd.Apply<BurningPower>(
 				choiceContext,
 				cardPlay.Target,

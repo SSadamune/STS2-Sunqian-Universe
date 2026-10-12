@@ -48,5 +48,7 @@ public sealed class ChickenFootCheeseScriptStrikePreview : ModCardTemplate, IRan
 			hitCountPerTarget: IsUpgraded
 				? ScriptChickenFootCheesePower.UpgradedHitCount
 				: ScriptChickenFootCheesePower.BaseHitCount,
-			cardPlay: cardPlay);
+			hitFx: null,
+			cardPlay: cardPlay,
+			beforeHit: SquHitVfx.SmallMagicMissiles);
 }

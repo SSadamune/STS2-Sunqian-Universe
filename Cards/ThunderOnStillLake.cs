@@ -88,7 +88,8 @@ public sealed class ThunderOnStillLake : ChargeCardTemplate
 			.FromCard(this, cardPlay)
 			.TargetingAllOpponents(CombatState)
 			.WithHitCount(DynamicVars.Repeat.IntValue)
-			.WithHitFx("vfx/vfx_attack_slash")
+			.WithHitFx("vfx/vfx_attack_lightning")
+			.SpawningHitVfxOnEachCreature()
 			.Execute(choiceContext);
 	}
 

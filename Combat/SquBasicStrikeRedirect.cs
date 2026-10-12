@@ -30,6 +30,8 @@ public static class SquBasicStrikeRedirect
 			choiceContext,
 			ScriptChickenFootCheesePower.RedirectRandomEnemyCount,
 			hitCountPerTarget: power?.HitCountPerTarget ?? ScriptChickenFootCheesePower.BaseHitCount,
-			cardPlay: cardPlay);
+			hitFx: null,
+			cardPlay: cardPlay,
+			beforeHit: SquHitVfx.SmallMagicMissiles);
 	}
 }

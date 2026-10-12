@@ -11,6 +11,7 @@ using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.CardPools;
 using Squ.Audio;
+using Squ.Combat;
 using Squ.Powers;
 using STS2RitsuLib.Interop.AutoRegistration;
 using STS2RitsuLib.Scaffolding.Content;
@@ -69,6 +70,7 @@ public sealed class BurnCity : ModCardTemplate
 					continue;
 				}
 
+				SquHitVfx.FireBurst(enemy);
 				await PowerCmd.Apply<BurningPower>(
 					choiceContext,
 					enemy,

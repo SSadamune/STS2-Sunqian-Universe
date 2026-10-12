@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using MegaCrit.Sts2.Core.Combat;
 using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
+using MegaCrit.Sts2.Core.Entities.Creatures;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
@@ -61,7 +62,18 @@ public sealed class HateTheHeavensStrike : ModCardTemplate
 		await DamageCmd.Attack(DynamicVars.Damage.BaseValue)
 			.FromCard(this, cardPlay)
 			.TargetingAllOpponents(combatState)
-			.WithHitFx("vfx/vfx_attack_slash")
+			.BeforeDamage(() =>
+			{
+				foreach (Creature enemy in combatState.HittableEnemies)
+				{
+					if (enemy.IsAlive)
+					{
+						SquHitVfx.ThinSlice(enemy);
+					}
+				}
+
+				return Task.CompletedTask;
+			})
 			.Execute(choiceContext);
 
 		ScryResult scryResult = await ScryCmd.Execute(

@@ -18,6 +18,7 @@ using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Nodes.Combat;
 using MegaCrit.Sts2.Core.Nodes.Multiplayer;
 using MegaCrit.Sts2.Core.Nodes.Rooms;
+using MegaCrit.Sts2.Core.Nodes.Vfx;
 using MegaCrit.Sts2.Core.Runs;
 using MegaCrit.Sts2.Core.ValueProps;
 using Squ.Character;
@@ -73,7 +74,7 @@ public sealed class KillingIntentPerception : ModCardTemplate
 		await DamageCmd.Attack(DynamicVars.Damage.BaseValue)
 			.FromCard(this, cardPlay)
 			.TargetingAllOpponents(combatState)
-			.WithHitFx("vfx/vfx_attack_slash")
+			.WithHitVfxNode(target => NScratchVfx.Create(target, goingRight: true))
 			.Execute(choiceContext);
 
 		if (combatState.PlayerCreatures.Count(creature => creature.IsAlive) <= 1

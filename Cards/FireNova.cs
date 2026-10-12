@@ -72,7 +72,7 @@ public sealed class FireNova : SlightRevisionCardTemplate<FireMeteorShower>, IRa
 		await DamageCmd.Attack(vigorSequence.ResolveNextAttackDamage())
 			.FromCard(this, cardPlay)
 			.Targeting(target)
-			.WithHitFx("vfx/vfx_attack_slash")
+			.BeforeDamage(() => SquHitVfx.LargeMagicMissile(target))
 			.Execute(choiceContext);
 		foreach (Creature burningTarget in CombatState!.HittableEnemies)
 		{

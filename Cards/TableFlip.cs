@@ -59,7 +59,9 @@ public sealed class TableFlip : ModCardTemplate
 		await DamageCmd.Attack(DynamicVars.Damage.BaseValue)
 			.FromCard(this, cardPlay)
 			.TargetingAllOpponents(combatState)
-			.WithHitFx("vfx/vfx_attack_blunt")
+			.WithHitFx("vfx/vfx_heavy_blunt")
+			.WithHitVfxSpawnedAtBase()
+			.SpawningHitVfxOnEachCreature()
 			.Execute(choiceContext);
 
 		foreach (Creature target in combatState.HittableEnemies)

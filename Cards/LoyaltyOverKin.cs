@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using MegaCrit.Sts2.Core.Combat;
 using MegaCrit.Sts2.Core.Commands;
+using MegaCrit.Sts2.Core.Commands.Builders;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.Entities.Creatures;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
@@ -104,11 +105,18 @@ public sealed class LoyaltyOverKin : ModCardTemplate
 		decimal strengthAmount = DynamicVars[nameof(StrengthPower)].BaseValue;
 		SquVigorSnapshot.AttackSequence vigorSequence = SquVigorSnapshot.BeginAttackSequence(Owner.Creature, this);
 
-		await DamageCmd.Attack(vigorSequence.ResolveNextAttackDamage())
-			.FromCard(this, cardPlay)
-			.Targeting(target)
-			.WithHitFx("vfx/vfx_attack_slash")
-			.Execute(choiceContext);
+		AttackCommand Strike(decimal damage) =>
+			DamageCmd.Attack(damage)
+				.FromCard(this, cardPlay)
+				.Targeting(target)
+				.WithHitFx("vfx/vfx_bloody_impact")
+				.BeforeDamage(() =>
+				{
+					VfxCmd.PlayOnCreatureCenter(target, "vfx/vfx_flying_slash");
+					return Task.CompletedTask;
+				});
+
+		await Strike(vigorSequence.ResolveNextAttackDamage()).Execute(choiceContext);
 
 		foreach (CardModel card in selected)
 		{
@@ -128,11 +136,7 @@ public sealed class LoyaltyOverKin : ModCardTemplate
 
 			if (target.IsAlive)
 			{
-				await DamageCmd.Attack(vigorSequence.ResolveNextAttackDamage())
-					.FromCard(this, cardPlay)
-					.Targeting(target)
-					.WithHitFx("vfx/vfx_attack_slash")
-					.Execute(choiceContext);
+				await Strike(vigorSequence.ResolveNextAttackDamage()).Execute(choiceContext);
 			}
 		}
 	}

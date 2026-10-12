@@ -1,9 +1,11 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Godot;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.Models.CardPools;
+using MegaCrit.Sts2.Core.Nodes.Vfx;
 using MegaCrit.Sts2.Core.ValueProps;
 using Squ.Audio;
 using Squ.Combat;
@@ -52,7 +54,9 @@ public sealed class SalvoStrike : ModCardTemplate, IRandomEnemyTargetCount
 			this,
 			choiceContext,
 			RandomEnemyTargetCount,
-			cardPlay: cardPlay);
+			hitFx: null,
+			cardPlay: cardPlay,
+			hitVfxNode: target => NDaggerSprayImpactVfx.Create(target, new Color("b1ccca"), goingRight: true));
 	}
 
 	protected override void OnUpgrade()

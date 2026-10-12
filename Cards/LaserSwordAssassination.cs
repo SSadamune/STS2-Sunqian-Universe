@@ -3,9 +3,11 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using MegaCrit.Sts2.Core.Combat;
 using MegaCrit.Sts2.Core.Commands;
+using MegaCrit.Sts2.Core.Commands.Builders;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.Entities.Creatures;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
+using MegaCrit.Sts2.Core.Hooks;
 using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Localization;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
@@ -34,6 +36,7 @@ public sealed class LaserSwordAssassination : ModCardTemplate, IPenetratingDamag
 	public const int MaximumUpgradeLevel = 3;
 	public const int CanonicalDamageMultiplier = 2;
 	public const int UpgradedDamageMultiplier = 3;
+	private const decimal HyperbeamPreviewThreshold = 30m;
 	private const string IsAmplifiedVarName = "IsAmplified";
 
 	private bool IsUpgradePreview => UpgradePreviewType != CardUpgradePreviewType.None;
@@ -132,12 +135,30 @@ public sealed class LaserSwordAssassination : ModCardTemplate, IPenetratingDamag
 			? SquSfx.LaserSwordAssassinationLaserEvent
 			: SquSfx.LaserSwordAssassinationDrawEvent);
 
-		await DamageCmd.Attack(DynamicVars.Damage.BaseValue)
+		AttackCommand attack = DamageCmd.Attack(DynamicVars.Damage.BaseValue)
 			.WithDamageProps(DamageProps)
 			.FromCard(this, cardPlay)
-			.Targeting(cardPlay.Target)
-			.WithHitFx("vfx/vfx_attack_slash")
-			.Execute(choiceContext);
+			.Targeting(cardPlay.Target);
+		if (PreviewDamage(cardPlay.Target) < HyperbeamPreviewThreshold)
+		{
+			attack.WithHitFx("vfx/vfx_attack_slash")
+				.BeforeDamage(() =>
+				{
+					SquHitVfx.ThinSlice(cardPlay.Target);
+					return Task.CompletedTask;
+				});
+		}
+		else
+		{
+			attack.BeforeDamage(() =>
+			{
+				SquHitVfx.HyperbeamImpact(Owner.Creature, cardPlay.Target);
+				SquHitVfx.ThinSlice(cardPlay.Target);
+				return Task.CompletedTask;
+			});
+		}
+
+		await attack.Execute(choiceContext);
 	}
 
 	protected override void OnUpgrade()
@@ -200,6 +221,27 @@ public sealed class LaserSwordAssassination : ModCardTemplate, IPenetratingDamag
 
 	internal static bool ShouldAmplifyDamage(Creature? target) =>
 		target is { IsAlive: true } && !SquEnemyIntent.IntendsToAttack(target);
+
+	private decimal PreviewDamage(Creature target)
+	{
+		if (Owner?.RunState is not { } runState || CombatState is not { } combatState)
+		{
+			return DynamicVars.Damage.BaseValue;
+		}
+
+		return Hook.ModifyDamage(
+			runState,
+			combatState,
+			target,
+			Owner.Creature,
+			DynamicVars.Damage.BaseValue,
+			DamageProps,
+			this,
+			null,
+			ModifyDamageHookType.All,
+			CardPreviewMode.Normal,
+			out _);
+	}
 
 	/// <summary>
 	/// 让意图倍率参与 Hook.ModifyDamage 的乘算阶段，使力量、活力等先参与计算。

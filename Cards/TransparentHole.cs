@@ -1,6 +1,8 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Godot;
 using MegaCrit.Sts2.Core.Combat;
 using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Commands.Builders;
@@ -9,6 +11,7 @@ using MegaCrit.Sts2.Core.Entities.Creatures;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.Models;
+using MegaCrit.Sts2.Core.Nodes.Vfx;
 using MegaCrit.Sts2.Core.ValueProps;
 using Squ.Audio;
 using Squ.Character;
@@ -79,12 +82,18 @@ public sealed class TransparentHole : ModCardTemplate, IRandomEnemyTargetCount, 
 			return;
 		}
 
+		int wave = 1;
 		AttackCommand attack = DamageCmd.Attack(DynamicVars.Damage.BaseValue)
 			.FromCard(this, cardPlay)
 			.TargetingAllOpponents(combatState)
 			.TargetingFiltered(firstVolley)
 			.WithHitCount(targetCount)
-			.WithHitFx("vfx/vfx_attack_slash");
+			.WithHitVfxNode(target => CreateStab(target, wave))
+			.BeforeDamage(() =>
+			{
+				wave++;
+				return Task.CompletedTask;
+			});
 
 		_cascadeAttack = attack;
 		_cascadeInitialCount = targetCount;
@@ -131,6 +140,66 @@ public sealed class TransparentHole : ModCardTemplate, IRandomEnemyTargetCount, 
 		context.Attack.TargetingFiltered(
 			SquRandomEnemyTargeting.SelectRandomEnemies(this, nextTargetCount));
 		await Cmd.Wait(RepeatAttackDelaySeconds);
+	}
+
+	private static NStabVfx? CreateStab(Creature target, int wave)
+	{
+		NStabVfx? stab = NStabVfx.Create(target, facingEnemies: true);
+		if (stab == null)
+		{
+			return null;
+		}
+
+		Color color = StabColorForWave(wave);
+		Color highlight = color.Lerp(Colors.White, 0.4f);
+		stab.Connect(
+			Node.SignalName.Ready,
+			Callable.From(() => TintStab(stab, color, highlight)));
+		return stab;
+	}
+
+	private static Color StabColorForWave(int wave)
+	{
+		(int Wave, Color Color)[] stops =
+		[
+			(1, new Color("FFFFFF")),
+			(3, new Color("FFE14A")),
+			(5, new Color("FF0000")),
+			(7, new Color("A803FF")),
+		];
+		wave = Math.Max(wave, 1);
+		if (wave >= stops[^1].Wave)
+		{
+			return stops[^1].Color;
+		}
+
+		for (int i = 0; i < stops.Length - 1; i++)
+		{
+			(int startWave, Color start) = stops[i];
+			(int endWave, Color end) = stops[i + 1];
+			if (wave > endWave)
+			{
+				continue;
+			}
+
+			float t = (wave - startWave) / (float)(endWave - startWave);
+			return start.Lerp(end, t);
+		}
+
+		return stops[^1].Color;
+	}
+
+	private static void TintStab(NStabVfx stab, Color color, Color highlight)
+	{
+		if (stab.GetNodeOrNull<CanvasItem>("Primary") is { } primary)
+		{
+			primary.SelfModulate = color;
+		}
+
+		if (stab.GetNodeOrNull<CanvasItem>("%Secondary") is { } secondary)
+		{
+			secondary.SelfModulate = highlight;
+		}
 	}
 
 	private void PlayTransparentHoleSfx()

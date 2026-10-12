@@ -9,6 +9,7 @@ using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Localization;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.Models;
+using MegaCrit.Sts2.Core.Nodes.Vfx;
 using MegaCrit.Sts2.Core.ValueProps;
 using Squ;
 using Squ.Audio;
@@ -82,7 +83,12 @@ public sealed class RuthlessStrike : ChargeCardTemplate, IPenetratingDamageCard
 			.WithHitCount(DynamicVars.Repeat.IntValue)
 			.FromCard(this, cardPlay)
 			.Targeting(cardPlay.Target)
-			.WithHitFx("vfx/vfx_attack_slash")
+			.WithHitVfxNode(target => NBigSlashVfx.Create(target))
+			.BeforeDamage(() =>
+			{
+				SquHitVfx.ThinSlice(cardPlay.Target);
+				return Task.CompletedTask;
+			})
 			.Execute(choiceContext);
 	}
 

@@ -2,8 +2,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Godot;
 using MegaCrit.Sts2.Core.Combat;
 using MegaCrit.Sts2.Core.Commands;
+using MegaCrit.Sts2.Core.Commands.Builders;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.Entities.Creatures;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
@@ -114,8 +116,11 @@ public static class SquRandomEnemyTargeting
 		int requestedTargetCount,
 		decimal? damagePerHit = null,
 		int hitCountPerTarget = 1,
-		string hitFx = "vfx/vfx_attack_slash",
-		CardPlay? cardPlay = null)
+		string? hitFx = "vfx/vfx_attack_slash",
+		CardPlay? cardPlay = null,
+		Func<Creature, Node2D?>? hitVfxNode = null,
+		bool spawnHitVfxOnEachCreature = false,
+		Func<IEnumerable<Creature>, Task>? beforeHit = null)
 	{
 		ICombatState? combatState = card.CombatState;
 		if (combatState == null || requestedTargetCount <= 0 || hitCountPerTarget <= 0)
@@ -129,13 +134,32 @@ public static class SquRandomEnemyTargeting
 			return 0;
 		}
 
-		await DamageCmd.Attack(damagePerHit ?? card.DynamicVars.Damage.BaseValue)
+		AttackCommand attack = DamageCmd.Attack(damagePerHit ?? card.DynamicVars.Damage.BaseValue)
 			.FromCard(card, cardPlay)
 			.TargetingAllOpponents(combatState)
 			.TargetingFiltered(targets)
-			.WithHitCount(hitCountPerTarget)
-			.WithHitFx(hitFx)
-			.Execute(choiceContext);
+			.WithHitCount(hitCountPerTarget);
+		if (hitFx != null)
+		{
+			attack.WithHitFx(hitFx);
+		}
+
+		if (spawnHitVfxOnEachCreature)
+		{
+			attack.SpawningHitVfxOnEachCreature();
+		}
+
+		if (hitVfxNode != null)
+		{
+			attack.WithHitVfxNode(hitVfxNode);
+		}
+
+		if (beforeHit != null)
+		{
+			attack.BeforeDamage(() => beforeHit(targets.Where(target => target.IsAlive)));
+		}
+
+		await attack.Execute(choiceContext);
 
 		return targets.Count;
 	}

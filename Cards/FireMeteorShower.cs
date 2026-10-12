@@ -85,7 +85,7 @@ public sealed class FireMeteorShower : ModCardTemplate, IRandomEnemyTargetCount
 			await DamageCmd.Attack(vigorSequence.ResolveNextAttackDamage())
 				.FromCard(this, cardPlay)
 				.Targeting(damageTarget)
-				.WithHitFx("vfx/vfx_attack_slash")
+				.BeforeDamage(() => SquHitVfx.LargeMagicMissile(damageTarget))
 				.Execute(choiceContext);
 
 			foreach (Creature burningTarget in combatState.HittableEnemies)

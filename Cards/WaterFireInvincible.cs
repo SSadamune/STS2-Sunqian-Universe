@@ -65,7 +65,7 @@ public sealed class WaterFireInvincible : ModCardTemplate
 		AttackCommand attackCommand = await DamageCmd.Attack(DynamicVars.Damage.BaseValue)
 			.FromCard(this, cardPlay)
 			.Targeting(cardPlay.Target)
-			.WithHitFx("vfx/vfx_attack_slash")
+			.WithHitFx("vfx/vfx_molten_fist")
 			.Execute(choiceContext);
 
 		int damageDealt = attackCommand.Results

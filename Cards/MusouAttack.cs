@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using MegaCrit.Sts2.Core.Commands;
+using MegaCrit.Sts2.Core.Commands.Builders;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.Entities.Creatures;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
@@ -10,6 +11,7 @@ using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.Powers;
+using MegaCrit.Sts2.Core.Nodes.Vfx;
 using MegaCrit.Sts2.Core.ValueProps;
 using Squ.Audio;
 using Squ.Character;
@@ -62,10 +64,28 @@ public sealed class MusouAttack : ModCardTemplate
 
 		decimal dexterityBonus = GetDexterityBonus(this);
 		SquSfx.Play(SquSfx.MusouAttackThoughtLuBuEvent);
-		await DamageCmd.Attack(DynamicVars.Damage.BaseValue + dexterityBonus)
+		AttackCommand attack = DamageCmd.Attack(DynamicVars.Damage.BaseValue + dexterityBonus)
 			.FromCard(this, cardPlay)
 			.TargetingAllOpponents(CombatState)
-			.WithHitFx("vfx/vfx_attack_slash")
+			.WithHitFx("vfx/vfx_giant_horizontal_slash");
+		if ((Owner.Creature.GetPower<DexterityPower>()?.Amount ?? 0m) > 4m)
+		{
+			attack.WithHitVfxNode(NGrandFinaleImpactVfx.Create);
+		}
+
+		await attack
+			.BeforeDamage(() =>
+			{
+				foreach (Creature enemy in CombatState.HittableEnemies)
+				{
+					if (enemy.IsAlive)
+					{
+						SquHitVfx.ThinSlice(enemy);
+					}
+				}
+
+				return Task.CompletedTask;
+			})
 			.Execute(choiceContext);
 
 		CardValueRetain.TryAddBaseDamage(this, dexterityBonus);

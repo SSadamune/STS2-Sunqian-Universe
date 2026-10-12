@@ -63,7 +63,9 @@ public sealed class ChickenFootCheeseScript : ScriptCardTemplate, IRandomEnemyTa
 			hitCountPerTarget: IsUpgraded
 				? ScriptChickenFootCheesePower.UpgradedHitCount
 				: ScriptChickenFootCheesePower.BaseHitCount,
-			cardPlay: cardPlay);
+			hitFx: null,
+			cardPlay: cardPlay,
+			beforeHit: SquHitVfx.SmallMagicMissiles);
 
 		await PowerCmd.Apply<ScriptChickenFootCheesePower>(
 			choiceContext,

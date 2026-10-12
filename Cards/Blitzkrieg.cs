@@ -8,6 +8,7 @@ using MegaCrit.Sts2.Core.Entities.Creatures;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.Models;
+using MegaCrit.Sts2.Core.Nodes.Vfx;
 using MegaCrit.Sts2.Core.ValueProps;
 using Squ;
 using Squ.Audio;
@@ -79,7 +80,8 @@ public sealed class Blitzkrieg : ModCardTemplate
 			await DamageCmd.Attack(DynamicVars.Damage.BaseValue)
 				.FromCard(this, cardPlay)
 				.Targeting(cardPlay.Target)
-				.WithHitFx("vfx/vfx_attack_slash")
+				.WithHitVfxNode(target => NStabVfx.Create(target, facingEnemies: true))
+				.WithHitFx("vfx/vfx_starry_impact")
 				.Execute(choiceContext);
 
 			await PlayAllStrikesAndBlitzkriegFromPiles(choiceContext, cardPlay.Target);
