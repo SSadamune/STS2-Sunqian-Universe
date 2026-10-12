@@ -1,6 +1,6 @@
 {
   "SUNQIAN_UNIVERSE_CARD_METAMORPHOSIS.title": "千变万化",
-  "SUNQIAN_UNIVERSE_CARD_METAMORPHOSIS.description": "从三张其他角色的{IfUpgraded:show:升级过的|}可能有用的牌中获得一张。\n你不会再从[gold]千变万化[/gold]中获得此角色的牌，且每回合第一次打出此角色的牌时获得{energyPrefix:energyIcons(1)}。",
+  "SUNQIAN_UNIVERSE_CARD_METAMORPHOSIS.description": "从三张其他角色的{IfUpgraded:show:升级过的|}可能有用的牌中获得一张。\n你不会再从[gold]千变万化[/gold]中获得此角色的牌，且每回合第一次打出此角色的牌后获得{energyPrefix:energyIcons(1)}。",
   "SUNQIAN_UNIVERSE_CARD_STRIKE.title": "打击",
   "SUNQIAN_UNIVERSE_CARD_STRIKE.description": "{BodyText}",
   "SUNQIAN_UNIVERSE_CARD_STRIKE.normalBody": "造成{Damage:diff()}点伤害。",

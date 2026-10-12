@@ -23,12 +23,17 @@ internal static class NewsanguoMetamorphosisInterop
 	public const string BetterEachDayEntry = "NEWSANGUO_CARD_BETTER_EACH_DAY";
 	public const string MaClanQuadBlastEntry = "NEWSANGUO_CARD_MA_CLAN_QUAD_BLAST";
 	public const string MyThreeGeneralsEntry = "NEWSANGUO_CARD_MY_THREE_GENERALS";
+	public const string CaoArtOfWarEntry = "NEWSANGUO_CARD_CAO_ART_OF_WAR";
+	public const string CricketFormEntry = "NEWSANGUO_CARD_CRICKET_FORM";
 	public const string HeavenAndEarthEntry = "NEWSANGUO_CARD_HEAVEN_AND_EARTH";
 	public const string TenThousandTransparentHolesEntry =
 		"NEWSANGUO_CARD_TEN_THOUSAND_TRANSPARENT_HOLES";
 	public const string AutoPilotEntry = "NEWSANGUO_CARD_AUTO_PILOT";
 	public const string ReleaseEntry = "NEWSANGUO_CARD_RELEASE";
 	public const string WheresWineEntry = "NEWSANGUO_CARD_WHERES_WINE";
+	public const string TigerWindCloudDragonEntry =
+		"NEWSANGUO_CARD_TIGER_WIND_CLOUD_DRAGON";
+	public const string MegalovaniaEntry = "NEWSANGUO_CARD_MEGALOVANIA";
 
 	private static readonly string[] CaoWeiCandidateEntries =
 	[
@@ -37,8 +42,9 @@ internal static class NewsanguoMetamorphosisInterop
 		LetsDiscussEntry,
 		RetireEntry,
 		BetterEachDayEntry,
-		MaClanQuadBlastEntry,
 		MyThreeGeneralsEntry,
+		CaoArtOfWarEntry,
+		CricketFormEntry,
 	];
 
 	private static readonly string[] ShuHanCandidateEntries =
@@ -49,6 +55,8 @@ internal static class NewsanguoMetamorphosisInterop
 		ReleaseEntry,
 		MaClanQuadBlastEntry,
 		WheresWineEntry,
+		TigerWindCloudDragonEntry,
+		MegalovaniaEntry,
 	];
 
 	public static IReadOnlyList<CardModel> GetCaoWeiCandidateCards()
@@ -87,6 +95,16 @@ internal static class NewsanguoMetamorphosisInterop
 	public static bool IsCard(CardModel card, string entry) =>
 		NewsanguoPublicApiInterop.IsReady
 		&& card.Id == new ModelId("CARD", entry);
+
+	public static bool IsCandidateForPool(CardModel card, CardPoolModel pool)
+	{
+		IReadOnlyList<string>? entries = IsCaoWeiCardPool(pool)
+			? CaoWeiCandidateEntries
+			: IsShuHanCardPool(pool)
+				? ShuHanCandidateEntries
+				: null;
+		return entries is null || entries.Any(entry => IsCard(card, entry));
+	}
 
 	public static int GetDrunkenMight(Player? player) =>
 		NewsanguoPublicApiInterop.IsReady

@@ -107,7 +107,7 @@ public sealed class Metamorphosis : ModCardTemplate
 				Owner.Creature,
 				this);
 			Owner.Creature.GetPower<MetamorphosisPower>()
-				?.SyncAmountAndTurnHistory(this);
+				?.SyncAmountAndTurnHistory();
 			return;
 		}
 
@@ -122,6 +122,6 @@ public sealed class Metamorphosis : ModCardTemplate
 			1,
 			Owner.Creature,
 			this);
-		existing.SyncAmountAndTurnHistory(this);
+		existing.SyncAmountAndTurnHistory();
 	}
 }

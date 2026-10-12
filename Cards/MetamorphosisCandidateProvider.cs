@@ -328,7 +328,10 @@ internal sealed class DefaultMetamorphosisCandidateProvider : IMetamorphosisCand
 		ICombatState combatState,
 		CardModel card) =>
 		combatState.HittableEnemies.Count >= 3
-		&& card is Whirlwind or Misery or FireNova;
+		&& (card is Whirlwind or Misery or FireNova
+			|| NewsanguoMetamorphosisInterop.IsCard(
+				card,
+				NewsanguoMetamorphosisInterop.MaClanQuadBlastEntry));
 
 	private static bool MatchesDangerousEnemyCondition(
 		ICombatState combatState,
@@ -341,7 +344,10 @@ internal sealed class DefaultMetamorphosisCandidateProvider : IMetamorphosisCand
 				NewsanguoMetamorphosisInterop.RetireEntry)
 			|| NewsanguoMetamorphosisInterop.IsCard(
 				card,
-				NewsanguoMetamorphosisInterop.HeavenAndEarthEntry));
+				NewsanguoMetamorphosisInterop.HeavenAndEarthEntry)
+			|| NewsanguoMetamorphosisInterop.IsCard(
+				card,
+				NewsanguoMetamorphosisInterop.CricketFormEntry));
 
 	private static bool MatchesStrandedCardCondition(
 		IReadOnlyList<CardModel> hand,
@@ -368,11 +374,10 @@ internal sealed class DefaultMetamorphosisCandidateProvider : IMetamorphosisCand
 			entry.HappenedThisTurn(combatState)
 			&& entry.CardPlay.Player == player
 			&& entry.CardPlay.PlayIndex == 0);
-		return (remainingEnergy > attacksAndSkills || cardsPlayedThisTurn <= 2)
+		return (remainingEnergy > attacksAndSkills || cardsPlayedThisTurn <= 1)
 			&& (card is Backflip
 				or BurningPact
 				or Skim
-				or Audition
 				or BuddyLongtaodi
 				|| NewsanguoMetamorphosisInterop.IsCard(
 					card,
@@ -382,7 +387,10 @@ internal sealed class DefaultMetamorphosisCandidateProvider : IMetamorphosisCand
 					NewsanguoMetamorphosisInterop.AutoPilotEntry)
 				|| NewsanguoMetamorphosisInterop.IsCard(
 					card,
-					NewsanguoMetamorphosisInterop.AlwaysMineEntry));
+					NewsanguoMetamorphosisInterop.AlwaysMineEntry)
+				|| NewsanguoMetamorphosisInterop.IsCard(
+					card,
+					NewsanguoMetamorphosisInterop.TigerWindCloudDragonEntry));
 	}
 
 	private static bool MatchesExcessBlockCondition(
@@ -578,7 +586,6 @@ internal sealed class DefaultMetamorphosisCandidateProvider : IMetamorphosisCand
 			or Production
 			or Backflip
 			or Skim
-			or Audition
 			or BuddyLongtaodi
 			or Afterimage
 			or TwoWordPoetScript
@@ -623,7 +630,13 @@ internal sealed class DefaultMetamorphosisCandidateProvider : IMetamorphosisCand
 			NewsanguoMetamorphosisInterop.TenThousandTransparentHolesEntry)
 		|| NewsanguoMetamorphosisInterop.IsCard(
 			card,
-			NewsanguoMetamorphosisInterop.UnclesAndAuntsEntry);
+			NewsanguoMetamorphosisInterop.UnclesAndAuntsEntry)
+		|| NewsanguoMetamorphosisInterop.IsCard(
+			card,
+			NewsanguoMetamorphosisInterop.CricketFormEntry)
+		|| NewsanguoMetamorphosisInterop.IsCard(
+			card,
+			NewsanguoMetamorphosisInterop.TigerWindCloudDragonEntry);
 
 	private static bool MatchesAnyCardCondition(CardModel _) => true;
 
@@ -653,6 +666,7 @@ internal sealed class DefaultMetamorphosisCandidateProvider : IMetamorphosisCand
 					player.UnlockState,
 					player.RunState.CardMultiplayerConstraint))
 				.Where(card => allowedIds.Contains(card.Id))
+				.Where(card => NewsanguoMetamorphosisInterop.IsCandidateForPool(card, pool))
 				.Select(card => new CanonicalChoice(card, pool)))
 			.ToList();
 	}
@@ -718,7 +732,8 @@ internal sealed class DefaultMetamorphosisCandidateProvider : IMetamorphosisCand
 			ModelDb.Card<FireNova>(),
 			ModelDb.Card<MusouAttack>(),
 			ModelDb.Card<WorryWithoutWorry>(),
-			ModelDb.Card<Audition>(),
+			ModelDb.Card<DistributedScreenwriter>(),
+			ModelDb.Card<GrandGoblet>(),
 			ModelDb.Card<TwoWordPoetScript>(),
 			ModelDb.Card<WaterFireInvincible>(),
 			ModelDb.Card<BuddyLongtaodi>(),

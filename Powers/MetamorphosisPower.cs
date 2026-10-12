@@ -75,16 +75,16 @@ public sealed class MetamorphosisPower : ModPowerTemplate
 		return true;
 	}
 
-	public void SyncAmountAndTurnHistory(CardModel? currentlyResolvingCard)
+	public void SyncAmountAndTurnHistory()
 	{
 		SetAmount(GetInternalData<Data>().RecordedPoolIds.Count);
-		SyncPlayedPoolsFromHistory(currentlyResolvingCard);
+		SyncPlayedPoolsFromHistory();
 		InvokeDisplayAmountChanged();
 	}
 
 	public override Task AfterApplied(Creature? applier, CardModel? cardSource)
 	{
-		SyncAmountAndTurnHistory(cardSource);
+		SyncAmountAndTurnHistory();
 		return Task.CompletedTask;
 	}
 
@@ -104,7 +104,7 @@ public sealed class MetamorphosisPower : ModPowerTemplate
 		return Task.CompletedTask;
 	}
 
-	public override async Task AfterCardPlayed(
+	public override async Task AfterCardPlayedLate(
 		PlayerChoiceContext choiceContext,
 		CardPlay cardPlay)
 	{
@@ -187,7 +187,7 @@ public sealed class MetamorphosisPower : ModPowerTemplate
 				.Select(MetamorphosisCharacterCatalog.GetDisplayName));
 	}
 
-	private void SyncPlayedPoolsFromHistory(CardModel? currentlyResolvingCard)
+	private void SyncPlayedPoolsFromHistory()
 	{
 		if (CombatState is not { } combatState || Owner.Player is not { } player)
 		{
@@ -202,10 +202,6 @@ public sealed class MetamorphosisPower : ModPowerTemplate
 			.Where(entry => entry.HappenedThisTurn(combatState)
 				&& entry.CardPlay.Card.Owner == player)
 			.Select(entry => entry.CardPlay.Card);
-		if (currentlyResolvingCard?.Owner == player)
-		{
-			playedCards = playedCards.Append(currentlyResolvingCard);
-		}
 
 		IReadOnlyList<CardPoolModel> supportedPools =
 			MetamorphosisCharacterCatalog.GetSupportedPools(player);
