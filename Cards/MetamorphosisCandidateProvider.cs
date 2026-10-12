@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using MegaCrit.Sts2.Core.Combat;
+using MegaCrit.Sts2.Core.Combat.History.Entries;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.Entities.Creatures;
 using MegaCrit.Sts2.Core.Entities.Players;
@@ -213,10 +214,14 @@ internal sealed class DefaultMetamorphosisCandidateProvider : IMetamorphosisCand
 	/// 3-5 = urgent responses; 6-7 = resource/early-turn responses; 8 = excess block;
 	/// 9 = Power; 10 = unnamed-card hand type balance; 11 = any card;
 	/// 12 = Sunqian/Cao Wei cross-character pool; 13 = high offensive resources;
-	/// 14 = early safe unnamed Power; 15 = Eternal Armor while Plating is active;
+	/// 14 = early safe unnamed Power; 15 = Plating armor cards;
 	/// 16 = Vital Spark counter; 17 = high Dexterity; 18 = All for One density;
 	/// 19 = Iteration status generation; 20 = defense pressure;
-	/// 21 = Sleight of Flesh debuff density; 22 = Supermassive exhaust density.
+	/// 21 = Sleight of Flesh debuff density; 22 = Ashen Strike exhaust density;
+	/// 23 = Supermassive generated-card density; 24 = Colossus vulnerable intent;
+	/// 25 = No Escape doom stacks; 26 = Compact hand status density;
+	/// 27 = Flak Cannon pile status density; 28 = Summon Forth Sovereign Blade;
+	/// 29 = Conqueror Sovereign Blade.
 	/// </summary>
 	private static bool MatchesStep(
 		Metamorphosis source,
@@ -261,7 +266,14 @@ internal sealed class DefaultMetamorphosisCandidateProvider : IMetamorphosisCand
 					|| MatchesAllForOneDensityCondition(player, card)
 					|| MatchesIterationStatusDensityCondition(player, card)
 					|| MatchesSleightOfFleshDebuffDensityCondition(player, card)
-					|| MatchesSupermassiveExhaustDensityCondition(player, card)),
+					|| MatchesAshenStrikeExhaustDensityCondition(player, card)
+					|| MatchesSupermassiveGeneratedDensityCondition(card)
+					|| MatchesColossusVulnerableIntentCondition(combatState, card)
+					|| MatchesNoEscapeDoomCondition(combatState, card)
+					|| MatchesCompactHandStatusCondition(hand, card)
+					|| MatchesFlakCannonStatusDensityCondition(player, card)
+					|| MatchesSummonForthSovereignBladeCondition(player, card)
+					|| MatchesConquerorSovereignBladeCondition(hand, card)),
 			SelectionStep.SunqianCaoWeiResponse => matchesRoleCondition
 				&& MatchesPlayableCondition(card, remainingEnergy)
 				&& MatchesSunqianCaoWeiCondition(player, choice.CharacterPool)
@@ -356,7 +368,7 @@ internal sealed class DefaultMetamorphosisCandidateProvider : IMetamorphosisCand
 		remainingEnergy == 0
 			&& hand.Any(candidate => !candidate.EnergyCost.CostsX
 				&& candidate.EnergyCost.GetResolved() > 0)
-			&& (card is Wine or Production
+			&& (card is Wine or Production or ForgottenRitual or Turbo
 				|| NewsanguoMetamorphosisInterop.IsCard(
 					card,
 					NewsanguoMetamorphosisInterop.AutoPilotEntry));
@@ -379,6 +391,7 @@ internal sealed class DefaultMetamorphosisCandidateProvider : IMetamorphosisCand
 				or BurningPact
 				or Skim
 				or BuddyLongtaodi
+				or Severance
 				|| NewsanguoMetamorphosisInterop.IsCard(
 					card,
 					NewsanguoMetamorphosisInterop.LetsDiscussEntry)
@@ -433,14 +446,14 @@ internal sealed class DefaultMetamorphosisCandidateProvider : IMetamorphosisCand
 		Player player,
 		CardModel card) =>
 		player.Creature.GetPowerAmount<PlatingPower>() > 1
-		&& card is EternalArmor;
+		&& card is EternalArmor or StoneArmor or OneManOneCity;
 
 	private static bool MatchesVitalSparkCounterCondition(
 		ICombatState combatState,
 		CardModel card) =>
 		combatState.Enemies.Any(enemy =>
 			enemy.IsAlive && enemy.HasPower<VitalSparkPower>())
-		&& (card is Fisticuffs or EternalArmor or WaterFireInvincible
+		&& (card is Fisticuffs or EternalArmor or WaterFireInvincible or Dash
 			|| NewsanguoMetamorphosisInterop.IsCard(
 				card,
 				NewsanguoMetamorphosisInterop.UnclesAndAuntsEntry));
@@ -508,11 +521,88 @@ internal sealed class DefaultMetamorphosisCandidateProvider : IMetamorphosisCand
 			5,
 			AppliesRelevantDebuff);
 
-	private static bool MatchesSupermassiveExhaustDensityCondition(
+	private static bool MatchesAshenStrikeExhaustDensityCondition(
 		Player player,
 		CardModel card) =>
-		card is Supermassive
+		card is AshenStrike
 		&& PileType.Exhaust.GetPile(player).Cards.Count >= 12;
+
+	private static bool MatchesSupermassiveGeneratedDensityCondition(CardModel card) =>
+		card is Supermassive
+		&& CombatManager.Instance.History.Entries.OfType<CardGeneratedEntry>().Count() >= 12;
+
+	private static bool MatchesColossusVulnerableIntentCondition(
+		ICombatState combatState,
+		CardModel card) =>
+		card is Colossus
+		&& combatState.Enemies
+			.Where(enemy => enemy.IsAlive && enemy.HasPower<VulnerablePower>())
+			.Sum(enemy => GetIntentDamage(combatState, enemy)) >= 30;
+
+	private static bool MatchesNoEscapeDoomCondition(
+		ICombatState combatState,
+		CardModel card) =>
+		card is NoEscape
+		&& combatState.Enemies.Any(enemy =>
+			enemy.IsAlive && enemy.GetPowerAmount<DoomPower>() >= 30);
+
+	private static bool MatchesCompactHandStatusCondition(
+		IReadOnlyList<CardModel> hand,
+		CardModel card) =>
+		card is Compact
+		&& hand.Count(candidate => candidate.Rarity == CardRarity.Status) >= 5;
+
+	private static bool MatchesFlakCannonStatusDensityCondition(Player player, CardModel card)
+	{
+		if (card is not FlakCannon)
+		{
+			return false;
+		}
+
+		IReadOnlyList<CardModel> hand = PileType.Hand.GetPile(player).Cards;
+		IReadOnlyList<CardModel> draw = PileType.Draw.GetPile(player).Cards;
+		IReadOnlyList<CardModel> discard = PileType.Discard.GetPile(player).Cards;
+		if (hand.Count + draw.Count + discard.Count > PileSearchCardLimit)
+		{
+			return false;
+		}
+
+		int matchingCount = 0;
+		foreach (CardModel candidate in hand.Concat(draw).Concat(discard))
+		{
+			if (candidate.Rarity == CardRarity.Status && ++matchingCount >= 8)
+			{
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	private static bool MatchesSummonForthSovereignBladeCondition(Player player, CardModel card)
+	{
+		if (card is not SummonForth)
+		{
+			return false;
+		}
+
+		IReadOnlyList<CardModel> draw = PileType.Draw.GetPile(player).Cards;
+		IReadOnlyList<CardModel> discard = PileType.Discard.GetPile(player).Cards;
+		if (draw.Count + discard.Count > PileSearchCardLimit)
+		{
+			return false;
+		}
+
+		return draw.Concat(discard).Any(HasHighBaseDamageSovereignBlade);
+	}
+
+	private static bool MatchesConquerorSovereignBladeCondition(
+		IReadOnlyList<CardModel> hand,
+		CardModel card) =>
+		card is Conqueror && hand.Any(HasHighBaseDamageSovereignBlade);
+
+	private static bool HasHighBaseDamageSovereignBlade(CardModel card) =>
+		card is SovereignBlade && card.DynamicVars.Damage.BaseValue >= 30;
 
 	private static bool HasAtLeastMatchingCardsWithinLimit(
 		IReadOnlyList<CardModel> firstPile,
@@ -584,14 +674,20 @@ internal sealed class DefaultMetamorphosisCandidateProvider : IMetamorphosisCand
 			or Defy
 			or Wine
 			or Production
+			or ForgottenRitual
+			or Turbo
 			or Backflip
 			or Skim
 			or BuddyLongtaodi
+			or Severance
 			or Afterimage
 			or TwoWordPoetScript
 			or EternalArmor
+			or StoneArmor
+			or OneManOneCity
 			or Fisticuffs
 			or WaterFireInvincible
+			or Dash
 			or MusouAttack
 			or WorryWithoutWorry
 			or Glitterstream
@@ -604,6 +700,13 @@ internal sealed class DefaultMetamorphosisCandidateProvider : IMetamorphosisCand
 			or Rage
 			or SleightOfFlesh
 			or Supermassive
+			or AshenStrike
+			or Colossus
+			or NoEscape
+			or Compact
+			or FlakCannon
+			or SummonForth
+			or Conqueror
 		|| NewsanguoMetamorphosisInterop.IsCard(
 			card,
 			NewsanguoMetamorphosisInterop.MyThreeGeneralsEntry)
@@ -697,6 +800,10 @@ internal sealed class DefaultMetamorphosisCandidateProvider : IMetamorphosisCand
 			ModelDb.Card<PommelStrike>(),
 			ModelDb.Card<Rage>(),
 			ModelDb.Card<DarkEmbrace>(),
+			ModelDb.Card<AshenStrike>(),
+			ModelDb.Card<ForgottenRitual>(),
+			ModelDb.Card<Colossus>(),
+			ModelDb.Card<StoneArmor>(),
 			// Silent
 			ModelDb.Card<Prepared>(),
 			ModelDb.Card<CloakAndDagger>(),
@@ -705,6 +812,8 @@ internal sealed class DefaultMetamorphosisCandidateProvider : IMetamorphosisCand
 			ModelDb.Card<Neutralize>(),
 			ModelDb.Card<Afterimage>(),
 			ModelDb.Card<WellLaidPlans>(),
+			ModelDb.Card<Strangle>(),
+			ModelDb.Card<Dash>(),
 			// Regent
 			ModelDb.Card<KnowThyPlace>(),
 			ModelDb.Card<Supermassive>(),
@@ -713,12 +822,19 @@ internal sealed class DefaultMetamorphosisCandidateProvider : IMetamorphosisCand
 			ModelDb.Card<CosmicIndifference>(),
 			ModelDb.Card<Arsenal>(),
 			ModelDb.Card<Glitterstream>(),
+			ModelDb.Card<SummonForth>(),
+			ModelDb.Card<Conqueror>(),
+			ModelDb.Card<MonarchsGaze>(),
 			// Necrobinder
 			ModelDb.Card<Misery>(),
 			ModelDb.Card<Defy>(),
 			ModelDb.Card<SleightOfFlesh>(),
 			ModelDb.Card<Graveblast>(),
 			ModelDb.Card<Neurosurge>(),
+			ModelDb.Card<Debilitate>(),
+			ModelDb.Card<Severance>(),
+			ModelDb.Card<EnfeeblingTouch>(),
+			ModelDb.Card<NoEscape>(),
 			// Defect
 			ModelDb.Card<AllForOne>(),
 			ModelDb.Card<Tempest>(),
@@ -726,6 +842,10 @@ internal sealed class DefaultMetamorphosisCandidateProvider : IMetamorphosisCand
 			ModelDb.Card<Iteration>(),
 			ModelDb.Card<FightThrough>(),
 			ModelDb.Card<Supercritical>(),
+			ModelDb.Card<Turbo>(),
+			ModelDb.Card<Hologram>(),
+			ModelDb.Card<Compact>(),
+			ModelDb.Card<FlakCannon>(),
 			// Supporting Actor
 			ModelDb.Card<Wine>(),
 			ModelDb.Card<OpenDefecation>(),
@@ -737,6 +857,7 @@ internal sealed class DefaultMetamorphosisCandidateProvider : IMetamorphosisCand
 			ModelDb.Card<TwoWordPoetScript>(),
 			ModelDb.Card<WaterFireInvincible>(),
 			ModelDb.Card<BuddyLongtaodi>(),
+			ModelDb.Card<OneManOneCity>(),
 		];
 		cards.AddRange(NewsanguoMetamorphosisInterop.GetCaoWeiCandidateCards());
 		cards.AddRange(NewsanguoMetamorphosisInterop.GetShuHanCandidateCards());
