@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using MegaCrit.Sts2.Core.Combat;
 using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Commands.Builders;
 using MegaCrit.Sts2.Core.Entities.Cards;
@@ -66,18 +67,20 @@ public sealed class TwoWordPoetScript : ScriptCardTemplate
 
 		AttackCommand attack = DamageCmd.Attack(DynamicVars.Damage.BaseValue)
 			.WithHitCount(DynamicVars.Repeat.IntValue)
-			.FromCard(this, cardPlay)
-			.WithHitFx("vfx/vfx_attack_slash");
-
+			.FromCard(this, cardPlay);
 		if (IsUpgraded)
 		{
 			ArgumentNullException.ThrowIfNull(CombatState, "CombatState");
-			await attack.TargetingAllOpponents(CombatState).Execute(choiceContext);
+			ICombatState combatState = CombatState;
+			attack.BeforeDamage(() => SquHitVfx.BlackSweepingBeam(Owner.Creature, combatState.HittableEnemies));
+			await attack.TargetingAllOpponents(combatState).Execute(choiceContext);
 		}
 		else
 		{
 			ArgumentNullException.ThrowIfNull(cardPlay.Target, "cardPlay.Target");
-			await attack.Targeting(cardPlay.Target).Execute(choiceContext);
+			Creature target = cardPlay.Target;
+			attack.BeforeDamage(() => SquHitVfx.BlackSmallMagicMissileAndStarryImpact(target));
+			await attack.Targeting(target).Execute(choiceContext);
 		}
 
 		await PowerCmd.Apply<ScriptTwoWordPoetPower>(

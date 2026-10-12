@@ -11,6 +11,7 @@ using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.CardPools;
+using MegaCrit.Sts2.Core.Nodes.Vfx;
 using Squ.Audio;
 using Squ.Character;
 using Squ.Combat;
@@ -71,27 +72,38 @@ public sealed class PartTimeGeneralScript : ScriptCardTemplate
 
 		List<CardModel> playedCards = [];
 		List<CardModel> strikeCards = ChooseStrikeCards(playCount);
-		for (int index = 0; index < strikeCards.Count; index++)
+		NGrandFinaleVfx? finale = strikeCards.Count > 0
+			? SquHitVfx.StartGrandFinale(Owner.Creature)
+			: null;
+		try
 		{
-			CardModel canonical = strikeCards[index];
-			CardModel source = combatState.CreateCard(canonical, Owner);
-			if (IsUpgraded && source.IsUpgradable)
+			for (int index = 0; index < strikeCards.Count; index++)
 			{
-				source.UpgradeInternal();
-				source.FinalizeUpgradeInternal();
-			}
+				finale = SquHitVfx.EnsureGrandFinale(Owner.Creature, finale);
+				CardModel canonical = strikeCards[index];
+				CardModel source = combatState.CreateCard(canonical, Owner);
+				if (IsUpgraded && source.IsUpgradable)
+				{
+					source.UpgradeInternal();
+					source.FinalizeUpgradeInternal();
+				}
 
-			CardModel autoPlayedCard = source.CreateDupe(Owner);
-			source.RemoveFromState();
-			playedCards.Add(autoPlayedCard);
-			await CardCmd.AutoPlay(
-				choiceContext,
-				autoPlayedCard,
-				target);
-			if (index < strikeCards.Count - 1)
-			{
-				await Cmd.Wait(0.2f);
+				CardModel autoPlayedCard = source.CreateDupe(Owner);
+				source.RemoveFromState();
+				playedCards.Add(autoPlayedCard);
+				await CardCmd.AutoPlay(
+					choiceContext,
+					autoPlayedCard,
+					target);
+				if (index < strikeCards.Count - 1)
+				{
+					await Cmd.Wait(0.3f);
+				}
 			}
+		}
+		finally
+		{
+			SquHitVfx.StopGrandFinale(finale);
 		}
 
 		var scriptPower = (ScriptPartTimeGeneralPower)ModelDb

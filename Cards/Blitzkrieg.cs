@@ -82,6 +82,11 @@ public sealed class Blitzkrieg : ModCardTemplate
 				.Targeting(cardPlay.Target)
 				.WithHitVfxNode(target => NStabVfx.Create(target, facingEnemies: true))
 				.WithHitFx("vfx/vfx_starry_impact")
+				.BeforeDamage(() =>
+				{
+					SquHitVfx.ThinSlice(cardPlay.Target);
+					return Task.CompletedTask;
+				})
 				.Execute(choiceContext);
 
 			await PlayAllStrikesAndBlitzkriegFromPiles(choiceContext, cardPlay.Target);

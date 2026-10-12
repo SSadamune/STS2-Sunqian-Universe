@@ -50,6 +50,11 @@ public sealed class StarryNightStrike : ModCardTemplate
 			.FromCard(this, cardPlay)
 			.Targeting(cardPlay.Target)
 			.WithHitFx("vfx/vfx_starry_impact")
+			.BeforeDamage(() =>
+			{
+				VfxCmd.PlayOnCreatureCenter(cardPlay.Target, "vfx/vfx_attack_slash");
+				return Task.CompletedTask;
+			})
 			.Execute(choiceContext);
 	}
 

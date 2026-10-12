@@ -112,16 +112,24 @@ public sealed class ScriptTwoWordPoetPower : StackableScriptPowerTemplate
 		AttackCommand attack = DamageCmd.Attack(Amount)
 			.Unpowered()
 			.WithHitCount(TurnStartHitCount)
-			.FromCard(sourceCard, null)
-			.WithHitFx("vfx/vfx_attack_slash");
-
+			.FromCard(sourceCard, null);
 		if (data.TargetsAllEnemies)
 		{
+			attack.BeforeDamage(() => SquHitVfx.BlackSweepingBeam(Owner, combatState.HittableEnemies));
 			await attack.TargetingAllOpponents(combatState)
 				.Execute(new ThrowingPlayerChoiceContext());
 		}
 		else
 		{
+			Creature? hitTarget = null;
+			attack.WithHitVfxNode(target =>
+				{
+					hitTarget = target;
+					return null;
+				})
+				.BeforeDamage(() => hitTarget is { IsAlive: true } target
+					? SquHitVfx.BlackSmallMagicMissileAndStarryImpact(target)
+					: Task.CompletedTask);
 			await attack.TargetingRandomOpponents(combatState)
 				.Execute(new ThrowingPlayerChoiceContext());
 		}

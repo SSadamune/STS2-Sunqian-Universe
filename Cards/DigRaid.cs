@@ -90,6 +90,11 @@ public sealed class DigRaid : ModCardTemplate
 			.FromCard(this, cardPlay)
 			.Targeting(cardPlay.Target)
 			.WithHitVfxNode(target => NSpikeSplashVfx.Create(target))
+			.BeforeDamage(() =>
+			{
+				SquHitVfx.FireBurst(cardPlay.Target);
+				return Task.CompletedTask;
+			})
 			.Execute(choiceContext);
 
 		await PowerCmd.Apply<BurningPower>(

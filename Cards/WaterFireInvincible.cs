@@ -66,6 +66,11 @@ public sealed class WaterFireInvincible : ModCardTemplate
 			.FromCard(this, cardPlay)
 			.Targeting(cardPlay.Target)
 			.WithHitFx("vfx/vfx_molten_fist")
+			.BeforeDamage(() =>
+			{
+				VfxCmd.PlayOnCreature(cardPlay.Target, "vfx/vfx_heavy_blunt");
+				return Task.CompletedTask;
+			})
 			.Execute(choiceContext);
 
 		int damageDealt = attackCommand.Results

@@ -76,6 +76,11 @@ public sealed class RelocateCapital : SlightRevisionCardTemplate<BurnCity>
 			.FromCard(this, cardPlay)
 			.Targeting(cardPlay.Target)
 			.WithHitFx("vfx/vfx_bloody_impact")
+			.BeforeDamage(() =>
+			{
+				VfxCmd.PlayOnCreatureCenter(cardPlay.Target, "vfx/vfx_attack_blunt");
+				return Task.CompletedTask;
+			})
 			.Execute(choiceContext);
 
 		int vigorSpent = vigorBefore - SquVigorSnapshot.GetAmount(owner);

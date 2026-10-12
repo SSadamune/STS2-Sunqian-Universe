@@ -1,14 +1,13 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Godot;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.Models.CardPools;
-using MegaCrit.Sts2.Core.Nodes.Vfx;
 using MegaCrit.Sts2.Core.ValueProps;
 using Squ.Audio;
 using Squ.Combat;
+using Squ.Powers;
 using STS2RitsuLib.Interop.AutoRegistration;
 using STS2RitsuLib.Scaffolding.Content;
 
@@ -22,6 +21,8 @@ public sealed class SalvoStrike : ModCardTemplate, IRandomEnemyTargetCount
 	public const int BaseDamage = 10;
 	public const int UpgradedDamage = 14;
 	public const int RandomEnemyTargetCount = 3;
+	public const int BaseArrowRainLayers = 2;
+	public const int BonusPercentPerArrowRainLayer = 50;
 
 	protected override IEnumerable<DynamicVar> CanonicalVars =>
 	[
@@ -50,17 +51,28 @@ public sealed class SalvoStrike : ModCardTemplate, IRandomEnemyTargetCount
 	protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
 	{
 		SquSfx.Play(SquSfx.ArrowCurtainEvent);
+		int arrowRainLayers = GetArrowRainLayers();
 		await SquRandomEnemyTargeting.ExecuteDistinctRandomEnemyDamage(
 			this,
 			choiceContext,
 			RandomEnemyTargetCount,
 			hitFx: null,
 			cardPlay: cardPlay,
-			hitVfxNode: target => NDaggerSprayImpactVfx.Create(target, new Color("b1ccca"), goingRight: true));
+			beforeHit: targets => SquHitVfx.ArrowRain(targets, arrowRainLayers));
 	}
 
 	protected override void OnUpgrade()
 	{
 		DynamicVars.Damage.UpgradeValueBy(UpgradedDamage - BaseDamage);
+	}
+
+	private int GetArrowRainLayers()
+	{
+		decimal bonusPercent = Owner.Creature
+			.GetPower<ScriptExecutionCommanderPower>()?.Amount ?? 0m;
+		int bonusLayers = bonusPercent > 0m
+			? (int)decimal.Floor(bonusPercent / BonusPercentPerArrowRainLayer)
+			: 0;
+		return BaseArrowRainLayers + bonusLayers;
 	}
 }

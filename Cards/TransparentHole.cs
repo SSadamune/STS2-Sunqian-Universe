@@ -151,12 +151,16 @@ public sealed class TransparentHole : ModCardTemplate, IRandomEnemyTargetCount, 
 		}
 
 		Color color = StabColorForWave(wave);
-		Color highlight = color.Lerp(Colors.White, 0.4f);
+		Color highlight = wave >= 7 ? DeepPurpleHighlight : color.Lerp(Colors.White, 0.4f);
 		stab.Connect(
 			Node.SignalName.Ready,
 			Callable.From(() => TintStab(stab, color, highlight)));
 		return stab;
 	}
+
+	private static readonly Color DeepPurple = new("240046");
+
+	private static readonly Color DeepPurpleHighlight = new("4A148C");
 
 	private static Color StabColorForWave(int wave)
 	{
@@ -165,7 +169,7 @@ public sealed class TransparentHole : ModCardTemplate, IRandomEnemyTargetCount, 
 			(1, new Color("FFFFFF")),
 			(3, new Color("FFE14A")),
 			(5, new Color("FF0000")),
-			(7, new Color("A803FF")),
+			(7, DeepPurple),
 		];
 		wave = Math.Max(wave, 1);
 		if (wave >= stops[^1].Wave)

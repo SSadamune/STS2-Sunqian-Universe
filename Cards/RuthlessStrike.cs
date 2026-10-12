@@ -87,6 +87,7 @@ public sealed class RuthlessStrike : ChargeCardTemplate, IPenetratingDamageCard
 			.BeforeDamage(() =>
 			{
 				SquHitVfx.ThinSlice(cardPlay.Target);
+				SquHitVfx.ThinSlice(cardPlay.Target);
 				return Task.CompletedTask;
 			})
 			.Execute(choiceContext);
