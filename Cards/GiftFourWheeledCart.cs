@@ -19,7 +19,8 @@ using STS2RitsuLib.Scaffolding.Content;
 
 namespace Squ.Cards;
 
-[RegisterCard(typeof(SunqianCardPool), StableEntryStem = "gift_four_wheeled_cart")]
+// Temporarily retired from the card pool. Restore this attribute to revive it.
+// [RegisterCard(typeof(SunqianCardPool), StableEntryStem = "gift_four_wheeled_cart")]
 public sealed class GiftFourWheeledCart : ModCardTemplate
 {
 	public const int StrengthAmount = 2;

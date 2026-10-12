@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using MegaCrit.Sts2.Core.Combat;
 using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
+using MegaCrit.Sts2.Core.Factories;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Helpers;
@@ -14,6 +15,7 @@ using MegaCrit.Sts2.Core.Models.Cards;
 using MegaCrit.Sts2.Core.Random;
 using Squ;
 using Squ.Character;
+using Squ.Combat;
 using Squ.Script;
 using STS2RitsuLib.Interop.AutoRegistration;
 using STS2RitsuLib.Scaffolding.Content;
@@ -264,20 +266,15 @@ public sealed class JuggleMultipleShoots : ModCardTemplate
 
 	private IEnumerable<CardModel> GetOtherCharacterPowersAtMostCost(int maxCost)
 	{
-		List<CardPoolModel> pools = Owner.UnlockState.CharacterCardPools.ToList();
-		pools.Remove(Owner.Character.CardPool);
-
-		return pools
-			.SelectMany(pool => pool.GetUnlockedCards(
-				Owner.UnlockState,
-				Owner.RunState.CardMultiplayerConstraint))
+		IEnumerable<CardModel> cards = CharacterCardPoolMembership.GetUnlockedCards(
+			Owner,
+			CharacterCardPoolMembership.GetOtherCharacterPools(Owner));
+		return CardFactory.FilterForCombat(cards)
 			.Where(card => IsEligiblePower(card, maxCost));
 	}
 
 	private static bool IsEligiblePower(CardModel card, int maxCost) =>
 		card.Type == CardType.Power
-		&& card.CanBeGeneratedInCombat
-		&& card.Rarity is not CardRarity.Basic and not CardRarity.Ancient and not CardRarity.Event
 		&& !card.EnergyCost.CostsX
 		&& GetCanonicalEnergyCost(card) <= maxCost
 		&& !SquCardTags.IsCharacterMechanicBound(card)

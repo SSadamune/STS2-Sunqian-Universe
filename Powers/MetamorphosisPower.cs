@@ -15,6 +15,7 @@ using MegaCrit.Sts2.Core.Localization;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.Models;
 using Squ.Cards;
+using Squ.Combat;
 using STS2RitsuLib.Interop.AutoRegistration;
 using STS2RitsuLib.Scaffolding.Content;
 
@@ -110,32 +111,49 @@ public sealed class MetamorphosisPower : ModPowerTemplate
 		if (Owner.IsDead
 			|| Owner.Player is not { } player
 			|| cardPlay.Card.Owner != player
-			|| CombatState?.CurrentSide != Owner.Side
-			|| !TryMarkTriggered(cardPlay.Card))
+			|| CombatState?.CurrentSide != Owner.Side)
+		{
+			return;
+		}
+
+		int triggerCount = MarkAndCountTriggers(cardPlay.Card);
+		if (triggerCount == 0)
 		{
 			return;
 		}
 
 		Flash();
-		await PlayerCmd.GainEnergy(Metamorphosis.EnergyGain, player);
+		await PlayerCmd.GainEnergy(Metamorphosis.EnergyGain * triggerCount, player);
 	}
 
-	private bool TryMarkTriggered(CardModel card)
+	private int MarkAndCountTriggers(CardModel card)
 	{
 		Data data = GetInternalData<Data>();
-		if (card.Pool.IsColorless)
+		int triggerCount = 0;
+		if (IsComplete
+			&& CharacterCardPoolMembership.IsColorless(card)
+			&& !data.TriggeredColorlessThisTurn)
 		{
-			if (!IsComplete || data.TriggeredColorlessThisTurn)
-			{
-				return false;
-			}
-
 			data.TriggeredColorlessThisTurn = true;
-			return true;
+			triggerCount++;
 		}
 
-		return data.RecordedPoolIds.Contains(card.Pool.Id)
-			&& data.TriggeredPoolIdsThisTurn.Add(card.Pool.Id);
+		if (Owner.Player is not { } player)
+		{
+			return triggerCount;
+		}
+
+		foreach (CardPoolModel pool in MetamorphosisCharacterCatalog.GetSupportedPools(player))
+		{
+			if (data.RecordedPoolIds.Contains(pool.Id)
+				&& CharacterCardPoolMembership.Contains(pool, card)
+				&& data.TriggeredPoolIdsThisTurn.Add(pool.Id))
+			{
+				triggerCount++;
+			}
+		}
+
+		return triggerCount;
 	}
 
 	private bool IsComplete
@@ -148,7 +166,7 @@ public sealed class MetamorphosisPower : ModPowerTemplate
 			}
 
 			ModelId currentPoolId = player.Character.CardPool.Id;
-			return MetamorphosisCharacterCatalog.SupportedPools
+			return MetamorphosisCharacterCatalog.GetSupportedPools(player)
 				.Where(pool => pool.Id != currentPoolId)
 				.All(pool => HasRecorded(pool));
 		}
@@ -162,7 +180,9 @@ public sealed class MetamorphosisPower : ModPowerTemplate
 			Id.Entry + ".characterSeparator").GetFormattedText() ?? "、";
 		((StringVar)DynamicVars[CharacterNamesVarName]).StringValue = string.Join(
 			separator,
-			MetamorphosisCharacterCatalog.SupportedPools
+			(Owner.Player is { } player
+				? MetamorphosisCharacterCatalog.GetSupportedPools(player)
+				: MetamorphosisCharacterCatalog.SupportedPools)
 				.Where(pool => data.RecordedPoolIds.Contains(pool.Id))
 				.Select(MetamorphosisCharacterCatalog.GetDisplayName));
 	}
@@ -187,15 +207,22 @@ public sealed class MetamorphosisPower : ModPowerTemplate
 			playedCards = playedCards.Append(currentlyResolvingCard);
 		}
 
+		IReadOnlyList<CardPoolModel> supportedPools =
+			MetamorphosisCharacterCatalog.GetSupportedPools(player);
 		foreach (CardModel playedCard in playedCards)
 		{
-			if (playedCard.Pool.IsColorless)
+			if (IsComplete && CharacterCardPoolMembership.IsColorless(playedCard))
 			{
-				data.TriggeredColorlessThisTurn |= IsComplete;
+				data.TriggeredColorlessThisTurn = true;
 			}
-			else if (data.RecordedPoolIds.Contains(playedCard.Pool.Id))
+
+			foreach (CardPoolModel pool in supportedPools)
 			{
-				data.TriggeredPoolIdsThisTurn.Add(playedCard.Pool.Id);
+				if (data.RecordedPoolIds.Contains(pool.Id)
+					&& CharacterCardPoolMembership.Contains(pool, playedCard))
+				{
+					data.TriggeredPoolIdsThisTurn.Add(pool.Id);
+				}
 			}
 		}
 	}

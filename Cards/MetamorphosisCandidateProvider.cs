@@ -7,6 +7,7 @@ using MegaCrit.Sts2.Core.Combat;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.Entities.Creatures;
 using MegaCrit.Sts2.Core.Entities.Players;
+using MegaCrit.Sts2.Core.Factories;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.CardPools;
 using MegaCrit.Sts2.Core.Models.Cards;
@@ -14,6 +15,7 @@ using MegaCrit.Sts2.Core.Models.Powers;
 using MegaCrit.Sts2.Core.MonsterMoves.Intents;
 using MegaCrit.Sts2.Core.Random;
 using Squ.Character;
+using Squ.Combat;
 using Squ.Interop;
 using Squ.Powers;
 using STS2RitsuLib.Combat.SecondaryResources;
@@ -25,9 +27,11 @@ namespace Squ.Cards;
 /// <see cref="Metamorphosis.CandidateProvider"/> allows a future implementation to use
 /// deck/hand-specific heuristics without changing the card's resolution flow.
 /// </summary>
+public sealed record MetamorphosisCandidate(CardModel Card, CardPoolModel? CharacterPool);
+
 public interface IMetamorphosisCandidateProvider
 {
-	IReadOnlyList<CardModel> BuildChoices(Metamorphosis source, int count);
+	IReadOnlyList<MetamorphosisCandidate> BuildChoices(Metamorphosis source, int count);
 }
 
 internal static class MetamorphosisCharacterCatalog
@@ -49,6 +53,10 @@ internal static class MetamorphosisCharacterCatalog
 			{
 				pools.Add(caoWeiPool);
 			}
+			if (NewsanguoMetamorphosisInterop.GetShuHanCardPool() is { } shuHanPool)
+			{
+				pools.Add(shuHanPool);
+			}
 
 			return pools;
 		}
@@ -56,6 +64,17 @@ internal static class MetamorphosisCharacterCatalog
 
 	public static bool IsSupported(CardPoolModel pool) =>
 		SupportedPools.Any(candidate => candidate.Id == pool.Id);
+
+	public static IReadOnlyList<CardPoolModel> GetSupportedPools(Player player)
+	{
+		HashSet<ModelId> playerPoolIds = CharacterCardPoolMembership
+			.GetCharacterPools(player)
+			.Select(pool => pool.Id)
+			.ToHashSet();
+		return SupportedPools
+			.Where(pool => playerPoolIds.Contains(pool.Id))
+			.ToList();
+	}
 
 	public static string GetDisplayName(CardPoolModel pool) => pool switch
 	{
@@ -73,12 +92,16 @@ internal static class MetamorphosisCharacterCatalog
 			.Title.GetFormattedText() ?? pool.Title,
 		_ when NewsanguoMetamorphosisInterop.IsCaoWeiCardPool(pool) =>
 			NewsanguoMetamorphosisInterop.GetCaoWeiDisplayName() ?? pool.Title,
+		_ when NewsanguoMetamorphosisInterop.IsShuHanCardPool(pool) =>
+			NewsanguoMetamorphosisInterop.GetShuHanDisplayName() ?? pool.Title,
 		_ => pool.Title,
 	};
 }
 
 internal sealed class DefaultMetamorphosisCandidateProvider : IMetamorphosisCandidateProvider
 {
+	private sealed record CanonicalChoice(CardModel Card, CardPoolModel? CharacterPool);
+
 	private enum SelectionStep
 	{
 		UrgentResponse = 1,
@@ -91,7 +114,7 @@ internal sealed class DefaultMetamorphosisCandidateProvider : IMetamorphosisCand
 
 	private const int FinalStep = (int)SelectionStep.Fallback;
 
-	public IReadOnlyList<CardModel> BuildChoices(Metamorphosis source, int count)
+	public IReadOnlyList<MetamorphosisCandidate> BuildChoices(Metamorphosis source, int count)
 	{
 		Player player = source.Owner;
 		ICombatState? combatState = source.CombatState;
@@ -101,23 +124,22 @@ internal sealed class DefaultMetamorphosisCandidateProvider : IMetamorphosisCand
 		}
 
 		MetamorphosisPower? power = player.Creature.GetPower<MetamorphosisPower>();
-		List<CardPoolModel> availablePools = MetamorphosisCharacterCatalog.SupportedPools
+		List<CardPoolModel> availablePools = MetamorphosisCharacterCatalog
+			.GetSupportedPools(player)
 			.Where(pool => pool.Id != player.Character.CardPool.Id)
 			.Where(pool => power is null || !power.HasRecorded(pool))
 			.ToList();
 
-		List<CardModel> pool = availablePools.Count > 0
-			? BuildTemporaryCharacterPool()
-				.Where(card => availablePools.Any(candidate => candidate.Id == card.Pool.Id))
-				.ToList()
-			: BuildColorlessPool();
+		List<CanonicalChoice> pool = availablePools.Count > 0
+			? BuildCharacterChoices(player, availablePools)
+			: BuildColorlessChoices();
 
 		if (pool.Count == 0)
 		{
 			return [];
 		}
 
-		List<CardModel> picked = PickCanonicalChoices(
+		List<CanonicalChoice> picked = PickCanonicalChoices(
 			source,
 			pool,
 			count,
@@ -125,51 +147,56 @@ internal sealed class DefaultMetamorphosisCandidateProvider : IMetamorphosisCand
 			player.RunState.Rng.CombatCardGeneration);
 
 		return picked
-			.Select(card => combatState.CreateCard(card, player))
+			.Select(choice => new MetamorphosisCandidate(
+				combatState.CreateCard(choice.Card, player),
+				choice.CharacterPool))
 			.ToList();
 	}
 
-	private static List<CardModel> PickCanonicalChoices(
+	private static List<CanonicalChoice> PickCanonicalChoices(
 		Metamorphosis source,
-		List<CardModel> pool,
+		List<CanonicalChoice> pool,
 		int count,
 		int remainingCharacterCount,
 		Rng rng)
 	{
-		List<CardModel> picked = [];
+		List<CanonicalChoice> picked = [];
 		int firstStepToCheck = 1;
 
 		while (picked.Count < count)
 		{
-			CardModel? choice = null;
+			CanonicalChoice? selectedChoice = null;
 			int matchedStep = firstStepToCheck;
 			for (int step = firstStepToCheck; step <= FinalStep; step++)
 			{
-				List<CardModel> matches = pool
-					.Where(card => !picked.Any(existing => existing.Id == card.Id))
-					.Where(card => MatchesStep(
+				List<CanonicalChoice> matches = pool
+					.Where(choice => !picked.Any(existing =>
+						existing.Card.Id == choice.Card.Id))
+					.Where(choice => MatchesStep(
 						source,
-						card,
+						choice,
 						picked,
 						remainingCharacterCount,
 						step))
+					.GroupBy(choice => choice.Card.Id)
+					.Select(group => group.First())
 					.ToList();
 				if (matches.Count == 0)
 				{
 					continue;
 				}
 
-				choice = rng.NextItem(matches);
+				selectedChoice = rng.NextItem(matches);
 				matchedStep = step;
 				break;
 			}
 
-			if (choice is null)
+			if (selectedChoice is null)
 			{
 				break;
 			}
 
-			picked.Add(choice);
+			picked.Add(selectedChoice);
 			// The final step is the catch-all and remains available for all remaining slots.
 			firstStepToCheck = Math.Min(matchedStep + 1, FinalStep);
 		}
@@ -186,17 +213,18 @@ internal sealed class DefaultMetamorphosisCandidateProvider : IMetamorphosisCand
 	/// </summary>
 	private static bool MatchesStep(
 		Metamorphosis source,
-		CardModel card,
-		IReadOnlyList<CardModel> picked,
+		CanonicalChoice choice,
+		IReadOnlyList<CanonicalChoice> picked,
 		int remainingCharacterCount,
 		int stepNumber)
 	{
 		Player player = source.Owner;
 		ICombatState combatState = source.CombatState!;
 		IReadOnlyList<CardModel> hand = PileType.Hand.GetPile(player).Cards;
+		CardModel card = choice.Card;
 		int remainingEnergy = player.PlayerCombatState?.Energy ?? 0;
 		bool matchesRoleCondition = MatchesRoleDeduplicationCondition(
-			card,
+			choice,
 			picked,
 			remainingCharacterCount);
 
@@ -216,7 +244,7 @@ internal sealed class DefaultMetamorphosisCandidateProvider : IMetamorphosisCand
 			SelectionStep.SunqianCaoWeiBalance => matchesRoleCondition
 				&& MatchesPlayableCondition(card, remainingEnergy)
 				&& MatchesHandBalanceCondition(hand, card)
-				&& MatchesSunqianCaoWeiCondition(player, card),
+				&& MatchesSunqianCaoWeiCondition(player, choice.CharacterPool),
 			SelectionStep.PlayablePower => matchesRoleCondition
 				&& MatchesPlayableCondition(card, remainingEnergy)
 				&& MatchesPowerCardCondition(card),
@@ -229,18 +257,20 @@ internal sealed class DefaultMetamorphosisCandidateProvider : IMetamorphosisCand
 	}
 
 	private static bool MatchesRoleDeduplicationCondition(
-		CardModel card,
-		IReadOnlyList<CardModel> picked,
+		CanonicalChoice choice,
+		IReadOnlyList<CanonicalChoice> picked,
 		int remainingCharacterCount)
 	{
 		if (remainingCharacterCount == 0)
 		{
-			return card.Pool.IsColorless;
+			return choice.CharacterPool is null
+				&& CharacterCardPoolMembership.IsColorless(choice.Card);
 		}
 
-		return !card.Pool.IsColorless
+		return choice.CharacterPool is not null
 			&& (remainingCharacterCount < 3
-				|| picked.All(existing => existing.Pool.Id != card.Pool.Id));
+				|| picked.All(existing =>
+					existing.CharacterPool?.Id != choice.CharacterPool.Id));
 	}
 
 	private static bool MatchesPlayableCondition(CardModel card, int remainingEnergy) =>
@@ -281,7 +311,10 @@ internal sealed class DefaultMetamorphosisCandidateProvider : IMetamorphosisCand
 		&& (card is Defy
 			|| NewsanguoMetamorphosisInterop.IsCard(
 				card,
-				NewsanguoMetamorphosisInterop.RetireEntry));
+				NewsanguoMetamorphosisInterop.RetireEntry)
+			|| NewsanguoMetamorphosisInterop.IsCard(
+				card,
+				NewsanguoMetamorphosisInterop.HeavenAndEarthEntry));
 
 	private static bool MatchesStrandedCardCondition(
 		IReadOnlyList<CardModel> hand,
@@ -290,7 +323,10 @@ internal sealed class DefaultMetamorphosisCandidateProvider : IMetamorphosisCand
 		remainingEnergy == 0
 			&& hand.Any(candidate => !candidate.EnergyCost.CostsX
 				&& candidate.EnergyCost.GetResolved() > 0)
-			&& card is Wine or Production;
+			&& (card is Wine or Production
+				|| NewsanguoMetamorphosisInterop.IsCard(
+					card,
+					NewsanguoMetamorphosisInterop.AutoPilotEntry));
 
 	private static bool MatchesExcessEnergyCondition(
 		IReadOnlyList<CardModel> hand,
@@ -303,7 +339,10 @@ internal sealed class DefaultMetamorphosisCandidateProvider : IMetamorphosisCand
 			&& (card is Backflip or BurningPact or Skim or Audition
 				|| NewsanguoMetamorphosisInterop.IsCard(
 					card,
-					NewsanguoMetamorphosisInterop.LetsDiscussEntry));
+					NewsanguoMetamorphosisInterop.LetsDiscussEntry)
+				|| NewsanguoMetamorphosisInterop.IsCard(
+					card,
+					NewsanguoMetamorphosisInterop.AutoPilotEntry));
 	}
 
 	private static bool MatchesExcessBlockCondition(
@@ -328,13 +367,19 @@ internal sealed class DefaultMetamorphosisCandidateProvider : IMetamorphosisCand
 			&& (card is Whirlwind or TwoWordPoetScript
 				|| NewsanguoMetamorphosisInterop.IsCard(
 					card,
-					NewsanguoMetamorphosisInterop.MaClanQuadBlastEntry));
+					NewsanguoMetamorphosisInterop.MaClanQuadBlastEntry)
+				|| NewsanguoMetamorphosisInterop.IsCard(
+					card,
+					NewsanguoMetamorphosisInterop.TenThousandTransparentHolesEntry));
 	}
 
-	private static bool MatchesSunqianCaoWeiCondition(Player player, CardModel card) =>
-		(player.Character is not SunqianCharacter && card.Pool is SunqianCardPool)
+	private static bool MatchesSunqianCaoWeiCondition(
+		Player player,
+		CardPoolModel? characterPool) =>
+		(player.Character is not SunqianCharacter && characterPool is SunqianCardPool)
 		|| (!NewsanguoPublicApiInterop.IsCaoWeiCharacter(player.Character)
-			&& NewsanguoMetamorphosisInterop.IsCaoWeiCardPool(card.Pool));
+			&& characterPool is not null
+			&& NewsanguoMetamorphosisInterop.IsCaoWeiCardPool(characterPool));
 
 	private static bool MatchesPowerCardCondition(CardModel card) =>
 		card.Type == CardType.Power;
@@ -362,6 +407,28 @@ internal sealed class DefaultMetamorphosisCandidateProvider : IMetamorphosisCand
 		IEnumerable<Creature> targets = combatState.GetOpponentsOf(enemy);
 		return intents.OfType<AttackIntent>().Sum(intent => intent.GetTotalDamage(targets, enemy));
 	}
+
+	private static List<CanonicalChoice> BuildCharacterChoices(
+		Player player,
+		IEnumerable<CardPoolModel> pools)
+	{
+		HashSet<ModelId> allowedIds = BuildTemporaryCharacterPool()
+			.Select(card => card.Id)
+			.ToHashSet();
+		return pools
+			.SelectMany(pool => CardFactory.FilterForCombat(pool.GetUnlockedCards(
+					player.UnlockState,
+					player.RunState.CardMultiplayerConstraint))
+				.Where(card => allowedIds.Contains(card.Id))
+				.Select(card => new CanonicalChoice(card, pool)))
+			.ToList();
+	}
+
+	private static List<CanonicalChoice> BuildColorlessChoices() =>
+		CardFactory.FilterForCombat(BuildColorlessPool())
+			.Where(CharacterCardPoolMembership.IsColorless)
+			.Select(card => new CanonicalChoice(card, null))
+			.ToList();
 
 	private static List<CardModel> BuildColorlessPool() =>
 	[
@@ -420,6 +487,7 @@ internal sealed class DefaultMetamorphosisCandidateProvider : IMetamorphosisCand
 			ModelDb.Card<BuddyLongtaodi>(),
 		];
 		cards.AddRange(NewsanguoMetamorphosisInterop.GetCaoWeiCandidateCards());
+		cards.AddRange(NewsanguoMetamorphosisInterop.GetShuHanCandidateCards());
 		return cards;
 	}
 }

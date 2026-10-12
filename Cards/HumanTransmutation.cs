@@ -16,6 +16,7 @@ using MegaCrit.Sts2.Core.Random;
 using Squ;
 using Squ.Audio;
 using Squ.Character;
+using Squ.Combat;
 using STS2RitsuLib.Interop.AutoRegistration;
 using STS2RitsuLib.Scaffolding.Content;
 
@@ -167,16 +168,15 @@ public sealed class HumanTransmutation : ModCardTemplate
 
 	private CardModel? PickRandomAttackForRarity(CardRarity rarity, Rng rng)
 	{
-		List<CardPoolModel> allPools = Owner.UnlockState.CharacterCardPools.ToList();
+		IReadOnlyList<CardPoolModel> allPools =
+			CharacterCardPoolMembership.GetCharacterPools(Owner);
 		if (allPools.Count == 0)
 		{
 			return null;
 		}
 
-		IEnumerable<CardModel> eligibleAttacks = allPools
-			.SelectMany(pool => pool.GetUnlockedCards(
-				Owner.UnlockState,
-				Owner.RunState.CardMultiplayerConstraint))
+		IEnumerable<CardModel> eligibleAttacks = CharacterCardPoolMembership
+			.GetUnlockedCards(Owner, allPools)
 			.Where(card => IsEligibleAttack(card, rarity));
 
 		return CardFactory.GetDistinctForCombat(Owner, eligibleAttacks, 1, rng).FirstOrDefault();

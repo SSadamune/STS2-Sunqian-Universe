@@ -6,6 +6,7 @@ using MegaCrit.Sts2.Core.Combat;
 using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.Entities.Creatures;
+using MegaCrit.Sts2.Core.Factories;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Models;
@@ -113,17 +114,11 @@ public sealed class PartTimeGeneralScript : ScriptCardTemplate
 			return [];
 		}
 
-		List<CardPoolModel> pools = Owner.UnlockState.CharacterCardPools
-			.Where(pool => pool.Id != Owner.Character.CardPool.Id)
-			.ToList();
-
-		List<CardModel> candidates = pools
-			.SelectMany(pool => pool.GetUnlockedCards(
-				Owner.UnlockState,
-				Owner.RunState.CardMultiplayerConstraint))
+		IEnumerable<CardModel> cards = CharacterCardPoolMembership.GetUnlockedCards(
+			Owner,
+			CharacterCardPoolMembership.GetOtherCharacterPools(Owner));
+		List<CardModel> candidates = CardFactory.FilterForCombat(cards)
 			.Where(IsEligibleStrike)
-			.GroupBy(card => card.Id)
-			.Select(group => group.First())
 			.ToList();
 
 		Owner.RunState.Rng.CombatCardGeneration.Shuffle(candidates);
@@ -132,6 +127,5 @@ public sealed class PartTimeGeneralScript : ScriptCardTemplate
 
 	private static bool IsEligibleStrike(CardModel card) =>
 		card.Type == CardType.Attack
-		&& card.Tags.Contains(CardTag.Strike)
-		&& card.Rarity != CardRarity.Basic;
+		&& card.Tags.Contains(CardTag.Strike);
 }

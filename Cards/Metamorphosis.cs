@@ -51,11 +51,14 @@ public sealed class Metamorphosis : ModCardTemplate
 
 	protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
 	{
-		List<CardModel> choices = CandidateProvider.BuildChoices(this, ChoiceCount).ToList();
-		if (choices.Count == 0)
+		List<MetamorphosisCandidate> candidates =
+			CandidateProvider.BuildChoices(this, ChoiceCount).ToList();
+		if (candidates.Count == 0)
 		{
 			return;
 		}
+
+		List<CardModel> choices = candidates.Select(candidate => candidate.Card).ToList();
 
 		if (IsUpgraded)
 		{
@@ -72,16 +75,18 @@ public sealed class Metamorphosis : ModCardTemplate
 			Owner,
 			canSkip: false);
 		selected ??= choices[0];
+		MetamorphosisCandidate selectedCandidate = candidates.First(candidate =>
+			ReferenceEquals(candidate.Card, selected) || candidate.Card.Id == selected.Id);
 
 		await CardPileCmd.AddGeneratedCardToCombat(selected, PileType.Hand, Owner);
-		await RecordSelectedCharacter(choiceContext, selected);
+		await RecordSelectedCharacter(choiceContext, selectedCandidate.CharacterPool);
 	}
 
 	private async Task RecordSelectedCharacter(
 		PlayerChoiceContext choiceContext,
-		CardModel selected)
+		CardPoolModel? selectedPool)
 	{
-		if (!MetamorphosisCharacterCatalog.IsSupported(selected.Pool))
+		if (selectedPool is null || !MetamorphosisCharacterCatalog.IsSupported(selectedPool))
 		{
 			// Once every supported character is recorded, only colorless cards are offered;
 			// later plays deliberately leave the power unchanged.
@@ -93,7 +98,7 @@ public sealed class Metamorphosis : ModCardTemplate
 		{
 			MetamorphosisPower created =
 				(MetamorphosisPower)ModelDb.Power<MetamorphosisPower>().ToMutable();
-			created.Record(selected.Pool);
+			created.Record(selectedPool);
 			await PowerCmd.Apply(
 				choiceContext,
 				created,
@@ -106,7 +111,7 @@ public sealed class Metamorphosis : ModCardTemplate
 			return;
 		}
 
-		if (!existing.Record(selected.Pool))
+		if (!existing.Record(selectedPool))
 		{
 			return;
 		}
