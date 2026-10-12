@@ -180,7 +180,7 @@ public sealed class MetamorphosisPower : ModPowerTemplate
 			Id.Entry + ".characterSeparator").GetFormattedText() ?? "、";
 		((StringVar)DynamicVars[CharacterNamesVarName]).StringValue = string.Join(
 			separator,
-			(Owner.Player is { } player
+			(Owner?.Player is { } player
 				? MetamorphosisCharacterCatalog.GetSupportedPools(player)
 				: MetamorphosisCharacterCatalog.SupportedPools)
 				.Where(pool => data.RecordedPoolIds.Contains(pool.Id))

@@ -11,6 +11,7 @@ using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Localization;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.Models;
+using MegaCrit.Sts2.Core.Models.Cards;
 using MegaCrit.Sts2.Core.Models.Enchantments;
 using MegaCrit.Sts2.Core.Random;
 using Squ;
@@ -185,6 +186,7 @@ public sealed class HumanTransmutation : ModCardTemplate
 	private static bool IsEligibleAttack(CardModel card, CardRarity rarity) =>
 		card.Type == CardType.Attack
 		&& card.Rarity == rarity
+		&& card is not TimesUp
 		&& !SquCardTags.IsCharacterMechanicBound(card)
 		&& !CostsStars(card)
 		&& !InvolvesOsty(card);

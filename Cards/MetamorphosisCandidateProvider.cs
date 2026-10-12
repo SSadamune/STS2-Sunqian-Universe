@@ -210,10 +210,10 @@ internal sealed class DefaultMetamorphosisCandidateProvider : IMetamorphosisCand
 	/// <summary>
 	/// Each step combines reusable conditions:
 	/// 1 = role deduplication/colorless phase; 2 = playable resource cost;
-	/// 3-5 = urgent responses; 6-7 = resource responses; 8 = excess block;
+	/// 3-5 = urgent responses; 6-7 = resource/early-turn responses; 8 = excess block;
 	/// 9 = Power; 10 = unnamed-card hand type balance; 11 = any card;
 	/// 12 = Sunqian/Cao Wei cross-character pool; 13 = high offensive resources;
-	/// 14 = early safe Power; 15 = Eternal Armor while Plating is active;
+	/// 14 = early safe unnamed Power; 15 = Eternal Armor while Plating is active;
 	/// 16 = Vital Spark counter; 17 = high Dexterity; 18 = All for One density;
 	/// 19 = Iteration status generation; 20 = defense pressure;
 	/// 21 = Sleight of Flesh debuff density; 22 = Supermassive exhaust density.
@@ -246,7 +246,12 @@ internal sealed class DefaultMetamorphosisCandidateProvider : IMetamorphosisCand
 			SelectionStep.ResourceResponse => matchesRoleCondition
 				&& MatchesPlayableCondition(card, remainingEnergy)
 				&& (MatchesStrandedCardCondition(hand, card, remainingEnergy)
-					|| MatchesExcessEnergyCondition(hand, card, remainingEnergy)
+					|| MatchesExcessEnergyCondition(
+						player,
+						combatState,
+						hand,
+						card,
+						remainingEnergy)
 					|| MatchesHighOffensiveResourcesCondition(player, card)
 					|| MatchesHighDexterityCondition(player, card)
 					|| MatchesDefensePressureCondition(player, combatState, card)),
@@ -351,18 +356,23 @@ internal sealed class DefaultMetamorphosisCandidateProvider : IMetamorphosisCand
 					NewsanguoMetamorphosisInterop.AutoPilotEntry));
 
 	private static bool MatchesExcessEnergyCondition(
+		Player player,
+		ICombatState combatState,
 		IReadOnlyList<CardModel> hand,
 		CardModel card,
 		int remainingEnergy)
 	{
 		int attacksAndSkills = hand.Count(candidate =>
 			candidate.Type is CardType.Attack or CardType.Skill);
-		return remainingEnergy > attacksAndSkills
+		int cardsPlayedThisTurn = CombatManager.Instance.History.CardPlaysFinished.Count(entry =>
+			entry.HappenedThisTurn(combatState)
+			&& entry.CardPlay.Player == player
+			&& entry.CardPlay.PlayIndex == 0);
+		return (remainingEnergy > attacksAndSkills || cardsPlayedThisTurn <= 2)
 			&& (card is Backflip
 				or BurningPact
 				or Skim
 				or Audition
-				or Graveblast
 				or BuddyLongtaodi
 				|| NewsanguoMetamorphosisInterop.IsCard(
 					card,
@@ -408,7 +418,8 @@ internal sealed class DefaultMetamorphosisCandidateProvider : IMetamorphosisCand
 		CardModel card) =>
 		player.PlayerCombatState?.TurnNumber <= 3
 		&& player.Creature.Block - GetTotalIntentDamage(combatState) >= -20
-		&& card.Type == CardType.Power;
+		&& card.Type == CardType.Power
+		&& !IsExplicitlyNamedByAnotherCondition(card);
 
 	private static bool MatchesPlatingEternalArmorCondition(
 		Player player,
@@ -568,7 +579,6 @@ internal sealed class DefaultMetamorphosisCandidateProvider : IMetamorphosisCand
 			or Backflip
 			or Skim
 			or Audition
-			or Graveblast
 			or BuddyLongtaodi
 			or Afterimage
 			or TwoWordPoetScript
