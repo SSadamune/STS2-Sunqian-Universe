@@ -50,8 +50,8 @@ public sealed class PartTimeGeneralScript : ScriptCardTemplate
 		PortraitPath: "res://images/cards/PartTimeGeneralScript.png");
 
 	private const float FirstStrikeLeadInSeconds = 1.2f;
-	private const float StrikeIntervalSeconds = 0.3f;
-	private const float StrikeShakeDelaySeconds = 0.125f;
+	private const float StrikeIntervalSeconds = 0.15f;
+	private const float StrikeShakeDelaySeconds = 0.4f;
 
 	public PartTimeGeneralScript()
 		: base(0, CardType.Attack, CardRarity.Rare, TargetType.AnyEnemy, true)

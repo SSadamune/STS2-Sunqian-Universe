@@ -34,6 +34,8 @@ public sealed class MusouAttack : ModCardTemplate
 	public const int UpgradedDamage = 19;
 	public const int CanonicalDexterityMultiplier = 3;
 	public const int UpgradedDexterityMultiplier = 4;
+	public const int DexterityPerExtraThinSlice = 2;
+	public const float ResolutionDelaySeconds = 0.3f;
 
 	public const string DexterityMultVarName = "DexterityMult";
 
@@ -63,30 +65,42 @@ public sealed class MusouAttack : ModCardTemplate
 		ArgumentNullException.ThrowIfNull(CombatState, nameof(CombatState));
 
 		decimal dexterityBonus = GetDexterityBonus(this);
+		decimal dexterity = Owner.Creature.GetPower<DexterityPower>()?.Amount ?? 0m;
+		int thinSliceCount = GetThinSliceCount(dexterity);
 		SquSfx.Play(SquSfx.MusouAttackThoughtLuBuEvent);
 		AttackCommand attack = DamageCmd.Attack(DynamicVars.Damage.BaseValue + dexterityBonus)
 			.FromCard(this, cardPlay)
 			.TargetingAllOpponents(CombatState)
-			.WithHitFx("vfx/vfx_giant_horizontal_slash");
-		if ((Owner.Creature.GetPower<DexterityPower>()?.Amount ?? 0m) > 4m)
+			.WithHitFx("vfx/vfx_giant_horizontal_slash")
+			.WithWaitBeforeHit(ResolutionDelaySeconds, ResolutionDelaySeconds)
+			.AfterAttackerAnim(() =>
+			{
+				SquHitVfx.PlayFinaleAnticipation(Owner.Creature);
+				return Task.CompletedTask;
+			});
+		if (thinSliceCount > 0)
 		{
-			attack.WithHitVfxNode(NGrandFinaleImpactVfx.Create);
-		}
-
-		await attack
-			.BeforeDamage(() =>
+			attack.WithHitVfxNode(NBigSlashVfx.Create);
+			attack.BeforeDamage(() =>
 			{
 				foreach (Creature enemy in CombatState.HittableEnemies)
 				{
-					if (enemy.IsAlive)
+					if (!enemy.IsAlive)
+					{
+						continue;
+					}
+
+					for (int slice = 0; slice < thinSliceCount; slice++)
 					{
 						SquHitVfx.ThinSlice(enemy);
 					}
 				}
 
 				return Task.CompletedTask;
-			})
-			.Execute(choiceContext);
+			});
+		}
+
+		await attack.Execute(choiceContext);
 
 		CardValueRetain.TryAddBaseDamage(this, dexterityBonus);
 	}
@@ -116,6 +130,11 @@ public sealed class MusouAttack : ModCardTemplate
 			: CanonicalDexterityMultiplier;
 		return dexterity * multiplier;
 	}
+
+	private static int GetThinSliceCount(decimal dexterity) =>
+		dexterity > 0m
+			? 1 + (int)decimal.Floor(dexterity / DexterityPerExtraThinSlice)
+			: 0;
 
 	/// <summary>
 	/// 卡面伤害预览包含当前敏捷加成；<see cref="DynamicVar.BaseValue"/> 保持印面数值，

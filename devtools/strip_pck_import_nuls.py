@@ -24,6 +24,12 @@ EXCLUDED_ENTRIES = {
     ".godot/global_script_class_cache.cfg",
     ".godot/uid_cache.bin",
 }
+# Exporter bakes these and drops ext_resources that live in the base game.
+# Ship the text scenes so those paths still resolve at runtime.
+TEXT_SCENES = (
+    "scenes/vfx/vfx_part_time_general_finale.tscn",
+    "scenes/vfx/vfx_grand_finale_anticipation.tscn",
+)
 
 
 def _pad(alignment: int, n: int) -> int:
@@ -124,7 +130,7 @@ def fix_pck(pck_path: Path) -> tuple[int, int]:
     stripped = 0
     excluded = 0
     for name, _flags, data in entries:
-        if name in EXCLUDED_ENTRIES:
+        if name in EXCLUDED_ENTRIES or _is_exported_text_scene_binary(name):
             excluded += 1
             continue
         if name.endswith(".import"):
@@ -135,8 +141,20 @@ def fix_pck(pck_path: Path) -> tuple[int, int]:
         else:
             by_name[name] = data
 
+    repo = Path(__file__).resolve().parents[1]
+    for scene in TEXT_SCENES:
+        by_name[scene] = (repo / scene).read_bytes()
+
     write_pck(pck_path, maj, minor, patch, list(by_name.items()))
     return stripped, excluded
+
+
+def _is_exported_text_scene_binary(name: str) -> bool:
+    for scene in TEXT_SCENES:
+        stem = scene.rsplit("/", 1)[-1].removesuffix(".tscn")
+        if name == f"{scene}.remap" or name.endswith(f"{stem}.scn"):
+            return True
+    return False
 
 
 def main() -> int:

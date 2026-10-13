@@ -8,6 +8,8 @@ using MegaCrit.Sts2.Core.Helpers;
 using MegaCrit.Sts2.Core.Nodes.Combat;
 using MegaCrit.Sts2.Core.Nodes.Rooms;
 using MegaCrit.Sts2.Core.Nodes.Vfx;
+using MegaCrit.Sts2.Core.Nodes.Vfx.Utilities;
+using MegaCrit.Sts2.Core.TestSupport;
 
 #nullable enable
 
@@ -18,10 +20,84 @@ namespace Squ.Combat;
 /// </summary>
 internal static class SquHitVfx
 {
+	public const string FinaleAnticipationScenePath = "res://scenes/vfx/vfx_grand_finale_anticipation.tscn";
+
 	private static readonly Color FireMissileTint = new("FF8B57");
 	private static readonly Color SmallMissileTint = new("50b598");
 	private static readonly Color BlackTint = Colors.Black;
 	private const float SweepingBeamImpactDelaySeconds = 0.5f;
+	private const float FinaleAnticipationHoldSeconds = 2f;
+
+	public static void Scream(Creature target) =>
+		VfxCmd.PlayOnCreatureCenter(target, VfxCmd.screamVfx);
+
+	public static void Scream(IEnumerable<Creature> targets)
+	{
+		foreach (Creature target in targets)
+		{
+			if (target.IsAlive)
+			{
+				Scream(target);
+			}
+		}
+	}
+
+	public static void SpookyScream(Creature target) =>
+		VfxCmd.PlayOnCreatureCenter(target, VfxCmd.spookyScreamVfx);
+
+	public static void SpookyScream(IEnumerable<Creature> targets)
+	{
+		foreach (Creature target in targets)
+		{
+			if (target.IsAlive)
+			{
+				SpookyScream(target);
+			}
+		}
+	}
+
+	/// <summary>
+	/// 华丽收场蓄力粒子的独立副本，播在该生物的特效生成点上。
+	/// <paramref name="durationSeconds"/> 大于 0 时，把各发射器的寿命和位移按比例拉长到该时长。
+	/// <paramref name="tint"/> 有值时覆盖每个发射器的颜色。
+	/// </summary>
+	public static void PlayFinaleAnticipation(Creature owner, float durationSeconds = 0f, Color? tint = null)
+	{
+		if (TestMode.IsOn)
+		{
+			return;
+		}
+
+		NCreature? creatureNode = NCombatRoom.Instance?.GetCreatureNode(owner);
+		Node? container = NCombatRoom.Instance?.CombatVfxContainer;
+		PackedScene? packed = ModSceneCache.Get(FinaleAnticipationScenePath);
+		if (creatureNode == null || container == null || packed == null)
+		{
+			return;
+		}
+
+		NParticlesContainer? anticipation = packed.Instantiate<NParticlesContainer>();
+		if (anticipation == null)
+		{
+			return;
+		}
+
+		if (durationSeconds > 0f)
+		{
+			StretchAnticipation(anticipation, durationSeconds);
+		}
+
+		if (tint is { } color)
+		{
+			TintAnticipation(anticipation, color);
+		}
+
+		container.AddChildSafely(anticipation);
+		anticipation.GlobalPosition = creatureNode.VfxSpawnPosition;
+		anticipation.Restart();
+		float holdSeconds = durationSeconds > 0f ? durationSeconds : FinaleAnticipationHoldSeconds;
+		_ = TaskHelper.RunSafely(ReleaseFinaleAnticipation(anticipation, holdSeconds));
+	}
 
 	public static void FireBurst(Creature target) =>
 		Spawn(NFireBurstVfx.Create(target, 0.75f));
@@ -192,6 +268,66 @@ internal static class SquHitVfx
 		if (any)
 		{
 			await Cmd.Wait(wait);
+		}
+	}
+
+	private static void TintAnticipation(Node node, Color color)
+	{
+		foreach (Node child in node.GetChildren())
+		{
+			if (child is CanvasItem item)
+			{
+				item.SelfModulate = color;
+			}
+
+			TintAnticipation(child, color);
+		}
+	}
+
+	private static void StretchAnticipation(Node node, float durationSeconds)
+	{
+		foreach (Node child in node.GetChildren())
+		{
+			if (child is GpuParticles2D particles)
+			{
+				StretchParticles(particles, durationSeconds);
+			}
+
+			StretchAnticipation(child, durationSeconds);
+		}
+	}
+
+	private static void StretchParticles(GpuParticles2D particles, float durationSeconds)
+	{
+		float lifetime = (float)particles.Lifetime;
+		if (lifetime <= 0.001f || durationSeconds <= lifetime)
+		{
+			return;
+		}
+
+		float scale = durationSeconds / lifetime;
+		particles.Lifetime = durationSeconds;
+		if (particles.ProcessMaterial is not ParticleProcessMaterial source)
+		{
+			return;
+		}
+
+		ParticleProcessMaterial material = (ParticleProcessMaterial)source.Duplicate();
+		material.LifetimeRandomness = 0f;
+		material.InitialVelocityMin /= scale;
+		material.InitialVelocityMax /= scale;
+		material.AngularVelocityMin /= scale;
+		material.AngularVelocityMax /= scale;
+		material.Gravity /= scale;
+		particles.ProcessMaterial = material;
+	}
+
+	private static async Task ReleaseFinaleAnticipation(Node anticipation, float holdSeconds)
+	{
+		await Cmd.Wait(holdSeconds);
+		if (GodotObject.IsInstanceValid(anticipation))
+		{
+			anticipation.QueueFreeSafely();
 		}
 	}
 

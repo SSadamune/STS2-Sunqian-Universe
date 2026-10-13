@@ -14,6 +14,9 @@ $ModDir = Join-Path $GameDir "mods\$ModId"
 
 Write-Host "Building $ModId..." -ForegroundColor Cyan
 dotnet build (Join-Path $ProjectRoot "$ModId.csproj") -c Debug
+if ($LASTEXITCODE -ne 0) {
+    throw "dotnet build failed with exit code $LASTEXITCODE"
+}
 
 if (-not (Test-Path $GodotExe)) {
     throw "Godot not found at: $GodotExe"
@@ -42,10 +45,9 @@ while (-not (Test-Path $pckPath)) {
     }
     Start-Sleep -Milliseconds 250
 }
-if (-not $godotProcess.HasExited) {
-    $godotProcess.WaitForExit()
-}
-if ($godotProcess.ExitCode -ne 0) {
+$godotProcess.WaitForExit()
+$godotProcess.Refresh()
+if ($null -ne $godotProcess.ExitCode -and $godotProcess.ExitCode -ne 0) {
     Write-Warning "Godot exited with code $($godotProcess.ExitCode), but PCK was created."
 }
 

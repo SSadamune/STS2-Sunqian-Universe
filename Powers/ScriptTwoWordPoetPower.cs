@@ -115,7 +115,11 @@ public sealed class ScriptTwoWordPoetPower : StackableScriptPowerTemplate
 			.FromCard(sourceCard, null);
 		if (data.TargetsAllEnemies)
 		{
-			attack.BeforeDamage(() => SquHitVfx.BlackSweepingBeam(Owner, combatState.HittableEnemies));
+			attack.BeforeDamage(async () =>
+			{
+				await SquHitVfx.BlackSweepingBeam(Owner, combatState.HittableEnemies);
+				SquHitVfx.SpookyScream(combatState.HittableEnemies);
+			});
 			await attack.TargetingAllOpponents(combatState)
 				.Execute(new ThrowingPlayerChoiceContext());
 		}
@@ -127,9 +131,16 @@ public sealed class ScriptTwoWordPoetPower : StackableScriptPowerTemplate
 					hitTarget = target;
 					return null;
 				})
-				.BeforeDamage(() => hitTarget is { IsAlive: true } target
-					? SquHitVfx.BlackSmallMagicMissileAndStarryImpact(target)
-					: Task.CompletedTask);
+				.BeforeDamage(async () =>
+				{
+					if (hitTarget is not { IsAlive: true } target)
+					{
+						return;
+					}
+
+					await SquHitVfx.BlackSmallMagicMissileAndStarryImpact(target);
+					SquHitVfx.SpookyScream(target);
+				});
 			await attack.TargetingRandomOpponents(combatState)
 				.Execute(new ThrowingPlayerChoiceContext());
 		}

@@ -72,14 +72,22 @@ public sealed class TwoWordPoetScript : ScriptCardTemplate
 		{
 			ArgumentNullException.ThrowIfNull(CombatState, "CombatState");
 			ICombatState combatState = CombatState;
-			attack.BeforeDamage(() => SquHitVfx.BlackSweepingBeam(Owner.Creature, combatState.HittableEnemies));
+			attack.BeforeDamage(async () =>
+			{
+				await SquHitVfx.BlackSweepingBeam(Owner.Creature, combatState.HittableEnemies);
+				SquHitVfx.Scream(combatState.HittableEnemies);
+			});
 			await attack.TargetingAllOpponents(combatState).Execute(choiceContext);
 		}
 		else
 		{
 			ArgumentNullException.ThrowIfNull(cardPlay.Target, "cardPlay.Target");
 			Creature target = cardPlay.Target;
-			attack.BeforeDamage(() => SquHitVfx.BlackSmallMagicMissileAndStarryImpact(target));
+			attack.BeforeDamage(async () =>
+			{
+				await SquHitVfx.BlackSmallMagicMissileAndStarryImpact(target);
+				SquHitVfx.Scream(target);
+			});
 			await attack.Targeting(target).Execute(choiceContext);
 		}
 

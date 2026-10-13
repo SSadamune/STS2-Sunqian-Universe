@@ -4,6 +4,9 @@
     <EnableDynamicLoading>true</EnableDynamicLoading>
     <OutputPath>.builds</OutputPath>
     <RootNamespace>Squ</RootNamespace>
+    <!-- Godot writes generated AssemblyInfo into .godot/. Command-line builds
+         otherwise compile those files and the SDK copies, which duplicates attributes. -->
+    <DefaultItemExcludes>$(DefaultItemExcludes);.godot/**;tests/**</DefaultItemExcludes>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="sts2">

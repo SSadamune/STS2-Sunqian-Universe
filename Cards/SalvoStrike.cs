@@ -51,14 +51,13 @@ public sealed class SalvoStrike : ModCardTemplate, IRandomEnemyTargetCount
 	protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
 	{
 		SquSfx.Play(SquSfx.ArrowCurtainEvent);
-		int arrowRainLayers = GetArrowRainLayers();
 		await SquRandomEnemyTargeting.ExecuteDistinctRandomEnemyDamage(
 			this,
 			choiceContext,
 			RandomEnemyTargetCount,
 			hitFx: null,
 			cardPlay: cardPlay,
-			beforeHit: targets => SquHitVfx.ArrowRain(targets, arrowRainLayers));
+			beforeHit: targets => SquHitVfx.ArrowRain(targets, GetArrowRainLayers()));
 	}
 
 	protected override void OnUpgrade()
@@ -68,6 +67,11 @@ public sealed class SalvoStrike : ModCardTemplate, IRandomEnemyTargetCount
 
 	private int GetArrowRainLayers()
 	{
+		if (CombatState?.HittableEnemies.Count != 1)
+		{
+			return BaseArrowRainLayers;
+		}
+
 		decimal bonusPercent = Owner.Creature
 			.GetPower<ScriptExecutionCommanderPower>()?.Amount ?? 0m;
 		int bonusLayers = bonusPercent > 0m
