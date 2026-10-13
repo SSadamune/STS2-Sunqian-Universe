@@ -20,17 +20,25 @@ public sealed class PortalTests : SunqianCombatTestSuite
     }
 
     [Fact]
-    public async Task Portal_draws_and_auto_plays_an_attack_after_scry()
+    public async Task Portal_discards_selected_scry_cards_then_draws_and_auto_plays_the_revealed_attack()
     {
         var first = EnemyAt(0);
         var second = EnemyAt(1);
         int totalHpBefore = first.CurrentHp + second.CurrentHp;
         var drawnAttack = await AddToDrawPileTop<StrikeLongtao>();
+        var firstDiscard = await AddToDrawPileTop<DefendLongtao>();
+        var secondDiscard = await AddToDrawPileTop<DefendLongtao>();
         var portal = await AddToHand<Portal>();
-        portal.DynamicVars[ScryVar.VarName].BaseValue = 0;
+        var selector = new ScriptedCardSelector().ThenSelect(firstDiscard, secondDiscard);
 
-        await Play(portal);
+        using (UseCardSelector(selector))
+        {
+            await Play(portal);
+        }
 
+        AssertAllSelectionsConsumed(selector);
+        AssertInPile(firstDiscard, PileType.Discard);
+        AssertInPile(secondDiscard, PileType.Discard);
         Assert.Equal(
             totalHpBefore - StrikeLongtao.BaseDamage,
             first.CurrentHp + second.CurrentHp);

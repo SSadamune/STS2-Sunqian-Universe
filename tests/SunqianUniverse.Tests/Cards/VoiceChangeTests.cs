@@ -18,6 +18,24 @@ public sealed class VoiceChangeTests : SunqianCombatTestSuite
     }
 
     [Fact]
+    public async Task Upgraded_voice_change_returns_only_the_selected_exhausted_script_to_hand()
+    {
+        var first = await AddCardToPile<SunqianScript>(PileType.Exhaust);
+        var selected = await AddCardToPile<XiliangSavageScript>(PileType.Exhaust);
+        var selector = new ScriptedCardSelector().ThenSelect(selected);
+
+        using (UseCardSelector(selector))
+        {
+            await Play(Upgrade(await AddToHand<VoiceChange>()));
+        }
+
+        AssertAllSelectionsConsumed(selector);
+        AssertInPile(selected, PileType.Hand);
+        Assert.True(selected.IsUpgraded);
+        AssertInPile(first, PileType.Exhaust);
+    }
+
+    [Fact]
     public async Task VoiceChange_upgrades_and_returns_the_only_exhausted_script_to_draw_top()
     {
         var exhaustedScript = await AddCardToPile<SunqianScript>(PileType.Exhaust);

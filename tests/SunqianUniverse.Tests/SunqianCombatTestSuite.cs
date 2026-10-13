@@ -16,6 +16,12 @@ namespace Squ.Tests;
 /// </summary>
 public abstract class SunqianCombatTestSuite : CombatTestSuite
 {
+    protected static IDisposable UseCardSelector(ScriptedCardSelector selector) =>
+        CardSelectCmd.UseSelector(selector);
+
+    protected static void AssertAllSelectionsConsumed(ScriptedCardSelector selector) =>
+        Assert.Equal(0, selector.PendingSteps);
+
     protected async Task<TCard> AddCardToPile<TCard>(
         PileType pileType,
         CardPilePosition position = CardPilePosition.Bottom,
