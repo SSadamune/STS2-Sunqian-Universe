@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using Godot;
 using MegaCrit.Sts2.Core.Commands;
@@ -25,36 +24,13 @@ internal static class SquHitVfx
 	private static readonly Color FireMissileTint = new("FF8B57");
 	private static readonly Color SmallMissileTint = new("50b598");
 	private static readonly Color BlackTint = Colors.Black;
-	private const float SweepingBeamImpactDelaySeconds = 0.5f;
 	private const float FinaleAnticipationHoldSeconds = 2f;
 
 	public static void Scream(Creature target) =>
 		VfxCmd.PlayOnCreatureCenter(target, VfxCmd.screamVfx);
 
-	public static void Scream(IEnumerable<Creature> targets)
-	{
-		foreach (Creature target in targets)
-		{
-			if (target.IsAlive)
-			{
-				Scream(target);
-			}
-		}
-	}
-
 	public static void SpookyScream(Creature target) =>
 		VfxCmd.PlayOnCreatureCenter(target, VfxCmd.spookyScreamVfx);
-
-	public static void SpookyScream(IEnumerable<Creature> targets)
-	{
-		foreach (Creature target in targets)
-		{
-			if (target.IsAlive)
-			{
-				SpookyScream(target);
-			}
-		}
-	}
 
 	/// <summary>
 	/// 华丽收场蓄力粒子的独立副本，播在该生物的特效生成点上。
@@ -114,6 +90,12 @@ internal static class SquHitVfx
 	public static Task SmallMagicMissiles(IEnumerable<Creature> targets) =>
 		LaunchSmallMagicMissiles(targets, SmallMissileTint);
 
+	public static Task BlackSmallMagicMissile(Creature target) =>
+		BlackSmallMagicMissiles([target]);
+
+	public static Task BlackSmallMagicMissiles(IEnumerable<Creature> targets) =>
+		LaunchSmallMagicMissiles(targets, BlackTint);
+
 	public static Task ArrowRain(Creature target) =>
 		ArrowRain([target], layersPerTarget: 1);
 
@@ -153,33 +135,6 @@ internal static class SquHitVfx
 		{
 			await Cmd.Wait(NArrowRainVfx.ImpactTimeSeconds);
 		}
-	}
-
-	public static async Task BlackSmallMagicMissileAndStarryImpact(Creature target)
-	{
-		await LaunchSmallMagicMissiles([target], BlackTint);
-		VfxCmd.PlayOnCreatureCenter(target, "vfx/vfx_starry_impact");
-	}
-
-	public static async Task BlackSweepingBeam(Creature owner, IEnumerable<Creature> targets)
-	{
-		List<Creature> aliveTargets = targets.Where(target => target.IsAlive).ToList();
-		if (aliveTargets.Count == 0)
-		{
-			return;
-		}
-
-		NSweepingBeamVfx? beam = NSweepingBeamVfx.Create(owner, aliveTargets);
-		Node? container = NCombatRoom.Instance?.CombatVfxContainer;
-		if (beam == null || container == null)
-		{
-			return;
-		}
-
-		TintParticles(beam, BlackTint);
-		container.AddChildSafely(beam);
-		await Cmd.Wait(SweepingBeamImpactDelaySeconds);
-		TintActiveSweepingBeamImpacts(BlackTint);
 	}
 
 	public static NGrandFinaleVfx? StartGrandFinale(Creature owner)
@@ -335,36 +290,6 @@ internal static class SquHitVfx
 		finale != null
 		&& GodotObject.IsInstanceValid(finale)
 		&& !finale.IsQueuedForDeletion();
-
-	private static void TintActiveSweepingBeamImpacts(Color tint)
-	{
-		Node? root = NCombatRoom.Instance?.GetTree()?.Root;
-		if (root == null)
-		{
-			return;
-		}
-
-		foreach (Node child in root.GetChildren())
-		{
-			if (child is NSweepingBeamImpactVfx)
-			{
-				TintParticles(child, tint);
-			}
-		}
-	}
-
-	private static void TintParticles(Node node, Color tint)
-	{
-		if (node is GpuParticles2D particles)
-		{
-			particles.SelfModulate = tint;
-		}
-
-		foreach (Node child in node.GetChildren())
-		{
-			TintParticles(child, tint);
-		}
-	}
 
 	private static void Spawn(Node2D? vfx)
 	{

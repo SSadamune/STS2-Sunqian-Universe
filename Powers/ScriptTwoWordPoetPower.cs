@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Godot;
 using MegaCrit.Sts2.Core.Combat;
 using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Commands.Builders;
@@ -108,6 +107,7 @@ public sealed class ScriptTwoWordPoetPower : StackableScriptPowerTemplate
 
 		Flash();
 		SquSfx.PlayRandom(combatState.RunState, SquSfx.TwoWordPoetTriggerEvents);
+		SquHitVfx.SpookyScream(Owner);
 
 		AttackCommand attack = DamageCmd.Attack(Amount)
 			.Unpowered()
@@ -115,11 +115,8 @@ public sealed class ScriptTwoWordPoetPower : StackableScriptPowerTemplate
 			.FromCard(sourceCard, null);
 		if (data.TargetsAllEnemies)
 		{
-			attack.BeforeDamage(async () =>
-			{
-				await SquHitVfx.BlackSweepingBeam(Owner, combatState.HittableEnemies);
-				SquHitVfx.SpookyScream(combatState.HittableEnemies);
-			});
+			attack.BeforeDamage(() =>
+				SquHitVfx.BlackSmallMagicMissiles(combatState.HittableEnemies));
 			await attack.TargetingAllOpponents(combatState)
 				.Execute(new ThrowingPlayerChoiceContext());
 		}
@@ -131,15 +128,14 @@ public sealed class ScriptTwoWordPoetPower : StackableScriptPowerTemplate
 					hitTarget = target;
 					return null;
 				})
-				.BeforeDamage(async () =>
+				.BeforeDamage(() =>
 				{
 					if (hitTarget is not { IsAlive: true } target)
 					{
-						return;
+						return Task.CompletedTask;
 					}
 
-					await SquHitVfx.BlackSmallMagicMissileAndStarryImpact(target);
-					SquHitVfx.SpookyScream(target);
+					return SquHitVfx.BlackSmallMagicMissile(target);
 				});
 			await attack.TargetingRandomOpponents(combatState)
 				.Execute(new ThrowingPlayerChoiceContext());

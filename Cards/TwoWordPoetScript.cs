@@ -61,6 +61,7 @@ public sealed class TwoWordPoetScript : ScriptCardTemplate
 	protected override async Task PlayScriptAsync(PlayerChoiceContext choiceContext, CardPlay cardPlay)
 	{
 		SquSfx.Play(SquSfx.TwoWordWineAndSongEvent);
+		SquHitVfx.Scream(Owner.Creature);
 		decimal snapshotDamagePerHit = ScriptTwoWordPoetPower.CalculateSnapshotDamagePerHit(
 			this,
 			Owner.Creature);
@@ -72,22 +73,15 @@ public sealed class TwoWordPoetScript : ScriptCardTemplate
 		{
 			ArgumentNullException.ThrowIfNull(CombatState, "CombatState");
 			ICombatState combatState = CombatState;
-			attack.BeforeDamage(async () =>
-			{
-				await SquHitVfx.BlackSweepingBeam(Owner.Creature, combatState.HittableEnemies);
-				SquHitVfx.Scream(combatState.HittableEnemies);
-			});
+			attack.BeforeDamage(() =>
+				SquHitVfx.BlackSmallMagicMissiles(combatState.HittableEnemies));
 			await attack.TargetingAllOpponents(combatState).Execute(choiceContext);
 		}
 		else
 		{
 			ArgumentNullException.ThrowIfNull(cardPlay.Target, "cardPlay.Target");
 			Creature target = cardPlay.Target;
-			attack.BeforeDamage(async () =>
-			{
-				await SquHitVfx.BlackSmallMagicMissileAndStarryImpact(target);
-				SquHitVfx.Scream(target);
-			});
+			attack.BeforeDamage(() => SquHitVfx.BlackSmallMagicMissile(target));
 			await attack.Targeting(target).Execute(choiceContext);
 		}
 
