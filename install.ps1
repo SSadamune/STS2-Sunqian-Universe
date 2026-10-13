@@ -14,6 +14,9 @@ $ModDir = Join-Path $GameDir "mods\$ModId"
 
 Write-Host "Building $ModId..." -ForegroundColor Cyan
 dotnet build (Join-Path $ProjectRoot "$ModId.csproj") -c Debug
+if ($LASTEXITCODE -ne 0) {
+    throw "dotnet build failed with exit code $LASTEXITCODE"
+}
 
 if (-not (Test-Path $GodotExe)) {
     throw "Godot not found at: $GodotExe"

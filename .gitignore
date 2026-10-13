@@ -11,6 +11,10 @@ lib/sts2.dll
 tools/
 .sts2probe/
 
+# .NET test/build outputs
+**/bin/
+**/obj/
+
 # Python bytecode caches
 **/__pycache__/
 **/*.pyc
