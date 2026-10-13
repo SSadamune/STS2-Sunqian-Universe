@@ -1,0 +1,126 @@
+[gd_scene load_steps=22 format=3 uid="uid://cfinaleantic1"]
+
+[ext_resource type="Script" uid="uid://bd46jtcut2h66" path="res://src/Core/Nodes/Vfx/Utilities/NParticlesContainer.cs" id="1_particles"]
+[ext_resource type="PackedScene" uid="uid://4d2n7qwoll72" path="res://scenes/vfx/common/vfx_common_clean_flare_1.tscn" id="2_flare"]
+[ext_resource type="PackedScene" uid="uid://0vk581j1pecs" path="res://scenes/vfx/common/vfx_common_ring_polar_a.tscn" id="3_ring"]
+[ext_resource type="Material" uid="uid://c4ycqv0gdxvmr" path="res://themes/canvas_item_material_additive_shared.tres" id="4_additive"]
+[ext_resource type="Texture2D" uid="uid://dmh3bilnwb17o" path="res://images/vfx/shared_use/motion_line.png" id="5_line"]
+
+[sub_resource type="Curve" id="Curve_mvavk"]
+_data = [Vector2(0, 1), 0.0, -2.188963, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="CurveTexture" id="CurveTexture_6rxrx"]
+curve = SubResource("Curve_mvavk")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_tq21t"]
+particle_flag_disable_z = true
+angular_velocity_min = -360.0
+angular_velocity_max = 359.99997
+gravity = Vector3(0, 0, 0)
+scale_min = 3.0
+scale_max = 3.0
+scale_curve = SubResource("CurveTexture_6rxrx")
+
+[sub_resource type="Curve" id="Curve_4ms1i"]
+_limits = [0.0, 3.0, 0.0, 1.0]
+_data = [Vector2(0, 3), 0.0, -8.75114, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="CurveTexture" id="CurveTexture_t3waw"]
+curve = SubResource("Curve_4ms1i")
+
+[sub_resource type="Curve" id="Curve_c0d5v"]
+_data = [Vector2(0, 1), 0.0, 0.2799829, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="CurveTexture" id="CurveTexture_mvavk"]
+curve = SubResource("Curve_c0d5v")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_6rxrx"]
+particle_flag_disable_z = true
+gravity = Vector3(0, 0, 0)
+scale_min = 2.0
+scale_max = 2.0
+scale_curve = SubResource("CurveTexture_mvavk")
+emission_curve = SubResource("CurveTexture_t3waw")
+
+[sub_resource type="Curve" id="Curve_pod23"]
+_data = [Vector2(0, 0.3007483), 0.0, -0.82086045, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="CurveTexture" id="CurveTexture_twkgf"]
+curve = SubResource("Curve_pod23")
+
+[sub_resource type="Gradient" id="Gradient_i2ak4"]
+colors = PackedColorArray(1, 1, 1, 0.5019608, 1, 1, 1, 0.76862746)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_nmb1b"]
+gradient = SubResource("Gradient_i2ak4")
+
+[sub_resource type="Curve" id="Curve_2ykcv"]
+_data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(1, 1), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="Curve" id="Curve_3netq"]
+_limits = [0.0, 4.0, 0.0, 1.0]
+_data = [Vector2(0, 4), 0.0, 0.0, 0, 0]
+point_count = 1
+
+[sub_resource type="Curve" id="Curve_yqfxx"]
+_data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(1, 1), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="CurveXYZTexture" id="CurveXYZTexture_6xgad"]
+curve_x = SubResource("Curve_2ykcv")
+curve_y = SubResource("Curve_3netq")
+curve_z = SubResource("Curve_yqfxx")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_21ddx"]
+lifetime_randomness = 0.5
+particle_flag_disable_z = true
+emission_shape = 3
+emission_box_extents = Vector3(600, 600, 1)
+direction = Vector3(0, 1, 0)
+spread = 0.0
+initial_velocity_min = 4800.0
+initial_velocity_max = 9600.0
+gravity = Vector3(0, 0, 0)
+scale_min = 0.25
+scale_curve = SubResource("CurveXYZTexture_6xgad")
+color_initial_ramp = SubResource("GradientTexture1D_nmb1b")
+alpha_curve = SubResource("CurveTexture_twkgf")
+
+[node name="vfx_grand_finale_anticipation" type="Node2D" node_paths=PackedStringArray("_particles")]
+script = ExtResource("1_particles")
+_particles = [NodePath("vfx_common_clean_flare_1"), NodePath("vfx_common_ring_polar_a"), NodePath("vfx_grand_finale_horizontal_lines")]
+
+[node name="vfx_common_clean_flare_1" parent="." instance=ExtResource("2_flare")]
+self_modulate = Color(0.36869264, 0.7783351, 0.62310225, 1)
+emitting = false
+amount = 1
+lifetime = 0.2
+one_shot = true
+explosiveness = 1.0
+process_material = SubResource("ParticleProcessMaterial_tq21t")
+
+[node name="vfx_common_ring_polar_a" parent="." instance=ExtResource("3_ring")]
+emitting = false
+amount = 1
+lifetime = 0.2
+one_shot = true
+explosiveness = 1.0
+process_material = SubResource("ParticleProcessMaterial_6rxrx")
+
+[node name="vfx_grand_finale_horizontal_lines" type="GPUParticles2D" parent="."]
+material = ExtResource("4_additive")
+rotation = -1.4835298
+emitting = false
+amount = 30
+texture = ExtResource("5_line")
+lifetime = 0.3
+one_shot = true
+explosiveness = 0.2
+fixed_fps = 60
+local_coords = true
+process_material = SubResource("ParticleProcessMaterial_21ddx")

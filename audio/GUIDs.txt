@@ -99,6 +99,8 @@
 {3caa82e7-290b-478b-8e30-326a03858af0} event:/sunqian_universe/sfx/吾亦过江-连孙权一起拿了
 {18e16c94-042a-4500-afb2-43819bb703d8} event:/sunqian_universe/sfx/吾亦过江-那好啊，他过江我也过江
 {6de1432d-a5e0-412f-849a-f58941f1a9ab} event:/sunqian_universe/sfx/哪家的鹰犬
+{a74ed721-a16f-4f40-be5d-c735c577d301} event:/sunqian_universe/sfx/四轮车-我赏你一辆四轮车
+{092b822e-cf9a-485d-83e1-b3a734a62ea9} event:/sunqian_universe/sfx/四轮车-直奔诸葛亮四轮儿车
 {880314bd-44ae-48f0-a56f-1579ca6ad9f8} event:/sunqian_universe/sfx/国贼董卓
 {25f87d38-dcce-42b8-acf2-fd369148d02a} event:/sunqian_universe/sfx/多智袁术-为何追杀
 {2b7a15c9-c02e-442d-9c4d-5f55dcd4ef94} event:/sunqian_universe/sfx/多智袁术-贪功心切
@@ -150,6 +152,7 @@
 {3fdc77fa-6816-4105-b6a5-fa0f29daa5ad} event:/sunqian_universe/sfx/收工-差不多就到这里了99
 {3233f9b6-47fc-4186-9753-fd60b7694eba} event:/sunqian_universe/sfx/无双乱舞-我原本以为吕布
 {422bc859-6769-4d75-a031-d476b5b2363c} event:/sunqian_universe/sfx/无双乱舞-我爱死他了
+{f7052129-a80e-4803-bc70-39db874e142e} event:/sunqian_universe/sfx/无双乱舞-没想到有人比他还勇猛
 {b02c95c5-e13d-490b-ba40-3ee72beb756f} event:/sunqian_universe/sfx/无忧而虑-孔明在犹豫什么？丞相自己也说不清楚
 {47ebe93e-de92-484f-849f-8574b51df59c} event:/sunqian_universe/sfx/无忧而虑-而让我忧虑的却是，我不知道这危险是从何而来
 {b83f1637-5192-4f24-a452-f5457118bb16} event:/sunqian_universe/sfx/无情打击-剑声

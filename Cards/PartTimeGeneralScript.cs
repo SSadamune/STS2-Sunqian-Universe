@@ -8,10 +8,12 @@ using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.Entities.Creatures;
 using MegaCrit.Sts2.Core.Factories;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
+using MegaCrit.Sts2.Core.Helpers;
 using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.CardPools;
-using MegaCrit.Sts2.Core.Nodes.Vfx;
+using MegaCrit.Sts2.Core.Nodes;
+using MegaCrit.Sts2.Core.Nodes.Vfx.Utilities;
 using Squ.Audio;
 using Squ.Character;
 using Squ.Combat;
@@ -47,6 +49,10 @@ public sealed class PartTimeGeneralScript : ScriptCardTemplate
 	public override CardAssetProfile AssetProfile => new(
 		PortraitPath: "res://images/cards/PartTimeGeneralScript.png");
 
+	private const float FirstStrikeLeadInSeconds = 1.2f;
+	private const float StrikeIntervalSeconds = 0.15f;
+	private const float StrikeShakeDelaySeconds = 0.4f;
+
 	public PartTimeGeneralScript()
 		: base(0, CardType.Attack, CardRarity.Rare, TargetType.AnyEnemy, true)
 	{
@@ -57,29 +63,34 @@ public sealed class PartTimeGeneralScript : ScriptCardTemplate
 		CardPlay cardPlay)
 	{
 		ArgumentNullException.ThrowIfNull(cardPlay.Target, nameof(cardPlay.Target));
-		SquSfx.Play(SquSfx.PartTimeGeneralShadowCloneEvent);
 		ICombatState combatState = CombatState
 			?? throw new InvalidOperationException(
 				"PartTimeGeneralScript requires an active combat.");
 		Creature target = cardPlay.Target;
 		int playCount = ResolveEnergyXValue();
-		if (playCount > 0)
+		List<CardModel> playedCards = [];
+		List<CardModel> strikeCards = ChooseStrikeCards(playCount);
+		bool willPlayStrikes = strikeCards.Count > 0;
+		NPartTimeGeneralFinaleVfx? finale = null;
+		if (willPlayStrikes)
 		{
 			await SupremeGeneralKeywordSystem.ConsumeVigorForRootWithoutAttack(
 				choiceContext,
 				cardPlay);
+			SquSfx.Play(SquSfx.PartTimeGeneralShadowCloneEvent);
+			finale = NPartTimeGeneralFinaleVfx.Create(Owner.Creature);
 		}
 
-		List<CardModel> playedCards = [];
-		List<CardModel> strikeCards = ChooseStrikeCards(playCount);
-		NGrandFinaleVfx? finale = strikeCards.Count > 0
-			? SquHitVfx.StartGrandFinale(Owner.Creature)
-			: null;
 		try
 		{
+			if (willPlayStrikes)
+			{
+				await Cmd.Wait(FirstStrikeLeadInSeconds);
+			}
+
 			for (int index = 0; index < strikeCards.Count; index++)
 			{
-				finale = SquHitVfx.EnsureGrandFinale(Owner.Creature, finale);
+				_ = TaskHelper.RunSafely(PlayStrikeShakeAsync());
 				CardModel canonical = strikeCards[index];
 				CardModel source = combatState.CreateCard(canonical, Owner);
 				if (IsUpgraded && source.IsUpgradable)
@@ -97,13 +108,13 @@ public sealed class PartTimeGeneralScript : ScriptCardTemplate
 					target);
 				if (index < strikeCards.Count - 1)
 				{
-					await Cmd.Wait(0.3f);
+					await Cmd.Wait(StrikeIntervalSeconds);
 				}
 			}
 		}
 		finally
 		{
-			SquHitVfx.StopGrandFinale(finale);
+			finale?.PlayOutro();
 		}
 
 		var scriptPower = (ScriptPartTimeGeneralPower)ModelDb
@@ -117,6 +128,12 @@ public sealed class PartTimeGeneralScript : ScriptCardTemplate
 			1m,
 			Owner.Creature,
 			this);
+	}
+
+	private static async Task PlayStrikeShakeAsync()
+	{
+		await Cmd.Wait(StrikeShakeDelaySeconds);
+		NGame.Instance?.ScreenShake(ShakeStrength.Medium, ShakeDuration.Normal);
 	}
 
 	private List<CardModel> ChooseStrikeCards(int count)

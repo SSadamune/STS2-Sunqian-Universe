@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using Godot;
 using MegaCrit.Sts2.Core.Commands;
@@ -8,6 +7,8 @@ using MegaCrit.Sts2.Core.Helpers;
 using MegaCrit.Sts2.Core.Nodes.Combat;
 using MegaCrit.Sts2.Core.Nodes.Rooms;
 using MegaCrit.Sts2.Core.Nodes.Vfx;
+using MegaCrit.Sts2.Core.Nodes.Vfx.Utilities;
+using MegaCrit.Sts2.Core.TestSupport;
 
 #nullable enable
 
@@ -18,10 +19,61 @@ namespace Squ.Combat;
 /// </summary>
 internal static class SquHitVfx
 {
+	public const string FinaleAnticipationScenePath = "res://scenes/vfx/vfx_grand_finale_anticipation.tscn";
+
 	private static readonly Color FireMissileTint = new("FF8B57");
 	private static readonly Color SmallMissileTint = new("50b598");
 	private static readonly Color BlackTint = Colors.Black;
-	private const float SweepingBeamImpactDelaySeconds = 0.5f;
+	private const float FinaleAnticipationHoldSeconds = 2f;
+
+	public static void Scream(Creature target) =>
+		VfxCmd.PlayOnCreatureCenter(target, VfxCmd.screamVfx);
+
+	public static void SpookyScream(Creature target) =>
+		VfxCmd.PlayOnCreatureCenter(target, VfxCmd.spookyScreamVfx);
+
+	/// <summary>
+	/// 华丽收场蓄力粒子的独立副本，播在该生物的特效生成点上。
+	/// <paramref name="durationSeconds"/> 大于 0 时，把各发射器的寿命和位移按比例拉长到该时长。
+	/// <paramref name="tint"/> 有值时覆盖每个发射器的颜色。
+	/// </summary>
+	public static void PlayFinaleAnticipation(Creature owner, float durationSeconds = 0f, Color? tint = null)
+	{
+		if (TestMode.IsOn)
+		{
+			return;
+		}
+
+		NCreature? creatureNode = NCombatRoom.Instance?.GetCreatureNode(owner);
+		Node? container = NCombatRoom.Instance?.CombatVfxContainer;
+		PackedScene? packed = ModSceneCache.Get(FinaleAnticipationScenePath);
+		if (creatureNode == null || container == null || packed == null)
+		{
+			return;
+		}
+
+		NParticlesContainer? anticipation = packed.Instantiate<NParticlesContainer>();
+		if (anticipation == null)
+		{
+			return;
+		}
+
+		if (durationSeconds > 0f)
+		{
+			StretchAnticipation(anticipation, durationSeconds);
+		}
+
+		if (tint is { } color)
+		{
+			TintAnticipation(anticipation, color);
+		}
+
+		container.AddChildSafely(anticipation);
+		anticipation.GlobalPosition = creatureNode.VfxSpawnPosition;
+		anticipation.Restart();
+		float holdSeconds = durationSeconds > 0f ? durationSeconds : FinaleAnticipationHoldSeconds;
+		_ = TaskHelper.RunSafely(ReleaseFinaleAnticipation(anticipation, holdSeconds));
+	}
 
 	public static void FireBurst(Creature target) =>
 		Spawn(NFireBurstVfx.Create(target, 0.75f));
@@ -37,6 +89,12 @@ internal static class SquHitVfx
 
 	public static Task SmallMagicMissiles(IEnumerable<Creature> targets) =>
 		LaunchSmallMagicMissiles(targets, SmallMissileTint);
+
+	public static Task BlackSmallMagicMissile(Creature target) =>
+		BlackSmallMagicMissiles([target]);
+
+	public static Task BlackSmallMagicMissiles(IEnumerable<Creature> targets) =>
+		LaunchSmallMagicMissiles(targets, BlackTint);
 
 	public static Task ArrowRain(Creature target) =>
 		ArrowRain([target], layersPerTarget: 1);
@@ -77,33 +135,6 @@ internal static class SquHitVfx
 		{
 			await Cmd.Wait(NArrowRainVfx.ImpactTimeSeconds);
 		}
-	}
-
-	public static async Task BlackSmallMagicMissileAndStarryImpact(Creature target)
-	{
-		await LaunchSmallMagicMissiles([target], BlackTint);
-		VfxCmd.PlayOnCreatureCenter(target, "vfx/vfx_starry_impact");
-	}
-
-	public static async Task BlackSweepingBeam(Creature owner, IEnumerable<Creature> targets)
-	{
-		List<Creature> aliveTargets = targets.Where(target => target.IsAlive).ToList();
-		if (aliveTargets.Count == 0)
-		{
-			return;
-		}
-
-		NSweepingBeamVfx? beam = NSweepingBeamVfx.Create(owner, aliveTargets);
-		Node? container = NCombatRoom.Instance?.CombatVfxContainer;
-		if (beam == null || container == null)
-		{
-			return;
-		}
-
-		TintParticles(beam, BlackTint);
-		container.AddChildSafely(beam);
-		await Cmd.Wait(SweepingBeamImpactDelaySeconds);
-		TintActiveSweepingBeamImpacts(BlackTint);
 	}
 
 	public static NGrandFinaleVfx? StartGrandFinale(Creature owner)
@@ -195,40 +226,70 @@ internal static class SquHitVfx
 		}
 	}
 
-	private static bool IsGrandFinalePlaying(NGrandFinaleVfx? finale) =>
-		finale != null
-		&& GodotObject.IsInstanceValid(finale)
-		&& !finale.IsQueuedForDeletion();
-
-	private static void TintActiveSweepingBeamImpacts(Color tint)
+	private static void TintAnticipation(Node node, Color color)
 	{
-		Node? root = NCombatRoom.Instance?.GetTree()?.Root;
-		if (root == null)
+		foreach (Node child in node.GetChildren())
+		{
+			if (child is CanvasItem item)
+			{
+				item.SelfModulate = color;
+			}
+
+			TintAnticipation(child, color);
+		}
+	}
+
+	private static void StretchAnticipation(Node node, float durationSeconds)
+	{
+		foreach (Node child in node.GetChildren())
+		{
+			if (child is GpuParticles2D particles)
+			{
+				StretchParticles(particles, durationSeconds);
+			}
+
+			StretchAnticipation(child, durationSeconds);
+		}
+	}
+
+	private static void StretchParticles(GpuParticles2D particles, float durationSeconds)
+	{
+		float lifetime = (float)particles.Lifetime;
+		if (lifetime <= 0.001f || durationSeconds <= lifetime)
 		{
 			return;
 		}
 
-		foreach (Node child in root.GetChildren())
+		float scale = durationSeconds / lifetime;
+		particles.Lifetime = durationSeconds;
+		if (particles.ProcessMaterial is not ParticleProcessMaterial source)
 		{
-			if (child is NSweepingBeamImpactVfx)
-			{
-				TintParticles(child, tint);
-			}
+			return;
 		}
+
+		ParticleProcessMaterial material = (ParticleProcessMaterial)source.Duplicate();
+		material.LifetimeRandomness = 0f;
+		material.InitialVelocityMin /= scale;
+		material.InitialVelocityMax /= scale;
+		material.AngularVelocityMin /= scale;
+		material.AngularVelocityMax /= scale;
+		material.Gravity /= scale;
+		particles.ProcessMaterial = material;
 	}
 
-	private static void TintParticles(Node node, Color tint)
+	private static async Task ReleaseFinaleAnticipation(Node anticipation, float holdSeconds)
 	{
-		if (node is GpuParticles2D particles)
+		await Cmd.Wait(holdSeconds);
+		if (GodotObject.IsInstanceValid(anticipation))
 		{
-			particles.SelfModulate = tint;
-		}
-
-		foreach (Node child in node.GetChildren())
-		{
-			TintParticles(child, tint);
+			anticipation.QueueFreeSafely();
 		}
 	}
+
+	private static bool IsGrandFinalePlaying(NGrandFinaleVfx? finale) =>
+		finale != null
+		&& GodotObject.IsInstanceValid(finale)
+		&& !finale.IsQueuedForDeletion();
 
 	private static void Spawn(Node2D? vfx)
 	{

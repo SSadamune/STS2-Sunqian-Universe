@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Godot;
 using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Combat;
 using MegaCrit.Sts2.Core.Entities.Cards;
@@ -13,6 +14,7 @@ using MegaCrit.Sts2.Core.Models.Powers;
 using MegaCrit.Sts2.Core.ValueProps;
 using Squ.Audio;
 using Squ.Character;
+using Squ.Combat;
 using Squ.Powers;
 using STS2RitsuLib.Interop.AutoRegistration;
 using STS2RitsuLib.Scaffolding.Content;
@@ -26,6 +28,7 @@ public sealed class TableFlip : ModCardTemplate
 {
 	public const int WeakAmount = 3;
 	public const int DamageAmount = 18;
+	public const float ChargeSeconds = 2.2f;
 
 	protected override IEnumerable<DynamicVar> CanonicalVars =>
 	[
@@ -51,6 +54,7 @@ public sealed class TableFlip : ModCardTemplate
 		ICombatState? combatState = CombatState;
 		ArgumentNullException.ThrowIfNull(combatState, nameof(combatState));
 
+		SquHitVfx.PlayFinaleAnticipation(Owner.Creature, ChargeSeconds, new Color(1f, 0.22f, 0.16f));
 		await SquSfx.PlayAndWait(SquSfx.TableFlipReluctantEvent, maxSeconds: 3f);
 		SquSfx.Play(SquSfx.TableFlipHumEvent);
 

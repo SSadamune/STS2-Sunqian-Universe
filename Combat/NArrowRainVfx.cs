@@ -8,8 +8,8 @@ using MegaCrit.Sts2.Core.Random;
 namespace Squ.Combat;
 
 /// <summary>
-/// A single arrow that falls from above and embeds in a target. Each instance
-/// rolls its own trajectory and impact offset so overlapping volleys fan out.
+/// A silver projectile streak that falls from above. Each instance rolls its
+/// own trajectory and impact offset so overlapping volleys fan out.
 /// </summary>
 public partial class NArrowRainVfx : Node2D
 {
@@ -19,21 +19,10 @@ public partial class NArrowRainVfx : Node2D
 	private const float MinAngleDegrees = 76f;
 	private const float MaxAngleDegrees = 104f;
 	private const float ImpactEffectLeadSeconds = 0.1f;
-	private const float EmbeddedHoldSeconds = 0.08f;
-	private const float FadeSeconds = 0.18f;
 
-	private static readonly Color ImpactTint = new("b1ccca");
-	private static readonly Color TrailGlow = new(0.72f, 0.91f, 0.88f, 0.18f);
-	private static readonly Color TrailCore = new(0.85f, 0.98f, 0.94f, 0.55f);
-	private static readonly Color ShaftOutline = new("211b19");
-	private static readonly Color Shaft = new("9a6a3c");
-	private static readonly Color ShaftHighlight = new("e4b66f");
-	private static readonly Color ArrowheadOutline = new("1b2325");
-	private static readonly Color Arrowhead = new("c7d1cf");
-	private static readonly Color ArrowheadHighlight = new("f2ffff");
-	private static readonly Color FletchingOutline = new("27191a");
-	private static readonly Color Fletching = new("a63f42");
-	private static readonly Color FletchingHighlight = new("e97865");
+	private static readonly Color ImpactTint = new("d2d2d2");
+	private static readonly Color TrailShadow = new(0f, 0f, 0f, 0.72f);
+	private static readonly Color TrailSilver = new("c7cbd0");
 
 	private Vector2 _startPosition;
 	private Vector2 _impactPosition;
@@ -83,46 +72,32 @@ public partial class NArrowRainVfx : Node2D
 			if (progress >= 1f)
 			{
 				_hasImpacted = true;
+				QueueRedraw();
+				this.QueueFreeSafely();
 			}
-			return;
-		}
-
-		float fadeProgress = Mathf.Clamp(
-			(_elapsed - ImpactTimeSeconds - EmbeddedHoldSeconds) / FadeSeconds,
-			0f,
-			1f);
-		Modulate = new Color(1f, 1f, 1f, 1f - fadeProgress);
-		if (fadeProgress >= 1f)
-		{
-			this.QueueFreeSafely();
 		}
 	}
 
 	public override void _Draw()
 	{
-		// The arrow points along local +X; the whole node is rotated onto its trajectory.
-		DrawLine(new Vector2(-62f, 0f), new Vector2(22f, 0f), TrailGlow, 11f, true);
-		DrawLine(new Vector2(-50f, 0f), new Vector2(20f, 0f), TrailCore, 3f, true);
+		if (_hasImpacted)
+		{
+			return;
+		}
 
-		DrawLine(new Vector2(-38f, 0f), new Vector2(19f, 0f), ShaftOutline, 6f, true);
-		DrawLine(new Vector2(-37f, 0f), new Vector2(19f, 0f), Shaft, 3.5f, true);
-		DrawLine(new Vector2(-35f, -0.8f), new Vector2(18f, -0.8f), ShaftHighlight, 1f, true);
-
-		DrawColoredPolygon(
-			[new Vector2(31f, 0f), new Vector2(14f, -10f), new Vector2(18f, 0f), new Vector2(14f, 10f)],
-			ArrowheadOutline);
-		DrawColoredPolygon(
-			[new Vector2(28f, 0f), new Vector2(16f, -7f), new Vector2(19f, 0f), new Vector2(16f, 7f)],
-			Arrowhead);
-		DrawLine(new Vector2(18f, -5f), new Vector2(27f, -0.5f), ArrowheadHighlight, 1.2f, true);
-
-		DrawColoredPolygon(
-			[new Vector2(-38f, 0f), new Vector2(-55f, -10f), new Vector2(-49f, 0f), new Vector2(-55f, 10f)],
-			FletchingOutline);
-		DrawColoredPolygon(
-			[new Vector2(-39f, 0f), new Vector2(-52f, -7f), new Vector2(-47f, 0f), new Vector2(-52f, 7f)],
-			Fletching);
-		DrawLine(new Vector2(-50f, -5f), new Vector2(-41f, -0.5f), FletchingHighlight, 1f, true);
+		// One silver projectile streak over a slightly offset black shadow.
+		DrawLine(
+			new Vector2(-96f, 2.5f),
+			new Vector2(18f, 2.5f),
+			TrailShadow,
+			7f,
+			true);
+		DrawLine(
+			new Vector2(-96f, 0f),
+			new Vector2(18f, 0f),
+			TrailSilver,
+			3.5f,
+			true);
 	}
 
 	private void SpawnImpactEffect()
