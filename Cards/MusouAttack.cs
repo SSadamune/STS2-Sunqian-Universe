@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Godot;
 using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Commands.Builders;
 using MegaCrit.Sts2.Core.Entities.Cards;
@@ -35,7 +36,8 @@ public sealed class MusouAttack : ModCardTemplate
 	public const int CanonicalDexterityMultiplier = 3;
 	public const int UpgradedDexterityMultiplier = 4;
 	public const int DexterityPerExtraThinSlice = 2;
-	public const float ResolutionDelaySeconds = 0.3f;
+	public const float ResolutionDelaySeconds = 2.3f;
+	private static readonly Color ChargeTint = new(0.62f, 0.86f, 1f);
 
 	public const string DexterityMultVarName = "DexterityMult";
 
@@ -67,7 +69,7 @@ public sealed class MusouAttack : ModCardTemplate
 		decimal dexterityBonus = GetDexterityBonus(this);
 		decimal dexterity = Owner.Creature.GetPower<DexterityPower>()?.Amount ?? 0m;
 		int thinSliceCount = GetThinSliceCount(dexterity);
-		SquSfx.Play(SquSfx.MusouAttackThoughtLuBuEvent);
+		SquSfx.Play(SquSfx.MusouAttackBraverThanLuBuEvent);
 		AttackCommand attack = DamageCmd.Attack(DynamicVars.Damage.BaseValue + dexterityBonus)
 			.FromCard(this, cardPlay)
 			.TargetingAllOpponents(CombatState)
@@ -75,7 +77,7 @@ public sealed class MusouAttack : ModCardTemplate
 			.WithWaitBeforeHit(ResolutionDelaySeconds, ResolutionDelaySeconds)
 			.AfterAttackerAnim(() =>
 			{
-				SquHitVfx.PlayFinaleAnticipation(Owner.Creature);
+				SquHitVfx.PlayFinaleAnticipation(Owner.Creature, ResolutionDelaySeconds, ChargeTint);
 				return Task.CompletedTask;
 			});
 		if (thinSliceCount > 0)
