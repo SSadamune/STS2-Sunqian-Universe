@@ -31,4 +31,17 @@ public sealed class FlameStrikeTests : SunqianCombatTestSuite
             enemy,
             FlameStrike.BaseBurning * 2);
     }
+
+    [Fact]
+    public async Task Upgraded_FlameStrike_uses_both_upgraded_values()
+    {
+        var enemy = EnemyAt(0);
+        int hpBefore = enemy.CurrentHp;
+        var card = Upgrade(await AddToHand<FlameStrike>());
+
+        await Play(card, enemy);
+
+        Assert.Equal(hpBefore - FlameStrike.UpgradedDamage, enemy.CurrentHp);
+        CardTestAssertions.AssertPowerAmount<BurningPower>(enemy, FlameStrike.UpgradedBurning * 2);
+    }
 }
