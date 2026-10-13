@@ -10,6 +10,7 @@ using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.Powers;
+using MegaCrit.Sts2.Core.Nodes.Vfx.Cards;
 using MegaCrit.Sts2.Core.ValueProps;
 using Squ;
 using Squ.Audio;
@@ -24,16 +25,16 @@ using STS2RitsuLib.Scaffolding.Content;
 namespace Squ.Cards;
 
 /// <summary>
-/// 掘地突袭：无视格挡伤害并给予灼烧。灼烧额外吃活力；升级后伤害与灼烧同时吃活力和火种。
+/// 掘地突袭：造成无视格挡的伤害并给予灼烧。灼烧额外吃活力；升级后伤害与灼烧同时吃活力和火种。
 /// 卡面预览把加成写进 PreviewValue，印面 BaseValue 不变以便 :diff() 标绿。
 /// </summary>
 [RegisterCard(typeof(SunqianCardPool), StableEntryStem = "dig_raid")]
 public sealed class DigRaid : ModCardTemplate
 {
-	public const decimal CanonicalDamage = 8m;
-	public const decimal UpgradedDamage = 11m;
-	public const decimal CanonicalBurning = 5m;
-	public const decimal UpgradedBurning = 7m;
+	public const int CanonicalDamage = 7;
+	public const int UpgradedDamage = 9;
+	public const int CanonicalBurning = 7;
+	public const int UpgradedBurning = 9;
 
 	private static readonly ValueProp DamageProps = ValueProp.Move | ValueProp.Unblockable;
 
@@ -81,14 +82,19 @@ public sealed class DigRaid : ModCardTemplate
 
 		SquSfx.Play(SquSfx.DigRaidEvent);
 		Creature owner = Owner.Creature;
-		int vigor = SquVigorSnapshot.GetAmount(owner);
+		int vigor = SquVigorSnapshot.GetEffectiveAmount(owner, this);
 		decimal tinderBonus = IsUpgraded ? GetTinderAmount(owner) : 0m;
 
 		await DamageCmd.Attack(DynamicVars.Damage.BaseValue + tinderBonus)
 			.WithDamageProps(DamageProps)
 			.FromCard(this, cardPlay)
 			.Targeting(cardPlay.Target)
-			.WithHitFx("vfx/vfx_attack_slash")
+			.WithHitVfxNode(target => NSpikeSplashVfx.Create(target))
+			.BeforeDamage(() =>
+			{
+				SquHitVfx.FireBurst(cardPlay.Target);
+				return Task.CompletedTask;
+			})
 			.Execute(choiceContext);
 
 		await PowerCmd.Apply<BurningPower>(
@@ -125,7 +131,7 @@ public sealed class DigRaid : ModCardTemplate
 			bool runGlobalHooks)
 		{
 			decimal amount = BaseValue;
-			if (card.IsUpgraded)
+			if (card.IsUpgraded && card.Pile?.Type is PileType.Hand or PileType.Play)
 			{
 				amount += GetTinderAmount(card.Owner?.Creature);
 			}
@@ -156,7 +162,8 @@ public sealed class DigRaid : ModCardTemplate
 	}
 
 	/// <summary>
-	/// 灼烧预览包含当前活力，再走火种/好火等给予层数修正；BaseValue 保持印面数值以便标绿。
+	/// 手牌灼烧预览包含当前活力，再走火种/好火等给予层数修正；BaseValue 保持印面数值以便标绿。
+	/// 抽牌堆/弃牌堆不显示活力加成。
 	/// </summary>
 	private sealed class VigorBoostedBurningVar : PowerVar<BurningPower>
 	{
@@ -177,7 +184,7 @@ public sealed class DigRaid : ModCardTemplate
 				return;
 			}
 
-			decimal amount = BaseValue + SquVigorSnapshot.GetAmount(owner);
+			decimal amount = BaseValue + SquVigorSnapshot.GetAmountForCardPreview(card);
 			if (!runGlobalHooks || card.CombatState is not { } combatState)
 			{
 				PreviewValue = amount;

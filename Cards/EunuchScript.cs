@@ -8,6 +8,7 @@ using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.Models;
 using Squ;
+using Squ.Audio;
 using Squ.Character;
 using Squ.Powers;
 using STS2RitsuLib.Interop.AutoRegistration;
@@ -22,6 +23,11 @@ public sealed class EunuchScript : ScriptCardTemplate
 {
 	public const int BaseDraw = 2;
 	public const int UpgradedDraw = 3;
+
+	private List<CardModel>? _drawnCardsForCurrentPlay;
+
+	internal IReadOnlyList<CardModel> DrawnCardsForCurrentPlay =>
+		_drawnCardsForCurrentPlay ?? [];
 
 	protected override IEnumerable<DynamicVar> CanonicalVars =>
 	[
@@ -50,18 +56,26 @@ public sealed class EunuchScript : ScriptCardTemplate
 
 	protected override async Task PlayScriptAsync(PlayerChoiceContext choiceContext, CardPlay cardPlay)
 	{
+		SquSfx.Play(SquSfx.EunuchScriptEvent);
 		List<CardModel> drawn = (await CardPileCmd.Draw(
 			choiceContext,
 			DynamicVars.Cards.BaseValue,
 			Owner)).ToList();
 
-		await PowerCmd.Apply<ScriptEunuchPower>(
-			choiceContext,
-			Owner.Creature,
-			1m,
-			Owner.Creature,
-			this);
-		ScriptEunuchPower.MarkDrawnCards(drawn);
+		try
+		{
+			_drawnCardsForCurrentPlay = drawn;
+			await PowerCmd.Apply<ScriptEunuchPower>(
+				choiceContext,
+				Owner.Creature,
+				1m,
+				Owner.Creature,
+				this);
+		}
+		finally
+		{
+			_drawnCardsForCurrentPlay = null;
+		}
 	}
 
 	protected override void OnUpgrade()

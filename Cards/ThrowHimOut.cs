@@ -18,9 +18,12 @@ namespace Squ.Cards;
 [RegisterCard(typeof(TokenCardPool), StableEntryStem = "throw_him_out")]
 public sealed class ThrowHimOut : ModCardTemplate
 {
+	public const int BaseBlock = 5;
+	public const int UpgradedBlock = 8;
+
 	protected override IEnumerable<DynamicVar> CanonicalVars =>
 	[
-		new BlockVar(5m, ValueProp.Move),
+		new BlockVar(BaseBlock, ValueProp.Move),
 	];
 
 	public override bool GainsBlock => true;
@@ -46,6 +49,6 @@ public sealed class ThrowHimOut : ModCardTemplate
 
 	protected override void OnUpgrade()
 	{
-		DynamicVars.Block.UpgradeValueBy(3m);
+		DynamicVars.Block.UpgradeValueBy(UpgradedBlock - BaseBlock);
 	}
 }

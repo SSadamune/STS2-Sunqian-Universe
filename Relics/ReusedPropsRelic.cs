@@ -16,7 +16,7 @@ using STS2RitsuLib.Scaffolding.Content;
 namespace Squ.Relics;
 
 /// <summary>
-/// 复用素材：拾起时，从牌组中选择一张带消耗词条的剧本牌，永久移除其消耗词条。
+/// 复用素材：拾起时，从牌组中选择至多两张带消耗词条的剧本牌，永久移除其消耗词条。
 /// </summary>
 [RegisterRelic(typeof(SunqianRelicPool), StableEntryStem = "reused_props")]
 public sealed class ReusedPropsRelic : ScriptRelicTemplate
@@ -34,17 +34,20 @@ public sealed class ReusedPropsRelic : ScriptRelicTemplate
 	{
 		IEnumerable<CardModel> selectedCards = await CardSelectCmd.FromDeckGeneric(
 			Owner,
-			new CardSelectorPrefs(SelectionScreenPrompt, 1),
+			new CardSelectorPrefs(SelectionScreenPrompt, 0, 2),
 			IsEligibleScriptCard);
 
-		CardModel? selectedCard = selectedCards.FirstOrDefault();
-		if (selectedCard is null)
+		bool removedAny = false;
+		foreach (CardModel selectedCard in selectedCards)
 		{
-			return;
+			CardCmd.RemoveKeyword(selectedCard, CardKeyword.Exhaust);
+			removedAny = true;
 		}
 
-		CardCmd.RemoveKeyword(selectedCard, CardKeyword.Exhaust);
-		Flash();
+		if (removedAny)
+		{
+			Flash();
+		}
 	}
 
 	private static bool IsEligibleScriptCard(CardModel card) =>

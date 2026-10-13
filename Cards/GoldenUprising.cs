@@ -25,9 +25,9 @@ namespace Squ.Cards;
 [RegisterCard(typeof(SunqianCardPool), StableEntryStem = "golden_uprising")]
 public sealed class GoldenUprising : ModCardTemplate
 {
-	public const int BaseGoldCost = 10;
-	public const int GoldEscalationPerPlay = 5;
-	public const int CardPickCount = 2;
+	public const int BaseGoldCost = 18;
+	public const int BaseCardPickCount = 2;
+	public const int UpgradedCardPickCount = 3;
 
 	private static readonly LocString SelectionPrompt =
 		new("cards", "SUNQIAN_UNIVERSE_CARD_GOLDEN_UPRISING.selectionScreenPrompt");
@@ -35,12 +35,13 @@ public sealed class GoldenUprising : ModCardTemplate
 	protected override IEnumerable<DynamicVar> CanonicalVars =>
 	[
 		new GoldVar(BaseGoldCost),
-		new CardsVar(CardPickCount),
+		new CardsVar(BaseCardPickCount),
 	];
 
 	public override IEnumerable<CardKeyword> CanonicalKeywords =>
 	[
 		CardKeyword.Exhaust,
+		CardKeyword.Innate,
 	];
 
 	public override CardAssetProfile AssetProfile => new(
@@ -78,16 +79,11 @@ public sealed class GoldenUprising : ModCardTemplate
 		{
 			await CardPileCmd.Add(card, PileType.Hand);
 		}
-
-		if (IsUpgraded)
-		{
-			DynamicVars.Gold.UpgradeValueBy(GoldEscalationPerPlay);
-		}
 	}
 
 	protected override void OnUpgrade()
 	{
-		RemoveKeyword(CardKeyword.Exhaust);
+		DynamicVars.Cards.UpgradeValueBy(UpgradedCardPickCount - BaseCardPickCount);
 	}
 
 	/// <summary>
@@ -97,6 +93,6 @@ public sealed class GoldenUprising : ModCardTemplate
 	{
 		int drawCount = PileType.Draw.GetPile(Owner).Cards.Count;
 		int handSpace = CardPile.MaxCardsInHand - PileType.Hand.GetPile(Owner).Cards.Count;
-		return Math.Min(CardPickCount, Math.Min(drawCount, handSpace));
+		return Math.Min(DynamicVars.Cards.IntValue, Math.Min(drawCount, handSpace));
 	}
 }

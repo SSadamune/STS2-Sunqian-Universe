@@ -26,8 +26,8 @@ public sealed class VoiceChange : ModCardTemplate
 	private static readonly LocString SelectionPrompt =
 		new("cards", "SUNQIAN_UNIVERSE_CARD_VOICE_CHANGE.selectionScreenPrompt");
 
-	public const decimal BaseBlock = 7m;
-	public const decimal UpgradedBlock = 8m;
+	public const int BaseBlock = 7;
+	public const int UpgradedBlock = 8;
 
 	protected override IEnumerable<DynamicVar> CanonicalVars =>
 	[
@@ -38,11 +38,6 @@ public sealed class VoiceChange : ModCardTemplate
 
 	public override CardAssetProfile AssetProfile => new(
 		PortraitPath: "res://images/cards/VoiceChange.png");
-
-	public override IEnumerable<CardKeyword> CanonicalKeywords =>
-	[
-		CardKeyword.Exhaust,
-	];
 
 	protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
 	[
@@ -56,15 +51,15 @@ public sealed class VoiceChange : ModCardTemplate
 
 	protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
 	{
-		SquSfx.PlayRandom(
-			RunState,
-			SquSfx.VoiceChangeYearsAgoEvent,
-			SquSfx.VoiceChangeObviousEvent,
-			SquSfx.VoiceChangeTheseWordsEvent,
-			SquSfx.VoiceChangeVolumeWrongEvent);
+		SquSfx.PlayRandom(RunState, SquSfx.VoiceChangeEvents);
 		await CreatureCmd.GainBlock(Owner.Creature, DynamicVars.Block, cardPlay);
 
 		CardPile exhaustPile = PileType.Exhaust.GetPile(Owner);
+		if (!exhaustPile.Cards.Any(IsScriptCard))
+		{
+			return;
+		}
+
 		CardSelectorPrefs prefs = new(SelectionPrompt, 1);
 		IEnumerable<CardModel> selected = await CardSelectCmd.FromCombatPile(
 			choiceContext,
@@ -81,14 +76,20 @@ public sealed class VoiceChange : ModCardTemplate
 				CardCmd.Upgrade(scriptCard);
 			}
 
-			await CardPileCmd.Add(scriptCard, PileType.Draw, CardPilePosition.Top);
+			if (IsUpgraded)
+			{
+				await CardPileCmd.Add(scriptCard, PileType.Hand);
+			}
+			else
+			{
+				await CardPileCmd.Add(scriptCard, PileType.Draw, CardPilePosition.Top);
+			}
 		}
 	}
 
 	protected override void OnUpgrade()
 	{
 		DynamicVars.Block.UpgradeValueBy(UpgradedBlock - BaseBlock);
-		RemoveKeyword(CardKeyword.Exhaust);
 	}
 
 	private static bool IsScriptCard(CardModel card) =>

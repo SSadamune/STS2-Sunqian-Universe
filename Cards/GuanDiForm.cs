@@ -1,14 +1,11 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.HoverTips;
-using MegaCrit.Sts2.Core.Localization.DynamicVars;
-using MegaCrit.Sts2.Core.Models.Powers;
-using Squ.Audio;
+using MegaCrit.Sts2.Core.Models;
 using Squ.Character;
-using Squ.Powers;
+using Squ.Combat;
 using STS2RitsuLib.Interop.AutoRegistration;
 using STS2RitsuLib.Scaffolding.Content;
 
@@ -19,21 +16,10 @@ namespace Squ.Cards;
 [RegisterCard(typeof(SunqianCardPool), StableEntryStem = "guan_di_form")]
 public sealed class GuanDiForm : ModCardTemplate
 {
-	private const string PowerVarName = "Power";
-
-	public const int BaseAmountPerEnergy = 2;
-
-	public const int UpgradedAmountPerEnergy = 3;
-
-	protected override IEnumerable<DynamicVar> CanonicalVars =>
-	[
-		new DynamicVar(PowerVarName, BaseAmountPerEnergy),
-	];
-
 	protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
 	[
-		HoverTipFactory.Static(StaticHoverTip.Block),
-		HoverTipFactory.FromPower<VigorPower>(),
+		CreateFormHoverTip<GuanYuCivilVer>(),
+		CreateFormHoverTip<GuanYuMartialVer>(),
 	];
 
 	public override CardAssetProfile AssetProfile => new(
@@ -44,19 +30,31 @@ public sealed class GuanDiForm : ModCardTemplate
 	{
 	}
 
-	protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
+	/// <summary>
+	/// 升级预览保留“刚升级”状态，让两张选项的变化内容显示为绿色。
+	/// 手牌悬停和二选一会完成升级定稿，因此保持普通颜色。
+	/// </summary>
+	private IHoverTip CreateFormHoverTip<T>()
+		where T : CardModel
 	{
-		SquSfx.Play(SquSfx.WhoAreYouEvent);
-		await PowerCmd.Apply<GuanDiFormPower>(
-			choiceContext,
-			Owner.Creature,
-			DynamicVars[PowerVarName].BaseValue,
-			Owner.Creature,
-			this);
+		if (UpgradePreviewType == CardUpgradePreviewType.None)
+		{
+			return HoverTipFactory.FromCard<T>(IsUpgraded);
+		}
+
+		CardModel card = (CardModel)ModelDb.Card<T>().MutableClone();
+		card.UpgradeInternal();
+		return new CardHoverTip(card);
 	}
 
-	protected override void OnUpgrade()
+	protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
 	{
-		DynamicVars[PowerVarName].UpgradeValueBy(UpgradedAmountPerEnergy - BaseAmountPerEnergy);
+		await GuanDiFormChoice.OfferAsync(
+			choiceContext,
+			Owner,
+			this,
+			cardPlay.Resources.EnergySpent,
+			IsUpgraded,
+			canSkip: false);
 	}
 }

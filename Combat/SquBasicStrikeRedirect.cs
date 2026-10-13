@@ -14,15 +14,24 @@ namespace Squ.Combat;
 public static class SquBasicStrikeRedirect
 {
 	public static bool ShouldHandleInOnPlay(CardModel card) =>
-		ChickenFootCheeseStrikePower.ShouldRedirectBasicStrike(card);
+		ScriptChickenFootCheesePower.ShouldRedirectBasicStrike(card);
 
-	public static Task ExecuteRedirectedBasicStrikeDamage(
+	public static async Task ExecuteRedirectedBasicStrikeDamage(
 		CardModel card,
 		PlayerChoiceContext choiceContext,
-		CardPlay? cardPlay = null) =>
-		SquRandomEnemyTargeting.ExecuteDistinctRandomEnemyDamage(
+		CardPlay? cardPlay = null)
+	{
+		ScriptChickenFootCheesePower? power =
+			card.Owner?.Creature?.GetPower<ScriptChickenFootCheesePower>();
+		power?.TriggerForRedirectedStrike();
+
+		await SquRandomEnemyTargeting.ExecuteDistinctRandomEnemyDamage(
 			card,
 			choiceContext,
-			ChickenFootCheeseStrikePower.RedirectRandomEnemyCount,
-			cardPlay: cardPlay);
+			ScriptChickenFootCheesePower.RedirectRandomEnemyCount,
+			hitCountPerTarget: power?.HitCountPerTarget ?? ScriptChickenFootCheesePower.BaseHitCount,
+			hitFx: null,
+			cardPlay: cardPlay,
+			beforeHit: SquHitVfx.SmallMagicMissiles);
+	}
 }

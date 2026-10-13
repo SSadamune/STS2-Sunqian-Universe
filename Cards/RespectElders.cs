@@ -3,12 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using MegaCrit.Sts2.Core.Commands;
+using MegaCrit.Sts2.Core.Commands.Builders;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.Entities.Creatures;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.Localization;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.Models;
+using MegaCrit.Sts2.Core.Nodes.Vfx;
 using MegaCrit.Sts2.Core.ValueProps;
 using Squ.Audio;
 using Squ.Character;
@@ -23,13 +25,15 @@ namespace Squ.Cards;
 [RegisterCard(typeof(SunqianCardPool), StableEntryStem = "respect_elders")]
 public sealed class RespectElders : ModCardTemplate
 {
-	private const int BaseHitCount = 2;
-	private const int UpgradedHitCount = 3;
+	public const int DamageAmount = 9;
+	public const int BaseHitCount = 2;
+	public const int UpgradedHitCount = 3;
+
 	private const string CanMultiHitVarName = "CanMultiHit";
 
 	protected override IEnumerable<DynamicVar> CanonicalVars =>
 	[
-		new DamageVar(7m, ValueProp.Move),
+		new DamageVar(DamageAmount, ValueProp.Move),
 		new DynamicVar("HitCount", BaseHitCount),
 		ModCardVars.Computed(CanMultiHitVarName, 0,
 			(CardModel? card, Creature? target) =>
@@ -60,12 +64,17 @@ public sealed class RespectElders : ModCardTemplate
 			? (int)DynamicVars["HitCount"].BaseValue
 			: 1;
 
-		await DamageCmd.Attack(DynamicVars.Damage.BaseValue)
+		AttackCommand attack = DamageCmd.Attack(DynamicVars.Damage.BaseValue)
 			.WithHitCount(hitCount)
 			.FromCard(this, cardPlay)
 			.Targeting(cardPlay.Target)
-			.WithHitFx("vfx/vfx_attack_blunt")
-			.Execute(choiceContext);
+			.WithHitVfxNode(target => NBigSlashVfx.Create(target));
+		if (extraHits)
+		{
+			attack.WithHitVfxNode(target => NBigSlashImpactVfx.Create(target));
+		}
+
+		await attack.Execute(choiceContext);
 	}
 
 	protected override void OnUpgrade()
@@ -79,14 +88,16 @@ public sealed class RespectElders : ModCardTemplate
 		{
 			var hitConfirm = new LocString("cards", Id.Entry + ".hitConfirm");
 			hitConfirm.Add(DynamicVars.Damage);
-			hitConfirm.Add(DynamicVars["HitCount"]);
+			hitConfirm.Add(new IfUpgradedVar(
+				IsUpgraded ? UpgradeDisplay.Upgraded : UpgradeDisplay.Normal));
 			description.Add("BodyText", hitConfirm);
 			return;
 		}
 
 		var bodyText = new LocString("cards", Id.Entry + ".normalBody");
 		bodyText.Add(DynamicVars.Damage);
-		bodyText.Add(DynamicVars["HitCount"]);
+		bodyText.Add(new IfUpgradedVar(
+			IsUpgraded ? UpgradeDisplay.Upgraded : UpgradeDisplay.Normal));
 		description.Add("BodyText", bodyText);
 	}
 

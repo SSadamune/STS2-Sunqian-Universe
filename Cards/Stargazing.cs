@@ -1,8 +1,8 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using MegaCrit.Sts2.Core.Combat;
+using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.Entities.Creatures;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
@@ -20,19 +20,20 @@ using STS2RitsuLib.Scaffolding.Content;
 namespace Squ.Cards;
 
 /// <summary>
-/// 夜观天象：不能被打出。进入弃牌堆时预见，数量为场上玩家与敌人总数（至多 5）。
+/// 夜观天象：不能被打出。抽到此牌时抽 1 张牌；进入弃牌堆时预见 3（升级后 5）。
 /// 移动钩子统一记录入弃牌堆事件；有弃牌上下文时立即结算，否则延后至当前阵营回合结束。
 /// </summary>
 [RegisterCard(typeof(SunqianCardPool), StableEntryStem = "stargazing")]
 public sealed class Stargazing : ModCardTemplate
 {
-	public const int MaxScry = 5;
+	public const int ScryAmount = 3;
+	public const int UpgradedScryAmount = 5;
 
 	private int _pendingDiscardPileEntries;
 
 	protected override IEnumerable<DynamicVar> CanonicalVars =>
 	[
-		new CreatureCountScryVar(),
+		new ScryVar(ScryAmount),
 	];
 
 	public override IEnumerable<CardKeyword> CanonicalKeywords =>
@@ -41,13 +42,11 @@ public sealed class Stargazing : ModCardTemplate
 		SquKeywords.Scry,
 	];
 
-	public override int MaxUpgradeLevel => 0;
-
 	public override CardAssetProfile AssetProfile => new(
 		PortraitPath: "res://images/cards/Stargazing.png");
 
 	public Stargazing()
-		: base(0, CardType.Skill, CardRarity.Uncommon, TargetType.None)
+		: base(-1, CardType.Skill, CardRarity.Uncommon, TargetType.None)
 	{
 	}
 
@@ -59,14 +58,30 @@ public sealed class Stargazing : ModCardTemplate
 		PileType oldPileType,
 		AbstractModel? clonedBy)
 	{
-		if (card == this
-			&& oldPileType != PileType.Discard
-			&& Pile?.Type == PileType.Discard)
+		if (card != this)
+		{
+			return Task.CompletedTask;
+		}
+
+		if (oldPileType != PileType.Discard && Pile?.Type == PileType.Discard)
 		{
 			_pendingDiscardPileEntries++;
 		}
 
 		return Task.CompletedTask;
+	}
+
+	public override Task AfterCardDrawn(
+		PlayerChoiceContext choiceContext,
+		CardModel card,
+		bool fromHandDraw)
+	{
+		if (card != this)
+		{
+			return Task.CompletedTask;
+		}
+
+		return DrawOne(choiceContext);
 	}
 
 	public override Task AfterCardDiscarded(PlayerChoiceContext choiceContext, CardModel card)
@@ -76,7 +91,9 @@ public sealed class Stargazing : ModCardTemplate
 			return Task.CompletedTask;
 		}
 
-		return ConsumeOneDiscardPileEntry(choiceContext);
+		return ConsumeOneDiscardPileEntry(
+			choiceContext,
+			preserveEndTurnReadiness: false);
 	}
 
 	public override async Task AfterSideTurnEnd(
@@ -106,12 +123,26 @@ public sealed class Stargazing : ModCardTemplate
 		{
 			while (card._pendingDiscardPileEntries > 0)
 			{
-				await card.ConsumeOneDiscardPileEntry(choiceContext);
+				await card.ConsumeOneDiscardPileEntry(
+					choiceContext,
+					preserveEndTurnReadiness: true);
 			}
 		}
 	}
 
-	private Task ConsumeOneDiscardPileEntry(PlayerChoiceContext choiceContext)
+	private Task DrawOne(PlayerChoiceContext choiceContext)
+	{
+		if (CombatManager.Instance.IsOverOrEnding || Owner is null)
+		{
+			return Task.CompletedTask;
+		}
+
+		return CardPileCmd.Draw(choiceContext, 1, Owner);
+	}
+
+	private Task ConsumeOneDiscardPileEntry(
+		PlayerChoiceContext choiceContext,
+		bool preserveEndTurnReadiness)
 	{
 		_pendingDiscardPileEntries--;
 
@@ -120,47 +151,13 @@ public sealed class Stargazing : ModCardTemplate
 			SquSfx.StargazingWangYunEvent,
 			SquSfx.StargazingDongZhuoEvent);
 
-		int amount = GetScryAmount(this);
-		if (amount <= 0)
-		{
-			return Task.CompletedTask;
-		}
-
-		return ScryCmd.Execute(choiceContext, Owner, amount);
+		return preserveEndTurnReadiness
+			? ScryCmd.ExecuteDuringTurnEnd(choiceContext, this)
+			: ScryCmd.Execute(choiceContext, this);
 	}
 
-	private static int GetScryAmount(CardModel card)
+	protected override void OnUpgrade()
 	{
-		if (card.CombatState is not { } combatState)
-		{
-			return 0;
-		}
-
-		int count = combatState.Players.Count + combatState.Enemies.Count;
-		return Math.Min(MaxScry, count);
-	}
-
-	private sealed class CreatureCountScryVar : DynamicVar
-	{
-		public CreatureCountScryVar()
-			: base(ScryVar.VarName, 0m)
-		{
-		}
-
-		public override void UpdateCardPreview(
-			CardModel card,
-			CardPreviewMode previewMode,
-			Creature? target,
-			bool runGlobalHooks)
-		{
-			int amount = GetScryAmount(card);
-			BaseValue = amount;
-			if (runGlobalHooks)
-			{
-				amount = ScryHook.ModifyScryAmount(card.Owner, amount, out _);
-			}
-
-			PreviewValue = amount;
-		}
+		DynamicVars[ScryVar.VarName].UpgradeValueBy(UpgradedScryAmount - ScryAmount);
 	}
 }

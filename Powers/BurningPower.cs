@@ -16,6 +16,7 @@ using MegaCrit.Sts2.Core.Nodes.Rooms;
 using MegaCrit.Sts2.Core.Nodes.Vfx;
 using MegaCrit.Sts2.Core.Random;
 using MegaCrit.Sts2.Core.ValueProps;
+using Squ.Combat;
 using Squ.Relics;
 using STS2RitsuLib.Combat.HealthBars;
 using STS2RitsuLib.Interop.AutoRegistration;
@@ -113,14 +114,20 @@ public sealed class BurningPower : ModPowerTemplate, IHealthBarForecastSource
 
 		PlayFiendFireDamageVfx(Owner);
 
-		await CreatureCmd.Damage(
+		IronChainPower? ironChain = Owner.GetPower<IronChainPower>();
+		IEnumerable<DamageResult> damageResults = await CreatureCmd.Damage(
 			new ThrowingPlayerChoiceContext(),
 			Owner,
 			Amount,
 			ValueProp.Unblockable | ValueProp.Unpowered,
-			Applier,
 			null,
 			null);
+
+		if (ironChain is not null)
+		{
+			int damageDealt = damageResults.Sum(result => result.TotalDamage);
+			await ironChain.AfterBurningDamage(damageDealt);
+		}
 
 		if (!Owner.IsAlive)
 		{
@@ -165,7 +172,7 @@ public sealed class BurningPower : ModPowerTemplate, IHealthBarForecastSource
 
 	public IEnumerable<HealthBarForecastSegment> GetHealthBarForecastSegments(HealthBarForecastContext context) =>
 		HealthBarForecasts.Single(
-			Amount,
+			SquTurnStartDamageForecast.Calculate(context.Creature).BurningDamage,
 			BurningLethalColor,
 			HealthBarForecastGrowthDirection.FromRight);
 

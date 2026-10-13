@@ -9,11 +9,15 @@ using Squ.Audio;
 using Squ.Cards;
 using Squ.Character;
 using Squ.Combat;
+using Squ.Interop;
 using Squ.Relics;
+using Squ.RunData;
 using Squ.Script;
+using Squ.Settings;
 using STS2RitsuLib;
 using STS2RitsuLib.Interop;
 using STS2RitsuLib.Keywords;
+using STS2RitsuLib.Models.Capabilities;
 using STS2RitsuLib.Utils;
 using STS2RitsuLib.Utils.Persistence;
 
@@ -37,8 +41,8 @@ public static class SquMod
 		SquTargetTypes.Register();
 		RitsuLibFramework.EnsureGodotScriptsRegistered(assembly, Logger);
 		ModTypeDiscoveryHub.RegisterModAssembly(ModId, assembly);
-		SunqianSelectBgm.Register();
 		SquSfx.Register();
+		SquSettingsPage.Register();
 
 		RitsuLibFramework.CreateContentPack(ModId)
 			.CharacterStarterRelic<SunqianCharacter, BoxLunchRelic>(1)
@@ -47,9 +51,28 @@ public static class SquMod
 			.CardKeywordOwnedByLocNamespace("stackable_script")
 			.CardKeywordOwnedByLocNamespace("multi_target")
 			.CardKeywordOwnedByLocNamespace("environmental")
+			.CardKeywordOwnedByLocNamespace("piercing_damage")
 			.CardKeywordOwnedByLocNamespace("scry")
 			.CardKeywordOwnedByLocNamespace("counts_as_played")
 			.CardKeywordOwnedByLocNamespace("charge")
+			.CardKeywordOwnedByLocNamespace(
+				"family",
+				iconPath: null,
+				ModKeywordCardDescriptionPlacement.BeforeCardDescription,
+				includeInCardHoverTip: true)
+			.CardKeywordOwnedByLocNamespace("wrap")
+			.CardKeywordOwnedByLocNamespace("strong_monster_encounter")
+			.CardKeywordOwnedByLocNamespace("slight_revision")
+			.CardKeywordOwnedByLocNamespace(
+				"supreme_general",
+				iconPath: null,
+				ModKeywordCardDescriptionPlacement.BeforeCardDescription,
+				includeInCardHoverTip: true)
+			.CardKeywordOwnedByLocNamespace(
+				"enthralled",
+				iconPath: null,
+				ModKeywordCardDescriptionPlacement.BeforeCardDescription,
+				includeInCardHoverTip: true)
 			.CardKeywordOwnedByLocNamespace(
 				"eunuch_message",
 				iconPath: null,
@@ -70,15 +93,28 @@ public static class SquMod
 			.Apply();
 
 		CardDrawPlayRateTracker.Initialize();
+		CardResolutionTracker.Initialize();
+		AllInResolutionTracker.Initialize();
+		RitsuLibFramework.RegisterModelCapability<SlightRevisionCapability>(ModId);
+		RitsuLibFramework.RegisterModelCapability<NightRaidWuchaoStrikeCapability>(ModId);
+		ContentSettingsRunData.Initialize();
 		RunReloadCount.Initialize();
+		DailyWageRunData.Initialize();
+		SelfDecapitationReviveData.Initialize();
 		ScriptSystem.Initialize();
+		SlightRevisionSystem.Initialize();
+		NightRaidWuchaoStrikeSystem.Initialize();
 		RitsuLibFramework.SubscribeLifecycle<CombatEndedEvent>(_ => WarFeedsWarResolutionTracker.ClearCombat());
 
 		var harmony = new Harmony($"{ModId}.patches");
 		PatchAllResilient(harmony, assembly);
 		SquStrikeRedirectPatches.Initialize(harmony);
 
+		RitsuLibFramework.SubscribeLifecycleOnce<DeferredInitializationCompletedEvent>(_ =>
+			NewsanguoInteropDiagnostics.LogSnapshot("DeferredInitializationCompleted"));
+
 		Logger.Info("sunqian-universe (SQU) mod loaded!");
+		NewsanguoInteropDiagnostics.LogSnapshot("ModLoaded");
 	}
 
 	private static void PatchAllResilient(Harmony harmony, Assembly assembly)

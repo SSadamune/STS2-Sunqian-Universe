@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using MegaCrit.Sts2.Core.Combat;
 using MegaCrit.Sts2.Core.Commands;
+using MegaCrit.Sts2.Core.Commands.Builders;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.Entities.Creatures;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
@@ -54,10 +55,29 @@ public sealed class LoyaltyOverKin : ModCardTemplate
 		CardKeyword.Ethereal,
 	];
 
-	protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
-	[
-		HoverTipFactory.FromPower<StrengthPower>(),
-	];
+	protected override IEnumerable<IHoverTip> AdditionalHoverTips
+	{
+		get
+		{
+			List<IHoverTip> tips =
+			[
+				HoverTipFactory.FromPower<StrengthPower>(),
+				SquCommonL10n.PlayRateHoverTip(),
+			];
+			List<CardModel> previewTargets = GetDescriptionPreviewTargets();
+			IHoverTip? targetTip = CreateTargetCardsHoverTip(previewTargets);
+			if (targetTip != null)
+			{
+				tips.Add(targetTip);
+				foreach (CardModel target in previewTargets)
+				{
+					tips.Add(HoverTipFactory.FromCard(target));
+				}
+			}
+
+			return tips;
+		}
+	}
 
 	public override CardAssetProfile AssetProfile => new(
 		PortraitPath: "res://images/cards/LoyaltyOverKin.png");
@@ -85,6 +105,19 @@ public sealed class LoyaltyOverKin : ModCardTemplate
 		decimal strengthAmount = DynamicVars[nameof(StrengthPower)].BaseValue;
 		SquVigorSnapshot.AttackSequence vigorSequence = SquVigorSnapshot.BeginAttackSequence(Owner.Creature, this);
 
+		AttackCommand Strike(decimal damage) =>
+			DamageCmd.Attack(damage)
+				.FromCard(this, cardPlay)
+				.Targeting(target)
+				.WithHitFx("vfx/vfx_bloody_impact")
+				.BeforeDamage(() =>
+				{
+					VfxCmd.PlayOnCreatureCenter(target, "vfx/vfx_flying_slash");
+					return Task.CompletedTask;
+				});
+
+		await Strike(vigorSequence.ResolveNextAttackDamage()).Execute(choiceContext);
+
 		foreach (CardModel card in selected)
 		{
 			if (card.Pile?.Type != PileType.Draw)
@@ -94,21 +127,17 @@ public sealed class LoyaltyOverKin : ModCardTemplate
 
 			await CardCmd.Exhaust(choiceContext, card);
 
-			if (target.IsAlive)
-			{
-				await DamageCmd.Attack(vigorSequence.ResolveNextAttackDamage())
-					.FromCard(this, cardPlay)
-					.Targeting(target)
-					.WithHitFx("vfx/vfx_attack_slash")
-					.Execute(choiceContext);
-			}
-
 			await PowerCmd.Apply<StrengthPower>(
 				choiceContext,
 				Owner.Creature,
 				strengthAmount,
 				Owner.Creature,
 				this);
+
+			if (target.IsAlive)
+			{
+				await Strike(vigorSequence.ResolveNextAttackDamage()).Execute(choiceContext);
+			}
 		}
 	}
 
@@ -117,18 +146,16 @@ public sealed class LoyaltyOverKin : ModCardTemplate
 		DynamicVars[nameof(StrengthPower)].UpgradeValueBy(UpgradedStrength - BaseStrength);
 	}
 
-	protected override void AddExtraArgsToDescription(LocString description)
+	private IHoverTip? CreateTargetCardsHoverTip(IReadOnlyList<CardModel> previewTargets)
 	{
-		List<CardModel> previewTargets = GetDescriptionPreviewTargets();
 		if (previewTargets.Count == 0)
 		{
-			description.Add("TargetCards", string.Empty);
-			return;
+			return null;
 		}
 
-		var clause = new LocString("cards", Id.Entry + ".targetCards");
-		clause.Add("Cards", FormatCardList(previewTargets));
-		description.Add("TargetCards", clause);
+		LocString description = new("cards", Id.Entry + ".targetCards");
+		description.Add("Cards", FormatCardList(previewTargets));
+		return new HoverTip(SquCommonL10n.AnnotationTitle(), description);
 	}
 
 	private List<CardModel> GetDescriptionPreviewTargets()

@@ -17,10 +17,13 @@ namespace Squ.Cards;
 [RegisterCard(typeof(ColorlessCardPool), StableEntryStem = "the_grieving_prevail")]
 public sealed class TheGrievingPrevail : ModCardTemplate
 {
+	public const int StrengthLoss = -7;
+	public const int RitualAmount = 3;
+
 	protected override IEnumerable<DynamicVar> CanonicalVars =>
 	[
-		new PowerVar<StrengthPower>(-7),
-		new PowerVar<RitualPower>(3),
+		new PowerVar<StrengthPower>(StrengthLoss),
+		new PowerVar<RitualPower>(RitualAmount),
 	];
 
 	public override IEnumerable<CardKeyword> CanonicalKeywords =>

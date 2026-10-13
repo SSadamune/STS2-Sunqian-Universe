@@ -24,6 +24,7 @@ using MegaCrit.Sts2.Core.Rooms;
 using MegaCrit.Sts2.Core.Runs;
 using MegaCrit.Sts2.Core.TestSupport;
 using Squ.Character;
+using Squ.Interop;
 using STS2RitsuLib.Interop.AutoRegistration;
 using STS2RitsuLib.Scaffolding.Content;
 
@@ -69,7 +70,8 @@ public sealed class PeiguoBrewPotion : ModPotionTemplate
 	protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
 	[
 		HoverTipFactory.ForEnergy(this),
-		HoverTipFactory.FromPower<VigorPower>(),
+		..NewsanguoVigorSwap.GrantedPowerHoverTips(this),
+		..NewsanguoVigorSwap.LibraryHoverTips(),
 	];
 
 	public override PotionAssetProfile AssetProfile => new(
@@ -105,7 +107,7 @@ public sealed class PeiguoBrewPotion : ModPotionTemplate
 		if (CombatManager.Instance.IsInProgress)
 		{
 			await PlayerCmd.GainEnergy(DynamicVars.Energy.BaseValue, Owner);
-			await PowerCmd.Apply<VigorPower>(
+			await NewsanguoVigorSwap.ApplyVigorOrDrunkenMight(
 				choiceContext,
 				Owner.Creature,
 				DynamicVars[nameof(VigorPower)].BaseValue,

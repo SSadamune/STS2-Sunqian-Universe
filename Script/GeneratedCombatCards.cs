@@ -1,3 +1,4 @@
+using System;
 using System.Threading.Tasks;
 using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Combat;
@@ -34,10 +35,12 @@ public static class GeneratedCombatCards
 		ICombatState combatState,
 		Player player,
 		bool upgraded,
-		Player? creator = null)
+		Player? creator = null,
+		Action<CardModel>? customize = null)
 		where T : CardModel
 	{
 		CardModel card = CreateInCombat<T>(combatState, player, upgraded);
+		customize?.Invoke(card);
 		await CardPileCmd.AddGeneratedCardToCombat(card, PileType.Hand, creator ?? player);
 	}
 
@@ -46,13 +49,15 @@ public static class GeneratedCombatCards
 		Player player,
 		int count,
 		bool upgraded,
-		Player? creator = null)
+		Player? creator = null,
+		Action<CardModel>? customize = null)
 		where T : CardModel
 	{
 		CardPile drawPile = PileType.Draw.GetPile(player);
 		for (int i = 0; i < count; i++)
 		{
 			CardModel card = CreateInCombat<T>(combatState, player, upgraded);
+			customize?.Invoke(card);
 			CardPileAddResult result = await CardPileCmd.AddGeneratedCardToCombat(
 				card,
 				PileType.Draw,

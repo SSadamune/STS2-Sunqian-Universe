@@ -39,7 +39,7 @@ public sealed class KeepCalm : ChargeCardTemplate
 
 	protected override IEnumerable<DynamicVar> CanonicalVars =>
 	[
-		new EnergyVar(CanonicalEnergy),
+		new ChargedEnergyVar(CanonicalEnergy, _ => CanonicalEnergy),
 		new DynamicVar(RetainBonusVarName, CanonicalRetainBonus),
 	];
 

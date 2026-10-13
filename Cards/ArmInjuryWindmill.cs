@@ -9,6 +9,7 @@ using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.Models.Cards;
 using MegaCrit.Sts2.Core.Models.Powers;
+using Squ.Audio;
 using Squ.Character;
 using Squ.Powers;
 using Squ.Script;
@@ -22,13 +23,14 @@ namespace Squ.Cards;
 [RegisterCard(typeof(SunqianCardPool), StableEntryStem = "arm_injury_windmill")]
 public sealed class ArmInjuryWindmill : ModCardTemplate
 {
-	private const int BaseDrawCount = 2;
-	private const int UpgradedDrawCount = 3;
-	private const decimal StatAmount = 2m;
+	public const int BaseDrawCount = 2;
+	public const int UpgradedDrawCount = 3;
+	public const int StatAmount = 3;
 
 	protected override IEnumerable<DynamicVar> CanonicalVars =>
 	[
 		new CardsVar(BaseDrawCount),
+		new DynamicVar(nameof(StatAmount), StatAmount),
 	];
 
 	protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
@@ -48,29 +50,29 @@ public sealed class ArmInjuryWindmill : ModCardTemplate
 
 	protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
 	{
+		SquSfx.Play(SquSfx.ArmInjuryWindmillEvent);
 		ICombatState combatState = CombatState
 			?? throw new InvalidOperationException("ArmInjuryWindmill requires an active combat.");
 
 		await CardPileCmd.Draw(choiceContext, DynamicVars.Cards.IntValue, Owner);
 
-		await PowerCmd.Apply<TempDexFromArmInjuryWindmillPower>(
+		await PowerCmd.Apply<TempDexPower>(
 			choiceContext,
 			Owner.Creature,
-			StatAmount,
+			DynamicVars[nameof(StatAmount)].BaseValue,
 			Owner.Creature,
 			this);
 
 		await PowerCmd.Apply<TempStrFromArmInjuryWindmillPower>(
 			choiceContext,
 			Owner.Creature,
-			StatAmount,
+			DynamicVars[nameof(StatAmount)].BaseValue,
 			Owner.Creature,
 			this);
 
-		await GeneratedCombatCards.AddToDrawPileInCombat<Wound>(
+		await GeneratedCombatCards.AddToHandInCombat<Wound>(
 			combatState,
 			Owner,
-			1,
 			upgraded: false,
 			Owner);
 	}

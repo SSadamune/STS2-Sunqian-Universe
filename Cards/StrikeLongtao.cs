@@ -4,10 +4,13 @@ using System.Threading.Tasks;
 using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
+using MegaCrit.Sts2.Core.Localization;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.ValueProps;
+using Squ.Audio;
 using Squ.Character;
 using Squ.Combat;
+using Squ.Powers;
 using STS2RitsuLib.Interop.AutoRegistration;
 using STS2RitsuLib.Scaffolding.Content;
 
@@ -17,9 +20,12 @@ namespace Squ.Cards;
 [RegisterCharacterStarterCard(typeof(SunqianCharacter), 4)]
 public sealed class StrikeLongtao : ModCardTemplate
 {
+	public const int BaseDamage = 6;
+	public const int UpgradedDamage = 9;
+
 	protected override IEnumerable<DynamicVar> CanonicalVars =>
 	[
-		new DamageVar(6m, ValueProp.Move),
+		new DamageVar(BaseDamage, ValueProp.Move),
 	];
 
 	protected override HashSet<CardTag> CanonicalTags => [CardTag.Strike];
@@ -34,6 +40,8 @@ public sealed class StrikeLongtao : ModCardTemplate
 
 	protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
 	{
+		SquSfx.PlayRandom(RunState, SquSfx.BasicStrikeEvents);
+
 		if (SquBasicStrikeRedirect.ShouldHandleInOnPlay(this))
 		{
 			await SquBasicStrikeRedirect.ExecuteRedirectedBasicStrikeDamage(this, choiceContext);
@@ -51,6 +59,24 @@ public sealed class StrikeLongtao : ModCardTemplate
 
 	protected override void OnUpgrade()
 	{
-		DynamicVars.Damage.UpgradeValueBy(3m);
+		DynamicVars.Damage.UpgradeValueBy(UpgradedDamage - BaseDamage);
+	}
+
+	protected override void AddExtraArgsToDescription(LocString description)
+	{
+		string bodyKey = "normalBody";
+		if (Pile?.Type == PileType.Hand
+			&& ScriptChickenFootCheesePower.ShouldRedirectBasicStrike(this))
+		{
+			bodyKey = Owner?.Creature?.GetPower<ScriptChickenFootCheesePower>() is { } power
+				&& power.HitCountPerTarget >= ScriptChickenFootCheesePower.UpgradedHitCount
+				? "chickenFootCheeseScriptUpgradedBody"
+				: "chickenFootCheeseScriptBody";
+		}
+
+		SquKeywords.AddNestedLoc(
+			description,
+			"BodyText",
+			new LocString("cards", Id.Entry + "." + bodyKey));
 	}
 }

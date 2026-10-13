@@ -9,6 +9,7 @@ using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.Powers;
 using Squ;
+using Squ.Audio;
 using Squ.Character;
 using Squ.Powers;
 using STS2RitsuLib.Interop.AutoRegistration;
@@ -21,10 +22,10 @@ namespace Squ.Cards;
 [RegisterCard(typeof(SunqianCardPool), StableEntryStem = "bowang_paradox_script")]
 public sealed class BowangParadoxScript : ScriptCardTemplate
 {
-	public const decimal BaseVigor = 6m;
-	public const decimal UpgradedVigor = 9m;
-	public const decimal BaseTinderStacks = 6m;
-	public const decimal UpgradedTinderStacks = 9m;
+	public const int BaseVigor = 6;
+	public const int UpgradedVigor = 9;
+	public const int BaseTinderStacks = 6;
+	public const int UpgradedTinderStacks = 9;
 
 	protected override IEnumerable<DynamicVar> CanonicalVars =>
 	[
@@ -37,6 +38,7 @@ public sealed class BowangParadoxScript : ScriptCardTemplate
 		HoverTipFactory.FromPower<VigorPower>(),
 		HoverTipFactory.FromPower<TinderPower>(),
 		HoverTipFactory.FromPower<BurningPower>(),
+		HoverTipFactory.FromKeyword(CardKeyword.Retain),
 	];
 
 	public override IEnumerable<CardKeyword> CanonicalKeywords =>
@@ -55,6 +57,7 @@ public sealed class BowangParadoxScript : ScriptCardTemplate
 
 	protected override async Task PlayScriptAsync(PlayerChoiceContext choiceContext, CardPlay cardPlay)
 	{
+		SquSfx.Play(SquSfx.BowangParadoxPlayEvent);
 		await PowerCmd.Apply<VigorPower>(
 			choiceContext,
 			Owner.Creature,
@@ -63,7 +66,7 @@ public sealed class BowangParadoxScript : ScriptCardTemplate
 			this);
 
 		List<CardModel> attackCards = PileType.Hand.GetPile(Owner).Cards
-			.Where(card => card.Type == CardType.Attack)
+			.Where(card => card.Type == CardType.Attack && !card.ShouldRetainThisTurn)
 			.ToList();
 		if (attackCards.Count > 0)
 		{

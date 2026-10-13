@@ -8,6 +8,7 @@ using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Models.Cards;
 using Squ;
+using Squ.Audio;
 using Squ.Character;
 using Squ.Powers;
 using Squ.Script;
@@ -44,12 +45,13 @@ public sealed class NeutralAmbushScript : ScriptCardTemplate
 		PortraitPath: "res://images/cards/NeutralAmbushScript.png");
 
 	public NeutralAmbushScript()
-		: base(1, CardType.Skill, CardRarity.Common, TargetType.Self, false)
+		: base(1, CardType.Skill, CardRarity.Uncommon, TargetType.Self, false)
 	{
 	}
 
 	protected override async Task PlayScriptAsync(PlayerChoiceContext choiceContext, CardPlay cardPlay)
 	{
+		SquSfx.Play(SquSfx.NeutralAmbushPlayEvent);
 		Player player = Owner;
 		ICombatState combatState = player.Creature.CombatState
 			?? throw new System.InvalidOperationException("NeutralAmbushScript requires an active combat.");

@@ -1,15 +1,16 @@
 {
   "id": "sunqian-universe",
-  "name": "Sunqian Universe (SQU)",
+  "name": "孙乾宇宙",
   "author": "Sadaki",
   "description": "Sunqian Universe mod for Slay the Spire 2.",
-  "version": "0.1.7",
+  "version": "0.2.13",
   "min_game_version": "0.111.0",
   "has_pck": true,
   "has_dll": true,
   "dependencies": [
     {
-      "id": "STS2-RitsuLib"
+      "id": "STS2-RitsuLib",
+      "min_version": "0.6.2"
     }
   ],
   "affects_gameplay": true

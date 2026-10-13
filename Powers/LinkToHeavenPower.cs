@@ -66,7 +66,12 @@ public sealed class LinkToHeavenPower : ModPowerTemplate
 		}
 
 		Flash();
-		await ScryCmd.Execute(choiceContext, player, (int)Amount, HandleChosenCard);
+		await ScryCmd.Execute(
+			choiceContext,
+			player,
+			(int)Amount,
+			HandleChosenCard,
+			source: Title);
 	}
 
 	private async Task HandleChosenCard(PlayerChoiceContext choiceContext, CardModel card)
@@ -81,7 +86,7 @@ public sealed class LinkToHeavenPower : ModPowerTemplate
 				await PowerCmd.Apply<TempStrFromLinkToHeavenPower>(choiceContext, owner, StrengthGain, owner, null);
 				break;
 			case CardType.Skill:
-				await PowerCmd.Apply<TempDexFromLinkToHeavenPower>(choiceContext, owner, DexterityGain, owner, null);
+				await PowerCmd.Apply<TempDexPower>(choiceContext, owner, DexterityGain, owner, null);
 				break;
 			case CardType.Power:
 				await PlayerCmd.GainEnergy(EnergyGain, card.Owner);
@@ -89,9 +94,6 @@ public sealed class LinkToHeavenPower : ModPowerTemplate
 		}
 	}
 }
-
-[RegisterPower]
-public sealed class TempDexFromLinkToHeavenPower : TempDexPower<LinkToHeavenPower> { }
 
 [RegisterPower]
 public sealed class TempStrFromLinkToHeavenPower : TemporaryStrengthPower, IModPowerAssetOverrides

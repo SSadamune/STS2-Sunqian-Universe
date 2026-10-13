@@ -18,8 +18,8 @@ namespace Squ.Cards;
 [RegisterCard(typeof(SunqianCardPool), StableEntryStem = "burn_after_reading")]
 public sealed class BurnAfterReading : ModCardTemplate
 {
-	public const decimal TinderStacks = 3m;
-	public const decimal UpgradedTinderStacks = 4m;
+	public const int TinderStacks = 3;
+	public const int UpgradedTinderStacks = 4;
 
 	protected override IEnumerable<DynamicVar> CanonicalVars =>
 	[
@@ -31,7 +31,6 @@ public sealed class BurnAfterReading : ModCardTemplate
 		HoverTipFactory.FromKeyword(CardKeyword.Exhaust),
 		..HoverTipFactory.FromPowerWithPowerHoverTips<TinderPower>(
 			(int)DynamicVars[nameof(TinderPower)].BaseValue),
-		HoverTipFactory.FromPower<BurningPower>(),
 	];
 
 	public override CardAssetProfile AssetProfile => new(

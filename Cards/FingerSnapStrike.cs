@@ -1,11 +1,13 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Godot;
 using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.Nodes.Cards;
+using MegaCrit.Sts2.Core.Nodes.Vfx;
 using MegaCrit.Sts2.Core.ValueProps;
 using Squ;
 using Squ.Audio;
@@ -24,17 +26,18 @@ namespace Squ.Cards;
 [RegisterCard(typeof(SunqianCardPool), StableEntryStem = "finger_snap_strike")]
 public sealed class FingerSnapStrike : ChargeCardTemplate
 {
-	public const int BaseDamage = 11;
-	public const int UpgradedDamage = 15;
+	public const int BaseDamage = 13;
+	public const int UpgradedDamage = 18;
 	public const string MinCostVarName = "MinCost";
 	public const string MaxCostVarName = "MaxCost";
 
+	public const int RandomCostInclusiveMin = 0;
 	public const int RandomCostInclusiveMax = 2;
 
 	protected override IEnumerable<DynamicVar> CanonicalVars =>
 	[
 		new DamageVar(BaseDamage, ValueProp.Move),
-		new DynamicVar(MinCostVarName, 0),
+		new DynamicVar(MinCostVarName, RandomCostInclusiveMin),
 		new DynamicVar(MaxCostVarName, RandomCostInclusiveMax),
 	];
 
@@ -68,11 +71,13 @@ public sealed class FingerSnapStrike : ChargeCardTemplate
 		SquSfx.PlayRandom(
 			RunState,
 			SquSfx.FingerStrikeDongZhuoHeadEvent,
-			SquSfx.FingerStrikeRemainingLandEvent);
+			SquSfx.FingerStrikeRemainingLandEvent,
+			SquSfx.FingerStrikeInstantHeadEvent,
+			SquSfx.FingerStrikeDestroyXiliangArmyEvent);
 		await DamageCmd.Attack(DynamicVars.Damage.BaseValue)
 			.FromCard(this, cardPlay)
 			.Targeting(cardPlay.Target)
-			.WithHitFx("vfx/vfx_attack_slash")
+			.WithHitVfxNode(target => NDaggerSprayImpactVfx.Create(target, new Color("b1ccca"), goingRight: true))
 			.Execute(choiceContext);
 	}
 

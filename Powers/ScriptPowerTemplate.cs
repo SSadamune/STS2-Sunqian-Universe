@@ -19,6 +19,8 @@ namespace Squ.Powers;
 /// </summary>
 public abstract class ScriptPowerTemplate : ModPowerTemplate
 {
+	private List<ScriptPowerTemplate>? _scriptsToReplace;
+
 	public override PowerType Type => PowerType.Buff;
 
 	public override PowerStackType StackType => PowerStackType.None;
@@ -29,19 +31,45 @@ public abstract class ScriptPowerTemplate : ModPowerTemplate
 
 	protected override IEnumerable<string> RegisteredKeywordIds => [SquKeywords.ScriptId];
 
-	public override async Task BeforeApplied(
+	public sealed override async Task BeforeApplied(
 		Creature target,
 		decimal amount,
 		Creature? applier,
 		CardModel? cardSource)
 	{
-		foreach (ScriptPowerTemplate active in target.Powers.OfType<ScriptPowerTemplate>().ToList())
-		{
-			await ScriptSystem.RemoveScriptPowerAsync(active);
-		}
-
+		// Keep the outgoing script alive until this power has been initialized and
+		// attached. Its lift effects can draw or auto-play cards, which the incoming
+		// script must be able to observe.
+		_scriptsToReplace = target.Powers
+			.OfType<ScriptPowerTemplate>()
+			.Where(ShouldReplaceActiveScript)
+			.ToList();
 		await base.BeforeApplied(target, amount, applier, cardSource);
 	}
+
+	public sealed override async Task AfterApplied(Creature? applier, CardModel? cardSource)
+	{
+		await base.AfterApplied(applier, cardSource);
+		await OnScriptApplied(applier, cardSource);
+
+		List<ScriptPowerTemplate> scriptsToReplace = _scriptsToReplace ?? [];
+		_scriptsToReplace = null;
+		foreach (ScriptPowerTemplate active in scriptsToReplace)
+		{
+			if (Owner.Powers.Contains(active))
+			{
+				await ScriptSystem.RemoveScriptPowerAsync(active);
+			}
+		}
+	}
+
+	protected virtual bool ShouldReplaceActiveScript(ScriptPowerTemplate active) => true;
+
+	/// <summary>
+	/// Initializes script-specific state before the outgoing script is lifted.
+	/// </summary>
+	protected virtual Task OnScriptApplied(Creature? applier, CardModel? cardSource) =>
+		Task.CompletedTask;
 
 	public override async Task AfterRemoved(Creature oldOwner)
 	{

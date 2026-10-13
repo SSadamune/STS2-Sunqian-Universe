@@ -20,9 +20,9 @@ namespace Squ.Cards;
 [RegisterCard(typeof(SunqianCardPool), StableEntryStem = "burning_linked_camps_script")]
 public sealed class BurningLinkedCampsScript : ScriptCardTemplate
 {
-	public const decimal TinderStacks = 5m;
+	public const int TinderStacks = 5;
 
-	public const decimal UpgradedTinderStacks = 8m;
+	public const int UpgradedTinderStacks = 8;
 
 	protected override IEnumerable<DynamicVar> CanonicalVars =>
 	[
@@ -33,7 +33,6 @@ public sealed class BurningLinkedCampsScript : ScriptCardTemplate
 	[
 		..HoverTipFactory.FromPowerWithPowerHoverTips<TinderPower>(
 			(int)DynamicVars[nameof(TinderPower)].BaseValue),
-		HoverTipFactory.FromPower<BurningPower>(),
 		HoverTipFactory.FromCard<Burn>(),
 		HoverTipFactory.FromCard<ShangfangguSigh>(IsUpgraded),
 	];

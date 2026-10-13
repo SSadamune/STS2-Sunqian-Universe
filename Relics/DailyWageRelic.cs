@@ -12,6 +12,7 @@ using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Rooms;
 using Squ;
 using Squ.Character;
+using Squ.RunData;
 using STS2RitsuLib.Interop.AutoRegistration;
 using STS2RitsuLib.Scaffolding.Content;
 
@@ -34,6 +35,7 @@ public sealed class DailyWageRelic : ScriptRelicTemplate
 	protected override IEnumerable<DynamicVar> CanonicalVars =>
 	[
 		new GoldVar(3),
+		new DynamicVar(DailyWageRunData.GoldEarnedVarName, 0m),
 	];
 
 	public override RelicAssetProfile AssetProfile => new(
@@ -77,13 +79,30 @@ public sealed class DailyWageRelic : ScriptRelicTemplate
 		}
 
 		Flash();
-		await PlayerCmd.GainGold(DynamicVars.Gold.BaseValue, Owner);
+		decimal gold = DynamicVars.Gold.BaseValue;
+		await PlayerCmd.GainGold(gold, Owner);
+		DailyWageRunData.AddGold(Owner, gold);
+		DailyWageRunData.SyncRelic(this);
 		PlayedScriptThisTurn = false;
 	}
 
 	public override Task AfterCombatEnd(CombatRoom room)
 	{
 		PlayedScriptThisTurn = false;
+		DailyWageRunData.SyncRelic(this);
+		return Task.CompletedTask;
+	}
+
+	public override Task AfterSideTurnStart(
+		CombatSide side,
+		IReadOnlyList<Creature> participants,
+		ICombatState combatState)
+	{
+		if (participants.Contains(Owner.Creature))
+		{
+			DailyWageRunData.SyncRelic(this);
+		}
+
 		return Task.CompletedTask;
 	}
 }

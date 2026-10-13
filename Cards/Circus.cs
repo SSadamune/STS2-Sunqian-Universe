@@ -8,6 +8,7 @@ using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.Models.Powers;
 using MegaCrit.Sts2.Core.ValueProps;
+using Squ.Audio;
 using Squ.Character;
 using Squ.Powers;
 using STS2RitsuLib.Interop.AutoRegistration;
@@ -23,10 +24,10 @@ namespace Squ.Cards;
 [RegisterCard(typeof(SunqianCardPool), StableEntryStem = "circus")]
 public sealed class Circus : ModCardTemplate
 {
-	public const decimal CanonicalDamage = 9m;
-	public const decimal UpgradedDamage = 12m;
-	public const decimal CanonicalDexterity = 2m;
-	public const decimal UpgradedDexterity = 3m;
+	public const int CanonicalDamage = 10;
+	public const int UpgradedDamage = 13;
+	public const int CanonicalDexterity = 2;
+	public const int UpgradedDexterity = 3;
 
 	protected override IEnumerable<DynamicVar> CanonicalVars =>
 	[
@@ -50,14 +51,15 @@ public sealed class Circus : ModCardTemplate
 	protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
 	{
 		ArgumentNullException.ThrowIfNull(cardPlay.Target, nameof(cardPlay.Target));
+		SquSfx.PlayRandom(RunState, SquSfx.CircusEvents);
 
 		await DamageCmd.Attack(DynamicVars.Damage.BaseValue)
 			.FromCard(this, cardPlay)
 			.Targeting(cardPlay.Target)
-			.WithHitFx("vfx/vfx_attack_slash")
+			.WithHitFx("vfx/vfx_dramatic_stab")
 			.Execute(choiceContext);
 
-		await PowerCmd.Apply<TempDexFromCircusPower>(
+		await PowerCmd.Apply<TempDexPower>(
 			choiceContext,
 			Owner.Creature,
 			DynamicVars[nameof(DexterityPower)].BaseValue,

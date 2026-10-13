@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Godot;
 using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Combat;
 using MegaCrit.Sts2.Core.Entities.Cards;
@@ -13,6 +14,7 @@ using MegaCrit.Sts2.Core.Models.Powers;
 using MegaCrit.Sts2.Core.ValueProps;
 using Squ.Audio;
 using Squ.Character;
+using Squ.Combat;
 using Squ.Powers;
 using STS2RitsuLib.Interop.AutoRegistration;
 using STS2RitsuLib.Scaffolding.Content;
@@ -24,10 +26,14 @@ namespace Squ.Cards;
 [RegisterCard(typeof(SunqianCardPool), StableEntryStem = "table_flip")]
 public sealed class TableFlip : ModCardTemplate
 {
+	public const int WeakAmount = 3;
+	public const int DamageAmount = 18;
+	public const float ChargeSeconds = 2.2f;
+
 	protected override IEnumerable<DynamicVar> CanonicalVars =>
 	[
-		new PowerVar<WeakPower>(2),
-		new DamageVar(16m, ValueProp.Move),
+		new PowerVar<WeakPower>(WeakAmount),
+		new DamageVar(DamageAmount, ValueProp.Move),
 	];
 
 	protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
@@ -48,14 +54,18 @@ public sealed class TableFlip : ModCardTemplate
 		ICombatState? combatState = CombatState;
 		ArgumentNullException.ThrowIfNull(combatState, nameof(combatState));
 
-		SquSfx.Play(SquSfx.SlamTheCommandDeskEvent);
+		SquHitVfx.PlayFinaleAnticipation(Owner.Creature, ChargeSeconds, new Color(1f, 0.22f, 0.16f));
+		await SquSfx.PlayAndWait(SquSfx.TableFlipReluctantEvent, maxSeconds: 3f);
+		SquSfx.Play(SquSfx.TableFlipHumEvent);
 
 		decimal weakAmount = DynamicVars[nameof(WeakPower)].BaseValue;
 
 		await DamageCmd.Attack(DynamicVars.Damage.BaseValue)
 			.FromCard(this, cardPlay)
 			.TargetingAllOpponents(combatState)
-			.WithHitFx("vfx/vfx_attack_blunt")
+			.WithHitFx("vfx/vfx_heavy_blunt")
+			.WithHitVfxSpawnedAtBase()
+			.SpawningHitVfxOnEachCreature()
 			.Execute(choiceContext);
 
 		foreach (Creature target in combatState.HittableEnemies)

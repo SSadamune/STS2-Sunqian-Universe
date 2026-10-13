@@ -18,9 +18,12 @@ namespace Squ.Cards;
 [RegisterCard(typeof(SunqianCardPool), StableEntryStem = "too_smart_to_be_real")]
 public sealed class TooSmartToBeReal : ModCardTemplate
 {
+	public const int BaseDraw = 1;
+	public const int UpgradedDraw = 2;
+
 	protected override IEnumerable<DynamicVar> CanonicalVars =>
 	[
-		new CardsVar(1),
+		new CardsVar(BaseDraw),
 	];
 
 	protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
@@ -52,6 +55,6 @@ public sealed class TooSmartToBeReal : ModCardTemplate
 
 	protected override void OnUpgrade()
 	{
-		DynamicVars.Cards.UpgradeValueBy(1m);
+		DynamicVars.Cards.UpgradeValueBy(UpgradedDraw - BaseDraw);
 	}
 }

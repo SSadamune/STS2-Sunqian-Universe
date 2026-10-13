@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using HarmonyLib;
 using MegaCrit.Sts2.Core.CardSelection;
 using MegaCrit.Sts2.Core.Combat;
 using MegaCrit.Sts2.Core.Commands;
@@ -10,6 +11,7 @@ using MegaCrit.Sts2.Core.Entities.Multiplayer;
 using MegaCrit.Sts2.Core.Entities.Players;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.Hooks;
+using MegaCrit.Sts2.Core.Localization;
 using MegaCrit.Sts2.Core.Models;
 
 #nullable enable
@@ -36,24 +38,75 @@ public readonly record struct ScryResult
 /// </summary>
 public static class ScryCmd
 {
+	private static readonly Dictionary<ulong, int> PreserveEndTurnReadinessDepthByPlayer = [];
+
 	/// <summary>
 	/// 以卡牌上名为 "Scry" 的 <see cref="ScryVar"/> 作为基础数量执行预见。
 	/// </summary>
 	public static Task<ScryResult> Execute(PlayerChoiceContext choiceContext, CardModel card)
 	{
-		return Execute(choiceContext, card.Owner, card.DynamicVars.Scry().IntValue);
+		return ExecuteInternal(
+			choiceContext,
+			card.Owner,
+			card.DynamicVars.Scry().IntValue,
+			onCardChosen: null,
+			source: card.TitleLocString,
+			preserveEndTurnReadiness: false);
+	}
+
+	/// <summary>
+	/// Executes Scry after the player has committed to ending their turn. Card selection normally
+	/// undoes that commitment; suppressing only that automatic undo keeps the end-turn transition
+	/// and its button state intact while the complete, possibly nested Scry chain resolves.
+	/// </summary>
+	public static Task<ScryResult> ExecuteDuringTurnEnd(
+		PlayerChoiceContext choiceContext,
+		CardModel card)
+	{
+		return ExecuteInternal(
+			choiceContext,
+			card.Owner,
+			card.DynamicVars.Scry().IntValue,
+			onCardChosen: null,
+			source: card.TitleLocString,
+			preserveEndTurnReadiness: true);
 	}
 
 	/// <param name="onCardChosen">
 	/// 若提供，被玩家选中的每张牌改由此回调处理（例如改为消耗而非丢弃），
 	/// 调用方需自行负责该牌的去向；不提供时使用默认的丢弃行为。
 	/// </param>
-	public static async Task<ScryResult> Execute(
+	/// <param name="source">
+	/// 可选的预见来源名称（例如卡牌或能力的标题）；提供后会显示在玩家选择提示中。
+	/// </param>
+	public static Task<ScryResult> Execute(
 		PlayerChoiceContext choiceContext,
 		Player player,
 		int amount,
-		Func<PlayerChoiceContext, CardModel, Task>? onCardChosen = null)
+		Func<PlayerChoiceContext, CardModel, Task>? onCardChosen = null,
+		LocString? source = null)
 	{
+		return ExecuteInternal(
+			choiceContext,
+			player,
+			amount,
+			onCardChosen,
+			source,
+			preserveEndTurnReadiness: false);
+	}
+
+	private static async Task<ScryResult> ExecuteInternal(
+		PlayerChoiceContext choiceContext,
+		Player player,
+		int amount,
+		Func<PlayerChoiceContext, CardModel, Task>? onCardChosen,
+		LocString? source,
+		bool preserveEndTurnReadiness)
+	{
+		using IDisposable? preserveReadinessScope = preserveEndTurnReadiness
+			? BeginPreservingEndTurnReadiness(player)
+			: null;
+
 		var modifiedAmount = ScryHook.ModifyScryAmount(player, amount, out var modifiers);
 		await ScryHook.AfterModifyingScryAmount(choiceContext, player, modifiers, amount, modifiedAmount);
 
@@ -66,12 +119,13 @@ public static class ScryCmd
 		var cardsToScry = drawPile.Cards.Take(modifiedAmount).ToList();
 		if (cardsToScry.Count == 0) return ScryResult.Empty;
 
+		LocString selectionPrompt = CreateSelectionPrompt(source);
 		var prefs = new CardSelectorPrefs(
-			CardSelectorPrefs.DiscardSelectionPrompt,
+			selectionPrompt,
 			0,
 			cardsToScry.Count);
 
-		var cardsToDiscard = (await CardSelectCmd.FromSimpleGrid(
+		List<CardModel> cardsToDiscard = (await CardSelectCmd.FromSimpleGrid(
 			choiceContext,
 			cardsToScry,
 			player,
@@ -91,6 +145,30 @@ public static class ScryCmd
 
 		await ScryHook.AfterScryed(choiceContext, player, modifiedAmount, cardsToDiscard.Count, cardsToDiscard);
 		return new ScryResult(cardsToDiscard);
+	}
+
+	private static IDisposable BeginPreservingEndTurnReadiness(Player player)
+	{
+		ulong playerId = player.NetId;
+		PreserveEndTurnReadinessDepthByPlayer.TryGetValue(playerId, out int depth);
+		PreserveEndTurnReadinessDepthByPlayer[playerId] = depth + 1;
+		return new PreserveEndTurnReadinessScope(playerId);
+	}
+
+	private static bool IsPreservingEndTurnReadiness(Player player) =>
+		PreserveEndTurnReadinessDepthByPlayer.TryGetValue(player.NetId, out int depth)
+		&& depth > 0;
+
+	private static LocString CreateSelectionPrompt(LocString? source)
+	{
+		if (source == null)
+		{
+			return CardSelectorPrefs.DiscardSelectionPrompt;
+		}
+
+		LocString prompt = SquCommonL10n.ScrySelectionPromptWithSource();
+		prompt.Add("Source", source);
+		return prompt;
 	}
 
 	private static async Task DiscardSelectedCards(
@@ -119,5 +197,35 @@ public static class ScryCmd
 		{
 			await CardCmd.AutoPlay(choiceContext, slyCard, null, AutoPlayType.SlyDiscard);
 		}
+	}
+
+	private sealed class PreserveEndTurnReadinessScope(ulong playerId) : IDisposable
+	{
+		private bool _disposed;
+
+		public void Dispose()
+		{
+			if (_disposed)
+			{
+				return;
+			}
+
+			_disposed = true;
+			if (!PreserveEndTurnReadinessDepthByPlayer.TryGetValue(playerId, out int depth)
+				|| depth <= 1)
+			{
+				PreserveEndTurnReadinessDepthByPlayer.Remove(playerId);
+				return;
+			}
+
+			PreserveEndTurnReadinessDepthByPlayer[playerId] = depth - 1;
+		}
+	}
+
+	[HarmonyPatch(typeof(CardSelectCmd), "UndoEndTurnIfNecessary")]
+	private static class PreserveEndTurnReadinessPatch
+	{
+		private static bool Prefix(Player player) =>
+			!IsPreservingEndTurnReadiness(player);
 	}
 }

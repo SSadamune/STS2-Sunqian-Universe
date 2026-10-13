@@ -5,11 +5,10 @@ using System.Threading.Tasks;
 using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.Entities.Creatures;
-using MegaCrit.Sts2.Core.Entities.Players;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
-using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.Models;
+using MegaCrit.Sts2.Core.Nodes.Vfx;
 using MegaCrit.Sts2.Core.ValueProps;
 using Squ;
 using Squ.Audio;
@@ -24,7 +23,7 @@ namespace Squ.Cards;
 
 /// <summary>
 /// 闪电战：对目标造成伤害，再从手牌与抽牌堆对该敌人打出所有闪电战与打击。
-/// 升级获得「契合」（参考原版 PerfectFit：非初始洗牌时置顶）。
+/// 「上将军」会让嵌套自动打出的攻击牌继承本牌实际消耗的活力加成。
 /// </summary>
 [RegisterCard(typeof(SunqianCardPool), StableEntryStem = "blitzkrieg")]
 public sealed class Blitzkrieg : ModCardTemplate
@@ -46,10 +45,11 @@ public sealed class Blitzkrieg : ModCardTemplate
 		new DamageVar(BaseDamage, ValueProp.Move),
 	];
 
-	protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
-		IsUpgraded ? [HoverTipFactory.FromKeyword(SquKeywords.Fit)] : [];
-
-	public override IEnumerable<CardKeyword> CanonicalKeywords => [SquKeywords.WarFeedsWar];
+	public override IEnumerable<CardKeyword> CanonicalKeywords =>
+	[
+		SquKeywords.WarFeedsWar,
+		SquKeywords.SupremeGeneral,
+	];
 
 	public override CardAssetProfile AssetProfile => new(
 		PortraitPath: "res://images/cards/Blitzkrieg.png");
@@ -80,7 +80,13 @@ public sealed class Blitzkrieg : ModCardTemplate
 			await DamageCmd.Attack(DynamicVars.Damage.BaseValue)
 				.FromCard(this, cardPlay)
 				.Targeting(cardPlay.Target)
-				.WithHitFx("vfx/vfx_attack_slash")
+				.WithHitVfxNode(target => NStabVfx.Create(target, facingEnemies: true))
+				.WithHitFx("vfx/vfx_starry_impact")
+				.BeforeDamage(() =>
+				{
+					SquHitVfx.ThinSlice(cardPlay.Target);
+					return Task.CompletedTask;
+				})
 				.Execute(choiceContext);
 
 			await PlayAllStrikesAndBlitzkriegFromPiles(choiceContext, cardPlay.Target);
@@ -94,26 +100,6 @@ public sealed class Blitzkrieg : ModCardTemplate
 	protected override void OnUpgrade()
 	{
 		DynamicVars.Damage.UpgradeValueBy(UpgradedDamage - BaseDamage);
-		AddKeyword(SquKeywords.Fit);
-	}
-
-	/// <summary>
-	/// Mirrors vanilla <see cref="MegaCrit.Sts2.Core.Models.Enchantments.PerfectFit"/>.
-	/// </summary>
-	public override void ModifyShuffleOrder(Player player, List<CardModel> cards, bool isInitialShuffle)
-	{
-		if (!IsUpgraded || isInitialShuffle || player != Owner)
-		{
-			return;
-		}
-
-		if (!cards.Contains(this))
-		{
-			return;
-		}
-
-		cards.Remove(this);
-		cards.Insert(0, this);
 	}
 
 	private async Task PlayAllStrikesAndBlitzkriegFromPiles(

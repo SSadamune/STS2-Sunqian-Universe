@@ -18,7 +18,7 @@ namespace Squ.Powers;
 
 /// <summary>
 /// 「火种」：下一张带 <see cref="SquCardTags.Burning"/> 的牌给予的灼烧额外加层，可跨回合保留。
-/// 该牌一次打出内的多次给予灼烧均有效，于 <see cref="AfterCardPlayedLate"/> 后移除。
+/// 该牌整次打出（含额外结算）内的多次给予灼烧均有效；嵌套打出的其它牌不会提前移除火种。
 /// </summary>
 [RegisterPower]
 public sealed class TinderPower : ModPowerTemplate
@@ -78,12 +78,15 @@ public sealed class TinderPower : ModPowerTemplate
 
 	public override async Task AfterCardPlayedLate(PlayerChoiceContext choiceContext, CardPlay cardPlay)
 	{
-		if (cardPlay.Card.Owner.Creature != Owner || !SquCardTags.AppliesBurning(cardPlay.Card))
+		Data data = GetInternalData<Data>();
+		if (cardPlay.Card.Owner.Creature != Owner
+			|| cardPlay.PlayIndex != cardPlay.PlayCount - 1
+			|| !ReferenceEquals(data.BoundCardSource, cardPlay.Card))
 		{
 			return;
 		}
 
-		GetInternalData<Data>().BoundCardSource = null;
+		data.BoundCardSource = null;
 		await PowerCmd.Remove(this);
 	}
 }

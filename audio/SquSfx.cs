@@ -1,8 +1,13 @@
 #nullable enable
+using System.Threading.Tasks;
+using Godot;
+using MegaCrit.Sts2.Core.Combat;
 using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Helpers;
 using MegaCrit.Sts2.Core.Random;
 using MegaCrit.Sts2.Core.Runs;
+using MegaCrit.Sts2.Core.TestSupport;
+using Squ.Settings;
 using STS2RitsuLib.Audio;
 using STS2RitsuLib.RunRngs;
 
@@ -26,6 +31,8 @@ internal static class SquSfx
 	public const string KnowWrongDenyWrongEvent = "event:/sunqian_universe/sfx/何谓人主，那就是知错改错不认错";
 	public const string RespectEldersTooOldEvent = "event:/sunqian_universe/sfx/尊老爱幼-你太老了";
 	public const string RespectEldersSpareTheYoungAndOldEvent = "event:/sunqian_universe/sfx/尊老爱幼-不斩老幼";
+	public const string NotAfraidOfAcidEvent = "event:/sunqian_universe/sfx/不怕酸-咱家不怕酸";
+	public const string SaidNotAfraidOfAcidEvent = "event:/sunqian_universe/sfx/不怕酸-说了不怕酸";
 	public const string RighteousnessSwordEvent = "event:/sunqian_universe/sfx/义之剑";
 	public const string ChaosHarmedYouNotAmanEvent = "event:/sunqian_universe/sfx/乱世害你-不是阿瞒害了你";
 	public const string ChaosHarmedYouNotDieInVainEvent = "event:/sunqian_universe/sfx/乱世害你-不能白死";
@@ -37,17 +44,25 @@ internal static class SquSfx
 	public const string TwoWordGenerousAndStrongEvent = "event:/sunqian_universe/sfx/二言-慨当以慷";
 	public const string TwoWordLikeMorningDewEvent = "event:/sunqian_universe/sfx/二言-譬如朝露";
 	public const string HumanTransmutationEvent = "event:/sunqian_universe/sfx/人体炼成";
+	public const string PartTimeGeneralShadowCloneEvent = "event:/sunqian_universe/sfx/兼职将军-哥们你还会影分身之术";
+	public const string PartTimeGeneralBothSidesEvent = "event:/sunqian_universe/sfx/兼职将军-需要在两边同时出场";
 	public const string BenevolenceSwordEvent = "event:/sunqian_universe/sfx/仁之剑";
-	public const string WhoAreYouEvent = "event:/sunqian_universe/sfx/你是何人";
-	public const string RunWildAgainEvent = "event:/sunqian_universe/sfx/再来撒野";
+	public const string GuanDiFormWhoAreYouEvent = "event:/sunqian_universe/sfx/关帝形态-你是何人";
+	public const string GuanDiFormCivilSunqianEvent = "event:/sunqian_universe/sfx/关帝形态-文关羽孙乾";
+	public const string GuanDiFormMartialZhouCangEvent = "event:/sunqian_universe/sfx/关帝形态-武关羽周仓";
 	public const string HuaguMianzhangEvent = "event:/sunqian_universe/sfx/化骨绵掌";
+	public const string HuaguMianzhangTriggerEvent = "event:/sunqian_universe/sfx/化骨绵掌-喷血";
 	public const string ForkOutWalkEvent = "event:/sunqian_universe/sfx/叉出去-走";
 	public const string ForkOutGetUpEvent = "event:/sunqian_universe/sfx/叉出去-起来";
 	public const string PortalJizhouJingzhouEvent = "event:/sunqian_universe/sfx/传送门-冀州和荆州有空间通道";
 	public const string PortalGansuHenanEvent = "event:/sunqian_universe/sfx/传送门-星夜从甘肃杀到河南";
-	public const string PortalYuanShaoXuzhouEvent = "event:/sunqian_universe/sfx/传送门-袁绍兵发徐州";
-	public const string PortalXiliangChenliuEvent = "event:/sunqian_universe/sfx/传送门-西凉太守来陈留会盟";
 	public const string PortalChanganMeiwuEvent = "event:/sunqian_universe/sfx/传送门-长安和堳坞之间有传送门";
+	public const string PortalXiliangAllianceEvent = "event:/sunqian_universe/sfx/传送门-西凉太守马腾亲自率军来陈留城会盟";
+	public const string PortalYellowRiverRunanEvent = "event:/sunqian_universe/sfx/传送门-黄河渡向北八十里是汝南郡";
+	public const string HateTheHeavensStrikePlayEvent = "event:/sunqian_universe/sfx/恨天打击-恨天";
+	public const string HateTheHeavensStrikeHeavenHelpsYouEvent = "event:/sunqian_universe/sfx/恨天打击-天不助我助尔曹";
+	public const string HateTheHeavensStrikeHeavenHelpsCaoEvent = "event:/sunqian_universe/sfx/恨天打击-天意助曹不助袁";
+	public const string HateTheHeavensStrikeHeavenUnjustEvent = "event:/sunqian_universe/sfx/恨天打击-上苍无道未尽其才";
 	public const string VoiceChangeObviousEvent = "event:/sunqian_universe/sfx/变声期-有个很明显的变声期";
 	public const string VoiceChangeYearsAgoEvent = "event:/sunqian_universe/sfx/变声期-这个多年前，明显有变声期";
 	public const string VoiceChangeTheseWordsEvent = "event:/sunqian_universe/sfx/变声期-这几个字儿明显是变声期啊";
@@ -63,17 +78,31 @@ internal static class SquSfx
 	public const string ThunderOnStillLakeChopYourHeadEvent = "event:/sunqian_universe/sfx/平湖惊雷-放肆我砍你的头";
 	public const string FingerStrikeRemainingLandEvent = "event:/sunqian_universe/sfx/弹指打击-剩下一小片江山";
 	public const string FingerStrikeDongZhuoHeadEvent = "event:/sunqian_universe/sfx/弹指打击-取董贼首级";
+	public const string FingerStrikeDestroyXiliangArmyEvent = "event:/sunqian_universe/sfx/弹指打击-董卓和西凉军弹指可灭";
 	public const string NearAndFarEvent = "event:/sunqian_universe/sfx/忽近忽远";
 	public const string SlamTheCommandDeskEvent = "event:/sunqian_universe/sfx/怒掀帅案";
-	public const string WhatDoWeEatEvent = "event:/sunqian_universe/sfx/我们吃什么";
+	public const string TableFlipReluctantEvent = "event:/sunqian_universe/sfx/怒掀帅案-舍不得帅案";
+	public const string TableFlipHumEvent = "event:/sunqian_universe/sfx/怒掀帅案-哼";
+	public const string TableFlipRunWildAgainEvent = "event:/sunqian_universe/sfx/怒掀帅案-再来撒野";
+	public const string WhatDoWeEatEvent =
+		"event:/sunqian_universe/sfx/吃什么-你走了我们吃什么";
 	public const string BiggerGobletEvent = "event:/sunqian_universe/sfx/换大盏-换大盏";
 	public const string BiggerGobletWontBePoliteEvent = "event:/sunqian_universe/sfx/换大盏-不会客气";
 	public const string BiggerGobletToastEvent = "event:/sunqian_universe/sfx/换大盏-当浮一大白";
-	public const string ExactlyWhatToEatEvent = "event:/sunqian_universe/sfx/是啊吃什么";
+	public const string ExactlyWhatToEatEvent =
+		"event:/sunqian_universe/sfx/吃什么-吃什么是啊";
 	public const string EmperorKnowsNoWarEvent = "event:/sunqian_universe/sfx/朕不知兵";
+	public const string UnfriendlyVisitorsTauntEvent =
+		"event:/sunqian_universe/sfx/来者不善-来者何人？快去叫袁绍出来接驾，我大哥前来会盟啦";
+	public const string UnfriendlyVisitorsShrugItOffEvent =
+		"event:/sunqian_universe/sfx/来者不善-刘什么，关什么，没听说过，袁将军请你们了吗";
+	public const string UnfriendlyVisitorsSuckerPunchEvent =
+		"event:/sunqian_universe/sfx/来者不善-（突然一拳）打你个不长眼的！给我拿下";
 	public const string WaterFireInvincibleEvent = "event:/sunqian_universe/sfx/水火无敌";
 	public const string BombardChibiReduceAttackEvent = "event:/sunqian_universe/sfx/炮轰赤壁-减攻";
+	public const string BombardChibiRestoreEnergyEvent = "event:/sunqian_universe/sfx/炮轰赤壁-我笑猪哥愚蠢";
 	public const string BombardChibiIgniteEvent = "event:/sunqian_universe/sfx/炮轰赤壁-点火";
+	public const string BombardChibiZhouYuPlanEvent = "event:/sunqian_universe/sfx/炮轰赤壁-赤壁鏖兵乃周瑜之谋";
 	public const string FateUnknownEvent = "event:/sunqian_universe/sfx/生死不明";
 	public const string FateUnknownThatsDeathEvent = "event:/sunqian_universe/sfx/生死不明-那就是死了";
 	public const string SilverUprisingEvent = "event:/sunqian_universe/sfx/白银起义";
@@ -102,24 +131,52 @@ internal static class SquSfx
 	public const string FlyingFireMeteor2Event = "event:/sunqian_universe/sfx/飞火流星2";
 	public const string FlyingFireMeteor3Event = "event:/sunqian_universe/sfx/飞火流星3";
 	public const string FlyingFireMeteor4Event = "event:/sunqian_universe/sfx/飞火流星4";
+	public const string FlyingFireMeteorArtifactEvent = "event:/sunqian_universe/sfx/飞火流星-有这等神物";
+	public const string CrossTheRiverPlayEvent = "event:/sunqian_universe/sfx/吾亦过江-那好啊，他过江我也过江";
+	public const string CrossTheRiverDirectJianyeEvent = "event:/sunqian_universe/sfx/吾亦过江-直捣东吴建业";
+	public const string CrossTheRiverCaptureSunQuanEvent = "event:/sunqian_universe/sfx/吾亦过江-连孙权一起拿了";
+	public const string IronChainBoatsPlayEvent = "event:/sunqian_universe/sfx/铁索连舟-将所有战船用铁索连为一体";
+	public const string IronChainBoatsTriggerEvent = "event:/sunqian_universe/sfx/铁索连舟-登船交战，大展神威";
+	public const string FarmingGeneralEvent = "event:/sunqian_universe/sfx/种地将军-曹操真是老糊涂了";
+	public const string WorryWithoutWorryHesitationEvent = "event:/sunqian_universe/sfx/无忧而虑-孔明在犹豫什么？丞相自己也说不清楚";
+	public const string WorryWithoutWorryUnknownDangerEvent = "event:/sunqian_universe/sfx/无忧而虑-而让我忧虑的却是，我不知道这危险是从何而来";
+	public const string SharpenSwordForDecadesEvent = "event:/sunqian_universe/sfx/磨剑十几年-我挥剑只有一次，可磨剑磨了十几年呐！";
+	public const string CircusNewFightEvent = "event:/sunqian_universe/sfx/马戏-看一种很新的打戏";
+	public const string CircusStandUpEvent = "event:/sunqian_universe/sfx/马戏-乖乖，站起来了";
+	public const string CircusAcrobaticsEvent = "event:/sunqian_universe/sfx/马戏-不去玩杂耍真可惜了";
+	public const string StandardBaseVehicleDeployEvent = "event:/sunqian_universe/sfx/制式基地车-deploy";
+	public const string StandardBaseVehicleSetUpShopEvent = "event:/sunqian_universe/sfx/制式基地车-Lets set up shop";
+	public const string StandardBaseVehicleReportingInEvent = "event:/sunqian_universe/sfx/制式基地车-MCV reporting in";
+	public const string StandardBaseVehicleYesComradeEvent = "event:/sunqian_universe/sfx/制式基地车-Yes comrade";
+	public const string StandardBaseVehicleQuicklyEvent = "event:/sunqian_universe/sfx/制式基地车-as quickly as possible";
+	public const string StandardBaseVehicleLocationKeyEvent = "event:/sunqian_universe/sfx/制式基地车-location is key";
+	public const string StandardBaseVehicleOverThereEvent = "event:/sunqian_universe/sfx/制式基地车-wanna set up over there";
 	public const string GoldenUprisingEvent = "event:/sunqian_universe/sfx/黄金起义";
 	public const string BlockFirefightingDoNotDisturbEvent = "event:/sunqian_universe/sfx/阻拦救火-不可惊扰";
 	public const string BlockFirefightingSageEvent = "event:/sunqian_universe/sfx/阻拦救火-先生奇人";
 	public const string MonsterHuntingMethodEnemyEvent = "event:/sunqian_universe/sfx/过禽论-若除禽兽";
 	public const string MonsterHuntingMethodSelfEvent = "event:/sunqian_universe/sfx/过禽论-与禽兽何异";
-	public const string MonsterHuntingMethodOtherEvent = "event:/sunqian_universe/sfx/过禽论-义父要把我";
+	public const string MonsterHuntingMethodOtherTargetEvent = "event:/sunqian_universe/sfx/过禽论-义父要把我";
 	public const string KeepCalmHateCloudsJudgmentEvent = "event:/sunqian_universe/sfx/保持冷静-仇恨会使你丧失判断力";
 	public const string KeepCalmDoNotAngerEvent = "event:/sunqian_universe/sfx/保持冷静-不要愤怒愤怒会降低智慧";
 	public const string KeepCalmLuBuMereMortalEvent = "event:/sunqian_universe/sfx/保持冷静-吕布一介匹夫";
 	public const string KeepCalmXuzhouWasMineEvent = "event:/sunqian_universe/sfx/保持冷静-徐州原本就是我哒";
 	public const string LaserSwordAssassinationDrawEvent = "event:/sunqian_universe/sfx/光剑刺杀-拔刀";
 	public const string LaserSwordAssassinationLaserEvent = "event:/sunqian_universe/sfx/光剑刺杀-激光";
+	public const string SevenStarDaggerEvent = "event:/sunqian_universe/sfx/七星刀-削金断玉锐不可当";
+	public const string FakeSevenStarDaggerEvent = "event:/sunqian_universe/sfx/七星刀-你以为它就是七星宝刀吗";
 	public const string DigRaidEvent = "event:/sunqian_universe/sfx/掘地突袭";
 	public const string MusouAttackThoughtLuBuEvent = "event:/sunqian_universe/sfx/无双乱舞-我原本以为吕布";
+	public const string MusouAttackBraverThanLuBuEvent = "event:/sunqian_universe/sfx/无双乱舞-没想到有人比他还勇猛";
 	public const string RuthlessStrikeDontForceMeEvent = "event:/sunqian_universe/sfx/无情打击-可别逼我使出无情剑来";
 	public const string RuthlessStrikeSwordSoundEvent = "event:/sunqian_universe/sfx/无情打击-剑声";
-	public const string KeepEnjoyingKeepDancingEvent = "event:/sunqian_universe/sfx/继续享受-接着奏乐接着舞";
-	public const string KeepEnjoyingLetMeEnjoyEvent = "event:/sunqian_universe/sfx/继续享受-我打了一辈子仗就不能享受享受吗";
+	public const string NeverHadThesePlayEvent = "event:/sunqian_universe/sfx/从来没有这些-从来没有这些";
+	public const string NeverHadTheseBelovedPartnerDiscardEvent = "event:/sunqian_universe/sfx/从来没有这些-爱侣-小乔，上酒";
+	public const string NeverHadTheseBelovedPartnerExhaustEvent = "event:/sunqian_universe/sfx/从来没有这些-爱侣-先生请快上车";
+	public const string NeverHadTheseNextOfKinExhaustEvent = "event:/sunqian_universe/sfx/从来没有这些-至亲-孩儿不孝啊";
+	public const string NeverHadTheseCutePetExhaustEvent = "event:/sunqian_universe/sfx/从来没有这些-萌宠-各个有情有义";
+	public const string KeepPlayingKeepDancingEvent = "event:/sunqian_universe/sfx/接着奏乐接着舞-接着奏乐接着舞";
+	public const string WorkLifeBalanceLetMeEnjoyEvent = "event:/sunqian_universe/sfx/劳逸结合-我打了一辈子仗就不能享受享受吗";
 	public const string BurnAfterReadingPlayEvent = "event:/sunqian_universe/sfx/阅后即焚-读完一卷烧一卷，全部读完则全部烧尽";
 	public const string BurnAfterReadingTriggerBurnOneEvent = "event:/sunqian_universe/sfx/阅后即焚-读完一卷烧一卷";
 	public const string BurnAfterReadingTriggerBurnAllEvent = "event:/sunqian_universe/sfx/阅后即焚-全部读完则全部烧尽";
@@ -131,9 +188,262 @@ internal static class SquSfx
 	public const string WatchFireFromShoreStopTalkingEvent = "event:/sunqian_universe/sfx/隔岸观火-三弟快快住口";
 	public const string WatchFireFromShoreKneelEvent = "event:/sunqian_universe/sfx/隔岸观火-放肆，还不快跪下";
 	public const string WatchFireFromShoreYideEvent = "event:/sunqian_universe/sfx/隔岸观火-翼德，不可出言不逊";
-	public const string TooKindToBeTrueEvent = "event:/sunqian_universe/sfx/长厚似伪-为何老替他说话";
 	public const string StargazingWangYunEvent = "event:/sunqian_universe/sfx/夜观天象-王允";
 	public const string StargazingDongZhuoEvent = "event:/sunqian_universe/sfx/夜观天象-董卓";
+	public const string GreatestPassOfCentralPlainsCombatRewardEvent = "event:/sunqian_universe/sfx/中原第一雄关-进可攻退可守";
+	public const string WhyDoubtWeiDareEvent = "event:/sunqian_universe/sfx/何疑魏-有何不敢";
+	public const string PortalZiwuValleyEvent = "event:/sunqian_universe/sfx/传送门-子午谷未必不可行";
+	public const string VoiceChangeTooMuchEvent = "event:/sunqian_universe/sfx/变声期-是不是有点过于变声期";
+	public const string VoiceChangeSubtitlesConflictEvent = "event:/sunqian_universe/sfx/变声期-字幕和语音打架";
+	public const string RelocateCapitalEvent = "event:/sunqian_universe/sfx/迁都-迁都入长安";
+	public const string RelocateCapitalHighVigorEvent = "event:/sunqian_universe/sfx/迁都-迁入伊斯坦";
+	public const string FingerStrikeInstantHeadEvent = "event:/sunqian_universe/sfx/弹指打击-弹指间取你首级";
+	public const string TooKindToBeTrueFaultIsMineEvent = "event:/sunqian_universe/sfx/长厚似伪-错在于我，连累三军";
+	public const string TooKindToBeTrueNothingToDoWithYouEvent = "event:/sunqian_universe/sfx/长厚似伪-与列位断然无关";
+	public const string TooKindToBeTrueTriggerEvent = "event:/sunqian_universe/sfx/长厚似伪-为何老替他说话";
+	public const string SunqianScriptFrequentAppearanceEvent = "event:/sunqian_universe/sfx/孙乾剧本-每一集基本都有登场";
+	public const string SunqianScriptRareTrueFormEvent = "event:/sunqian_universe/sfx/孙乾剧本-难得以本体形态登场";
+	public const string SunqianScriptRemovedEvent = "event:/sunqian_universe/sfx/孙乾剧本-好生侍候先生";
+	public const string WrapUp155Event = "event:/sunqian_universe/sfx/收工-差不多就到这里了155";
+	public const string WrapUp269Event = "event:/sunqian_universe/sfx/收工-差不多就到这里了269";
+	public const string WrapUp47Event = "event:/sunqian_universe/sfx/收工-差不多就到这里了47";
+	public const string WrapUp99Event = "event:/sunqian_universe/sfx/收工-差不多就到这里了99";
+	public const string AllInPlayEvent = "event:/sunqian_universe/sfx/倾巢而出-我们这回倾城而出";
+	public const string AllInFullArmyAttackEvent = "event:/sunqian_universe/sfx/倾巢而出-就是要全军出击";
+	public const string AllInStakeEverythingEvent = "event:/sunqian_universe/sfx/倾巢而出-就是要全盘压上";
+	public const string ArmInjuryWindmillEvent = "event:/sunqian_universe/sfx/伤臂大风车-大风车";
+	public const string AuditionEvent = "event:/sunqian_universe/sfx/试镜-每一个演好了都足以笑傲江湖";
+	public const string BowangParadoxPlayEvent = "event:/sunqian_universe/sfx/博望悖论-这一波人马根本就不存在";
+	public const string BowangParadoxRemovedEvent = "event:/sunqian_universe/sfx/博望悖论-你这辈子也等不到南面火起";
+	public const string BuddyHuEvent = "event:/sunqian_universe/sfx/好哥们胡兄-胡兄是哪位";
+	public const string BuddyTangxiaohuEvent = "event:/sunqian_universe/sfx/好哥们唐小虎-主子爷，小的叫人给打了";
+	public const string BuddyLongtaodiEvent = "event:/sunqian_universe/sfx/好兄弟龙套哥-很努力地上班";
+	public const string DrinkingTableCultureEvent = "event:/sunqian_universe/sfx/酒桌文化-你要不喝便是犯了军令";
+	public const string EunuchScriptEvent = "event:/sunqian_universe/sfx/小黄门剧本-小公公，曹大人";
+	public const string HeadsmanScriptEvent = "event:/sunqian_universe/sfx/刀斧手-刀斧手听令";
+	public const string FlameStrikeEvent = "event:/sunqian_universe/sfx/烈焰打击-我去放把火";
+	public const string BurnCityEvent = "event:/sunqian_universe/sfx/焚城-汉宫生大火";
+	public const string NeutralAmbushPlayEvent = "event:/sunqian_universe/sfx/中立伏兵-你等会，这是谁家的伏兵";
+	public const string NeutralAmbushTriggerEvent = "event:/sunqian_universe/sfx/中立伏兵-这一路伏兵见人就打";
+	public const string NightRaidWuchaoRushOvernightEvent = "event:/sunqian_universe/sfx/夜袭乌巢-连夜杀奔";
+	public const string NightRaidWuchaoIfEvent = "event:/sunqian_universe/sfx/夜袭乌巢-如果一旦";
+	public const string OpenDefecationPlayEvent = "event:/sunqian_universe/sfx/魏武挥鞭-又开始魏武挥鞭了";
+	public const string OpenDefecationSplashResolvedEvent = "event:/sunqian_universe/sfx/魏武挥鞭-挥鞭不忘讨论天下大势";
+	public const string SendHorseWithoutHayChargedEvent = "event:/sunqian_universe/sfx/缺草送马-曹操说加不起油";
+	public const string SendHorseWithoutHayPlayChargedEvent = "event:/sunqian_universe/sfx/缺草送马-董卓说送你辆法拉利";
+	public const string StarryNightStrikeChengduEvent = "event:/sunqian_universe/sfx/星夜打击-两万精兵攻取成都";
+	public const string StarryNightStrikeFiveThousandCavalryEvent = "event:/sunqian_universe/sfx/星夜打击-五千铁骑星夜追杀";
+	public const string StarryNightStrikeFiveHundredCavalryEvent = "event:/sunqian_universe/sfx/星夜打击-五百铁骑星夜追赶";
+	public const string StarryNightStrikeLeadCavalryEvent = "event:/sunqian_universe/sfx/星夜打击-亲率铁骑星夜进军";
+	public const string StarryNightStrikeLeaveCityEvent = "event:/sunqian_universe/sfx/星夜打击-带领部下星夜出城";
+	public const string StarryNightStrikeArriveHereEvent = "event:/sunqian_universe/sfx/星夜打击-星夜兼程至此";
+	public const string StarryNightStrikeXinchengEvent = "event:/sunqian_universe/sfx/星夜打击-星夜兼程赶往新城";
+	public const string StarryNightStrikeCrossWeiheEvent = "event:/sunqian_universe/sfx/星夜打击-星夜渡过渭河";
+	public const string StarryNightStrikeXiaotingEvent = "event:/sunqian_universe/sfx/星夜打击-星夜赶往猇亭前线";
+	public const string StarryNightStrikePursueDongZhuoEvent = "event:/sunqian_universe/sfx/星夜打击-星夜追杀董贼";
+	public const string StarryNightStrikeReinforceYouEvent = "event:/sunqian_universe/sfx/星夜打击-星夜驰援于你";
+	public const string StarryNightStrikeReinforceMeEvent = "event:/sunqian_universe/sfx/星夜打击-星夜驰援于我";
+
+	public const string ChickenFootCheeseScriptXuShuEvent = "event:/sunqian_universe/sfx/鸡脚芝士-徐庶";
+	public const string ChickenFootCheeseScriptTaoQianEvent = "event:/sunqian_universe/sfx/鸡脚芝士-陶谦";
+	public const string ChickenFootCheeseScriptLiuBeiEvent = "event:/sunqian_universe/sfx/鸡脚芝士-刘备";
+	public const string ChickenFootCheeseScriptChenGongEvent = "event:/sunqian_universe/sfx/鸡脚芝士-陈宫";
+	public const string ChickenFootCheeseScriptWangPingEvent = "event:/sunqian_universe/sfx/鸡脚芝士-王平";
+	public const string SlightRevisionEvent = "event:/sunqian_universe/sfx/稍作修改-好方略，不过我想稍作修改";
+	public const string SunqianHurtEvent = "event:/sunqian_universe/sfx/孙乾-受击";
+	public const string SunqianUniverseManyFormsEvent = "event:/sunqian_universe/sfx/孙乾宇宙-孙乾变化万千，以各种形态登场";
+	public const string LittleThirdBigFourthEvent = "event:/sunqian_universe/sfx/三叔四伯-三叔四伯，不必多礼";
+	public const string TheBackupsBackupJianYongPlaysSunqianEvent = "event:/sunqian_universe/sfx/龙套的替身-孙乾由简雍来演";
+	public const string TheBackupsBackupSunqianPlaysHeadsmanEvent = "event:/sunqian_universe/sfx/龙套的替身-让简雍来演孙乾，孙乾演刀斧手";
+	public const string BasicStrikeCaoCaoEvent = "event:/sunqian_universe/sfx/打击-曹操";
+	public const string BasicStrikeLiuBeiEvent = "event:/sunqian_universe/sfx/打击-刘备";
+	public const string BasicStrikeNailongEvent = "event:/sunqian_universe/sfx/打击-奶龙";
+	public const string BasicStrikeZhangFeiEvent = "event:/sunqian_universe/sfx/打击-张飞";
+	public const string BasicStrikeGuanYuEvent = "event:/sunqian_universe/sfx/打击-关羽";
+	public const string BasicDefendCaoCaoEvent = "event:/sunqian_universe/sfx/防御-曹操";
+	public const string BasicDefendLiuBeiEvent = "event:/sunqian_universe/sfx/防御-刘备";
+	public const string BasicDefendZhouYuEvent = "event:/sunqian_universe/sfx/防御-周瑜";
+	public const string BasicDefendGuanYuEvent = "event:/sunqian_universe/sfx/防御-关羽";
+	public const string WineDrinkThisFlaskEvent = "event:/sunqian_universe/sfx/酒-喝下这壶酒";
+	public const string WineThirstyEvent = "event:/sunqian_universe/sfx/酒-我正渴着呢";
+	public const string WineStillDrinkEvent = "event:/sunqian_universe/sfx/酒-还是喝酒吧";
+	public const string WineOldHeroEvent = "event:/sunqian_universe/sfx/酒-酒是老英雄";
+	public const string WineWentIntoTownEvent = "event:/sunqian_universe/sfx/酒-进城喝酒去了";
+
+	public static readonly string[] TheBackupsBackupEvents =
+	[
+		TheBackupsBackupJianYongPlaysSunqianEvent,
+		TheBackupsBackupSunqianPlaysHeadsmanEvent,
+	];
+
+	public static readonly string[] BasicStrikeEvents =
+	[
+		BasicStrikeCaoCaoEvent,
+		BasicStrikeLiuBeiEvent,
+		BasicStrikeNailongEvent,
+		BasicStrikeZhangFeiEvent,
+		BasicStrikeGuanYuEvent,
+	];
+
+	public static readonly string[] HateTheHeavensStrikeExhaustEvents =
+	[
+		HateTheHeavensStrikeHeavenHelpsCaoEvent,
+		HateTheHeavensStrikeHeavenHelpsCaoEvent,
+		HateTheHeavensStrikeHeavenHelpsYouEvent,
+		HateTheHeavensStrikeHeavenUnjustEvent,
+	];
+
+	public static readonly string[] BasicDefendEvents =
+	[
+		BasicDefendCaoCaoEvent,
+		BasicDefendLiuBeiEvent,
+		BasicDefendZhouYuEvent,
+		BasicDefendGuanYuEvent,
+	];
+
+	public static readonly string[] WineEvents =
+	[
+		WineDrinkThisFlaskEvent,
+		WineThirstyEvent,
+		WineStillDrinkEvent,
+		WineOldHeroEvent,
+		WineWentIntoTownEvent,
+	];
+
+	public static readonly string[] VoiceChangeEvents =
+	[
+		VoiceChangeYearsAgoEvent,
+		VoiceChangeObviousEvent,
+		VoiceChangeTheseWordsEvent,
+		VoiceChangeVolumeWrongEvent,
+		VoiceChangeTooMuchEvent,
+		VoiceChangeSubtitlesConflictEvent,
+	];
+
+	public static readonly string[] WrapUpEvents =
+	[
+		WrapUp155Event,
+		WrapUp269Event,
+		WrapUp47Event,
+		WrapUp99Event,
+	];
+
+	public static readonly string[] AllInTriggerEvents =
+	[
+		AllInFullArmyAttackEvent,
+		AllInStakeEverythingEvent,
+	];
+
+	public static readonly string[] NightRaidWuchaoPlayEvents =
+	[
+		NightRaidWuchaoRushOvernightEvent,
+		NightRaidWuchaoIfEvent,
+	];
+
+	public static readonly string[] TooKindToBeTruePlayEvents =
+	[
+		TooKindToBeTrueFaultIsMineEvent,
+		TooKindToBeTrueNothingToDoWithYouEvent,
+	];
+
+	public static readonly string[] StarryNightStrikeEvents =
+	[
+		StarryNightStrikeChengduEvent,
+		StarryNightStrikeFiveThousandCavalryEvent,
+		StarryNightStrikeFiveHundredCavalryEvent,
+		StarryNightStrikeLeadCavalryEvent,
+		StarryNightStrikeLeaveCityEvent,
+		StarryNightStrikeArriveHereEvent,
+		StarryNightStrikeXinchengEvent,
+		StarryNightStrikeCrossWeiheEvent,
+		StarryNightStrikeXiaotingEvent,
+		StarryNightStrikePursueDongZhuoEvent,
+		StarryNightStrikeReinforceYouEvent,
+		StarryNightStrikeReinforceMeEvent,
+	];
+
+	public static readonly string[] FlyingFireMeteorEvents =
+	[
+		FlyingFireMeteor1Event,
+		FlyingFireMeteor2Event,
+		FlyingFireMeteor3Event,
+		FlyingFireMeteor4Event,
+	];
+
+	public static readonly string[] CrossTheRiverTriggerEvents =
+	[
+		CrossTheRiverDirectJianyeEvent,
+		CrossTheRiverCaptureSunQuanEvent,
+	];
+
+	public static readonly string[] WorryWithoutWorryEvents =
+	[
+		WorryWithoutWorryHesitationEvent,
+		WorryWithoutWorryUnknownDangerEvent,
+	];
+
+	public static readonly string[] CircusEvents =
+	[
+		CircusNewFightEvent,
+		CircusStandUpEvent,
+		CircusAcrobaticsEvent,
+	];
+
+	public static readonly string[] StandardBaseVehicleReturnEvents =
+	[
+		StandardBaseVehicleSetUpShopEvent,
+		StandardBaseVehicleReportingInEvent,
+		StandardBaseVehicleYesComradeEvent,
+		StandardBaseVehicleQuicklyEvent,
+		StandardBaseVehicleLocationKeyEvent,
+		StandardBaseVehicleOverThereEvent,
+	];
+
+	public static readonly string[] ChickenFootCheeseScriptEvents =
+	[
+		ChickenFootCheeseScriptXuShuEvent,
+		ChickenFootCheeseScriptTaoQianEvent,
+		ChickenFootCheeseScriptLiuBeiEvent,
+		ChickenFootCheeseScriptWangPingEvent,
+	];
+
+	public static readonly string[] TransparentHoleEvents =
+	[
+		TransparentHoleGuanYuEvent,
+		TransparentHoleZhouYuEvent,
+		TransparentHoleMaChaoEvent,
+		TransparentHoleLuBuEvent,
+		TransparentHoleYuanShuEvent,
+	];
+
+	public static readonly string[] TwoWordPoetTriggerEvents =
+	[
+		TwoWordHowToRelieveWorryEvent,
+		TwoWordBitterDaysEvent,
+		TwoWordOnlyDukangEvent,
+		TwoWordUnforgettableWorryEvent,
+		TwoWordGenerousAndStrongEvent,
+		TwoWordLikeMorningDewEvent,
+	];
+
+	public static readonly string[] TwoWordPoetEvents =
+	[
+		TwoWordWineAndSongEvent,
+		..TwoWordPoetTriggerEvents,
+	];
+
+	public static readonly string[] BurnAfterReadingTriggerEvents =
+	[
+		BurnAfterReadingTriggerBurnOneEvent,
+		BurnAfterReadingTriggerBurnAllEvent,
+		BurnAfterReadingTriggerEmptyStudyEvent,
+	];
+
+	public static readonly string[] BurnAfterReadingEvents =
+	[
+		BurnAfterReadingPlayEvent,
+		..BurnAfterReadingTriggerEvents,
+	];
 
 	public static void Register()
 	{
@@ -143,7 +453,106 @@ internal static class SquSfx
 
 	public static void Play(string eventPath)
 	{
-		SfxCmd.Play(eventPath);
+		SfxCmd.Play(eventPath, SquSettings.SfxLinearMultiplier);
+	}
+
+	/// <summary>
+	/// 创建 FMOD 事件实例并等到它停止后再返回。
+	/// <see cref="SfxCmd.Play"/> 是一次性播放，拿不到结束时机。
+	/// 超过 <paramref name="maxSeconds"/> 仍未停止时，打断该实例并返回。
+	/// </summary>
+	public static async Task PlayAndWait(string eventPath, float maxSeconds = 30f)
+	{
+		if (NonInteractiveMode.IsActive || TestMode.IsOn || CombatManager.Instance.IsEnding)
+		{
+			return;
+		}
+
+		float volume = SquSettings.SfxLinearMultiplier;
+		GodotObject? instance = FmodStudioEventInstances.TryCreate(eventPath);
+		if (instance == null)
+		{
+			Play(eventPath);
+			return;
+		}
+
+		try
+		{
+			instance.Call("set_volume", volume);
+		}
+		catch (System.Exception)
+		{
+			// 实例仍以事件默认音量播放。
+		}
+
+		if (!FmodStudioEventInstances.TryStart(instance))
+		{
+			FmodStudioEventInstances.TryRelease(instance);
+			Play(eventPath);
+			return;
+		}
+
+		const float pollSeconds = 0.05f;
+		float elapsed = 0f;
+		bool seenActive = false;
+		while (elapsed < maxSeconds && !CombatManager.Instance.IsEnding)
+		{
+			await WaitRealtime(pollSeconds);
+			elapsed += pollSeconds;
+
+			if (!TryGetPlaybackState(instance, out int state))
+			{
+				break;
+			}
+
+			// PLAYING / SUSTAINING / STARTING / STOPPING
+			if (state is 0 or 1 or 3 or 4)
+			{
+				seenActive = true;
+			}
+
+			// STOPPED。先见到播放中，避免刚 start 时误判成已经结束。
+			if (seenActive && state == 2)
+			{
+				break;
+			}
+		}
+
+		if (!TryGetPlaybackState(instance, out int finalState) || finalState != 2)
+		{
+			FmodStudioEventInstances.TryStop(instance, allowFadeOut: false);
+		}
+
+		FmodStudioEventInstances.TryRelease(instance);
+	}
+
+	private static bool TryGetPlaybackState(GodotObject instance, out int state)
+	{
+		state = -1;
+		try
+		{
+			Variant result = instance.Call("get_playback_state");
+			state = result.AsInt32();
+			return true;
+		}
+		catch (System.Exception)
+		{
+			return false;
+		}
+	}
+
+	private static async Task WaitRealtime(float seconds)
+	{
+		if (seconds <= 0f || NonInteractiveMode.IsActive)
+		{
+			return;
+		}
+
+		SceneTree tree = (SceneTree)Engine.GetMainLoop();
+		SceneTreeTimer timer = tree.CreateTimer(seconds, true, true, false);
+		TaskCompletionSource tcs = new(TaskCreationOptions.RunContinuationsAsynchronously);
+		timer.Timeout += () => tcs.TrySetResult();
+		await tcs.Task;
 	}
 
 	/// <summary>
@@ -157,7 +566,7 @@ internal static class SquSfx
 			return;
 		}
 
-		GameFmod.Studio.PlayOneShot(eventPath);
+		GameFmod.Studio.PlayOneShot(eventPath, SquSettings.SfxLinearMultiplier);
 	}
 
 	/// <summary>

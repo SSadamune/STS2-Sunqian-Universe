@@ -21,9 +21,10 @@ namespace Squ.Cards;
 [RegisterCard(typeof(ColorlessCardPool), StableEntryStem = "the_arrogant_fall")]
 public sealed class TheArrogantFall : ModCardTemplate
 {
+	public const int BuffAmount = 7;
+
 	private const string BuffVarName = "Buff";
 	private const string DebuffVarName = "Debuff";
-	private const decimal BuffAmount = 7m;
 
 	private static readonly ValueProp BlockProps = ValueProp.Unpowered;
 

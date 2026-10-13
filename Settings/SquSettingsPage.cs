@@ -1,0 +1,223 @@
+#nullable enable
+using System;
+using System.Linq;
+using Godot;
+using Squ.RunData;
+using STS2RitsuLib;
+using STS2RitsuLib.Data;
+using STS2RitsuLib.Settings;
+using STS2RitsuLib.Ui.Shell.Theme;
+using STS2RitsuLib.Utils.Persistence;
+
+namespace Squ.Settings;
+
+/// <summary>
+/// 注册游戏内「设置 → Mod 设置」中的孙乾宇宙页面。
+/// </summary>
+public static class SquSettingsPage
+{
+	private static readonly IModSettingsValueBinding<int> SfxVolumePercentBinding =
+		new DefaultModSettingsValueBinding<int>(
+			new ModSettingsValueBinding<SquSettings, int>(
+				SquMod.ModId,
+				SquSettings.DataKey,
+				SaveScope.Global,
+				static s => Math.Clamp(s.SfxVolumePercent, SquSettings.MinSfxVolumePercent, SquSettings.MaxSfxVolumePercent),
+				static (s, v) =>
+				{
+					s.SfxVolumePercent = Math.Clamp(
+						v,
+						SquSettings.MinSfxVolumePercent,
+						SquSettings.MaxSfxVolumePercent);
+					SquSfxPreview.PlaySelected();
+				}),
+			static () => SquSettings.DefaultSfxVolumePercent);
+
+	private static readonly IModSettingsValueBinding<string> PreviewSfxBinding =
+		new DefaultModSettingsValueBinding<string>(
+			new ModSettingsValueBinding<SquSettings, string>(
+				SquMod.ModId,
+				SquSettings.DataKey,
+				SaveScope.Global,
+				static s => SquSfxPreview.NormalizeId(s.PreviewSfxId),
+				static (s, v) =>
+				{
+					s.PreviewSfxId = SquSfxPreview.NormalizeId(v);
+					SquSfxPreview.PlaySelected();
+				}),
+			static () => SquSfxPreview.DefaultId);
+
+	private static readonly IModSettingsValueBinding<NeutralContentPermissionMode> NeutralPotionModificationBinding =
+		new DefaultModSettingsValueBinding<NeutralContentPermissionMode>(
+			new ModSettingsValueBinding<SquSettings, NeutralContentPermissionMode>(
+				SquMod.ModId,
+				SquSettings.DataKey,
+				SaveScope.Global,
+				static s => ContentSettingsRunData.DisplayedPotionMode(s),
+				static (s, v) => ContentSettingsRunData.TryWriteLocalPotionMode(s, v)),
+			static () => SquSettings.DefaultNeutralPotionModificationMode);
+
+	private static readonly IModSettingsValueBinding<NeutralContentPermissionMode> NeutralCardRegistrationBinding =
+		new DefaultModSettingsValueBinding<NeutralContentPermissionMode>(
+			new ModSettingsValueBinding<SquSettings, NeutralContentPermissionMode>(
+				SquMod.ModId,
+				SquSettings.DataKey,
+				SaveScope.Global,
+				static s => ContentSettingsRunData.DisplayedCardMode(s),
+				static (s, v) => ContentSettingsRunData.TryWriteLocalCardMode(s, v)),
+			static () => SquSettings.DefaultNeutralCardRegistrationMode);
+
+	private static readonly IModSettingsValueBinding<NeutralContentPermissionMode> NeutralRelicRegistrationPlaceholderBinding =
+		CreateAllowOnlyPlaceholderBinding();
+
+	private static readonly IModSettingsValueBinding<NeutralContentPermissionMode> EventRegistrationPlaceholderBinding =
+		CreateAllowOnlyPlaceholderBinding();
+
+	public static void Register()
+	{
+		ModDataStore.For(SquMod.ModId).Register<SquSettings>(
+			key: SquSettings.DataKey,
+			fileName: SquSettings.FileName,
+			scope: SaveScope.Global,
+			defaultFactory: () => new SquSettings(),
+			autoCreateIfMissing: true);
+
+		RitsuLibFramework.RegisterModSettings(SquMod.ModId, page =>
+		{
+			page.WithModDisplayName(Loc("SUNQIAN_UNIVERSE_COMMON.SETTINGS.modDisplayName", "孙乾宇宙"))
+				.WithTitle(Loc("SUNQIAN_UNIVERSE_COMMON.SETTINGS.pageTitle", "模组设置"))
+				.WithDescription(Loc(
+					"SUNQIAN_UNIVERSE_COMMON.SETTINGS.pageDescription",
+					"调整孙乾宇宙的音效和游戏内容覆写。"))
+				.WithVisibleOnHostSurfaces(
+					ModSettingsHostSurface.MainMenu
+					| ModSettingsHostSurface.RunPause
+					| ModSettingsHostSurface.CombatPause)
+				.AddSection("sfx", section =>
+				{
+					section.WithTitle(Loc("SUNQIAN_UNIVERSE_COMMON.SETTINGS.sectionSfxTitle", "音效音量"))
+						.AddIntSlider(
+							id: "sfx_volume_percent",
+							label: Loc("SUNQIAN_UNIVERSE_COMMON.SETTINGS.sfxVolumeLabel", "模组音效音量"),
+							binding: SfxVolumePercentBinding,
+							minValue: SquSettings.MinSfxVolumePercent,
+							maxValue: SquSettings.MaxSfxVolumePercent,
+							step: 5,
+							valueFormatter: static v => $"{v}%")
+						.AddCustom(
+							"sfx_preview_clip",
+							Loc("SUNQIAN_UNIVERSE_COMMON.SETTINGS.previewSfxLabel", "试听音效"),
+							CreatePreviewSfxRow);
+				})
+				.AddSection("gameplay", section =>
+				{
+					section.WithTitle(Loc("SUNQIAN_UNIVERSE_COMMON.SETTINGS.sectionGameplayTitle", "游戏内容"))
+						.WithEnabledWhen(static () => !ContentSettingsRunData.IsReadOnly)
+						.AddChoice(
+							id: "neutral_potion_modification",
+							label: Loc("SUNQIAN_UNIVERSE_COMMON.SETTINGS.neutralPotionModificationLabel", "允许修改中立药水"),
+							binding: NeutralPotionModificationBinding,
+							options:
+							[
+								new(NeutralContentPermissionMode.Allow, Loc("SUNQIAN_UNIVERSE_COMMON.SETTINGS.neutralPotionModification.allow", "允许")),
+								new(NeutralContentPermissionMode.WhenModCharacterPresent, Loc("SUNQIAN_UNIVERSE_COMMON.SETTINGS.neutralPotionModification.whenModCharacterPresent", "有本模组角色时允许")),
+								new(NeutralContentPermissionMode.Deny, Loc("SUNQIAN_UNIVERSE_COMMON.SETTINGS.neutralPotionModification.deny", "不允许")),
+							],
+							description: Loc("SUNQIAN_UNIVERSE_COMMON.SETTINGS.neutralPotionModificationDescription", "控制本模组是否覆写中立药水的效果。"),
+							presentation: ModSettingsChoicePresentation.Dropdown)
+						.AddChoice(
+							id: "neutral_card_registration",
+							label: Loc("SUNQIAN_UNIVERSE_COMMON.SETTINGS.neutralCardRegistrationLabel", "允许添加中立卡牌"),
+							binding: NeutralCardRegistrationBinding,
+							options:
+							[
+								new(NeutralContentPermissionMode.Allow, Loc("SUNQIAN_UNIVERSE_COMMON.SETTINGS.neutralPotionModification.allow", "允许")),
+								new(NeutralContentPermissionMode.WhenModCharacterPresent, Loc("SUNQIAN_UNIVERSE_COMMON.SETTINGS.neutralPotionModification.whenModCharacterPresent", "有本模组角色时允许")),
+								new(NeutralContentPermissionMode.Deny, Loc("SUNQIAN_UNIVERSE_COMMON.SETTINGS.neutralPotionModification.deny", "不允许")),
+							],
+							description: Loc("SUNQIAN_UNIVERSE_COMMON.SETTINGS.neutralCardRegistrationDescription", "是否允许本模组向中立牌池添加卡牌（例如「哀兵必胜」）。"),
+							presentation: ModSettingsChoicePresentation.Dropdown)
+						.AddChoice(
+							id: "neutral_relic_registration_placeholder",
+							label: Loc("SUNQIAN_UNIVERSE_COMMON.SETTINGS.neutralRelicRegistrationLabel", "允许添加中立遗物（施工中）"),
+							binding: NeutralRelicRegistrationPlaceholderBinding,
+							options:
+							[
+								new(NeutralContentPermissionMode.Allow, Loc("SUNQIAN_UNIVERSE_COMMON.SETTINGS.neutralPotionModification.allow", "允许")),
+							],
+							description: Loc("SUNQIAN_UNIVERSE_COMMON.SETTINGS.neutralRelicRegistrationDescription", "是否允许本模组添加中立遗物。此功能仍在施工中。"),
+							presentation: ModSettingsChoicePresentation.Dropdown)
+						.AddChoice(
+							id: "event_registration_placeholder",
+							label: Loc("SUNQIAN_UNIVERSE_COMMON.SETTINGS.eventRegistrationLabel", "允许添加事件（施工中）"),
+							binding: EventRegistrationPlaceholderBinding,
+							options:
+							[
+								new(NeutralContentPermissionMode.Allow, Loc("SUNQIAN_UNIVERSE_COMMON.SETTINGS.neutralPotionModification.allow", "允许")),
+							],
+							description: Loc("SUNQIAN_UNIVERSE_COMMON.SETTINGS.eventRegistrationDescription", "是否允许本模组添加事件。此功能仍在施工中。"),
+							presentation: ModSettingsChoicePresentation.Dropdown);
+				});
+		});
+	}
+
+	private static Control CreatePreviewSfxRow(IModSettingsUiActionHost host)
+	{
+		HBoxContainer row = new() { SizeFlagsHorizontal = Control.SizeFlags.ExpandFill };
+		row.AddThemeConstantOverride("separation", 10);
+
+		var title = ModSettingsUiFactory.CreateHeaderLabel(
+			Loc("SUNQIAN_UNIVERSE_COMMON.SETTINGS.previewSfxLabel", "试听音效").Resolve(),
+			RitsuShellTheme.Current.Metric.FontSize.SettingLineTitle,
+			HorizontalAlignment.Left,
+			null,
+			RitsuShellTheme.Current.Text.RichTitle);
+		title.SizeFlagsHorizontal = Control.SizeFlags.ExpandFill;
+		title.SizeFlagsVertical = Control.SizeFlags.ShrinkCenter;
+
+		ModSettingsTextButton play = new(
+			Loc("SUNQIAN_UNIVERSE_COMMON.SETTINGS.previewSfx.play", "播放").Resolve(),
+			ModSettingsButtonTone.Accent,
+			SquSfxPreview.PlaySelected);
+		play.CustomMinimumSize = new Vector2(96f, RitsuShellTheme.Current.Metric.Entry.ValueMinHeight);
+
+		ModSettingsDropdownChoiceControl<string> dropdown = new(
+			PreviewOptions().Select(o => (o.Value, o.Label.Resolve())).ToArray(),
+			PreviewSfxBinding.Read(),
+			value =>
+			{
+				PreviewSfxBinding.Write(value);
+				host.MarkDirty(PreviewSfxBinding);
+			});
+
+		row.AddChild(title);
+		row.AddChild(play);
+		row.AddChild(dropdown);
+		return row;
+	}
+
+	private static ModSettingsChoiceOption<string>[] PreviewOptions() =>
+	[
+		new("eat", Loc("SUNQIAN_UNIVERSE_COMMON.SETTINGS.previewSfx.eat", "是啊吃什么")),
+		new("yiling", Loc("SUNQIAN_UNIVERSE_COMMON.SETTINGS.previewSfx.yiling", "夷陵好火")),
+		new("xiliang", Loc("SUNQIAN_UNIVERSE_COMMON.SETTINGS.previewSfx.xiliang", "西凉野人")),
+		new("cybertron", Loc("SUNQIAN_UNIVERSE_COMMON.SETTINGS.previewSfx.cybertron", "赛博坦之力")),
+		new("voice", Loc("SUNQIAN_UNIVERSE_COMMON.SETTINGS.previewSfx.voice", "变声期")),
+		new("meteor", Loc("SUNQIAN_UNIVERSE_COMMON.SETTINGS.previewSfx.meteor", "飞火流星")),
+		new("hole", Loc("SUNQIAN_UNIVERSE_COMMON.SETTINGS.previewSfx.hole", "透明窟窿")),
+		new("poet", Loc("SUNQIAN_UNIVERSE_COMMON.SETTINGS.previewSfx.poet", "二言诗人剧本")),
+	];
+
+	private static IModSettingsValueBinding<NeutralContentPermissionMode> CreateAllowOnlyPlaceholderBinding() =>
+		new DefaultModSettingsValueBinding<NeutralContentPermissionMode>(
+			new ModSettingsValueBinding<SquSettings, NeutralContentPermissionMode>(
+				SquMod.ModId,
+				SquSettings.DataKey,
+				SaveScope.Global,
+				static _ => NeutralContentPermissionMode.Allow,
+				static (_, _) => { }),
+			static () => NeutralContentPermissionMode.Allow);
+
+	private static ModSettingsText Loc(string key, string fallback) =>
+		ModSettingsText.LocString(SquCommonL10n.Table, key, fallback);
+}

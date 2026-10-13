@@ -1,10 +1,11 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using MegaCrit.Sts2.Core.Combat;
 using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
+using MegaCrit.Sts2.Core.Factories;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Helpers;
@@ -14,6 +15,7 @@ using MegaCrit.Sts2.Core.Models.Cards;
 using MegaCrit.Sts2.Core.Random;
 using Squ;
 using Squ.Character;
+using Squ.Combat;
 using Squ.Script;
 using STS2RitsuLib.Interop.AutoRegistration;
 using STS2RitsuLib.Scaffolding.Content;
@@ -25,10 +27,10 @@ namespace Squ.Cards;
 [RegisterCard(typeof(SunqianCardPool), StableEntryStem = "juggle_multiple_shoots")]
 public sealed class JuggleMultipleShoots : ModCardTemplate
 {
-	private const int ChoiceCount = 3;
+	public const int ChoiceCount = 3;
 
 	/// <summary>
-	/// 对龙套演员几乎无用的他角能力（辉星/锻造/君王之剑/小刀/奥斯提/魂/充能球等）。
+	/// 对龙套演员几乎无用的他角能力（辉星/锻造/君王之剑/小刀/奥斯提/魂/充能球/中毒增幅等）。
 	/// 明确保留：环绕轨道、熔炉、无尽刀刃、刀扇、雷暴、旋转工艺、暴涨。
 	/// </summary>
 	private static readonly HashSet<Type> ExcludedOtherCharacterPowers =
@@ -62,10 +64,18 @@ public sealed class JuggleMultipleShoots : ModCardTemplate
 		typeof(Defragment),
 		typeof(Thunder),
 		typeof(ConsumingShadow),
+		// 中毒增幅（自身不施加中毒）
+		typeof(Accelerant),
+		typeof(Outbreak),
 	];
 
 	private static readonly LocString SelectionPrompt =
 		new("cards", "SUNQIAN_UNIVERSE_CARD_JUGGLE_MULTIPLE_SHOOTS.selectionScreenPrompt");
+
+	public override IEnumerable<CardKeyword> CanonicalKeywords =>
+	[
+		SquKeywords.Wrap,
+	];
 
 	public override CardAssetProfile AssetProfile => new(
 		PortraitPath: "res://images/cards/JuggleMultipleShoots.png");
@@ -85,24 +95,20 @@ public sealed class JuggleMultipleShoots : ModCardTemplate
 	];
 
 	public JuggleMultipleShoots()
-		: base(0, CardType.Skill, CardRarity.Uncommon, TargetType.Self)
+		: base(1, CardType.Skill, CardRarity.Uncommon, TargetType.Self)
 	{
 	}
 
 	protected override bool ShouldGlowGoldInternal =>
-		Pile?.Type == PileType.Hand && ScriptSystem.HasActiveScript(Owner.Creature);
+		SquKeywords.ShouldGlowForWrap(this);
 
 	protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
 	{
-		if (!ScriptSystem.HasActiveScript(Owner.Creature))
-		{
-			return;
-		}
-
-		await ScriptSystem.InvalidateScriptsAsync(Owner.Creature);
+		bool wrap = await ScriptSystem.TryConsumeWrapAsync(Owner.Creature);
 
 		int remainingEnergy = Owner.PlayerCombatState?.Energy ?? 0;
-		List<CardModel> choices = BuildPowerChoices(remainingEnergy);
+		int energyBudget = remainingEnergy + (wrap ? 1 : 0);
+		List<CardModel> choices = BuildPowerChoices(energyBudget);
 		if (choices.Count == 0)
 		{
 			return;
@@ -117,6 +123,14 @@ public sealed class JuggleMultipleShoots : ModCardTemplate
 			}
 		}
 
+		if (wrap)
+		{
+			foreach (CardModel choice in choices)
+			{
+				ReduceCostThisCombat(choice);
+			}
+		}
+
 		CardModel? selected = await CardSelectCmd.FromChooseACardScreen(
 			choiceContext,
 			choices,
@@ -127,6 +141,17 @@ public sealed class JuggleMultipleShoots : ModCardTemplate
 		{
 			await CardPileCmd.AddGeneratedCardToCombat(selected, PileType.Hand, Owner);
 		}
+	}
+
+	private static void ReduceCostThisCombat(CardModel card)
+	{
+		if (card.EnergyCost.CostsX)
+		{
+			return;
+		}
+
+		card.EnergyCost.AddThisCombat(-1);
+		card.InvokeEnergyCostChanged();
 	}
 
 	private List<CardModel> BuildPowerChoices(int remainingEnergy)
@@ -183,18 +208,16 @@ public sealed class JuggleMultipleShoots : ModCardTemplate
 
 	private static (int Lower, int Upper) GetSlotCostBounds(int slotIndex, int remainingEnergy)
 	{
-		(int rawLower, int rawUpper) = slotIndex switch
+		int lower = slotIndex switch
 		{
-			0 => (remainingEnergy, remainingEnergy),
-			1 => (remainingEnergy - 1, remainingEnergy),
-			2 => (0, remainingEnergy),
+			0 => Math.Min(remainingEnergy, 3),
+			1 => Math.Min(remainingEnergy - 1, 2),
+			2 => 0,
 			_ => throw new ArgumentOutOfRangeException(nameof(slotIndex)),
 		};
 
-		return (ClampLowerBound(rawLower), ClampUpperBound(rawUpper));
+		return (lower, ClampUpperBound(remainingEnergy));
 	}
-
-	private static int ClampLowerBound(int rawLower) => Math.Min(rawLower, 3);
 
 	private static int ClampUpperBound(int rawUpper) =>
 		rawUpper <= 0 ? 1 : rawUpper;
@@ -243,22 +266,18 @@ public sealed class JuggleMultipleShoots : ModCardTemplate
 
 	private IEnumerable<CardModel> GetOtherCharacterPowersAtMostCost(int maxCost)
 	{
-		List<CardPoolModel> pools = Owner.UnlockState.CharacterCardPools.ToList();
-		pools.Remove(Owner.Character.CardPool);
-
-		return pools
-			.SelectMany(pool => pool.GetUnlockedCards(
-				Owner.UnlockState,
-				Owner.RunState.CardMultiplayerConstraint))
+		IEnumerable<CardModel> cards = CharacterCardPoolMembership.GetUnlockedCards(
+			Owner,
+			CharacterCardPoolMembership.GetOtherCharacterPools(Owner));
+		return CardFactory.FilterForCombat(cards)
 			.Where(card => IsEligiblePower(card, maxCost));
 	}
 
 	private static bool IsEligiblePower(CardModel card, int maxCost) =>
 		card.Type == CardType.Power
-		&& card.CanBeGeneratedInCombat
-		&& card.Rarity is not CardRarity.Basic and not CardRarity.Ancient and not CardRarity.Event
 		&& !card.EnergyCost.CostsX
 		&& GetCanonicalEnergyCost(card) <= maxCost
+		&& !SquCardTags.IsCharacterMechanicBound(card)
 		&& !ExcludedOtherCharacterPowers.Contains(card.GetType());
 
 	private static int GetCanonicalEnergyCost(CardModel card) => card.EnergyCost.Canonical;

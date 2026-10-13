@@ -2,15 +2,15 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Godot;
-using MegaCrit.Sts2.Core.Combat;
+using MegaCrit.Sts2.Core.CardSelection;
 using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
-using MegaCrit.Sts2.Core.Entities.Creatures;
 using MegaCrit.Sts2.Core.Entities.Players;
 using MegaCrit.Sts2.Core.Entities.Powers;
 using MegaCrit.Sts2.Core.Factories;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.HoverTips;
+using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.Models;
 using Squ;
 using STS2RitsuLib.Interop.AutoRegistration;
@@ -21,16 +21,13 @@ using STS2RitsuLib.Scaffolding.Content;
 namespace Squ.Powers;
 
 /// <summary>
-/// 分布式编剧：每回合开始时将 <see cref="Amount"/> 张随机剧本牌加入手牌（对齐原版创造性 AI 的叠层）。
-/// 若曾打出过升级后的此牌，则生成的剧本牌一并升级。
+/// 分布式编剧：正常的回合开始抽牌结束后，选择 <see cref="Amount"/> 张手牌，
+/// 将其分别变化为随机剧本牌（触发时点和选牌方式对齐原版 ENTROPY）。
 /// </summary>
 [RegisterPower]
 public sealed class DistributedScreenwriterPower : ModPowerTemplate
 {
-	private sealed class Data
-	{
-		public bool GrantUpgraded;
-	}
+	public const string DrawCardsVarName = "DrawCards";
 
 	public override PowerType Type => PowerType.Buff;
 
@@ -42,58 +39,52 @@ public sealed class DistributedScreenwriterPower : ModPowerTemplate
 		IconPath: "res://images/powers/DistributedScreenwriterPower.png",
 		BigIconPath: "res://images/powers/DistributedScreenwriterPowerBig.png");
 
+	protected override IEnumerable<DynamicVar> CanonicalVars =>
+	[
+		new DynamicVar(DrawCardsVarName, 0m),
+	];
+
+	protected override string SmartDescriptionLocKey =>
+		DynamicVars[DrawCardsVarName].BaseValue > 0m
+			? Id.Entry + ".smartDescriptionWithDraw"
+			: base.SmartDescriptionLocKey;
+
 	protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
 	[
 		HoverTipFactory.FromKeyword(SquKeywords.Script),
+		HoverTipFactory.Static(StaticHoverTip.Transform),
 	];
 
-	protected override object InitInternalData() => new Data();
-
-	protected override string SmartDescriptionLocKey =>
-		GetInternalData<Data>().GrantUpgraded
-			? base.Id.Entry + ".smartDescriptionUpgraded"
-			: base.Id.Entry + ".smartDescription";
-
-	public override Task AfterApplied(Creature? applier, CardModel? cardSource)
+	public void RecordUpgradedPlay()
 	{
-		SnapshotUpgraded(cardSource);
-		return Task.CompletedTask;
+		DynamicVars[DrawCardsVarName].BaseValue++;
 	}
 
-	public override Task AfterPowerAmountChanged(
+	public override async Task AfterPlayerTurnStart(
 		PlayerChoiceContext choiceContext,
-		PowerModel power,
-		decimal amount,
-		Creature? applier,
-		CardModel? cardSource)
+		Player player)
 	{
-		if (amount > 0m)
-		{
-			SnapshotUpgraded(cardSource);
-		}
-
-		return Task.CompletedTask;
-	}
-
-	public override async Task AfterSideTurnStart(
-		CombatSide side,
-		IReadOnlyList<Creature> participants,
-		ICombatState combatState)
-	{
-		if (side != Owner.Side || !participants.Contains(Owner) || Owner.IsDead)
-		{
-			return;
-		}
-
-		if (Owner.Player is not { } player || Amount <= 0m)
+		if (player != Owner.Player || Amount <= 0m)
 		{
 			return;
 		}
 
 		Flash();
-		bool upgraded = GetInternalData<Data>().GrantUpgraded;
-		int count = (int)Amount;
-		for (int i = 0; i < count; i++)
+		int drawCards = DynamicVars[DrawCardsVarName].IntValue;
+		if (drawCards > 0)
+		{
+			await CardPileCmd.Draw(choiceContext, drawCards, player);
+		}
+
+		CardSelectorPrefs prefs = new(CardSelectorPrefs.TransformSelectionPrompt, Amount);
+		List<CardModel> selectedCards = (await CardSelectCmd.FromHand(
+			choiceContext,
+			player,
+			prefs,
+			null,
+			this)).ToList();
+
+		foreach (CardModel selectedCard in selectedCards)
 		{
 			CardModel? scriptCard = CreateRandomScriptCard(player);
 			if (scriptCard is null)
@@ -101,21 +92,7 @@ public sealed class DistributedScreenwriterPower : ModPowerTemplate
 				break;
 			}
 
-			if (upgraded)
-			{
-				scriptCard.UpgradeInternal();
-				scriptCard.FinalizeUpgradeInternal();
-			}
-
-			await CardPileCmd.AddGeneratedCardToCombat(scriptCard, PileType.Hand, player);
-		}
-	}
-
-	private void SnapshotUpgraded(CardModel? cardSource)
-	{
-		if (cardSource is { IsUpgraded: true })
-		{
-			GetInternalData<Data>().GrantUpgraded = true;
+			await CardCmd.Transform(selectedCard, scriptCard);
 		}
 	}
 

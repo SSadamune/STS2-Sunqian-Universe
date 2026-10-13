@@ -7,6 +7,7 @@ using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.ValueProps;
+using Squ.Audio;
 using Squ.Character;
 using STS2RitsuLib.Interop.AutoRegistration;
 using STS2RitsuLib.Scaffolding.Content;
@@ -19,7 +20,7 @@ namespace Squ.Cards;
 public sealed class StandardBaseVehicle : ModCardTemplate
 {
 	public const int BaseBlock = 7;
-	public const int UpgradedBlock = 10;
+	public const int UpgradedBlock = 11;
 
 	protected override IEnumerable<DynamicVar> CanonicalVars =>
 	[
@@ -38,12 +39,13 @@ public sealed class StandardBaseVehicle : ModCardTemplate
 		PortraitPath: "res://images/cards/StandardBaseVehicle.png");
 
 	public StandardBaseVehicle()
-		: base(0, CardType.Skill, CardRarity.Common, TargetType.Self)
+		: base(0, CardType.Skill, CardRarity.Uncommon, TargetType.Self)
 	{
 	}
 
 	protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
 	{
+		SquSfx.Play(SquSfx.StandardBaseVehicleDeployEvent);
 		await CreatureCmd.TriggerAnim(Owner.Creature, "Cast", Owner.Character.CastAnimDelay);
 		await CreatureCmd.GainBlock(Owner.Creature, DynamicVars.Block, cardPlay);
 	}
@@ -56,6 +58,7 @@ public sealed class StandardBaseVehicle : ModCardTemplate
 		}
 
 		await CardPileCmd.Add(this, PileType.Hand);
+		SquSfx.PlayRandom(RunState, SquSfx.StandardBaseVehicleReturnEvents);
 	}
 
 	protected override void OnUpgrade()

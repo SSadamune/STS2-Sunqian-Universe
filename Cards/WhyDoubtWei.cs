@@ -8,6 +8,7 @@ using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.Powers;
+using MegaCrit.Sts2.Core.Nodes.Vfx;
 using MegaCrit.Sts2.Core.ValueProps;
 using Squ.Audio;
 using Squ.Character;
@@ -19,30 +20,34 @@ using STS2RitsuLib.Scaffolding.Content;
 namespace Squ.Cards;
 
 /// <summary>
-/// 何疑魏：造成伤害并获得力量；因虚无被消耗后获得格挡与虚弱。
+/// 何疑魏：造成伤害并获得力量；因虚无被消耗后获得格挡和虚弱。
 /// </summary>
 [RegisterCard(typeof(SunqianCardPool), StableEntryStem = "why_doubt_wei")]
 public sealed class WhyDoubtWei : ModCardTemplate
 {
-	public const decimal BaseDamage = 14m;
-	public const decimal UpgradedDamage = 17m;
-	public const decimal BlockAmount = 7m;
-	public const decimal BaseStrength = 2m;
-	public const decimal UpgradedStrength = 3m;
-	public const decimal WeakAmount = 2m;
+	public const int BaseDamage = 14;
+	public const int UpgradedDamage = 17;
+	public const int BaseBlock = 14;
+	public const int UpgradedBlock = 17;
+	public const int BaseStrength = 2;
+	public const int UpgradedStrength = 3;
+	public const int BaseWeak = 2;
+	public const int UpgradedWeak = 1;
 
 	protected override IEnumerable<DynamicVar> CanonicalVars =>
 	[
 		new DamageVar(BaseDamage, ValueProp.Move),
-		new BlockVar(BlockAmount, ValueProp.Move),
+		new BlockVar(BaseBlock, ValueProp.Move),
 		new PowerVar<StrengthPower>(BaseStrength),
-		new PowerVar<WeakPower>(WeakAmount),
+		new PowerVar<WeakPower>(BaseWeak),
 	];
 
 	public override IEnumerable<CardKeyword> CanonicalKeywords =>
 	[
 		CardKeyword.Ethereal,
 	];
+
+	public override bool GainsBlock => true;
 
 	protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
 	[
@@ -62,11 +67,13 @@ public sealed class WhyDoubtWei : ModCardTemplate
 	protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
 	{
 		ArgumentNullException.ThrowIfNull(cardPlay.Target, nameof(cardPlay.Target));
+		SquSfx.Play(SquSfx.WhyDoubtWeiDareEvent);
 
 		await DamageCmd.Attack(DynamicVars.Damage.BaseValue)
 			.FromCard(this, cardPlay)
 			.Targeting(cardPlay.Target)
-			.WithHitFx("vfx/vfx_attack_slash")
+			.WithHitFx("vfx/vfx_dramatic_stab")
+			.WithHitVfxNode(target => NBigSlashVfx.Create(target))
 			.Execute(choiceContext);
 
 		await PowerCmd.Apply<StrengthPower>(
@@ -103,17 +110,23 @@ public sealed class WhyDoubtWei : ModCardTemplate
 			SquSfx.WhyDoubtWeiTooCautiousEvent,
 			SquSfx.WhyDoubtWeiSoCautiousEvent);
 		await CreatureCmd.GainBlock(Owner.Creature, DynamicVars.Block, cardPlay: null);
-		await PowerCmd.Apply<WeakPower>(
-			choiceContext,
-			Owner.Creature,
-			DynamicVars[nameof(WeakPower)].BaseValue,
-			Owner.Creature,
-			this);
+		decimal weak = DynamicVars[nameof(WeakPower)].BaseValue;
+		if (weak > 0m)
+		{
+			await PowerCmd.Apply<WeakPower>(
+				choiceContext,
+				Owner.Creature,
+				weak,
+				Owner.Creature,
+				this);
+		}
 	}
 
 	protected override void OnUpgrade()
 	{
 		DynamicVars.Damage.UpgradeValueBy(UpgradedDamage - BaseDamage);
+		DynamicVars.Block.UpgradeValueBy(UpgradedBlock - BaseBlock);
 		DynamicVars[nameof(StrengthPower)].UpgradeValueBy(UpgradedStrength - BaseStrength);
+		DynamicVars[nameof(WeakPower)].UpgradeValueBy(UpgradedWeak - BaseWeak);
 	}
 }

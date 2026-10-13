@@ -9,6 +9,7 @@ using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.CardPools;
 using MegaCrit.Sts2.Core.ValueProps;
+using Squ.Audio;
 using Squ.Character;
 using STS2RitsuLib.Interop.AutoRegistration;
 using STS2RitsuLib.Scaffolding.Content;
@@ -22,9 +23,12 @@ namespace Squ.Cards;
 [RegisterCard(typeof(SunqianCardPool), StableEntryStem = "starry_night_strike")]
 public sealed class StarryNightStrike : ModCardTemplate
 {
+	public const int BaseDamage = 7;
+	public const int UpgradedDamage = 10;
+
 	protected override IEnumerable<DynamicVar> CanonicalVars =>
 	[
-		new DamageVar(6m, ValueProp.Move),
+		new DamageVar(BaseDamage, ValueProp.Move),
 	];
 
 	protected override HashSet<CardTag> CanonicalTags => [CardTag.Strike];
@@ -40,11 +44,17 @@ public sealed class StarryNightStrike : ModCardTemplate
 	protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
 	{
 		ArgumentNullException.ThrowIfNull(cardPlay.Target, nameof(cardPlay.Target));
+		SquSfx.PlayRandom(RunState, SquSfx.StarryNightStrikeEvents);
 
 		await DamageCmd.Attack(DynamicVars.Damage.BaseValue)
 			.FromCard(this, cardPlay)
 			.Targeting(cardPlay.Target)
-			.WithHitFx("vfx/vfx_attack_slash")
+			.WithHitFx("vfx/vfx_starry_impact")
+			.BeforeDamage(() =>
+			{
+				VfxCmd.PlayOnCreatureCenter(cardPlay.Target, "vfx/vfx_attack_slash");
+				return Task.CompletedTask;
+			})
 			.Execute(choiceContext);
 	}
 
@@ -60,6 +70,6 @@ public sealed class StarryNightStrike : ModCardTemplate
 
 	protected override void OnUpgrade()
 	{
-		DynamicVars.Damage.UpgradeValueBy(3m);
+		DynamicVars.Damage.UpgradeValueBy(UpgradedDamage - BaseDamage);
 	}
 }

@@ -25,13 +25,6 @@ namespace Squ.Powers;
 [RegisterPower]
 public sealed class BurnAfterReadingPower : ModPowerTemplate
 {
-	private static readonly string[] TriggerSfxCycle =
-	[
-		SquSfx.BurnAfterReadingTriggerBurnOneEvent,
-		SquSfx.BurnAfterReadingTriggerBurnAllEvent,
-		SquSfx.BurnAfterReadingTriggerEmptyStudyEvent,
-	];
-
 	private sealed class Data
 	{
 		public int TriggersThisTurn;
@@ -86,7 +79,8 @@ public sealed class BurnAfterReadingPower : ModPowerTemplate
 
 		Data data = GetInternalData<Data>();
 		data.TriggersThisTurn++;
-		SquSfx.Play(TriggerSfxCycle[(data.TriggersThisTurn - 1) % TriggerSfxCycle.Length]);
+		string[] cycle = SquSfx.BurnAfterReadingTriggerEvents;
+		SquSfx.Play(cycle[(data.TriggersThisTurn - 1) % cycle.Length]);
 		Flash();
 		await PowerCmd.Apply<TinderPower>(
 			choiceContext,

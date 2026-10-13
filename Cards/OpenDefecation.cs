@@ -11,6 +11,7 @@ using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.Cards;
 using MegaCrit.Sts2.Core.Models.Powers;
+using Squ.Audio;
 using Squ.Character;
 using Squ.Powers;
 using STS2RitsuLib.Interop.AutoRegistration;
@@ -23,9 +24,9 @@ namespace Squ.Cards;
 [RegisterCard(typeof(SunqianCardPool), StableEntryStem = "open_defecation")]
 public sealed class OpenDefecation : ModCardTemplate
 {
-	private const int Threshold = 3;
-	private const decimal BaseDexterity = 3m;
-	private const decimal UpgradedDexterity = 4m;
+	public const int Threshold = 3;
+	public const int BaseDexterity = 3;
+	public const int UpgradedDexterity = 4;
 
 	protected override IEnumerable<DynamicVar> CanonicalVars =>
 	[
@@ -55,10 +56,11 @@ public sealed class OpenDefecation : ModCardTemplate
 
 	protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
 	{
+		SquSfx.Play(SquSfx.OpenDefecationPlayEvent);
 		ICombatState? combatState = CombatState;
 		ArgumentNullException.ThrowIfNull(combatState, nameof(combatState));
 
-		await PowerCmd.Apply<TempDexFromOpenDefecationPower>(
+		await PowerCmd.Apply<TempDexPower>(
 			choiceContext,
 			Owner.Creature,
 			DynamicVars[nameof(DexterityPower)].BaseValue,
@@ -84,6 +86,7 @@ public sealed class OpenDefecation : ModCardTemplate
 				splashDupe,
 				target: null,
 				skipCardPileVisuals: true);
+			SquSfx.Play(SquSfx.OpenDefecationSplashResolvedEvent);
 		}
 	}
 

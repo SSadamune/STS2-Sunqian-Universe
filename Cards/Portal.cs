@@ -18,7 +18,8 @@ namespace Squ.Cards;
 [RegisterCard(typeof(SunqianCardPool), StableEntryStem = "portal")]
 public sealed class Portal : ModCardTemplate
 {
-	private const decimal ScryAmount = 3m;
+	public const int ScryAmount = 3;
+	public const int UpgradedScryAmount = 5;
 
 	protected override IEnumerable<DynamicVar> CanonicalVars =>
 	[
@@ -34,7 +35,7 @@ public sealed class Portal : ModCardTemplate
 	];
 
 	public Portal()
-		: base(1, CardType.Skill, CardRarity.Uncommon, TargetType.Self)
+		: base(1, CardType.Skill, CardRarity.Common, TargetType.Self)
 	{
 	}
 
@@ -42,11 +43,12 @@ public sealed class Portal : ModCardTemplate
 	{
 		SquSfx.PlayRandom(
 			RunState,
+			SquSfx.PortalXiliangAllianceEvent,
 			SquSfx.PortalChanganMeiwuEvent,
-			SquSfx.PortalYuanShaoXuzhouEvent,
 			SquSfx.PortalJizhouJingzhouEvent,
 			SquSfx.PortalGansuHenanEvent,
-			SquSfx.PortalXiliangChenliuEvent);
+			SquSfx.PortalYellowRiverRunanEvent,
+			SquSfx.PortalZiwuValleyEvent);
 		await ScryCmd.Execute(choiceContext, this);
 
 		CardModel? drawn = await CardPileCmd.Draw(choiceContext, Owner);
@@ -57,11 +59,10 @@ public sealed class Portal : ModCardTemplate
 
 		// 「对随机目标打出」：AnyEnemy 目标传 null 时会自动随机选敌。
 		await CardCmd.AutoPlay(choiceContext, drawn, null);
+	}
 
-		// 升级后额外抽的这张牌不再走上面的攻击判定，故此处只是单纯抽牌。
-		if (IsUpgraded)
-		{
-			await CardPileCmd.Draw(choiceContext, Owner);
-		}
+	protected override void OnUpgrade()
+	{
+		DynamicVars[ScryVar.VarName].UpgradeValueBy(UpgradedScryAmount - ScryAmount);
 	}
 }

@@ -8,6 +8,8 @@ using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Localization;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
+using MegaCrit.Sts2.Core.Models;
+using MegaCrit.Sts2.Core.Nodes.Vfx;
 using MegaCrit.Sts2.Core.ValueProps;
 using Squ;
 using Squ.Audio;
@@ -21,28 +23,32 @@ using STS2RitsuLib.Scaffolding.Content;
 namespace Squ.Cards;
 
 /// <summary>
-/// 无情打击：无视格挡伤害。蓄能：手牌中每打出一张消耗牌，额外造成 1 次伤害。
+/// 无情打击：造成穿透伤害。蓄能：手牌中每有一张己方牌被消耗，额外造成 1 次伤害。
 /// </summary>
 [RegisterCard(typeof(SunqianCardPool), StableEntryStem = "ruthless_strike")]
-public sealed class RuthlessStrike : ChargeCardTemplate
+public sealed class RuthlessStrike : ChargeCardTemplate, IPenetratingDamageCard
 {
-	public const decimal CanonicalDamage = 7m;
-	public const decimal UpgradedDamage = 9m;
-	public const int CanonicalHits = 1;
+	public const int CanonicalDamage = 8;
+	public const int BaseHits = 1;
+	public const int UpgradedHits = 2;
 
 	private static readonly ValueProp DamageProps = ValueProp.Move | ValueProp.Unblockable;
+
+	public bool DealsPenetratingDamage => true;
 
 	protected override IEnumerable<DynamicVar> CanonicalVars =>
 	[
 		new DamageVar(CanonicalDamage, DamageProps),
-		new RepeatVar(CanonicalHits),
+		new ChargedRepeatVar(
+			BaseHits,
+			card => GetCanonicalHits(card)),
 	];
 
 	protected override HashSet<CardTag> CanonicalTags => [CardTag.Strike];
 
 	protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
 	[
-		HoverTipFactory.Static(StaticHoverTip.Block),
+		HoverTipFactory.FromKeyword(SquKeywords.PiercingDamage),
 		HoverTipFactory.FromKeyword(CardKeyword.Exhaust),
 	];
 
@@ -51,8 +57,7 @@ public sealed class RuthlessStrike : ChargeCardTemplate
 	protected override ChargeHooks Charge => new(
 		OnRetained: null,
 		OnPowerAmountChanged: null,
-		Clear: ResetHitsUntilPlayed,
-		OnCardPlayed: GainExtraHitFromExhaustCard);
+		Clear: ResetHitsUntilPlayed);
 
 	public override CardAssetProfile AssetProfile => new(
 		PortraitPath: "res://images/cards/RuthlessStrike.png");
@@ -60,7 +65,7 @@ public sealed class RuthlessStrike : ChargeCardTemplate
 	protected override bool ShouldGlowGoldInternal => HasChargedHits;
 
 	public RuthlessStrike()
-		: base(1, CardType.Attack, CardRarity.Uncommon, TargetType.AnyEnemy)
+		: base(1, CardType.Attack, CardRarity.Rare, TargetType.AnyEnemy)
 	{
 	}
 
@@ -78,13 +83,35 @@ public sealed class RuthlessStrike : ChargeCardTemplate
 			.WithHitCount(DynamicVars.Repeat.IntValue)
 			.FromCard(this, cardPlay)
 			.Targeting(cardPlay.Target)
-			.WithHitFx("vfx/vfx_attack_slash")
+			.WithHitVfxNode(target => NBigSlashVfx.Create(target))
+			.BeforeDamage(() =>
+			{
+				SquHitVfx.ThinSlice(cardPlay.Target);
+				SquHitVfx.ThinSlice(cardPlay.Target);
+				return Task.CompletedTask;
+			})
 			.Execute(choiceContext);
 	}
 
 	protected override void OnUpgrade()
 	{
-		DynamicVars.Damage.UpgradeValueBy(UpgradedDamage - CanonicalDamage);
+		DynamicVars.Repeat.UpgradeValueBy(UpgradedHits - BaseHits);
+	}
+
+	public override Task AfterCardExhausted(
+		PlayerChoiceContext choiceContext,
+		CardModel card,
+		bool causedByEthereal)
+	{
+		if (Pile?.Type != PileType.Hand || card.Owner != Owner)
+		{
+			return Task.CompletedTask;
+		}
+
+		DynamicVars.Repeat.BaseValue += 1m;
+		RefreshCardVisuals();
+		SquSfx.Play(SquSfx.RuthlessStrikeDontForceMeEvent);
+		return Task.CompletedTask;
 	}
 
 	protected override void AddExtraArgsToDescription(LocString description)
@@ -110,7 +137,7 @@ public sealed class RuthlessStrike : ChargeCardTemplate
 
 	private bool ShouldShowChargedDescription()
 	{
-		// 图鉴规范卡不可变；仅战斗中的可变实例在蓄能已叠加后改写描述。
+		// 图鉴与战斗外预览使用印面描述；仅战斗中实际蓄能后显示动态攻击次数。
 		if (!IsMutable
 			|| RunState is null
 			|| !CombatManager.Instance.IsInProgress
@@ -124,24 +151,14 @@ public sealed class RuthlessStrike : ChargeCardTemplate
 
 	private bool HasChargedHits => DynamicVars.Repeat.IntValue > CanonicalHits;
 
-	private Task GainExtraHitFromExhaustCard(PlayerChoiceContext choiceContext, CardPlay cardPlay)
-	{
-		if (cardPlay.Card.Owner != Owner
-			|| cardPlay.PlayIndex != 0
-			|| !cardPlay.Card.Keywords.Contains(CardKeyword.Exhaust))
-		{
-			return Task.CompletedTask;
-		}
-
-		DynamicVars.Repeat.BaseValue += 1m;
-		RefreshCardVisuals();
-		SquSfx.Play(SquSfx.RuthlessStrikeDontForceMeEvent);
-		return Task.CompletedTask;
-	}
-
 	private void ResetHitsUntilPlayed()
 	{
 		DynamicVars.Repeat.BaseValue = CanonicalHits;
 		RefreshCardVisuals();
 	}
+
+	private int CanonicalHits => GetCanonicalHits(this);
+
+	private static int GetCanonicalHits(CardModel card) =>
+		card.IsUpgraded ? UpgradedHits : BaseHits;
 }

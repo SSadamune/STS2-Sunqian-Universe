@@ -11,11 +11,13 @@ using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Localization;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.Models;
+using MegaCrit.Sts2.Core.Models.Cards;
 using MegaCrit.Sts2.Core.Models.Enchantments;
 using MegaCrit.Sts2.Core.Random;
 using Squ;
 using Squ.Audio;
 using Squ.Character;
+using Squ.Combat;
 using STS2RitsuLib.Interop.AutoRegistration;
 using STS2RitsuLib.Scaffolding.Content;
 
@@ -26,38 +28,54 @@ namespace Squ.Cards;
 [RegisterCard(typeof(SunqianCardPool), StableEntryStem = "human_transmutation")]
 public sealed class HumanTransmutation : ModCardTemplate
 {
-	private const int MaxExhaustCount = 3;
+	public const int MaxExhaustCount = 3;
 
-	private const int SlitherMinCost = 3;
+	public const int SlitherMinCost = 3;
 
 	private readonly record struct EnchantmentSpec(Type EnchantmentType, int Amount);
 
 	private static readonly EnchantmentSpec SlitherSpec = new(typeof(Slither), 0);
 
-	private static readonly EnchantmentSpec[] CommonPool =
+	private static readonly EnchantmentSpec[] CommonTierPool =
 	[
-		new(typeof(Sharp), 3),
-		new(typeof(Swift), 2),
 		new(typeof(Vigorous), 6),
 		new(typeof(Steady), 0),
 		new(typeof(Inky), 0),
 	];
 
-	private static readonly EnchantmentSpec[] UncommonPool =
+	private static readonly EnchantmentSpec[] UncommonTierPool =
 	[
-		new(typeof(Swift), 3),
-		new(typeof(Sown), 1),
 		new(typeof(Momentum), 5),
 		new(typeof(Glam), 0),
 		new(typeof(Corrupted), 0),
 	];
 
-	private static readonly EnchantmentSpec[] RarePool =
+	private static readonly EnchantmentSpec[] RareTierPool =
 	[
 		new(typeof(Instinct), 0),
-		new(typeof(Sown), 2),
 		new(typeof(Spiral), 0),
+		new(typeof(TezcatarasEmber), 0),
+	];
+
+	private static readonly EnchantmentSpec[] CommonUniversalPool =
+	[
+		new(typeof(Sharp), 3),
+		new(typeof(Sown), 1),
+		new(typeof(Swift), 2),
+	];
+
+	private static readonly EnchantmentSpec[] UncommonUniversalPool =
+	[
+		new(typeof(Sharp), 5),
+		new(typeof(Sown), 1),
+		new(typeof(Swift), 3),
+	];
+
+	private static readonly EnchantmentSpec[] RareUniversalPool =
+	[
 		new(typeof(Sharp), 8),
+		new(typeof(Sown), 2),
+		new(typeof(Swift), 4),
 	];
 
 	protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
@@ -104,9 +122,13 @@ public sealed class HumanTransmutation : ModCardTemplate
 		Rng rng = Owner.RunState.Rng.CombatCardGeneration;
 		HashSet<Type> usedEnchantmentTypes = [];
 		List<CardModel> choices = [];
-		foreach (CardModel exhausted in toExhaust)
+		List<CardRarity> choiceRarities = toExhaust
+			.Select(exhausted => MapExhaustedRarity(exhausted.Rarity))
+			.ToList();
+		int highestEnchantmentTier = choiceRarities.Max(GetEnchantmentTier);
+
+		foreach (CardRarity rarity in choiceRarities)
 		{
-			CardRarity rarity = MapExhaustedRarity(exhausted.Rarity);
 			CardModel? attack = PickRandomAttackForRarity(rarity, rng);
 			if (attack is null)
 			{
@@ -119,7 +141,12 @@ public sealed class HumanTransmutation : ModCardTemplate
 				attack.FinalizeUpgradeInternal();
 			}
 
-			ApplyChoiceEnchantment(attack, rarity, rng, usedEnchantmentTypes);
+			ApplyChoiceEnchantment(
+				attack,
+				rarity,
+				highestEnchantmentTier,
+				rng,
+				usedEnchantmentTypes);
 			choices.Add(attack);
 		}
 
@@ -142,16 +169,15 @@ public sealed class HumanTransmutation : ModCardTemplate
 
 	private CardModel? PickRandomAttackForRarity(CardRarity rarity, Rng rng)
 	{
-		List<CardPoolModel> allPools = Owner.UnlockState.CharacterCardPools.ToList();
+		IReadOnlyList<CardPoolModel> allPools =
+			CharacterCardPoolMembership.GetCharacterPools(Owner);
 		if (allPools.Count == 0)
 		{
 			return null;
 		}
 
-		IEnumerable<CardModel> eligibleAttacks = allPools
-			.SelectMany(pool => pool.GetUnlockedCards(
-				Owner.UnlockState,
-				Owner.RunState.CardMultiplayerConstraint))
+		IEnumerable<CardModel> eligibleAttacks = CharacterCardPoolMembership
+			.GetUnlockedCards(Owner, allPools)
 			.Where(card => IsEligibleAttack(card, rarity));
 
 		return CardFactory.GetDistinctForCombat(Owner, eligibleAttacks, 1, rng).FirstOrDefault();
@@ -160,6 +186,8 @@ public sealed class HumanTransmutation : ModCardTemplate
 	private static bool IsEligibleAttack(CardModel card, CardRarity rarity) =>
 		card.Type == CardType.Attack
 		&& card.Rarity == rarity
+		&& card is not TimesUp
+		&& !SquCardTags.IsCharacterMechanicBound(card)
 		&& !CostsStars(card)
 		&& !InvolvesOsty(card);
 
@@ -172,15 +200,63 @@ public sealed class HumanTransmutation : ModCardTemplate
 
 	private static void ApplyChoiceEnchantment(
 		CardModel card,
-		CardRarity rarity,
+		CardRarity minimumRarity,
+		int highestTier,
 		Rng rng,
 		HashSet<Type> usedTypes)
 	{
 		EnchantmentSpec spec = TryRollSlither(card, rng, usedTypes)
-			?? PickRaritySpec(rarity, rng, usedTypes);
+			?? PickEnchantmentSpec(
+				minimumRarity,
+				highestTier,
+				rng,
+				usedTypes);
 		ApplySpec(card, spec);
 		usedTypes.Add(spec.EnchantmentType);
 	}
+
+	private static EnchantmentSpec PickEnchantmentSpec(
+		CardRarity minimumRarity,
+		int highestTier,
+		Rng rng,
+		HashSet<Type> usedTypes)
+	{
+		int minimumTier = GetEnchantmentTier(minimumRarity);
+		List<EnchantmentSpec> pool = [];
+		for (int tier = minimumTier; tier <= highestTier; tier++)
+		{
+			pool.AddRange(GetTierPool(tier));
+		}
+
+		pool.AddRange(GetUniversalPool(highestTier));
+
+		EnchantmentSpec[] unused = pool
+			.Where(spec => !usedTypes.Contains(spec.EnchantmentType))
+			.ToArray();
+		IEnumerable<EnchantmentSpec> candidates = unused.Length > 0 ? unused : pool;
+		return rng.NextItem(candidates);
+	}
+
+	private static EnchantmentSpec[] GetTierPool(int tier) => tier switch
+	{
+		2 => UncommonTierPool,
+		3 => RareTierPool,
+		_ => CommonTierPool,
+	};
+
+	private static EnchantmentSpec[] GetUniversalPool(int highestTier) => highestTier switch
+	{
+		2 => UncommonUniversalPool,
+		3 => RareUniversalPool,
+		_ => CommonUniversalPool,
+	};
+
+	private static int GetEnchantmentTier(CardRarity rarity) => rarity switch
+	{
+		CardRarity.Uncommon => 2,
+		CardRarity.Rare => 3,
+		_ => 1,
+	};
 
 	private static EnchantmentSpec? TryRollSlither(
 		CardModel card,
@@ -203,24 +279,6 @@ public sealed class HumanTransmutation : ModCardTemplate
 		}
 
 		return SlitherSpec;
-	}
-
-	private static EnchantmentSpec PickRaritySpec(
-		CardRarity rarity,
-		Rng rng,
-		HashSet<Type> usedTypes)
-	{
-		EnchantmentSpec[] pool = rarity switch
-		{
-			CardRarity.Uncommon => UncommonPool,
-			CardRarity.Rare => RarePool,
-			_ => CommonPool,
-		};
-
-		EnchantmentSpec[] unused = pool
-			.Where(spec => !usedTypes.Contains(spec.EnchantmentType))
-			.ToArray();
-		return rng.NextItem(unused.Length > 0 ? unused : pool);
 	}
 
 	private static void ApplySpec(CardModel card, EnchantmentSpec spec)
@@ -288,6 +346,12 @@ public sealed class HumanTransmutation : ModCardTemplate
 		if (spec.EnchantmentType == typeof(Momentum))
 		{
 			Apply<Momentum>(card, spec.Amount);
+			return;
+		}
+
+		if (spec.EnchantmentType == typeof(TezcatarasEmber))
+		{
+			Apply<TezcatarasEmber>(card, spec.Amount);
 			return;
 		}
 

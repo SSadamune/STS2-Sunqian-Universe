@@ -16,7 +16,7 @@ internal static class SquStrikeRedirectPatches
 		_harmony = harmony;
 
 		// ModLoaded is too early for ModelDb.AllCards (character loc keys may be missing).
-		// Apply once deferred init finishes; ChickenFootCheeseStrikePower also calls EnsureApplied.
+		// Apply once deferred init finishes; ScriptChickenFootCheesePower also calls EnsureApplied.
 		if (!_lifecycleSubscribed)
 		{
 			_lifecycleSubscribed = true;

@@ -14,7 +14,8 @@ public static class SquDoomKillThreshold
 {
 	public static int GetEffectiveGreenHp(Creature creature)
 	{
-		int poison = creature.GetPower<PoisonPower>()?.CalculateTotalDamageNextTurn() ?? 0;
+		// Deliberately preserve vanilla's original poison forecast for the Doom effect branch.
+		int poison = SquTurnStartDamageForecast.CalculateLegacyPoisonDamage(creature);
 		int burning = creature.GetPower<BurningPower>()?.Amount ?? 0;
 		int doom = creature.GetPowerAmount<DoomPower>();
 

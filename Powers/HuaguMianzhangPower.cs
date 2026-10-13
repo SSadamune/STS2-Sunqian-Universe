@@ -10,6 +10,7 @@ using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.Powers;
+using Squ.Audio;
 using STS2RitsuLib.Interop.AutoRegistration;
 using STS2RitsuLib.Scaffolding.Content;
 
@@ -43,6 +44,7 @@ public sealed class HuaguMianzhangPower : ModPowerTemplate
 			return;
 		}
 
+		SquSfx.Play(SquSfx.HuaguMianzhangTriggerEvent);
 		Flash();
 
 		await PowerCmd.Apply<DoomPower>(

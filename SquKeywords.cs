@@ -41,6 +41,11 @@ public static class SquKeywords
 
 	public static readonly CardKeyword Environmental = EnvironmentalId.GetModCardKeyword();
 
+	public static readonly string PiercingDamageId = ModContentRegistry
+		.GetQualifiedKeywordId(SquMod.ModId, "piercing_damage");
+
+	public static readonly CardKeyword PiercingDamage = PiercingDamageId.GetModCardKeyword();
+
 	public static readonly string ScryId = ModContentRegistry
 		.GetQualifiedKeywordId(SquMod.ModId, "scry");
 
@@ -70,6 +75,37 @@ public static class SquKeywords
 		.GetQualifiedKeywordId(SquMod.ModId, "charge");
 
 	public static readonly CardKeyword Charge = ChargeId.GetModCardKeyword();
+
+	public static readonly string FamilyId = ModContentRegistry
+		.GetQualifiedKeywordId(SquMod.ModId, "family");
+
+	public static readonly CardKeyword Family = FamilyId.GetModCardKeyword();
+
+	public static readonly string EnthralledId = ModContentRegistry
+		.GetQualifiedKeywordId(SquMod.ModId, "enthralled");
+
+	public static readonly CardKeyword Enthralled = EnthralledId.GetModCardKeyword();
+
+	public static readonly string WrapId = ModContentRegistry
+		.GetQualifiedKeywordId(SquMod.ModId, "wrap");
+
+	public static readonly CardKeyword Wrap = WrapId.GetModCardKeyword();
+
+	public static readonly string StrongMonsterEncounterId = ModContentRegistry
+		.GetQualifiedKeywordId(SquMod.ModId, "strong_monster_encounter");
+
+	public static readonly CardKeyword StrongMonsterEncounter =
+		StrongMonsterEncounterId.GetModCardKeyword();
+
+	public static readonly string SlightRevisionId = ModContentRegistry
+		.GetQualifiedKeywordId(SquMod.ModId, "slight_revision");
+
+	public static readonly CardKeyword SlightRevision = SlightRevisionId.GetModCardKeyword();
+
+	public static readonly string SupremeGeneralId = ModContentRegistry
+		.GetQualifiedKeywordId(SquMod.ModId, "supreme_general");
+
+	public static readonly CardKeyword SupremeGeneral = SupremeGeneralId.GetModCardKeyword();
 
 	public static IHoverTip CreateWarFeedsWarHoverTip(CardModel card)
 	{
@@ -123,4 +159,19 @@ public static class SquKeywords
 	public static bool IsScry(this CardModel card) => card.Keywords.Contains(Scry);
 
 	public static bool HasEunuchMessage(this CardModel card) => card.Keywords.Contains(EunuchMessage);
+
+	public static bool HasEnthralled(this CardModel card) => card.Keywords.Contains(Enthralled);
+
+	public static bool HasFamily(this CardModel card) => card.Keywords.Contains(Family);
+
+	public static bool HasWrap(this CardModel card) => card.Keywords.Contains(Wrap);
+
+	/// <summary>
+	/// 手牌中带「卸妆」的牌：当前有剧本时金色高光。
+	/// </summary>
+	public static bool ShouldGlowForWrap(CardModel card) =>
+		card.Pile?.Type == PileType.Hand
+		&& card.HasWrap()
+		&& card.Owner?.Creature is { } creature
+		&& global::Squ.Script.ScriptSystem.HasActiveScript(creature);
 }

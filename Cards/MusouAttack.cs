@@ -1,7 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Godot;
 using MegaCrit.Sts2.Core.Commands;
+using MegaCrit.Sts2.Core.Commands.Builders;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.Entities.Creatures;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
@@ -10,9 +12,11 @@ using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.Powers;
+using MegaCrit.Sts2.Core.Nodes.Vfx;
 using MegaCrit.Sts2.Core.ValueProps;
 using Squ.Audio;
 using Squ.Character;
+using Squ.Combat;
 using STS2RitsuLib.Interop.AutoRegistration;
 using STS2RitsuLib.Scaffolding.Content;
 
@@ -27,10 +31,13 @@ namespace Squ.Cards;
 [RegisterCard(typeof(SunqianCardPool), StableEntryStem = "musou_attack")]
 public sealed class MusouAttack : ModCardTemplate
 {
-	public const decimal CanonicalDamage = 15m;
-	public const decimal UpgradedDamage = 19m;
-	public const decimal CanonicalDexterityMultiplier = 3m;
-	public const decimal UpgradedDexterityMultiplier = 4m;
+	public const int CanonicalDamage = 17;
+	public const int UpgradedDamage = 19;
+	public const int CanonicalDexterityMultiplier = 3;
+	public const int UpgradedDexterityMultiplier = 4;
+	public const int DexterityPerExtraThinSlice = 2;
+	public const float ResolutionDelaySeconds = 2.3f;
+	private static readonly Color ChargeTint = new(0.62f, 0.86f, 1f);
 
 	public const string DexterityMultVarName = "DexterityMult";
 
@@ -59,12 +66,45 @@ public sealed class MusouAttack : ModCardTemplate
 	{
 		ArgumentNullException.ThrowIfNull(CombatState, nameof(CombatState));
 
-		SquSfx.Play(SquSfx.MusouAttackThoughtLuBuEvent);
-		await DamageCmd.Attack(DynamicVars.Damage.BaseValue + GetDexterityBonus(this))
+		decimal dexterityBonus = GetDexterityBonus(this);
+		decimal dexterity = Owner.Creature.GetPower<DexterityPower>()?.Amount ?? 0m;
+		int thinSliceCount = GetThinSliceCount(dexterity);
+		SquSfx.Play(SquSfx.MusouAttackBraverThanLuBuEvent);
+		AttackCommand attack = DamageCmd.Attack(DynamicVars.Damage.BaseValue + dexterityBonus)
 			.FromCard(this, cardPlay)
 			.TargetingAllOpponents(CombatState)
-			.WithHitFx("vfx/vfx_attack_slash")
-			.Execute(choiceContext);
+			.WithHitFx("vfx/vfx_giant_horizontal_slash")
+			.WithWaitBeforeHit(ResolutionDelaySeconds, ResolutionDelaySeconds)
+			.AfterAttackerAnim(() =>
+			{
+				SquHitVfx.PlayFinaleAnticipation(Owner.Creature, ResolutionDelaySeconds, ChargeTint);
+				return Task.CompletedTask;
+			});
+		if (thinSliceCount > 0)
+		{
+			attack.WithHitVfxNode(NBigSlashVfx.Create);
+			attack.BeforeDamage(() =>
+			{
+				foreach (Creature enemy in CombatState.HittableEnemies)
+				{
+					if (!enemy.IsAlive)
+					{
+						continue;
+					}
+
+					for (int slice = 0; slice < thinSliceCount; slice++)
+					{
+						SquHitVfx.ThinSlice(enemy);
+					}
+				}
+
+				return Task.CompletedTask;
+			});
+		}
+
+		await attack.Execute(choiceContext);
+
+		CardValueRetain.TryAddBaseDamage(this, dexterityBonus);
 	}
 
 	protected override void OnUpgrade()
@@ -93,6 +133,11 @@ public sealed class MusouAttack : ModCardTemplate
 		return dexterity * multiplier;
 	}
 
+	private static int GetThinSliceCount(decimal dexterity) =>
+		dexterity > 0m
+			? 1 + (int)decimal.Floor(dexterity / DexterityPerExtraThinSlice)
+			: 0;
+
 	/// <summary>
 	/// 卡面伤害预览包含当前敏捷加成；<see cref="DynamicVar.BaseValue"/> 保持印面数值，
 	/// 这样 <c>{Damage:diff()}</c> 才能把加成后的数字标绿。
@@ -110,7 +155,11 @@ public sealed class MusouAttack : ModCardTemplate
 			Creature? target,
 			bool runGlobalHooks)
 		{
-			decimal amount = BaseValue + GetDexterityBonus(card);
+			decimal amount = BaseValue;
+			if (card.Pile?.Type is PileType.Hand or PileType.Play)
+			{
+				amount += GetDexterityBonus(card);
+			}
 			if (!runGlobalHooks || card.CombatState is not { } combatState)
 			{
 				PreviewValue = amount;

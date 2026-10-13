@@ -44,6 +44,20 @@ public static class ScriptSystem
 		creature.Powers.OfType<ScriptPowerTemplate>().Any();
 
 	/// <summary>
+	/// 「卸妆」：若当前有剧本则令其失效，并返回是否触发了卸妆效果。
+	/// </summary>
+	public static async Task<bool> TryConsumeWrapAsync(Creature creature)
+	{
+		if (!HasActiveScript(creature))
+		{
+			return false;
+		}
+
+		await InvalidateScriptsAsync(creature);
+		return true;
+	}
+
+	/// <summary>
 	/// 移除生物身上所有剧本能力（例如事件强制结束剧本）。
 	/// </summary>
 	public static async Task InvalidateScriptsAsync(Creature creature)

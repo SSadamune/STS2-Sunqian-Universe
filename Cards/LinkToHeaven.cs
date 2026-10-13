@@ -17,7 +17,7 @@ namespace Squ.Cards;
 [RegisterCard(typeof(SunqianCardPool), StableEntryStem = "link_to_heaven")]
 public sealed class LinkToHeaven : ModCardTemplate
 {
-	private const decimal ScryStacksPerPlay = 3m;
+	public const int ScryStacksPerPlay = 3;
 
 	public override CardAssetProfile AssetProfile => new(
 		PortraitPath: "res://images/cards/LinkToHeaven.png");

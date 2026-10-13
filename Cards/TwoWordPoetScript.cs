@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using MegaCrit.Sts2.Core.Combat;
 using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Commands.Builders;
 using MegaCrit.Sts2.Core.Entities.Cards;
@@ -13,6 +14,7 @@ using MegaCrit.Sts2.Core.ValueProps;
 using Squ;
 using Squ.Audio;
 using Squ.Character;
+using Squ.Combat;
 using Squ.Powers;
 using STS2RitsuLib.Interop.AutoRegistration;
 using STS2RitsuLib.Scaffolding.Content;
@@ -24,7 +26,7 @@ namespace Squ.Cards;
 [RegisterCard(typeof(SunqianCardPool), StableEntryStem = "two_word_poet_script")]
 public sealed class TwoWordPoetScript : ScriptCardTemplate
 {
-	public const decimal CanonicalDamage = 2m;
+	public const int CanonicalDamage = 2;
 	public const int CanonicalHits = 2;
 
 	protected override IEnumerable<DynamicVar> CanonicalVars =>
@@ -59,24 +61,28 @@ public sealed class TwoWordPoetScript : ScriptCardTemplate
 	protected override async Task PlayScriptAsync(PlayerChoiceContext choiceContext, CardPlay cardPlay)
 	{
 		SquSfx.Play(SquSfx.TwoWordWineAndSongEvent);
+		SquHitVfx.Scream(Owner.Creature);
 		decimal snapshotDamagePerHit = ScriptTwoWordPoetPower.CalculateSnapshotDamagePerHit(
 			this,
 			Owner.Creature);
 
 		AttackCommand attack = DamageCmd.Attack(DynamicVars.Damage.BaseValue)
 			.WithHitCount(DynamicVars.Repeat.IntValue)
-			.FromCard(this, cardPlay)
-			.WithHitFx("vfx/vfx_attack_slash");
-
+			.FromCard(this, cardPlay);
 		if (IsUpgraded)
 		{
 			ArgumentNullException.ThrowIfNull(CombatState, "CombatState");
-			await attack.TargetingAllOpponents(CombatState).Execute(choiceContext);
+			ICombatState combatState = CombatState;
+			attack.BeforeDamage(() =>
+				SquHitVfx.BlackSmallMagicMissiles(combatState.HittableEnemies));
+			await attack.TargetingAllOpponents(combatState).Execute(choiceContext);
 		}
 		else
 		{
 			ArgumentNullException.ThrowIfNull(cardPlay.Target, "cardPlay.Target");
-			await attack.Targeting(cardPlay.Target).Execute(choiceContext);
+			Creature target = cardPlay.Target;
+			attack.BeforeDamage(() => SquHitVfx.BlackSmallMagicMissile(target));
+			await attack.Targeting(target).Execute(choiceContext);
 		}
 
 		await PowerCmd.Apply<ScriptTwoWordPoetPower>(
@@ -105,7 +111,10 @@ public sealed class TwoWordPoetScript : ScriptCardTemplate
 			bool runGlobalHooks)
 		{
 			BaseValue = card.DynamicVars.Damage.BaseValue;
-			base.UpdateCardPreview(card, previewMode, target: null, runGlobalHooks);
+			using (AllInResolutionTracker.SuppressBonus())
+			{
+				base.UpdateCardPreview(card, previewMode, target: null, runGlobalHooks);
+			}
 			if (runGlobalHooks && card.Owner?.Creature is { } dealer)
 			{
 				PreviewValue = ScriptTwoWordPoetPower.CalculateSnapshotDamagePerHit(card, dealer);

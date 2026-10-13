@@ -20,9 +20,9 @@ namespace Squ.Cards;
 [RegisterCard(typeof(SunqianCardPool), StableEntryStem = "one_man_one_city")]
 public sealed class OneManOneCity : ScriptCardTemplate
 {
-	public const decimal PlatingStacks = 6m;
+	public const int PlatingStacks = 6;
 
-	public const decimal UpgradedPlatingStacks = 8m;
+	public const int UpgradedPlatingStacks = 8;
 
 	protected override IEnumerable<DynamicVar> CanonicalVars =>
 	[

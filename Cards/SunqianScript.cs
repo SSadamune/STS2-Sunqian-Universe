@@ -7,7 +7,9 @@ using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.Models.Powers;
 using Squ;
+using Squ.Audio;
 using Squ.Character;
+using Squ.Combat;
 using Squ.Powers;
 using STS2RitsuLib.Interop.AutoRegistration;
 using STS2RitsuLib.Scaffolding.Content;
@@ -20,11 +22,12 @@ namespace Squ.Cards;
 [RegisterCharacterStarterCard(typeof(SunqianCharacter), 1)]
 public sealed class SunqianScript : ScriptCardTemplate
 {
-	private const decimal DexterityAmount = 2m;
+	public const int BaseDexterity = 2;
+	public const int UpgradedDexterity = 3;
 
 	protected override IEnumerable<DynamicVar> CanonicalVars =>
 	[
-		new PowerVar<DexterityPower>(DexterityAmount),
+		new PowerVar<DexterityPower>(BaseDexterity),
 	];
 
 	protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
@@ -47,10 +50,23 @@ public sealed class SunqianScript : ScriptCardTemplate
 
 	protected override async Task PlayScriptAsync(PlayerChoiceContext choiceContext, CardPlay cardPlay)
 	{
-		await PowerCmd.Apply<TempDexFromSunqianScriptPower>(
+		CardDrawPlayRateTracker.TryGetStats(
+			Owner,
+			this,
+			CardDrawPlayRateTracker.MaxStoredCombats,
+			includeCurrentCombat: false,
+			out int playFromHandCount,
+			out int handEntryCount);
+		bool frequentlyPlayed = handEntryCount > 0
+			&& (long)playFromHandCount * 2 >= handEntryCount;
+		SquSfx.Play(frequentlyPlayed
+			? SquSfx.SunqianScriptFrequentAppearanceEvent
+			: SquSfx.SunqianScriptRareTrueFormEvent);
+
+		await PowerCmd.Apply<TempDexPower>(
 			choiceContext,
 			Owner.Creature,
-			DexterityAmount,
+			DynamicVars[nameof(DexterityPower)].BaseValue,
 			Owner.Creature,
 			this);
 
@@ -60,5 +76,11 @@ public sealed class SunqianScript : ScriptCardTemplate
 			1m,
 			Owner.Creature,
 			this);
+	}
+
+	protected override void OnUpgrade()
+	{
+		DynamicVars[nameof(DexterityPower)]
+			.UpgradeValueBy(UpgradedDexterity - BaseDexterity);
 	}
 }

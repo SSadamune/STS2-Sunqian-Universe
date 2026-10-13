@@ -20,6 +20,7 @@ namespace Squ.Powers;
 /// 西凉野人剧本：持有者的牌会永久保留本次活力带来的数值加成。
 /// 攻击伤害在攻击结束后立刻写回；格挡、灼烧等在本次打出中才读取的加成
 /// 延迟到整张牌结算后写回，避免当前这次打出被重复计算。
+/// 「上将军」继承给嵌套攻击牌的活力加成同样由实际获得该加成的子牌保留。
 /// </summary>
 [RegisterPower]
 public sealed class ScriptXiliangSavagePower : ScriptPowerTemplate
@@ -29,18 +30,16 @@ public sealed class ScriptXiliangSavagePower : ScriptPowerTemplate
 
 	private sealed class Data
 	{
-		public PendingAttack? Pending;
+		public Dictionary<AttackCommand, PendingAttack> PendingAttacks { get; } = [];
 
 		public Dictionary<CardModel, PendingCardBonuses> PendingCardBonuses { get; } = [];
 	}
 
 	private sealed class PendingAttack
 	{
-		public required AttackCommand Command { get; init; }
-
 		public required CardModel Card { get; init; }
 
-		public required int VigorBefore { get; init; }
+		public required decimal VigorBonus { get; init; }
 	}
 
 	private sealed class PendingCardBonuses
@@ -63,17 +62,29 @@ public sealed class ScriptXiliangSavagePower : ScriptPowerTemplate
 			return Task.CompletedTask;
 		}
 
-		VigorPower? vigor = Owner.GetPower<VigorPower>();
-		if (vigor is not { Amount: > 0 } || !command.DamageProps.IsPoweredAttack())
+		if (!command.DamageProps.IsPoweredAttack())
 		{
 			return Task.CompletedTask;
 		}
 
-		GetInternalData<Data>().Pending = new PendingAttack
+		decimal vigorBonus = Owner.GetPower<VigorPower>()?.Amount ?? 0m;
+		if (SupremeGeneralKeywordSystem.TryGetInheritedVigorBonus(
+			card,
+			command.CardPlay,
+			out decimal inheritedVigor))
 		{
-			Command = command,
+			vigorBonus += inheritedVigor;
+		}
+
+		if (vigorBonus <= 0m)
+		{
+			return Task.CompletedTask;
+		}
+
+		GetInternalData<Data>().PendingAttacks[command] = new PendingAttack
+		{
 			Card = card,
-			VigorBefore = vigor.Amount,
+			VigorBonus = vigorBonus,
 		};
 
 		return Task.CompletedTask;
@@ -82,29 +93,21 @@ public sealed class ScriptXiliangSavagePower : ScriptPowerTemplate
 	public override Task AfterAttack(PlayerChoiceContext choiceContext, AttackCommand command)
 	{
 		Data data = GetInternalData<Data>();
-		PendingAttack? pending = data.Pending;
-		if (pending is null || pending.Command != command)
+		if (!data.PendingAttacks.Remove(command, out PendingAttack? pending))
 		{
 			return Task.CompletedTask;
 		}
 
-		data.Pending = null;
-
-		// Do not measure consumed vigor by reading stacks after the attack:
-		// Hook.AfterAttack listener order is not guaranteed. If this power runs
-		// before VigorPower, the difference is still 0 even though vigor will be spent.
-		// Vigor always removes its full pre-attack amount on powered attacks, so
-		// retain that snapshot (mirrors VigorPower.amountWhenAttackStarted).
-		int consumed = pending.VigorBefore;
-		if (consumed <= 0)
+		decimal vigorBonus = pending.VigorBonus;
+		if (vigorBonus <= 0m)
 		{
 			return Task.CompletedTask;
 		}
 
-		bool retained = CardValueRetain.TryAddBaseDamage(pending.Card, consumed);
+		bool retained = CardValueRetain.TryAddBaseDamage(pending.Card, vigorBonus);
 		if (pending.Card.DynamicVars.ContainsKey(BurningVarName))
 		{
-			QueueCardBonus(pending.Card, burning: consumed);
+			QueueCardBonus(pending.Card, burning: vigorBonus);
 			retained = true;
 		}
 

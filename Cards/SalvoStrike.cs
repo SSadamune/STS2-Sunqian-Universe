@@ -7,6 +7,7 @@ using MegaCrit.Sts2.Core.Models.CardPools;
 using MegaCrit.Sts2.Core.ValueProps;
 using Squ.Audio;
 using Squ.Combat;
+using Squ.Powers;
 using STS2RitsuLib.Interop.AutoRegistration;
 using STS2RitsuLib.Scaffolding.Content;
 
@@ -20,6 +21,8 @@ public sealed class SalvoStrike : ModCardTemplate, IRandomEnemyTargetCount
 	public const int BaseDamage = 10;
 	public const int UpgradedDamage = 14;
 	public const int RandomEnemyTargetCount = 3;
+	public const int BaseArrowRainLayers = 2;
+	public const int BonusPercentPerArrowRainLayer = 50;
 
 	protected override IEnumerable<DynamicVar> CanonicalVars =>
 	[
@@ -52,11 +55,28 @@ public sealed class SalvoStrike : ModCardTemplate, IRandomEnemyTargetCount
 			this,
 			choiceContext,
 			RandomEnemyTargetCount,
-			cardPlay: cardPlay);
+			hitFx: null,
+			cardPlay: cardPlay,
+			beforeHit: targets => SquHitVfx.ArrowRain(targets, GetArrowRainLayers()));
 	}
 
 	protected override void OnUpgrade()
 	{
 		DynamicVars.Damage.UpgradeValueBy(UpgradedDamage - BaseDamage);
+	}
+
+	private int GetArrowRainLayers()
+	{
+		if (CombatState?.HittableEnemies.Count != 1)
+		{
+			return BaseArrowRainLayers;
+		}
+
+		decimal bonusPercent = Owner.Creature
+			.GetPower<ScriptExecutionCommanderPower>()?.Amount ?? 0m;
+		int bonusLayers = bonusPercent > 0m
+			? (int)decimal.Floor(bonusPercent / BonusPercentPerArrowRainLayer)
+			: 0;
+		return BaseArrowRainLayers + bonusLayers;
 	}
 }

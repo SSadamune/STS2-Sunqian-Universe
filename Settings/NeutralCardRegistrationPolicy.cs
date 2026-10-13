@@ -1,0 +1,74 @@
+#nullable enable
+using System.Collections.Generic;
+using System.Linq;
+using HarmonyLib;
+using MegaCrit.Sts2.Core.HoverTips;
+using MegaCrit.Sts2.Core.Models;
+using MegaCrit.Sts2.Core.Models.CardPools;
+using MegaCrit.Sts2.Core.Runs;
+using Squ.Cards;
+using Squ.Character;
+using Squ.RunData;
+
+namespace Squ.Settings;
+
+/// <summary>
+/// 控制本模组注册的中立卡牌是否进入当前上下文的中立牌池候选。
+/// 模型本身始终保留注册，以保证存档与按 ID 直接生成卡牌的兼容性。
+/// </summary>
+public static class NeutralCardRegistrationPolicy
+{
+	public static bool ShouldInclude()
+	{
+		NeutralContentPermissionMode mode =
+			ContentSettingsRunData.NeutralCardRegistration;
+
+		return mode switch
+		{
+			NeutralContentPermissionMode.Allow => true,
+			NeutralContentPermissionMode.WhenModCharacterPresent => HasModCharacter(),
+			_ => false,
+		};
+	}
+
+	private static bool HasModCharacter()
+	{
+		IRunState? runState = RunManager.Instance.DebugOnlyGetState();
+		return runState?.Players.Any(player => player.Character is SunqianCharacter) == true;
+	}
+
+	private static bool IsAffectedCard(CardModel card) =>
+		card is TheGrievingPrevail or TheArrogantFall or KnowWrongDenyWrong;
+
+	[HarmonyPatch(typeof(CardModel), "get_HoverTips")]
+	private static class AffectedCardHoverTipsPatch
+	{
+		private static void Postfix(CardModel __instance, ref IEnumerable<IHoverTip> __result)
+		{
+			if (!IsAffectedCard(__instance) || !ShouldInclude())
+			{
+				return;
+			}
+
+			__result =
+			[
+				..__result,
+				new HoverTip(
+					SquCommonL10n.AnnotationTitle(),
+					SquCommonL10n.NeutralCardAddedAnnotation()),
+			];
+		}
+	}
+
+	[HarmonyPatch(typeof(CardPoolModel), nameof(CardPoolModel.GetUnlockedCards))]
+	private static class GetUnlockedCardsPatch
+	{
+		private static void Postfix(CardPoolModel __instance, ref IEnumerable<CardModel> __result)
+		{
+			if (__instance is ColorlessCardPool && !ShouldInclude())
+			{
+				__result = __result.Where(card => !IsAffectedCard(card));
+			}
+		}
+	}
+}

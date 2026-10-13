@@ -9,6 +9,7 @@ using MegaCrit.Sts2.Core.Entities.Players;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.Models;
 using Squ;
+using Squ.Cards;
 using STS2RitsuLib.Interop.AutoRegistration;
 using STS2RitsuLib.Scaffolding.Content;
 
@@ -19,19 +20,37 @@ namespace Squ.Powers;
 [RegisterPower]
 public sealed class ScriptEunuchPower : ScriptPowerTemplate
 {
+	private sealed class Data
+	{
+		public HashSet<CardModel> MarkedCards { get; } = [];
+	}
+
 	public override PowerAssetProfile AssetProfile => new(
 		IconPath: "res://images/powers/ScriptEunuchPower.png",
 		BigIconPath: "res://images/powers/ScriptEunuchPowerBig.png");
 
-	public static void MarkDrawnCards(IEnumerable<CardModel> cards)
+	protected override object InitInternalData() => new Data();
+
+	protected override Task OnScriptApplied(Creature? applier, CardModel? cardSource)
 	{
-		foreach (CardModel card in cards)
+		if (cardSource is not EunuchScript script)
 		{
-			if (card.Pile?.Type == PileType.Hand)
-			{
-				ApplyMark(card);
-			}
+			return Task.CompletedTask;
 		}
+
+		Data data = GetInternalData<Data>();
+		foreach (CardModel card in script.DrawnCardsForCurrentPlay)
+		{
+			if (card.Pile?.Type != PileType.Hand)
+			{
+				continue;
+			}
+
+			ApplyMark(card);
+			data.MarkedCards.Add(card);
+		}
+
+		return Task.CompletedTask;
 	}
 
 	public static void ClearMarkIfPresent(CardModel card)
@@ -49,8 +68,8 @@ public sealed class ScriptEunuchPower : ScriptPowerTemplate
 			&& oldOwner.CombatState is not null
 			&& !CombatManager.Instance.IsOverOrEnding)
 		{
-			List<CardModel> toExhaust = PileType.Hand.GetPile(player).Cards
-				.Where(static card => card.HasEunuchMessage())
+			List<CardModel> toExhaust = GetInternalData<Data>().MarkedCards
+				.Where(card => card.Pile?.Type == PileType.Hand && card.HasEunuchMessage())
 				.ToList();
 			foreach (CardModel card in toExhaust)
 			{

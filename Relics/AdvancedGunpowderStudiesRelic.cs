@@ -19,7 +19,7 @@ using STS2RitsuLib.Scaffolding.Content;
 namespace Squ.Relics;
 
 /// <summary>
-/// 《高级火药学》：每回合开始时获得 2 层火种；玩家造成灼烧后熄灭概率降至 0%。
+/// 《高级火药学》：每回合开始时获得 3 层火种；玩家造成灼烧后熄灭概率降至 0%。
 /// </summary>
 [RegisterRelic(typeof(SunqianRelicPool), StableEntryStem = "advanced_gunpowder_studies")]
 public sealed class AdvancedGunpowderStudiesRelic : ModRelicTemplate
@@ -28,7 +28,7 @@ public sealed class AdvancedGunpowderStudiesRelic : ModRelicTemplate
 
 	protected override IEnumerable<DynamicVar> CanonicalVars =>
 	[
-		new PowerVar<TinderPower>(2m),
+		new PowerVar<TinderPower>(3m),
 	];
 
 	protected override IEnumerable<IHoverTip> AdditionalHoverTips =>

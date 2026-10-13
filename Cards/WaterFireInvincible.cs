@@ -8,6 +8,7 @@ using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.Entities.Creatures;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.HoverTips;
+using MegaCrit.Sts2.Core.Localization;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.ValueProps;
 using Squ;
@@ -27,9 +28,9 @@ namespace Squ.Cards;
 [RegisterCard(typeof(SunqianCardPool), StableEntryStem = "water_fire_invincible")]
 public sealed class WaterFireInvincible : ModCardTemplate
 {
-	public const decimal BaseDamage = 7m;
+	public const int BaseDamage = 7;
 
-	public const decimal UpgradedDamage = 11m;
+	public const int UpgradedDamage = 11;
 
 	public override bool GainsBlock => true;
 
@@ -41,6 +42,8 @@ public sealed class WaterFireInvincible : ModCardTemplate
 	protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
 	[
 		HoverTipFactory.FromPower<BurningPower>(),
+		HoverTipFactory.Static(StaticHoverTip.Block),
+		new HoverTip(SquCommonL10n.AnnotationTitle(), new LocString("cards", Id.Entry + ".annotation")),
 	];
 
 	protected override HashSet<CardTag> CanonicalTags => [SquCardTags.Burning];
@@ -62,7 +65,12 @@ public sealed class WaterFireInvincible : ModCardTemplate
 		AttackCommand attackCommand = await DamageCmd.Attack(DynamicVars.Damage.BaseValue)
 			.FromCard(this, cardPlay)
 			.Targeting(cardPlay.Target)
-			.WithHitFx("vfx/vfx_attack_slash")
+			.WithHitFx("vfx/vfx_molten_fist")
+			.BeforeDamage(() =>
+			{
+				VfxCmd.PlayOnCreature(cardPlay.Target, "vfx/vfx_heavy_blunt");
+				return Task.CompletedTask;
+			})
 			.Execute(choiceContext);
 
 		int damageDealt = attackCommand.Results
@@ -84,12 +92,8 @@ public sealed class WaterFireInvincible : ModCardTemplate
 			this);
 
 		int burningApplied = target.GetPowerAmount<BurningPower>() - burningBefore;
-		if (burningApplied <= 0)
-		{
-			return;
-		}
-
-		await CreatureCmd.GainBlock(Owner.Creature, burningApplied, ValueProp.Move, cardPlay);
+		int blockAmount = burningApplied > 0 ? burningApplied : damageDealt;
+		await CreatureCmd.GainBlock(Owner.Creature, blockAmount, ValueProp.Move, cardPlay);
 	}
 
 	protected override void OnUpgrade()

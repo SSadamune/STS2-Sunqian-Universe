@@ -49,6 +49,6 @@ public sealed class LoudSecretPlot : ModCardTemplate
 
 	protected override void OnUpgrade()
 	{
-		EnergyCost.UpgradeBy(-1);
+		RemoveKeyword(CardKeyword.Ethereal);
 	}
 }

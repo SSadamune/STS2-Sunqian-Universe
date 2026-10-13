@@ -10,6 +10,7 @@ using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.Models;
 using Squ;
+using Squ.Audio;
 using Squ.Cards;
 using STS2RitsuLib.Interop.AutoRegistration;
 using STS2RitsuLib.Scaffolding.Content;
@@ -20,7 +21,7 @@ namespace Squ.Powers;
 
 /// <summary>
 /// 博望悖论剧本：失效时，获得一次性的火种层数，并丢弃手牌中所有能造成灼烧的牌。
-/// 火种的具体层数在打出时（<see cref="AfterApplied"/>）根据牌是否已升级快照到内部数据，
+/// 火种的具体层数在打出时（<see cref="OnScriptApplied"/>）根据牌是否已升级快照到内部数据，
 /// 失效结算（<see cref="AfterRemoved"/>）时直接读取快照值，不依赖届时的 DynamicVars 状态。
 /// </summary>
 [RegisterPower]
@@ -46,9 +47,10 @@ public sealed class ScriptBowangParadoxPower : ScriptPowerTemplate
 	[
 		HoverTipFactory.FromPower<TinderPower>(),
 		HoverTipFactory.FromPower<BurningPower>(),
+		HoverTipFactory.FromKeyword(CardKeyword.Retain),
 	];
 
-	public override Task AfterApplied(Creature? applier, CardModel? cardSource)
+	protected override Task OnScriptApplied(Creature? applier, CardModel? cardSource)
 	{
 		decimal stacks = cardSource is BowangParadoxScript { IsUpgraded: true }
 			? BowangParadoxScript.UpgradedTinderStacks
@@ -60,6 +62,7 @@ public sealed class ScriptBowangParadoxPower : ScriptPowerTemplate
 
 	public override async Task AfterRemoved(Creature oldOwner)
 	{
+		SquSfx.Play(SquSfx.BowangParadoxRemovedEvent);
 		decimal stacks = GetInternalData<Data>().TinderStacks;
 		Player? player = oldOwner.Player;
 		if (stacks > 0 && player is not null)
@@ -74,7 +77,7 @@ public sealed class ScriptBowangParadoxPower : ScriptPowerTemplate
 				null);
 
 			List<CardModel> burningCards = PileType.Hand.GetPile(player).Cards
-				.Where(SquCardTags.AppliesBurning)
+				.Where(card => SquCardTags.AppliesBurning(card) && !card.ShouldRetainThisTurn)
 				.ToList();
 			if (burningCards.Count > 0)
 			{

@@ -21,15 +21,17 @@ using STS2RitsuLib.Scaffolding.Content;
 namespace Squ.Cards;
 
 /// <summary>
-/// 平湖惊雷：保留。对所有敌人造成伤害（未升级 5 费 1，升级后 4 费 7）。
+/// 平湖惊雷：保留。对所有敌人造成伤害两次（未升级 5 费 1，升级后 4 费 5）。
 /// 蓄能：被攻击时降费；消耗活力后增加等量伤害。打出后解除。
 /// </summary>
 [RegisterCard(typeof(SunqianCardPool), StableEntryStem = "thunder_on_still_lake")]
 public sealed class ThunderOnStillLake : ChargeCardTemplate
 {
-	public const decimal CanonicalDamage = 1m;
+	public const int CanonicalDamage = 1;
 
-	public const decimal UpgradedDamage = 10m;
+	public const int UpgradedDamage = 5;
+
+	public const int CanonicalHits = 2;
 
 	public const int CanonicalCost = 5;
 
@@ -37,13 +39,17 @@ public sealed class ThunderOnStillLake : ChargeCardTemplate
 
 	public const int EnergyReductionPerAttack = 1;
 
-	private const decimal ChopYourHeadDamage = 30m;
+	public const int ChopYourHeadDamage = 30;
 
-	private const decimal AsLongAsIBreatheDamage = 10m;
+	public const int AsLongAsIBreatheDamage = 10;
 
 	protected override IEnumerable<DynamicVar> CanonicalVars =>
 	[
-		new DamageVar(CanonicalDamage, ValueProp.Move),
+		new ChargedDamageVar(
+			CanonicalDamage,
+			ValueProp.Move,
+			card => card.IsUpgraded ? UpgradedDamage : CanonicalDamage),
+		new RepeatVar(CanonicalHits),
 	];
 
 	public override IEnumerable<CardKeyword> CanonicalKeywords =>
@@ -81,7 +87,9 @@ public sealed class ThunderOnStillLake : ChargeCardTemplate
 		await DamageCmd.Attack(DynamicVars.Damage.BaseValue)
 			.FromCard(this, cardPlay)
 			.TargetingAllOpponents(CombatState)
-			.WithHitFx("vfx/vfx_attack_slash")
+			.WithHitCount(DynamicVars.Repeat.IntValue)
+			.WithHitFx("vfx/vfx_attack_lightning")
+			.SpawningHitVfxOnEachCreature()
 			.Execute(choiceContext);
 	}
 

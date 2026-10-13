@@ -17,14 +17,14 @@ using STS2RitsuLib.Scaffolding.Content;
 namespace Squ.Relics;
 
 /// <summary>
-/// 《孟德新书》：敌人正面状态种类减伤；自身负面状态种类增伤（每种 8%，加算叠加，至多 40%）。
+/// 《孟德新书》：敌人正面状态种类减伤；自身负面状态种类增伤（每种 10%，加算叠加，至多 50%）。
 /// </summary>
 [RegisterRelic(typeof(SunqianRelicPool), StableEntryStem = "mengde_new_book")]
 public sealed class MengdeNewBookRelic : ModRelicTemplate
 {
-	public const decimal PercentPerPowerType = 0.08m;
+	public const decimal PercentPerPowerType = 0.10m;
 
-	public const decimal MaxPercent = 0.40m;
+	public const decimal MaxPercent = 0.50m;
 
 	public override RelicRarity Rarity => RelicRarity.Rare;
 
