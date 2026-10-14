@@ -6,7 +6,8 @@ param(
     [string]$Filter = "",
     [int]$TimeoutSeconds = 180,
     [switch]$ListOnly,
-    [switch]$SkipModInstall
+    [switch]$SkipModInstall,
+    [switch]$JointModTests
 )
 
 $ErrorActionPreference = "Stop"
@@ -34,7 +35,7 @@ $RitsuManifestPath = Join-Path $RitsuLibDir "mod_manifest.json"
 if (-not (Test-Path -LiteralPath $RitsuManifestPath -PathType Leaf)) {
     throw "RitsuLib manifest was not found: $RitsuManifestPath"
 }
-$RitsuManifest = Get-Content -LiteralPath $RitsuManifestPath -Raw | ConvertFrom-Json
+$RitsuManifest = Get-Content -LiteralPath $RitsuManifestPath -Raw -Encoding UTF8 | ConvertFrom-Json
 if ($RitsuManifest.id -ne "STS2-RitsuLib") {
     throw "Unexpected RitsuLib mod id '$($RitsuManifest.id)' in $RitsuManifestPath"
 }
@@ -72,6 +73,9 @@ $MsBuildArgs = @(
 )
 if (-not [string]::IsNullOrWhiteSpace($Filter)) {
     $MsBuildArgs += "-p:Sts2TestArgs=--sts2-test-filter=$Filter"
+}
+if ($JointModTests) {
+    $MsBuildArgs += "-p:Sts2JointModTests=true"
 }
 
 Write-Host "$Target via TestTheSpire..." -ForegroundColor Cyan
