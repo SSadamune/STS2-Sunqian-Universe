@@ -78,7 +78,7 @@ public sealed class Blitzkrieg : ModCardTemplate
 			}
 
 			await DamageCmd.Attack(DynamicVars.Damage.BaseValue)
-				.FromCard(this, cardPlay)
+				.FromCard(this)
 				.Targeting(cardPlay.Target)
 				.WithHitVfxNode(target => NStabVfx.Create(target, facingEnemies: true))
 				.WithHitFx("vfx/vfx_starry_impact")

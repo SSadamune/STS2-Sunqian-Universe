@@ -84,7 +84,7 @@ public sealed class TransparentHole : ModCardTemplate, IRandomEnemyTargetCount, 
 
 		int wave = 1;
 		AttackCommand attack = DamageCmd.Attack(DynamicVars.Damage.BaseValue)
-			.FromCard(this, cardPlay)
+			.FromCard(this)
 			.TargetingAllOpponents(combatState)
 			.TargetingFiltered(firstVolley)
 			.WithHitCount(targetCount)

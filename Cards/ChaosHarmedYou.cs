@@ -116,7 +116,7 @@ public sealed class ChaosHarmedYou : ModCardTemplate
 
 		AttackCommand attackCommand = await DamageCmd.Attack(DynamicVars.Damage.BaseValue)
 			.WithDamageProps(DamageProps)
-			.FromCard(this, cardPlay)
+			.FromCard(this)
 			.Targeting(target)
 			.WithHitFx("vfx/vfx_attack_slash")
 			.Execute(choiceContext);
@@ -172,7 +172,6 @@ public sealed class ChaosHarmedYou : ModCardTemplate
 			DynamicVars.Damage.BaseValue,
 			DamageProps,
 			this,
-			null,
 			ModifyDamageHookType.All,
 			CardPreviewMode.None,
 			out _);

@@ -127,12 +127,11 @@ public sealed class VigorAmplificationPower : ModPowerTemplate
 		decimal amount,
 		ValueProp props,
 		Creature? dealer,
-		CardModel? card,
-		CardPlay? cardPlay)
+		CardModel? card)
 	{
 		int bonusMultiplier = card is null
 			? 0
-			: GetAppliedMultiplier(card, cardPlay);
+			: GetAppliedMultiplier(card, null);
 		if (dealer != Owner
 			|| bonusMultiplier <= 0
 			|| !props.IsPoweredAttack())

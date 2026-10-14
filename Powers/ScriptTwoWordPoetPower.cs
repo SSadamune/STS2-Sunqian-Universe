@@ -70,7 +70,6 @@ public sealed class ScriptTwoWordPoetPower : StackableScriptPowerTemplate
 			damageVar.BaseValue,
 			damageVar.Props,
 			card,
-			null,
 			ModifyDamageHookType.All,
 			CardPreviewMode.None,
 			out _);
@@ -112,7 +111,7 @@ public sealed class ScriptTwoWordPoetPower : StackableScriptPowerTemplate
 		AttackCommand attack = DamageCmd.Attack(Amount)
 			.Unpowered()
 			.WithHitCount(TurnStartHitCount)
-			.FromCard(sourceCard, null);
+			.FromCard(sourceCard);
 		if (data.TargetsAllEnemies)
 		{
 			attack.BeforeDamage(() =>

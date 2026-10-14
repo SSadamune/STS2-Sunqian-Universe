@@ -7,6 +7,7 @@ using MegaCrit.Sts2.Core.Factories;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Models;
+using MegaCrit.Sts2.Core.Nodes.Cards;
 using Squ;
 using Squ.Audio;
 using Squ.Character;
@@ -65,7 +66,8 @@ public sealed class Audition : ModCardTemplate
 			await CardPileCmd.AddGeneratedCardToCombat(card, PileType.Hand, Owner);
 			if (wrap && card.Pile?.Type == PileType.Hand)
 			{
-				CardCmd.ApplySingleTurnRetain(card);
+				card.GiveSingleTurnRetain();
+				NCard.FindOnTable(card)?.UpdateVisuals(card.Pile!.Type, CardPreviewMode.Normal);
 			}
 		}
 	}

@@ -72,7 +72,7 @@ public sealed class KillingIntentPerception : ModCardTemplate
 				"KillingIntentPerception requires an active combat.");
 
 		await DamageCmd.Attack(DynamicVars.Damage.BaseValue)
-			.FromCard(this, cardPlay)
+			.FromCard(this)
 			.TargetingAllOpponents(combatState)
 			.WithHitVfxNode(target => NScratchVfx.Create(target, goingRight: true))
 			.Execute(choiceContext);

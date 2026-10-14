@@ -10,7 +10,7 @@ namespace Squ.Combat;
 /// <summary>
 /// 让宠物身上的原版再生在其主人回合结束时按原版流程结算。
 /// </summary>
-[HarmonyPatch(typeof(RegenPower), nameof(RegenPower.BeforeSideTurnEndEarly))]
+[HarmonyPatch(typeof(RegenPower), nameof(RegenPower.AfterSideTurnEnd))]
 public static class PetRegenSystem
 {
 	private static void Prefix(

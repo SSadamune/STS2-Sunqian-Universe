@@ -57,14 +57,14 @@ public sealed class MonsterHuntingMethod : ModCardTemplate
 	/// <summary>
 	/// 结果牌堆在 OnPlay 之前就已决定，不能依赖 ExhaustOnNextPlay。
 	/// </summary>
-	protected override CardLocation GetResultLocationForCardPlay()
+	protected override PileType GetResultPileTypeForCardPlay()
 	{
 		if (CurrentTarget is { IsPlayer: true })
 		{
-			return new CardLocation(Owner, PileType.Exhaust, CardPilePosition.Bottom);
+			return PileType.Exhaust;
 		}
 
-		return base.GetResultLocationForCardPlay();
+		return base.GetResultPileTypeForCardPlay();
 	}
 
 	protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)

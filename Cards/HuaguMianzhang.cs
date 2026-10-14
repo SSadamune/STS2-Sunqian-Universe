@@ -51,7 +51,7 @@ public sealed class HuaguMianzhang : ModCardTemplate
 		SquSfx.Play(SquSfx.HuaguMianzhangEvent);
 
 		AttackCommand attack = await DamageCmd.Attack(DynamicVars.Damage.BaseValue)
-			.FromCard(this, cardPlay)
+			.FromCard(this)
 			.Targeting(cardPlay.Target)
 			.WithHitFx("vfx/vfx_attack_blunt")
 			.Execute(choiceContext);

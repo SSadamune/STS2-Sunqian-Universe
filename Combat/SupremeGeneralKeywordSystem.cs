@@ -63,7 +63,7 @@ public sealed class SupremeGeneralKeywordSystem : HookedSingletonModel
 			return Task.CompletedTask;
 		}
 
-		ulong playerId = cardPlay.Player.NetId;
+		ulong playerId = cardPlay.Card.Owner.NetId;
 		if (!WindowsByPlayer.TryGetValue(playerId, out List<ResolutionWindow>? windows))
 		{
 			windows = [];
@@ -85,7 +85,7 @@ public sealed class SupremeGeneralKeywordSystem : HookedSingletonModel
 		if (command.Attacker?.Player is not { } player
 			|| !command.DamageProps.IsPoweredAttack()
 			|| !TryGetOutermostWindow(player.NetId, out ResolutionWindow window)
-			|| !ReferenceEquals(command.CardPlay, window.RootPlay))
+			|| !ReferenceEquals(command.ModelSource, window.RootCard))
 		{
 			return Task.CompletedTask;
 		}
@@ -118,12 +118,11 @@ public sealed class SupremeGeneralKeywordSystem : HookedSingletonModel
 		decimal amount,
 		ValueProp props,
 		Creature? dealer,
-		CardModel? cardSource,
-		CardPlay? cardPlay)
+		CardModel? cardSource)
 	{
 		if (!props.IsPoweredAttack()
 			|| cardSource is null
-			|| !TryGetInheritedVigorBonus(cardSource, cardPlay, out decimal inheritedVigor)
+			|| !TryGetInheritedVigorBonus(cardSource, null, out decimal inheritedVigor)
 			|| dealer != cardSource.Owner.Creature)
 		{
 			return 0m;
@@ -170,13 +169,13 @@ public sealed class SupremeGeneralKeywordSystem : HookedSingletonModel
 		PlayerChoiceContext choiceContext,
 		CardPlay cardPlay)
 	{
-		if (!TryGetOutermostWindow(cardPlay.Player.NetId, out ResolutionWindow window)
+		if (!TryGetOutermostWindow(cardPlay.Card.Owner.NetId, out ResolutionWindow window)
 			|| !ReferenceEquals(window.RootPlay, cardPlay))
 		{
 			return;
 		}
 
-		Creature owner = cardPlay.Player.Creature;
+		Creature owner = cardPlay.Card.Owner.Creature;
 		decimal vigorBefore = GetVigorAmount(owner);
 		await SquVigorSnapshot.SpendAll(choiceContext, owner, cardPlay.Card);
 		decimal consumed = vigorBefore - GetVigorAmount(owner);
@@ -296,7 +295,7 @@ public sealed class SupremeGeneralKeywordSystem : HookedSingletonModel
 
 	private static void CloseWindow(CardPlay cardPlay)
 	{
-		ulong playerId = cardPlay.Player.NetId;
+		ulong playerId = cardPlay.Card.Owner.NetId;
 		if (!WindowsByPlayer.TryGetValue(playerId, out List<ResolutionWindow>? windows))
 		{
 			return;

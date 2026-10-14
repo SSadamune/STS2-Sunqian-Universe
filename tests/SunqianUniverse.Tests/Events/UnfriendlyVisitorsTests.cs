@@ -163,7 +163,7 @@ public sealed class UnfriendlyVisitorsTests : SunqianCombatTestSuite
     private async Task<UnfriendlyVisitors> BeginEvent()
     {
         var evt = (UnfriendlyVisitors)ModelDb.Event<UnfriendlyVisitors>().ToMutable();
-        await evt.BeginEvent(Player, combatSynchronizer: null, isPreFinished: false);
+        await evt.BeginEvent(Player, isPreFinished: false);
         return evt;
     }
 
@@ -223,7 +223,7 @@ public sealed class UnfriendlyVisitorsCaoWeiTests : SunqianCombatTestSuite
             CardModel selected = Player.Deck.Cards.First(card =>
                 card.Rarity == CardRarity.Basic && card.Tags.Contains(sourceTag));
             var evt = (UnfriendlyVisitors)ModelDb.Event<UnfriendlyVisitors>().ToMutable();
-            await evt.BeginEvent(Player, combatSynchronizer: null, isPreFinished: false);
+            await evt.BeginEvent(Player, isPreFinished: false);
             Assert.Equal(
                 $"{EventEntry}.pages.CAO_WEI_INITIAL.description",
                 evt.Description!.LocEntryKey);
@@ -282,7 +282,7 @@ public sealed class UnfriendlyVisitorsShuHanTests : SunqianCombatTestSuite
             CardModel selected = Player.Deck.Cards.First(card =>
                 card.Rarity == CardRarity.Basic && card.Tags.Contains(sourceTag));
             var evt = (UnfriendlyVisitors)ModelDb.Event<UnfriendlyVisitors>().ToMutable();
-            await evt.BeginEvent(Player, combatSynchronizer: null, isPreFinished: false);
+            await evt.BeginEvent(Player, isPreFinished: false);
             Assert.Equal(
                 $"{EventEntry}.pages.SHU_HAN_INITIAL.description",
                 evt.Description!.LocEntryKey);
@@ -322,7 +322,7 @@ public sealed class UnfriendlyVisitorsShuHanTests : SunqianCombatTestSuite
         {
             Assert.Null(ModelDb.GetByIdOrNull<CardModel>(ProxyStrikeId));
             var evt = (UnfriendlyVisitors)ModelDb.Event<UnfriendlyVisitors>().ToMutable();
-            await evt.BeginEvent(Player, combatSynchronizer: null, isPreFinished: false);
+            await evt.BeginEvent(Player, isPreFinished: false);
 
             Assert.True(evt.CurrentOptions[1].IsLocked);
             Assert.False(evt.CurrentOptions[0].IsLocked);
@@ -348,7 +348,7 @@ public sealed class UnfriendlyVisitorsShuHanTests : SunqianCombatTestSuite
                 card.Rarity == CardRarity.Basic && card.Tags.Contains(CardTag.Strike));
             CardCmd.Upgrade(selected, CardPreviewStyle.None);
             var evt = (UnfriendlyVisitors)ModelDb.Event<UnfriendlyVisitors>().ToMutable();
-            await evt.BeginEvent(Player, combatSynchronizer: null, isPreFinished: false);
+            await evt.BeginEvent(Player, isPreFinished: false);
             Assert.False(evt.CurrentOptions[1].IsLocked);
             var selector = new ScriptedCardSelector().ThenSelect(selected);
 

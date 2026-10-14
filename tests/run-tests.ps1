@@ -78,7 +78,7 @@ Write-Host "$Target via TestTheSpire..." -ForegroundColor Cyan
 New-Item -ItemType Directory -Force -Path $TestUserDataDir | Out-Null
 New-Item -ItemType Directory -Force -Path (Join-Path $TestUserDataDir "Local") | Out-Null
 
-# TestTheSpire 0.1.7 sets XDG_DATA_HOME, but STS2 0.111.0 on Windows reads
+# TestTheSpire 0.1.7 sets XDG_DATA_HOME, but STS2 0.107.1 on Windows reads
 # APPDATA instead. Passing all three variables to the child process keeps the
 # generated settings and test saves isolated from the player's normal profile.
 $StartInfo = [System.Diagnostics.ProcessStartInfo]::new()

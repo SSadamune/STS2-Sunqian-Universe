@@ -77,7 +77,7 @@ public sealed class FlameStrike : ModCardTemplate
 
 		await DamageCmd.Attack(DynamicVars.Damage.BaseValue)
 			.WithHitCount(targetWasBurning ? 2 : 1)
-			.FromCard(this, cardPlay)
+			.FromCard(this)
 			.Targeting(cardPlay.Target)
 			.WithHitFx("vfx/vfx_attack_blunt")
 			.Execute(choiceContext);

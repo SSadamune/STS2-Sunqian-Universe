@@ -169,7 +169,6 @@ internal static class SquTurnStartDamageForecast
 			amount,
 			ValueProp.Unblockable | ValueProp.Unpowered,
 			null,
-			null,
 			ModifyDamageHookType.All,
 			CardPreviewMode.None,
 			out IEnumerable<AbstractModel> _);

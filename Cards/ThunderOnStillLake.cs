@@ -85,7 +85,7 @@ public sealed class ThunderOnStillLake : ChargeCardTemplate
 
 		PlayOnPlaySfx();
 		await DamageCmd.Attack(DynamicVars.Damage.BaseValue)
-			.FromCard(this, cardPlay)
+			.FromCard(this)
 			.TargetingAllOpponents(CombatState)
 			.WithHitCount(DynamicVars.Repeat.IntValue)
 			.WithHitFx("vfx/vfx_attack_lightning")

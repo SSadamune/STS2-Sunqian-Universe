@@ -137,7 +137,7 @@ public sealed class LaserSwordAssassination : ModCardTemplate, IPenetratingDamag
 
 		AttackCommand attack = DamageCmd.Attack(DynamicVars.Damage.BaseValue)
 			.WithDamageProps(DamageProps)
-			.FromCard(this, cardPlay)
+			.FromCard(this)
 			.Targeting(cardPlay.Target);
 		if (PreviewDamage(cardPlay.Target) < HyperbeamPreviewThreshold)
 		{
@@ -237,7 +237,6 @@ public sealed class LaserSwordAssassination : ModCardTemplate, IPenetratingDamag
 			DynamicVars.Damage.BaseValue,
 			DamageProps,
 			this,
-			null,
 			ModifyDamageHookType.All,
 			CardPreviewMode.Normal,
 			out _);
@@ -251,8 +250,7 @@ public sealed class LaserSwordAssassination : ModCardTemplate, IPenetratingDamag
 		decimal amount,
 		ValueProp props,
 		Creature? dealer,
-		CardModel? cardSource,
-		CardPlay? cardPlay)
+		CardModel? cardSource)
 	{
 		if (cardSource != this
 			|| !props.IsPoweredAttack()

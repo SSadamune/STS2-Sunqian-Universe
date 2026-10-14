@@ -70,7 +70,7 @@ public sealed class ScriptXiliangSavagePower : ScriptPowerTemplate
 		decimal vigorBonus = Owner.GetPower<VigorPower>()?.Amount ?? 0m;
 		if (SupremeGeneralKeywordSystem.TryGetInheritedVigorBonus(
 			card,
-			command.CardPlay,
+			null,
 			out decimal inheritedVigor))
 		{
 			vigorBonus += inheritedVigor;

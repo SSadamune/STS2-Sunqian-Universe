@@ -107,7 +107,7 @@ public sealed class LoyaltyOverKin : ModCardTemplate
 
 		AttackCommand Strike(decimal damage) =>
 			DamageCmd.Attack(damage)
-				.FromCard(this, cardPlay)
+				.FromCard(this)
 				.Targeting(target)
 				.WithHitFx("vfx/vfx_bloody_impact")
 				.BeforeDamage(() =>

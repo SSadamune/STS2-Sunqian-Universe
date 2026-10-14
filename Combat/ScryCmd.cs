@@ -225,6 +225,9 @@ public static class ScryCmd
 	[HarmonyPatch(typeof(CardSelectCmd), "UndoEndTurnIfNecessary")]
 	private static class PreserveEndTurnReadinessPatch
 	{
+		private static bool Prepare() =>
+			AccessTools.Method(typeof(CardSelectCmd), "UndoEndTurnIfNecessary") != null;
+
 		private static bool Prefix(Player player) =>
 			!IsPreservingEndTurnReadiness(player);
 	}

@@ -54,7 +54,7 @@ public sealed class Circus : ModCardTemplate
 		SquSfx.PlayRandom(RunState, SquSfx.CircusEvents);
 
 		await DamageCmd.Attack(DynamicVars.Damage.BaseValue)
-			.FromCard(this, cardPlay)
+			.FromCard(this)
 			.Targeting(cardPlay.Target)
 			.WithHitFx("vfx/vfx_dramatic_stab")
 			.Execute(choiceContext);

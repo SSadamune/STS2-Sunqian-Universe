@@ -38,8 +38,7 @@ public sealed class MengdeNewBookRelic : ModRelicTemplate
 		decimal amount,
 		ValueProp props,
 		Creature? dealer,
-		CardModel? cardSource,
-		CardPlay? cardPlay)
+		CardModel? cardSource)
 	{
 		if (dealer is null || !props.IsPoweredAttack())
 		{

@@ -99,7 +99,7 @@ public sealed class PartTimeGeneralScript : ScriptCardTemplate
 					source.FinalizeUpgradeInternal();
 				}
 
-				CardModel autoPlayedCard = source.CreateDupe(Owner);
+				CardModel autoPlayedCard = source.CreateDupe();
 				source.RemoveFromState();
 				playedCards.Add(autoPlayedCard);
 				await CardCmd.AutoPlay(

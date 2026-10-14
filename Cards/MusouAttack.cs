@@ -71,7 +71,7 @@ public sealed class MusouAttack : ModCardTemplate
 		int thinSliceCount = GetThinSliceCount(dexterity);
 		SquSfx.Play(SquSfx.MusouAttackBraverThanLuBuEvent);
 		AttackCommand attack = DamageCmd.Attack(DynamicVars.Damage.BaseValue + dexterityBonus)
-			.FromCard(this, cardPlay)
+			.FromCard(this)
 			.TargetingAllOpponents(CombatState)
 			.WithHitFx("vfx/vfx_giant_horizontal_slash")
 			.WithWaitBeforeHit(ResolutionDelaySeconds, ResolutionDelaySeconds)
@@ -176,7 +176,6 @@ public sealed class MusouAttack : ModCardTemplate
 					amount,
 					Props,
 					card,
-					null,
 					ModifyDamageHookType.All,
 					previewMode,
 					out _));

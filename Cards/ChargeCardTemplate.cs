@@ -96,7 +96,6 @@ public abstract class ChargeCardTemplate : ModCardTemplate
 					BaseValue,
 					Props,
 					card,
-					null,
 					ModifyDamageHookType.All,
 					previewMode,
 					out _);

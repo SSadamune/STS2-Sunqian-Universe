@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -63,7 +63,7 @@ public sealed class WaterFireInvincible : ModCardTemplate
 		SquSfx.Play(SquSfx.WaterFireInvincibleEvent);
 
 		AttackCommand attackCommand = await DamageCmd.Attack(DynamicVars.Damage.BaseValue)
-			.FromCard(this, cardPlay)
+			.FromCard(this)
 			.Targeting(cardPlay.Target)
 			.WithHitFx("vfx/vfx_molten_fist")
 			.BeforeDamage(() =>

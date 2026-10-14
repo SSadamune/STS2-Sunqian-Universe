@@ -41,7 +41,7 @@ internal static class ChaosHarmedYouLethalityPatch
 			entry.HappenedThisTurn(__instance.CombatState)
 			&& entry.CardPlay.Card.Type == CardType.Attack
 			&& entry.CardPlay.Card is not ChaosHarmedYou
-			&& entry.CardPlay.Player == __instance.Owner.Player);
+			&& entry.CardPlay.Card.Owner == __instance.Owner.Player);
 		int currentPlayOffset = pile is { Type: PileType.Play } ? 1 : 0;
 		if (attacksThisTurn > currentPlayOffset)
 		{

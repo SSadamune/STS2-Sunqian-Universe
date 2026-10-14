@@ -70,7 +70,7 @@ public sealed class WhyDoubtWei : ModCardTemplate
 		SquSfx.Play(SquSfx.WhyDoubtWeiDareEvent);
 
 		await DamageCmd.Attack(DynamicVars.Damage.BaseValue)
-			.FromCard(this, cardPlay)
+			.FromCard(this)
 			.Targeting(cardPlay.Target)
 			.WithHitFx("vfx/vfx_dramatic_stab")
 			.WithHitVfxNode(target => NBigSlashVfx.Create(target))

@@ -384,7 +384,7 @@ internal sealed class DefaultMetamorphosisCandidateProvider : IMetamorphosisCand
 			candidate.Type is CardType.Attack or CardType.Skill);
 		int cardsPlayedThisTurn = CombatManager.Instance.History.CardPlaysFinished.Count(entry =>
 			entry.HappenedThisTurn(combatState)
-			&& entry.CardPlay.Player == player
+			&& entry.CardPlay.Card.Owner == player
 			&& entry.CardPlay.PlayIndex == 0);
 		return (remainingEnergy > attacksAndSkills || cardsPlayedThisTurn <= 1)
 			&& (card is Backflip

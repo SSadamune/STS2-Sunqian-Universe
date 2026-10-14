@@ -83,7 +83,7 @@ public sealed class FireMeteorShower : ModCardTemplate, IRandomEnemyTargetCount
 			}
 
 			await DamageCmd.Attack(vigorSequence.ResolveNextAttackDamage())
-				.FromCard(this, cardPlay)
+				.FromCard(this)
 				.Targeting(damageTarget)
 				.BeforeDamage(() => SquHitVfx.LargeMagicMissile(damageTarget))
 				.Execute(choiceContext);

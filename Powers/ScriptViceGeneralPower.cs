@@ -29,8 +29,7 @@ public sealed class ScriptViceGeneralPower : ScriptPowerTemplate
 		decimal amount,
 		ValueProp props,
 		Creature? dealer,
-		CardModel? card,
-		CardPlay? cardPlay)
+		CardModel? card)
 	{
 		if (Owner != dealer || card is null || !props.IsPoweredAttack())
 		{

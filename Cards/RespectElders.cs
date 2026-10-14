@@ -66,7 +66,7 @@ public sealed class RespectElders : ModCardTemplate
 
 		AttackCommand attack = DamageCmd.Attack(DynamicVars.Damage.BaseValue)
 			.WithHitCount(hitCount)
-			.FromCard(this, cardPlay)
+			.FromCard(this)
 			.Targeting(cardPlay.Target)
 			.WithHitVfxNode(target => NBigSlashVfx.Create(target));
 		if (extraHits)

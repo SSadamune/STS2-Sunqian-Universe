@@ -34,14 +34,13 @@ internal static class SupportingActorBadgeGenerateRewardsPatch
 			new GoldReward(combatRoom.Encounter.MinGoldReward, combatRoom.Encounter.MaxGoldReward, player),
 		];
 
-		if (player.PlayerOdds.PotionReward.Roll(player, RoomType.Elite))
+		if (player.PlayerOdds.PotionReward.Roll(player, RunManager.Instance.AscensionManager, RoomType.Elite))
 		{
 			rewards.Add(new PotionReward(player));
 		}
 
 		rewards.Add(new CardReward(
-			CardCreationOptions.ForRoom(player, RoomType.Elite)
-				.WithFlags(CardCreationFlags.IsFromCombat),
+			CardCreationOptions.ForRoom(player, RoomType.Elite),
 			3,
 			player));
 		rewards.Add(new RelicReward(player));

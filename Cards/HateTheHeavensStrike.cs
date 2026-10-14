@@ -60,7 +60,7 @@ public sealed class HateTheHeavensStrike : ModCardTemplate
 		SquSfx.Play(SquSfx.HateTheHeavensStrikePlayEvent);
 
 		await DamageCmd.Attack(DynamicVars.Damage.BaseValue)
-			.FromCard(this, cardPlay)
+			.FromCard(this)
 			.TargetingAllOpponents(combatState)
 			.BeforeDamage(() =>
 			{

@@ -70,7 +70,7 @@ public sealed class FireNova : SlightRevisionCardTemplate<FireMeteorShower>, IRa
 			SquVigorSnapshot.BeginAttackSequence(Owner.Creature, this);
 		SquSfx.Play(SquSfx.FlyingFireMeteorArtifactEvent);
 		await DamageCmd.Attack(vigorSequence.ResolveNextAttackDamage())
-			.FromCard(this, cardPlay)
+			.FromCard(this)
 			.Targeting(target)
 			.BeforeDamage(() => SquHitVfx.LargeMagicMissile(target))
 			.Execute(choiceContext);

@@ -81,7 +81,7 @@ public sealed class RuthlessStrike : ChargeCardTemplate, IPenetratingDamageCard
 		await DamageCmd.Attack(DynamicVars.Damage.BaseValue)
 			.WithDamageProps(DamageProps)
 			.WithHitCount(DynamicVars.Repeat.IntValue)
-			.FromCard(this, cardPlay)
+			.FromCard(this)
 			.Targeting(cardPlay.Target)
 			.WithHitVfxNode(target => NBigSlashVfx.Create(target))
 			.BeforeDamage(() =>

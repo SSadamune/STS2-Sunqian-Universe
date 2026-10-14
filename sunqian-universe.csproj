@@ -1,6 +1,6 @@
 <Project Sdk="Godot.NET.Sdk/4.5.1">
   <PropertyGroup>
-    <TargetFramework>net10.0</TargetFramework>
+    <TargetFramework>net9.0</TargetFramework>
     <EnableDynamicLoading>true</EnableDynamicLoading>
     <OutputPath>.builds</OutputPath>
     <RootNamespace>Squ</RootNamespace>
@@ -19,10 +19,10 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <!-- 与 newsanguo 对齐：0.6.x 起 RitsuLib 拆成多程序集，必须与玩家安装的运行时同版本。
+    <!-- 公开版分支对齐游戏 0.107.1。0.6.x 起 RitsuLib 拆成多程序集，必须与玩家安装的运行时同版本。
          用 [0.6.2] 精确锁定（写成 0.6.2 会被 NuGet 当成最低版本，可能拉到不兼容的更新）。
          框架本体由 mods/STS2-RitsuLib 提供，不随本 mod 分发。 -->
-    <PackageReference Include="STS2.RitsuLib" Version="[0.6.2]">
+    <PackageReference Include="STS2.RitsuLib.Compat.0.107.1" Version="[0.6.2]">
       <ExcludeAssets>runtime</ExcludeAssets>
     </PackageReference>
   </ItemGroup>

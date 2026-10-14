@@ -87,7 +87,7 @@ public sealed class DigRaid : ModCardTemplate
 
 		await DamageCmd.Attack(DynamicVars.Damage.BaseValue + tinderBonus)
 			.WithDamageProps(DamageProps)
-			.FromCard(this, cardPlay)
+			.FromCard(this)
 			.Targeting(cardPlay.Target)
 			.WithHitVfxNode(target => NSpikeSplashVfx.Create(target))
 			.BeforeDamage(() =>
@@ -154,7 +154,6 @@ public sealed class DigRaid : ModCardTemplate
 					amount,
 					Props,
 					card,
-					null,
 					ModifyDamageHookType.All,
 					previewMode,
 					out _));

@@ -71,8 +71,7 @@ public sealed class SupportingActorBadgeRelic : ModRelicTemplate
 		if (!rewards.Any(reward => reward is CardReward))
 		{
 			rewards.Add(new CardReward(
-				CardCreationOptions.ForRoom(player, RoomType.Boss)
-					.WithFlags(CardCreationFlags.IsFromCombat),
+				CardCreationOptions.ForRoom(player, RoomType.Boss),
 				3,
 				player));
 		}
@@ -82,7 +81,7 @@ public sealed class SupportingActorBadgeRelic : ModRelicTemplate
 
 	private static PotionReward CreateRarePotionReward(Player player)
 	{
-		IEnumerable<PotionModel> rarePotions = PotionFactory.GetPotionOptions(player)
+		IEnumerable<PotionModel> rarePotions = PotionFactory.GetPotionOptions(player, [])
 			.Where(potion => potion.Rarity == PotionRarity.Rare);
 		PotionModel potion = player.PlayerRng.Rewards.NextItem(rarePotions)
 			?? throw new InvalidOperationException("No unlocked rare potion is available for 配角工牌.");

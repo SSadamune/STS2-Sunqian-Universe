@@ -61,8 +61,7 @@ internal static class FirePotionBurningPatch
 			DamageAmount,
 			ValueProp.Unpowered,
 			potion.Owner.Creature,
-			cardSource: null,
-			cardPlay: null);
+			cardSource: null);
 		await PowerCmd.Apply<BurningPower>(
 			choiceContext,
 			target,

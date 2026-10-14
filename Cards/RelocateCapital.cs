@@ -73,7 +73,7 @@ public sealed class RelocateCapital : SlightRevisionCardTemplate<BurnCity>
 			: SquSfx.RelocateCapitalEvent);
 
 		await DamageCmd.Attack(DynamicVars.Damage.BaseValue)
-			.FromCard(this, cardPlay)
+			.FromCard(this)
 			.Targeting(cardPlay.Target)
 			.WithHitFx("vfx/vfx_bloody_impact")
 			.BeforeDamage(() =>

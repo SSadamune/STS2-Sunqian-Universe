@@ -68,7 +68,7 @@ public sealed class TwoWordPoetScript : ScriptCardTemplate
 
 		AttackCommand attack = DamageCmd.Attack(DynamicVars.Damage.BaseValue)
 			.WithHitCount(DynamicVars.Repeat.IntValue)
-			.FromCard(this, cardPlay);
+			.FromCard(this);
 		if (IsUpgraded)
 		{
 			ArgumentNullException.ThrowIfNull(CombatState, "CombatState");

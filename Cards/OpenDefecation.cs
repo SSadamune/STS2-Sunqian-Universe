@@ -79,7 +79,7 @@ public sealed class OpenDefecation : ModCardTemplate
 				splashSource.FinalizeUpgradeInternal();
 			}
 
-			CardModel splashDupe = splashSource.CreateDupe(Owner);
+			CardModel splashDupe = splashSource.CreateDupe();
 			splashSource.RemoveFromState();
 			await CardCmd.AutoPlay(
 				choiceContext,

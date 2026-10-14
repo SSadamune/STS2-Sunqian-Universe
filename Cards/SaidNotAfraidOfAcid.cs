@@ -54,7 +54,7 @@ public sealed class SaidNotAfraidOfAcid : ModCardTemplate
 		SquSfx.Play(SquSfx.SaidNotAfraidOfAcidEvent);
 
 		await DamageCmd.Attack(DynamicVars.Damage.BaseValue)
-			.FromCard(this, cardPlay)
+			.FromCard(this)
 			.Targeting(cardPlay.Target)
 			.WithHitVfxNode(NGoopyImpactVfx.Create)
 			.Execute(choiceContext);

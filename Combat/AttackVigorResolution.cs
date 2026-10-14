@@ -58,7 +58,7 @@ public static class AttackVigorResolution
 		if (command.ModelSource is not CardModel card
 			|| !SupremeGeneralKeywordSystem.ShouldSuppressSameOwnerChildAttackResources(
 				card,
-				command.CardPlay)
+				null)
 			|| !TryGetVigorData(vigor, out object? data)
 			|| CommandToModifyField!.GetValue(data) != command)
 		{

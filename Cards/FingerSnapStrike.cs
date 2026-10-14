@@ -75,7 +75,7 @@ public sealed class FingerSnapStrike : ChargeCardTemplate
 			SquSfx.FingerStrikeInstantHeadEvent,
 			SquSfx.FingerStrikeDestroyXiliangArmyEvent);
 		await DamageCmd.Attack(DynamicVars.Damage.BaseValue)
-			.FromCard(this, cardPlay)
+			.FromCard(this)
 			.Targeting(cardPlay.Target)
 			.WithHitVfxNode(target => NDaggerSprayImpactVfx.Create(target, new Color("b1ccca"), goingRight: true))
 			.Execute(choiceContext);

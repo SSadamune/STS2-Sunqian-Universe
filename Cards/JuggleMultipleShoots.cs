@@ -55,7 +55,6 @@ public sealed class JuggleMultipleShoots : ModCardTemplate
 		// 魂牌
 		typeof(DevourLife),
 		typeof(Haunt),
-		typeof(Soulbound),
 		// 充能球 / 专注（保留雷暴、旋转工艺、暴涨）
 		typeof(Hailstorm),
 		typeof(Coolant),

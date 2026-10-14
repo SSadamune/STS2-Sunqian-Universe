@@ -58,8 +58,7 @@ public sealed class CrossTheRiverPower : ModPowerTemplate
 		decimal amount,
 		ValueProp props,
 		Creature? dealer,
-		CardModel? card,
-		CardPlay? cardPlay)
+		CardModel? card)
 	{
 		if (dealer != Owner
 			|| card?.Type != CardType.Attack
