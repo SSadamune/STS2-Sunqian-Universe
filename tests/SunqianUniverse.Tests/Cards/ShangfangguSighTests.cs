@@ -82,7 +82,7 @@ public sealed class ShangfangguSighTests : SunqianCombatTestSuite
                 && textTip.Title == SquCommonL10n.YjcmGoodFireHoverTitle()
                     .GetFormattedText());
         Assert.DoesNotContain(
-            SquCommonL10n.YjcmGoodFireCombatNote().GetFormattedText(),
+            "[purple]",
             card.GetDescriptionForPile(PileType.Hand));
 
         await Play(card);
@@ -150,7 +150,7 @@ public sealed class ShangfangguSighTests : SunqianCombatTestSuite
                     && textTip.Title == SquCommonL10n.YjcmGoodFireHoverTitle()
                         .GetFormattedText());
             Assert.DoesNotContain(
-                SquCommonL10n.YjcmGoodFireCombatNote().GetFormattedText(),
+                "[purple]",
                 card.GetDescriptionForPile(PileType.Hand));
 
             await Play(card);

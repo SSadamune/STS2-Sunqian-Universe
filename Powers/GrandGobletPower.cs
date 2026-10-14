@@ -8,6 +8,7 @@ using MegaCrit.Sts2.Core.Entities.Creatures;
 using MegaCrit.Sts2.Core.Entities.Powers;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.HoverTips;
+using MegaCrit.Sts2.Core.Localization;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.Powers;
@@ -44,6 +45,16 @@ public sealed class GrandGobletPower : ModPowerTemplate
 		..NewsanguoVigorSwap.GrantedPowerHoverTips(this),
 		..NewsanguoVigorSwap.LibraryHoverTips(),
 	];
+
+	public override LocString Description
+	{
+		get
+		{
+			LocString description = base.Description;
+			NewsanguoVigorSwap.AddCombatPowerCondition(description, this);
+			return description;
+		}
+	}
 
 	public override Task AfterPowerAmountChanged(
 		PlayerChoiceContext choiceContext,

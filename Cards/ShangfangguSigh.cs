@@ -56,7 +56,7 @@ public sealed class ShangfangguSigh : ModCardTemplate
 
 	protected override void AddExtraArgsToDescription(LocString description)
 	{
-		YjcmGoodFireInterop.AddCombatNote(description, this);
+		YjcmGoodFireInterop.AddCombatCondition(description, this);
 	}
 
 	protected override void OnUpgrade()

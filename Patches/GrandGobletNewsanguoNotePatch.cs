@@ -9,15 +9,18 @@ using Squ.Powers;
 namespace Squ.Patches;
 
 [HarmonyPatch(typeof(PowerModel), "get_SmartDescription")]
-internal static class GrandGobletNewsanguoNotePatch
+internal static class InteropPowerDescriptionPatch
 {
 	private static void Postfix(PowerModel __instance, LocString __result)
 	{
-		if (__instance is not GrandGobletPower)
+		switch (__instance)
 		{
-			return;
+			case GrandGobletPower:
+				NewsanguoVigorSwap.AddCombatPowerCondition(__result, __instance);
+				break;
+			case GoodFirePower:
+				YjcmGoodFireInterop.AddCombatCondition(__result, __instance);
+				break;
 		}
-
-		NewsanguoVigorSwap.AddCombatPowerNote(__result, __instance);
 	}
 }

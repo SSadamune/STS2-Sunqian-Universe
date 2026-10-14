@@ -1,8 +1,11 @@
 using MegaCrit.Sts2.Core.Models;
+using MegaCrit.Sts2.Core.Entities.Cards;
+using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Models.Monsters;
 using MegaCrit.Sts2.Core.Models.Powers;
 using Squ.Cards;
 using Squ.Interop;
+using Squ.Powers;
 using TestTheSpire;
 using Xunit;
 
@@ -23,15 +26,47 @@ public sealed class NewsanguoJointModTests : SunqianCombatTestSuite
     }
 
     [Fact]
-    public async Task Wine_grants_real_Newsanguo_drunken_might_instead_of_vigor()
+    public async Task Wine_and_Grand_Goblet_use_real_Newsanguo_drunken_might()
     {
         Assert.True(NewsanguoPublicApiInterop.IsReady);
         Assert.True(NewsanguoPublicApiInterop.IsNewsanguoCharacter(Player.Character));
-        var card = await AddToHand<Wine>();
+        string drunkenMightTitle = Assert.IsType<HoverTip>(
+            NewsanguoPublicApiInterop.CreateDrunkenMightHoverTip()).Title
+            ?? throw new InvalidOperationException("Drunken Might hover title is missing.");
+        string vigorTitle = ModelDb.Power<VigorPower>().Title.GetFormattedText();
+        var wine = await AddToHand<Wine>();
+        var grandGoblet = await AddToHand<GrandGoblet>();
+        AssertUsesDrunkenMightText(wine, drunkenMightTitle, vigorTitle);
+        AssertUsesDrunkenMightText(grandGoblet, drunkenMightTitle, vigorTitle);
 
-        await Play(card);
+        await Play(grandGoblet);
+        var grandGobletPower = Assert.IsType<GrandGobletPower>(
+            Player.Creature.GetPower<GrandGobletPower>());
+        string powerDescription = FormatPowerDescription(grandGobletPower);
+        Assert.Contains(drunkenMightTitle, powerDescription);
+        Assert.DoesNotContain(vigorTitle, powerDescription);
+
+        await Play(wine);
 
         Assert.Equal(Wine.BaseVigor, NewsanguoPublicApiInterop.GetDrunkenMight(Player));
         Assert.Null(Player.Creature.GetPower<VigorPower>());
+    }
+
+    private static void AssertUsesDrunkenMightText(
+        CardModel card,
+        string drunkenMightTitle,
+        string vigorTitle)
+    {
+        string description = card.GetDescriptionForPile(PileType.Hand);
+        Assert.Contains(drunkenMightTitle, description);
+        Assert.DoesNotContain(vigorTitle, description);
+    }
+
+    private static string FormatPowerDescription(PowerModel power)
+    {
+        var description = power.SmartDescription;
+        description.Add("Amount", power.Amount);
+        power.DynamicVars.AddTo(description);
+        return description.GetFormattedText();
     }
 }

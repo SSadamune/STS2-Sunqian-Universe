@@ -63,20 +63,20 @@ public static class NewsanguoVigorSwap
 		yield return HoverTipFactory.FromPower<VigorPower>();
 	}
 
-	public static void AddCombatNote(LocString description, CardModel card) =>
+	public static void AddCombatCondition(LocString description, CardModel card) =>
 		description.Add(
-			"NewsanguoCombatNote",
-			CombatNoteOrEmpty(MutableOwner(card), SquCommonL10n.NewsanguoCombatNote()));
+			"NewsanguoPowerName",
+			CombatPowerName(MutableOwner(card)));
 
 	public static void AddCombatNote(LocString description, PotionModel potion) =>
 		description.Add(
 			"NewsanguoCombatNote",
 			CombatNoteOrEmpty(MutableOwner(potion), SquCommonL10n.NewsanguoCombatNote()));
 
-	public static void AddCombatPowerNote(LocString description, PowerModel power) =>
+	public static void AddCombatPowerCondition(LocString description, PowerModel power) =>
 		description.Add(
-			"NewsanguoCombatNote",
-			CombatNoteOrEmpty(MutableOwner(power), SquCommonL10n.NewsanguoCombatPowerNote()));
+			"NewsanguoPowerName",
+			CombatPowerName(MutableOwner(power)?.Player));
 
 	public static Task ApplyVigorOrDrunkenMight(
 		PlayerChoiceContext choiceContext,
@@ -131,6 +131,14 @@ public static class NewsanguoVigorSwap
 
 		return "\n[purple]" + note.GetFormattedText() + "[/purple]";
 	}
+
+	private static string CombatPowerName(Creature? owner) =>
+		CombatPowerName(owner?.Player);
+
+	private static string CombatPowerName(Player? owner) =>
+		(ShowsPurpleNote(owner)
+			? SquCommonL10n.NewsanguoDrunkenMightInlineText()
+			: SquCommonL10n.NewsanguoVigorInlineText()).GetFormattedText();
 
 	private static bool ShowsPurpleNote(Player? owner) =>
 		IsCombatInProgress() && AffectsNewsanguo(owner);

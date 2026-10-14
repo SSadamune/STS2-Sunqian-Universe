@@ -1,4 +1,6 @@
 using MegaCrit.Sts2.Core.Models;
+using MegaCrit.Sts2.Core.Entities.Cards;
+using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Models.Monsters;
 using Squ.Cards;
 using Squ.Interop;
@@ -37,9 +39,18 @@ public sealed class YjcmJointModTests : SunqianCombatTestSuite
         Assert.True(YjcmPublicApiInterop.IsYjcmCharacter(PlayerWithNetId(2).Character));
         PowerModel huoGong = Assert.Single(
             ModelDb.AllPowers.Where(YjcmPublicApiInterop.IsHuoGongPower));
+        string huoGongTitle = Assert.IsType<HoverTip>(
+            YjcmPublicApiInterop.CreateHuoGongHoverTip()).Title
+            ?? throw new InvalidOperationException("Huo Gong hover title is missing.");
         var weiDongZhuo = PlayerWithNetId(2);
         var wuZhugeliangCard = Upgrade(await AddToHand<ShangfangguSigh>(Player));
         var weiDongZhuoCard = Upgrade(await AddToHand<ShangfangguSigh>(weiDongZhuo));
+        Assert.Contains(
+            huoGongTitle,
+            wuZhugeliangCard.GetDescriptionForPile(PileType.Hand));
+        Assert.Contains(
+            huoGongTitle,
+            weiDongZhuoCard.GetDescriptionForPile(PileType.Hand));
 
         await Play(wuZhugeliangCard);
         await Play(weiDongZhuoCard);
@@ -48,6 +59,12 @@ public sealed class YjcmJointModTests : SunqianCombatTestSuite
             Player.Creature.GetPower<GoodFirePower>());
         var weiDongZhuoGoodFire = Assert.IsType<GoodFirePower>(
             weiDongZhuo.Creature.GetPower<GoodFirePower>());
+        Assert.Contains(
+            huoGongTitle,
+            FormatPowerDescription(wuZhugeliangGoodFire));
+        Assert.Contains(
+            huoGongTitle,
+            FormatPowerDescription(weiDongZhuoGoodFire));
         decimal expectedMultiplier =
             1m + ShangfangguSigh.UpgradedBonusPercent / 100m;
         Assert.Equal(
@@ -66,5 +83,13 @@ public sealed class YjcmJointModTests : SunqianCombatTestSuite
                 3m,
                 EnemyAt(0),
                 weiDongZhuoCard));
+    }
+
+    private static string FormatPowerDescription(PowerModel power)
+    {
+        var description = power.SmartDescription;
+        description.Add("Amount", power.Amount);
+        power.DynamicVars.AddTo(description);
+        return description.GetFormattedText();
     }
 }

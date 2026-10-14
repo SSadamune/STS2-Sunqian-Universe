@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using MegaCrit.Sts2.Core.Combat;
 using MegaCrit.Sts2.Core.Entities.Cards;
+using MegaCrit.Sts2.Core.Entities.Creatures;
 using MegaCrit.Sts2.Core.Entities.Players;
 using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Localization;
@@ -33,6 +34,15 @@ internal static class YjcmGoodFireInterop
 		}
 	}
 
+	public static IEnumerable<IHoverTip> HuoGongHoverTips(PowerModel power)
+	{
+		if (ShowsCombatEffect(MutableOwner(power)?.Player)
+			&& YjcmPublicApiInterop.CreateHuoGongHoverTip() is { } huoGongTip)
+		{
+			yield return huoGongTip;
+		}
+	}
+
 	public static IEnumerable<IHoverTip> LibraryHoverTips()
 	{
 		if (!IsModReady || IsCombatInProgress())
@@ -45,15 +55,25 @@ internal static class YjcmGoodFireInterop
 			SquCommonL10n.YjcmGoodFireLibraryHover());
 	}
 
-	public static void AddCombatNote(LocString description, CardModel card) =>
+	public static void AddCombatCondition(LocString description, CardModel card) =>
 		description.Add(
-			"YjcmHuoGongCombatNote",
+			"YjcmHuoGongText",
 			ShowsCombatEffect(MutableOwner(card))
-				? "\n[purple]" + SquCommonL10n.YjcmGoodFireCombatNote().GetFormattedText() + "[/purple]"
+				? SquCommonL10n.YjcmGoodFireInlineText().GetFormattedText()
+				: string.Empty);
+
+	public static void AddCombatCondition(LocString description, PowerModel power) =>
+		description.Add(
+			"YjcmHuoGongText",
+			ShowsCombatEffect(MutableOwner(power)?.Player)
+				? SquCommonL10n.YjcmGoodFireInlineText().GetFormattedText()
 				: string.Empty);
 
 	private static Player? MutableOwner(CardModel card) =>
 		card.IsMutable ? card.Owner : null;
+
+	private static Creature? MutableOwner(PowerModel power) =>
+		power.IsMutable ? power.Owner : null;
 
 	private static bool ShowsCombatEffect(Player? owner) =>
 		IsCombatInProgress() && Affects(owner);

@@ -75,7 +75,7 @@ public sealed class Wine : ModCardTemplate
 
 	protected override void AddExtraArgsToDescription(LocString description)
 	{
-		NewsanguoVigorSwap.AddCombatNote(description, this);
+		NewsanguoVigorSwap.AddCombatCondition(description, this);
 	}
 
 	protected override void OnUpgrade()

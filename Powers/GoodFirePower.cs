@@ -3,6 +3,7 @@ using Godot;
 using MegaCrit.Sts2.Core.Entities.Creatures;
 using MegaCrit.Sts2.Core.Entities.Powers;
 using MegaCrit.Sts2.Core.HoverTips;
+using MegaCrit.Sts2.Core.Localization;
 using MegaCrit.Sts2.Core.Models;
 using Squ.Interop;
 using STS2RitsuLib.Interop.AutoRegistration;
@@ -33,7 +34,18 @@ public sealed class GoodFirePower : ModPowerTemplate
 	protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
 	[
 		HoverTipFactory.FromPower<BurningPower>(),
+		..YjcmGoodFireInterop.HuoGongHoverTips(this),
 	];
+
+	public override LocString Description
+	{
+		get
+		{
+			LocString description = base.Description;
+			YjcmGoodFireInterop.AddCombatCondition(description, this);
+			return description;
+		}
+	}
 
 	public override decimal ModifyPowerAmountGivenMultiplicative(
 		PowerModel power,
