@@ -1,4 +1,5 @@
 using System.Reflection;
+using HarmonyLib;
 using MegaCrit.Sts2.Core.Logging;
 using MegaCrit.Sts2.Core.Modding;
 using TestTheSpire;
@@ -10,6 +11,9 @@ public static class Entry
 {
     public static void Init()
     {
+        new Harmony("sunqian-universe.Tests.patches")
+            .PatchAll(Assembly.GetExecutingAssembly());
+
         CombatTestBootstrap.Initialize(
             Assembly.GetExecutingAssembly(),
             new CombatTestOptions

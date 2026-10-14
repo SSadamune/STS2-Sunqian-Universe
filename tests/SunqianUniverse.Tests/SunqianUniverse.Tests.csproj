@@ -27,6 +27,10 @@
       <HintPath>..\..\lib\sts2.dll</HintPath>
       <Private>false</Private>
     </Reference>
+    <Reference Include="0Harmony">
+      <HintPath>..\..\lib\0Harmony.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
     <ProjectReference Include="..\..\sunqian-universe.csproj" />
     <PackageReference Include="TestTheSpire" Version="0.1.7" />
   </ItemGroup>
