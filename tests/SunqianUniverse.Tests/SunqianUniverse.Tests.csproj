@@ -1,0 +1,37 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <AssemblyName>sunqian-universe.Tests</AssemblyName>
+    <RootNamespace>Squ.Tests</RootNamespace>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+
+    <Sts2MainModId>sunqian-universe</Sts2MainModId>
+    <Sts2TestModId>sunqian-universe.Tests</Sts2TestModId>
+    <Sts2TestModName>Sunqian Universe Tests</Sts2TestModName>
+    <Sts2TestModAuthor>Sadaki</Sts2TestModAuthor>
+    <Sts2TestMinGameVersion>0.111.0</Sts2TestMinGameVersion>
+    <Sts2RequiredModIds>STS2-RitsuLib</Sts2RequiredModIds>
+    <Sts2DisableOtherMods>true</Sts2DisableOtherMods>
+
+    <Sts2TestXdgDataHome>$(MSBuildProjectDirectory)\obj\Sts2TestData</Sts2TestXdgDataHome>
+    <Sts2TestPayloadDir>$(MSBuildProjectDirectory)\obj\Sts2Payload\TestMod</Sts2TestPayloadDir>
+    <Sts2TestDependencyPayloadRoot>$(MSBuildProjectDirectory)\obj\Sts2Payload\Dependencies</Sts2TestDependencyPayloadRoot>
+
+    <GodotProjectDir>$(MSBuildProjectDirectory)\..\..</GodotProjectDir>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <CompilerVisibleProperty Include="GodotProjectDir" />
+    <Reference Include="sts2">
+      <HintPath>..\..\lib\sts2.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="0Harmony">
+      <HintPath>..\..\lib\0Harmony.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <ProjectReference Include="..\..\sunqian-universe.csproj" />
+    <PackageReference Include="TestTheSpire" Version="0.1.7" />
+  </ItemGroup>
+</Project>
