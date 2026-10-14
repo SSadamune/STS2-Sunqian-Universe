@@ -1,4 +1,7 @@
+using System.Reflection;
+using HarmonyLib;
 using MegaCrit.Sts2.Core.Entities.Cards;
+using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.Characters;
 using MegaCrit.Sts2.Core.Models.Cards;
 using MegaCrit.Sts2.Core.Models.Monsters;
@@ -6,6 +9,7 @@ using MegaCrit.Sts2.Core.Models.Powers;
 using Squ.Cards;
 using Squ.Combat;
 using Squ.Powers;
+using STS2RitsuLib.Networking.ManagedActions;
 using TestTheSpire;
 using Xunit;
 
@@ -67,5 +71,63 @@ public sealed class TooKindToBeTrueTests : SunqianCombatTestSuite
 
         Assert.Equal(DefendLongtao.BaseBlock + TooKindToBeTrue.UpgradedExtraBlockPerDebuff * 2, Player.Creature.Block);
         CardTestAssertions.AssertPowerAmount<TooKindToBeTruePower>(Player.Creature, TooKindToBeTrue.UpgradedExtraBlockPerDebuff);
+    }
+
+    [Fact]
+    public async Task Right_click_uses_the_replacement_slight_revision_and_arsenal_gains_strength()
+    {
+        const int arsenalStrength = 1;
+        FireNova attack = await AddToHand<FireNova>();
+        TooKindToBeTrue source = await AddToHand<TooKindToBeTrue>();
+        Assert.True(SlightRevisionSystem.TryGetRevision(attack, out CardModel originalTarget, out bool originalUpgraded));
+        Assert.IsType<FireMeteorShower>(originalTarget);
+        Assert.False(originalUpgraded);
+        await ApplyPower<ArsenalPower>(Player.Creature, arsenalStrength);
+        var selector = new ScriptedCardSelector().ThenSelect(attack);
+
+        using (UseCardSelector(selector))
+        {
+            await Play(source);
+        }
+
+        AssertAllSelectionsConsumed(selector);
+        Assert.True(SlightRevisionSystem.TryGetRevision(attack, out CardModel replacement, out bool replacementUpgraded));
+        Assert.IsType<UltimateDefend>(replacement);
+        Assert.False(replacementUpgraded);
+        Assert.Null(Player.Creature.GetPower<StrengthPower>());
+
+        // Combat tests use a host-shaped net service that rejects managed actions before enqueue.
+        // The right-click path is RequestRevision; once enqueue is allowed, the same host queue
+        // runs the synced transform.
+        MethodInfo canSend = AccessTools.DeclaredMethod(
+                typeof(RitsuLibManagedNetActions),
+                "CanSendManagedAction")
+            ?? throw new InvalidOperationException("CanSendManagedAction was not found.");
+        var harmony = new Harmony("squ.tests.slight-revision-request");
+        harmony.Patch(
+            canSend,
+            prefix: new HarmonyMethod(typeof(TooKindToBeTrueTests), nameof(AllowManagedActionsInTests)));
+        try
+        {
+            Assert.True(
+                SlightRevisionSystem.RequestRevision(Player, attack),
+                "Right-click slight revision was not queued.");
+            await WaitForIdle();
+        }
+        finally
+        {
+            harmony.UnpatchAll(harmony.Id);
+        }
+
+        UltimateDefend revised = Assert.Single(PileType.Hand.GetPile(Player).Cards.OfType<UltimateDefend>());
+        Assert.False(revised.IsUpgraded);
+        Assert.DoesNotContain(Player.PlayerCombatState!.AllCards, card => card is FireNova or FireMeteorShower);
+        CardTestAssertions.AssertPowerAmount<StrengthPower>(Player.Creature, arsenalStrength);
+    }
+
+    private static bool AllowManagedActionsInTests(ref bool __result)
+    {
+        __result = true;
+        return false;
     }
 }

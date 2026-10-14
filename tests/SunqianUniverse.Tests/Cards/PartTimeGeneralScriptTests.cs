@@ -1,8 +1,12 @@
+using System.Reflection;
+using HarmonyLib;
 using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.Models;
+using MegaCrit.Sts2.Core.Models.Cards;
 using MegaCrit.Sts2.Core.Models.Characters;
 using MegaCrit.Sts2.Core.Models.Monsters;
+using MegaCrit.Sts2.Core.Models.Powers;
 using Squ.Cards;
 using Squ.Powers;
 using TestTheSpire;
@@ -63,5 +67,53 @@ public sealed class PartTimeGeneralScriptTests : SunqianCombatTestSuite
         await Play(await AddToHand<ServantScript>());
 
         AssertOnlyScript<ScriptServantPower>();
+    }
+
+    [Fact]
+    public async Task Nested_strike_drawn_by_pommel_and_autoplayed_by_hellraiser_keeps_supreme_general_vigor()
+    {
+        const int vigor = 5;
+        await ApplyPower<VigorPower>(Player.Creature, vigor);
+        await ApplyPower<HellraiserPower>(Player.Creature, 1);
+        await CardPileCmd.Add(PileType.Draw.GetPile(Player).Cards.ToArray(), PileType.Discard);
+        StrikeIronclad drawnStrike = await AddToDrawPileTop<StrikeIronclad>();
+        await PlayerCmd.SetEnergy(1, Player);
+        int hp = EnemyAt(0).CurrentHp;
+        int expectedDamage = (int)(
+            ModelDb.Card<PommelStrike>().DynamicVars.Damage.BaseValue
+            + drawnStrike.DynamicVars.Damage.BaseValue
+            + vigor * 2);
+
+        MethodInfo chooseStrikes = AccessTools.DeclaredMethod(
+                typeof(PartTimeGeneralScript),
+                "ChooseStrikeCards")
+            ?? throw new InvalidOperationException("ChooseStrikeCards was not found.");
+        var harmony = new Harmony("squ.tests.force-pommel-strike");
+        harmony.Patch(
+            chooseStrikes,
+            prefix: new HarmonyMethod(typeof(PartTimeGeneralScriptTests), nameof(ForcePommelStrike)));
+        try
+        {
+            await Play(await AddToHand<PartTimeGeneralScript>(), EnemyAt(0));
+        }
+        finally
+        {
+            harmony.UnpatchAll(harmony.Id);
+        }
+
+        Assert.Equal(hp - expectedDamage, EnemyAt(0).CurrentHp);
+        Assert.True((Player.Creature.GetPower<VigorPower>()?.Amount ?? 0m) == 0m);
+        AssertInPile(drawnStrike, PileType.Discard);
+        var script = Assert.IsType<ScriptPartTimeGeneralPower>(
+            Player.Creature.GetPower<ScriptPartTimeGeneralPower>());
+        Assert.Contains(
+            ModelDb.Card<PommelStrike>().Title,
+            script.DynamicVars[ScriptPartTimeGeneralPower.RecordedCardsVarName].ToString());
+    }
+
+    private static bool ForcePommelStrike(int count, ref List<CardModel> __result)
+    {
+        __result = count <= 0 ? [] : [ModelDb.Card<PommelStrike>()];
+        return false;
     }
 }
