@@ -10,6 +10,7 @@ using Squ.Cards;
 using Squ.Character;
 using Squ.Combat;
 using Squ.Interop;
+using Squ.Patches;
 using Squ.Relics;
 using Squ.RunData;
 using Squ.Script;
@@ -104,6 +105,7 @@ public static class SquMod
 		ScriptSystem.Initialize();
 		SlightRevisionSystem.Initialize();
 		NightRaidWuchaoStrikeSystem.Initialize();
+		EunuchMessageClearOnLeaveHand.Initialize();
 		RitsuLibFramework.SubscribeLifecycle<CombatEndedEvent>(_ => WarFeedsWarResolutionTracker.ClearCombat());
 
 		var harmony = new Harmony($"{ModId}.patches");

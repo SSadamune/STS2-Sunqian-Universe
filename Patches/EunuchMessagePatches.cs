@@ -10,6 +10,7 @@ using MegaCrit.Sts2.Core.Localization;
 using MegaCrit.Sts2.Core.Models;
 using Squ;
 using Squ.Powers;
+using STS2RitsuLib;
 
 #nullable enable
 
@@ -87,6 +88,33 @@ internal static class EunuchMessageClearBeforeLeaveHandPatch
 		{
 			ScriptEunuchPower.ClearMarkIfPresent(__instance);
 		}
+	}
+}
+
+/// <summary>
+/// <see cref="CardModel.RemoveFromCurrentPile"/> 会被 0.107.1 的 JIT 内联进
+/// <c>CardPileCmd.Add</c> 的状态机，上面的前缀因此覆盖不到消耗、弃牌等移堆。
+/// 移堆事件在内联之后仍然会发出，离开手牌时在这里再清一次口信。
+/// </summary>
+internal static class EunuchMessageClearOnLeaveHand
+{
+	private static bool _initialized;
+
+	public static void Initialize()
+	{
+		if (_initialized)
+		{
+			return;
+		}
+
+		_initialized = true;
+		RitsuLibFramework.SubscribeLifecycle<CardMovedBetweenPilesEvent>(evt =>
+		{
+			if (evt.PreviousPile == PileType.Hand)
+			{
+				ScriptEunuchPower.ClearMarkIfPresent(evt.Card);
+			}
+		});
 	}
 }
 

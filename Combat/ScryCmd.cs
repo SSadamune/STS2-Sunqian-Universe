@@ -13,6 +13,7 @@ using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.Hooks;
 using MegaCrit.Sts2.Core.Localization;
 using MegaCrit.Sts2.Core.Models;
+using MegaCrit.Sts2.Core.TestSupport;
 
 #nullable enable
 
@@ -125,11 +126,15 @@ public static class ScryCmd
 			0,
 			cardsToScry.Count);
 
-		List<CardModel> cardsToDiscard = (await CardSelectCmd.FromSimpleGrid(
-			choiceContext,
-			cardsToScry,
-			player,
-			prefs)).ToList();
+		// 0.107.1 无头测试里，没有选牌器时打开简单选牌界面会在 NCardGrid.InitGrid
+		// 上空引用，并把外层打出动作停在玩家选择上。预见允许一张都不选，测试里直接确认空选择。
+		List<CardModel> cardsToDiscard = TestMode.IsOn && CardSelectCmd.Selector == null
+			? []
+			: (await CardSelectCmd.FromSimpleGrid(
+				choiceContext,
+				cardsToScry,
+				player,
+				prefs)).ToList();
 
 		if (onCardChosen == null)
 		{
