@@ -48,7 +48,7 @@
   "SUNQIAN_UNIVERSE_CARD_NEUTRAL_AMBUSH_SCRIPT.title": "Neutral Ambush Script",
   "SUNQIAN_UNIVERSE_CARD_NEUTRAL_AMBUSH_SCRIPT.description": "Add 1 [gold]{IfUpgraded:show:Giant Rock+|Giant Rock}[/gold] and 2 [gold]{IfUpgraded:show:Salvo Strike+|Salvo Strike}[/gold] into your [gold]Draw Pile[/gold].\n[gold]Script[/gold]: When you draw [gold]Giant Rock[/gold] or [gold]Salvo Strike[/gold], play it on a random target.",
   "SUNQIAN_UNIVERSE_CARD_SHANGFANGGU_SIGH.title": "Shangfanggu's Sigh",
-  "SUNQIAN_UNIVERSE_CARD_SHANGFANGGU_SIGH.description": "[gold]Burning[/gold] you apply is increased by {GoodFirePower:diff()}%.",
+  "SUNQIAN_UNIVERSE_CARD_SHANGFANGGU_SIGH.description": "[gold]Burning[/gold] you apply is increased by {GoodFirePower:diff()}%.{YjcmHuoGongCombatNote}",
   "SUNQIAN_UNIVERSE_CARD_CYBERTRON_STRENGTH.title": "Cybertron Strength",
   "SUNQIAN_UNIVERSE_CARD_CYBERTRON_STRENGTH.description": "Gain {Block:diff()} [gold]Block[/gold].\nGain Block an additional time for every {BurningPer:diff()} total [gold]Burning[/gold] on enemies.",
   "SUNQIAN_UNIVERSE_CARD_ONE_MAN_ONE_CITY.title": "One Man, One City",

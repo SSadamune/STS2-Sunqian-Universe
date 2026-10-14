@@ -63,7 +63,7 @@
   "SUNQIAN_UNIVERSE_CARD_BURNING_LINKED_CAMPS_SCRIPT.title": "火烧连营剧本",
   "SUNQIAN_UNIVERSE_CARD_BURNING_LINKED_CAMPS_SCRIPT.description": "获得{TinderPower:diff()}层[gold]火种[/gold]。\n[gold]剧本[/gold]：失效时，获得一张[gold]灼伤[/gold]，并将一张[gold]{IfUpgraded:show:上方谷之叹+|上方谷之叹}[/gold]加入[gold]抽牌堆[/gold]。",
   "SUNQIAN_UNIVERSE_CARD_SHANGFANGGU_SIGH.title": "上方谷之叹",
-  "SUNQIAN_UNIVERSE_CARD_SHANGFANGGU_SIGH.description": "你给予的[gold]灼烧[/gold]层数+{GoodFirePower:diff()}%。",
+  "SUNQIAN_UNIVERSE_CARD_SHANGFANGGU_SIGH.description": "你给予的[gold]灼烧[/gold]层数+{GoodFirePower:diff()}%。{YjcmHuoGongCombatNote}",
   "SUNQIAN_UNIVERSE_CARD_CYBERTRON_STRENGTH.title": "赛博坦之力",
   "SUNQIAN_UNIVERSE_CARD_CYBERTRON_STRENGTH.description": "获得{Block:diff()}点[gold]格挡[/gold]。\n敌人合计每有{BurningPer:diff()}点[gold]灼烧[/gold]，额外获得一次。",
   "SUNQIAN_UNIVERSE_CARD_ONE_MAN_ONE_CITY.title": "一人一城剧本",
