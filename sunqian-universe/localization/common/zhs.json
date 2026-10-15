@@ -14,6 +14,7 @@
   "SUNQIAN_UNIVERSE_COMMON.YJCM_GOOD_FIRE.libraryHover": "威董卓和武诸葛使用此牌时，给予的[gold]火攻[/gold]层数也增加。",
   "SUNQIAN_UNIVERSE_COMMON.YJCM_GOOD_FIRE.combatNote": "给予的[gold]火攻[/gold]层数也增加。",
   "SUNQIAN_UNIVERSE_COMMON.YJCM_GOOD_FIRE.inlineText": "[purple]和火攻层数[/purple]",
+  "SUNQIAN_UNIVERSE_COMMON.YJCM_TINDER.inlineText": "[purple]或火攻[/purple]",
   "SUNQIAN_UNIVERSE_COMMON.SCRY.selectionPromptWithSource": "预见（{Source}）：丢弃至多{Amount}张牌",
   "SUNQIAN_UNIVERSE_COMMON.SETTINGS.modDisplayName": "孙乾宇宙",
   "SUNQIAN_UNIVERSE_COMMON.SETTINGS.pageTitle": "模组设置",

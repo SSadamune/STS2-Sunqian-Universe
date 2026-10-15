@@ -14,6 +14,7 @@
   "SUNQIAN_UNIVERSE_COMMON.YJCM_GOOD_FIRE.libraryHover": "When played by Wei Dong Zhuo or Wu Zhuge, this card also increases the amount of [gold]Fire Attack[/gold] they apply.",
   "SUNQIAN_UNIVERSE_COMMON.YJCM_GOOD_FIRE.combatNote": "The amount of [gold]Fire Attack[/gold] you apply is also increased.",
   "SUNQIAN_UNIVERSE_COMMON.YJCM_GOOD_FIRE.inlineText": "[purple] and Fire Attack[/purple]",
+  "SUNQIAN_UNIVERSE_COMMON.YJCM_TINDER.inlineText": "[purple] or Fire Attack[/purple]",
   "SUNQIAN_UNIVERSE_COMMON.SCRY.selectionPromptWithSource": "Scry ({Source}): Discard up to {Amount} cards",
   "SUNQIAN_UNIVERSE_COMMON.SETTINGS.modDisplayName": "Sunqian Universe",
   "SUNQIAN_UNIVERSE_COMMON.SETTINGS.pageTitle": "Mod Settings",

@@ -21,6 +21,9 @@ internal static class InteropPowerDescriptionPatch
 			case GoodFirePower:
 				YjcmGoodFireInterop.AddCombatCondition(__result, __instance);
 				break;
+			case TinderPower:
+				YjcmTinderInterop.AddCombatDescriptionArgs(__result, __instance);
+				break;
 		}
 	}
 }
