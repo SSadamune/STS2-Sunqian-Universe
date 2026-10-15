@@ -27,8 +27,9 @@ using STS2RitsuLib.Scaffolding.Content;
 namespace Squ.Powers;
 
 /// <summary>
-/// Burning: stackable debuff that deals damage equal to its stacks at turn start,
-/// then may extinguish itself with an escalating chance. Applying more Burning lowers the extinguish chance toward 25%.
+/// Burning: stackable debuff that deals damage equal to its stacks, then may
+/// extinguish itself with an escalating chance. Enemies trigger it at turn
+/// start; players and pets trigger it at the end of their owner's turn.
 /// </summary>
 [RegisterPower]
 public sealed class BurningPower : ModPowerTemplate, IHealthBarForecastSource
@@ -59,6 +60,11 @@ public sealed class BurningPower : ModPowerTemplate, IHealthBarForecastSource
 	[
 		new DynamicVar(ClearChanceVarName, (decimal)(InitialClearChance * 100f)),
 	];
+
+	protected override string SmartDescriptionLocKey =>
+		IsMutable && Owner is { } owner && (owner.IsPlayer || owner.IsPet)
+			? Id.Entry + ".playerSmartDescription"
+			: base.SmartDescriptionLocKey;
 
 	/// <summary>
 	/// Card hand hovers use <see cref="PowerModel.GetDumbHoverTip" />, which reads
@@ -105,9 +111,50 @@ public sealed class BurningPower : ModPowerTemplate, IHealthBarForecastSource
 		IReadOnlyList<Creature> participants,
 		ICombatState combatState)
 	{
-		if (!participants.Contains(Owner) || Owner.IsDead || Amount <= 0)
+		if (!Owner.IsEnemy || Owner.IsPet || !participants.Contains(Owner))
 		{
 			return;
+		}
+
+		await TriggerAsync(new ThrowingPlayerChoiceContext());
+	}
+
+	public override async Task AfterSideTurnEnd(
+		PlayerChoiceContext choiceContext,
+		CombatSide side,
+		IEnumerable<Creature> participants)
+	{
+		Creature? turnOwner = Owner.IsPlayer ? Owner : Owner.PetOwner?.Creature;
+		if (side != CombatSide.Player
+			|| turnOwner is null
+			|| !participants.Contains(turnOwner))
+		{
+			return;
+		}
+
+		await TriggerAsync(choiceContext);
+	}
+
+	/// <summary>
+	/// Resolves one complete Burning trigger, including damage, extinguish
+	/// prevention/checking, and the post-trigger chance adjustment. The
+	/// adjustment may be negative and is clamped to the 0–1 range.
+	/// </summary>
+	public async Task<bool> TriggerAsync(
+		PlayerChoiceContext choiceContext,
+		bool shouldCheckExtinguish = true,
+		float clearChanceIncrement = ClearChanceIncrement,
+		CardModel? cardSource = null)
+	{
+		if (Owner.IsDead || Amount <= 0 || Owner.CombatState is not { } combatState)
+		{
+			return false;
+		}
+		if (!float.IsFinite(clearChanceIncrement))
+		{
+			throw new ArgumentOutOfRangeException(
+				nameof(clearChanceIncrement),
+				"The extinguish chance increment must be finite.");
 		}
 
 		Flash();
@@ -116,11 +163,11 @@ public sealed class BurningPower : ModPowerTemplate, IHealthBarForecastSource
 
 		IronChainPower? ironChain = Owner.GetPower<IronChainPower>();
 		IEnumerable<DamageResult> damageResults = await CreatureCmd.Damage(
-			new ThrowingPlayerChoiceContext(),
+			choiceContext,
 			Owner,
 			Amount,
-			ValueProp.Unblockable | ValueProp.Unpowered,
-			null,
+			ValueProp.Unpowered,
+			cardSource,
 			null);
 
 		if (ironChain is not null)
@@ -131,25 +178,36 @@ public sealed class BurningPower : ModPowerTemplate, IHealthBarForecastSource
 
 		if (!Owner.IsAlive)
 		{
-			return;
+			return true;
 		}
 
 		Data data = GetInternalData<Data>();
-		Rng rng = combatState.RunState.Rng.Niche;
-		bool rolledExtinguish = data.ClearChance >= 1f || rng.NextFloat() < data.ClearChance;
-		bool prevented = await UnextinguishedPower.TryPreventExtinguish(Owner);
-		if (rolledExtinguish && !prevented)
+		if (shouldCheckExtinguish)
 		{
-			await PowerCmd.Remove(this);
-			return;
+			bool prevented = await UnextinguishedPower.TryPreventExtinguish(Owner);
+			if (!prevented)
+			{
+				Rng rng = combatState.RunState.Rng.Niche;
+				bool rolledExtinguish = data.ClearChance >= 1f
+					|| rng.NextFloat() < data.ClearChance;
+				if (rolledExtinguish)
+				{
+					await PowerCmd.Remove(this);
+					return true;
+				}
+			}
 		}
 
-		data.ClearChance = Math.Min(data.ClearChance + ClearChanceIncrement, 1f);
+		data.ClearChance = Math.Clamp(
+			data.ClearChance + clearChanceIncrement,
+			0f,
+			1f);
 		SyncClearChanceVar();
+		return true;
 	}
 
 	/// <summary>
-	/// Lowers the extinguish chance used at turn start (0–1). Never raises it.
+	/// Lowers the extinguish chance used after the next trigger (0–1). Never raises it.
 	/// </summary>
 	public void ReduceClearChanceTo(float clearChance)
 	{

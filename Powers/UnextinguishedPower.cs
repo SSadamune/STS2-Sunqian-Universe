@@ -35,8 +35,8 @@ public sealed class UnextinguishedPower : ModPowerTemplate
 	];
 
 	/// <summary>
-	/// If this creature has at least 1 stack, consume 1 stack and prevent Burning from extinguishing this turn.
-	/// Extinguish chance still increases as if it did not extinguish.
+	/// If this creature has at least 1 stack, consume 1 stack and prevent Burning
+	/// from extinguishing after this trigger. The chance still increases.
 	/// </summary>
 	public static async Task<bool> TryPreventExtinguish(Creature owner)
 	{

@@ -86,6 +86,31 @@ public static class SunqianUniversePublicApi
 			cardSource,
 			silent);
 
+	/// <summary>
+	/// 立即触发目标身上的一次“灼烧”，包括伤害、熄灭判定及熄灭概率递增。
+	/// 目标没有灼烧时返回 <see langword="false"/>。
+	/// <paramref name="shouldCheckExtinguish"/> 为 <see langword="false"/> 时不进行熄灭判定，
+	/// 也不会消耗“不熄”；未熄灭时，概率按 <paramref name="clearChanceIncrement"/> 调整。
+	/// 调整量可为负数，最终概率限制在 0–1 范围内。
+	/// </summary>
+	public static async Task<bool> TriggerBurning(
+		PlayerChoiceContext choiceContext,
+		Creature target,
+		bool shouldCheckExtinguish = true,
+		float clearChanceIncrement = BurningPower.ClearChanceIncrement,
+		CardModel? cardSource = null)
+	{
+		ArgumentNullException.ThrowIfNull(choiceContext);
+		ArgumentNullException.ThrowIfNull(target);
+
+		return target.GetPower<BurningPower>() is { } burning
+			&& await burning.TriggerAsync(
+				choiceContext,
+				shouldCheckExtinguish,
+				clearChanceIncrement,
+				cardSource);
+	}
+
 	/// <summary>判断能力是否属于本模组的「剧本」机制。</summary>
 	public static bool IsScriptPower(PowerModel? power) => power is ScriptPowerTemplate;
 
