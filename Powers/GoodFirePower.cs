@@ -3,7 +3,9 @@ using Godot;
 using MegaCrit.Sts2.Core.Entities.Creatures;
 using MegaCrit.Sts2.Core.Entities.Powers;
 using MegaCrit.Sts2.Core.HoverTips;
+using MegaCrit.Sts2.Core.Localization;
 using MegaCrit.Sts2.Core.Models;
+using Squ.Interop;
 using STS2RitsuLib.Interop.AutoRegistration;
 using STS2RitsuLib.Scaffolding.Content;
 
@@ -32,7 +34,18 @@ public sealed class GoodFirePower : ModPowerTemplate
 	protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
 	[
 		HoverTipFactory.FromPower<BurningPower>(),
+		..YjcmGoodFireInterop.HuoGongHoverTips(this),
 	];
+
+	public override LocString Description
+	{
+		get
+		{
+			LocString description = base.Description;
+			YjcmGoodFireInterop.AddCombatCondition(description, this);
+			return description;
+		}
+	}
 
 	public override decimal ModifyPowerAmountGivenMultiplicative(
 		PowerModel power,
@@ -41,11 +54,14 @@ public sealed class GoodFirePower : ModPowerTemplate
 		Creature? target,
 		CardModel? cardSource)
 	{
-		if (giver != Owner || power is not BurningPower || Amount <= 0)
+		if (giver != Owner || Amount <= 0)
 		{
 			return 1m;
 		}
 
-		return 1m + (Amount / 100m);
+		return power is BurningPower
+			|| YjcmGoodFireInterop.EnhancesHuoGong(Owner.Player, power)
+				? 1m + (Amount / 100m)
+				: 1m;
 	}
 }

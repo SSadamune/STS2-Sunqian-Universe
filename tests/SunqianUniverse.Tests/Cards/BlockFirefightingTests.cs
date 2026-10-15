@@ -1,4 +1,5 @@
 using MegaCrit.Sts2.Core.Entities.Cards;
+using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.Models.Characters;
 using MegaCrit.Sts2.Core.Models.Monsters;
 using MegaCrit.Sts2.Core.Models.Powers;
@@ -36,5 +37,15 @@ public sealed class BlockFirefightingTests : SunqianCombatTestSuite
         CardTestAssertions.AssertPowerAmount<BurningPower>(enemy, FlameStrike.BaseBurning * 2 + BlockFirefighting.UpgradedBurning);
         CardTestAssertions.AssertPowerAmount<UnextinguishedPower>(enemy, BlockFirefighting.UpgradedUnextinguished);
         CardTestAssertions.AssertPowerAmount<WeakPower>(Player.Creature, BlockFirefighting.WeakAmount);
+
+        var burning = Assert.IsType<BurningPower>(enemy.GetPower<BurningPower>());
+        for (int trigger = 0; trigger < BlockFirefighting.UpgradedUnextinguished; trigger++)
+        {
+            await burning.TriggerAsync(new BlockingPlayerChoiceContext());
+        }
+
+        Assert.Same(burning, enemy.GetPower<BurningPower>());
+        Assert.Null(enemy.GetPower<UnextinguishedPower>());
+        Assert.Equal(100, burning.DynamicVars[BurningPower.ClearChanceVarName].IntValue);
     }
 }

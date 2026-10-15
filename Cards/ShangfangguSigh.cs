@@ -4,9 +4,11 @@ using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.HoverTips;
+using MegaCrit.Sts2.Core.Localization;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.Models.CardPools;
 using Squ.Audio;
+using Squ.Interop;
 using Squ.Powers;
 using STS2RitsuLib.Interop.AutoRegistration;
 using STS2RitsuLib.Scaffolding.Content;
@@ -29,6 +31,8 @@ public sealed class ShangfangguSigh : ModCardTemplate
 	protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
 	[
 		HoverTipFactory.FromPower<BurningPower>(),
+		..YjcmGoodFireInterop.HuoGongHoverTips(this),
+		..YjcmGoodFireInterop.LibraryHoverTips(),
 	];
 
 	public override CardAssetProfile AssetProfile => new(
@@ -48,6 +52,11 @@ public sealed class ShangfangguSigh : ModCardTemplate
 			DynamicVars[nameof(GoodFirePower)].BaseValue,
 			Owner.Creature,
 			this);
+	}
+
+	protected override void AddExtraArgsToDescription(LocString description)
+	{
+		YjcmGoodFireInterop.AddCombatCondition(description, this);
 	}
 
 	protected override void OnUpgrade()

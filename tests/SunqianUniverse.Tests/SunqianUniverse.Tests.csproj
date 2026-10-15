@@ -21,6 +21,18 @@
     <GodotProjectDir>$(MSBuildProjectDirectory)\..\..</GodotProjectDir>
   </PropertyGroup>
 
+  <PropertyGroup Condition="'$(Sts2JointModTests)' == 'true'">
+    <Sts2RequiredModIds>STS2-RitsuLib;Yjcm;newsanguo</Sts2RequiredModIds>
+  </PropertyGroup>
+
+  <ItemGroup Condition="'$(Sts2JointModTests)' == 'true'">
+    <Compile Remove="Degrade\**\*.cs" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(Sts2JointModTests)' != 'true'">
+    <Compile Remove="JointMods\**\*.cs" />
+  </ItemGroup>
+
   <ItemGroup>
     <CompilerVisibleProperty Include="GodotProjectDir" />
     <Reference Include="sts2">

@@ -40,9 +40,31 @@ public abstract class SunqianCombatTestSuite : CombatTestSuite
         return card;
     }
 
+    protected async Task<CardModel> AddCardToPile(
+        ModelId cardId,
+        PileType pileType,
+        CardPilePosition position = CardPilePosition.Bottom,
+        Player? owner = null)
+    {
+        owner ??= Player;
+        CardModel canonical = ModelDb.GetById<CardModel>(cardId);
+        CardModel card = owner.Creature.CombatState!.CreateCard(canonical, owner);
+
+        await CardPileCmd.AddGeneratedCardToCombat(card, pileType, owner, position);
+        await WaitFor(
+            () => card.Pile?.Type == pileType,
+            $"Injected {cardId} did not appear in {pileType}.");
+        await WaitForIdle();
+
+        return card;
+    }
+
     protected Task<TCard> AddToDrawPileTop<TCard>(Player? owner = null)
         where TCard : CardModel =>
         AddCardToPile<TCard>(PileType.Draw, CardPilePosition.Top, owner);
+
+    protected Task<CardModel> AddToHand(ModelId cardId, Player? owner = null) =>
+        AddCardToPile(cardId, PileType.Hand, CardPilePosition.Bottom, owner);
 
     protected static TCard Upgrade<TCard>(TCard card)
         where TCard : CardModel

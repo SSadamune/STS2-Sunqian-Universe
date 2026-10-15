@@ -59,7 +59,7 @@ public sealed class GrandGoblet : ModCardTemplate
 
 	protected override void AddExtraArgsToDescription(LocString description)
 	{
-		NewsanguoVigorSwap.AddCombatNote(description, this);
+		NewsanguoVigorSwap.AddCombatCondition(description, this);
 	}
 
 	protected override void OnUpgrade()

@@ -41,10 +41,11 @@ internal static class SquTurnStartDamageForecast
 			target.GetPower<IntangiblePower>() is { Amount: > 0 };
 
 		private int _hpRemaining = target.CurrentHp;
+		private int _blockRemaining = (target.PetOwner?.Creature ?? target).Block;
 
 		public bool IsAlive => _hpRemaining > 0;
 
-		public int Apply(decimal damage)
+		public int Apply(decimal damage, bool blockable = false)
 		{
 			damage = Math.Max(0m, damage);
 			damage = Math.Min(damage, _hardenedShellRemaining);
@@ -52,6 +53,13 @@ internal static class SquTurnStartDamageForecast
 			if (_hasIntangible || _slipperyRemaining > 0)
 			{
 				damage = Math.Min(damage, 1m);
+			}
+
+			if (blockable && _blockRemaining > 0)
+			{
+				int blocked = Math.Min((int)damage, _blockRemaining);
+				_blockRemaining -= blocked;
+				damage -= blocked;
 			}
 
 			int hpLost = Math.Min((int)Math.Min(damage, 999999999m), _hpRemaining);
@@ -103,7 +111,9 @@ internal static class SquTurnStartDamageForecast
 			}
 			else if (ReferenceEquals(power, burning) && burning!.Amount > 0)
 			{
-				burningDamage = defense.Apply(ModifyDamage(target, burning.Amount));
+				burningDamage = defense.Apply(
+					ModifyDamage(target, burning.Amount, blockable: true),
+					blockable: true);
 			}
 		}
 
@@ -154,7 +164,10 @@ internal static class SquTurnStartDamageForecast
 		return Math.Min(poison.Amount, 1 + accelerantTriggers);
 	}
 
-	private static decimal ModifyDamage(Creature target, decimal amount)
+	private static decimal ModifyDamage(
+		Creature target,
+		decimal amount,
+		bool blockable = false)
 	{
 		if (target.CombatState is not { } combatState)
 		{
@@ -167,7 +180,7 @@ internal static class SquTurnStartDamageForecast
 			target,
 			null,
 			amount,
-			ValueProp.Unblockable | ValueProp.Unpowered,
+			blockable ? ValueProp.Unpowered : ValueProp.Unblockable | ValueProp.Unpowered,
 			null,
 			null,
 			ModifyDamageHookType.All,
