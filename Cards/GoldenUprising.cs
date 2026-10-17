@@ -5,6 +5,7 @@ using MegaCrit.Sts2.Core.CardSelection;
 using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.Entities.Gold;
+using MegaCrit.Sts2.Core.Extensions;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.Localization;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
@@ -28,6 +29,7 @@ public sealed class GoldenUprising : ModCardTemplate
 	public const int BaseGoldCost = 18;
 	public const int BaseCardPickCount = 2;
 	public const int UpgradedCardPickCount = 3;
+	public const int MaxCandidateCount = 20;
 
 	private static readonly LocString SelectionPrompt =
 		new("cards", "SUNQIAN_UNIVERSE_CARD_GOLDEN_UPRISING.selectionScreenPrompt");
@@ -69,9 +71,16 @@ public sealed class GoldenUprising : ModCardTemplate
 		int goldCost = DynamicVars.Gold.IntValue;
 		await PlayerCmd.LoseGold(goldCost, Owner, GoldLossType.Spent);
 
-		IEnumerable<CardModel> selected = await CardSelectCmd.FromCombatPile(
+		List<CardModel> candidates = [.. PileType.Draw.GetPile(Owner).Cards];
+		Owner.RunState.Rng.CombatCardGeneration.Shuffle(candidates);
+		if (candidates.Count > MaxCandidateCount)
+		{
+			candidates.RemoveRange(MaxCandidateCount, candidates.Count - MaxCandidateCount);
+		}
+
+		IEnumerable<CardModel> selected = await CardSelectCmd.FromSimpleGrid(
 			choiceContext,
-			PileType.Draw.GetPile(Owner),
+			candidates,
 			Owner,
 			new CardSelectorPrefs(SelectionPrompt, pickCount));
 

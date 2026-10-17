@@ -1,6 +1,7 @@
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.Entities.Gold;
 using MegaCrit.Sts2.Core.Commands;
+using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.Cards;
 using MegaCrit.Sts2.Core.Models.Characters;
 using MegaCrit.Sts2.Core.Models.Monsters;
@@ -14,6 +15,69 @@ public sealed class GoldenUprisingTests : SunqianCombatTestSuite
 {
     protected override void ConfigureBattle(CombatTestBattleBuilder battle) =>
         battle.Player<Ironclad>().AddEnemy<BigDummy>().WithSeed("golden-uprising");
+
+    [Fact]
+    public async Task Selection_is_limited_to_twenty_random_draw_cards()
+    {
+        await CardPileCmd.Add(PileType.Draw.GetPile(Player).Cards.ToArray(), PileType.Discard);
+        var drawCards = new List<CardModel>();
+        for (var i = 0; i < GoldenUprising.MaxCandidateCount + 1; i++)
+        {
+            drawCards.Add(await AddCardToPile<DefendIronclad>(PileType.Draw));
+        }
+
+        CardModel[]? offered = null;
+        CardModel[]? selected = null;
+        var selector = new ScriptedCardSelector().ThenSelect(options =>
+        {
+            offered = options.ToArray();
+            selected = options.Take(GoldenUprising.BaseCardPickCount).ToArray();
+            return selected;
+        });
+
+        using (UseCardSelector(selector))
+        {
+            await Play(await AddToHand<GoldenUprising>());
+        }
+
+        AssertAllSelectionsConsumed(selector);
+        Assert.NotNull(offered);
+        Assert.Equal(GoldenUprising.MaxCandidateCount, offered.Length);
+        Assert.All(offered, card => Assert.Contains(card, drawCards));
+        Assert.Single(drawCards.Except(offered));
+        Assert.NotNull(selected);
+        Assert.All(selected, card => AssertInPile(card, PileType.Hand));
+    }
+
+    [Fact]
+    public async Task Selection_offers_every_draw_card_when_fewer_than_twenty_remain()
+    {
+        await CardPileCmd.Add(PileType.Draw.GetPile(Player).Cards.ToArray(), PileType.Discard);
+        CardModel[] drawCards =
+        [
+            await AddCardToPile<StrikeIronclad>(PileType.Draw),
+            await AddCardToPile<DefendIronclad>(PileType.Draw),
+            await AddCardToPile<Bash>(PileType.Draw),
+            await AddCardToPile<Anger>(PileType.Draw),
+        ];
+
+        CardModel[]? offered = null;
+        var selector = new ScriptedCardSelector().ThenSelect(options =>
+        {
+            offered = options.ToArray();
+            return options.Take(GoldenUprising.BaseCardPickCount).ToArray();
+        });
+
+        using (UseCardSelector(selector))
+        {
+            await Play(await AddToHand<GoldenUprising>());
+        }
+
+        AssertAllSelectionsConsumed(selector);
+        Assert.NotNull(offered);
+        Assert.Equal(drawCards.Length, offered.Length);
+        Assert.All(drawCards, card => Assert.Contains(card, offered));
+    }
 
     [Fact]
     public async Task Upgrade_spends_gold_and_moves_three_selected_draw_cards_to_hand()
