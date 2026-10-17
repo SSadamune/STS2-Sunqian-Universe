@@ -90,7 +90,7 @@
   "SUNQIAN_UNIVERSE_CARD_SALVO_STRIKE.title": "Salvo Strike",
   "SUNQIAN_UNIVERSE_CARD_SALVO_STRIKE.description": "Deal {Damage:diff()} damage to 3 random enemies.",
   "SUNQIAN_UNIVERSE_CARD_GOLDEN_UPRISING.title": "Golden Uprising",
-  "SUNQIAN_UNIVERSE_CARD_GOLDEN_UPRISING.description": "Spend {Gold:diff()} [gold]Gold[/gold]. Choose {Cards:diff()} of 20 random cards in your [gold]Draw Pile[/gold] and put them into your [gold]Hand[/gold].",
+  "SUNQIAN_UNIVERSE_CARD_GOLDEN_UPRISING.description": "Spend {Gold:diff()} [gold]Gold[/gold]. Choose {Cards:diff()} from up to 20 cards at the bottom of your [gold]Draw Pile[/gold] and put them into your [gold]Hand[/gold].",
   "SUNQIAN_UNIVERSE_CARD_GOLDEN_UPRISING.selectionScreenPrompt": "Choose {Amount} cards to put into your Hand.",
   "SUNQIAN_UNIVERSE_CARD_SUNQIAN_SCRIPT.title": "Sunqian Script",
   "SUNQIAN_UNIVERSE_CARD_SUNQIAN_SCRIPT.description": "Gain {DexterityPower:diff()} [gold]Dexterity[/gold] this turn.\n[gold]Script[/gold]: When this [gold]Script[/gold] ends, draw {IfUpgraded:show:2|1} {IfUpgraded:show:cards|card}.",

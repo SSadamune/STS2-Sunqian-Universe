@@ -17,7 +17,7 @@ public sealed class GoldenUprisingTests : SunqianCombatTestSuite
         battle.Player<Ironclad>().AddEnemy<BigDummy>().WithSeed("golden-uprising");
 
     [Fact]
-    public async Task Selection_is_limited_to_twenty_random_draw_cards()
+    public async Task Selection_is_limited_to_the_bottom_twenty_draw_cards()
     {
         await CardPileCmd.Add(PileType.Draw.GetPile(Player).Cards.ToArray(), PileType.Discard);
         var drawCards = new List<CardModel>();
@@ -43,8 +43,10 @@ public sealed class GoldenUprisingTests : SunqianCombatTestSuite
         AssertAllSelectionsConsumed(selector);
         Assert.NotNull(offered);
         Assert.Equal(GoldenUprising.MaxCandidateCount, offered.Length);
-        Assert.All(offered, card => Assert.Contains(card, drawCards));
-        Assert.Single(drawCards.Except(offered));
+        Assert.DoesNotContain(offered, card => ReferenceEquals(card, drawCards[0]));
+        Assert.All(
+            drawCards.Skip(1),
+            expected => Assert.Contains(offered, card => ReferenceEquals(card, expected)));
         Assert.NotNull(selected);
         Assert.All(selected, card => AssertInPile(card, PileType.Hand));
     }

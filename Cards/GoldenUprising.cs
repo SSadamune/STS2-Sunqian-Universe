@@ -1,11 +1,11 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using MegaCrit.Sts2.Core.CardSelection;
 using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.Entities.Gold;
-using MegaCrit.Sts2.Core.Extensions;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.Localization;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
@@ -71,12 +71,8 @@ public sealed class GoldenUprising : ModCardTemplate
 		int goldCost = DynamicVars.Gold.IntValue;
 		await PlayerCmd.LoseGold(goldCost, Owner, GoldLossType.Spent);
 
-		List<CardModel> candidates = [.. PileType.Draw.GetPile(Owner).Cards];
-		Owner.RunState.Rng.CombatCardGeneration.Shuffle(candidates);
-		if (candidates.Count > MaxCandidateCount)
-		{
-			candidates.RemoveRange(MaxCandidateCount, candidates.Count - MaxCandidateCount);
-		}
+		List<CardModel> candidates =
+			PileType.Draw.GetPile(Owner).Cards.TakeLast(MaxCandidateCount).ToList();
 
 		IEnumerable<CardModel> selected = await CardSelectCmd.FromSimpleGrid(
 			choiceContext,

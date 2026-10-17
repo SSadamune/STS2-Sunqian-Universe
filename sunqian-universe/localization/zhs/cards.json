@@ -97,7 +97,7 @@
   "SUNQIAN_UNIVERSE_CARD_SALVO_STRIKE.title": "箭幕打击",
   "SUNQIAN_UNIVERSE_CARD_SALVO_STRIKE.description": "对随机三名敌人各造成{Damage:diff()}点伤害。",
   "SUNQIAN_UNIVERSE_CARD_GOLDEN_UPRISING.title": "黄金起义",
-  "SUNQIAN_UNIVERSE_CARD_GOLDEN_UPRISING.description": "花费{Gold:diff()}[gold]金币[/gold]，从[gold]抽牌堆[/gold]的随机20张牌中获得{Cards:diff()}张。",
+  "SUNQIAN_UNIVERSE_CARD_GOLDEN_UPRISING.description": "花费{Gold:diff()}[gold]金币[/gold]，从[gold]抽牌堆[/gold]底部的至多20张牌中获得{Cards:diff()}张。",
   "SUNQIAN_UNIVERSE_CARD_GOLDEN_UPRISING.selectionScreenPrompt": "获得{Amount}张牌（来自「黄金起义」）。",
   "SUNQIAN_UNIVERSE_CARD_BUDDY_TANGXIAOHU.title": "好哥们唐小虎",
   "SUNQIAN_UNIVERSE_CARD_BUDDY_TANGXIAOHU.description": "你打出[gold]剧本[/gold]牌后，获得{Block:diff()}点[gold]格挡[/gold]。",
