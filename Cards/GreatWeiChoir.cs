@@ -19,6 +19,10 @@ namespace Squ.Cards;
 [RegisterCard(typeof(SunqianCardPool), StableEntryStem = "great_wei_choir")]
 public sealed class GreatWeiChoir : ModCardTemplate
 {
+	public const int BaseTriggersPerTurn = 1;
+
+	public const int UpgradedTriggersPerTurn = 2;
+
 	protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
 	[
 		HoverTipFactory.FromPower<BurningPower>(),
@@ -35,7 +39,7 @@ public sealed class GreatWeiChoir : ModCardTemplate
 		await PowerCmd.Apply<GreatWeiChoirPower>(
 			choiceContext,
 			Owner.Creature,
-			1m,
+			IsUpgraded ? UpgradedTriggersPerTurn : BaseTriggersPerTurn,
 			Owner.Creature,
 			this);
 

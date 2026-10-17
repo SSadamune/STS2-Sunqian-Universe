@@ -33,7 +33,9 @@ public sealed class GreatWeiChoirTests : SunqianCombatTestSuite
         await Play(first);
         await Play(await AddToHand<GreatWeiChoir>());
 
-        CardTestAssertions.AssertPowerAmount<GreatWeiChoirPower>(Player.Creature, 2);
+        CardTestAssertions.AssertPowerAmount<GreatWeiChoirPower>(
+            Player.Creature,
+            GreatWeiChoir.BaseTriggersPerTurn * 2);
 
         await ExtinguishGuaranteed(EnemyAt(0), 2);
         await ExtinguishGuaranteed(EnemyAt(1), 3);
@@ -65,7 +67,21 @@ public sealed class GreatWeiChoirTests : SunqianCombatTestSuite
         Assert.NotNull(secondEnemy.GetPower<BurningPower>());
         Assert.Null(firstEnemy.GetPower<UnextinguishedPower>());
         Assert.Null(secondEnemy.GetPower<UnextinguishedPower>());
-        CardTestAssertions.AssertPowerAmount<GreatWeiChoirPower>(Player.Creature, 1);
+        CardTestAssertions.AssertPowerAmount<GreatWeiChoirPower>(
+            Player.Creature,
+            GreatWeiChoir.UpgradedTriggersPerTurn);
+    }
+
+    [Fact]
+    public async Task Upgraded_card_triggers_twice_per_turn()
+    {
+        await Play(Upgrade(await AddToHand<GreatWeiChoir>()));
+
+        await ExtinguishGuaranteed(EnemyAt(0), 2);
+        await ExtinguishGuaranteed(EnemyAt(1), 3);
+        await ExtinguishGuaranteed(EnemyAt(2), 7);
+
+        CardTestAssertions.AssertPowerAmount<VigorPower>(Player.Creature, 5);
     }
 
     private async Task ExtinguishGuaranteed(Creature target, int amount)
