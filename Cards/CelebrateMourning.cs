@@ -21,14 +21,14 @@ using STS2RitsuLib.Scaffolding.Content;
 namespace Squ.Cards;
 
 /// <summary>
-/// 闻丧贺喜：获得活力；牌组中打出率最高的「其它」牌被消耗时回手。
+/// 闻丧贺喜：获得活力；被消耗的牌不低于手牌、抽牌堆和弃牌堆中的最高打出率时回手。
 /// </summary>
 [RegisterCard(typeof(SunqianCardPool), StableEntryStem = "celebrate_mourning")]
 public sealed class CelebrateMourning : ModCardTemplate
 {
-	public const int BaseVigor = 4;
+	public const int BaseVigor = 5;
 
-	public const int UpgradedVigor = 6;
+	public const int UpgradedVigor = 7;
 
 	public const int PlayRateWindow = CardDrawPlayRateTracker.MaxStoredCombats;
 
@@ -67,7 +67,7 @@ public sealed class CelebrateMourning : ModCardTemplate
 		PortraitPath: "res://images/cards/CelebrateMourning.png");
 
 	public CelebrateMourning()
-		: base(0, CardType.Skill, CardRarity.Uncommon, TargetType.Self)
+		: base(0, CardType.Skill, CardRarity.Rare, TargetType.Self)
 	{
 	}
 
@@ -88,19 +88,19 @@ public sealed class CelebrateMourning : ModCardTemplate
 	}
 
 	/// <summary>
-	/// 任意卡牌被消耗后：若其为牌组中打出率最高的「其它」牌（并列任一），则本牌回手。
+	/// 任意实体卡牌被消耗后：若该牌在消耗时的有效候选中打出率最高（并列任一），则本牌回手。
 	/// </summary>
 	public override async Task AfterCardExhausted(
 		PlayerChoiceContext choiceContext,
 		CardModel card,
 		bool causedByEthereal)
 	{
-		if (!CanListenForReturnTrigger() || card.Owner != Owner || IsCelebrateMourning(card))
+		if (!CanListenForReturnTrigger() || card.Owner != Owner)
 		{
 			return;
 		}
 
-		List<CardModel> candidates = GetOtherPlayRateCandidates(card);
+		List<CardModel> candidates = GetPlayRateCandidates(card);
 		if (!CardDrawPlayRateTracker.IsAmongHighestPlayRateCards(
 			    Owner,
 			    card,
@@ -111,7 +111,7 @@ public sealed class CelebrateMourning : ModCardTemplate
 			return;
 		}
 
-		HashSet<CardModel> highest = GetHighestOtherPlayRateCards(candidates);
+		HashSet<CardModel> highest = GetHighestPlayRateCards(candidates);
 
 		CardDrawPlayRateTracker.LogCurrentState(
 			Owner,
@@ -135,34 +135,15 @@ public sealed class CelebrateMourning : ModCardTemplate
 			return [];
 		}
 
-		return GetHighestOtherPlayRateCards(GetOtherPlayRateCandidates())
+		return GetHighestPlayRateCards(GetPlayRateCandidates())
 			.OrderBy(card => card.Title, System.StringComparer.Ordinal)
 			.ToList();
 	}
 
-	private List<CardModel> GetOtherPlayRateCandidates(CardModel? exhaustedCard = null)
-	{
-		List<CardModel> candidates = PileType.Deck.GetPile(Owner).Cards
-			.Where(card => !IsCelebrateMourning(card))
-			.ToList();
-		if (Owner.PlayerCombatState is { } playerCombatState)
-		{
-			candidates.AddRange(playerCombatState.AllCards.Where(card =>
-				card.DeckVersion is null
-				&& card.HasFamily()
-				&& card.Pile?.Type is PileType.Hand or PileType.Draw or PileType.Discard or PileType.Play));
-		}
-
-		if (exhaustedCard is { } exhausted
-			&& exhausted.DeckVersion is null
-			&& exhausted.HasFamily()
-			&& !candidates.Contains(exhausted))
-		{
-			candidates.Add(exhausted);
-		}
-
-		return candidates;
-	}
+	private List<CardModel> GetPlayRateCandidates(CardModel? exhaustedCard = null)
+		=> CardDrawPlayRateTracker.GetCelebrateMourningPlayRateCandidates(
+			Owner,
+			exhaustedCard);
 
 	private IHoverTip? CreateReturnTriggerHoverTip(IReadOnlyList<CardModel> triggerTargets)
 	{
@@ -176,7 +157,7 @@ public sealed class CelebrateMourning : ModCardTemplate
 		return new HoverTip(SquCommonL10n.AnnotationTitle(), description);
 	}
 
-	private HashSet<CardModel> GetHighestOtherPlayRateCards(IEnumerable<CardModel> candidates) =>
+	private HashSet<CardModel> GetHighestPlayRateCards(IEnumerable<CardModel> candidates) =>
 		CardDrawPlayRateTracker.GetHighestPlayRateCards(
 			Owner,
 			candidates,
@@ -189,9 +170,6 @@ public sealed class CelebrateMourning : ModCardTemplate
 			?? ", ";
 		return string.Join(separator, cards.Select(card => $"[gold]{card.Title}[/gold]"));
 	}
-
-	private static bool IsCelebrateMourning(CardModel card) =>
-		card is CelebrateMourning || card.DeckVersion is CelebrateMourning;
 
 	private static bool CanListenForReturnTrigger(PileType? pileType) =>
 		pileType is PileType.Hand or PileType.Draw or PileType.Discard or PileType.Exhaust;

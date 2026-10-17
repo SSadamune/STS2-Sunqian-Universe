@@ -1,4 +1,7 @@
 {
+  "SUNQIAN_UNIVERSE_POWER_GREAT_WEI_CHOIR_POWER.title": "大魏唱诗班",
+  "SUNQIAN_UNIVERSE_POWER_GREAT_WEI_CHOIR_POWER.description": "每回合限一次，任意生物的[gold]灼烧熄灭[/gold]后，你获得等量[gold]活力[/gold]。",
+  "SUNQIAN_UNIVERSE_POWER_GREAT_WEI_CHOIR_POWER.smartDescription": "任意生物的[gold]灼烧熄灭[/gold]后，你获得等量[gold]活力[/gold]。每回合至多触发[blue]{Amount}[/blue]次。",
   "SUNQIAN_UNIVERSE_POWER_METAMORPHOSIS_POWER.title": "千变万化",
   "SUNQIAN_UNIVERSE_POWER_METAMORPHOSIS_POWER.description": "你不会从[gold]千变万化[/gold]中获得已记录角色的牌，且你每回合第一次打出已记录角色的牌后获得{energyPrefix:energyIcons(1)}。",
   "SUNQIAN_UNIVERSE_POWER_METAMORPHOSIS_POWER.smartDescription": "不会从[gold]千变万化[/gold]中获得下列角色的牌，且每回合第一次打出下列角色的牌后获得{energyPrefix:energyIcons(1)}：\n{CharacterNames}",

@@ -29,7 +29,7 @@ public sealed class GoldenUprising : ModCardTemplate
 	public const int BaseGoldCost = 18;
 	public const int BaseCardPickCount = 2;
 	public const int UpgradedCardPickCount = 3;
-	public const int MaxCandidateCount = 20;
+	public const int MaxCandidateCount = 18;
 
 	private static readonly LocString SelectionPrompt =
 		new("cards", "SUNQIAN_UNIVERSE_CARD_GOLDEN_UPRISING.selectionScreenPrompt");

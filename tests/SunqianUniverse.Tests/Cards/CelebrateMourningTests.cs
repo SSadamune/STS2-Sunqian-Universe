@@ -1,6 +1,8 @@
 using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
+using MegaCrit.Sts2.Core.Entities.Players;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
+using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.Cards;
 using MegaCrit.Sts2.Core.Models.Characters;
@@ -32,13 +34,80 @@ public sealed class CelebrateMourningTests : SunqianCombatTestSuite
     }
 
     [Fact]
-    public async Task Upgrade_grants_six_vigor_at_zero_cost()
+    public async Task Base_card_grants_five_vigor_at_zero_cost()
+    {
+        int energy = Player.PlayerCombatState!.Energy;
+        await Play(await AddToHand<CelebrateMourning>());
+
+        Assert.Equal(energy, Player.PlayerCombatState.Energy);
+        CardTestAssertions.AssertPowerAmount<VigorPower>(Player.Creature, CelebrateMourning.BaseVigor);
+    }
+
+    [Fact]
+    public async Task Upgrade_grants_seven_vigor_at_zero_cost()
     {
         int energy = Player.PlayerCombatState!.Energy;
         await Play(Upgrade(await AddToHand<CelebrateMourning>()));
 
         Assert.Equal(energy, Player.PlayerCombatState.Energy);
         CardTestAssertions.AssertPowerAmount<VigorPower>(Player.Creature, CelebrateMourning.UpgradedVigor);
+    }
+
+    [Fact]
+    public async Task Highest_rate_celebrate_mourning_returns_all_copies_including_itself()
+    {
+        CelebrateMourning returning = await AddToHand<CelebrateMourning>();
+        await Play(returning);
+        AssertInPile(returning, PileType.Discard);
+        CelebrateMourning exhausted = await AddToHand<CelebrateMourning>();
+
+        await CardCmd.Exhaust(new BlockingPlayerChoiceContext(), exhausted);
+
+        AssertInPile(exhausted, PileType.Hand);
+        AssertInPile(returning, PileType.Hand);
+    }
+
+    [Fact]
+    public async Task Previously_exhausted_higher_rate_card_is_excluded_from_later_comparisons()
+    {
+        CelebrateMourning celebrate = await AddToHand<CelebrateMourning>();
+        await CardPileCmd.Add(celebrate, PileType.Discard);
+        AssertInPile(celebrate, PileType.Discard);
+        CardModel lowerRate = await CreateHighestPartialPlayRateStrikeAsync();
+        CutePet higherRate = await AddToHand<CutePet>();
+
+        await CardCmd.Exhaust(new BlockingPlayerChoiceContext(), lowerRate);
+        AssertInPile(celebrate, PileType.Discard);
+
+        await CardCmd.Exhaust(new BlockingPlayerChoiceContext(), higherRate);
+        AssertInPile(celebrate, PileType.Hand);
+        await CardPileCmd.Add(celebrate, PileType.Discard);
+        await CardPileCmd.Add(lowerRate, PileType.Hand);
+
+        await CardCmd.Exhaust(new BlockingPlayerChoiceContext(), lowerRate);
+
+        AssertInPile(higherRate, PileType.Exhaust);
+        AssertInPile(lowerRate, PileType.Exhaust);
+        AssertInPile(celebrate, PileType.Hand);
+    }
+
+    [Fact]
+    public async Task Hover_preview_dynamically_excludes_cards_already_in_exhaust_pile()
+    {
+        CelebrateMourning celebrate = await AddToHand<CelebrateMourning>();
+        await CardPileCmd.Add(celebrate, PileType.Discard);
+        CardModel lowerRate = await CreateHighestPartialPlayRateStrikeAsync();
+        CutePet higherRate = await AddToHand<CutePet>();
+
+        string beforeExhaust = ReturnTriggerDescription(celebrate, higherRate.Title);
+        Assert.Contains(higherRate.Title, beforeExhaust);
+        Assert.DoesNotContain(lowerRate.Title, beforeExhaust);
+
+        await CardCmd.Exhaust(new BlockingPlayerChoiceContext(), higherRate);
+
+        string afterExhaust = ReturnTriggerDescription(celebrate, lowerRate.Title);
+        Assert.DoesNotContain(higherRate.Title, afterExhaust);
+        Assert.Contains(lowerRate.Title, afterExhaust);
     }
 
     [Fact]
@@ -126,10 +195,8 @@ public sealed class CelebrateMourningTests : SunqianCombatTestSuite
 
     private bool IsCurrentHighestPlayRate(CardModel card)
     {
-        List<CardModel> candidates = PileType.Deck.GetPile(Player).Cards
-            .Where(candidate => candidate is not CelebrateMourning)
-            .ToList();
-        candidates.AddRange(LivingFamilyCards());
+        List<CardModel> candidates =
+            CardDrawPlayRateTracker.GetCelebrateMourningPlayRateCandidates(Player);
         return CardDrawPlayRateTracker.IsAmongHighestPlayRateCards(
             Player,
             card,
@@ -138,9 +205,51 @@ public sealed class CelebrateMourningTests : SunqianCombatTestSuite
             includeCurrentCombat: true);
     }
 
+    private static string ReturnTriggerDescription(CelebrateMourning card, string expectedCardTitle)
+    {
+        HoverTip tip = Assert.Single(
+            card.HoverTips.OfType<HoverTip>().Where(candidate =>
+                candidate.Description?.Contains(expectedCardTitle, StringComparison.Ordinal) == true));
+        return tip.Description
+               ?? throw new InvalidOperationException("Celebrate Mourning return-trigger hover tip is missing.");
+    }
+
     private IEnumerable<CardModel> LivingFamilyCards() =>
         Player.PlayerCombatState!.AllCards.Where(card =>
             card.DeckVersion is null
             && card is FamilyCardTemplate
             && card.Pile?.Type is PileType.Hand or PileType.Draw or PileType.Discard or PileType.Play);
+}
+
+public sealed class CelebrateMourningMultiplayerTests : SunqianCombatTestSuite
+{
+    protected override void ConfigureBattle(CombatTestBattleBuilder battle) =>
+        battle
+            .AddPlayer<Ironclad>(1)
+            .AddPlayer<Silent>(2)
+            .LocalNetId(1)
+            .AddEnemy<BigDummy>()
+            .WithSeed("celebrate-mourning-multiplayer");
+
+    [Fact]
+    public async Task Exhaust_snapshots_and_return_triggers_are_isolated_per_player()
+    {
+        Player ally = PlayerWithNetId(2);
+        CelebrateMourning playerCelebrate = await AddToHand<CelebrateMourning>(Player);
+        CelebrateMourning allyCelebrate = await AddToHand<CelebrateMourning>(ally);
+        await Play(playerCelebrate);
+        await Play(allyCelebrate);
+        CutePet playerFamily = await AddToHand<CutePet>(Player);
+        CutePet allyFamily = await AddToHand<CutePet>(ally);
+
+        await CardCmd.Exhaust(new BlockingPlayerChoiceContext(), playerFamily);
+
+        AssertInPile(playerCelebrate, PileType.Hand);
+        AssertInPile(allyCelebrate, PileType.Discard);
+
+        await CardCmd.Exhaust(new BlockingPlayerChoiceContext(), allyFamily);
+
+        AssertInPile(playerCelebrate, PileType.Hand);
+        AssertInPile(allyCelebrate, PileType.Hand);
+    }
 }

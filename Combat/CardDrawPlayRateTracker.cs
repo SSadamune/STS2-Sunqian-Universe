@@ -41,6 +41,13 @@ public static class CardDrawPlayRateTracker
 		PileType.Play,
 	];
 
+	private static readonly PileType[] CelebrateMourningCandidatePiles =
+	[
+		PileType.Hand,
+		PileType.Draw,
+		PileType.Discard,
+	];
+
 	private static readonly PlayerRunSavedData<PlayerSaveState> SavedData =
 		RitsuLibFramework.GetRunSavedDataStore(SquMod.ModId).RegisterPerPlayer(
 			SaveKey,
@@ -228,7 +235,8 @@ public static class CardDrawPlayRateTracker
 		Func<CardModel, bool>? exclude = null)
 	{
 		List<CardModel> candidates = PileType.Deck.GetPile(player).Cards.ToList();
-		if (card.HasFamily() && ResolveIdentityCard(card) is null)
+		if ((card.HasFamily() || IsCelebrateMourningCard(card))
+			&& ResolveIdentityCard(card) is null)
 		{
 			candidates.Add(card);
 		}
@@ -283,6 +291,27 @@ public static class CardDrawPlayRateTracker
 		}
 
 		return false;
+	}
+
+	/// <summary>
+	/// Returns the cards that compete with an exhausted card for Celebrate Mourning.
+	/// Exhaust-time candidates are captured when the card enters the exhaust pile,
+	/// before any asynchronous exhaust hooks can move other cards between piles.
+	/// Without an exhausted card, returns the live Hand/Draw/Discard candidates used
+	/// by Celebrate Mourning's hover preview.
+	/// </summary>
+	public static List<CardModel> GetCelebrateMourningPlayRateCandidates(
+		Player player,
+		CardModel? exhaustedCard = null)
+	{
+		if (exhaustedCard is not null
+			&& GetOrCreateRuntime(player).CelebrateMourningExhaustCandidates
+				.TryGetValue(exhaustedCard, out List<CardModel>? captured))
+		{
+			return captured.ToList();
+		}
+
+		return CaptureCelebrateMourningCandidates(player, exhaustedCard);
 	}
 
 	public static bool TryGetStats(
@@ -418,65 +447,47 @@ public static class CardDrawPlayRateTracker
 			builder.AppendLine("  exhaustedCardStats: (no tracked stats for this card)");
 		}
 
-		List<RankedDeckCard> rankedOthers = GetRankedDeckCards(
+		List<CardModel> candidates = GetCelebrateMourningPlayRateCandidates(
 			player,
-			windowSize,
-			includeCurrentCombat,
-			exclude: IsCelebrateMourningCard);
-		AppendExhaustedPlayRateRank(builder, exhaustedCard, rankedOthers);
+			exhaustedCard);
+		builder.AppendLine("  eligibleCards (exhausted + Hand/Draw/Discard snapshot):");
+		foreach (CardModel candidate in candidates)
+		{
+			AppendCardRateLine(
+				builder,
+				"    ",
+				player,
+				candidate,
+				windowSize,
+				includeCurrentCombat);
+		}
 
-		builder.AppendLine("  highestOtherPlayRateDeckCards:");
-		HashSet<CardModel> highestOthers = GetHighestPlayRateDeckCards(
+		builder.AppendLine("  highestEligibleCards:");
+		HashSet<CardModel> highestCards = GetHighestPlayRateCards(
 			player,
+			candidates,
 			windowSize,
-			includeCurrentCombat,
-			exclude: IsCelebrateMourningCard);
-		if (highestOthers.Count == 0)
+			includeCurrentCombat);
+		if (highestCards.Count == 0)
 		{
 			builder.AppendLine("    (none)");
 		}
 		else
 		{
-			foreach (CardModel deckCard in highestOthers.OrderBy(card => card.Title, StringComparer.Ordinal))
+			foreach (CardModel candidate in highestCards.OrderBy(card => card.Title, StringComparer.Ordinal))
 			{
-				builder.Append("    ").AppendLine(FormatCardLabel(deckCard));
+				builder.Append("    ").AppendLine(FormatCardLabel(candidate));
 			}
 		}
 
-		bool isAmongHighestOthers = IsAmongHighestPlayRateDeckCards(
+		bool isAmongHighest = IsAmongHighestPlayRateCards(
 			player,
 			exhaustedCard,
+			candidates,
 			windowSize,
-			includeCurrentCombat,
-			exclude: IsCelebrateMourningCard);
-		bool wasAmongHighestBeforeExhaust = WasAmongHighestPlayRateDeckCardsBeforeExhaust(
-			player,
-			exhaustedCard,
-			windowSize,
-			includeCurrentCombat,
-			exclude: IsCelebrateMourningCard);
-		builder.Append("  isAmongHighestOtherPlayRate: ").AppendLine(isAmongHighestOthers.ToString());
-		builder.Append("  wasAmongHighestBeforeThisExhaust: ")
-			.AppendLine(wasAmongHighestBeforeExhaust.ToString());
+			includeCurrentCombat);
+		builder.Append("  isAmongHighestPlayRate: ").AppendLine(isAmongHighest.ToString());
 		builder.Append("  isCelebrateMourningCard: ").AppendLine(IsCelebrateMourningCard(exhaustedCard).ToString());
-
-		builder.AppendLine("  deckPlayRateRanking (excluding Celebrate Mourning):");
-		if (rankedOthers.Count == 0)
-		{
-			builder.AppendLine("    (empty deck)");
-		}
-		else
-		{
-			for (int i = 0; i < rankedOthers.Count; i++)
-			{
-				RankedDeckCard entry = rankedOthers[i];
-				builder.Append("    #").Append(i + 1).Append(' ')
-					.Append(FormatCardLabel(entry.Card))
-					.Append(" [").Append(entry.IdentityKey).Append("] rate=")
-					.Append(FormatRate(entry.PlayFromHandCount, entry.HandEntryCount))
-					.AppendLine();
-			}
-		}
 
 		builder.AppendLine("  celebrateMourningInstances:");
 		AppendCelebrateMourningInstances(
@@ -485,7 +496,7 @@ public static class CardDrawPlayRateTracker
 			exhaustedCard,
 			windowSize,
 			includeCurrentCombat,
-			wasAmongHighestBeforeExhaust);
+			isAmongHighest);
 
 		SquMod.Logger.Info(builder.ToString());
 	}
@@ -532,6 +543,8 @@ public static class CardDrawPlayRateTracker
 		PileType? newPile = card.Pile?.Type;
 		if (newPile == PileType.Exhaust && previousPile != PileType.Exhaust)
 		{
+			GetOrCreateRuntime(player).CelebrateMourningExhaustCandidates[card] =
+				CaptureCelebrateMourningCandidates(player, card);
 			LogCardExhaustedDiagnostics(player, card, previousPile);
 		}
 
@@ -565,7 +578,9 @@ public static class CardDrawPlayRateTracker
 		foreach (Player player in runState.Players)
 		{
 			LoadSavedState(player);
-			GetOrCreateRuntime(player).Current = new CombatSnapshot();
+			PlayerRuntime runtime = GetOrCreateRuntime(player);
+			runtime.Current = new CombatSnapshot();
+			runtime.CelebrateMourningExhaustCandidates.Clear();
 		}
 	}
 
@@ -584,6 +599,7 @@ public static class CardDrawPlayRateTracker
 			}
 
 			runtime.Current = new CombatSnapshot();
+			runtime.CelebrateMourningExhaustCandidates.Clear();
 			Persist(player);
 		}
 	}
@@ -620,7 +636,32 @@ public static class CardDrawPlayRateTracker
 		PlayerSaveState saved = SavedData.Get(player);
 		runtime.Recent = CloneCombatList(saved.RecentCombats);
 		runtime.Current = new CombatSnapshot();
+		runtime.CelebrateMourningExhaustCandidates.Clear();
 		runtime.SavedStateLoaded = true;
+	}
+
+	private static List<CardModel> CaptureCelebrateMourningCandidates(
+		Player player,
+		CardModel? exhaustedCard)
+	{
+		List<CardModel> candidates = [];
+		if (exhaustedCard is not null)
+		{
+			candidates.Add(exhaustedCard);
+		}
+
+		foreach (PileType pileType in CelebrateMourningCandidatePiles)
+		{
+			foreach (CardModel card in pileType.GetPile(player).Cards)
+			{
+				if (!ReferenceEquals(card, exhaustedCard))
+				{
+					candidates.Add(card);
+				}
+			}
+		}
+
+		return candidates;
 	}
 
 	private static bool TryGetStatsKey(CardModel card, out string statsKey)
@@ -878,18 +919,18 @@ public static class CardDrawPlayRateTracker
 	private static void AppendExhaustedPlayRateRank(
 		StringBuilder builder,
 		CardModel exhaustedCard,
-		IReadOnlyList<RankedDeckCard> rankedOthers)
+		IReadOnlyList<RankedDeckCard> rankedCandidates)
 	{
 		if (!TryGetExhaustedIdentityKey(exhaustedCard, out string exhaustedKey))
 		{
-			builder.AppendLine("  exhaustedPlayRateRankAmongOthers: (identity unresolved)");
+			builder.AppendLine("  exhaustedPlayRateRank: (identity unresolved)");
 			return;
 		}
 
 		int rank = -1;
-		for (int i = 0; i < rankedOthers.Count; i++)
+		for (int i = 0; i < rankedCandidates.Count; i++)
 		{
-			if (rankedOthers[i].IdentityKey == exhaustedKey)
+			if (rankedCandidates[i].IdentityKey == exhaustedKey)
 			{
 				rank = i + 1;
 				break;
@@ -899,13 +940,13 @@ public static class CardDrawPlayRateTracker
 		if (rank < 0)
 		{
 			builder.AppendLine(
-				"  exhaustedPlayRateRankAmongOthers: (not found in deck ranking — likely not a deck card identity)");
+				"  exhaustedPlayRateRank: (not found in deck ranking — likely not a deck card identity)");
 			return;
 		}
 
-		RankedDeckCard entry = rankedOthers[rank - 1];
-		builder.Append("  exhaustedPlayRateRankAmongOthers: #").Append(rank)
-			.Append('/').Append(rankedOthers.Count)
+		RankedDeckCard entry = rankedCandidates[rank - 1];
+		builder.Append("  exhaustedPlayRateRank: #").Append(rank)
+			.Append('/').Append(rankedCandidates.Count)
 			.Append(" rate=").Append(FormatRate(entry.PlayFromHandCount, entry.HandEntryCount))
 			.AppendLine();
 	}
@@ -916,7 +957,7 @@ public static class CardDrawPlayRateTracker
 		CardModel exhaustedCard,
 		int windowSize,
 		bool includeCurrentCombat,
-		bool wasAmongHighestBeforeExhaust)
+		bool isAmongHighestAtExhaust)
 	{
 		bool found = false;
 		foreach (PileType pileType in CelebrateMourningScanPiles)
@@ -933,11 +974,9 @@ public static class CardDrawPlayRateTracker
 				found = true;
 				bool canListen = CanCelebrateMourningListenForReturnTrigger(card.Pile?.Type);
 				bool ownerMatches = exhaustedCard.Owner == card.Owner;
-				bool exhaustedIsSelf = IsCelebrateMourningCard(exhaustedCard);
 				bool wouldTriggerReturn = canListen
 				                          && ownerMatches
-				                          && !exhaustedIsSelf
-				                          && wasAmongHighestBeforeExhaust;
+				                          && isAmongHighestAtExhaust;
 
 				builder.Append("    ").Append(pileType).Append('[').Append(index).Append("]: ")
 					.Append(FormatCardLabel(card))
@@ -959,14 +998,9 @@ public static class CardDrawPlayRateTracker
 						builder.Append("owner mismatch; ");
 					}
 
-					if (exhaustedIsSelf)
+					if (!isAmongHighestAtExhaust)
 					{
-						builder.Append("exhausted card is Celebrate Mourning; ");
-					}
-
-					if (!wasAmongHighestBeforeExhaust)
-					{
-						builder.Append("exhausted card not among highest other play rate before this exhaust; ");
+						builder.Append("exhausted card not among highest eligible play rate at exhaust; ");
 					}
 
 					builder.Append(')');
@@ -1056,6 +1090,9 @@ public static class CardDrawPlayRateTracker
 		public List<CombatSnapshot> Recent { get; set; } = [];
 
 		public CombatSnapshot Current { get; set; } = new();
+
+		public Dictionary<CardModel, List<CardModel>> CelebrateMourningExhaustCandidates { get; } =
+			new(ReferenceEqualityComparer.Instance);
 	}
 
 	public sealed class PlayerSaveState

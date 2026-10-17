@@ -192,7 +192,13 @@ public sealed class BurningPower : ModPowerTemplate, IHealthBarForecastSource
 					|| rng.NextFloat() < data.ClearChance;
 				if (rolledExtinguish)
 				{
+					decimal extinguishedAmount = Amount;
 					await PowerCmd.Remove(this);
+					await GreatWeiChoirPower.OnBurningExtinguishedAsync(
+						choiceContext,
+						combatState,
+						extinguishedAmount,
+						cardSource);
 					return true;
 				}
 			}

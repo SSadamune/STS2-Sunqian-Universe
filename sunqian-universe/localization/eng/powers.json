@@ -1,4 +1,7 @@
 {
+  "SUNQIAN_UNIVERSE_POWER_GREAT_WEI_CHOIR_POWER.title": "Great Wei Choir",
+  "SUNQIAN_UNIVERSE_POWER_GREAT_WEI_CHOIR_POWER.description": "Once per turn, after any creature's [gold]Burning is extinguished[/gold], gain that much [gold]Vigor[/gold].",
+  "SUNQIAN_UNIVERSE_POWER_GREAT_WEI_CHOIR_POWER.smartDescription": "After any creature's [gold]Burning is extinguished[/gold], gain that much [gold]Vigor[/gold]. Triggers up to [blue]{Amount}[/blue] {Amount:plural:time|times} per turn.",
   "SUNQIAN_UNIVERSE_POWER_METAMORPHOSIS_POWER.title": "Ever-Changing",
   "SUNQIAN_UNIVERSE_POWER_METAMORPHOSIS_POWER.description": "You cannot obtain cards from recorded characters through [gold]Ever-Changing[/gold]. After you play the first card from a recorded character each turn, gain {energyPrefix:energyIcons(1)}.",
   "SUNQIAN_UNIVERSE_POWER_METAMORPHOSIS_POWER.smartDescription": "You cannot obtain cards from the following characters through [gold]Ever-Changing[/gold]. After you play the first card from each of these characters each turn, gain {energyPrefix:energyIcons(1)}:\n{CharacterNames}",
