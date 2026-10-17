@@ -10,6 +10,7 @@ using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.Powers;
+using Squ.Audio;
 using STS2RitsuLib.Interop.AutoRegistration;
 using STS2RitsuLib.Scaffolding.Content;
 
@@ -32,6 +33,10 @@ public sealed class GreatWeiChoirPower : ModPowerTemplate
 	public override PowerStackType StackType => PowerStackType.Counter;
 
 	public override Color AmountLabelColor => PowerModel._normalAmountLabelColor;
+
+	public override PowerAssetProfile AssetProfile => new(
+		IconPath: "res://images/powers/GreatWeiChoirPower.png",
+		BigIconPath: "res://images/powers/GreatWeiChoirPowerBig.png");
 
 	protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
 	[
@@ -97,6 +102,7 @@ public sealed class GreatWeiChoirPower : ModPowerTemplate
 		}
 
 		data.TriggerCount++;
+		SquSfx.Play(SquSfx.GreatWeiChoirTriggerEvent);
 		Flash();
 		await PowerCmd.Apply<VigorPower>(
 			choiceContext,

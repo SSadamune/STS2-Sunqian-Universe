@@ -109,6 +109,7 @@
 {43748165-1fbc-48c2-a594-23e597853580} event:/sunqian_universe/sfx/夜观天象-王允
 {f88e063e-0622-4b5c-a7e2-13c66980d840} event:/sunqian_universe/sfx/夜观天象-董卓
 {10189575-4fd1-4c12-aeab-dfb859667ae5} event:/sunqian_universe/sfx/大义灭亲
+{fdba7a11-55d9-46ff-b678-0314d3f45619} event:/sunqian_universe/sfx/夷陵之战-大败我70万蜀军
 {1fae88d6-0db5-4220-b506-40d4367e636b} event:/sunqian_universe/sfx/夷陵好火
 {1cb4d21a-93cc-4f5e-a98f-7570cc283362} event:/sunqian_universe/sfx/好兄弟龙套哥-很努力地上班
 {49c3296f-398d-4545-993f-34d485f8fdc1} event:/sunqian_universe/sfx/好哥们唐小虎-主子爷，小的叫人给打了
@@ -184,6 +185,8 @@
 {adef8aef-88ec-4baf-9e48-999915329fda} event:/sunqian_universe/sfx/生死不明-那就是死了
 {19a69e50-cedd-43c9-9634-513e9df4cb4d} event:/sunqian_universe/sfx/白银起义
 {f33ea8e2-cbde-4079-bff1-6d7a3de50ca9} event:/sunqian_universe/sfx/磨剑十几年-我挥剑只有一次，可磨剑磨了十几年呐！
+{41cc0a85-1880-422b-9b5c-9b52b69ff5a7} event:/sunqian_universe/sfx/祈雨合唱团-司马懿是英雄
+{2360cdf4-1eb8-47ce-8010-c72c9e1ab022} event:/sunqian_universe/sfx/祈雨合唱团-风萧萧兮易水寒
 {9c585106-b323-486a-b967-2f694e2dca3c} event:/sunqian_universe/sfx/种地将军-曹操真是老糊涂了
 {f873e3cf-3bfb-4547-a7b8-e0916b1442f9} event:/sunqian_universe/sfx/稍作修改-好方略，不过我想稍作修改
 {1ba1aa01-3f0b-4671-8afb-8ba1c04969de} event:/sunqian_universe/sfx/竟然不许

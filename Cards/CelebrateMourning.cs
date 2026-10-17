@@ -30,7 +30,7 @@ public sealed class CelebrateMourning : ModCardTemplate
 
 	public const int BaseVigor = 5;
 
-	public const int UpgradedVigor = 7;
+	public const int UpgradedVigor = 8;
 
 	public const int PlayRateWindow = CardDrawPlayRateTracker.MaxStoredCombats;
 

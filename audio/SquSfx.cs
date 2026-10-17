@@ -269,6 +269,8 @@ internal static class SquSfx
 	public const string WineStillDrinkEvent = "event:/sunqian_universe/sfx/酒-还是喝酒吧";
 	public const string WineOldHeroEvent = "event:/sunqian_universe/sfx/酒-酒是老英雄";
 	public const string WineWentIntoTownEvent = "event:/sunqian_universe/sfx/酒-进城喝酒去了";
+	public const string GreatWeiChoirPlayEvent = "event:/sunqian_universe/sfx/祈雨合唱团-风萧萧兮易水寒";
+	public const string GreatWeiChoirTriggerEvent = "event:/sunqian_universe/sfx/祈雨合唱团-司马懿是英雄";
 
 	public static readonly string[] TheBackupsBackupEvents =
 	[
