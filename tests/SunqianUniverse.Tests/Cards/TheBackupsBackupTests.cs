@@ -3,6 +3,7 @@ using MegaCrit.Sts2.Core.Models.Monsters;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.Models;
 using Squ.Cards;
+using Squ.Character;
 using TestTheSpire;
 using Xunit;
 
@@ -10,7 +11,70 @@ namespace Squ.Tests.Cards;
 
 public sealed class TheBackupsBackupTests : SunqianCombatTestSuite
 {
-    protected override void ConfigureBattle(CombatTestBattleBuilder battle) => battle.Player<Ironclad>().AddRemotePlayer<Ironclad>().AddEnemy<BigDummy>().WithSeed("the-backups-backup");
+    protected override void ConfigureBattle(CombatTestBattleBuilder battle) => battle.Player<SunqianCharacter>().AddRemotePlayer<SunqianCharacter>().AddEnemy<BigDummy>().WithSeed("the-backups-backup");
+
+    [Fact]
+    public async Task Options_exclude_the_backups_backup_in_both_directions_when_decks_have_at_most_three_eligible_cards()
+    {
+        var ally = Players.Single(player => player != Player);
+        var ownerCards = new CardModel[]
+        {
+            Combat.CreateCard<TheBackupsBackup>(Player),
+            Combat.CreateCard<FlameStrike>(Player),
+            Combat.CreateCard<Phasing>(Player),
+        };
+        var allyCards = new CardModel[]
+        {
+            Combat.CreateCard<TheBackupsBackup>(ally),
+            Combat.CreateCard<TableFlip>(ally),
+            Combat.CreateCard<KeepCalm>(ally),
+        };
+        Player.Deck.Clear();
+        ally.Deck.Clear();
+        foreach (CardModel card in ownerCards)
+        {
+            Player.Deck.AddInternal(card);
+        }
+        foreach (CardModel card in allyCards)
+        {
+            ally.Deck.AddInternal(card);
+        }
+
+        CardModel[]? ownerOptions = null;
+        CardModel[]? allyOptions = null;
+        var selector = new ScriptedCardSelector()
+            .ThenSelect(options =>
+            {
+                ownerOptions = options.ToArray();
+                return [options[0]];
+            })
+            .ThenSelect(options =>
+            {
+                allyOptions = options.ToArray();
+                return [options[0]];
+            });
+
+        using (UseCardSelector(selector))
+        {
+            await Play(await AddToHand<TheBackupsBackup>(), ally.Creature);
+        }
+
+        AssertAllSelectionsConsumed(selector);
+        Assert.Equal(3, Player.Deck.Cards.Count(card => card.Rarity is CardRarity.Uncommon or CardRarity.Rare));
+        Assert.Equal(3, ally.Deck.Cards.Count(card => card.Rarity is CardRarity.Uncommon or CardRarity.Rare));
+
+        Assert.NotNull(ownerOptions);
+        Assert.Equal(3, ownerOptions.Length);
+        Assert.DoesNotContain(ownerOptions, card => card.CanonicalInstance is TheBackupsBackup);
+        Assert.Contains(ownerOptions, card => ReferenceEquals(card, allyCards[1]));
+        Assert.Contains(ownerOptions, card => ReferenceEquals(card, allyCards[2]));
+
+        Assert.NotNull(allyOptions);
+        Assert.Equal(3, allyOptions.Length);
+        Assert.DoesNotContain(allyOptions, card => card.CanonicalInstance is TheBackupsBackup);
+        Assert.Contains(allyOptions, card => ReferenceEquals(card, ownerCards[1]));
+        Assert.Contains(allyOptions, card => ReferenceEquals(card, ownerCards[2]));
+    }
 
     [Fact]
     public async Task Upgrade_offers_three_non_common_cards_to_each_player_even_when_decks_are_common_only()

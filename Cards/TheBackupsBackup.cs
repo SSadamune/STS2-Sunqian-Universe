@@ -99,7 +99,7 @@ public sealed class TheBackupsBackup : ModCardTemplate
 		List<CardModel> options = [];
 		foreach (CardModel card in sourceDeckOwner.Deck.Cards)
 		{
-			if (IsAllowedRarity(card.Rarity, allowed))
+			if (IsDiscoverable(card, allowed))
 			{
 				options.Add(card);
 			}
@@ -174,7 +174,7 @@ public sealed class TheBackupsBackup : ModCardTemplate
 			sourceDeckOwner.RunState.CardMultiplayerConstraint))
 		{
 			CardModel canonical = card.CanonicalInstance;
-			if (!IsAllowedRarity(card.Rarity, allowed) || offered.Contains(canonical) || !pool.TrueForAll(existing => existing.CanonicalInstance != canonical))
+			if (!IsDiscoverable(card, allowed) || offered.Contains(canonical) || !pool.TrueForAll(existing => existing.CanonicalInstance != canonical))
 			{
 				continue;
 			}
@@ -193,6 +193,9 @@ public sealed class TheBackupsBackup : ModCardTemplate
 		options.AddRange(fillers);
 		return fillers;
 	}
+
+	private static bool IsDiscoverable(CardModel card, CardRarity[] allowed) =>
+		card.CanonicalInstance is not TheBackupsBackup && IsAllowedRarity(card.Rarity, allowed);
 
 	private static bool IsAllowedRarity(CardRarity rarity, CardRarity[] allowed)
 	{
