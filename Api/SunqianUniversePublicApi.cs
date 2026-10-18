@@ -87,6 +87,21 @@ public static class SunqianUniversePublicApi
 			silent);
 
 	/// <summary>
+	/// 使用默认熄灭规则立即触发目标身上的一次“灼烧”。
+	/// 保留此三参数重载以兼容已发布的调用方。
+	/// </summary>
+	public static Task<bool> TriggerBurning(
+		PlayerChoiceContext choiceContext,
+		Creature target,
+		CardModel? cardSource) =>
+		TriggerBurning(
+			choiceContext,
+			target,
+			shouldCheckExtinguish: true,
+			clearChanceIncrement: BurningPower.ClearChanceIncrement,
+			cardSource: cardSource);
+
+	/// <summary>
 	/// 立即触发目标身上的一次“灼烧”，包括伤害、熄灭判定及熄灭概率递增。
 	/// 目标没有灼烧时返回 <see langword="false"/>。
 	/// <paramref name="shouldCheckExtinguish"/> 为 <see langword="false"/> 时不进行熄灭判定，

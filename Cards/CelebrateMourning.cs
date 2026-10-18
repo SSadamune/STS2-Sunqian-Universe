@@ -9,6 +9,7 @@ using MegaCrit.Sts2.Core.Localization;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.Powers;
+using MegaCrit.Sts2.Core.Runs;
 using Squ;
 using Squ.Audio;
 using Squ.Character;
@@ -49,19 +50,20 @@ public sealed class CelebrateMourning : ModCardTemplate
 			[
 				HoverTipFactory.FromPower<VigorPower>(),
 				SquCommonL10n.PlayRateHoverTip(),
-				new HoverTip(
-					SquCommonL10n.AnnotationTitle(),
-					new LocString("cards", Id.Entry + ".annotation")),
 			];
+			if (RunManager.Instance is not { IsInProgress: true })
+			{
+				tips.Add(new HoverTip(
+					SquCommonL10n.AnnotationTitle(),
+					new LocString("cards", Id.Entry + ".annotation")));
+				return tips;
+			}
+
 			List<CardModel> triggerTargets = GetReturnTriggerTargets();
 			ReturnTriggerPreview? preview = CreateReturnTriggerPreview(triggerTargets);
 			if (preview != null)
 			{
 				tips.Add(preview.Summary);
-				foreach (CardModel target in preview.DetailedCards)
-				{
-					tips.Add(HoverTipFactory.FromCard(target));
-				}
 			}
 
 			return tips;
@@ -167,8 +169,7 @@ public sealed class CelebrateMourning : ModCardTemplate
 		LocString description = new("cards", Id.Entry + ".returnTriggerHoverTip");
 		description.Add("Cards", FormatCardList(labels));
 		return new ReturnTriggerPreview(
-			new HoverTip(SquCommonL10n.AnnotationTitle(), description),
-			visibleGroups.Select(group => group.Cards[0]).ToList());
+			new HoverTip(SquCommonL10n.AnnotationTitle(), description));
 	}
 
 	private HashSet<CardModel> GetHighestPlayRateCards(IEnumerable<CardModel> candidates) =>
@@ -192,5 +193,5 @@ public sealed class CelebrateMourning : ModCardTemplate
 
 	private sealed record TriggerTargetGroup(string Title, IReadOnlyList<CardModel> Cards);
 
-	private sealed record ReturnTriggerPreview(IHoverTip Summary, IReadOnlyList<CardModel> DetailedCards);
+	private sealed record ReturnTriggerPreview(IHoverTip Summary);
 }

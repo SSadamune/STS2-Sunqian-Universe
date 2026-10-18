@@ -1,4 +1,5 @@
 using MegaCrit.Sts2.Core.Commands;
+using MegaCrit.Sts2.Core.Combat;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.Entities.Players;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
@@ -9,13 +10,53 @@ using MegaCrit.Sts2.Core.Models.Cards;
 using MegaCrit.Sts2.Core.Models.Characters;
 using MegaCrit.Sts2.Core.Models.Monsters;
 using MegaCrit.Sts2.Core.Models.Powers;
+using MegaCrit.Sts2.Core.Runs;
+using HarmonyLib;
 using Squ;
 using Squ.Cards;
 using Squ.Combat;
+using System.Text.Json;
 using TestTheSpire;
 using Xunit;
 
 namespace Squ.Tests.Cards;
+
+internal static class TestCelebrateMourningCombatState
+{
+    public static bool ForceOutsideCombat { get; set; }
+
+    public static bool ForceOutsideRun { get; set; }
+}
+
+[HarmonyPatch(typeof(CombatManager), "get_IsInProgress")]
+internal static class TestCelebrateMourningCombatStatePatch
+{
+    private static bool Prefix(ref bool __result)
+    {
+        if (!TestCelebrateMourningCombatState.ForceOutsideCombat)
+        {
+            return true;
+        }
+
+        __result = false;
+        return false;
+    }
+}
+
+[HarmonyPatch(typeof(RunManager), "get_IsInProgress")]
+internal static class TestCelebrateMourningRunStatePatch
+{
+    private static bool Prefix(ref bool __result)
+    {
+        if (!TestCelebrateMourningCombatState.ForceOutsideRun)
+        {
+            return true;
+        }
+
+        __result = false;
+        return false;
+    }
+}
 
 public sealed class CelebrateMourningTests : SunqianCombatTestSuite
 {
@@ -94,16 +135,62 @@ public sealed class CelebrateMourningTests : SunqianCombatTestSuite
     }
 
     [Fact]
-    public async Task Annotation_explains_this_card_and_the_second_highest_fallback()
+    public async Task Combat_hover_shows_return_targets_without_out_of_combat_annotation()
+    {
+        CelebrateMourning celebrate = await AddToHand<CelebrateMourning>();
+        AllIn target = await AddToHand<AllIn>();
+        string annotation = new LocString("cards", celebrate.Id.Entry + ".annotation").GetFormattedText()
+            ?? throw new InvalidOperationException("Celebrate Mourning annotation is missing.");
+        HoverTip contextualTip = Assert.Single(
+            celebrate.HoverTips.OfType<HoverTip>().Where(tip =>
+                tip.Title == SquCommonL10n.AnnotationTitle().GetFormattedText()));
+
+        Assert.NotEqual(annotation, contextualTip.Description);
+        Assert.Contains(target.Title, contextualTip.Description);
+    }
+
+    [Fact]
+    public async Task In_run_outside_combat_hover_still_shows_return_targets_without_annotation()
+    {
+        CelebrateMourning celebrate = await AddToHand<CelebrateMourning>();
+        AllIn target = await AddToHand<AllIn>();
+        string annotation = new LocString("cards", celebrate.Id.Entry + ".annotation").GetFormattedText()
+            ?? throw new InvalidOperationException("Celebrate Mourning annotation is missing.");
+
+        TestCelebrateMourningCombatState.ForceOutsideCombat = true;
+        try
+        {
+            HoverTip contextualTip = Assert.Single(
+                celebrate.HoverTips.OfType<HoverTip>().Where(tip =>
+                    tip.Title == SquCommonL10n.AnnotationTitle().GetFormattedText()));
+            Assert.NotEqual(annotation, contextualTip.Description);
+            Assert.Contains(target.Title, contextualTip.Description);
+        }
+        finally
+        {
+            TestCelebrateMourningCombatState.ForceOutsideCombat = false;
+        }
+    }
+
+    [Fact]
+    public async Task Outside_run_hover_shows_annotation_without_return_targets()
     {
         CelebrateMourning celebrate = await AddToHand<CelebrateMourning>();
         string annotation = new LocString("cards", celebrate.Id.Entry + ".annotation").GetFormattedText()
             ?? throw new InvalidOperationException("Celebrate Mourning annotation is missing.");
 
-        Assert.Contains(
-            celebrate.HoverTips.OfType<HoverTip>(),
-            tip => tip.Title == SquCommonL10n.AnnotationTitle().GetFormattedText()
-                && tip.Description == annotation);
+        TestCelebrateMourningCombatState.ForceOutsideRun = true;
+        try
+        {
+            HoverTip contextualTip = Assert.Single(
+                celebrate.HoverTips.OfType<HoverTip>().Where(tip =>
+                    tip.Title == SquCommonL10n.AnnotationTitle().GetFormattedText()));
+            Assert.Equal(annotation, contextualTip.Description);
+        }
+        finally
+        {
+            TestCelebrateMourningCombatState.ForceOutsideRun = false;
+        }
     }
 
     [Fact]
@@ -319,18 +406,14 @@ public sealed class CelebrateMourningTests : SunqianCombatTestSuite
         await AddToHand<AllIn>();
 
         string description = ReturnTriggerDescription(celebrate, first.Title);
-        int distinctHighestTitles = GetCurrentHighestCards()
-            .Select(card => card.Title)
-            .Distinct(StringComparer.Ordinal)
-            .Count();
         IHoverTip[] tips = celebrate.HoverTips.ToArray();
 
         Assert.Contains("× 2", description);
-        Assert.Equal(distinctHighestTitles, tips.OfType<CardHoverTip>().Count());
+        Assert.Empty(tips.OfType<CardHoverTip>());
     }
 
     [Fact]
-    public async Task Hover_preview_caps_detailed_card_tips_when_many_titles_tie()
+    public async Task Hover_preview_caps_text_without_creating_nested_card_nodes()
     {
         CelebrateMourning celebrate = await AddToHand<CelebrateMourning>();
         await AddToDrawPileTop<AllIn>();
@@ -343,12 +426,72 @@ public sealed class CelebrateMourningTests : SunqianCombatTestSuite
         await AddToDrawPileTop<EunuchScript>();
         await AddToDrawPileTop<FireNova>();
 
-        Assert.True(
-            GetCurrentHighestCards().Select(card => card.Title).Distinct(StringComparer.Ordinal).Count()
-            > CelebrateMourning.MaxReturnTriggerDetailedCards);
-        Assert.Equal(
-            CelebrateMourning.MaxReturnTriggerDetailedCards,
-            celebrate.HoverTips.OfType<CardHoverTip>().Count());
+        List<IGrouping<string, CardModel>> groups = GetCurrentHighestCards()
+            .GroupBy(card => card.Title, StringComparer.Ordinal)
+            .OrderBy(group => group.Key, StringComparer.Ordinal)
+            .ToList();
+        Assert.True(groups.Count > CelebrateMourning.MaxReturnTriggerDetailedCards);
+        int hiddenCardCount = groups
+            .Skip(CelebrateMourning.MaxReturnTriggerDetailedCards)
+            .Sum(group => group.Count());
+        LocString moreCards = new("cards", celebrate.Id.Entry + ".returnTriggerMoreCards");
+        moreCards.Add("Cards", hiddenCardCount);
+        string description = ReturnTriggerDescription(celebrate, groups[0].Key);
+        IHoverTip[] tips = celebrate.HoverTips.ToArray();
+
+        Assert.Contains(moreCards.GetFormattedText()!, description);
+        Assert.Empty(tips.OfType<CardHoverTip>());
+    }
+
+    [Fact]
+    public void Play_rate_history_uses_compact_json_and_migrates_legacy_v4_data()
+    {
+        const string firstKey = "CARD_A|u0|f1|enone";
+        const string secondKey = "CARD_B|u1|f2|eENCHANTMENT:1";
+        var firstCombat = new CardDrawPlayRateTracker.CombatSnapshot();
+        firstCombat.Cards[firstKey] = new CardDrawPlayRateTracker.CardCombatStats
+        {
+            PlayFromHandCount = 2,
+            HandEntryCount = 3,
+        };
+        var secondCombat = new CardDrawPlayRateTracker.CombatSnapshot();
+        secondCombat.Cards[firstKey] = new CardDrawPlayRateTracker.CardCombatStats
+        {
+            PlayFromHandCount = 1,
+            HandEntryCount = 4,
+        };
+        secondCombat.Cards[secondKey] = new CardDrawPlayRateTracker.CardCombatStats
+        {
+            PlayFromHandCount = 5,
+            HandEntryCount = 6,
+        };
+        var state = new CardDrawPlayRateTracker.PlayerSaveState
+        {
+            RecentCombats = [firstCombat, secondCombat],
+        };
+
+        string compactJson = JsonSerializer.Serialize(state);
+        Assert.Contains("\"n\":2", compactJson);
+        Assert.Contains("\"h\":", compactJson);
+        Assert.DoesNotContain(nameof(CardDrawPlayRateTracker.PlayerSaveState.RecentCombats), compactJson);
+        Assert.DoesNotContain(nameof(CardDrawPlayRateTracker.CardCombatStats.PlayFromHandCount), compactJson);
+        Assert.Equal(1, compactJson.Split(firstKey, StringSplitOptions.None).Length - 1);
+
+        CardDrawPlayRateTracker.PlayerSaveState roundTripped =
+            JsonSerializer.Deserialize<CardDrawPlayRateTracker.PlayerSaveState>(compactJson)!;
+        Assert.Equal(2, roundTripped.RecentCombats.Count);
+        Assert.Equal(2, roundTripped.RecentCombats[0].Cards[firstKey].PlayFromHandCount);
+        Assert.Equal(4, roundTripped.RecentCombats[1].Cards[firstKey].HandEntryCount);
+        Assert.Equal(5, roundTripped.RecentCombats[1].Cards[secondKey].PlayFromHandCount);
+
+        const string legacyJson =
+            "{\"RecentCombats\":[{\"Cards\":{\"CARD_A|u0|f1|enone\":{\"PlayFromHandCount\":7,\"HandEntryCount\":9}}}]}";
+        CardDrawPlayRateTracker.PlayerSaveState migrated =
+            JsonSerializer.Deserialize<CardDrawPlayRateTracker.PlayerSaveState>(legacyJson)!;
+        Assert.Single(migrated.RecentCombats);
+        Assert.Equal(7, migrated.RecentCombats[0].Cards[firstKey].PlayFromHandCount);
+        Assert.Equal(9, migrated.RecentCombats[0].Cards[firstKey].HandEntryCount);
+        Assert.DoesNotContain("RecentCombats", JsonSerializer.Serialize(migrated));
     }
 
     [Fact]

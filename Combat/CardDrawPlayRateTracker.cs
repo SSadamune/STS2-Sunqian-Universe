@@ -2,6 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using MegaCrit.Sts2.Core.Combat;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.Entities.Players;
@@ -548,7 +550,7 @@ public static class CardDrawPlayRateTracker
 		}
 
 		PlayerSaveState saved = SavedData.Get(player);
-		runtime.Recent = CloneCombatList(saved.RecentCombats);
+		runtime.Recent = CloneCombatList(saved.RecentCombats.TakeLast(MaxStoredCombats));
 		runtime.Current = new CombatSnapshot();
 		runtime.CelebrateMourningExhaustResults.Clear();
 		runtime.CelebrateMourningCards.Clear();
@@ -752,7 +754,7 @@ public static class CardDrawPlayRateTracker
 		PlayerRuntime runtime = GetOrCreateRuntime(player);
 		SavedData.Modify(player, saved =>
 		{
-			saved.RecentCombats = CloneCombatList(runtime.Recent);
+			saved.RecentCombats = CloneCombatList(runtime.Recent.TakeLast(MaxStoredCombats));
 		});
 	}
 
@@ -907,9 +909,147 @@ public static class CardDrawPlayRateTracker
 			new(ReferenceEqualityComparer.Instance);
 	}
 
+	[JsonConverter(typeof(PlayerSaveStateJsonConverter))]
 	public sealed class PlayerSaveState
 	{
 		public List<CombatSnapshot> RecentCombats { get; set; } = [];
+	}
+
+	/// <summary>
+	/// Stores each stable card identity only once and transposes its per-combat
+	/// play/entry counts into a compact integer array. The reader also accepts the
+	/// original v4 object graph, so an existing run keeps all of its history and is
+	/// rewritten compactly after the next completed combat.
+	/// </summary>
+	public sealed class PlayerSaveStateJsonConverter : JsonConverter<PlayerSaveState>
+	{
+		private const string CombatCountProperty = "n";
+
+		private const string HistoriesProperty = "h";
+
+		private const string LegacyRecentCombatsProperty = "RecentCombats";
+
+		public override PlayerSaveState Read(
+			ref Utf8JsonReader reader,
+			Type typeToConvert,
+			JsonSerializerOptions options)
+		{
+			using JsonDocument document = JsonDocument.ParseValue(ref reader);
+			JsonElement root = document.RootElement;
+			if (root.ValueKind != JsonValueKind.Object)
+			{
+				return new PlayerSaveState();
+			}
+
+			if (root.TryGetProperty(HistoriesProperty, out JsonElement historiesElement))
+			{
+				return ReadCompact(root, historiesElement);
+			}
+
+			if (root.TryGetProperty(LegacyRecentCombatsProperty, out JsonElement legacyElement))
+			{
+				List<CombatSnapshot>? legacy = JsonSerializer.Deserialize<List<CombatSnapshot>>(
+					legacyElement.GetRawText(),
+					options);
+				return new PlayerSaveState
+				{
+					RecentCombats = CloneCombatList((legacy ?? []).TakeLast(MaxStoredCombats)),
+				};
+			}
+
+			return new PlayerSaveState();
+		}
+
+		public override void Write(
+			Utf8JsonWriter writer,
+			PlayerSaveState value,
+			JsonSerializerOptions options)
+		{
+			List<CombatSnapshot> recent = value.RecentCombats
+				.TakeLast(MaxStoredCombats)
+				.ToList();
+			string[] keys = recent
+				.SelectMany(snapshot => snapshot.Cards.Keys)
+				.Distinct(StringComparer.Ordinal)
+				.OrderBy(key => key, StringComparer.Ordinal)
+				.ToArray();
+
+			writer.WriteStartObject();
+			writer.WriteNumber(CombatCountProperty, recent.Count);
+			writer.WritePropertyName(HistoriesProperty);
+			writer.WriteStartObject();
+			foreach (string key in keys)
+			{
+				writer.WritePropertyName(key);
+				writer.WriteStartArray();
+				foreach (CombatSnapshot snapshot in recent)
+				{
+					if (snapshot.Cards.TryGetValue(key, out CardCombatStats? stats))
+					{
+						writer.WriteNumberValue(stats.PlayFromHandCount);
+						writer.WriteNumberValue(stats.HandEntryCount);
+					}
+					else
+					{
+						writer.WriteNumberValue(0);
+						writer.WriteNumberValue(0);
+					}
+				}
+				writer.WriteEndArray();
+			}
+			writer.WriteEndObject();
+			writer.WriteEndObject();
+		}
+
+		private static PlayerSaveState ReadCompact(JsonElement root, JsonElement historiesElement)
+		{
+			if (historiesElement.ValueKind != JsonValueKind.Object)
+			{
+				return new PlayerSaveState();
+			}
+
+			int serializedCombatCount = root.TryGetProperty(CombatCountProperty, out JsonElement countElement)
+				&& countElement.TryGetInt32(out int parsedCount)
+					? Math.Max(0, parsedCount)
+					: 0;
+			int retainedCombatCount = Math.Min(serializedCombatCount, MaxStoredCombats);
+			int skippedCombatCount = serializedCombatCount - retainedCombatCount;
+			var recent = Enumerable.Range(0, retainedCombatCount)
+				.Select(_ => new CombatSnapshot())
+				.ToList();
+
+			foreach (JsonProperty history in historiesElement.EnumerateObject())
+			{
+				if (history.Value.ValueKind != JsonValueKind.Array)
+				{
+					continue;
+				}
+
+				int[] counts = history.Value
+					.EnumerateArray()
+					.Select(element => element.TryGetInt32(out int count) ? count : 0)
+					.ToArray();
+				for (int retainedIndex = 0; retainedIndex < retainedCombatCount; retainedIndex++)
+				{
+					int serializedIndex = skippedCombatCount + retainedIndex;
+					int countIndex = serializedIndex * 2;
+					int plays = countIndex < counts.Length ? counts[countIndex] : 0;
+					int entries = countIndex + 1 < counts.Length ? counts[countIndex + 1] : 0;
+					if (plays == 0 && entries == 0)
+					{
+						continue;
+					}
+
+					recent[retainedIndex].Cards[history.Name] = new CardCombatStats
+					{
+						PlayFromHandCount = plays,
+						HandEntryCount = entries,
+					};
+				}
+			}
+
+			return new PlayerSaveState { RecentCombats = recent };
+		}
 	}
 
 	public sealed class CombatSnapshot
