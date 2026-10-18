@@ -5,7 +5,6 @@ using MegaCrit.Sts2.Core.Combat;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.Entities.Creatures;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
-using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Models;
 using Squ.Audio;
 using STS2RitsuLib.Scaffolding.Content;
@@ -35,9 +34,6 @@ public abstract class FamilyCardTemplate : ModCardTemplate
 		CardKeyword.Unplayable,
 		SquKeywords.Family,
 	];
-
-	protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
-		[SquCommonL10n.PlayRateHoverTip()];
 
 	protected FamilyCardTemplate(int energyCost = -1)
 		: base(energyCost, CardType.Quest, CardRarity.Quest, TargetType.None, showInCardLibrary: false)

@@ -38,7 +38,6 @@ public sealed class CutePet : FamilyCardTemplate
 
 	protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
 	[
-		.. base.AdditionalHoverTips,
 		HoverTipFactory.Static(StaticHoverTip.SummonDynamic, DynamicVars.Summon),
 	];
 

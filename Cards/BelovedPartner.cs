@@ -36,7 +36,6 @@ public sealed class BelovedPartner : FamilyCardTemplate
 	[
 		HoverTipFactory.FromPower<RegenPower>(),
 		HoverTipFactory.FromPower<TinderPower>(),
-		.. base.AdditionalHoverTips,
 	];
 
 	public override IEnumerable<CardKeyword> CanonicalKeywords =>

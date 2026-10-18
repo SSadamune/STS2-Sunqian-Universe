@@ -1,6 +1,7 @@
 using MegaCrit.Sts2.Core.Combat;
 using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
+using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.Cards;
 using MegaCrit.Sts2.Core.Models.Characters;
@@ -67,6 +68,20 @@ public sealed class NeverHadTheseRelicTests : SunqianCombatTestSuite
         await relic.AfterSideTurnStart(CombatSide.Enemy, [EnemyAt(0)], Combat);
         Assert.Equal(energyBefore, Player.PlayerCombatState.Energy);
         Assert.Null(Player.Creature.GetPower<DexterityPower>());
+    }
+
+    [Fact]
+    public void Own_hover_tips_still_explain_energy_and_dexterity()
+    {
+        IHoverTip[] tips = ModelDb.Relic<NeverHadTheseRelic>().HoverTips.ToArray();
+
+        Assert.Contains(tips, tip => tip.CanonicalModel is NeverHadTheseRelic);
+        Assert.Contains(
+            tips.OfType<HoverTip>(),
+            tip => tip.Id.Contains("ENERGY.title", StringComparison.Ordinal));
+        Assert.Contains(
+            tips.OfType<HoverTip>(),
+            tip => tip.Id == ModelDb.Power<DexterityPower>().Id.ToString());
     }
 
     private NeverHadTheseRelic CreateRelic()

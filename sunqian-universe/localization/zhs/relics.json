@@ -39,6 +39,6 @@
   "SUNQIAN_UNIVERSE_RELIC_FAKE_SEVEN_STAR_DAGGER.description": "在战斗中右键点击此遗物，[gold]视为打出[/gold]一张[gold]七星[/gold]，然后此遗物永久失效。",
   "SUNQIAN_UNIVERSE_RELIC_FAKE_SEVEN_STAR_DAGGER.flavor": "你以为它就是七星宝刀吗？",
   "SUNQIAN_UNIVERSE_RELIC_NEVER_HAD_THESE.title": "就当我从来没有这些！",
-  "SUNQIAN_UNIVERSE_RELIC_NEVER_HAD_THESE.description": "战斗开始时，你每从卡组中移除过一张[gold]家人[/gold]牌，获得1{energyPrefix:energyIcons(1)}和1点[gold]敏捷[/gold]。",
+  "SUNQIAN_UNIVERSE_RELIC_NEVER_HAD_THESE.description": "每场战斗开始时，根据你从卡组中移除过的[gold]家人[/gold]牌的数量，获得等量{energyPrefix:energyIcons(1)}和[gold]敏捷[/gold]。",
   "SUNQIAN_UNIVERSE_RELIC_NEVER_HAD_THESE.flavor": "我从来没有这些！"
 }

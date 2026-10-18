@@ -3,10 +3,12 @@ using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.Entities.Players;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
+using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.Characters;
 using MegaCrit.Sts2.Core.Models.Monsters;
 using MegaCrit.Sts2.Core.Models.Powers;
+using Squ;
 using Squ.Cards;
 using Squ.Interop;
 using Squ.Powers;
@@ -59,6 +61,35 @@ public sealed class FamilyQuestCardTests : SunqianCombatTestSuite
 {
     protected override void ConfigureBattle(CombatTestBattleBuilder battle) =>
         battle.Player<Ironclad>().AddEnemy<BigDummy>().WithSeed("family-quest-cards");
+
+    [Fact]
+    public async Task Family_cards_show_each_keyword_once_and_skip_the_play_rate_explanation()
+    {
+        CardModel[] cards =
+        [
+            await AddToHand<CutePet>(),
+            await AddToHand<BelovedPartner>(),
+            await AddToHand<NextOfKin>(),
+        ];
+
+        foreach (CardModel card in cards)
+        {
+            string description = card.GetDescriptionForPile(PileType.Hand);
+            foreach (CardKeyword keyword in card.Keywords)
+            {
+                HoverTip keywordTip = Assert.IsType<HoverTip>(HoverTipFactory.FromKeyword(keyword));
+                string marker = "[gold]" + keywordTip.Title + "[/gold]";
+                Assert.Equal(1, description.Split(marker).Length - 1);
+            }
+
+            Assert.Contains(
+                card.HoverTips.OfType<HoverTip>(),
+                tip => tip.Id.Contains("KEYWORD_FAMILY", StringComparison.Ordinal));
+            Assert.DoesNotContain(
+                card.HoverTips.OfType<HoverTip>(),
+                tip => tip.Id.Contains(SquCommonL10n.PlayRateTitleKey, StringComparison.Ordinal));
+        }
+    }
 
     [Fact]
     public async Task Cute_pet_is_unplayable_and_ethereal_and_summons_four_hp_when_exhausted()
@@ -127,7 +158,14 @@ public sealed class FamilyQuestCardTests : SunqianCombatTestSuite
         Assert.Contains(CardKeyword.Innate, card.Keywords);
         Assert.Contains(CardKeyword.Ethereal, card.Keywords);
         Assert.Contains(CardKeyword.Unplayable, card.Keywords);
-        Assert.DoesNotContain("[purple]", card.GetDescriptionForPile(PileType.Hand));
+        string description = card.GetDescriptionForPile(PileType.Hand);
+        Assert.DoesNotContain("[purple]", description);
+        foreach (CardKeyword keyword in card.Keywords)
+        {
+            HoverTip keywordTip = Assert.IsType<HoverTip>(HoverTipFactory.FromKeyword(keyword));
+            string marker = "[gold]" + keywordTip.Title + "[/gold]";
+            Assert.Equal(1, description.Split(marker).Length - 1);
+        }
 
         await CardCmd.Exhaust(
             new BlockingPlayerChoiceContext(),

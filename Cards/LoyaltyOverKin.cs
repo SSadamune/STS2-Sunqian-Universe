@@ -64,11 +64,15 @@ public sealed class LoyaltyOverKin : ModCardTemplate
 				HoverTipFactory.FromPower<StrengthPower>(),
 				SquCommonL10n.PlayRateHoverTip(),
 			];
-			List<CardModel> previewTargets = GetDescriptionPreviewTargets();
-			IHoverTip? targetTip = CreateTargetCardsHoverTip(previewTargets);
+			bool inCombat = TryGetDescriptionPreviewTargets(out List<CardModel> previewTargets);
+			IHoverTip? targetTip = CreateTargetCardsHoverTip(previewTargets, inCombat);
 			if (targetTip != null)
 			{
 				tips.Add(targetTip);
+				for (int index = 0; index < previewTargets.Count; index++)
+				{
+					tips.Add(new TargetCardHoverTip(previewTargets[index], index));
+				}
 			}
 
 			return tips;
@@ -109,7 +113,8 @@ public sealed class LoyaltyOverKin : ModCardTemplate
 
 		foreach (CardModel card in selected)
 		{
-			if (card.Pile?.Type != PileType.Draw)
+			// 打出时已选定。先消耗的牌可能让《闻丧贺喜》回到手牌，这张牌仍要被消耗。
+			if (card.Pile?.Type is not (PileType.Draw or PileType.Hand or PileType.Discard))
 			{
 				continue;
 			}
@@ -135,27 +140,39 @@ public sealed class LoyaltyOverKin : ModCardTemplate
 		DynamicVars[nameof(StrengthPower)].UpgradeValueBy(UpgradedStrength - BaseStrength);
 	}
 
-	private IHoverTip? CreateTargetCardsHoverTip(IReadOnlyList<CardModel> previewTargets)
+	private IHoverTip? CreateTargetCardsHoverTip(IReadOnlyList<CardModel> previewTargets, bool inCombat)
 	{
-		if (previewTargets.Count == 0)
+		if (!inCombat)
 		{
 			return null;
 		}
 
-		LocString description = new("cards", Id.Entry + ".targetCards");
-		description.Add("Cards", FormatCardList(previewTargets));
+		string entrySuffix = previewTargets.Count switch
+		{
+			0 => ".targetCardsNone",
+			1 => ".targetCardsInsufficient",
+			_ => ".targetCards",
+		};
+		LocString description = new("cards", Id.Entry + entrySuffix);
+		if (previewTargets.Count > 0)
+		{
+			description.Add("Cards", FormatCardList(previewTargets));
+		}
+
 		return new HoverTip(SquCommonL10n.AnnotationTitle(), description);
 	}
 
-	private List<CardModel> GetDescriptionPreviewTargets()
+	private bool TryGetDescriptionPreviewTargets(out List<CardModel> previewTargets)
 	{
 		// 图鉴规范卡不可变，访问 Owner 会 AssertMutable；仅战斗中的可变实例才预览消耗目标。
 		if (!IsMutable || RunState is null || !CombatManager.Instance.IsInProgress || Owner?.PlayerCombatState == null)
 		{
-			return [];
+			previewTargets = [];
+			return false;
 		}
 
-		return SelectTargets();
+		previewTargets = SelectTargets();
+		return true;
 	}
 
 	private List<CardModel> SelectTargets() =>
@@ -170,5 +187,22 @@ public sealed class LoyaltyOverKin : ModCardTemplate
 		string separator = new LocString("cards", Id.Entry + ".cardSeparator").GetFormattedText()
 			?? ", ";
 		return string.Join(separator, cards.Select(card => $"[gold]{card.Title}[/gold]"));
+	}
+
+	/// <summary>
+	/// 只展示将被消耗的卡面。编号按本次预览序号区分，避免同名牌被去重；
+	/// 不附带这些牌自己的悬停说明。
+	/// </summary>
+	private sealed class TargetCardHoverTip : CardHoverTip, IHoverTip
+	{
+		private readonly string _id;
+
+		public TargetCardHoverTip(CardModel card, int index)
+			: base(card)
+		{
+			_id = $"{card.Id.Entry}:{index}";
+		}
+
+		string IHoverTip.Id => _id;
 	}
 }

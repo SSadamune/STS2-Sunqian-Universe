@@ -8,6 +8,8 @@ using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.Acts;
 using MegaCrit.Sts2.Core.Models.Characters;
 using MegaCrit.Sts2.Core.Models.Monsters;
+using MegaCrit.Sts2.Core.Models.Powers;
+using Squ;
 using Squ.Cards;
 using Squ.Events;
 using Squ.Relics;
@@ -157,6 +159,12 @@ public sealed class FamilyOfOriginTests : SunqianCombatTestSuite
         IHoverTip[] all = tips.ToArray();
         Assert.Contains(all, tip => tip is CardHoverTip cardTip && cardTip.Card is TCard);
         Assert.Contains(all, tip => tip.CanonicalModel is NeverHadTheseRelic);
+        string dexterityTipId = ModelDb.Power<DexterityPower>().Id.ToString();
+        Assert.DoesNotContain(
+            all.OfType<HoverTip>(),
+            tip => tip.Id.Contains("ENERGY.title", StringComparison.Ordinal)
+                || tip.Id == dexterityTipId
+                || tip.Id.Contains(SquCommonL10n.PlayRateTitleKey, StringComparison.Ordinal));
     }
 
     private static void AssertPage(FamilyOfOrigin evt, string page, int optionCount)

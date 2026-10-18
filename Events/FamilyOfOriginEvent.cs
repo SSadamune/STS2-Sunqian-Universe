@@ -103,9 +103,7 @@ public sealed class FamilyOfOrigin : ModEventTemplate
 			yield return tip;
 		}
 
-		foreach (IHoverTip tip in HoverTipFactory.FromRelic<NeverHadTheseRelic>())
-		{
-			yield return tip;
-		}
+		// 只悬停遗物本身。能量和敏捷的说明仍留在遗物自己的悬停里。
+		yield return ModelDb.Relic<NeverHadTheseRelic>().HoverTip;
 	}
 }
