@@ -24,7 +24,7 @@ public sealed class CutePet : FamilyCardTemplate
 		PortraitPath: "res://images/cards/CutePet.png");
 
 	public CutePet()
-		: base(0)
+		: base()
 	{
 	}
 
@@ -44,7 +44,8 @@ public sealed class CutePet : FamilyCardTemplate
 
 	public override IEnumerable<CardKeyword> CanonicalKeywords =>
 	[
-		CardKeyword.Exhaust,
+		CardKeyword.Ethereal,
+		CardKeyword.Unplayable,
 		SquKeywords.Family,
 	];
 
