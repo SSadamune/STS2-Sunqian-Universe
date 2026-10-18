@@ -8,7 +8,6 @@ using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.Powers;
-using Squ.Audio;
 // using Squ.Character;
 using Squ.Powers;
 using Squ.Script;
@@ -49,8 +48,6 @@ public sealed class NeverHadThese : ModCardTemplate
 
 	protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
 	{
-		SquSfx.Play(SquSfx.NeverHadThesePlayEvent);
-
 		if (CombatState is not { } combatState)
 		{
 			return;

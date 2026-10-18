@@ -6,6 +6,7 @@ using MegaCrit.Sts2.Core.Events;
 using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.Acts;
+using Squ.Audio;
 using Squ.Cards;
 using Squ.Relics;
 using STS2RitsuLib.Interop.AutoRegistration;
@@ -43,6 +44,7 @@ public sealed class FamilyOfOrigin : ModEventTemplate
 
 	private async Task ReadCutePet()
 	{
+		SquSfx.Play(SquSfx.NeverHadTheseCutePetOptionEvent);
 		await AddCardToDeck<CutePet>();
 		await RelicCmd.Obtain<NeverHadTheseRelic>(Owner!);
 		SetEventState(PageDescription(PartnerPage),
@@ -58,6 +60,7 @@ public sealed class FamilyOfOrigin : ModEventTemplate
 
 	private async Task ReadBelovedPartner()
 	{
+		SquSfx.Play(SquSfx.NeverHadTheseBelovedPartnerOptionEvent);
 		await AddCardToDeck<BelovedPartner>();
 		SetEventState(PageDescription(NextOfKinPage),
 		[
@@ -72,6 +75,7 @@ public sealed class FamilyOfOrigin : ModEventTemplate
 
 	private async Task ReadNextOfKin()
 	{
+		SquSfx.Play(SquSfx.NeverHadTheseNextOfKinOptionEvent);
 		await AddCardToDeck<NextOfKin>();
 		SetEventFinished(PageDescription(CompletedPage));
 	}

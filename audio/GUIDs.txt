@@ -44,7 +44,9 @@
 {f0c71181-2a39-4de2-91ed-c84fc3b187a3} event:/sunqian_universe/sfx/从来没有这些-爱侣-小乔，上酒
 {d63c41df-d2ee-417f-a529-b4a6123bf575} event:/sunqian_universe/sfx/从来没有这些-至亲-不够，远远不够
 {a369ab36-4102-4b80-be5a-a5bcdc063d5c} event:/sunqian_universe/sfx/从来没有这些-至亲-孩儿不孝啊
+{759ff266-f83a-4e79-83ee-d42d6b597f7f} event:/sunqian_universe/sfx/从来没有这些-至亲-孩儿对不住你呀
 {09022d2f-fba2-4826-b72e-4c80ae2cf645} event:/sunqian_universe/sfx/从来没有这些-萌宠-各个有情有义
+{f9fbd53d-929a-4811-be04-4f4d88f1c617} event:/sunqian_universe/sfx/从来没有这些-萌宠-对不起你们
 {c9bc6e2e-6108-4c91-953a-ba9dad3f2b50} event:/sunqian_universe/sfx/传送门-冀州和荆州有空间通道
 {c854d646-1a8f-4400-9135-8c2e2f6004d9} event:/sunqian_universe/sfx/传送门-子午谷未必不可行
 {5b64ddfc-20fb-4712-b30b-eb05519d5377} event:/sunqian_universe/sfx/传送门-星夜从甘肃杀到河南

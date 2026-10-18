@@ -12,6 +12,7 @@ using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.Powers;
 using MegaCrit.Sts2.Core.Models.RelicPools;
 using MegaCrit.Sts2.Core.Saves.Runs;
+using Squ.Audio;
 using STS2RitsuLib.Interop.AutoRegistration;
 using STS2RitsuLib.Scaffolding.Content;
 
@@ -81,6 +82,7 @@ public sealed class NeverHadTheseRelic : ModRelicTemplate
 		}
 
 		Flash();
+		SquSfx.Play(SquSfx.NeverHadTheseRelicTriggerEvent);
 		await PlayerCmd.GainEnergy(RemovedFamilyCards, Owner);
 		await PowerCmd.Apply<DexterityPower>(
 			new ThrowingPlayerChoiceContext(),
