@@ -69,10 +69,6 @@ public sealed class LoyaltyOverKin : ModCardTemplate
 			if (targetTip != null)
 			{
 				tips.Add(targetTip);
-				foreach (CardModel target in previewTargets)
-				{
-					tips.Add(HoverTipFactory.FromCard(target));
-				}
 			}
 
 			return tips;
@@ -93,13 +89,6 @@ public sealed class LoyaltyOverKin : ModCardTemplate
 
 		SquSfx.Play(SquSfx.LoyaltyOverKinEvent);
 		List<CardModel> selected = SelectTargets();
-
-		CardDrawPlayRateTracker.LogCurrentState(
-			Owner,
-			windowSize: PlayRateWindow,
-			includeCurrentCombat: IncludeCurrentCombat,
-			selectedCards: selected,
-			reason: $"Loyalty Over Kin OnPlay (count={ExhaustCount})");
 
 		Creature target = cardPlay.Target;
 		decimal strengthAmount = DynamicVars[nameof(StrengthPower)].BaseValue;

@@ -1,7 +1,7 @@
 [gd_scene load_steps=3 format=3 uid="uid://c6gvty2sjjast"]
 
-[ext_resource type="Texture2D" uid="uid://bh5fjxxj7jr10" path="res://icon.svg" id="1_74iws"]
-[ext_resource type="Texture2D" uid="uid://6tarkc7gfa3l" path="res://images/scenes/campfire.png" id="2_clcmj"]
+[ext_resource type="Texture2D" path="res://icon.svg" id="1_74iws"]
+[ext_resource type="Texture2D" path="res://images/scenes/campfire.png" id="2_clcmj"]
 
 [node name="SunqianCharacterRestSite" type="Node2D"]
 

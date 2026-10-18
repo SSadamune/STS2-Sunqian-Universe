@@ -10,7 +10,7 @@ namespace Squ.Interop;
 /// Optional proxy for the public gameplay API exposed by the Yjcm mod.
 /// Keep these fallback stubs simple: RitsuLib replaces them only when Yjcm is loaded.
 /// </summary>
-[AssemblyInterop("Yjcm.Api.YjcmPublicApi, Yjcm")]
+[ModInterop("Yjcm", "Yjcm.Api.YjcmPublicApi")]
 public static class YjcmPublicApiInterop
 {
 	public static bool IsReady => false;

@@ -1,7 +1,7 @@
 [gd_scene load_steps=3 format=3 uid="uid://byrx5q8skyuso"]
 
-[ext_resource type="Texture2D" uid="uid://dwx3g61ljr1ok" path="res://images/character/Longtao.png" id="1_3x068"]
-[ext_resource type="Texture2D" uid="uid://fvld4nn4e664" path="res://images/scenes/merchant.png" id="1_fyan6"]
+[ext_resource type="Texture2D" path="res://images/character/Longtao.png" id="1_3x068"]
+[ext_resource type="Texture2D" path="res://images/scenes/merchant.png" id="1_fyan6"]
 
 [node name="SunqianMerchant" type="Node2D"]
 
