@@ -1,17 +1,21 @@
 using System.Reflection;
 using HarmonyLib;
 using MegaCrit.Sts2.Core.Commands;
+using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.Entities.Players;
 using MegaCrit.Sts2.Core.Entities.Relics;
 using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.Acts;
+using MegaCrit.Sts2.Core.Models.Cards;
 using MegaCrit.Sts2.Core.Models.Characters;
 using MegaCrit.Sts2.Core.Models.Monsters;
 using MegaCrit.Sts2.Core.Models.Powers;
+using MegaCrit.Sts2.Core.Models.Relics;
 using Squ;
 using Squ.Cards;
 using Squ.Events;
+using Squ.Powers;
 using Squ.Relics;
 using TestTheSpire;
 using Xunit;
@@ -65,11 +69,11 @@ public sealed class FamilyOfOriginTests : SunqianCombatTestSuite
         battle.Player<Ironclad>().AddEnemy<BigDummy>().WithSeed("family-of-origin-event");
 
     [Fact]
-    public void Event_is_registered_only_in_the_second_act()
+    public void Event_is_registered_in_both_first_act_maps_and_the_second_act()
     {
         Assert.Contains(ModelDb.Act<Hive>().AllEvents, evt => evt is FamilyOfOrigin);
-        Assert.DoesNotContain(ModelDb.Act<Overgrowth>().AllEvents, evt => evt is FamilyOfOrigin);
-        Assert.DoesNotContain(ModelDb.Act<Underdocks>().AllEvents, evt => evt is FamilyOfOrigin);
+        Assert.Contains(ModelDb.Act<Overgrowth>().AllEvents, evt => evt is FamilyOfOrigin);
+        Assert.Contains(ModelDb.Act<Underdocks>().AllEvents, evt => evt is FamilyOfOrigin);
         Assert.DoesNotContain(ModelDb.Act<Glory>().AllEvents, evt => evt is FamilyOfOrigin);
     }
 
@@ -103,6 +107,96 @@ public sealed class FamilyOfOriginTests : SunqianCombatTestSuite
         {
             TestEventRelicObtain.Reset();
         }
+    }
+
+    [Fact]
+    public async Task Paels_tooth_removal_and_returned_family_cards_can_strengthen_the_relic_twice()
+    {
+        // TestTheSpire needs at least one queued combat action before teardown. All event,
+        // deck-removal, and relic lifecycle APIs below otherwise execute outside that queue.
+        await Play(await AddToHand<StrikeIronclad>(), EnemyAt(0));
+
+        NeverHadTheseRelic familyRelic;
+        TestEventRelicObtain.Enabled = true;
+        try
+        {
+            FamilyOfOrigin evt = await BeginEvent();
+            await evt.CurrentOptions[0].Chosen();
+            await evt.CurrentOptions[0].Chosen();
+            await evt.CurrentOptions[0].Chosen();
+            familyRelic = Assert.IsType<NeverHadTheseRelic>(
+                Assert.Single(TestEventRelicObtain.Relics));
+        }
+        finally
+        {
+            TestEventRelicObtain.Reset();
+        }
+
+        // Attach the event relic silently so deck removal still traverses the real hook list,
+        // without running an out-of-room relic-obtain animation during an active test combat.
+        Player.AddRelicInternal(familyRelic, silent: true);
+        CardModel[] originalFamilyCards = Player.Deck.Cards
+            .Where(card => card is CutePet or BelovedPartner or NextOfKin)
+            .ToArray();
+        Assert.Equal(3, originalFamilyCards.Length);
+        HashSet<CardModel> originalFamilyCardSet = [..originalFamilyCards];
+
+        var selector = new ScriptedCardSelector().ThenSelect(options => originalFamilyCards
+            .Concat(options.Where(card => !originalFamilyCardSet.Contains(card)).Take(2))
+            .ToArray());
+        var paelsTooth = (PaelsTooth)ModelDb.Relic<PaelsTooth>().ToMutable();
+        paelsTooth.Owner = Player;
+        using (UseCardSelector(selector))
+        {
+            await paelsTooth.AfterObtained();
+        }
+
+        AssertAllSelectionsConsumed(selector);
+        Assert.Empty(Player.Deck.Cards.Where(card => card is FamilyCardTemplate));
+        Assert.Equal(PaelsTooth.cardsCount, paelsTooth.SerializableCards.Count);
+        AssertFamilyRemovalCounts(familyRelic, expectedCopiesOfEachCard: 1);
+
+        int energyBeforeFirstTrigger = Player.PlayerCombatState!.Energy;
+        int drawBeforeFirstTrigger = PileType.Draw.GetPile(Player).Cards.Count;
+        int petsBeforeFirstTrigger = Combat.Creatures.Count(creature => creature.IsPet);
+        await familyRelic.AfterSideTurnStart(
+            MegaCrit.Sts2.Core.Combat.CombatSide.Player,
+            [Player.Creature],
+            Combat);
+
+        Assert.Equal(energyBeforeFirstTrigger + 3, Player.PlayerCombatState.Energy);
+        Assert.Equal(drawBeforeFirstTrigger - NextOfKin.DrawAmount, PileType.Draw.GetPile(Player).Cards.Count);
+        Assert.Equal(petsBeforeFirstTrigger + 1, Combat.Creatures.Count(creature => creature.IsPet));
+        CardTestAssertions.AssertPowerAmount<RegenPower>(Player.Creature, BelovedPartner.RegenAmount);
+        CardTestAssertions.AssertPowerAmount<TinderPower>(Player.Creature, BelovedPartner.TinderAmount);
+
+        // PaelsTooth returns one stored card after each combat. Resolve enough combat-end
+        // hooks to return all five cards, including the three Family cards.
+        while (paelsTooth.SerializableCards.Count > 0)
+        {
+            await paelsTooth.AfterCombatEnd(null!);
+        }
+
+        CardModel[] returnedFamilyCards = Player.Deck.Cards
+            .Where(card => card is CutePet or BelovedPartner or NextOfKin)
+            .ToArray();
+        Assert.Equal(3, returnedFamilyCards.Length);
+        Assert.All(returnedFamilyCards, card => Assert.True(card.IsUpgraded));
+        Assert.Empty(paelsTooth.SerializableCards);
+
+        await CardPileCmd.RemoveFromDeck(returnedFamilyCards, showPreview: false);
+
+        Assert.Empty(Player.Deck.Cards.Where(card => card is FamilyCardTemplate));
+        AssertFamilyRemovalCounts(familyRelic, expectedCopiesOfEachCard: 2);
+
+        var description = familyRelic.DynamicDescription;
+        familyRelic.DynamicVars.AddTo(description);
+        string formattedDescription = description.GetFormattedText();
+        Assert.Contains("召唤[/gold]8", formattedDescription);
+        Assert.Contains("获得4层[gold]再生[/gold]和6层[gold]火种[/gold]", formattedDescription);
+        Assert.Contains("抽4张牌", formattedDescription);
+
+        Player.RemoveRelicInternal(familyRelic, silent: true);
     }
 
     [Fact]
@@ -151,6 +245,16 @@ public sealed class FamilyOfOriginTests : SunqianCombatTestSuite
         var evt = (FamilyOfOrigin)ModelDb.Event<FamilyOfOrigin>().ToMutable();
         await evt.BeginEvent(Player, combatSynchronizer: null, isPreFinished: false);
         return evt;
+    }
+
+    private static void AssertFamilyRemovalCounts(
+        NeverHadTheseRelic relic,
+        int expectedCopiesOfEachCard)
+    {
+        Assert.Equal(expectedCopiesOfEachCard * 3, relic.RemovedFamilyCards);
+        Assert.Equal(expectedCopiesOfEachCard, relic.RemovedCutePets);
+        Assert.Equal(expectedCopiesOfEachCard, relic.RemovedBelovedPartners);
+        Assert.Equal(expectedCopiesOfEachCard, relic.RemovedNextOfKin);
     }
 
     private static void AssertReadOptionTips<TCard>(IEnumerable<IHoverTip> tips)

@@ -2,9 +2,11 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
+using MegaCrit.Sts2.Core.Entities.Players;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
+using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.CardPools;
 using MegaCrit.Sts2.Core.Models.Powers;
 using Squ.Audio;
@@ -19,7 +21,7 @@ namespace Squ.Cards;
 [RegisterCard(typeof(TokenCardPool), StableEntryStem = "beloved_partner")]
 public sealed class BelovedPartner : FamilyCardTemplate
 {
-	public const int RegenAmount = 3;
+	public const int RegenAmount = 2;
 	public const int TinderAmount = 3;
 
 	public override CardAssetProfile AssetProfile => new(
@@ -56,17 +58,32 @@ public sealed class BelovedPartner : FamilyCardTemplate
 		PlayerChoiceContext choiceContext,
 		bool causedByEthereal)
 	{
+		await ResolveExhaustEffect(
+			choiceContext,
+			Owner,
+			DynamicVars[nameof(RegenPower)].BaseValue,
+			DynamicVars[nameof(TinderPower)].BaseValue,
+			this);
+	}
+
+	internal static async Task ResolveExhaustEffect(
+		PlayerChoiceContext choiceContext,
+		Player owner,
+		decimal regenAmount,
+		decimal tinderAmount,
+		CardModel? source)
+	{
 		await PowerCmd.Apply<RegenPower>(
 			choiceContext,
-			Owner.Creature,
-			DynamicVars[nameof(RegenPower)].BaseValue,
-			Owner.Creature,
-			this);
+			owner.Creature,
+			regenAmount,
+			owner.Creature,
+			source);
 		await PowerCmd.Apply<TinderPower>(
 			choiceContext,
-			Owner.Creature,
-			DynamicVars[nameof(TinderPower)].BaseValue,
-			Owner.Creature,
-			this);
+			owner.Creature,
+			tinderAmount,
+			owner.Creature,
+			source);
 	}
 }

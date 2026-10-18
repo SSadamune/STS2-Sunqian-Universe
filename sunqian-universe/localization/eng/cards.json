@@ -265,7 +265,7 @@
   "SUNQIAN_UNIVERSE_CARD_NEVER_HAD_THESE.title": "Never Had These",
   "SUNQIAN_UNIVERSE_CARD_NEVER_HAD_THESE.description": "Choose 1 of 3 [gold]Family[/gold] cards to add to your [gold]Hand[/gold]. Add the others to your [gold]Draw Pile[/gold].\nWhenever a [gold]Family[/gold] card is [gold]Exhausted[/gold], gain {energyPrefix:energyIcons(1)} and {DexterityPower:diff()} [gold]Dexterity[/gold].",
   "SUNQIAN_UNIVERSE_CARD_NEXT_OF_KIN.title": "Casus Belli",
-  "SUNQIAN_UNIVERSE_CARD_NEXT_OF_KIN.description": "When Exhausted, draw {Cards:diff()} cards and remove this card from your deck.",
+  "SUNQIAN_UNIVERSE_CARD_NEXT_OF_KIN.description": "When Exhausted, draw {Cards:diff()} cards.",
   "SUNQIAN_UNIVERSE_CARD_BELOVED_PARTNER.title": "Hostess Dancer",
   "SUNQIAN_UNIVERSE_CARD_BELOVED_PARTNER.description": "When Exhausted, gain {RegenPower:diff()} [gold]Regen[/gold] and {TinderPower:diff()} [gold]Tinder[/gold].",
   "SUNQIAN_UNIVERSE_CARD_CUTE_PET.title": "My Good Sirs",

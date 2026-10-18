@@ -265,7 +265,7 @@
   "SUNQIAN_UNIVERSE_CARD_NEVER_HAD_THESE.title": "从来就没有这些",
   "SUNQIAN_UNIVERSE_CARD_NEVER_HAD_THESE.description": "从三张「[gold]家人[/gold]」牌中获得一张，其余加入[gold]抽牌堆[/gold]。\n每有一张[gold]家人[/gold]被[gold]消耗[/gold]，你获得{energyPrefix:energyIcons(1)}和{DexterityPower:diff()}点[gold]敏捷[/gold]。",
   "SUNQIAN_UNIVERSE_CARD_NEXT_OF_KIN.title": "宣战理由",
-  "SUNQIAN_UNIVERSE_CARD_NEXT_OF_KIN.description": "被消耗时，抽{Cards:diff()}张牌并从卡组中移除此牌。",
+  "SUNQIAN_UNIVERSE_CARD_NEXT_OF_KIN.description": "被消耗时，抽{Cards:diff()}张牌。",
   "SUNQIAN_UNIVERSE_CARD_BELOVED_PARTNER.title": "陪酒舞女",
   "SUNQIAN_UNIVERSE_CARD_BELOVED_PARTNER.description": "被消耗时，获得{RegenPower:diff()}层[gold]再生[/gold]和{TinderPower:diff()}层[gold]火种[/gold]。",
   "SUNQIAN_UNIVERSE_CARD_CUTE_PET.title": "列位仁兄",

@@ -12,6 +12,7 @@ using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.CardPools;
 using MegaCrit.Sts2.Core.Models.Enchantments;
 using Squ.Audio;
+using Squ.Combat;
 using STS2RitsuLib.Interop.AutoRegistration;
 using STS2RitsuLib.Scaffolding.Content;
 
@@ -19,7 +20,7 @@ namespace Squ.Cards;
 
 /// <summary>由《铁索连舟》的“稍作修改”产生：从抽牌堆选择至多两（三）张可播种或带消耗的牌。</summary>
 [RegisterCard(typeof(TokenCardPool), StableEntryStem = "farming_general")]
-public sealed class FarmingGeneral : ModCardTemplate
+public sealed class FarmingGeneral : SlightRevisionDerivedCardTemplate
 {
 	public const int BaseMaxCards = 2;
 	public const int UpgradedMaxCards = 3;
@@ -43,7 +44,7 @@ public sealed class FarmingGeneral : ModCardTemplate
 		PortraitPath: "res://images/cards/FarmingGeneral.png");
 
 	public FarmingGeneral()
-		: base(1, CardType.Power, CardRarity.Token, TargetType.Self)
+		: base(1, CardType.Power, TargetType.Self)
 	{
 	}
 

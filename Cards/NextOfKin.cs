@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
+using MegaCrit.Sts2.Core.Entities.Players;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.Models.CardPools;
@@ -35,7 +36,7 @@ public sealed class NextOfKin : FamilyCardTemplate
 	];
 
 	public NextOfKin()
-		: base(3)
+		: base(1)
 	{
 	}
 
@@ -45,11 +46,12 @@ public sealed class NextOfKin : FamilyCardTemplate
 		PlayerChoiceContext choiceContext,
 		bool causedByEthereal)
 	{
-		await CardPileCmd.Draw(choiceContext, DynamicVars.Cards.BaseValue, Owner);
-		if (DeckVersion is { Pile.Type: PileType.Deck } deckCard)
-		{
-			await CardPileCmd.RemoveFromDeck(deckCard);
-			DeckVersion = null;
-		}
+		await ResolveExhaustEffect(choiceContext, Owner, DynamicVars.Cards.BaseValue);
 	}
+
+	internal static Task ResolveExhaustEffect(
+		PlayerChoiceContext choiceContext,
+		Player owner,
+		decimal drawAmount) =>
+		CardPileCmd.Draw(choiceContext, drawAmount, owner);
 }

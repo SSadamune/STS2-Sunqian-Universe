@@ -39,6 +39,10 @@
   "SUNQIAN_UNIVERSE_RELIC_FAKE_SEVEN_STAR_DAGGER.description": "在战斗中右键点击此遗物，[gold]视为打出[/gold]一张[gold]七星[/gold]，然后此遗物永久失效。",
   "SUNQIAN_UNIVERSE_RELIC_FAKE_SEVEN_STAR_DAGGER.flavor": "你以为它就是七星宝刀吗？",
   "SUNQIAN_UNIVERSE_RELIC_NEVER_HAD_THESE.title": "就当我从来没有这些！",
-  "SUNQIAN_UNIVERSE_RELIC_NEVER_HAD_THESE.description": "每场战斗开始时，根据你从卡组中移除过的[gold]家人[/gold]牌的数量，获得等量{energyPrefix:energyIcons(1)}和[gold]敏捷[/gold]。",
+  "SUNQIAN_UNIVERSE_RELIC_NEVER_HAD_THESE.description": "每场战斗开始时，根据你从卡组中移除过的[gold]家人[/gold]牌的数量，获得等量{energyPrefix:energyIcons(1)}，并触发它们被消耗时的效果。{TriggeredEffectsLine}",
+  "SUNQIAN_UNIVERSE_RELIC_NEVER_HAD_THESE.triggeredEffectsLine": "[green]包括[/green]：{CutePetEffect}{BelovedPartnerEffect}{NextOfKinEffect}",
+  "SUNQIAN_UNIVERSE_RELIC_NEVER_HAD_THESE.cutePetEffect": "\n- [gold]召唤[/gold]{Summon}。",
+  "SUNQIAN_UNIVERSE_RELIC_NEVER_HAD_THESE.belovedPartnerEffect": "\n- 获得{Regen}层[gold]再生[/gold]和{Tinder}层[gold]火种[/gold]。",
+  "SUNQIAN_UNIVERSE_RELIC_NEVER_HAD_THESE.nextOfKinEffect": "\n- 抽{Cards}张牌。",
   "SUNQIAN_UNIVERSE_RELIC_NEVER_HAD_THESE.flavor": "我从来没有这些！"
 }

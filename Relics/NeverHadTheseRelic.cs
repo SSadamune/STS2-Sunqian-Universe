@@ -7,12 +7,11 @@ using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.Entities.Creatures;
 using MegaCrit.Sts2.Core.Entities.Relics;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
-using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Models;
-using MegaCrit.Sts2.Core.Models.Powers;
 using MegaCrit.Sts2.Core.Models.RelicPools;
 using MegaCrit.Sts2.Core.Saves.Runs;
 using Squ.Audio;
+using Squ.Cards;
 using STS2RitsuLib.Interop.AutoRegistration;
 using STS2RitsuLib.Scaffolding.Content;
 
@@ -21,12 +20,16 @@ using STS2RitsuLib.Scaffolding.Content;
 namespace Squ.Relics;
 
 /// <summary>
-/// 就当我从来没有这些！：记录本局从牌组中移除的家人牌，并在战斗开始时按数量提供能量和敏捷。
+/// 就当我从来没有这些！：记录本局从牌组中移除的家人牌，并在战斗开始时按数量
+/// 提供能量、触发这些牌被消耗时的效果。
 /// </summary>
 [RegisterRelic(typeof(EventRelicPool), StableEntryStem = "never_had_these")]
 public sealed class NeverHadTheseRelic : ModRelicTemplate
 {
 	private int _removedFamilyCards;
+	private int _removedCutePets;
+	private int _removedBelovedPartners;
+	private int _removedNextOfKin;
 
 	public override RelicRarity Rarity => RelicRarity.Event;
 
@@ -35,11 +38,6 @@ public sealed class NeverHadTheseRelic : ModRelicTemplate
 	public override int DisplayAmount => RemovedFamilyCards;
 
 	protected override bool IncludeEnergyHoverTip => true;
-
-	protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
-	[
-		HoverTipFactory.FromPower<DexterityPower>(),
-	];
 
 	public override RelicAssetProfile AssetProfile => new(
 		IconPath: "res://images/relics/NeverHadTheseRelic.png",
@@ -58,11 +56,56 @@ public sealed class NeverHadTheseRelic : ModRelicTemplate
 		}
 	}
 
+	[SavedProperty(SerializationCondition.SaveIfNotTypeDefault)]
+	public int RemovedCutePets
+	{
+		get => _removedCutePets;
+		set
+		{
+			AssertMutable();
+			_removedCutePets = value;
+		}
+	}
+
+	[SavedProperty(SerializationCondition.SaveIfNotTypeDefault)]
+	public int RemovedBelovedPartners
+	{
+		get => _removedBelovedPartners;
+		set
+		{
+			AssertMutable();
+			_removedBelovedPartners = value;
+		}
+	}
+
+	[SavedProperty(SerializationCondition.SaveIfNotTypeDefault)]
+	public int RemovedNextOfKin
+	{
+		get => _removedNextOfKin;
+		set
+		{
+			AssertMutable();
+			_removedNextOfKin = value;
+		}
+	}
+
 	public override Task BeforeCardRemoved(CardModel card)
 	{
 		if (card.Owner == Owner && card.HasFamily())
 		{
 			RemovedFamilyCards++;
+			switch (card)
+			{
+				case CutePet:
+					RemovedCutePets++;
+					break;
+				case BelovedPartner:
+					RemovedBelovedPartners++;
+					break;
+				case NextOfKin:
+					RemovedNextOfKin++;
+					break;
+			}
 			Flash();
 		}
 
@@ -84,11 +127,33 @@ public sealed class NeverHadTheseRelic : ModRelicTemplate
 		Flash();
 		SquSfx.Play(SquSfx.NeverHadTheseRelicTriggerEvent);
 		await PlayerCmd.GainEnergy(RemovedFamilyCards, Owner);
-		await PowerCmd.Apply<DexterityPower>(
-			new ThrowingPlayerChoiceContext(),
-			Owner.Creature,
-			RemovedFamilyCards,
-			Owner.Creature,
-			null);
+
+		var choiceContext = new ThrowingPlayerChoiceContext();
+		for (int index = 0; index < RemovedCutePets; index++)
+		{
+			await CutePet.ResolveExhaustEffect(
+				choiceContext,
+				Owner,
+				CutePet.SummonAmount,
+				this);
+		}
+
+		for (int index = 0; index < RemovedBelovedPartners; index++)
+		{
+			await BelovedPartner.ResolveExhaustEffect(
+				choiceContext,
+				Owner,
+				BelovedPartner.RegenAmount,
+				BelovedPartner.TinderAmount,
+				null);
+		}
+
+		for (int index = 0; index < RemovedNextOfKin; index++)
+		{
+			await NextOfKin.ResolveExhaustEffect(
+				choiceContext,
+				Owner,
+				NextOfKin.DrawAmount);
+		}
 	}
 }

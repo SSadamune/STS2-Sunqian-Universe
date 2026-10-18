@@ -74,6 +74,7 @@ public sealed class FamilyQuestCardTests : SunqianCombatTestSuite
 
         foreach (CardModel card in cards)
         {
+            Assert.True(card.ShouldShowInCardLibrary);
             string description = card.GetDescriptionForPile(PileType.Hand);
             foreach (CardKeyword keyword in card.Keywords)
             {
@@ -111,7 +112,7 @@ public sealed class FamilyQuestCardTests : SunqianCombatTestSuite
     }
 
     [Fact]
-    public async Task Beloved_partner_costs_two_and_grants_regen_and_tinder_when_exhausted()
+    public async Task Beloved_partner_costs_two_and_grants_two_regen_and_three_tinder_when_exhausted()
     {
         var card = await AddToHand<BelovedPartner>();
 
@@ -124,10 +125,12 @@ public sealed class FamilyQuestCardTests : SunqianCombatTestSuite
 
         CardTestAssertions.AssertPowerAmount<RegenPower>(Player.Creature, BelovedPartner.RegenAmount);
         CardTestAssertions.AssertPowerAmount<TinderPower>(Player.Creature, BelovedPartner.TinderAmount);
+        Assert.Equal(2, BelovedPartner.RegenAmount);
+        Assert.Equal(3, BelovedPartner.TinderAmount);
     }
 
     [Fact]
-    public async Task Next_of_kin_draws_two_and_removes_its_linked_deck_card_when_exhausted()
+    public async Task Next_of_kin_costs_one_and_draws_two_without_removing_its_linked_deck_card()
     {
         CardModel deckCard = Player.RunState.CreateCard<NextOfKin>(Player);
         await CardPileCmd.Add(deckCard, PileType.Deck);
@@ -135,7 +138,7 @@ public sealed class FamilyQuestCardTests : SunqianCombatTestSuite
         card.DeckVersion = deckCard;
         int drawBefore = PileType.Draw.GetPile(Player).Cards.Count;
 
-        Assert.Equal(3, card.EnergyCost.Canonical);
+        Assert.Equal(1, card.EnergyCost.Canonical);
         Assert.Contains(CardKeyword.Retain, card.Keywords);
         Assert.Contains(CardKeyword.Exhaust, card.Keywords);
         Assert.Contains(SquKeywords.Family, card.Keywords);
@@ -143,8 +146,8 @@ public sealed class FamilyQuestCardTests : SunqianCombatTestSuite
         await CardCmd.Exhaust(new BlockingPlayerChoiceContext(), card);
 
         Assert.Equal(drawBefore - NextOfKin.DrawAmount, PileType.Draw.GetPile(Player).Cards.Count);
-        Assert.DoesNotContain(deckCard, Player.Deck.Cards);
-        Assert.Null(card.DeckVersion);
+        Assert.Contains(deckCard, Player.Deck.Cards);
+        Assert.Same(deckCard, card.DeckVersion);
     }
 
     [Fact]

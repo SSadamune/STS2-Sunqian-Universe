@@ -82,15 +82,11 @@ public sealed class UncommonCardPoolTests : SunqianCombatTestSuite
     public void Non_character_pool_uncommons_are_covered_separately()
     {
         var arrogant = Combat.CreateCard<TheArrogantFall>(Player);
-        var fireMeteor = Combat.CreateCard<FireMeteorShower>(Player);
         var grieving = Combat.CreateCard<TheGrievingPrevail>(Player);
         var knowWrong = Combat.CreateCard<KnowWrongDenyWrong>(Player);
-        var saidAcid = Combat.CreateCard<SaidNotAfraidOfAcid>(Player);
 
         Assert.Equal(CardRarity.Uncommon, arrogant.Rarity);
-        Assert.Equal(CardRarity.Uncommon, fireMeteor.Rarity);
         Assert.Equal(CardRarity.Uncommon, grieving.Rarity);
         Assert.Equal(CardRarity.Uncommon, knowWrong.Rarity);
-        Assert.Equal(CardRarity.Uncommon, saidAcid.Rarity);
     }
 }

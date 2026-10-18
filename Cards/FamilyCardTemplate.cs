@@ -36,7 +36,7 @@ public abstract class FamilyCardTemplate : ModCardTemplate
 	];
 
 	protected FamilyCardTemplate(int energyCost = -1)
-		: base(energyCost, CardType.Quest, CardRarity.Quest, TargetType.None, showInCardLibrary: false)
+		: base(energyCost, CardType.Quest, CardRarity.Quest, TargetType.None, showInCardLibrary: true)
 	{
 	}
 

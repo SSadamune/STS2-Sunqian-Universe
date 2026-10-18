@@ -16,6 +16,8 @@ using STS2RitsuLib.Scaffolding.Content;
 
 namespace Squ.Events;
 
+[RegisterActEvent(typeof(Overgrowth))]
+[RegisterActEvent(typeof(Underdocks))]
 [RegisterActEvent(typeof(Hive))]
 public sealed class FamilyOfOrigin : ModEventTemplate
 {
