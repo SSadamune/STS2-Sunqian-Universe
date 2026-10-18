@@ -22,7 +22,7 @@ namespace Squ.Cards;
 
 /// <summary>由飞火流星的「稍作修改」产生，沿用其改版前的升级效果。</summary>
 [RegisterCard(typeof(TokenCardPool), StableEntryStem = "fire_meteor_shower")]
-public sealed class FireMeteorShower : ModCardTemplate, IRandomEnemyTargetCount
+public sealed class FireMeteorShower : SlightRevisionDerivedCardTemplate, IRandomEnemyTargetCount
 {
 	public const int DamageAmount = 3;
 	public const int BurningStacks = 5;
@@ -50,7 +50,7 @@ public sealed class FireMeteorShower : ModCardTemplate, IRandomEnemyTargetCount
 	public override TargetType TargetType => SquTargetTypes.RandomEnemies;
 
 	public FireMeteorShower()
-		: base(0, CardType.Attack, CardRarity.Uncommon, TargetType.AnyEnemy)
+		: base(0, CardType.Attack, TargetType.AnyEnemy)
 	{
 	}
 

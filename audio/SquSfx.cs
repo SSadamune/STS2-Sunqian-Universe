@@ -170,11 +170,13 @@ internal static class SquSfx
 	public const string MusouAttackBraverThanLuBuEvent = "event:/sunqian_universe/sfx/无双乱舞-没想到有人比他还勇猛";
 	public const string RuthlessStrikeDontForceMeEvent = "event:/sunqian_universe/sfx/无情打击-可别逼我使出无情剑来";
 	public const string RuthlessStrikeSwordSoundEvent = "event:/sunqian_universe/sfx/无情打击-剑声";
-	public const string NeverHadThesePlayEvent = "event:/sunqian_universe/sfx/从来没有这些-从来没有这些";
-	public const string NeverHadTheseBelovedPartnerDiscardEvent = "event:/sunqian_universe/sfx/从来没有这些-爱侣-小乔，上酒";
-	public const string NeverHadTheseBelovedPartnerExhaustEvent = "event:/sunqian_universe/sfx/从来没有这些-爱侣-先生请快上车";
-	public const string NeverHadTheseNextOfKinExhaustEvent = "event:/sunqian_universe/sfx/从来没有这些-至亲-孩儿不孝啊";
+	public const string NeverHadTheseRelicTriggerEvent = "event:/sunqian_universe/sfx/从来没有这些-从来没有这些";
+	public const string NeverHadTheseCutePetOptionEvent = "event:/sunqian_universe/sfx/从来没有这些-萌宠-对不起你们";
 	public const string NeverHadTheseCutePetExhaustEvent = "event:/sunqian_universe/sfx/从来没有这些-萌宠-各个有情有义";
+	public const string NeverHadTheseBelovedPartnerOptionEvent = "event:/sunqian_universe/sfx/从来没有这些-爱侣-小乔，上酒";
+	public const string NeverHadTheseBelovedPartnerExhaustEvent = "event:/sunqian_universe/sfx/从来没有这些-爱侣-先生请快上车";
+	public const string NeverHadTheseNextOfKinOptionEvent = "event:/sunqian_universe/sfx/从来没有这些-至亲-孩儿对不住你呀";
+	public const string NeverHadTheseNextOfKinExhaustEvent = "event:/sunqian_universe/sfx/从来没有这些-至亲-孩儿不孝啊";
 	public const string KeepPlayingKeepDancingEvent = "event:/sunqian_universe/sfx/接着奏乐接着舞-接着奏乐接着舞";
 	public const string WorkLifeBalanceLetMeEnjoyEvent = "event:/sunqian_universe/sfx/劳逸结合-我打了一辈子仗就不能享受享受吗";
 	public const string BurnAfterReadingPlayEvent = "event:/sunqian_universe/sfx/阅后即焚-读完一卷烧一卷，全部读完则全部烧尽";
@@ -269,6 +271,8 @@ internal static class SquSfx
 	public const string WineStillDrinkEvent = "event:/sunqian_universe/sfx/酒-还是喝酒吧";
 	public const string WineOldHeroEvent = "event:/sunqian_universe/sfx/酒-酒是老英雄";
 	public const string WineWentIntoTownEvent = "event:/sunqian_universe/sfx/酒-进城喝酒去了";
+	public const string GreatWeiChoirPlayEvent = "event:/sunqian_universe/sfx/祈雨合唱团-风萧萧兮易水寒";
+	public const string GreatWeiChoirTriggerEvent = "event:/sunqian_universe/sfx/祈雨合唱团-司马懿是英雄";
 
 	public static readonly string[] TheBackupsBackupEvents =
 	[

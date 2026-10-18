@@ -86,7 +86,7 @@ public static class SquMod
 			.CardKeywordOwnedByLocNamespace(
 				"war_feeds_war",
 				iconPath: null,
-				ModKeywordCardDescriptionPlacement.AfterCardDescription,
+				ModKeywordCardDescriptionPlacement.BeforeCardDescription,
 				includeInCardHoverTip: false)
 			.ArchaicToothTranscendence<SunqianScript, SunqianUniverse>()
 			.TouchOfOrobasRefinement<BoxLunchRelic, AbundantBoxLunchRelic>()

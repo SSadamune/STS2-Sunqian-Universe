@@ -16,6 +16,7 @@ public sealed class RareCardPoolTests : SunqianCombatTestSuite
         typeof(Blitzkrieg),
         typeof(BombardChibiScript),
         typeof(BurningLinkedCampsScript),
+        typeof(CelebrateMourning),
         typeof(CloseFittingArmor),
         typeof(CrossTheRiver),
         typeof(DistributedScreenwriter),
@@ -32,7 +33,6 @@ public sealed class RareCardPoolTests : SunqianCombatTestSuite
         typeof(Metamorphosis),
         typeof(MonsterHuntingMethod),
         typeof(MusouAttack),
-        typeof(NeverHadThese),
         typeof(PartTimeGeneralScript),
         typeof(RuthlessStrike),
         typeof(SelfDecapitationAscension),
@@ -63,5 +63,6 @@ public sealed class RareCardPoolTests : SunqianCombatTestSuite
     {
         Assert.Equal(CardRarity.Rare, Combat.CreateCard<GiftFourWheeledCart>(Player).Rarity);
         Assert.Equal(CardRarity.Rare, Combat.CreateCard<MutatedCentaur>(Player).Rarity);
+        Assert.Equal(CardRarity.Rare, Combat.CreateCard<NeverHadThese>(Player).Rarity);
     }
 }

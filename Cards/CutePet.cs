@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
+using MegaCrit.Sts2.Core.Entities.Players;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
@@ -24,7 +25,7 @@ public sealed class CutePet : FamilyCardTemplate
 		PortraitPath: "res://images/cards/CutePet.png");
 
 	public CutePet()
-		: base(0)
+		: base()
 	{
 	}
 
@@ -38,18 +39,25 @@ public sealed class CutePet : FamilyCardTemplate
 
 	protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
 	[
-		.. base.AdditionalHoverTips,
 		HoverTipFactory.Static(StaticHoverTip.SummonDynamic, DynamicVars.Summon),
 	];
 
 	public override IEnumerable<CardKeyword> CanonicalKeywords =>
 	[
-		CardKeyword.Exhaust,
+		CardKeyword.Ethereal,
+		CardKeyword.Unplayable,
 		SquKeywords.Family,
 	];
 
 	protected override Task ResolveAdditionalExhaust(
 		PlayerChoiceContext choiceContext,
 		bool causedByEthereal) =>
-		OstyCmd.Summon(choiceContext, Owner, DynamicVars.Summon.BaseValue, this);
+		ResolveExhaustEffect(choiceContext, Owner, DynamicVars.Summon.BaseValue, this);
+
+	internal static Task ResolveExhaustEffect(
+		PlayerChoiceContext choiceContext,
+		Player owner,
+		decimal summonAmount,
+		AbstractModel source) =>
+		OstyCmd.Summon(choiceContext, owner, summonAmount, source);
 }

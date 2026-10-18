@@ -1,9 +1,12 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using MegaCrit.Sts2.Core.Commands;
+using MegaCrit.Sts2.Core.Entities.Cards;
+using MegaCrit.Sts2.Core.Entities.Players;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
+using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.CardPools;
 using MegaCrit.Sts2.Core.Models.Powers;
 using Squ.Audio;
@@ -16,47 +19,71 @@ using STS2RitsuLib.Scaffolding.Content;
 namespace Squ.Cards;
 
 [RegisterCard(typeof(TokenCardPool), StableEntryStem = "beloved_partner")]
-public sealed class BelovedPartner : FamilyCardTemplate
+public sealed class BelovedPartner : FamilyCardTemplate, IRowKeywordsCard
 {
-	public const int VigorAmount = 3;
-	public const int TinderAmount = 3;
+	public const int RegenAmount = 2;
+	public const int TinderAmount = 4;
 
 	public override CardAssetProfile AssetProfile => new(
 		PortraitPath: "res://images/cards/BelovedPartner.png");
 
-	protected override bool ResolvesEffectsWhenDiscarded => true;
-
 	protected override IEnumerable<DynamicVar> CanonicalVars =>
 	[
-		new PowerVar<VigorPower>(VigorAmount),
+		new PowerVar<RegenPower>(RegenAmount),
 		new PowerVar<TinderPower>(TinderAmount),
 		.. base.CanonicalVars,
 	];
 
 	protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
 	[
-		HoverTipFactory.FromPower<VigorPower>(),
+		HoverTipFactory.FromPower<RegenPower>(),
 		HoverTipFactory.FromPower<TinderPower>(),
-		.. base.AdditionalHoverTips,
 	];
 
-	protected override string DiscardSfxEvent => SquSfx.NeverHadTheseBelovedPartnerDiscardEvent;
+	public override IEnumerable<CardKeyword> CanonicalKeywords =>
+	[
+		CardKeyword.Exhaust,
+		CardKeyword.Sly,
+		SquKeywords.Family,
+	];
+
+	public BelovedPartner()
+		: base(2)
+	{
+	}
 
 	protected override string ExhaustSfxEvent => SquSfx.NeverHadTheseBelovedPartnerExhaustEvent;
 
-	protected override async Task ResolveAdditionalDiscard(PlayerChoiceContext choiceContext)
+	protected override async Task ResolveAdditionalExhaust(
+		PlayerChoiceContext choiceContext,
+		bool causedByEthereal)
 	{
-		await PowerCmd.Apply<VigorPower>(
+		await ResolveExhaustEffect(
 			choiceContext,
-			Owner.Creature,
-			DynamicVars[nameof(VigorPower)].BaseValue,
-			Owner.Creature,
+			Owner,
+			DynamicVars[nameof(RegenPower)].BaseValue,
+			DynamicVars[nameof(TinderPower)].BaseValue,
 			this);
+	}
+
+	internal static async Task ResolveExhaustEffect(
+		PlayerChoiceContext choiceContext,
+		Player owner,
+		decimal regenAmount,
+		decimal tinderAmount,
+		CardModel? source)
+	{
+		await PowerCmd.Apply<RegenPower>(
+			choiceContext,
+			owner.Creature,
+			regenAmount,
+			owner.Creature,
+			source);
 		await PowerCmd.Apply<TinderPower>(
 			choiceContext,
-			Owner.Creature,
-			DynamicVars[nameof(TinderPower)].BaseValue,
-			Owner.Creature,
-			this);
+			owner.Creature,
+			tinderAmount,
+			owner.Creature,
+			source);
 	}
 }

@@ -1,5 +1,7 @@
+using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Entities.Cards;
+using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Models.Monsters;
 using MegaCrit.Sts2.Core.Models.Powers;
@@ -50,6 +52,33 @@ public sealed class NewsanguoJointModTests : SunqianCombatTestSuite
 
         Assert.Equal(Wine.BaseVigor, NewsanguoPublicApiInterop.GetDrunkenMight(Player));
         Assert.Null(Player.Creature.GetPower<VigorPower>());
+    }
+
+    [Fact]
+    public async Task Normal_thinking_uses_real_heavens_force_api_when_ethereal()
+    {
+        Assert.True(NewsanguoPublicApiInterop.IsReady);
+        string heavensForceTitle = Assert.IsType<HoverTip>(
+            NewsanguoPublicApiInterop.CreateHeavensForceHoverTip()).Title
+            ?? throw new InvalidOperationException("Heaven's Force hover title is missing.");
+        var card = await AddToHand<NormalThinking>();
+        Assert.Contains(heavensForceTitle, card.GetDescriptionForPile(PileType.Hand));
+
+        await NewsanguoPublicApiInterop.AddHeavensForce(
+            new BlockingPlayerChoiceContext(),
+            Player,
+            NormalThinking.HeavensForceLoss,
+            card);
+        int before = NewsanguoPublicApiInterop.GetHeavensForce(Player);
+
+        await CardCmd.Exhaust(
+            new BlockingPlayerChoiceContext(),
+            card,
+            causedByEthereal: true);
+
+        Assert.Equal(
+            before - NormalThinking.HeavensForceLoss,
+            NewsanguoPublicApiInterop.GetHeavensForce(Player));
     }
 
     private static void AssertUsesDrunkenMightText(

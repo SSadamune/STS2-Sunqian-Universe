@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using MegaCrit.Sts2.Core.Commands;
+using MegaCrit.Sts2.Core.Combat;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.HoverTips;
@@ -9,6 +10,7 @@ using MegaCrit.Sts2.Core.Localization;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.Powers;
+using MegaCrit.Sts2.Core.Runs;
 using Squ;
 using Squ.Audio;
 using Squ.Character;
@@ -21,11 +23,13 @@ using STS2RitsuLib.Scaffolding.Content;
 namespace Squ.Cards;
 
 /// <summary>
-/// 闻丧贺喜：获得活力；牌组中打出率最高的「其它」牌被消耗时回手。
+/// 闻丧贺喜：获得活力并抽牌；打出率最高的牌被消耗后回手。
 /// </summary>
 [RegisterCard(typeof(SunqianCardPool), StableEntryStem = "celebrate_mourning")]
 public sealed class CelebrateMourning : ModCardTemplate
 {
+	public const int MaxReturnTriggerDetailedCards = 8;
+
 	public const int BaseVigor = 4;
 
 	public const int UpgradedVigor = 6;
@@ -48,15 +52,19 @@ public sealed class CelebrateMourning : ModCardTemplate
 				HoverTipFactory.FromPower<VigorPower>(),
 				SquCommonL10n.PlayRateHoverTip(),
 			];
-			List<CardModel> triggerTargets = GetReturnTriggerTargets();
-			IHoverTip? triggerTip = CreateReturnTriggerHoverTip(triggerTargets);
-			if (triggerTip != null)
+			if (RunManager.Instance is not { IsInProgress: true })
 			{
-				tips.Add(triggerTip);
-				foreach (CardModel target in triggerTargets)
-				{
-					tips.Add(HoverTipFactory.FromCard(target));
-				}
+				tips.Add(new HoverTip(
+					SquCommonL10n.AnnotationTitle(),
+					new LocString("cards", Id.Entry + ".annotation")));
+				return tips;
+			}
+
+			List<CardModel> triggerTargets = GetReturnTriggerTargets();
+			ReturnTriggerPreview? preview = CreateReturnTriggerPreview(triggerTargets);
+			if (preview != null)
+			{
+				tips.Add(preview.Summary);
 			}
 
 			return tips;
@@ -67,7 +75,7 @@ public sealed class CelebrateMourning : ModCardTemplate
 		PortraitPath: "res://images/cards/CelebrateMourning.png");
 
 	public CelebrateMourning()
-		: base(0, CardType.Skill, CardRarity.Uncommon, TargetType.Self)
+		: base(0, CardType.Skill, CardRarity.Rare, TargetType.Self)
 	{
 	}
 
@@ -80,6 +88,7 @@ public sealed class CelebrateMourning : ModCardTemplate
 			DynamicVars[nameof(VigorPower)].BaseValue,
 			Owner.Creature,
 			this);
+		await CardPileCmd.Draw(choiceContext, Owner);
 	}
 
 	protected override void OnUpgrade()
@@ -88,37 +97,24 @@ public sealed class CelebrateMourning : ModCardTemplate
 	}
 
 	/// <summary>
-	/// 任意卡牌被消耗后：若其为牌组中打出率最高的「其它」牌（并列任一），则本牌回手。
+	/// 任意实体卡牌被消耗后：若该牌在消耗时的有效候选中打出率最高（并列任一），则本牌回手。
 	/// </summary>
 	public override async Task AfterCardExhausted(
 		PlayerChoiceContext choiceContext,
 		CardModel card,
 		bool causedByEthereal)
 	{
-		if (!CanListenForReturnTrigger() || card.Owner != Owner || IsCelebrateMourning(card))
+		if (!CanListenForReturnTrigger() || card.Owner != Owner)
 		{
 			return;
 		}
 
-		List<CardModel> candidates = GetOtherPlayRateCandidates(card);
-		if (!CardDrawPlayRateTracker.IsAmongHighestPlayRateCards(
+		if (!CardDrawPlayRateTracker.WasAmongHighestCelebrateMourningCandidatesAtExhaust(
 			    Owner,
-			    card,
-			    candidates,
-			    windowSize: PlayRateWindow,
-			    includeCurrentCombat: IncludeCurrentCombat))
+			    card))
 		{
 			return;
 		}
-
-		HashSet<CardModel> highest = GetHighestOtherPlayRateCards(candidates);
-
-		CardDrawPlayRateTracker.LogCurrentState(
-			Owner,
-			windowSize: PlayRateWindow,
-			includeCurrentCombat: IncludeCurrentCombat,
-			selectedCards: highest.ToList(),
-			reason: $"Celebrate Mourning return-to-hand (exhausted: {card.Title})");
 
 		SquSfx.Play(SquSfx.CelebrateMourningGrieveForLordEvent);
 		if (Pile?.Type != PileType.Hand)
@@ -135,66 +131,76 @@ public sealed class CelebrateMourning : ModCardTemplate
 			return [];
 		}
 
-		return GetHighestOtherPlayRateCards(GetOtherPlayRateCandidates())
-			.OrderBy(card => card.Title, System.StringComparer.Ordinal)
+		return GetHighestPlayRateCards(GetPlayRateCandidates())
 			.ToList();
 	}
 
-	private List<CardModel> GetOtherPlayRateCandidates(CardModel? exhaustedCard = null)
+	private List<CardModel> GetPlayRateCandidates()
 	{
-		List<CardModel> candidates = PileType.Deck.GetPile(Owner).Cards
-			.Where(card => !IsCelebrateMourning(card))
-			.ToList();
-		if (Owner.PlayerCombatState is { } playerCombatState)
+		if (CombatManager.Instance is { IsInProgress: true })
 		{
-			candidates.AddRange(playerCombatState.AllCards.Where(card =>
-				card.DeckVersion is null
-				&& card.HasFamily()
-				&& card.Pile?.Type is PileType.Hand or PileType.Draw or PileType.Discard or PileType.Play));
+			return CardDrawPlayRateTracker.GetCelebrateMourningPlayRateCandidates(Owner);
 		}
 
-		if (exhaustedCard is { } exhausted
-			&& exhausted.DeckVersion is null
-			&& exhausted.HasFamily()
-			&& !candidates.Contains(exhausted))
-		{
-			candidates.Add(exhausted);
-		}
-
-		return candidates;
+		return PileType.Deck.GetPile(Owner).Cards.ToList();
 	}
 
-	private IHoverTip? CreateReturnTriggerHoverTip(IReadOnlyList<CardModel> triggerTargets)
+	private ReturnTriggerPreview? CreateReturnTriggerPreview(IReadOnlyList<CardModel> triggerTargets)
 	{
 		if (triggerTargets.Count == 0)
 		{
 			return null;
 		}
 
+		List<TriggerTargetGroup> groups = triggerTargets
+			.GroupBy(card => card.Title, System.StringComparer.Ordinal)
+			.Select(group => new TriggerTargetGroup(group.Key, group.ToList()))
+			.OrderBy(group => group.Title, System.StringComparer.Ordinal)
+			.ToList();
+		List<TriggerTargetGroup> visibleGroups = groups
+			.Take(MaxReturnTriggerDetailedCards)
+			.ToList();
+		List<string> labels = visibleGroups
+			.Select(group => group.Cards.Count == 1
+				? $"[gold]{group.Title}[/gold]"
+				: $"[gold]{group.Title} × {group.Cards.Count}[/gold]")
+			.ToList();
+		int hiddenCardCount = groups
+			.Skip(MaxReturnTriggerDetailedCards)
+			.Sum(group => group.Cards.Count);
+		if (hiddenCardCount > 0)
+		{
+			LocString moreCards = new("cards", Id.Entry + ".returnTriggerMoreCards");
+			moreCards.Add("Cards", hiddenCardCount);
+			labels.Add(moreCards.GetFormattedText() ?? hiddenCardCount.ToString());
+		}
+
 		LocString description = new("cards", Id.Entry + ".returnTriggerHoverTip");
-		description.Add("Cards", FormatCardList(triggerTargets));
-		return new HoverTip(SquCommonL10n.AnnotationTitle(), description);
+		description.Add("Cards", FormatCardList(labels));
+		return new ReturnTriggerPreview(
+			new HoverTip(SquCommonL10n.AnnotationTitle(), description));
 	}
 
-	private HashSet<CardModel> GetHighestOtherPlayRateCards(IEnumerable<CardModel> candidates) =>
+	private HashSet<CardModel> GetHighestPlayRateCards(IEnumerable<CardModel> candidates) =>
 		CardDrawPlayRateTracker.GetHighestPlayRateCards(
 			Owner,
 			candidates,
 			windowSize: PlayRateWindow,
 			includeCurrentCombat: IncludeCurrentCombat);
 
-	private string FormatCardList(IReadOnlyList<CardModel> cards)
+	private string FormatCardList(IReadOnlyList<string> cardLabels)
 	{
 		string separator = new LocString("cards", Id.Entry + ".cardSeparator").GetFormattedText()
 			?? ", ";
-		return string.Join(separator, cards.Select(card => $"[gold]{card.Title}[/gold]"));
+		return string.Join(separator, cardLabels);
 	}
-
-	private static bool IsCelebrateMourning(CardModel card) =>
-		card is CelebrateMourning || card.DeckVersion is CelebrateMourning;
 
 	private static bool CanListenForReturnTrigger(PileType? pileType) =>
 		pileType is PileType.Hand or PileType.Draw or PileType.Discard or PileType.Exhaust;
 
 	private bool CanListenForReturnTrigger() => CanListenForReturnTrigger(Pile?.Type);
+
+	private sealed record TriggerTargetGroup(string Title, IReadOnlyList<CardModel> Cards);
+
+	private sealed record ReturnTriggerPreview(IHoverTip Summary);
 }

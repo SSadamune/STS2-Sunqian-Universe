@@ -27,7 +27,7 @@ namespace Squ.Cards;
 /// 使用后从主卡组永久移除。
 /// </summary>
 [RegisterCard(typeof(SunqianCardPool), StableEntryStem = "greatest_pass_of_central_plains")]
-public sealed class GreatestPassOfCentralPlains : ModCardTemplate
+public sealed class GreatestPassOfCentralPlains : ModCardTemplate, IRowKeywordsCard
 {
 	public const int BlockAmount = 16;
 	public const int UpgradedBlockAmount = 24;

@@ -15,6 +15,7 @@ using MegaCrit.Sts2.Core.Models.CardPools;
 using MegaCrit.Sts2.Core.Nodes.Vfx;
 using MegaCrit.Sts2.Core.ValueProps;
 using Squ.Audio;
+using Squ.Combat;
 using Squ.Script;
 using STS2RitsuLib.Interop.AutoRegistration;
 using STS2RitsuLib.Scaffolding.Content;
@@ -23,7 +24,7 @@ namespace Squ.Cards;
 
 /// <summary>由《咱家不怕酸》的「稍作修改」产生：攻击后消耗任意张不能被打出的手牌，并获得等量的酒。</summary>
 [RegisterCard(typeof(TokenCardPool), StableEntryStem = "said_not_afraid_of_acid")]
-public sealed class SaidNotAfraidOfAcid : ModCardTemplate
+public sealed class SaidNotAfraidOfAcid : SlightRevisionDerivedCardTemplate
 {
 	public const int BaseDamage = 8;
 	public const int UpgradedDamage = 11;
@@ -44,7 +45,7 @@ public sealed class SaidNotAfraidOfAcid : ModCardTemplate
 		PortraitPath: "res://images/cards/SaidNotAfraidOfAcid.png");
 
 	public SaidNotAfraidOfAcid()
-		: base(1, CardType.Attack, CardRarity.Uncommon, TargetType.AnyEnemy)
+		: base(1, CardType.Attack, TargetType.AnyEnemy)
 	{
 	}
 
