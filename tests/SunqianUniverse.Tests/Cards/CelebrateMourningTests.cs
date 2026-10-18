@@ -77,23 +77,27 @@ public sealed class CelebrateMourningTests : SunqianCombatTestSuite
     }
 
     [Fact]
-    public async Task Base_card_grants_five_vigor_at_zero_cost()
+    public async Task Base_card_grants_four_vigor_draws_one_and_costs_zero()
     {
+        CardModel drawn = await AddToDrawPileTop<DefendLongtao>();
         int energy = Player.PlayerCombatState!.Energy;
         await Play(await AddToHand<CelebrateMourning>());
 
         Assert.Equal(energy, Player.PlayerCombatState.Energy);
         CardTestAssertions.AssertPowerAmount<VigorPower>(Player.Creature, CelebrateMourning.BaseVigor);
+        AssertInPile(drawn, PileType.Hand);
     }
 
     [Fact]
-    public async Task Upgrade_grants_seven_vigor_at_zero_cost()
+    public async Task Upgrade_grants_six_vigor_draws_one_and_costs_zero()
     {
+        CardModel drawn = await AddToDrawPileTop<DefendLongtao>();
         int energy = Player.PlayerCombatState!.Energy;
         await Play(Upgrade(await AddToHand<CelebrateMourning>()));
 
         Assert.Equal(energy, Player.PlayerCombatState.Energy);
         CardTestAssertions.AssertPowerAmount<VigorPower>(Player.Creature, CelebrateMourning.UpgradedVigor);
+        AssertInPile(drawn, PileType.Hand);
     }
 
     [Fact]
@@ -153,7 +157,8 @@ public sealed class CelebrateMourningTests : SunqianCombatTestSuite
     public async Task In_run_outside_combat_hover_still_shows_return_targets_without_annotation()
     {
         CelebrateMourning celebrate = await AddToHand<CelebrateMourning>();
-        AllIn target = await AddToHand<AllIn>();
+        AllIn combatOnlyCard = await AddToHand<AllIn>();
+        CardModel deckCard = PileType.Deck.GetPile(Player).Cards.First();
         string annotation = new LocString("cards", celebrate.Id.Entry + ".annotation").GetFormattedText()
             ?? throw new InvalidOperationException("Celebrate Mourning annotation is missing.");
 
@@ -164,7 +169,8 @@ public sealed class CelebrateMourningTests : SunqianCombatTestSuite
                 celebrate.HoverTips.OfType<HoverTip>().Where(tip =>
                     tip.Title == SquCommonL10n.AnnotationTitle().GetFormattedText()));
             Assert.NotEqual(annotation, contextualTip.Description);
-            Assert.Contains(target.Title, contextualTip.Description);
+            Assert.Contains(deckCard.Title, contextualTip.Description);
+            Assert.DoesNotContain(combatOnlyCard.Title, contextualTip.Description);
         }
         finally
         {

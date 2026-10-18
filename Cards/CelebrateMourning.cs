@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using MegaCrit.Sts2.Core.Commands;
+using MegaCrit.Sts2.Core.Combat;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.HoverTips;
@@ -22,16 +23,16 @@ using STS2RitsuLib.Scaffolding.Content;
 namespace Squ.Cards;
 
 /// <summary>
-/// 闻丧贺喜：获得活力；打出率最高的牌被消耗后回手。
+/// 闻丧贺喜：获得活力并抽牌；打出率最高的牌被消耗后回手。
 /// </summary>
 [RegisterCard(typeof(SunqianCardPool), StableEntryStem = "celebrate_mourning")]
 public sealed class CelebrateMourning : ModCardTemplate
 {
 	public const int MaxReturnTriggerDetailedCards = 8;
 
-	public const int BaseVigor = 5;
+	public const int BaseVigor = 4;
 
-	public const int UpgradedVigor = 8;
+	public const int UpgradedVigor = 6;
 
 	public const int PlayRateWindow = CardDrawPlayRateTracker.MaxStoredCombats;
 
@@ -87,6 +88,7 @@ public sealed class CelebrateMourning : ModCardTemplate
 			DynamicVars[nameof(VigorPower)].BaseValue,
 			Owner.Creature,
 			this);
+		await CardPileCmd.Draw(choiceContext, Owner);
 	}
 
 	protected override void OnUpgrade()
@@ -133,8 +135,15 @@ public sealed class CelebrateMourning : ModCardTemplate
 			.ToList();
 	}
 
-	private List<CardModel> GetPlayRateCandidates() =>
-		CardDrawPlayRateTracker.GetCelebrateMourningPlayRateCandidates(Owner);
+	private List<CardModel> GetPlayRateCandidates()
+	{
+		if (CombatManager.Instance is { IsInProgress: true })
+		{
+			return CardDrawPlayRateTracker.GetCelebrateMourningPlayRateCandidates(Owner);
+		}
+
+		return PileType.Deck.GetPile(Owner).Cards.ToList();
+	}
 
 	private ReturnTriggerPreview? CreateReturnTriggerPreview(IReadOnlyList<CardModel> triggerTargets)
 	{

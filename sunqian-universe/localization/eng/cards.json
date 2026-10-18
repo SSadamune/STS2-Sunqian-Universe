@@ -183,7 +183,7 @@
   "SUNQIAN_UNIVERSE_CARD_LOYALTY_OVER_KIN.targetCards": "Exhausts {Cards}.",
   "SUNQIAN_UNIVERSE_CARD_LOYALTY_OVER_KIN.cardSeparator": ", ",
   "SUNQIAN_UNIVERSE_CARD_CELEBRATE_MOURNING.title": "Celebrate Mourning",
-  "SUNQIAN_UNIVERSE_CARD_CELEBRATE_MOURNING.description": "Gain {VigorPower:diff()} [gold]Vigor[/gold].\nWhen your highest [gold]play rate[/gold] card is Exhausted, gain this card.",
+  "SUNQIAN_UNIVERSE_CARD_CELEBRATE_MOURNING.description": "Gain {VigorPower:diff()} [gold]Vigor[/gold].\nDraw a card.\nWhen your highest [gold]play rate[/gold] card is Exhausted, gain this card.",
   "SUNQIAN_UNIVERSE_CARD_CELEBRATE_MOURNING.annotation": "In the description, [gold]this card[/gold] refers to this [gold]Celebrate Mourning[/gold].\nIf the card with the highest play rate has already been Exhausted, the card that originally had the second-highest play rate will be considered the card with the highest play rate.",
   "SUNQIAN_UNIVERSE_CARD_CELEBRATE_MOURNING.returnTriggerHoverTip": "When any of the following cards is Exhausted, gain this [gold]Celebrate Mourning[/gold]:\n{Cards}.",
   "SUNQIAN_UNIVERSE_CARD_CELEBRATE_MOURNING.returnTriggerMoreCards": "and {Cards} more {Cards:plural:card|cards}",
