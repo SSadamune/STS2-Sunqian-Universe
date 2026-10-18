@@ -160,7 +160,7 @@ public sealed class FamilyQuestCardTests : SunqianCombatTestSuite
         CardTestAssertions.AssertPowerAmount<RegenPower>(Player.Creature, BelovedPartner.RegenAmount);
         CardTestAssertions.AssertPowerAmount<TinderPower>(Player.Creature, BelovedPartner.TinderAmount);
         Assert.Equal(2, BelovedPartner.RegenAmount);
-        Assert.Equal(3, BelovedPartner.TinderAmount);
+        Assert.Equal(4, BelovedPartner.TinderAmount);
     }
 
     [Fact]
@@ -192,6 +192,8 @@ public sealed class FamilyQuestCardTests : SunqianCombatTestSuite
         Assert.False(NewsanguoPublicApiInterop.IsReady);
         Assert.Equal(CardType.Curse, card.Type);
         Assert.Equal(CardRarity.Curse, card.Rarity);
+        Assert.True(card.ShouldShowInCardLibrary);
+        Assert.InRange((int)card.Rarity, (int)CardRarity.Event, (int)CardRarity.Quest);
         Assert.Contains(CardKeyword.Innate, card.Keywords);
         Assert.Contains(CardKeyword.Ethereal, card.Keywords);
         Assert.Contains(CardKeyword.Unplayable, card.Keywords);

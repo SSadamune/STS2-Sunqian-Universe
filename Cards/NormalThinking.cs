@@ -46,7 +46,7 @@ public sealed class NormalThinking : ModCardTemplate
 		PortraitPath: "res://images/cards/NormalThinking.png");
 
 	public NormalThinking()
-		: base(-1, CardType.Curse, CardRarity.Curse, TargetType.None, showInCardLibrary: false)
+		: base(-1, CardType.Curse, CardRarity.Curse, TargetType.None, showInCardLibrary: true)
 	{
 	}
 

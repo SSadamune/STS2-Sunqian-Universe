@@ -22,7 +22,7 @@ namespace Squ.Cards;
 public sealed class BelovedPartner : FamilyCardTemplate, IRowKeywordsCard
 {
 	public const int RegenAmount = 2;
-	public const int TinderAmount = 3;
+	public const int TinderAmount = 4;
 
 	public override CardAssetProfile AssetProfile => new(
 		PortraitPath: "res://images/cards/BelovedPartner.png");
