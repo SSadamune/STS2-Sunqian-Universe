@@ -15,7 +15,7 @@ using STS2RitsuLib.Scaffolding.Content;
 namespace Squ.Cards;
 
 [RegisterCard(typeof(TokenCardPool), StableEntryStem = "next_of_kin")]
-public sealed class NextOfKin : FamilyCardTemplate
+public sealed class NextOfKin : FamilyCardTemplate, IRowKeywordsCard
 {
 	public const int DrawAmount = 2;
 

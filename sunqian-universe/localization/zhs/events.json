@@ -46,5 +46,7 @@
   "SUNQIAN_UNIVERSE_EVENT_FAMILY_OF_ORIGIN.pages.NEXT_OF_KIN.options.REJECT.description": "结束事件。",
   "SUNQIAN_UNIVERSE_EVENT_FAMILY_OF_ORIGIN.pages.COMPLETED.description": "展开册页，你的脑海中浮现出一只神奇生物，\n它的叫声似哭似笑，偶尔还夹杂一声「呱」…",
   "SUNQIAN_UNIVERSE_EVENT_FAMILY_OF_ORIGIN.pages.REJECTED.description": "既然难以忍受作者的胡言乱语，为何不能视它如草芥？",
-  "SUNQIAN_UNIVERSE_EVENT_FAMILY_OF_ORIGIN.pages.FIRST_REJECTED.description": "既然难以忍受作者的胡言乱语，为何不能视它如草芥？\n你保持了正常人的心智，但[red]天意爷[/red]并不认同你的选择。"
+  "SUNQIAN_UNIVERSE_EVENT_FAMILY_OF_ORIGIN.pages.FIRST_REJECTED.description": "既然难以忍受作者的胡言乱语，为何不能视它如草芥？\n你保持了正常人的心智，但[red]天意爷[/red]并不认同你的选择。",
+  "COLORFUL_PHILOSOPHERS.pages.INITIAL.options.SUNQIAN.title": "葡萄紫",
+  "COLORFUL_PHILOSOPHERS.pages.INITIAL.options.SUNQIAN.description": "获得[purple]{Cards}[/purple]张龙套演员的卡牌。"
 }

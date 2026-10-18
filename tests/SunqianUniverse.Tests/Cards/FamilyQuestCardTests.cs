@@ -93,6 +93,40 @@ public sealed class FamilyQuestCardTests : SunqianCombatTestSuite
     }
 
     [Fact]
+    public async Task Only_opted_in_family_cards_render_adjacent_leading_keywords_on_one_line()
+    {
+        (CardModel Card, CardKeyword[] LeadingKeywords)[] cases =
+        [
+            (await AddToHand<BelovedPartner>(),
+            [SquKeywords.Family, CardKeyword.Sly]),
+            (await AddToHand<NextOfKin>(),
+            [SquKeywords.Family, CardKeyword.Retain]),
+        ];
+
+        foreach ((CardModel card, CardKeyword[] leadingKeywords) in cases)
+        {
+            string[] lines = card.GetDescriptionForPile(PileType.Hand).Split('\n');
+            string[] markers = leadingKeywords
+                .Select(keyword =>
+                {
+                    HoverTip tip = Assert.IsType<HoverTip>(HoverTipFactory.FromKeyword(keyword));
+                    return "[gold]" + tip.Title + "[/gold]";
+                })
+                .ToArray();
+
+            string keywordLine = Assert.Single(
+                lines.Where(line => markers.Any(marker => line.Contains(marker, StringComparison.Ordinal))));
+            Assert.All(
+                markers,
+                marker => Assert.Contains(marker, keywordLine, StringComparison.Ordinal));
+        }
+
+        var cutePet = await AddToHand<CutePet>();
+        Assert.IsNotAssignableFrom<IRowKeywordsCard>(cutePet);
+        Assert.All(cases, item => Assert.IsAssignableFrom<IRowKeywordsCard>(item.Card));
+    }
+
+    [Fact]
     public async Task Cute_pet_is_unplayable_and_ethereal_and_summons_four_hp_when_exhausted()
     {
         var card = await AddToHand<CutePet>();

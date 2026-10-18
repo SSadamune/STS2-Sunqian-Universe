@@ -1,3 +1,4 @@
+using System.Reflection;
 using MegaCrit.Sts2.Core.Combat;
 using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
@@ -7,6 +8,7 @@ using MegaCrit.Sts2.Core.Models.Cards;
 using MegaCrit.Sts2.Core.Models.Characters;
 using MegaCrit.Sts2.Core.Models.Monsters;
 using MegaCrit.Sts2.Core.Models.Powers;
+using MegaCrit.Sts2.Core.Runs;
 using Squ.Cards;
 using Squ.Powers;
 using Squ.Relics;
@@ -101,7 +103,7 @@ public sealed class NeverHadTheseRelicTests : SunqianCombatTestSuite
             tip => tip.Id == ModelDb.Power<DexterityPower>().Id.ToString());
 
         string description = FormatDescription(ModelDb.Relic<NeverHadTheseRelic>());
-        Assert.DoesNotContain("会触发", description);
+        Assert.DoesNotContain("[green]包括[/green]", description);
         Assert.DoesNotContain("召唤[/gold]4", description);
     }
 
@@ -117,9 +119,23 @@ public sealed class NeverHadTheseRelicTests : SunqianCombatTestSuite
         await relic.BeforeCardRemoved(Player.RunState.CreateCard<NextOfKin>(Player));
         await relic.BeforeCardRemoved(Player.RunState.CreateCard<NextOfKin>(Player));
 
-        string description = FormatDescription(relic);
+        PropertyInfo stateProperty = typeof(RunManager).GetProperty(
+            "State",
+            BindingFlags.Instance | BindingFlags.NonPublic)
+            ?? throw new MissingMemberException(typeof(RunManager).FullName, "State");
+        object? previousState = stateProperty.GetValue(RunManager.Instance);
+        string description;
+        try
+        {
+            stateProperty.SetValue(RunManager.Instance, Player.RunState);
+            description = FormatDescription(relic);
+        }
+        finally
+        {
+            stateProperty.SetValue(RunManager.Instance, previousState);
+        }
 
-        Assert.Contains("会触发", description);
+        Assert.Contains("[green]包括[/green]", description);
         Assert.Equal(1, description.Split("召唤[/gold]8").Length - 1);
         Assert.Contains("获得4层[gold]再生[/gold]和6层[gold]火种[/gold]", description);
         Assert.Contains("抽6张牌", description);

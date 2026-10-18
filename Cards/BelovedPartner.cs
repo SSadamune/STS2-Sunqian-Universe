@@ -19,7 +19,7 @@ using STS2RitsuLib.Scaffolding.Content;
 namespace Squ.Cards;
 
 [RegisterCard(typeof(TokenCardPool), StableEntryStem = "beloved_partner")]
-public sealed class BelovedPartner : FamilyCardTemplate
+public sealed class BelovedPartner : FamilyCardTemplate, IRowKeywordsCard
 {
 	public const int RegenAmount = 2;
 	public const int TinderAmount = 3;

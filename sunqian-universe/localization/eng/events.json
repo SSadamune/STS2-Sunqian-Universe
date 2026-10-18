@@ -46,5 +46,7 @@
   "SUNQIAN_UNIVERSE_EVENT_FAMILY_OF_ORIGIN.pages.NEXT_OF_KIN.options.REJECT.description": "End the event.",
   "SUNQIAN_UNIVERSE_EVENT_FAMILY_OF_ORIGIN.pages.COMPLETED.description": "As you unfold the pages, a wondrous creature appears in your mind.\nIts cry sounds half like weeping and half like laughter, with the occasional \"ribbit\" mixed in…",
   "SUNQIAN_UNIVERSE_EVENT_FAMILY_OF_ORIGIN.pages.REJECTED.description": "If the author's ravings are unbearable, why not treat them like so much rubbish?",
-  "SUNQIAN_UNIVERSE_EVENT_FAMILY_OF_ORIGIN.pages.FIRST_REJECTED.description": "If the author's ravings are unbearable, why not treat them like so much rubbish?\nYou preserve the mind of an ordinary person, but [red]Lord Providence[/red] does not approve of your choice."
+  "SUNQIAN_UNIVERSE_EVENT_FAMILY_OF_ORIGIN.pages.FIRST_REJECTED.description": "If the author's ravings are unbearable, why not treat them like so much rubbish?\nYou preserve the mind of an ordinary person, but [red]Lord Providence[/red] does not approve of your choice.",
+  "COLORFUL_PHILOSOPHERS.pages.INITIAL.options.SUNQIAN.title": "Grape Purple",
+  "COLORFUL_PHILOSOPHERS.pages.INITIAL.options.SUNQIAN.description": "Obtain [purple]{Cards}[/purple] Supporting Actor cards."
 }
