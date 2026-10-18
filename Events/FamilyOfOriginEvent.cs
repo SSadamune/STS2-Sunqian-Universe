@@ -21,7 +21,9 @@ namespace Squ.Events;
 [RegisterActEvent(typeof(Hive))]
 public sealed class FamilyOfOrigin : ModEventTemplate
 {
-	private const string PartnerPage = "PARTNER";
+	// 正文是上一章的阅读结果，本页选项才是下一章。
+	// 爱宠 → 蛐蛐罐；至亲 → 神奇生物；伴侣 → 正妻斟酒。
+	private const string CutePetPage = "CUTE_PET";
 	private const string NextOfKinPage = "NEXT_OF_KIN";
 	private const string CompletedPage = "COMPLETED";
 	private const string RejectedPage = "REJECTED";
@@ -49,29 +51,14 @@ public sealed class FamilyOfOrigin : ModEventTemplate
 		SquSfx.Play(SquSfx.NeverHadTheseCutePetOptionEvent);
 		await AddCardToDeck<CutePet>();
 		await RelicCmd.Obtain<NeverHadTheseRelic>(Owner!);
-		SetEventState(PageDescription(PartnerPage),
-		[
-			new EventOption(
-				this,
-				ReadBelovedPartner,
-				ModOptionKey(PartnerPage, "READ_BELOVED_PARTNER"),
-				ReadOptionHoverTips<BelovedPartner>()),
-			new EventOption(this, Reject, ModOptionKey(PartnerPage, "REJECT")),
-		]);
-	}
-
-	private async Task ReadBelovedPartner()
-	{
-		SquSfx.Play(SquSfx.NeverHadTheseBelovedPartnerOptionEvent);
-		await AddCardToDeck<BelovedPartner>();
-		SetEventState(PageDescription(NextOfKinPage),
+		SetEventState(PageDescription(CutePetPage),
 		[
 			new EventOption(
 				this,
 				ReadNextOfKin,
-				ModOptionKey(NextOfKinPage, "READ_NEXT_OF_KIN"),
+				ModOptionKey(CutePetPage, "READ_NEXT_OF_KIN"),
 				ReadOptionHoverTips<NextOfKin>()),
-			new EventOption(this, Reject, ModOptionKey(NextOfKinPage, "REJECT")),
+			new EventOption(this, Reject, ModOptionKey(CutePetPage, "REJECT")),
 		]);
 	}
 
@@ -79,6 +66,21 @@ public sealed class FamilyOfOrigin : ModEventTemplate
 	{
 		SquSfx.Play(SquSfx.NeverHadTheseNextOfKinOptionEvent);
 		await AddCardToDeck<NextOfKin>();
+		SetEventState(PageDescription(NextOfKinPage),
+		[
+			new EventOption(
+				this,
+				ReadBelovedPartner,
+				ModOptionKey(NextOfKinPage, "READ_BELOVED_PARTNER"),
+				ReadOptionHoverTips<BelovedPartner>()),
+			new EventOption(this, Reject, ModOptionKey(NextOfKinPage, "REJECT")),
+		]);
+	}
+
+	private async Task ReadBelovedPartner()
+	{
+		SquSfx.Play(SquSfx.NeverHadTheseBelovedPartnerOptionEvent);
+		await AddCardToDeck<BelovedPartner>();
 		SetEventFinished(PageDescription(CompletedPage));
 	}
 

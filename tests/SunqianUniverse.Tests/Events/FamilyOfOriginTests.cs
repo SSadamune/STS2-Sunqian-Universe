@@ -89,19 +89,31 @@ public sealed class FamilyOfOriginTests : SunqianCombatTestSuite
             AssertReadOptionTips<CutePet>(evt.CurrentOptions[0].HoverTips);
             await evt.CurrentOptions[0].Chosen();
 
-            AssertPage(evt, "PARTNER", optionCount: 2);
+            AssertPage(evt, "CUTE_PET", optionCount: 2);
+            Assert.Contains("蛐蛐罐", evt.Description!.GetFormattedText());
             Assert.Single(Player.Deck.Cards.OfType<CutePet>());
             Assert.IsType<NeverHadTheseRelic>(Assert.Single(TestEventRelicObtain.Relics));
-            AssertReadOptionTips<BelovedPartner>(evt.CurrentOptions[0].HoverTips);
+            AssertReadOptionTips<NextOfKin>(evt.CurrentOptions[0].HoverTips);
+            Assert.Equal(
+                $"{EventEntry}.pages.CUTE_PET.options.READ_NEXT_OF_KIN.title",
+                evt.CurrentOptions[0].Title.LocEntryKey);
+            Assert.Contains("至亲", evt.CurrentOptions[0].Title.GetFormattedText());
             await evt.CurrentOptions[0].Chosen();
 
             AssertPage(evt, "NEXT_OF_KIN", optionCount: 2);
-            Assert.Single(Player.Deck.Cards.OfType<BelovedPartner>());
-            AssertReadOptionTips<NextOfKin>(evt.CurrentOptions[0].HoverTips);
+            Assert.Contains("似哭似笑", evt.Description!.GetFormattedText());
+            Assert.Single(Player.Deck.Cards.OfType<NextOfKin>());
+            Assert.Empty(Player.Deck.Cards.OfType<BelovedPartner>());
+            AssertReadOptionTips<BelovedPartner>(evt.CurrentOptions[0].HoverTips);
+            Assert.Equal(
+                $"{EventEntry}.pages.NEXT_OF_KIN.options.READ_BELOVED_PARTNER.title",
+                evt.CurrentOptions[0].Title.LocEntryKey);
+            Assert.Contains("伴侣", evt.CurrentOptions[0].Title.GetFormattedText());
             await evt.CurrentOptions[0].Chosen();
 
             AssertFinishedOn(evt, "COMPLETED");
-            Assert.Single(Player.Deck.Cards.OfType<NextOfKin>());
+            Assert.Contains("斟酒伴舞", evt.Description!.GetFormattedText());
+            Assert.Single(Player.Deck.Cards.OfType<BelovedPartner>());
         }
         finally
         {
