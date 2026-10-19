@@ -41,6 +41,11 @@ public sealed class SquSettings
 
 	public string PreviewSfxId { get; set; } = SquSfxPreview.DefaultId;
 
+	/// <summary>
+	/// “龙套演员”选角标签下最近使用的内部角色版本。
+	/// </summary>
+	public string PreferredActorVariant { get; set; } = "sunqian";
+
 	public NeutralContentPermissionMode NeutralPotionModification { get; set; } =
 		DefaultNeutralPotionModificationMode;
 

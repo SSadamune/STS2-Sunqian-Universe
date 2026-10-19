@@ -28,7 +28,7 @@ internal static class SunqianCharacterSelectBgmPatch
 		NCharacterSelectButton charSelectButton,
 		CharacterModel characterModel)
 	{
-		if (!charSelectButton.IsLocked && characterModel is SunqianCharacter)
+		if (!charSelectButton.IsLocked && characterModel is SunqianCharacter or LiubeiCharacter)
 		{
 			SunqianSelectBgm.Play();
 			return;
@@ -41,7 +41,7 @@ internal static class SunqianCharacterSelectBgmPatch
 	[HarmonyPatch("OnLocalCharacterChangedForRandom")]
 	private static void OnLocalCharacterChangedForRandomPostfix(CharacterModel characterModel)
 	{
-		if (characterModel is SunqianCharacter)
+		if (characterModel is SunqianCharacter or LiubeiCharacter)
 		{
 			SunqianSelectBgm.Play();
 			return;

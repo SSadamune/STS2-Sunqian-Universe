@@ -1,0 +1,49 @@
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using MegaCrit.Sts2.Core.Commands;
+using MegaCrit.Sts2.Core.Entities.Cards;
+using MegaCrit.Sts2.Core.GameActions.Multiplayer;
+using MegaCrit.Sts2.Core.Localization.DynamicVars;
+using MegaCrit.Sts2.Core.ValueProps;
+using Squ.Audio;
+using Squ.Character;
+using STS2RitsuLib.Interop.AutoRegistration;
+using STS2RitsuLib.Scaffolding.Content;
+
+namespace Squ.Cards;
+
+[RegisterCard(typeof(LiubeiCardPool), StableEntryStem = "liubei_defend")]
+[RegisterCharacterStarterCard(typeof(LiubeiCharacter), 4)]
+public sealed class DefendLiubei : ModCardTemplate
+{
+	public const int BaseBlock = 5;
+	public const int UpgradedBlock = 8;
+
+	protected override IEnumerable<DynamicVar> CanonicalVars =>
+	[
+		new BlockVar(BaseBlock, ValueProp.Move),
+	];
+
+	protected override HashSet<CardTag> CanonicalTags => [CardTag.Defend];
+
+	public override bool GainsBlock => true;
+
+	public override CardAssetProfile AssetProfile => new(
+		PortraitPath: "res://images/cards/DefendLiubei.png");
+
+	public DefendLiubei()
+		: base(1, CardType.Skill, CardRarity.Basic, TargetType.Self)
+	{
+	}
+
+	protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
+	{
+		SquSfx.PlayRandom(RunState, SquSfx.BasicDefendEvents);
+		await CreatureCmd.GainBlock(Owner.Creature, DynamicVars.Block, cardPlay);
+	}
+
+	protected override void OnUpgrade()
+	{
+		DynamicVars.Block.UpgradeValueBy(UpgradedBlock - BaseBlock);
+	}
+}

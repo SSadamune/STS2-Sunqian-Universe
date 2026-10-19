@@ -291,5 +291,9 @@
   "SUNQIAN_UNIVERSE_CARD_PART_TIME_GENERAL_SCRIPT.title": "兼职将军剧本",
   "SUNQIAN_UNIVERSE_CARD_PART_TIME_GENERAL_SCRIPT.description": "[gold]视为打出[/gold]X张其他角色的{IfUpgraded:show:升级过的|}名字中有「打击」的牌。\n[gold]剧本[/gold]：失效时获得其中一张。",
   "SUNQIAN_UNIVERSE_CARD_GIFT_FOUR_WHEELED_CART.title": "赠予四轮车",
-  "SUNQIAN_UNIVERSE_CARD_GIFT_FOUR_WHEELED_CART.description": "令随机生物获得2点[gold]力量[/gold]和[gold]敏捷[/gold]：其受到未被格挡的伤害后，伤害来源获得此效果和{energyPrefix:energyIcons(1)}。"
+  "SUNQIAN_UNIVERSE_CARD_GIFT_FOUR_WHEELED_CART.description": "令随机生物获得2点[gold]力量[/gold]和[gold]敏捷[/gold]：其受到未被格挡的伤害后，伤害来源获得此效果和{energyPrefix:energyIcons(1)}。",
+  "SUNQIAN_UNIVERSE_CARD_LIUBEI_STRIKE.title": "打击",
+  "SUNQIAN_UNIVERSE_CARD_LIUBEI_STRIKE.description": "造成{Damage:diff()}点伤害。",
+  "SUNQIAN_UNIVERSE_CARD_LIUBEI_DEFEND.title": "防御",
+  "SUNQIAN_UNIVERSE_CARD_LIUBEI_DEFEND.description": "获得{Block:diff()}点[gold]格挡[/gold]。"
 }

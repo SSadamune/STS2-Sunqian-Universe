@@ -13,5 +13,21 @@
   "SUNQIAN_UNIVERSE_CHARACTER_SUNQIAN_CHARACTER.pronounSubject": "他",
   "SUNQIAN_UNIVERSE_CHARACTER_SUNQIAN_CHARACTER.title": "龙套演员",
   "SUNQIAN_UNIVERSE_CHARACTER_SUNQIAN_CHARACTER.titleObject": "龙套演员",
-  "SUNQIAN_UNIVERSE_CHARACTER_SUNQIAN_CHARACTER.unlockText": "用[pink]{Prerequisite}[/pink]进行一局游戏来解锁这个角色。"
+  "SUNQIAN_UNIVERSE_CHARACTER_SUNQIAN_CHARACTER.unlockText": "用[pink]{Prerequisite}[/pink]进行一局游戏来解锁这个角色。",
+  "SUNQIAN_UNIVERSE_CHARACTER_LIUBEI_CHARACTER.aromaPrinciple": "[sine][blue]我走过这里……多少次了？[/blue][/sine]",
+  "SUNQIAN_UNIVERSE_CHARACTER_LIUBEI_CHARACTER.banter.alive.endTurnPing": "再走一步。",
+  "SUNQIAN_UNIVERSE_CHARACTER_LIUBEI_CHARACTER.banter.dead.endTurnPing": "这一轮……到此为止。",
+  "SUNQIAN_UNIVERSE_CHARACTER_LIUBEI_CHARACTER.cardsModifierDescription": "轮回囚徒的卡牌现在会出现在奖励和商店中。",
+  "SUNQIAN_UNIVERSE_CHARACTER_LIUBEI_CHARACTER.cardsModifierTitle": "轮回囚徒卡牌",
+  "SUNQIAN_UNIVERSE_CHARACTER_LIUBEI_CHARACTER.description": "误入天意轮回的迷途之子。\n如果能达到塔顶，或许能得到解脱。",
+  "SUNQIAN_UNIVERSE_CHARACTER_LIUBEI_CHARACTER.eventDeathPrevention": "还不能在这里结束。",
+  "SUNQIAN_UNIVERSE_CHARACTER_LIUBEI_CHARACTER.goldMonologue": "[sine]带不出轮回的东西，至少还能换来片刻喘息。[/sine]",
+  "SUNQIAN_UNIVERSE_CHARACTER_LIUBEI_CHARACTER.possessiveAdjective": "他的",
+  "SUNQIAN_UNIVERSE_CHARACTER_LIUBEI_CHARACTER.pronounObject": "他",
+  "SUNQIAN_UNIVERSE_CHARACTER_LIUBEI_CHARACTER.pronounPossessive": "他的",
+  "SUNQIAN_UNIVERSE_CHARACTER_LIUBEI_CHARACTER.pronounSubject": "他",
+  "SUNQIAN_UNIVERSE_CHARACTER_LIUBEI_CHARACTER.title": "轮回囚徒",
+  "SUNQIAN_UNIVERSE_CHARACTER_LIUBEI_CHARACTER.titleObject": "轮回囚徒",
+  "SUNQIAN_UNIVERSE_CHARACTER_LIUBEI_CHARACTER.unlockText": "用[pink]{Prerequisite}[/pink]进行一局游戏来解锁这个角色。",
+  "SUNQIAN_UNIVERSE_CHARACTER_VARIANT_SELECTOR.title": "角色版本"
 }

@@ -1,0 +1,46 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Texture2D" path="res://images/character/LiubeiRestSite.png" id="1_rest"]
+
+[node name="LiubeiRestSite" type="Node2D"]
+
+[node name="ControlRoot" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 0
+
+[node name="SelectionReticle" type="Control" parent="ControlRoot"]
+unique_name_in_owner = true
+anchors_preset = 0
+offset_left = -153.0
+offset_top = -350.0
+offset_right = 267.0
+offset_bottom = 320.0
+
+[node name="Hitbox" type="Control" parent="ControlRoot"]
+unique_name_in_owner = true
+anchors_preset = 0
+offset_left = -78.0
+offset_top = -286.0
+offset_right = 244.0
+offset_bottom = 239.0
+
+[node name="ThoughtBubbleRight" type="Control" parent="ControlRoot"]
+unique_name_in_owner = true
+anchors_preset = 0
+offset_left = 161.0
+offset_top = -173.0
+offset_right = 161.0
+offset_bottom = -173.0
+
+[node name="ThoughtBubbleLeft" type="Control" parent="ControlRoot"]
+unique_name_in_owner = true
+anchors_preset = 0
+offset_left = -9.0
+offset_top = -231.0
+offset_right = -9.0
+offset_bottom = -231.0
+
+[node name="RestSiteArt" type="Sprite2D" parent="."]
+position = Vector2(87.50781, -25.865509)
+scale = Vector2(2.084865, 2.0932293)
+texture = ExtResource("1_rest")

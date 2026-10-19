@@ -1,0 +1,10 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Texture2D" path="res://images/character/Liubei.png" id="1_liubei"]
+
+[node name="LiubeiMerchant" type="Node2D"]
+
+[node name="Liubei" type="Sprite2D" parent="."]
+position = Vector2(-1.9073486e-06, -174.99998)
+scale = Vector2(0.45498046, 0.45498046)
+texture = ExtResource("1_liubei")

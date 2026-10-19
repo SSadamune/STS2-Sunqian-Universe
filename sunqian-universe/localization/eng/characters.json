@@ -13,5 +13,21 @@
   "SUNQIAN_UNIVERSE_CHARACTER_SUNQIAN_CHARACTER.pronounSubject": "he",
   "SUNQIAN_UNIVERSE_CHARACTER_SUNQIAN_CHARACTER.title": "Supporting Actor",
   "SUNQIAN_UNIVERSE_CHARACTER_SUNQIAN_CHARACTER.titleObject": "Supporting Actor",
-  "SUNQIAN_UNIVERSE_CHARACTER_SUNQIAN_CHARACTER.unlockText": "Play a run with [pink]{Prerequisite}[/pink] to unlock this character."
+  "SUNQIAN_UNIVERSE_CHARACTER_SUNQIAN_CHARACTER.unlockText": "Play a run with [pink]{Prerequisite}[/pink] to unlock this character.",
+  "SUNQIAN_UNIVERSE_CHARACTER_LIUBEI_CHARACTER.aromaPrinciple": "[sine][blue]How many times have I walked this path?[/blue][/sine]",
+  "SUNQIAN_UNIVERSE_CHARACTER_LIUBEI_CHARACTER.banter.alive.endTurnPing": "One more step.",
+  "SUNQIAN_UNIVERSE_CHARACTER_LIUBEI_CHARACTER.banter.dead.endTurnPing": "This cycle... ends here.",
+  "SUNQIAN_UNIVERSE_CHARACTER_LIUBEI_CHARACTER.cardsModifierDescription": "Reincarnation Prisoner cards now appear in rewards and shops.",
+  "SUNQIAN_UNIVERSE_CHARACTER_LIUBEI_CHARACTER.cardsModifierTitle": "Reincarnation Prisoner Cards",
+  "SUNQIAN_UNIVERSE_CHARACTER_LIUBEI_CHARACTER.description": "A lost soul who strayed into Destiny's endless cycle.\nIf he reaches the top of the Spire, perhaps he can finally be free.",
+  "SUNQIAN_UNIVERSE_CHARACTER_LIUBEI_CHARACTER.eventDeathPrevention": "It cannot end here.",
+  "SUNQIAN_UNIVERSE_CHARACTER_LIUBEI_CHARACTER.goldMonologue": "[sine]Nothing leaves the cycle. It can still buy a moment's rest.[/sine]",
+  "SUNQIAN_UNIVERSE_CHARACTER_LIUBEI_CHARACTER.possessiveAdjective": "his",
+  "SUNQIAN_UNIVERSE_CHARACTER_LIUBEI_CHARACTER.pronounObject": "him",
+  "SUNQIAN_UNIVERSE_CHARACTER_LIUBEI_CHARACTER.pronounPossessive": "his",
+  "SUNQIAN_UNIVERSE_CHARACTER_LIUBEI_CHARACTER.pronounSubject": "he",
+  "SUNQIAN_UNIVERSE_CHARACTER_LIUBEI_CHARACTER.title": "Reincarnation Prisoner",
+  "SUNQIAN_UNIVERSE_CHARACTER_LIUBEI_CHARACTER.titleObject": "Reincarnation Prisoner",
+  "SUNQIAN_UNIVERSE_CHARACTER_LIUBEI_CHARACTER.unlockText": "Play a run with [pink]{Prerequisite}[/pink] to unlock this character.",
+  "SUNQIAN_UNIVERSE_CHARACTER_VARIANT_SELECTOR.title": "Character Variant"
 }

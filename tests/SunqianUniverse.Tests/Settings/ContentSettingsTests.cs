@@ -31,6 +31,7 @@ public sealed class ContentSettingsTests : SunqianCombatTestSuite
 
         Assert.Equal(50, settings.SfxVolumePercent);
         Assert.Equal("cybertron", settings.PreviewSfxId);
+        Assert.Equal("sunqian", settings.PreferredActorVariant);
         Assert.Equal(
             NeutralContentPermissionMode.WhenModCharacterPresent,
             settings.NeutralPotionModification);
