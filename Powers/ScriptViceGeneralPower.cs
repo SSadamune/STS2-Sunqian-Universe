@@ -11,13 +11,13 @@ using STS2RitsuLib.Scaffolding.Content;
 namespace Squ.Powers;
 
 /// <summary>
-/// 剧本：副将。带 <see cref="CardTag.Strike"/> 的牌额外造成 2 点伤害；
+/// 剧本：副将。带 <see cref="CardTag.Strike"/> 的牌额外造成 3 点伤害；
 /// 带 <see cref="CardTag.Defend"/> 的牌额外获得 1 点格挡。
 /// </summary>
 [RegisterPower]
 public sealed class ScriptViceGeneralPower : ScriptPowerTemplate
 {
-	public const decimal StrikeBonusDamage = 2m;
+	public const decimal StrikeBonusDamage = 3m;
 	public const decimal DefendBonusBlock = 1m;
 
 	public override PowerAssetProfile AssetProfile => new(

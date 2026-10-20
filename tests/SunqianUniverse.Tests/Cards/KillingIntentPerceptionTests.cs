@@ -18,7 +18,7 @@ public sealed class KillingIntentPerceptionTests : SunqianCombatTestSuite
         int firstHp = first.CurrentHp;
         int secondHp = second.CurrentHp;
 
-        await Play(Upgrade(await AddToHand<KillingIntentPerception>()));
+        await Play(Upgrade(await AddToHand<KillingIntentPerception>()), first);
 
         Assert.Equal(firstHp - KillingIntentPerception.UpgradedDamage, first.CurrentHp);
         Assert.Equal(secondHp - KillingIntentPerception.UpgradedDamage, second.CurrentHp);

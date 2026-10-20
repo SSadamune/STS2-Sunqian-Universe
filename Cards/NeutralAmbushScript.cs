@@ -10,6 +10,7 @@ using MegaCrit.Sts2.Core.Models.Cards;
 using Squ;
 using Squ.Audio;
 using Squ.Character;
+using Squ.Combat;
 using Squ.Powers;
 using Squ.Script;
 using STS2RitsuLib.Interop.AutoRegistration;
@@ -31,8 +32,8 @@ public sealed class NeutralAmbushScript : ScriptCardTemplate
 
 	protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
 	[
-		..HoverTipFactory.FromCardWithCardHoverTips<GiantRock>(IsUpgraded),
-		..HoverTipFactory.FromCardWithCardHoverTips<SalvoStrike>(IsUpgraded),
+		..SquCardHoverTipFactory.FromCardWithCardHoverTips<GiantRock>(this, IsUpgraded),
+		..SquCardHoverTipFactory.FromCardWithCardHoverTips<SalvoStrike>(this, IsUpgraded),
 	];
 
 	public override IEnumerable<CardKeyword> CanonicalKeywords =>

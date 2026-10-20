@@ -32,11 +32,11 @@ namespace Squ.Cards;
 
 /// <summary>
 /// 杀意感知：攻击所有敌人后，选择一名盟友；升级前随机、升级后由盟友选择一张攻击牌，
-/// 对随机敌人自动打出。
+/// 对本牌指定的敌人自动打出。
 /// 上将军会使这些跨玩家自动打出的攻击牌继承本牌实际消耗的活力加成。
 /// </summary>
 [RegisterCard(typeof(SunqianCardPool), StableEntryStem = "killing_intent_perception")]
-public sealed class KillingIntentPerception : ModCardTemplate
+public sealed class KillingIntentPerception : ModCardTemplate, IHasMultiTargetCardIntent
 {
 	public const int BaseDamage = 9;
 	public const int UpgradedDamage = 13;
@@ -61,7 +61,7 @@ public sealed class KillingIntentPerception : ModCardTemplate
 		PortraitPath: "res://images/cards/KillingIntentPerception.png");
 
 	public KillingIntentPerception()
-		: base(1, CardType.Attack, CardRarity.Uncommon, TargetType.AllEnemies)
+		: base(1, CardType.Attack, CardRarity.Uncommon, TargetType.AnyEnemy)
 	{
 	}
 
@@ -70,6 +70,9 @@ public sealed class KillingIntentPerception : ModCardTemplate
 		ICombatState combatState = CombatState
 			?? throw new InvalidOperationException(
 				"KillingIntentPerception requires an active combat.");
+		Creature target = cardPlay.Target
+			?? throw new InvalidOperationException(
+				"KillingIntentPerception requires an enemy target.");
 
 		await DamageCmd.Attack(DynamicVars.Damage.BaseValue)
 			.FromCard(this, cardPlay)
@@ -78,7 +81,7 @@ public sealed class KillingIntentPerception : ModCardTemplate
 			.Execute(choiceContext);
 
 		if (combatState.PlayerCreatures.Count(creature => creature.IsAlive) <= 1
-			|| !combatState.HittableEnemies.Any(enemy => enemy.IsAlive))
+			|| !target.IsAlive)
 		{
 			return;
 		}
@@ -104,7 +107,7 @@ public sealed class KillingIntentPerception : ModCardTemplate
 
 		if (attack is not null)
 		{
-			await CardCmd.AutoPlay(choiceContext, attack, null);
+			await CardCmd.AutoPlay(choiceContext, attack, target);
 		}
 	}
 

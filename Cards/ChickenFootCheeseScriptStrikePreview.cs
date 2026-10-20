@@ -45,7 +45,10 @@ public sealed class ChickenFootCheeseScriptStrikePreview : ModCardTemplate, IRan
 	protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
 	{
 		List<MegaCrit.Sts2.Core.Entities.Creatures.Creature> targets =
-			SquRandomEnemyTargeting.SelectRandomEnemies(this, GetRandomEnemyTargetCount());
+			SquRandomEnemyTargeting.SelectRandomEnemies(
+				this,
+				GetRandomEnemyTargetCount(),
+				cardPlay.Target);
 		SquVigorSnapshot.AttackSequence damageSequence =
 			SquVigorSnapshot.BeginAttackSequence(Owner.Creature, this);
 		await SquRandomEnemyTargeting.ExecuteDamageAgainstTargets(

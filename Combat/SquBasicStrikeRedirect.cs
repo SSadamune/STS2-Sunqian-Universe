@@ -33,7 +33,8 @@ public static class SquBasicStrikeRedirect
 
 		List<Creature> targets = SquRandomEnemyTargeting.SelectRandomEnemies(
 			card,
-			ScriptChickenFootCheesePower.RedirectRandomEnemyCount);
+			ScriptChickenFootCheesePower.RedirectRandomEnemyCount,
+			cardPlay?.Target);
 		if (targets.Count == 0)
 		{
 			return;

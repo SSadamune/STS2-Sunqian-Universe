@@ -9,6 +9,7 @@ using MegaCrit.Sts2.Core.Models.Cards;
 using Squ;
 using Squ.Audio;
 using Squ.Character;
+using Squ.Combat;
 using Squ.Powers;
 using STS2RitsuLib.Interop.AutoRegistration;
 using STS2RitsuLib.Scaffolding.Content;
@@ -34,7 +35,7 @@ public sealed class BurningLinkedCampsScript : ScriptCardTemplate
 		..HoverTipFactory.FromPowerWithPowerHoverTips<TinderPower>(
 			(int)DynamicVars[nameof(TinderPower)].BaseValue),
 		HoverTipFactory.FromCard<Burn>(),
-		HoverTipFactory.FromCard<ShangfangguSigh>(IsUpgraded),
+		SquCardHoverTipFactory.FromCard<ShangfangguSigh>(this, IsUpgraded),
 	];
 
 	public override IEnumerable<CardKeyword> CanonicalKeywords =>

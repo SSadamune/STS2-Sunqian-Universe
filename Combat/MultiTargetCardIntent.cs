@@ -6,13 +6,21 @@ using MegaCrit.Sts2.Core.Models;
 namespace Squ.Combat;
 
 /// <summary>
+/// Marks a card whose effect has multi-target intent even though playing it requires
+/// choosing one primary target.
+/// </summary>
+public interface IHasMultiTargetCardIntent
+{
+}
+
+/// <summary>
 /// Shared checks for cards that target all enemies or multiple random enemies.
 /// </summary>
 public static class MultiTargetCardIntent
 {
 	public static bool HasMultiTargetIntent(CardModel card)
 	{
-		if (card.TargetType == TargetType.AllEnemies)
+		if (card.TargetType == TargetType.AllEnemies || card is IHasMultiTargetCardIntent)
 		{
 			return true;
 		}

@@ -42,6 +42,8 @@ public sealed class TransparentHole : ModCardTemplate, IRandomEnemyTargetCount, 
 
 	private decimal _cascadeDamage;
 
+	private Creature? _requiredTarget;
+
 	protected override bool HasEnergyCostX => true;
 
 	protected override IEnumerable<DynamicVar> CanonicalVars =>
@@ -76,7 +78,10 @@ public sealed class TransparentHole : ModCardTemplate, IRandomEnemyTargetCount, 
 			return;
 		}
 
-		List<Creature> firstVolley = SquRandomEnemyTargeting.SelectRandomEnemies(this, targetCount);
+		List<Creature> firstVolley = SquRandomEnemyTargeting.SelectRandomEnemies(
+			this,
+			targetCount,
+			cardPlay.Target);
 		if (firstVolley.Count == 0)
 		{
 			return;
@@ -98,6 +103,7 @@ public sealed class TransparentHole : ModCardTemplate, IRandomEnemyTargetCount, 
 		_cascadeAttack = attack;
 		_cascadeInitialCount = targetCount;
 		_cascadeDamage = DynamicVars.Damage.BaseValue;
+		_requiredTarget = cardPlay.Target;
 		try
 		{
 			await attack.Execute(choiceContext);
@@ -105,6 +111,7 @@ public sealed class TransparentHole : ModCardTemplate, IRandomEnemyTargetCount, 
 		finally
 		{
 			_cascadeAttack = null;
+			_requiredTarget = null;
 		}
 	}
 
@@ -138,7 +145,10 @@ public sealed class TransparentHole : ModCardTemplate, IRandomEnemyTargetCount, 
 
 		_cascadeDamage = decimal.Floor(_cascadeDamage * (1m + CascadeDamageMultiplier));
 		context.Attack.TargetingFiltered(
-			SquRandomEnemyTargeting.SelectRandomEnemies(this, nextTargetCount));
+			SquRandomEnemyTargeting.SelectRandomEnemies(
+				this,
+				nextTargetCount,
+				_requiredTarget));
 		await Cmd.Wait(RepeatAttackDelaySeconds);
 	}
 

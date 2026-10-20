@@ -26,7 +26,8 @@ public static class SquRandomEnemyTargeting
 	public static IEnumerable<Creature> PickRandomEnemiesUnique(
 		ICombatState combatState,
 		int count,
-		Rng rng)
+		Rng rng,
+		Creature? requiredTarget = null)
 	{
 		if (count <= 0)
 		{
@@ -42,12 +43,23 @@ public static class SquRandomEnemyTargeting
 		}
 
 		int pickCount = Math.Min(count, alive.Count);
-		List<Creature> pool = alive.ToList();
+		Creature? includedTarget = requiredTarget != null && alive.Contains(requiredTarget)
+			? requiredTarget
+			: null;
+		List<Creature> pool = alive
+			.Where(creature => creature != includedTarget)
+			.ToList();
 
 		for (int i = pool.Count - 1; i > 0; i--)
 		{
 			int swapIndex = rng.NextInt(0, i + 1);
 			(pool[i], pool[swapIndex]) = (pool[swapIndex], pool[i]);
+		}
+
+		if (includedTarget != null)
+		{
+			yield return includedTarget;
+			pickCount--;
 		}
 
 		foreach (Creature creature in pool.Take(pickCount))
@@ -86,13 +98,16 @@ public static class SquRandomEnemyTargeting
 			return CardModelTargetingExtensions.GetTargets(card, selectedTarget);
 		}
 
-		return SelectRandomEnemies(card, GetRandomEnemyTargetCount(card));
+		return SelectRandomEnemies(card, GetRandomEnemyTargetCount(card), selectedTarget);
 	}
 
 	/// <summary>
 	/// 为一项随机多目标效果选择一次目标集合。调用方必须在该效果的后续结算中复用返回的集合。
 	/// </summary>
-	public static List<Creature> SelectRandomEnemies(CardModel card, int requestedTargetCount)
+	public static List<Creature> SelectRandomEnemies(
+		CardModel card,
+		int requestedTargetCount,
+		Creature? requiredTarget = null)
 	{
 		ICombatState? combatState = card.CombatState;
 		if (combatState == null || requestedTargetCount <= 0)
@@ -103,7 +118,8 @@ public static class SquRandomEnemyTargeting
 		return PickRandomEnemiesUnique(
 			combatState,
 			requestedTargetCount,
-			card.Owner.RunState.Rng.CombatTargets).ToList();
+			card.Owner.RunState.Rng.CombatTargets,
+			requiredTarget).ToList();
 	}
 
 	/// <summary>
@@ -127,7 +143,10 @@ public static class SquRandomEnemyTargeting
 			return 0;
 		}
 
-		List<Creature> targets = SelectRandomEnemies(card, requestedTargetCount);
+		List<Creature> targets = SelectRandomEnemies(
+			card,
+			requestedTargetCount,
+			cardPlay?.Target);
 		await ExecuteDamageAgainstTargets(
 			card,
 			choiceContext,

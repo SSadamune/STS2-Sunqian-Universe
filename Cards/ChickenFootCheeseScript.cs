@@ -44,7 +44,7 @@ public sealed class ChickenFootCheeseScript : ScriptCardTemplate, IRandomEnemyTa
 
 	protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
 	[
-		..HoverTipFactory.FromCardWithCardHoverTips<ChickenFootCheeseScriptStrikePreview>(IsUpgraded),
+		..SquCardHoverTipFactory.FromCardWithCardHoverTips<ChickenFootCheeseScriptStrikePreview>(this, IsUpgraded),
 	];
 
 	public override CardAssetProfile AssetProfile => new(
@@ -63,7 +63,10 @@ public sealed class ChickenFootCheeseScript : ScriptCardTemplate, IRandomEnemyTa
 	{
 		SquSfx.Play(SquSfx.ChickenFootCheeseScriptChenGongEvent);
 		List<MegaCrit.Sts2.Core.Entities.Creatures.Creature> targets =
-			SquRandomEnemyTargeting.SelectRandomEnemies(this, RandomEnemyTargetCount);
+			SquRandomEnemyTargeting.SelectRandomEnemies(
+				this,
+				RandomEnemyTargetCount,
+				cardPlay.Target);
 		SquVigorSnapshot.AttackSequence damageSequence =
 			SquVigorSnapshot.BeginAttackSequence(Owner.Creature, this);
 		await SquRandomEnemyTargeting.ExecuteDamageAgainstTargets(
