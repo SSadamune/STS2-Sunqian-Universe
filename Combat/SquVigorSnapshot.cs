@@ -126,8 +126,18 @@ public static class SquVigorSnapshot
 
 		public decimal ResolveNextAttackDamage()
 		{
-			decimal baseDamage = _card.DynamicVars.Damage.BaseValue;
-			decimal? snapshotted = DamagePerHitWithSnapshot(_card, _vigorSnapshot, _firstAttackDone);
+			return ResolveNextAttackDamage(_card.DynamicVars.Damage.BaseValue);
+		}
+
+		/// <summary>
+		/// Returns the supplied base damage, carrying the snapshotted Vigor into every
+		/// attack command after the first command has consumed the actual power.
+		/// </summary>
+		public decimal ResolveNextAttackDamage(decimal baseDamage)
+		{
+			decimal? snapshotted = _firstAttackDone && _vigorSnapshot > 0
+				? baseDamage + _vigorSnapshot
+				: null;
 			_firstAttackDone = true;
 			return snapshotted ?? baseDamage;
 		}

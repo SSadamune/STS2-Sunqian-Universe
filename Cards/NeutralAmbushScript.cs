@@ -21,7 +21,7 @@ namespace Squ.Cards;
 
 /// <summary>
 /// 将原版 <see cref="GiantRock"/> 与 <see cref="SalvoStrike"/> 洗入抽牌堆，
-/// 并在剧本存续期间于抽到二者之一时自动对随机目标打出。
+/// 并在剧本存续期间每回合第一次抽到二者之一时自动对随机目标打出。
 /// </summary>
 [RegisterCard(typeof(SunqianCardPool), StableEntryStem = "neutral_ambush_script")]
 public sealed class NeutralAmbushScript : ScriptCardTemplate

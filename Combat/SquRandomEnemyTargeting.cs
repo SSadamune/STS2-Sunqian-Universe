@@ -122,16 +122,47 @@ public static class SquRandomEnemyTargeting
 		bool spawnHitVfxOnEachCreature = false,
 		Func<IEnumerable<Creature>, Task>? beforeHit = null)
 	{
-		ICombatState? combatState = card.CombatState;
-		if (combatState == null || requestedTargetCount <= 0 || hitCountPerTarget <= 0)
+		if (card.CombatState == null || requestedTargetCount <= 0 || hitCountPerTarget <= 0)
 		{
 			return 0;
 		}
 
 		List<Creature> targets = SelectRandomEnemies(card, requestedTargetCount);
-		if (targets.Count == 0)
+		await ExecuteDamageAgainstTargets(
+			card,
+			choiceContext,
+			targets,
+			damagePerHit,
+			hitCountPerTarget,
+			hitFx,
+			cardPlay,
+			hitVfxNode,
+			spawnHitVfxOnEachCreature,
+			beforeHit);
+
+		return targets.Count;
+	}
+
+	/// <summary>
+	/// Uses a previously selected target set so multiple attack commands from one effect
+	/// resolve against the same random enemies.
+	/// </summary>
+	public static async Task ExecuteDamageAgainstTargets(
+		CardModel card,
+		PlayerChoiceContext choiceContext,
+		IReadOnlyCollection<Creature> targets,
+		decimal? damagePerHit = null,
+		int hitCountPerTarget = 1,
+		string? hitFx = "vfx/vfx_attack_slash",
+		CardPlay? cardPlay = null,
+		Func<Creature, Node2D?>? hitVfxNode = null,
+		bool spawnHitVfxOnEachCreature = false,
+		Func<IEnumerable<Creature>, Task>? beforeHit = null)
+	{
+		ICombatState? combatState = card.CombatState;
+		if (combatState == null || targets.Count == 0 || hitCountPerTarget <= 0)
 		{
-			return 0;
+			return;
 		}
 
 		AttackCommand attack = DamageCmd.Attack(damagePerHit ?? card.DynamicVars.Damage.BaseValue)
@@ -160,7 +191,5 @@ public static class SquRandomEnemyTargeting
 		}
 
 		await attack.Execute(choiceContext);
-
-		return targets.Count;
 	}
 }

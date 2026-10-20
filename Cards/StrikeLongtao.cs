@@ -64,19 +64,9 @@ public sealed class StrikeLongtao : ModCardTemplate
 
 	protected override void AddExtraArgsToDescription(LocString description)
 	{
-		string bodyKey = "normalBody";
-		if (Pile?.Type == PileType.Hand
-			&& ScriptChickenFootCheesePower.ShouldRedirectBasicStrike(this))
-		{
-			bodyKey = Owner?.Creature?.GetPower<ScriptChickenFootCheesePower>() is { } power
-				&& power.HitCountPerTarget >= ScriptChickenFootCheesePower.UpgradedHitCount
-				? "chickenFootCheeseScriptUpgradedBody"
-				: "chickenFootCheeseScriptBody";
-		}
-
 		SquKeywords.AddNestedLoc(
 			description,
 			"BodyText",
-			new LocString("cards", Id.Entry + "." + bodyKey));
+			new LocString("cards", Id.Entry + ".normalBody"));
 	}
 }

@@ -1,7 +1,12 @@
+using MegaCrit.Sts2.Core.Entities.Cards;
+using MegaCrit.Sts2.Core.Models.Cards;
 using MegaCrit.Sts2.Core.Models.Characters;
 using MegaCrit.Sts2.Core.Models.Monsters;
+using MegaCrit.Sts2.Core.Models.Powers;
 using Squ.Cards;
+using Squ.Combat;
 using Squ.Powers;
+using STS2RitsuLib.Models.Capabilities;
 using TestTheSpire;
 using Xunit;
 
@@ -19,20 +24,142 @@ public sealed class ChickenFootCheeseScriptTests : SunqianCombatTestSuite
     }
 
     [Fact]
-    public async Task ChickenFootCheeseScript_hits_two_enemies_twice_and_becomes_active()
+    public async Task Base_card_deals_six_then_three_and_both_hits_receive_vigor()
     {
+        await ApplyPower<VigorPower>(Player.Creature, 2);
         var first = EnemyAt(0);
         var second = EnemyAt(1);
         int firstHpBefore = first.CurrentHp;
         int secondHpBefore = second.CurrentHp;
         var card = await AddToHand<ChickenFootCheeseScript>();
 
+        card.DynamicVars.Damage.UpdateCardPreview(card, CardPreviewMode.Normal, first, true);
+        card.DynamicVars[ChickenFootCheeseScript.FollowUpDamageVarName]
+            .UpdateCardPreview(card, CardPreviewMode.Normal, first, true);
+        card.DynamicVars[ChickenFootCheeseScript.ScriptFollowUpDamageVarName]
+            .UpdateCardPreview(card, CardPreviewMode.Normal, first, true);
+
+        Assert.Equal(8, card.DynamicVars.Damage.PreviewValue);
+        Assert.Equal(5, card.DynamicVars[ChickenFootCheeseScript.FollowUpDamageVarName].PreviewValue);
+        Assert.Equal(3, card.DynamicVars[ChickenFootCheeseScript.ScriptFollowUpDamageVarName].PreviewValue);
+        string cardDescription = card.GetDescriptionForPile(PileType.Hand);
+        Assert.Contains("5", cardDescription);
+        Assert.Contains("3", cardDescription);
+
         await Play(card);
 
-        int expectedDamage = ChickenFootCheeseScript.BaseDamage
-            * ScriptChickenFootCheesePower.BaseHitCount;
+        const int expectedDamage = (ChickenFootCheeseScript.BaseDamage + 2)
+            + (ChickenFootCheeseScript.BaseFollowUpDamage + 2);
         Assert.Equal(firstHpBefore - expectedDamage, first.CurrentHp);
         Assert.Equal(secondHpBefore - expectedDamage, second.CurrentHp);
-        AssertOnlyScript<ScriptChickenFootCheesePower>();
+        Assert.Equal(
+            ScriptChickenFootCheesePower.BaseFollowUpDamage,
+            Assert.IsType<ScriptChickenFootCheesePower>(
+                Player.Creature.GetPower<ScriptChickenFootCheesePower>()).FollowUpDamage);
+    }
+
+    [Fact]
+    public async Task Upgraded_card_deals_six_then_nine_and_stores_nine_in_script()
+    {
+        var first = EnemyAt(0);
+        var second = EnemyAt(1);
+        int firstHpBefore = first.CurrentHp;
+        int secondHpBefore = second.CurrentHp;
+        var card = Upgrade(await AddToHand<ChickenFootCheeseScript>());
+
+        Assert.Equal(
+            ChickenFootCheeseScript.UpgradedFollowUpDamage,
+            card.DynamicVars[ChickenFootCheeseScript.FollowUpDamageVarName].BaseValue);
+        Assert.Equal(
+            ChickenFootCheeseScript.UpgradedFollowUpDamage,
+            card.DynamicVars[ChickenFootCheeseScript.ScriptFollowUpDamageVarName].BaseValue);
+        var strikePreview = Upgrade(Combat.CreateCard<ChickenFootCheeseScriptStrikePreview>(Player));
+        Assert.Equal(ChickenFootCheeseScript.BaseDamage, strikePreview.DynamicVars.Damage.BaseValue);
+        Assert.Equal(
+            ChickenFootCheeseScript.UpgradedFollowUpDamage,
+            strikePreview.DynamicVars[ChickenFootCheeseScriptStrikePreview.FollowUpDamageVarName].BaseValue);
+
+        await Play(card);
+
+        const int expectedDamage = ChickenFootCheeseScript.BaseDamage
+            + ChickenFootCheeseScript.UpgradedFollowUpDamage;
+        Assert.Equal(firstHpBefore - expectedDamage, first.CurrentHp);
+        Assert.Equal(secondHpBefore - expectedDamage, second.CurrentHp);
+        Assert.Equal(
+            ScriptChickenFootCheesePower.UpgradedFollowUpDamage,
+            Assert.IsType<ScriptChickenFootCheesePower>(
+                Player.Creature.GetPower<ScriptChickenFootCheesePower>()).FollowUpDamage);
+    }
+
+    [Fact]
+    public async Task Redirected_strike_deals_normal_damage_then_vigor_scaled_follow_up()
+    {
+        await Play(await AddToHand<ChickenFootCheeseScript>());
+        await ApplyPower<VigorPower>(Player.Creature, 2);
+
+        var first = EnemyAt(0);
+        var second = EnemyAt(1);
+        int firstHpBefore = first.CurrentHp;
+        int secondHpBefore = second.CurrentHp;
+        var strike = await AddToHand<StrikeIronclad>();
+        var capability = Assert.IsType<ChickenFootCheeseStrikeCapability>(
+            strike.Capability<ChickenFootCheeseStrikeCapability>());
+
+        strike.DynamicVars.Damage.UpdateCardPreview(
+            strike,
+            CardPreviewMode.Normal,
+            first,
+            runGlobalHooks: true);
+        capability.DynamicVars[ChickenFootCheeseStrikeCapability.FollowUpDamageVarName]
+            .UpdateCardPreview(strike, CardPreviewMode.Normal, first, true);
+
+        Assert.Equal(8, strike.DynamicVars.Damage.PreviewValue);
+        Assert.Equal(
+            5,
+            capability.DynamicVars[ChickenFootCheeseStrikeCapability.FollowUpDamageVarName].PreviewValue);
+        Assert.Contains("5", strike.GetDescriptionForPile(PileType.Hand));
+
+        await Play(strike);
+
+        const int expectedDamage = (6 + 2)
+            + (ScriptChickenFootCheesePower.BaseFollowUpDamage + 2);
+        Assert.Equal(firstHpBefore - expectedDamage, first.CurrentHp);
+        Assert.Equal(secondHpBefore - expectedDamage, second.CurrentHp);
+    }
+
+    [Fact]
+    public async Task Upgraded_script_grants_nine_follow_up_regardless_of_strike_upgrade()
+    {
+        await Play(Upgrade(await AddToHand<ChickenFootCheeseScript>()));
+        var normalStrike = await AddToHand<StrikeIronclad>();
+        var upgradedStrike = Upgrade(await AddToHand<StrikeIronclad>());
+        var normalCapability = Assert.IsType<ChickenFootCheeseStrikeCapability>(
+            normalStrike.Capability<ChickenFootCheeseStrikeCapability>());
+        var upgradedCapability = Assert.IsType<ChickenFootCheeseStrikeCapability>(
+            upgradedStrike.Capability<ChickenFootCheeseStrikeCapability>());
+
+        normalCapability.DynamicVars[ChickenFootCheeseStrikeCapability.FollowUpDamageVarName]
+            .UpdateCardPreview(normalStrike, CardPreviewMode.Normal, EnemyAt(0), true);
+        upgradedCapability.DynamicVars[ChickenFootCheeseStrikeCapability.FollowUpDamageVarName]
+            .UpdateCardPreview(upgradedStrike, CardPreviewMode.Normal, EnemyAt(0), true);
+        Assert.Equal(
+            ScriptChickenFootCheesePower.UpgradedFollowUpDamage,
+            normalCapability.DynamicVars[ChickenFootCheeseStrikeCapability.FollowUpDamageVarName].PreviewValue);
+        Assert.Equal(
+            ScriptChickenFootCheesePower.UpgradedFollowUpDamage,
+            upgradedCapability.DynamicVars[ChickenFootCheeseStrikeCapability.FollowUpDamageVarName].PreviewValue);
+        Assert.Contains("9", normalStrike.GetDescriptionForPile(PileType.Hand));
+
+        await ApplyPower<VigorPower>(Player.Creature, 2);
+        var first = EnemyAt(0);
+        var second = EnemyAt(1);
+        int firstHpBefore = first.CurrentHp;
+        int secondHpBefore = second.CurrentHp;
+        await Play(upgradedStrike);
+
+        const int expectedDamage = (9 + 2)
+            + (ScriptChickenFootCheesePower.UpgradedFollowUpDamage + 2);
+        Assert.Equal(firstHpBefore - expectedDamage, first.CurrentHp);
+        Assert.Equal(secondHpBefore - expectedDamage, second.CurrentHp);
     }
 }

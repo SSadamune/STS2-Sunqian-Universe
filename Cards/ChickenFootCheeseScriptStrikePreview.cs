@@ -20,10 +20,12 @@ namespace Squ.Cards;
 public sealed class ChickenFootCheeseScriptStrikePreview : ModCardTemplate, IRandomEnemyTargetCount
 {
 	public const int BaseDamage = 6;
+	public const string FollowUpDamageVarName = "FollowUpDamage";
 
 	protected override IEnumerable<DynamicVar> CanonicalVars =>
 	[
 		new DamageVar(BaseDamage, ValueProp.Move),
+		new DamageVar(FollowUpDamageVarName, ScriptChickenFootCheesePower.BaseFollowUpDamage, ValueProp.Move),
 	];
 
 	protected override HashSet<CardTag> CanonicalTags => [CardTag.Strike];
@@ -40,15 +42,34 @@ public sealed class ChickenFootCheeseScriptStrikePreview : ModCardTemplate, IRan
 
 	public int GetRandomEnemyTargetCount() => ScriptChickenFootCheesePower.RedirectRandomEnemyCount;
 
-	protected override Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay) =>
-		SquRandomEnemyTargeting.ExecuteDistinctRandomEnemyDamage(
+	protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
+	{
+		List<MegaCrit.Sts2.Core.Entities.Creatures.Creature> targets =
+			SquRandomEnemyTargeting.SelectRandomEnemies(this, GetRandomEnemyTargetCount());
+		SquVigorSnapshot.AttackSequence damageSequence =
+			SquVigorSnapshot.BeginAttackSequence(Owner.Creature, this);
+		await SquRandomEnemyTargeting.ExecuteDamageAgainstTargets(
 			this,
 			choiceContext,
-			GetRandomEnemyTargetCount(),
-			hitCountPerTarget: IsUpgraded
-				? ScriptChickenFootCheesePower.UpgradedHitCount
-				: ScriptChickenFootCheesePower.BaseHitCount,
+			targets,
+			damageSequence.ResolveNextAttackDamage(),
 			hitFx: null,
 			cardPlay: cardPlay,
 			beforeHit: SquHitVfx.SmallMagicMissiles);
+		await SquRandomEnemyTargeting.ExecuteDamageAgainstTargets(
+			this,
+			choiceContext,
+			targets,
+			damageSequence.ResolveNextAttackDamage(DynamicVars[FollowUpDamageVarName].BaseValue),
+			hitFx: null,
+			cardPlay: cardPlay,
+			beforeHit: SquHitVfx.SmallMagicMissiles);
+	}
+
+	protected override void OnUpgrade()
+	{
+		DynamicVars[FollowUpDamageVarName].UpgradeValueBy(
+			ScriptChickenFootCheesePower.UpgradedFollowUpDamage
+			- ScriptChickenFootCheesePower.BaseFollowUpDamage);
+	}
 }
