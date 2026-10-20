@@ -5,6 +5,7 @@ using MegaCrit.Sts2.Core.Entities.Players;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Models;
+using MegaCrit.Sts2.Core.Models.CardPools;
 using MegaCrit.Sts2.Core.Models.Characters;
 using MegaCrit.Sts2.Core.Models.Monsters;
 using MegaCrit.Sts2.Core.Models.Powers;
@@ -212,6 +213,19 @@ public sealed class FamilyQuestCardTests : SunqianCombatTestSuite
             causedByEthereal: true);
 
         AssertInPile(card, PileType.Exhaust);
+    }
+
+    [Fact]
+    public void Normal_thinking_uses_curse_visuals_without_entering_the_random_curse_pool()
+    {
+        NormalThinking card = ModelDb.Card<NormalThinking>();
+        CardPoolModel cursePool = ModelDb.CardPool<CurseCardPool>();
+        CardPoolModel tokenPool = ModelDb.CardPool<TokenCardPool>();
+
+        Assert.Contains(card, tokenPool.AllCards);
+        Assert.DoesNotContain(card, cursePool.AllCards);
+        Assert.Same(cursePool, card.VisualCardPool);
+        Assert.Equal("card_frame_curse", card.VisualCardPool.CardFrameMaterialPath);
     }
 
     [Fact]
