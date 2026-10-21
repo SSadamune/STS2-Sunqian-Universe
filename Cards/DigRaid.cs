@@ -51,7 +51,7 @@ public sealed class DigRaid : ModCardTemplate
 		HoverTipFactory.Static(StaticHoverTip.Block),
 		HoverTipFactory.FromPower<BurningPower>(),
 		HoverTipFactory.FromPower<VigorPower>(),
-		HoverTipFactory.FromPower<TinderPower>(),
+		..HoverTipFactory.FromPowerWithPowerHoverTips<TinderPower>(),
 	];
 
 	public override CardAssetProfile AssetProfile => new(

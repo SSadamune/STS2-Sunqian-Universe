@@ -5,6 +5,7 @@ using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.Cards;
 using MegaCrit.Sts2.Core.Models.Characters;
 using MegaCrit.Sts2.Core.Models.Monsters;
+using Squ.Cards;
 using Squ.Interop;
 using Squ.Powers;
 using TestTheSpire;
@@ -17,10 +18,12 @@ public abstract class YjcmTinderJointModTestSuite : SunqianCombatTestSuite
     private static readonly ModelId HuoGongCardId =
         new("CARD", "YJCM_CARD_HUO_GONG");
 
-    protected async Task AssertTinderHuoGongScenario(bool expectCombatUi)
+    private protected async Task AssertTinderHuoGongScenario(string expectedMode)
     {
         Assert.True(YjcmPublicApiInterop.IsReady);
-        Assert.False(YjcmPublicApiInterop.IsYjcmCharacter(Player.Character));
+		Assert.Equal(
+			expectedMode == "InlineKeywords",
+			YjcmPublicApiInterop.IsYjcmCharacter(Player.Character));
         const int tinderAmount = 4;
         await ApplyPower<TinderPower>(Player.Creature, tinderAmount);
         var tinder = Assert.IsType<TinderPower>(
@@ -30,16 +33,34 @@ public abstract class YjcmTinderJointModTestSuite : SunqianCombatTestSuite
             ?? throw new InvalidOperationException("Huo Gong hover title is missing.");
         string description = FormatPowerDescription(tinder);
         IHoverTip[] hoverTips = tinder.HoverTips.ToArray();
+		string linkDescription = SquCommonL10n.YjcmTinderLibraryHover().GetFormattedText();
 
-        if (expectCombatUi)
+		if (expectedMode == "InlineKeywords")
         {
             Assert.Contains(huoGongTitle, description);
+			Assert.Contains("[purple]", description);
             Assert.Contains(hoverTips, tip => tip.Id == huoGongTip.Id);
+			Assert.DoesNotContain(
+				hoverTips.OfType<HoverTip>(),
+				tip => tip.Description == linkDescription);
         }
         else
         {
             Assert.DoesNotContain(huoGongTitle, description);
+			Assert.DoesNotContain("[purple]", description);
             Assert.DoesNotContain(hoverTips, tip => tip.Id == huoGongTip.Id);
+			if (expectedMode == "HoverOnly")
+			{
+				Assert.Contains(
+					hoverTips.OfType<HoverTip>(),
+					tip => tip.Description == linkDescription);
+			}
+			else
+			{
+				Assert.DoesNotContain(
+					hoverTips.OfType<HoverTip>(),
+					tip => tip.Description == linkDescription);
+			}
         }
 
         foreach (CardModel existing in PileType.Hand.GetPile(Player).Cards.ToArray())
@@ -83,8 +104,47 @@ public sealed class YjcmTinderPartyJointModTests : YjcmTinderJointModTestSuite
             .WithSeed("yjcm-tinder-party-ui");
 
     [Fact]
-    public Task Non_Yjcm_owner_gets_effect_and_ui_when_party_contains_Yjcm_character() =>
-        AssertTinderHuoGongScenario(expectCombatUi: true);
+	public Task Non_Yjcm_local_player_gets_hover_only_mode_when_party_contains_Yjcm_character() =>
+		AssertTinderHuoGongScenario("HoverOnly");
+
+	[Fact]
+	public void All_cards_that_reference_Tinder_propagate_its_mod_link_hover()
+	{
+		string linkDescription = SquCommonL10n.YjcmTinderLibraryHover().GetFormattedText();
+		CardModel[] cards =
+		[
+			Combat.CreateCard<BelovedPartner>(Player),
+			Combat.CreateCard<BowangParadoxScript>(Player),
+			Combat.CreateCard<BurnAfterReading>(Player),
+			Combat.CreateCard<BurningLinkedCampsScript>(Player),
+			Combat.CreateCard<DigRaid>(Player),
+			Combat.CreateCard<RelocateCapital>(Player),
+		];
+
+		foreach (CardModel card in cards)
+		{
+			Assert.Contains(
+				card.HoverTips.OfType<HoverTip>(),
+				tip => tip.Description == linkDescription);
+		}
+	}
+
+	[Fact]
+	public async Task Shangfanggu_sigh_uses_hover_only_mode_for_non_Yjcm_local_player()
+	{
+		var card = await AddToHand<ShangfangguSigh>();
+		IHoverTip huoGongTip = YjcmPublicApiInterop.CreateHuoGongHoverTip();
+		string huoGongTitle = Assert.IsType<HoverTip>(huoGongTip).Title!;
+		string description = card.GetDescriptionForPile(PileType.Hand);
+		string linkDescription = SquCommonL10n.YjcmGoodFireLibraryHover().GetFormattedText();
+
+		Assert.DoesNotContain(huoGongTitle, description);
+		Assert.DoesNotContain("[purple]", description);
+		Assert.DoesNotContain(card.HoverTips, tip => tip.Id == huoGongTip.Id);
+		Assert.Contains(
+			card.HoverTips.OfType<HoverTip>(),
+			tip => tip.Description == linkDescription);
+	}
 }
 
 public sealed class YjcmTinderNoPartyJointModTests : YjcmTinderJointModTestSuite
@@ -99,7 +159,7 @@ public sealed class YjcmTinderNoPartyJointModTests : YjcmTinderJointModTestSuite
 
     [Fact]
     public Task Multiplayer_without_Yjcm_character_gets_effect_but_no_ui() =>
-        AssertTinderHuoGongScenario(expectCombatUi: false);
+		AssertTinderHuoGongScenario("None");
 }
 
 public sealed class YjcmTinderSoloJointModTests : YjcmTinderJointModTestSuite
@@ -112,5 +172,21 @@ public sealed class YjcmTinderSoloJointModTests : YjcmTinderJointModTestSuite
 
     [Fact]
     public Task Solo_non_Yjcm_character_gets_effect_but_no_ui() =>
-        AssertTinderHuoGongScenario(expectCombatUi: false);
+		AssertTinderHuoGongScenario("None");
+}
+
+public sealed class YjcmTinderLocalJointModTests : YjcmTinderJointModTestSuite
+{
+	private static readonly ModelId WuZhugeliangId =
+		new("CHARACTER", "YJCM_CHARACTER_WU_ZHUGELIANG");
+
+	protected override void ConfigureBattle(CombatTestBattleBuilder battle) =>
+		battle
+			.Player(ModelDb.GetById<CharacterModel>(WuZhugeliangId))
+			.AddEnemy<BigDummy>()
+			.WithSeed("yjcm-tinder-local-inline-keywords");
+
+	[Fact]
+	public Task Yjcm_local_player_gets_inline_keyword_mode() =>
+		AssertTinderHuoGongScenario("InlineKeywords");
 }

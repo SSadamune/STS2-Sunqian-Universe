@@ -31,7 +31,7 @@ public static class NewsanguoVigorSwap
 	public static IEnumerable<IHoverTip> LibraryHoverTips()
 	{
 		bool inCombat = IsCombatInProgress();
-		bool willShow = IsModReady && !inCombat;
+		bool willShow = PresentationMode == JointModPresentationMode.HoverOnly;
 		NewsanguoInteropDiagnostics.LogLibraryHover(inCombat, willShow);
 		if (!willShow)
 		{
@@ -54,7 +54,7 @@ public static class NewsanguoVigorSwap
 
 	private static IEnumerable<IHoverTip> GrantedPowerHoverTips(Player? owner)
 	{
-		if (ShowsPurpleNote(owner) && TryCreateDrunkenMightHoverTip() is { } drunkenMight)
+		if (ShowsInlineKeywords() && TryCreateDrunkenMightHoverTip() is { } drunkenMight)
 		{
 			yield return drunkenMight;
 			yield break;
@@ -122,7 +122,7 @@ public static class NewsanguoVigorSwap
 
 	private static string CombatNoteOrEmpty(Player? owner, LocString note)
 	{
-		bool appended = ShowsPurpleNote(owner);
+		bool appended = ShowsInlineKeywords();
 		NewsanguoInteropDiagnostics.LogCombatNote(owner, appended);
 		if (!appended)
 		{
@@ -136,12 +136,17 @@ public static class NewsanguoVigorSwap
 		CombatPowerName(owner?.Player);
 
 	private static string CombatPowerName(Player? owner) =>
-		(ShowsPurpleNote(owner)
+		(ShowsInlineKeywords()
 			? SquCommonL10n.NewsanguoDrunkenMightInlineText()
 			: SquCommonL10n.NewsanguoVigorInlineText()).GetFormattedText();
 
-	private static bool ShowsPurpleNote(Player? owner) =>
-		IsCombatInProgress() && AffectsNewsanguo(owner);
+	private static JointModPresentationMode PresentationMode =>
+		JointModPresentation.Resolve(
+			IsModReady,
+			NewsanguoPublicApiInterop.IsNewsanguoCharacter);
+
+	private static bool ShowsInlineKeywords() =>
+		PresentationMode == JointModPresentationMode.InlineKeywords;
 
 	private static IHoverTip? TryCreateDrunkenMightHoverTip()
 	{

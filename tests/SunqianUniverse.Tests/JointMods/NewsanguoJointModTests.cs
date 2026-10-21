@@ -5,6 +5,7 @@ using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Models.Monsters;
 using MegaCrit.Sts2.Core.Models.Powers;
+using MegaCrit.Sts2.Core.Models.Characters;
 using Squ.Cards;
 using Squ.Interop;
 using Squ.Powers;
@@ -40,6 +41,8 @@ public sealed class NewsanguoJointModTests : SunqianCombatTestSuite
         var grandGoblet = await AddToHand<GrandGoblet>();
         AssertUsesDrunkenMightText(wine, drunkenMightTitle, vigorTitle);
         AssertUsesDrunkenMightText(grandGoblet, drunkenMightTitle, vigorTitle);
+		AssertInlineKeywordMode(wine);
+		AssertInlineKeywordMode(grandGoblet);
 
         await Play(grandGoblet);
         var grandGobletPower = Assert.IsType<GrandGobletPower>(
@@ -91,6 +94,18 @@ public sealed class NewsanguoJointModTests : SunqianCombatTestSuite
         Assert.DoesNotContain(vigorTitle, description);
     }
 
+	private static void AssertInlineKeywordMode(CardModel card)
+	{
+		IHoverTip drunkenMightTip = NewsanguoPublicApiInterop.CreateDrunkenMightHoverTip();
+		string linkDescription = SquCommonL10n.NewsanguoVigorSwapLibraryHover()
+			.GetFormattedText();
+		Assert.Contains("[purple]", card.GetDescriptionForPile(PileType.Hand));
+		Assert.Contains(card.HoverTips, tip => tip.Id == drunkenMightTip.Id);
+		Assert.DoesNotContain(
+			card.HoverTips.OfType<HoverTip>(),
+			tip => tip.Description == linkDescription);
+	}
+
     private static string FormatPowerDescription(PowerModel power)
     {
         var description = power.SmartDescription;
@@ -98,4 +113,49 @@ public sealed class NewsanguoJointModTests : SunqianCombatTestSuite
         power.DynamicVars.AddTo(description);
         return description.GetFormattedText();
     }
+}
+
+public sealed class NewsanguoPartyJointModTests : SunqianCombatTestSuite
+{
+	private static readonly ModelId CaoWeiCharacterId =
+		new("CHARACTER", "NEWSANGUO_CHARACTER_CAO_WEI_CHARACTER");
+
+	protected override void ConfigureBattle(CombatTestBattleBuilder battle) =>
+		battle
+			.AddPlayer<Ironclad>(1)
+			.AddPlayer(ModelDb.GetById<CharacterModel>(CaoWeiCharacterId), 2)
+			.LocalNetId(1)
+			.AddEnemy<BigDummy>()
+			.WithSeed("joint-newsanguo-party-hover-only");
+
+	[Fact]
+	public async Task Non_Newsanguo_local_player_gets_hover_only_mode()
+	{
+		Assert.False(NewsanguoPublicApiInterop.IsNewsanguoCharacter(Player.Character));
+		Assert.True(NewsanguoPublicApiInterop.IsNewsanguoCharacter(PlayerWithNetId(2).Character));
+		string vigorTitle = ModelDb.Power<VigorPower>().Title.GetFormattedText();
+		string drunkenMightTitle = Assert.IsType<HoverTip>(
+			NewsanguoPublicApiInterop.CreateDrunkenMightHoverTip()).Title!;
+		string linkDescription = SquCommonL10n.NewsanguoVigorSwapLibraryHover()
+			.GetFormattedText();
+		CardModel[] cards =
+		[
+			await AddToHand<Wine>(),
+			await AddToHand<GrandGoblet>(),
+		];
+
+		foreach (CardModel card in cards)
+		{
+			string description = card.GetDescriptionForPile(PileType.Hand);
+			Assert.Contains(vigorTitle, description);
+			Assert.DoesNotContain(drunkenMightTitle, description);
+			Assert.DoesNotContain("[purple]", description);
+			Assert.Contains(
+				card.HoverTips.OfType<HoverTip>(),
+				tip => tip.Description == linkDescription);
+			Assert.DoesNotContain(
+				card.HoverTips,
+				tip => tip.Id == NewsanguoPublicApiInterop.CreateDrunkenMightHoverTip().Id);
+		}
+	}
 }

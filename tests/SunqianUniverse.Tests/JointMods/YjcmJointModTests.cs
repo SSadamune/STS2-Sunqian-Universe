@@ -51,6 +51,8 @@ public sealed class YjcmJointModTests : SunqianCombatTestSuite
         Assert.Contains(
             huoGongTitle,
             weiDongZhuoCard.GetDescriptionForPile(PileType.Hand));
+		AssertInlineKeywordMode(wuZhugeliangCard, huoGongTitle);
+		AssertInlineKeywordMode(weiDongZhuoCard, huoGongTitle);
 
         await Play(wuZhugeliangCard);
         await Play(weiDongZhuoCard);
@@ -92,4 +94,17 @@ public sealed class YjcmJointModTests : SunqianCombatTestSuite
         power.DynamicVars.AddTo(description);
         return description.GetFormattedText();
     }
+
+	private static void AssertInlineKeywordMode(CardModel card, string huoGongTitle)
+	{
+		IHoverTip huoGongTip = YjcmPublicApiInterop.CreateHuoGongHoverTip();
+		string linkDescription = SquCommonL10n.YjcmGoodFireLibraryHover().GetFormattedText();
+		string description = card.GetDescriptionForPile(PileType.Hand);
+		Assert.Contains("[purple]", description);
+		Assert.Contains(huoGongTitle, description);
+		Assert.Contains(card.HoverTips, tip => tip.Id == huoGongTip.Id);
+		Assert.DoesNotContain(
+			card.HoverTips.OfType<HoverTip>(),
+			tip => tip.Description == linkDescription);
+	}
 }

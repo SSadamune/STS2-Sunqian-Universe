@@ -46,7 +46,10 @@ public sealed class RelocateCapital : SlightRevisionCardTemplate<BurnCity>
 
 			yield return HoverTipFactory.FromPower<VigorPower>();
 			yield return HoverTipFactory.Static(StaticHoverTip.Block);
-			yield return HoverTipFactory.FromPower<TinderPower>();
+			foreach (IHoverTip tip in HoverTipFactory.FromPowerWithPowerHoverTips<TinderPower>())
+			{
+				yield return tip;
+			}
 		}
 	}
 
