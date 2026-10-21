@@ -205,7 +205,9 @@ public sealed class FamilyOfOriginTests : SunqianCombatTestSuite
         familyRelic.DynamicVars.AddTo(description);
         string formattedDescription = description.GetFormattedText();
         Assert.Contains("召唤[/gold]8", formattedDescription);
-        Assert.Contains("获得4层[gold]再生[/gold]和6层[gold]火种[/gold]", formattedDescription);
+        Assert.Contains(
+            $"获得{BelovedPartner.RegenAmount * 2}层[gold]再生[/gold]和{BelovedPartner.TinderAmount * 2}层[gold]火种[/gold]",
+            formattedDescription);
         Assert.Contains("抽4张牌", formattedDescription);
 
         Player.RemoveRelicInternal(familyRelic, silent: true);

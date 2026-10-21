@@ -13,8 +13,10 @@ using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.Powers;
 using MegaCrit.Sts2.Core.ValueProps;
+using MegaCrit.Sts2.Core.Localization;
 using Squ.Cards;
 using Squ.Combat;
+using Squ.Interop;
 using STS2RitsuLib.Interop.AutoRegistration;
 using STS2RitsuLib.Scaffolding.Content;
 
@@ -23,7 +25,8 @@ using STS2RitsuLib.Scaffolding.Content;
 namespace Squ.Powers;
 
 /// <summary>
-/// 活力增幅：本回合下一张实际消耗活力的攻击牌获得额外活力加成，多层叠加倍率而非作用牌数。
+/// 活力增幅：本回合下一张实际消耗活力或酒力的攻击牌获得额外加成。
+/// 层数是这一张牌的倍率，不是能作用的牌数。同一张牌两种资源都消耗，也只结算这一次。
 /// </summary>
 [RegisterPower]
 public sealed class VigorAmplificationPower : ModPowerTemplate
@@ -35,6 +38,8 @@ public sealed class VigorAmplificationPower : ModPowerTemplate
 		public CardModel? ActiveCard { get; set; }
 
 		public decimal VigorSpent { get; set; }
+
+		public decimal DrunkenMightSpent { get; set; }
 	}
 
 	public override PowerType Type => PowerType.Buff;
@@ -50,7 +55,18 @@ public sealed class VigorAmplificationPower : ModPowerTemplate
 	protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
 	[
 		HoverTipFactory.FromPower<VigorPower>(),
+		..NewsanguoDrunkenMightEffect.HoverTips(),
 	];
+
+	public override LocString Description
+	{
+		get
+		{
+			LocString description = base.Description;
+			NewsanguoDrunkenMightEffect.AddOrText(description);
+			return description;
+		}
+	}
 
 	protected override object InitInternalData() => new Data();
 
@@ -86,6 +102,7 @@ public sealed class VigorAmplificationPower : ModPowerTemplate
 
 		data.ActiveCard = cardPlay.Card;
 		data.VigorSpent = 0m;
+		data.DrunkenMightSpent = 0m;
 		return Task.CompletedTask;
 	}
 
@@ -96,13 +113,21 @@ public sealed class VigorAmplificationPower : ModPowerTemplate
 		Creature? applier,
 		CardModel? cardSource)
 	{
+		Data data = GetInternalData<Data>();
 		if (!Owner.IsDead
-			&& power is VigorPower
-			&& power.Owner == Owner
-			&& amount < 0m
-			&& GetInternalData<Data>().ActiveCard is not null)
+			&& data.ActiveCard is not null
+			&& (cardSource is null || ReferenceEquals(cardSource, data.ActiveCard))
+			&& NewsanguoDrunkenMightEffect.IsSpentResource(power, Owner)
+			&& amount < 0m)
 		{
-			GetInternalData<Data>().VigorSpent += -amount;
+			if (power is VigorPower)
+			{
+				data.VigorSpent += -amount;
+			}
+			else
+			{
+				data.DrunkenMightSpent += -amount;
+			}
 		}
 
 		return Task.CompletedTask;
@@ -114,7 +139,7 @@ public sealed class VigorAmplificationPower : ModPowerTemplate
 			&& command.ModelSource is CardModel card
 			&& AppliesToActiveCard(card)
 			&& command.DamageProps.IsPoweredAttack()
-			&& GetVigorAmount() > 0m)
+			&& (GetVigorAmount() > 0m || NewsanguoDrunkenMightEffect.GetAmount(Owner) > 0))
 		{
 			Flash();
 		}
@@ -140,7 +165,7 @@ public sealed class VigorAmplificationPower : ModPowerTemplate
 			return 0m;
 		}
 
-		return GetVigorAmount() * bonusMultiplier;
+		return (GetVigorAmount() + NewsanguoDrunkenMightEffect.GetAmount(Owner)) * bonusMultiplier;
 	}
 
 	public override async Task AfterCardPlayedLate(
@@ -154,10 +179,11 @@ public sealed class VigorAmplificationPower : ModPowerTemplate
 			return;
 		}
 
-		bool spentVigor = data.VigorSpent > 0m;
+		bool spentResource = data.VigorSpent > 0m || data.DrunkenMightSpent > 0m;
 		data.ActiveCard = null;
 		data.VigorSpent = 0m;
-		if (spentVigor)
+		data.DrunkenMightSpent = 0m;
+		if (spentResource)
 		{
 			await PowerCmd.Remove(this);
 		}

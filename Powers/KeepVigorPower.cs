@@ -9,8 +9,10 @@ using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.Powers;
+using MegaCrit.Sts2.Core.Localization;
 using Squ.Cards;
 using Squ.Combat;
+using Squ.Interop;
 using STS2RitsuLib.Interop.AutoRegistration;
 using STS2RitsuLib.Scaffolding.Content;
 
@@ -19,9 +21,8 @@ using STS2RitsuLib.Scaffolding.Content;
 namespace Squ.Powers;
 
 /// <summary>
-/// Tracks every Attack as its own play. A stack is spent only when that Attack actually consumes
-/// Vigor. Same-owner child Attacks inheriting Vigor from Supreme General neither consume a stack
-/// nor absorb another restoration.
+/// 每张攻击牌单独占一层计数。同一张牌既消耗活力又消耗酒力，也只扣一层，
+/// 并把两种资源一起补回。上将军让同一持有者自动打出的子牌不另占一层。
 /// </summary>
 [RegisterPower]
 public class KeepVigorPower : ModPowerTemplate
@@ -38,6 +39,8 @@ public class KeepVigorPower : ModPowerTemplate
 		public required bool ReservesStack { get; init; }
 
 		public decimal VigorSpent { get; set; }
+
+		public decimal DrunkenMightSpent { get; set; }
 	}
 
 	public override PowerType Type => PowerType.Buff;
@@ -53,7 +56,18 @@ public class KeepVigorPower : ModPowerTemplate
 	protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
 	[
 		HoverTipFactory.FromPower<VigorPower>(),
+		..NewsanguoDrunkenMightEffect.HoverTips(),
 	];
+
+	public override LocString Description
+	{
+		get
+		{
+			LocString description = base.Description;
+			NewsanguoDrunkenMightEffect.AddOrText(description);
+			return description;
+		}
+	}
 
 	protected override object InitInternalData() => new Data();
 
@@ -88,20 +102,22 @@ public class KeepVigorPower : ModPowerTemplate
 		CardModel? cardSource)
 	{
 		if (Owner.IsDead
-			|| power is not VigorPower
-			|| power.Owner != Owner
+			|| !NewsanguoDrunkenMightEffect.IsSpentResource(power, Owner)
 			|| amount >= 0m)
 		{
 			return Task.CompletedTask;
 		}
 
-		Data data = GetInternalData<Data>();
-		if (data.ActiveAttacks.Count > 0)
+		AttackPlayTrack? active = FindTrackForSpend(GetInternalData<Data>(), cardSource);
+		if (active is { ReservesStack: true })
 		{
-			AttackPlayTrack active = data.ActiveAttacks[^1];
-			if (active.ReservesStack)
+			if (power is VigorPower)
 			{
 				active.VigorSpent += -amount;
+			}
+			else
+			{
+				active.DrunkenMightSpent += -amount;
 			}
 		}
 
@@ -127,7 +143,7 @@ public class KeepVigorPower : ModPowerTemplate
 
 		AttackPlayTrack track = data.ActiveAttacks[trackIndex];
 		data.ActiveAttacks.RemoveAt(trackIndex);
-		if (!track.ReservesStack || track.VigorSpent <= 0m)
+		if (!track.ReservesStack || (track.VigorSpent <= 0m && track.DrunkenMightSpent <= 0m))
 		{
 			return;
 		}
@@ -140,16 +156,29 @@ public class KeepVigorPower : ModPowerTemplate
 			return;
 		}
 
-		await PowerCmd.Apply<VigorPower>(
-			choiceContext,
-			Owner,
-			track.VigorSpent,
-			Owner,
-			cardPlay.Card);
-
-		if (Owner.GetPower<VigorPower>() is { } restoredVigor)
+		if (track.VigorSpent > 0m)
 		{
-			AttackVigorResolution.ClearVigorAttackBinding(restoredVigor);
+			await PowerCmd.Apply<VigorPower>(
+				choiceContext,
+				Owner,
+				track.VigorSpent,
+				Owner,
+				cardPlay.Card);
+
+			if (Owner.GetPower<VigorPower>() is { } restoredVigor)
+			{
+				AttackVigorResolution.ClearVigorAttackBinding(restoredVigor);
+			}
+		}
+
+		if (track.DrunkenMightSpent > 0m)
+		{
+			await NewsanguoPublicApiInterop.ApplyDrunkenMight(
+				choiceContext,
+				Owner,
+				track.DrunkenMightSpent,
+				Owner,
+				cardPlay.Card);
 		}
 	}
 
@@ -165,6 +194,25 @@ public class KeepVigorPower : ModPowerTemplate
 		}
 
 		return count;
+	}
+
+	/// <summary>
+	/// 消耗记在打出这张牌的记录上。活力和酒力因此共享同一次计数。
+	/// </summary>
+	private static AttackPlayTrack? FindTrackForSpend(Data data, CardModel? cardSource)
+	{
+		if (cardSource is not null)
+		{
+			for (int i = data.ActiveAttacks.Count - 1; i >= 0; i--)
+			{
+				if (ReferenceEquals(data.ActiveAttacks[i].Card, cardSource))
+				{
+					return data.ActiveAttacks[i];
+				}
+			}
+		}
+
+		return data.ActiveAttacks.Count > 0 ? data.ActiveAttacks[^1] : null;
 	}
 
 	private static int FindLastTrackIndex(Data data, CardModel card)

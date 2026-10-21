@@ -8,10 +8,12 @@ using MegaCrit.Sts2.Core.Entities.Creatures;
 using MegaCrit.Sts2.Core.Entities.Players;
 using MegaCrit.Sts2.Core.Entities.Powers;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
+using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.Powers;
 using MegaCrit.Sts2.Core.ValueProps;
 using Squ.Combat;
+using Squ.Interop;
 using STS2RitsuLib.Interop.AutoRegistration;
 using STS2RitsuLib.Scaffolding.Content;
 
@@ -46,9 +48,15 @@ public sealed class ScriptHeadsmanPower : ScriptPowerTemplate
 		/// <summary>整条结算链中由攻击实际消耗的活力总量。</summary>
 		public decimal VigorSpent { get; set; }
 
+		/// <summary>整条结算链中由攻击减半掉的酒力。</summary>
+		public decimal DrunkenMightSpent { get; set; }
+
 		/// <summary>本次打出期间是否至少击杀过一个敌人（不关心具体次数）。</summary>
 		public bool AnyKill { get; set; }
 	}
+
+	protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
+		NewsanguoDrunkenMightEffect.HoverTips();
 
 	public override PowerAssetProfile AssetProfile => new(
 		IconPath: "res://images/powers/ScriptHeadsmanPower.png",
@@ -128,15 +136,22 @@ public sealed class ScriptHeadsmanPower : ScriptPowerTemplate
 		CardModel? cardSource)
 	{
 		if (Owner.IsDead
-			|| power is not VigorPower
-			|| power.Owner != Owner
+			|| !NewsanguoDrunkenMightEffect.IsSpentResource(power, Owner)
 			|| amount >= 0m
 			|| !TryGetRootTrack(out AttackPlayTrack? track))
 		{
 			return Task.CompletedTask;
 		}
 
-		track.VigorSpent += -amount;
+		if (power is VigorPower)
+		{
+			track.VigorSpent += -amount;
+		}
+		else
+		{
+			track.DrunkenMightSpent += -amount;
+		}
+
 		return Task.CompletedTask;
 	}
 
@@ -172,6 +187,17 @@ public sealed class ScriptHeadsmanPower : ScriptPowerTemplate
 			{
 				AttackVigorResolution.ClearVigorAttackBinding(restoredVigor);
 			}
+			restored = true;
+		}
+
+		if (track.DrunkenMightSpent > 0m)
+		{
+			await NewsanguoPublicApiInterop.ApplyDrunkenMight(
+				choiceContext,
+				Owner,
+				track.DrunkenMightSpent,
+				Owner,
+				cardPlay.Card);
 			restored = true;
 		}
 

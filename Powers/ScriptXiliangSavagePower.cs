@@ -5,10 +5,12 @@ using MegaCrit.Sts2.Core.Commands.Builders;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.Entities.Creatures;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
+using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.Powers;
 using MegaCrit.Sts2.Core.ValueProps;
 using Squ.Combat;
+using Squ.Interop;
 using STS2RitsuLib.Interop.AutoRegistration;
 using STS2RitsuLib.Scaffolding.Content;
 
@@ -49,6 +51,9 @@ public sealed class ScriptXiliangSavagePower : ScriptPowerTemplate
 		public decimal Burning;
 	}
 
+	protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
+		NewsanguoDrunkenMightEffect.HoverTips();
+
 	public override PowerAssetProfile AssetProfile => new(
 		IconPath: "res://images/powers/ScriptXiliangSavagePower.png",
 		BigIconPath: "res://images/powers/ScriptXiliangSavagePowerBig.png");
@@ -75,6 +80,11 @@ public sealed class ScriptXiliangSavagePower : ScriptPowerTemplate
 		{
 			vigorBonus += inheritedVigor;
 		}
+
+		vigorBonus += NewsanguoDrunkenMightEffect.GetAmount(Owner);
+		vigorBonus += SupremeGeneralKeywordSystem.GetInheritedDrunkenMightBonus(
+			card,
+			command.CardPlay);
 
 		if (vigorBonus <= 0m)
 		{
@@ -126,8 +136,7 @@ public sealed class ScriptXiliangSavagePower : ScriptPowerTemplate
 		Creature? applier,
 		CardModel? cardSource)
 	{
-		if (power is not VigorPower
-			|| power.Owner != Owner
+		if (!NewsanguoDrunkenMightEffect.IsSpentResource(power, Owner)
 			|| amount >= 0m
 			|| cardSource is null
 			|| cardSource.Owner.Creature != Owner

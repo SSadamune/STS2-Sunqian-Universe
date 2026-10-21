@@ -7,11 +7,13 @@ using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.Entities.Creatures;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.HoverTips;
+using MegaCrit.Sts2.Core.Localization;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.Models.Powers;
 using Squ.Audio;
 using Squ.Character;
 using Squ.Combat;
+using Squ.Interop;
 using Squ.Powers;
 using STS2RitsuLib.Interop.AutoRegistration;
 using STS2RitsuLib.Scaffolding.Content;
@@ -40,7 +42,11 @@ public sealed class CrossTheRiver : ModCardTemplate
 		HoverTipFactory.FromPower<VigorPower>(),
 		HoverTipFactory.FromPower<StrengthPower>(),
 		HoverTipFactory.FromPower<VulnerablePower>(),
+		..NewsanguoDrunkenMightEffect.HoverTips(),
 	];
+
+	protected override void AddExtraArgsToDescription(LocString description) =>
+		NewsanguoDrunkenMightEffect.AddOrText(description);
 
 	public override CardAssetProfile AssetProfile => new(
 		PortraitPath: "res://images/cards/CrossTheRiver.png");

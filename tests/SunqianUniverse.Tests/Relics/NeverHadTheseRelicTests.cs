@@ -137,7 +137,9 @@ public sealed class NeverHadTheseRelicTests : SunqianCombatTestSuite
 
         Assert.Contains("[green]包括[/green]", description);
         Assert.Equal(1, description.Split("召唤[/gold]8").Length - 1);
-        Assert.Contains("获得4层[gold]再生[/gold]和6层[gold]火种[/gold]", description);
+        Assert.Contains(
+            $"获得{BelovedPartner.RegenAmount * 2}层[gold]再生[/gold]和{BelovedPartner.TinderAmount * 2}层[gold]火种[/gold]",
+            description);
         Assert.Contains("抽6张牌", description);
     }
 

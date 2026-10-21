@@ -22,6 +22,10 @@ public static class SquCommonL10n
 		"SUNQIAN_UNIVERSE_COMMON.NEWSANGUO_VIGOR_SWAP.vigorInlineText";
 	public const string NewsanguoDrunkenMightInlineTextKey =
 		"SUNQIAN_UNIVERSE_COMMON.NEWSANGUO_VIGOR_SWAP.drunkenMightInlineText";
+	public const string NewsanguoDrunkenMightEffectHoverKey =
+		"SUNQIAN_UNIVERSE_COMMON.NEWSANGUO_DRUNKEN_MIGHT_EFFECT.hover";
+	public const string NewsanguoDrunkenMightOrTextKey =
+		"SUNQIAN_UNIVERSE_COMMON.NEWSANGUO_DRUNKEN_MIGHT_EFFECT.orText";
 	public const string YjcmGoodFireHoverTitleKey =
 		"SUNQIAN_UNIVERSE_COMMON.YJCM_GOOD_FIRE.hoverTitle";
 	public const string YjcmGoodFireLibraryHoverKey =
@@ -67,6 +71,12 @@ public static class SquCommonL10n
 
 	public static LocString NewsanguoDrunkenMightInlineText() =>
 		new(Table, NewsanguoDrunkenMightInlineTextKey);
+
+	public static LocString NewsanguoDrunkenMightEffectHover() =>
+		new(Table, NewsanguoDrunkenMightEffectHoverKey);
+
+	public static LocString NewsanguoDrunkenMightOrText() =>
+		new(Table, NewsanguoDrunkenMightOrTextKey);
 
 	public static LocString YjcmGoodFireHoverTitle() =>
 		new(Table, YjcmGoodFireHoverTitleKey);

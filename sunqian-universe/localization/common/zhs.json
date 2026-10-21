@@ -10,6 +10,8 @@
   "SUNQIAN_UNIVERSE_COMMON.NEWSANGUO_VIGOR_SWAP.combatPowerNote": "此角色以此法获得[gold]酒力[/gold]，而非活力。",
   "SUNQIAN_UNIVERSE_COMMON.NEWSANGUO_VIGOR_SWAP.vigorInlineText": "[gold]活力[/gold]",
   "SUNQIAN_UNIVERSE_COMMON.NEWSANGUO_VIGOR_SWAP.drunkenMightInlineText": "[purple]酒力[/purple]",
+  "SUNQIAN_UNIVERSE_COMMON.NEWSANGUO_DRUNKEN_MIGHT_EFFECT.hover": "由于开启了[purple]新三国模组[/purple]，此效果也会因[gold]酒力[/gold]而触发。",
+  "SUNQIAN_UNIVERSE_COMMON.NEWSANGUO_DRUNKEN_MIGHT_EFFECT.orText": "[purple]与酒力[/purple]",
   "SUNQIAN_UNIVERSE_COMMON.YJCM_GOOD_FIRE.hoverTitle": "※模组联动",
   "SUNQIAN_UNIVERSE_COMMON.YJCM_GOOD_FIRE.libraryHover": "对于[purple]一将成名模组[/purple]角色，此效果将也会增加给予的[gold]火攻[/gold]层数。",
   "SUNQIAN_UNIVERSE_COMMON.YJCM_GOOD_FIRE.combatNote": "给予的[gold]火攻[/gold]层数也增加。",

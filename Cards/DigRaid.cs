@@ -7,6 +7,7 @@ using MegaCrit.Sts2.Core.Entities.Creatures;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.Hooks;
 using MegaCrit.Sts2.Core.HoverTips;
+using MegaCrit.Sts2.Core.Localization;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.Powers;
@@ -16,6 +17,7 @@ using Squ;
 using Squ.Audio;
 using Squ.Character;
 using Squ.Combat;
+using Squ.Interop;
 using Squ.Powers;
 using STS2RitsuLib.Interop.AutoRegistration;
 using STS2RitsuLib.Scaffolding.Content;
@@ -52,7 +54,11 @@ public sealed class DigRaid : ModCardTemplate
 		HoverTipFactory.FromPower<BurningPower>(),
 		HoverTipFactory.FromPower<VigorPower>(),
 		..HoverTipFactory.FromPowerWithPowerHoverTips<TinderPower>(),
+		..NewsanguoDrunkenMightEffect.HoverTips(),
 	];
+
+	protected override void AddExtraArgsToDescription(LocString description) =>
+		NewsanguoDrunkenMightEffect.AddOrText(description);
 
 	public override CardAssetProfile AssetProfile => new(
 		PortraitPath: "res://images/cards/DigRaid.png");
@@ -67,6 +73,7 @@ public sealed class DigRaid : ModCardTemplate
 			}
 
 			return SquVigorSnapshot.GetAmount(owner) > 0
+				|| NewsanguoDrunkenMightEffect.GetAmount(owner) > 0
 				|| (IsUpgraded && GetTinderAmount(owner) > 0);
 		}
 	}
@@ -82,7 +89,8 @@ public sealed class DigRaid : ModCardTemplate
 
 		SquSfx.Play(SquSfx.DigRaidEvent);
 		Creature owner = Owner.Creature;
-		int vigor = SquVigorSnapshot.GetEffectiveAmount(owner, this);
+		int vigor = SquVigorSnapshot.GetEffectiveAmount(owner, this)
+			+ NewsanguoDrunkenMightEffect.GetBonus(owner, this);
 		decimal tinderBonus = IsUpgraded ? GetTinderAmount(owner) : 0m;
 
 		await DamageCmd.Attack(DynamicVars.Damage.BaseValue + tinderBonus)
@@ -184,7 +192,9 @@ public sealed class DigRaid : ModCardTemplate
 				return;
 			}
 
-			decimal amount = BaseValue + SquVigorSnapshot.GetAmountForCardPreview(card);
+			decimal amount = BaseValue
+				+ SquVigorSnapshot.GetAmountForCardPreview(card)
+				+ NewsanguoDrunkenMightEffect.GetBonusForCardPreview(card);
 			if (!runGlobalHooks || card.CombatState is not { } combatState)
 			{
 				PreviewValue = amount;

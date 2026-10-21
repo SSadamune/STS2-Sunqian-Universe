@@ -8,6 +8,7 @@ using MegaCrit.Sts2.Core.Localization;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.Models.CardPools;
 using MegaCrit.Sts2.Core.Models.Powers;
+using Squ.Interop;
 using Squ.Powers;
 using STS2RitsuLib.Interop.AutoRegistration;
 using STS2RitsuLib.Scaffolding.Content;
@@ -36,7 +37,14 @@ public sealed class GuanYuMartialVer : ModCardTemplate
 	[
 		HoverTipFactory.FromPower<VigorPower>(),
 		CreateEnergyTimingHoverTip(),
+		..NewsanguoDrunkenMightEffect.HoverTips(),
 	];
+
+	protected override void AddExtraArgsToDescription(LocString description)
+	{
+		base.AddExtraArgsToDescription(description);
+		NewsanguoDrunkenMightEffect.AddOrText(description);
+	}
 
 	public override CardAssetProfile AssetProfile => new(
 		PortraitPath: "res://images/cards/GuanDiForm.png");

@@ -1,4 +1,5 @@
 using MegaCrit.Sts2.Core.Commands;
+using MegaCrit.Sts2.Core.Models.Cards;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
@@ -6,6 +7,7 @@ using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Models.Monsters;
 using MegaCrit.Sts2.Core.Models.Powers;
 using MegaCrit.Sts2.Core.Models.Characters;
+using Squ;
 using Squ.Cards;
 using Squ.Interop;
 using Squ.Powers;
@@ -84,6 +86,164 @@ public sealed class NewsanguoJointModTests : SunqianCombatTestSuite
             NewsanguoPublicApiInterop.GetHeavensForce(Player));
     }
 
+    [Fact]
+    public async Task Combat_text_appends_drunken_might_without_the_library_hover()
+    {
+        string orText = SquCommonL10n.NewsanguoDrunkenMightOrText().GetFormattedText();
+        string hover = SquCommonL10n.NewsanguoDrunkenMightEffectHover().GetFormattedText();
+        var card = await AddToHand<WorkLifeBalance>();
+        var keyword = HoverTipFactory.FromKeyword(SquKeywords.SupremeGeneral);
+
+        Assert.Contains(orText, card.GetDescriptionForPile(PileType.Hand));
+        Assert.Contains(orText, Assert.IsType<HoverTip>(keyword).Description);
+        Assert.DoesNotContain(
+            card.HoverTips.OfType<HoverTip>(),
+            tip => tip.Description == hover);
+    }
+
+    [Fact]
+    public async Task Dig_raid_burning_and_cross_the_river_add_drunken_might_without_replacing_vigor()
+    {
+        await ApplyPower<VigorPower>(Player.Creature, 4);
+        await ApplyDrunkenMight(4);
+        var enemy = EnemyAt(0);
+        int hp = enemy.CurrentHp;
+
+        await Play(Upgrade(await AddToHand<DigRaid>()), enemy);
+
+        Assert.Equal(hp - DigRaid.UpgradedDamage - 4 - 4, enemy.CurrentHp);
+        Assert.Equal(DigRaid.UpgradedBurning + 4 + 4, (int)(enemy.GetPower<BurningPower>()?.Amount ?? 0));
+        Assert.Null(Player.Creature.GetPower<VigorPower>());
+
+        await ApplyPower<CrossTheRiverPower>(Player.Creature, 1);
+        await ApplyDrunkenMight(3);
+        int drunken = NewsanguoPublicApiInterop.GetDrunkenMight(Player);
+        int strikeHp = EnemyAt(0).CurrentHp;
+        await Play(await AddToHand<StrikeIronclad>(), EnemyAt(0));
+
+        Assert.Equal(strikeHp - 6 - drunken - drunken, EnemyAt(0).CurrentHp);
+    }
+
+    [Fact]
+    public async Task Spent_drunken_might_charges_block_and_is_restored_alongside_vigor()
+    {
+        var balance = await AddToHand<WorkLifeBalance>();
+        await ApplyDrunkenMight(4);
+        await Play(await AddToHand<StrikeIronclad>(), EnemyAt(0));
+
+        Assert.Equal(WorkLifeBalance.CanonicalBlock + 2, balance.DynamicVars.Block.BaseValue);
+        Assert.Equal(2, NewsanguoPublicApiInterop.GetDrunkenMight(Player));
+
+        await Play(await AddToHand<KeepPlayingKeepDancing>());
+        await ApplyDrunkenMight(2);
+        Assert.Equal(KeepPlayingKeepDancing.BaseVigor, (int)(Player.Creature.GetPower<VigorPower>()?.Amount ?? 0));
+        await Play(await AddToHand<StrikeIronclad>(), EnemyAt(0));
+
+        Assert.Equal(KeepPlayingKeepDancing.BaseVigor, (int)(Player.Creature.GetPower<VigorPower>()?.Amount ?? 0));
+        Assert.Equal(4, NewsanguoPublicApiInterop.GetDrunkenMight(Player));
+        Assert.Null(Player.Creature.GetPower<KeepVigorPower>());
+    }
+
+    [Fact]
+    public async Task Relocate_capital_converts_vigor_and_the_drunken_might_an_attack_will_spend()
+    {
+        await ApplyPower<VigorPower>(Player.Creature, 4);
+        await ApplyDrunkenMight(5);
+        var enemy = EnemyAt(0);
+        int hp = enemy.CurrentHp;
+
+        await Play(await AddToHand<RelocateCapital>(), enemy);
+
+        Assert.Equal(hp - RelocateCapital.DamageAmount - 4 - 5, enemy.CurrentHp);
+        Assert.Equal(4 + 3, Player.Creature.Block);
+        Assert.Equal(4 + 3, (int)(Player.Creature.GetPower<TinderPower>()?.Amount ?? 0));
+    }
+
+    [Fact]
+    public async Task Later_supreme_general_attacks_keep_the_opening_drunken_might_bonus()
+    {
+        await CardPileCmd.Add(PileType.Hand.GetPile(Player).Cards.ToArray(), PileType.Exhaust);
+        await CardPileCmd.Add(PileType.Draw.GetPile(Player).Cards.ToArray(), PileType.Exhaust);
+        await AddCardToPile<StrikeIronclad>(PileType.Hand);
+        await AddCardToPile<StrikeIronclad>(PileType.Draw);
+        await ApplyDrunkenMight(4);
+        int hp = EnemyAt(0).CurrentHp;
+
+        await Play(await AddToHand<Blitzkrieg>(), EnemyAt(0));
+
+        Assert.Equal(hp - Blitzkrieg.BaseDamage - 4 - (6 + 4) - (6 + 4), EnemyAt(0).CurrentHp);
+    }
+
+    [Fact]
+    public async Task Xiliang_savage_keeps_vigor_and_drunken_might_on_the_card()
+    {
+        await Play(await AddToHand<XiliangSavageScript>());
+        await ApplyDrunkenMight(4);
+        var strike = await AddToHand<StrikeIronclad>();
+
+        await Play(strike, EnemyAt(0));
+
+        Assert.Equal(6 + XiliangSavageScript.BaseVigor + 4, strike.DynamicVars.Damage.BaseValue);
+    }
+
+    [Fact]
+    public async Task Vigor_amplification_adds_another_copy_of_drunken_might_and_is_spent()
+    {
+        await ApplyPower<VigorAmplificationPower>(Player.Creature, 1);
+        await ApplyDrunkenMight(4);
+        int hp = EnemyAt(0).CurrentHp;
+
+        await Play(await AddToHand<StrikeIronclad>(), EnemyAt(0));
+
+        Assert.Equal(hp - 6 - 4 - 4, EnemyAt(0).CurrentHp);
+        Assert.Null(Player.Creature.GetPower<VigorAmplificationPower>());
+        Assert.Equal(2, NewsanguoPublicApiInterop.GetDrunkenMight(Player));
+    }
+
+    [Fact]
+    public async Task One_attack_spends_one_keep_stack_for_both_vigor_and_drunken_might()
+    {
+        await ApplyPower<KeepVigorPower>(Player.Creature, 2);
+        await ApplyPower<VigorPower>(Player.Creature, 4);
+        await ApplyDrunkenMight(4);
+
+        await Play(await AddToHand<StrikeIronclad>(), EnemyAt(0));
+
+        Assert.Equal(4, (int)(Player.Creature.GetPower<VigorPower>()?.Amount ?? 0));
+        Assert.Equal(4, NewsanguoPublicApiInterop.GetDrunkenMight(Player));
+        Assert.Equal(1, (int)(Player.Creature.GetPower<KeepVigorPower>()?.Amount ?? 0));
+
+        await Play(await AddToHand<StrikeIronclad>(), EnemyAt(0));
+
+        Assert.Equal(4, (int)(Player.Creature.GetPower<VigorPower>()?.Amount ?? 0));
+        Assert.Equal(4, NewsanguoPublicApiInterop.GetDrunkenMight(Player));
+        Assert.Null(Player.Creature.GetPower<KeepVigorPower>());
+    }
+
+    [Fact]
+    public async Task One_attack_doubles_both_resources_and_spends_the_amplification_once()
+    {
+        await ApplyPower<VigorAmplificationPower>(Player.Creature, 2);
+        await ApplyPower<VigorPower>(Player.Creature, 4);
+        await ApplyDrunkenMight(4);
+        int hp = EnemyAt(0).CurrentHp;
+
+        await Play(await AddToHand<StrikeIronclad>(), EnemyAt(0));
+
+        Assert.Equal(hp - 6 - 4 - 8 - 4 - 8, EnemyAt(0).CurrentHp);
+        Assert.Null(Player.Creature.GetPower<VigorPower>());
+        Assert.Equal(2, NewsanguoPublicApiInterop.GetDrunkenMight(Player));
+        Assert.Null(Player.Creature.GetPower<VigorAmplificationPower>());
+    }
+
+    private Task ApplyDrunkenMight(int amount) =>
+        NewsanguoPublicApiInterop.ApplyDrunkenMight(
+            new BlockingPlayerChoiceContext(),
+            Player.Creature,
+            amount,
+            Player.Creature,
+            null);
+
     private static void AssertUsesDrunkenMightText(
         CardModel card,
         string drunkenMightTitle,
@@ -157,5 +317,24 @@ public sealed class NewsanguoPartyJointModTests : SunqianCombatTestSuite
 				card.HoverTips,
 				tip => tip.Id == NewsanguoPublicApiInterop.CreateDrunkenMightHoverTip().Id);
 		}
+
+		var balance = await AddToHand<WorkLifeBalance>();
+		string orText = SquCommonL10n.NewsanguoDrunkenMightOrText().GetFormattedText();
+		string effectHover = SquCommonL10n.NewsanguoDrunkenMightEffectHover().GetFormattedText();
+		Assert.DoesNotContain(orText, balance.GetDescriptionForPile(PileType.Hand));
+		Assert.DoesNotContain(
+			balance.HoverTips.OfType<HoverTip>(),
+			tip => tip.Description == effectHover);
+
+		await NewsanguoPublicApiInterop.ApplyDrunkenMight(
+			new BlockingPlayerChoiceContext(),
+			Player.Creature,
+			1,
+			Player.Creature,
+			null);
+		Assert.Contains(orText, balance.GetDescriptionForPile(PileType.Hand));
+		Assert.DoesNotContain(
+			balance.HoverTips.OfType<HoverTip>(),
+			tip => tip.Description == effectHover);
 	}
 }
