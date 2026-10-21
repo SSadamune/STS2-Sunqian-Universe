@@ -187,6 +187,22 @@ public sealed class NewsanguoJointModTests : SunqianCombatTestSuite
     }
 
     [Fact]
+    public async Task Xiliang_savage_retains_scaled_vigor_and_drunken_might_bonuses()
+    {
+        await Play(await AddToHand<XiliangSavageScript>());
+        await ApplyPower<CrossTheRiverPower>(Player.Creature, 1);
+        await ApplyPower<VigorAmplificationPower>(Player.Creature, 1);
+        await ApplyDrunkenMight(4);
+        var strike = await AddToHand<StrikeIronclad>();
+
+        await Play(strike, EnemyAt(0));
+
+        const int effectiveVigor = XiliangSavageScript.BaseVigor * 3;
+        const int effectiveDrunkenMight = 4 * 3;
+        Assert.Equal(6 + effectiveVigor + effectiveDrunkenMight, strike.DynamicVars.Damage.BaseValue);
+    }
+
+    [Fact]
     public async Task Vigor_amplification_adds_another_copy_of_drunken_might_and_is_spent()
     {
         await ApplyPower<VigorAmplificationPower>(Player.Creature, 1);

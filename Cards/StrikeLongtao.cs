@@ -42,12 +42,6 @@ public sealed class StrikeLongtao : ModCardTemplate
 	{
 		SquSfx.PlayRandom(RunState, SquSfx.BasicStrikeEvents);
 
-		if (SquBasicStrikeRedirect.ShouldHandleInOnPlay(this))
-		{
-			await SquBasicStrikeRedirect.ExecuteRedirectedBasicStrikeDamage(this, choiceContext);
-			return;
-		}
-
 		ArgumentNullException.ThrowIfNull(cardPlay.Target, nameof(cardPlay.Target));
 
 		await DamageCmd.Attack(DynamicVars.Damage.BaseValue)

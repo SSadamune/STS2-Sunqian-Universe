@@ -23,14 +23,16 @@ internal static class BasicStrikeRedirectOnPlayPatch
 
 	public static int Apply(Harmony harmony)
 	{
-		var prefix = new HarmonyMethod(typeof(BasicStrikeRedirectOnPlayPatch), nameof(TryRedirectOnPlay));
+		var prefix = new HarmonyMethod(typeof(BasicStrikeRedirectOnPlayPatch), nameof(BeginRedirectOnPlay));
+		var postfix = new HarmonyMethod(typeof(BasicStrikeRedirectOnPlayPatch), nameof(CompleteRedirectOnPlay));
+		var finalizer = new HarmonyMethod(typeof(BasicStrikeRedirectOnPlayPatch), nameof(CleanupFailedOnPlay));
 		int patched = 0;
 
 		foreach (MethodInfo onPlay in EnumerateBasicStrikeOnPlayMethods())
 		{
 			try
 			{
-				harmony.Patch(onPlay, prefix: prefix);
+				harmony.Patch(onPlay, prefix: prefix, postfix: postfix, finalizer: finalizer);
 				patched++;
 				SquMod.Logger?.Info(
 					$"Patched basic strike OnPlay: {onPlay.DeclaringType?.FullName}");
@@ -68,18 +70,43 @@ internal static class BasicStrikeRedirectOnPlayPatch
 		}
 	}
 
-	private static bool TryRedirectOnPlay(
+	private static void BeginRedirectOnPlay(
 		CardModel __instance,
-		PlayerChoiceContext choiceContext,
 		CardPlay cardPlay,
-		ref Task __result)
+		out SquBasicStrikeRedirect.RedirectScope? __state)
 	{
 		if (!SquBasicStrikeRedirect.ShouldHandleInOnPlay(__instance))
 		{
-			return true;
+			__state = null;
+			return;
 		}
 
-		__result = SquBasicStrikeRedirect.ExecuteRedirectedBasicStrikeDamage(__instance, choiceContext, cardPlay);
-		return false;
+		__state = SquBasicStrikeRedirect.BeginRedirectedBasicStrike(__instance, cardPlay);
+	}
+
+	private static void CompleteRedirectOnPlay(
+		PlayerChoiceContext choiceContext,
+		SquBasicStrikeRedirect.RedirectScope? __state,
+		ref Task __result)
+	{
+		if (__state is not null)
+		{
+			__result = SquBasicStrikeRedirect.CompleteRedirectedBasicStrike(
+				__result,
+				__state,
+				choiceContext);
+		}
+	}
+
+	private static Exception? CleanupFailedOnPlay(
+		Exception? __exception,
+		SquBasicStrikeRedirect.RedirectScope? __state)
+	{
+		if (__exception is not null && __state is not null)
+		{
+			SquBasicStrikeRedirect.AbortRedirectedBasicStrike(__state);
+		}
+
+		return __exception;
 	}
 }

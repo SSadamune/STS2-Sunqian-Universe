@@ -5,6 +5,7 @@ using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.Entities.Players;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Nodes.Cards;
+using Squ.Powers;
 using STS2RitsuLib;
 using STS2RitsuLib.Models.Capabilities;
 
@@ -25,9 +26,9 @@ public static class ChickenFootCheeseStrikeSystem
 		_initialized = true;
 		RitsuLibFramework.SubscribeLifecycle<CardMovedBetweenPilesEvent>(evt =>
 		{
-			if (IsBasicStrike(evt.Card))
+			if (ScriptChickenFootCheesePower.ShouldRedirectBasicStrike(evt.Card))
 			{
-				EnsureCapability(evt.Card);
+				EnsureCapability(evt.Card, refreshIfAdded: true);
 			}
 		});
 	}
@@ -40,25 +41,24 @@ public static class ChickenFootCheeseStrikeSystem
 			cards = cards.Concat(combatState.AllCards);
 		}
 
-		foreach (CardModel card in cards.Distinct().Where(IsBasicStrike))
+		foreach (CardModel card in cards.Distinct().Where(
+			ScriptChickenFootCheesePower.ShouldRedirectBasicStrike))
 		{
-			EnsureCapability(card);
+			EnsureCapability(card, refreshIfAdded: false);
 		}
 	}
 
-	private static void EnsureCapability(CardModel card)
+	private static void EnsureCapability(CardModel card, bool refreshIfAdded)
 	{
-		if (card.IsMutable && card.Capability<ChickenFootCheeseStrikeCapability>() is null)
+		if (!card.IsMutable || card.Capability<ChickenFootCheeseStrikeCapability>() is not null)
 		{
-			card.GetOrCreateCapability<ChickenFootCheeseStrikeCapability>();
+			return;
 		}
 
-		if (card.Pile?.Type is PileType.Hand or PileType.Play)
+		card.GetOrCreateCapability<ChickenFootCheeseStrikeCapability>();
+		if (refreshIfAdded && card.Pile?.Type is PileType.Hand or PileType.Play)
 		{
 			NCard.FindOnTable(card)?.UpdateVisuals(card.Pile.Type, CardPreviewMode.Normal);
 		}
 	}
-
-	private static bool IsBasicStrike(CardModel card) =>
-		card.Rarity == CardRarity.Basic && card.Tags.Contains(CardTag.Strike);
 }

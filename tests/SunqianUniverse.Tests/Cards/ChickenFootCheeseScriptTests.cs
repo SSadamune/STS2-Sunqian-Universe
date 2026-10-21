@@ -24,6 +24,14 @@ public sealed class ChickenFootCheeseScriptTests : SunqianCombatTestSuite
     }
 
     [Fact]
+    public async Task Basic_strike_has_no_presentation_capability_until_script_is_active()
+    {
+        var strike = await AddToHand<StrikeIronclad>();
+
+        Assert.Null(strike.Capability<ChickenFootCheeseStrikeCapability>());
+    }
+
+    [Fact]
     public async Task Base_card_deals_six_then_three_and_both_hits_receive_vigor()
     {
         await ApplyPower<VigorPower>(Player.Creature, 2);
