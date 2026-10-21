@@ -38,9 +38,7 @@ public class KeepVigorPower : ModPowerTemplate
 
 		public required bool ReservesStack { get; init; }
 
-		public decimal VigorSpent { get; set; }
-
-		public decimal DrunkenMightSpent { get; set; }
+		public AttackResourceSpendTransaction? ResourceSpend { get; init; }
 	}
 
 	public override PowerType Type => PowerType.Buff;
@@ -86,10 +84,14 @@ public class KeepVigorPower : ModPowerTemplate
 			|| SupremeGeneralKeywordSystem.ShouldSuppressSameOwnerChildAttackResources(
 				cardPlay.Card,
 				cardPlay);
+		bool reservesStack = !suppress && CountReservedStacks(data) < Amount;
 		data.ActiveAttacks.Add(new AttackPlayTrack
 		{
 			Card = cardPlay.Card,
-			ReservesStack = !suppress && CountReservedStacks(data) < Amount,
+			ReservesStack = reservesStack,
+			ResourceSpend = reservesStack
+				? new AttackResourceSpendTransaction(Owner, cardPlay.Card)
+				: null,
 		});
 		return Task.CompletedTask;
 	}
@@ -101,24 +103,14 @@ public class KeepVigorPower : ModPowerTemplate
 		Creature? applier,
 		CardModel? cardSource)
 	{
-		if (Owner.IsDead
-			|| !NewsanguoDrunkenMightEffect.IsSpentResource(power, Owner)
-			|| amount >= 0m)
+		if (Owner.IsDead || amount >= 0m)
 		{
 			return Task.CompletedTask;
 		}
 
-		AttackPlayTrack? active = FindTrackForSpend(GetInternalData<Data>(), cardSource);
-		if (active is { ReservesStack: true })
+		foreach (AttackPlayTrack active in GetInternalData<Data>().ActiveAttacks)
 		{
-			if (power is VigorPower)
-			{
-				active.VigorSpent += -amount;
-			}
-			else
-			{
-				active.DrunkenMightSpent += -amount;
-			}
+			active.ResourceSpend?.Record(power, amount, cardSource);
 		}
 
 		return Task.CompletedTask;
@@ -143,7 +135,7 @@ public class KeepVigorPower : ModPowerTemplate
 
 		AttackPlayTrack track = data.ActiveAttacks[trackIndex];
 		data.ActiveAttacks.RemoveAt(trackIndex);
-		if (!track.ReservesStack || (track.VigorSpent <= 0m && track.DrunkenMightSpent <= 0m))
+		if (!track.ReservesStack || track.ResourceSpend is not { SpentAny: true } resourceSpend)
 		{
 			return;
 		}
@@ -156,12 +148,13 @@ public class KeepVigorPower : ModPowerTemplate
 			return;
 		}
 
-		if (track.VigorSpent > 0m)
+		decimal vigorToRestore = resourceSpend.GetRestorableVigor();
+		if (vigorToRestore > 0m)
 		{
 			await PowerCmd.Apply<VigorPower>(
 				choiceContext,
 				Owner,
-				track.VigorSpent,
+				vigorToRestore,
 				Owner,
 				cardPlay.Card);
 
@@ -171,12 +164,13 @@ public class KeepVigorPower : ModPowerTemplate
 			}
 		}
 
-		if (track.DrunkenMightSpent > 0m)
+		decimal drunkenMightToRestore = resourceSpend.GetRestorableDrunkenMight();
+		if (drunkenMightToRestore > 0m)
 		{
 			await NewsanguoPublicApiInterop.ApplyDrunkenMight(
 				choiceContext,
 				Owner,
-				track.DrunkenMightSpent,
+				drunkenMightToRestore,
 				Owner,
 				cardPlay.Card);
 		}
@@ -194,25 +188,6 @@ public class KeepVigorPower : ModPowerTemplate
 		}
 
 		return count;
-	}
-
-	/// <summary>
-	/// 消耗记在打出这张牌的记录上。活力和酒力因此共享同一次计数。
-	/// </summary>
-	private static AttackPlayTrack? FindTrackForSpend(Data data, CardModel? cardSource)
-	{
-		if (cardSource is not null)
-		{
-			for (int i = data.ActiveAttacks.Count - 1; i >= 0; i--)
-			{
-				if (ReferenceEquals(data.ActiveAttacks[i].Card, cardSource))
-				{
-					return data.ActiveAttacks[i];
-				}
-			}
-		}
-
-		return data.ActiveAttacks.Count > 0 ? data.ActiveAttacks[^1] : null;
 	}
 
 	private static int FindLastTrackIndex(Data data, CardModel card)

@@ -131,7 +131,7 @@ public sealed class ThunderOnStillLake : ChargeCardTemplate
 		Creature? applier,
 		CardModel? cardSource)
 	{
-		if (!NewsanguoDrunkenMightEffect.IsSpentResource(power, Owner.Creature) || amount >= 0m)
+		if (!NewsanguoDrunkenMightEffect.IsEffectResource(power, Owner.Creature) || amount >= 0m)
 		{
 			return Task.CompletedTask;
 		}

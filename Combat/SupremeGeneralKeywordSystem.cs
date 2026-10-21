@@ -200,10 +200,11 @@ public sealed class SupremeGeneralKeywordSystem : HookedSingletonModel
 		&& card.Owner == window.RootCard.Owner;
 
 	/// <summary>
-	/// Lets a non-damaging Supreme General root card consume Vigor as though it had issued its own
-	/// powered Attack, then exposes the amount actually consumed to its nested auto-played Attacks.
+	/// Lets a non-damaging Supreme General root card consume Vigor and Drunken Might as though it
+	/// had issued its own powered Attack, then exposes the snapshotted bonuses to its nested
+	/// auto-played Attacks.
 	/// </summary>
-	internal static async Task ConsumeVigorForRootWithoutAttack(
+	internal static async Task ConsumeResourcesForRootWithoutAttack(
 		PlayerChoiceContext choiceContext,
 		CardPlay cardPlay)
 	{
@@ -221,6 +222,11 @@ public sealed class SupremeGeneralKeywordSystem : HookedSingletonModel
 		{
 			window.ConsumedVigor += consumed;
 		}
+
+		await NewsanguoDrunkenMightEffect.SpendForAttack(
+			choiceContext,
+			owner,
+			cardPlay.Card);
 	}
 
 	private static bool TryGetSupremeGeneralChildWindow(

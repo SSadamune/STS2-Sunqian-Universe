@@ -45,11 +45,8 @@ public sealed class ScriptHeadsmanPower : ScriptPowerTemplate
 	{
 		public required int EnergySpent { get; init; }
 
-		/// <summary>整条结算链中由攻击实际消耗的活力总量。</summary>
-		public decimal VigorSpent { get; set; }
-
-		/// <summary>整条结算链中由攻击减半掉的酒力。</summary>
-		public decimal DrunkenMightSpent { get; set; }
+		/// <summary>整条结算链中明确登记的攻击所消耗的资源。</summary>
+		public required AttackResourceSpendTransaction ResourceSpend { get; init; }
 
 		/// <summary>本次打出期间是否至少击杀过一个敌人（不关心具体次数）。</summary>
 		public bool AnyKill { get; set; }
@@ -80,21 +77,27 @@ public sealed class ScriptHeadsmanPower : ScriptPowerTemplate
 	public override Task BeforeCardPlayed(CardPlay cardPlay)
 	{
 		if (Owner.IsDead
-			|| !CardResolutionTracker.IsOutermostCardPlay(cardPlay)
 			|| cardPlay.Card.Type != CardType.Attack
-			|| cardPlay.PlayIndex != 0)
+			|| cardPlay.PlayIndex != 0
+			|| cardPlay.Card.Owner.Creature != Owner)
 		{
 			return Task.CompletedTask;
 		}
 
-		if (cardPlay.Card.Owner.Creature != Owner)
+		if (!CardResolutionTracker.IsOutermostCardPlay(cardPlay))
 		{
+			if (TryGetRootTrack(out AttackPlayTrack? rootTrack))
+			{
+				rootTrack.ResourceSpend.RegisterSource(cardPlay.Card);
+			}
+
 			return Task.CompletedTask;
 		}
 
 		GetInternalData<Data>().ActivePlays[cardPlay.Card] = new AttackPlayTrack
 		{
 			EnergySpent = cardPlay.Resources.EnergySpent,
+			ResourceSpend = new AttackResourceSpendTransaction(Owner, cardPlay.Card),
 		};
 
 		return Task.CompletedTask;
@@ -135,22 +138,12 @@ public sealed class ScriptHeadsmanPower : ScriptPowerTemplate
 		Creature? applier,
 		CardModel? cardSource)
 	{
-		if (Owner.IsDead
-			|| !NewsanguoDrunkenMightEffect.IsSpentResource(power, Owner)
-			|| amount >= 0m
-			|| !TryGetRootTrack(out AttackPlayTrack? track))
+		if (Owner.IsDead || !TryGetRootTrack(out AttackPlayTrack? track))
 		{
 			return Task.CompletedTask;
 		}
 
-		if (power is VigorPower)
-		{
-			track.VigorSpent += -amount;
-		}
-		else
-		{
-			track.DrunkenMightSpent += -amount;
-		}
+		track.ResourceSpend.Record(power, amount, cardSource);
 
 		return Task.CompletedTask;
 	}
@@ -175,12 +168,13 @@ public sealed class ScriptHeadsmanPower : ScriptPowerTemplate
 
 		bool restored = false;
 
-		if (track.VigorSpent > 0m)
+		decimal vigorToRestore = track.ResourceSpend.GetRestorableVigor();
+		if (vigorToRestore > 0m)
 		{
 			await PowerCmd.Apply<VigorPower>(
 				choiceContext,
 				Owner,
-				track.VigorSpent,
+				vigorToRestore,
 				Owner,
 				cardPlay.Card);
 			if (Owner.GetPower<VigorPower>() is { } restoredVigor)
@@ -190,12 +184,13 @@ public sealed class ScriptHeadsmanPower : ScriptPowerTemplate
 			restored = true;
 		}
 
-		if (track.DrunkenMightSpent > 0m)
+		decimal drunkenMightToRestore = track.ResourceSpend.GetRestorableDrunkenMight();
+		if (drunkenMightToRestore > 0m)
 		{
 			await NewsanguoPublicApiInterop.ApplyDrunkenMight(
 				choiceContext,
 				Owner,
-				track.DrunkenMightSpent,
+				drunkenMightToRestore,
 				Owner,
 				cardPlay.Card);
 			restored = true;

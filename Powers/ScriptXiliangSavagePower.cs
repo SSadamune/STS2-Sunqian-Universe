@@ -212,7 +212,7 @@ public sealed class ScriptXiliangSavagePower : ScriptPowerTemplate
 		Creature? applier,
 		CardModel? cardSource)
 	{
-		if (!NewsanguoDrunkenMightEffect.IsSpentResource(power, Owner)
+		if (!NewsanguoDrunkenMightEffect.IsEffectResource(power, Owner)
 			|| amount >= 0m
 			|| cardSource is null
 			|| cardSource.Owner.Creature != Owner

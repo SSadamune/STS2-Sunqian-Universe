@@ -37,9 +37,7 @@ public sealed class VigorAmplificationPower : ModPowerTemplate
 	{
 		public CardModel? ActiveCard { get; set; }
 
-		public decimal VigorSpent { get; set; }
-
-		public decimal DrunkenMightSpent { get; set; }
+		public AttackResourceSpendTransaction? ResourceSpend { get; set; }
 	}
 
 	public override PowerType Type => PowerType.Buff;
@@ -101,8 +99,7 @@ public sealed class VigorAmplificationPower : ModPowerTemplate
 		}
 
 		data.ActiveCard = cardPlay.Card;
-		data.VigorSpent = 0m;
-		data.DrunkenMightSpent = 0m;
+		data.ResourceSpend = new AttackResourceSpendTransaction(Owner, cardPlay.Card);
 		return Task.CompletedTask;
 	}
 
@@ -116,18 +113,9 @@ public sealed class VigorAmplificationPower : ModPowerTemplate
 		Data data = GetInternalData<Data>();
 		if (!Owner.IsDead
 			&& data.ActiveCard is not null
-			&& (cardSource is null || ReferenceEquals(cardSource, data.ActiveCard))
-			&& NewsanguoDrunkenMightEffect.IsSpentResource(power, Owner)
-			&& amount < 0m)
+			&& data.ResourceSpend is not null)
 		{
-			if (power is VigorPower)
-			{
-				data.VigorSpent += -amount;
-			}
-			else
-			{
-				data.DrunkenMightSpent += -amount;
-			}
+			data.ResourceSpend.Record(power, amount, cardSource);
 		}
 
 		return Task.CompletedTask;
@@ -179,10 +167,9 @@ public sealed class VigorAmplificationPower : ModPowerTemplate
 			return;
 		}
 
-		bool spentResource = data.VigorSpent > 0m || data.DrunkenMightSpent > 0m;
+		bool spentResource = data.ResourceSpend is { SpentAny: true };
 		data.ActiveCard = null;
-		data.VigorSpent = 0m;
-		data.DrunkenMightSpent = 0m;
+		data.ResourceSpend = null;
 		if (spentResource)
 		{
 			await PowerCmd.Remove(this);

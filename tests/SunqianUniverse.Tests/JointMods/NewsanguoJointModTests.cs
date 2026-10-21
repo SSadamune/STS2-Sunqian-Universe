@@ -9,6 +9,7 @@ using MegaCrit.Sts2.Core.Models.Powers;
 using MegaCrit.Sts2.Core.Models.Characters;
 using Squ;
 using Squ.Cards;
+using Squ.Combat;
 using Squ.Interop;
 using Squ.Powers;
 using TestTheSpire;
@@ -236,6 +237,50 @@ public sealed class NewsanguoJointModTests : SunqianCombatTestSuite
         Assert.Null(Player.Creature.GetPower<KeepVigorPower>());
     }
 
+	[Fact]
+	public async Task Supreme_general_children_do_not_reserve_additional_keep_stacks()
+	{
+		await CardPileCmd.Add(PileType.Hand.GetPile(Player).Cards.ToArray(), PileType.Exhaust);
+		await CardPileCmd.Add(PileType.Draw.GetPile(Player).Cards.ToArray(), PileType.Exhaust);
+		await AddCardToPile<StrikeIronclad>(PileType.Hand);
+		await AddCardToPile<StrikeIronclad>(PileType.Draw);
+		await ApplyPower<KeepVigorPower>(Player.Creature, 2);
+		await ApplyPower<VigorPower>(Player.Creature, 4);
+
+		await Play(await AddToHand<Blitzkrieg>(), EnemyAt(0));
+
+		Assert.Equal(4, (int)(Player.Creature.GetPower<VigorPower>()?.Amount ?? 0));
+		Assert.Equal(1, (int)(Player.Creature.GetPower<KeepVigorPower>()?.Amount ?? 0));
+	}
+
+	[Fact]
+	public async Task Part_time_general_spends_root_resources_before_children_and_keep_restores_them_once()
+	{
+		await PlayerCmd.SetEnergy(1, Player);
+		await ApplyPower<KeepVigorPower>(Player.Creature, 1);
+		await ApplyPower<VigorPower>(Player.Creature, 4);
+		await ApplyDrunkenMight(4);
+
+		await Play(await AddToHand<PartTimeGeneralScript>(), EnemyAt(0));
+
+		Assert.Equal(4, (int)(Player.Creature.GetPower<VigorPower>()?.Amount ?? 0));
+		Assert.Equal(4, NewsanguoPublicApiInterop.GetDrunkenMight(Player));
+		Assert.Null(Player.Creature.GetPower<KeepVigorPower>());
+	}
+
+	[Fact]
+	public async Task Part_time_general_root_spend_consumes_vigor_amplification()
+	{
+		await PlayerCmd.SetEnergy(1, Player);
+		await ApplyPower<VigorAmplificationPower>(Player.Creature, 1);
+		await ApplyDrunkenMight(4);
+
+		await Play(await AddToHand<PartTimeGeneralScript>(), EnemyAt(0));
+
+		Assert.Equal(2, NewsanguoPublicApiInterop.GetDrunkenMight(Player));
+		Assert.Null(Player.Creature.GetPower<VigorAmplificationPower>());
+	}
+
     [Fact]
     public async Task One_attack_doubles_both_resources_and_spends_the_amplification_once()
     {
@@ -251,6 +296,37 @@ public sealed class NewsanguoJointModTests : SunqianCombatTestSuite
         Assert.Equal(2, NewsanguoPublicApiInterop.GetDrunkenMight(Player));
         Assert.Null(Player.Creature.GetPower<VigorAmplificationPower>());
     }
+
+	[Fact]
+	public async Task Character_conversion_and_resource_effect_modes_are_independent()
+	{
+		Assert.True(NewsanguoVigorSwap.ShouldConvertGrantedVigor(Player));
+		Assert.Equal(0, NewsanguoPublicApiInterop.GetDrunkenMight(Player));
+
+		await ApplyDrunkenMight(1);
+
+		Assert.Equal(1, NewsanguoPublicApiInterop.GetDrunkenMight(Player));
+	}
+
+	[Fact]
+	public async Task Drunken_might_transaction_ignores_other_sources_and_never_refunds_above_its_opening_amount()
+	{
+		await ApplyDrunkenMight(4);
+		var root = await AddToHand<StrikeIronclad>();
+		var child = await AddToHand<StrikeIronclad>();
+		PowerModel drunkenMight = Assert.Single(
+			Player.Creature.Powers.Where(
+				power => power.Id.Entry == "NEWSANGUO_POWER_DRUNKEN_MIGHT_POWER"));
+		var transaction = new AttackResourceSpendTransaction(Player.Creature, root);
+
+		transaction.Record(drunkenMight, -3m, child);
+		transaction.Record(drunkenMight, 3m, root);
+		Assert.Equal(0m, transaction.DrunkenMightSpent);
+
+		transaction.Record(drunkenMight, -3m, root);
+		transaction.Record(drunkenMight, -3m, root);
+		Assert.Equal(4m, transaction.DrunkenMightSpent);
+	}
 
     private Task ApplyDrunkenMight(int amount) =>
         NewsanguoPublicApiInterop.ApplyDrunkenMight(
@@ -352,5 +428,25 @@ public sealed class NewsanguoPartyJointModTests : SunqianCombatTestSuite
 		Assert.DoesNotContain(
 			balance.HoverTips.OfType<HoverTip>(),
 			tip => tip.Description == effectHover);
+	}
+
+	[Fact]
+	public async Task Non_Newsanguo_character_with_drunken_might_uses_resource_effects_without_conversion()
+	{
+		Assert.False(NewsanguoVigorSwap.ShouldConvertGrantedVigor(Player));
+
+		await NewsanguoPublicApiInterop.ApplyDrunkenMight(
+			new BlockingPlayerChoiceContext(),
+			Player.Creature,
+			1,
+			Player.Creature,
+			null);
+
+		var enemy = EnemyAt(0);
+		int hp = enemy.CurrentHp;
+		await Play(await AddToHand<StrikeIronclad>(), enemy);
+
+		Assert.Equal(hp - 7, enemy.CurrentHp);
+		Assert.False(NewsanguoVigorSwap.ShouldConvertGrantedVigor(Player));
 	}
 }

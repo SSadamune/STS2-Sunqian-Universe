@@ -1,8 +1,11 @@
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using MegaCrit.Sts2.Core.Combat;
+using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.Context;
 using MegaCrit.Sts2.Core.Entities.Creatures;
+using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Localization;
 using MegaCrit.Sts2.Core.Models;
@@ -15,8 +18,9 @@ using Squ.Powers;
 namespace Squ.Interop;
 
 /// <summary>
-/// 酒力生效联动：模组已加载时，指定牌的「消耗活力 / 受到活力加成」同时计入酒力。
-/// 不替换获得活力的效果，也不走「获得酒力还是活力」那套角色分支。
+/// 资源效果联动：模组已加载时，指定牌的「消耗活力 / 受到活力加成」同时计入酒力。
+/// 该模式依据角色当前是否拥有酒力生效，不要求角色来自新三国模组；它不替换获得
+/// 活力的效果，也不走 <see cref="NewsanguoVigorSwap"/> 的角色转换分支。
 /// </summary>
 internal static class NewsanguoDrunkenMightEffect
 {
@@ -34,7 +38,12 @@ internal static class NewsanguoDrunkenMightEffect
 	public static bool IsDrunkenMight(PowerModel power) =>
 		IsEnabled && power.Id.Entry == PowerEntry;
 
-	public static bool IsSpentResource(PowerModel power, Creature owner) =>
+	/// <summary>资源效果模式：该角色当前是否能让酒力参与联动效果。</summary>
+	public static bool CanUseResourceEffects(Creature? creature) =>
+		GetAmount(creature) > 0;
+
+	/// <summary>资源效果模式下可被指定效果追踪的活力或酒力。</summary>
+	public static bool IsEffectResource(PowerModel power, Creature owner) =>
 		power.Owner == owner && (power is VigorPower || IsDrunkenMight(power));
 
 	public static int GetAmount(Creature? creature) =>
@@ -48,6 +57,45 @@ internal static class NewsanguoDrunkenMightEffect
 	{
 		int amount = GetAmount(creature);
 		return amount - amount / 2;
+	}
+
+	/// <summary>
+	/// 主动执行一次攻击牌应有的酒力减半，并保留明确的卡牌来源。用于本身不创建
+	/// AttackCommand、但需要把这次资源加成继承给子攻击的上将军根牌。
+	/// </summary>
+	public static async Task<int> SpendForAttack(
+		PlayerChoiceContext choiceContext,
+		Creature creature,
+		CardModel cardSource)
+	{
+		int consumed = ConsumedByAttack(creature);
+		if (consumed <= 0)
+		{
+			return 0;
+		}
+
+		PowerModel? drunkenMight = null;
+		foreach (PowerModel power in creature.Powers)
+		{
+			if (IsDrunkenMight(power))
+			{
+				drunkenMight = power;
+				break;
+			}
+		}
+
+		if (drunkenMight is null)
+		{
+			return 0;
+		}
+
+		await PowerCmd.ModifyAmount(
+			choiceContext,
+			drunkenMight,
+			-consumed,
+			creature,
+			cardSource);
+		return consumed;
 	}
 
 	/// <summary>
@@ -94,7 +142,7 @@ internal static class NewsanguoDrunkenMightEffect
 		{
 			var localPlayer = LocalContext.GetMe(runState);
 			localIsNewsanguo = NewsanguoPublicApiInterop.IsNewsanguoCharacter(localPlayer?.Character);
-			localHasDrunkenMight = GetAmount(localPlayer?.Creature) > 0;
+			localHasDrunkenMight = CanUseResourceEffects(localPlayer?.Creature);
 		}
 
 		return Resolve(IsEnabled, inCombat, localIsNewsanguo, localHasDrunkenMight);
