@@ -18,8 +18,8 @@ namespace Squ.Cards;
 [RegisterCard(typeof(TokenCardPool), StableEntryStem = "salvo_strike")]
 public sealed class SalvoStrike : ModCardTemplate, IRandomEnemyTargetCount
 {
-	public const int BaseDamage = 12;
-	public const int UpgradedDamage = 15;
+	public const int BaseDamage = 10;
+	public const int UpgradedDamage = 14;
 	public const int RandomEnemyTargetCount = 3;
 	public const int BaseArrowRainLayers = 2;
 	public const int BonusPercentPerArrowRainLayer = 25;

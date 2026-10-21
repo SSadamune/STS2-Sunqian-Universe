@@ -38,7 +38,7 @@
   "SUNQIAN_UNIVERSE_CARD_SERVANT_SCRIPT.title": "家丁剧本",
   "SUNQIAN_UNIVERSE_CARD_SERVANT_SCRIPT.description": "获得{Block:diff()}点[gold]格挡[/gold]。\n[gold]剧本[/gold]：每回合开始时，你获得一张[gold]{IfUpgraded:show:叉出去+|叉出去}[/gold]。",
   "SUNQIAN_UNIVERSE_CARD_NEUTRAL_AMBUSH_SCRIPT.title": "中立伏兵剧本",
-  "SUNQIAN_UNIVERSE_CARD_NEUTRAL_AMBUSH_SCRIPT.description": "将1张[gold]{IfUpgraded:show:巨石+|巨石}[/gold]和2张[gold]{IfUpgraded:show:箭幕打击+|箭幕打击}[/gold]加入[gold]抽牌堆[/gold]。\n[gold]剧本[/gold]：每回合第一次抽到[gold]巨石[/gold]或[gold]箭幕打击[/gold]时，对随机目标打出。",
+  "SUNQIAN_UNIVERSE_CARD_NEUTRAL_AMBUSH_SCRIPT.description": "将1张[gold]{IfUpgraded:show:巨石+|巨石}[/gold]和2张[gold]{IfUpgraded:show:箭幕打击+|箭幕打击}[/gold]加入[gold]抽牌堆[/gold]。\n[gold]剧本[/gold]：你抽到[gold]巨石[/gold]或[gold]箭幕打击[/gold]时，对随机目标打出。",
   "SUNQIAN_UNIVERSE_CARD_TWO_WORD_POET_SCRIPT.title": "二言诗人剧本",
   "SUNQIAN_UNIVERSE_CARD_TWO_WORD_POET_SCRIPT.description": "{IfUpgraded:show:对所有敌人|对一名敌人}造成{Damage:diff()}点伤害{Repeat:diff()}次。\n[gold]可叠层剧本[/gold]：每回合开始时，{IfUpgraded:show:对所有敌人|随机对敌人}造成{SnapshotDamage:diff()}点伤害{Repeat:diff()}次。",
   "SUNQIAN_UNIVERSE_CARD_JUGGLE_MULTIPLE_SHOOTS.title": "轧戏",

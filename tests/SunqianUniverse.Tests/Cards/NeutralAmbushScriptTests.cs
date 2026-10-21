@@ -1,5 +1,4 @@
 using MegaCrit.Sts2.Core.Commands;
-using MegaCrit.Sts2.Core.Combat;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.Models.Cards;
@@ -31,27 +30,20 @@ public sealed class NeutralAmbushScriptTests : SunqianCombatTestSuite
     }
 
     [Fact]
-    public async Task Only_the_first_matching_card_drawn_each_turn_is_auto_played()
+    public async Task Every_matching_card_drawn_is_auto_played()
     {
         await ApplyPower<ScriptNeutralAmbushPower>(Player.Creature, 1);
         var power = Assert.IsType<ScriptNeutralAmbushPower>(
             Player.Creature.GetPower<ScriptNeutralAmbushPower>());
+        string powerDescription = power.SmartDescription.GetFormattedText();
+        Assert.DoesNotContain("每回合第一次", powerDescription);
+        Assert.Contains("对随机目标打出", powerDescription);
         var rock = await AddToDrawPileTop<GiantRock>();
-        var firstSalvo = await AddToDrawPileTop<SalvoStrike>();
+        var salvo = await AddToDrawPileTop<SalvoStrike>();
 
         await CardPileCmd.Draw(new BlockingPlayerChoiceContext(), 2, Player);
 
-        Assert.Equal(PileType.Exhaust, firstSalvo.Pile?.Type);
-        Assert.Equal(PileType.Hand, rock.Pile?.Type);
-
-        await power.AfterSideTurnStart(
-            CombatSide.Player,
-            [Player.Creature],
-            Combat);
-        var nextTurnSalvo = await AddToDrawPileTop<SalvoStrike>();
-
-        await CardPileCmd.Draw(new BlockingPlayerChoiceContext(), 1, Player);
-
-        Assert.Equal(PileType.Exhaust, nextTurnSalvo.Pile?.Type);
+        Assert.Equal(PileType.Exhaust, salvo.Pile?.Type);
+        Assert.Equal(PileType.Discard, rock.Pile?.Type);
     }
 }
