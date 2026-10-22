@@ -41,6 +41,12 @@ public static class ContentSettingsRunData
 	public static NeutralContentPermissionMode NeutralCardRegistration =>
 		GetEffectiveSnapshot().NeutralCardRegistration;
 
+	public static NeutralContentPermissionMode NeutralRelicRegistration =>
+		GetEffectiveSnapshot().NeutralRelicRegistration;
+
+	public static NeutralContentPermissionMode EventRegistration =>
+		GetEffectiveSnapshot().EventRegistration;
+
 	public static void Initialize()
 	{
 		if (_initialized)
@@ -62,6 +68,16 @@ public static class ContentSettingsRunData
 		TryGetActiveSnapshot(out State snapshot)
 			? snapshot.NeutralCardRegistration
 			: NormalizeCardMode(localSettings.NeutralCardRegistration);
+
+	public static NeutralContentPermissionMode DisplayedRelicMode(SquSettings localSettings) =>
+		TryGetActiveSnapshot(out State snapshot)
+			? snapshot.NeutralRelicRegistration
+			: NormalizeRelicMode(localSettings.NeutralRelicRegistration);
+
+	public static NeutralContentPermissionMode DisplayedEventMode(SquSettings localSettings) =>
+		TryGetActiveSnapshot(out State snapshot)
+			? snapshot.EventRegistration
+			: NormalizeEventMode(localSettings.EventRegistration);
 
 	public static bool TryWriteLocalPotionMode(
 		SquSettings localSettings,
@@ -86,6 +102,32 @@ public static class ContentSettingsRunData
 		}
 
 		localSettings.NeutralCardRegistration = NormalizeCardMode(value);
+		return true;
+	}
+
+	public static bool TryWriteLocalRelicMode(
+		SquSettings localSettings,
+		NeutralContentPermissionMode value)
+	{
+		if (IsReadOnly)
+		{
+			return false;
+		}
+
+		localSettings.NeutralRelicRegistration = NormalizeRelicMode(value);
+		return true;
+	}
+
+	public static bool TryWriteLocalEventMode(
+		SquSettings localSettings,
+		NeutralContentPermissionMode value)
+	{
+		if (IsReadOnly)
+		{
+			return false;
+		}
+
+		localSettings.EventRegistration = NormalizeEventMode(value);
 		return true;
 	}
 
@@ -189,6 +231,8 @@ public static class ContentSettingsRunData
 		{
 			NeutralPotionModification = NormalizePotionMode(settings.NeutralPotionModification),
 			NeutralCardRegistration = NormalizeCardMode(settings.NeutralCardRegistration),
+			NeutralRelicRegistration = NormalizeRelicMode(settings.NeutralRelicRegistration),
+			EventRegistration = NormalizeEventMode(settings.EventRegistration),
 		};
 	}
 
@@ -198,6 +242,10 @@ public static class ContentSettingsRunData
 			NormalizePotionMode(snapshot.NeutralPotionModification);
 		snapshot.NeutralCardRegistration =
 			NormalizeCardMode(snapshot.NeutralCardRegistration);
+		snapshot.NeutralRelicRegistration =
+			NormalizeRelicMode(snapshot.NeutralRelicRegistration);
+		snapshot.EventRegistration =
+			NormalizeEventMode(snapshot.EventRegistration);
 	}
 
 	private static NeutralContentPermissionMode NormalizePotionMode(
@@ -211,6 +259,18 @@ public static class ContentSettingsRunData
 		Enum.IsDefined(value)
 			? value
 			: SquSettings.DefaultNeutralCardRegistrationMode;
+
+	private static NeutralContentPermissionMode NormalizeRelicMode(
+		NeutralContentPermissionMode value) =>
+		Enum.IsDefined(value)
+			? value
+			: SquSettings.DefaultNeutralRelicRegistrationMode;
+
+	private static NeutralContentPermissionMode NormalizeEventMode(
+		NeutralContentPermissionMode value) =>
+		Enum.IsDefined(value)
+			? value
+			: SquSettings.DefaultEventRegistrationMode;
 
 	private static JsonObject GetOrAddObject(JsonObject parent, string propertyName)
 	{
@@ -231,6 +291,12 @@ public static class ContentSettingsRunData
 
 		public NeutralContentPermissionMode NeutralCardRegistration { get; set; } =
 			SquSettings.DefaultNeutralCardRegistrationMode;
+
+		public NeutralContentPermissionMode NeutralRelicRegistration { get; set; } =
+			SquSettings.DefaultNeutralRelicRegistrationMode;
+
+		public NeutralContentPermissionMode EventRegistration { get; set; } =
+			SquSettings.DefaultEventRegistrationMode;
 	}
 }
 

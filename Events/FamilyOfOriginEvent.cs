@@ -6,9 +6,11 @@ using MegaCrit.Sts2.Core.Events;
 using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.Acts;
+using MegaCrit.Sts2.Core.Runs;
 using Squ.Audio;
 using Squ.Cards;
 using Squ.Relics;
+using Squ.Settings;
 using STS2RitsuLib.Interop.AutoRegistration;
 using STS2RitsuLib.Scaffolding.Content;
 
@@ -31,6 +33,9 @@ public sealed class FamilyOfOrigin : ModEventTemplate
 
 	public override EventAssetProfile AssetProfile => new(
 		InitialPortraitPath: "res://images/events/NeverHadThese.png");
+
+	public override bool IsAllowed(IRunState runState) =>
+		EventRegistrationPolicy.ShouldInclude(runState);
 
 	protected override IReadOnlyList<EventOption> GenerateInitialOptions() =>
 	[

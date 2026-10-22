@@ -42,6 +42,8 @@ public static class SquCommonL10n
 		"SUNQIAN_UNIVERSE_COMMON.SCRY.selectionPromptWithSource";
 	public const string NeutralCardAddedAnnotationKey =
 		"SUNQIAN_UNIVERSE_COMMON.NEUTRAL_CARD_ADDED.annotation";
+	public const string NeutralRelicAddedAnnotationKey =
+		"SUNQIAN_UNIVERSE_COMMON.NEUTRAL_RELIC_ADDED.annotation";
 	public const string NeutralPotionModifiedAnnotationKey =
 		"SUNQIAN_UNIVERSE_COMMON.NEUTRAL_POTION_MODIFIED.annotation";
 	public const string PlayRateTitleKey =
@@ -101,6 +103,9 @@ public static class SquCommonL10n
 
 	public static LocString NeutralCardAddedAnnotation() =>
 		new(Table, NeutralCardAddedAnnotationKey);
+
+	public static LocString NeutralRelicAddedAnnotation() =>
+		new(Table, NeutralRelicAddedAnnotationKey);
 
 	public static LocString NeutralPotionModifiedAnnotation() =>
 		new(Table, NeutralPotionModifiedAnnotationKey);

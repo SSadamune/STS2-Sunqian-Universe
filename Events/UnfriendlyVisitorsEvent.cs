@@ -16,6 +16,7 @@ using MegaCrit.Sts2.Core.Runs;
 using Squ.Audio;
 using Squ.Cards;
 using Squ.Interop;
+using Squ.Settings;
 using STS2RitsuLib.Interop.AutoRegistration;
 using STS2RitsuLib.Scaffolding.Content;
 
@@ -48,7 +49,8 @@ public sealed class UnfriendlyVisitors : ModEventTemplate
 			: base.InitialDescription;
 
 	public override bool IsAllowed(IRunState runState) =>
-		runState.Players.All(player => player.Deck.Cards.Any(IsBasicStrikeOrDefend));
+		EventRegistrationPolicy.ShouldInclude(runState)
+		&& runState.Players.All(player => player.Deck.Cards.Any(IsBasicStrikeOrDefend));
 
 	protected override IReadOnlyList<EventOption> GenerateInitialOptions()
 	{

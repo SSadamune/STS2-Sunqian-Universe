@@ -2,6 +2,7 @@
   "SUNQIAN_UNIVERSE_COMMON.ANNOTATION.title": "Tips",
   "SUNQIAN_UNIVERSE_COMMON.PLAY_RATE.title": "打出率",
   "SUNQIAN_UNIVERSE_COMMON.NEUTRAL_CARD_ADDED.annotation": "此牌由模组「孙乾宇宙」添加至中立牌池。你可以在「Mod设置(RitsuLib)」中拒绝添加这些卡牌。",
+  "SUNQIAN_UNIVERSE_COMMON.NEUTRAL_RELIC_ADDED.annotation": "此遗物由模组「孙乾宇宙」添加至中立遗物池。你可以在「Mod设置(RitsuLib)」中拒绝添加这些遗物。",
   "SUNQIAN_UNIVERSE_COMMON.NEUTRAL_POTION_MODIFIED.annotation": "此中立药水的效果受到模组「孙乾宇宙」的影响而改变。你可以在「Mod设置(RitsuLib)」中拒绝此类修改。",
   "SUNQIAN_UNIVERSE_COMMON.PLAY_RATE.annotation": "一张牌被手动打出过的[blue]次数[/blue]、与此牌进入过手牌的[blue]次数[/blue]的比值，即这张牌的[gold]打出率[/gold]。",
   "SUNQIAN_UNIVERSE_COMMON.NEWSANGUO_VIGOR_SWAP.hoverTitle": "※模组联动",
@@ -42,8 +43,8 @@
   "SUNQIAN_UNIVERSE_COMMON.SETTINGS.neutralPotionModification.deny": "不允许",
   "SUNQIAN_UNIVERSE_COMMON.SETTINGS.neutralCardRegistrationLabel": "允许添加中立卡牌",
   "SUNQIAN_UNIVERSE_COMMON.SETTINGS.neutralCardRegistrationDescription": "是否允许本模组向中立牌池添加卡牌（例如「哀兵必胜」）。",
-  "SUNQIAN_UNIVERSE_COMMON.SETTINGS.neutralRelicRegistrationLabel": "允许添加中立遗物（施工中）",
-  "SUNQIAN_UNIVERSE_COMMON.SETTINGS.neutralRelicRegistrationDescription": "是否允许本模组添加中立遗物。此功能仍在施工中。",
-  "SUNQIAN_UNIVERSE_COMMON.SETTINGS.eventRegistrationLabel": "允许添加事件（施工中）",
-  "SUNQIAN_UNIVERSE_COMMON.SETTINGS.eventRegistrationDescription": "是否允许本模组添加事件。此功能仍在施工中。"
+  "SUNQIAN_UNIVERSE_COMMON.SETTINGS.neutralRelicRegistrationLabel": "允许添加中立遗物",
+  "SUNQIAN_UNIVERSE_COMMON.SETTINGS.neutralRelicRegistrationDescription": "是否允许本模组向中立遗物池添加遗物（例如「七星宝刀」）。",
+  "SUNQIAN_UNIVERSE_COMMON.SETTINGS.eventRegistrationLabel": "允许添加事件",
+  "SUNQIAN_UNIVERSE_COMMON.SETTINGS.eventRegistrationDescription": "是否允许本模组向事件池添加事件（例如「原生家庭」和「不速之客」）。"
 }
