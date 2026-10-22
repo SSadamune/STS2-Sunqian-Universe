@@ -1,9 +1,11 @@
 using System;
 using System.Collections.Generic;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 using HarmonyLib;
 using MegaCrit.Sts2.Core.Models.Powers;
 using MegaCrit.Sts2.Core.Nodes.Combat;
+using Squ.Combat;
 using Squ.Interop;
 
 #nullable enable
@@ -11,25 +13,50 @@ using Squ.Interop;
 namespace Squ.Patches;
 
 /// <summary>
-/// When DefenseAwareDebuffPreview is loaded, keeps its Poison segment coordinated
-/// with Burning so both sources share the same ordered defensive-state simulation.
-/// Without that optional mod, the vanilla result is left untouched.
+/// Coordinates Poison's UI-only forecast with Burning. When both debuffs share an
+/// enemy turn-start batch, the dedicated vanilla Poison overlay is replaced by an
+/// ordered RitsuLib segment; otherwise the optional defense-aware result is used
+/// when available and the vanilla result is retained when it is not.
 /// </summary>
 [HarmonyPatch(typeof(PoisonPower), nameof(PoisonPower.CalculateTotalDamageNextTurn))]
 internal static class PoisonHealthBarForecastPatch
 {
 	[HarmonyPostfix]
+	[HarmonyPriority(Priority.Last)]
 	private static void CoordinateOptionalDebuffPreview(PoisonPower __instance, ref int __result)
 	{
-		if (PoisonHealthBarPreviewScopePatch.IsActive
-			&& DefenseAwareDebuffPreviewInterop.TryGetPreviewHpLoss(
-			__instance.Owner,
-			__instance,
-			out int hpLoss))
+		if (!PoisonHealthBarPreviewScopePatch.IsActive)
+		{
+			return;
+		}
+
+		if (OrderedPoisonHealthBarForecastSource.UsesSharedEnemyTurnStartSequence(
+			__instance.Owner))
+		{
+			// RitsuLib renders Poison and Burning together as ordered custom segments.
+			// Suppress only the otherwise-duplicated vanilla Poison overlay.
+			__result = 0;
+			return;
+		}
+
+		if (DefenseAwareDebuffPreviewInterop.TryGetPreviewHpLoss(
+				__instance.Owner,
+				__instance,
+				out int hpLoss))
 		{
 			__result = hpLoss;
 		}
 	}
+
+	/// <summary>
+	/// Invokes the unpatched game implementation for the UI fallback. This avoids
+	/// another mod's Poison patch leaking into the optional-API failure path.
+	/// </summary>
+	[HarmonyReversePatch]
+	[HarmonyPatch(typeof(PoisonPower), nameof(PoisonPower.CalculateTotalDamageNextTurn))]
+	[MethodImpl(MethodImplOptions.NoInlining)]
+	internal static int CalculateVanillaPreview(PoisonPower instance) =>
+		throw new NotSupportedException("Harmony reverse patch was not applied.");
 }
 
 /// <summary>

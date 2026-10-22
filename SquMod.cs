@@ -43,6 +43,7 @@ public static class SquMod
 		ModTypeDiscoveryHub.RegisterModAssembly(ModId, assembly);
 		SquSfx.Register();
 		SquSettingsPage.Register();
+		OrderedPoisonHealthBarForecastSource.Register();
 
 		RitsuLibFramework.CreateContentPack(ModId)
 			.CharacterStarterRelic<SunqianCharacter, BoxLunchRelic>(1)

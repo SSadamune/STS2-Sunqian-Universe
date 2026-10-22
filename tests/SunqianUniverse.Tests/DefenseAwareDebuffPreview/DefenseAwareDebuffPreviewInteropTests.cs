@@ -43,8 +43,11 @@ public sealed class DefenseAwareDebuffPreviewInteropTests : SunqianCombatTestSui
         AssertPowerOrder(enemy, burning, poison);
 
         int hpBefore = enemy.CurrentHp;
-        Assert.Equal(1, CalculateBurningPreview(burning));
-        Assert.Equal(4, CalculatePoisonUiPreview(poison));
+        HealthBarForecastSegment burningSegment = GetBurningPreview(burning);
+        HealthBarForecastSegment poisonSegment = GetOrderedPoisonPreview(poison);
+        Assert.Equal(1, burningSegment.Amount);
+        Assert.Equal(4, poisonSegment.Amount);
+        Assert.True(burningSegment.Order < poisonSegment.Order);
         Assert.Equal(hpBefore, enemy.CurrentHp);
         Assert.Equal(1, enemy.GetPower<SlipperyPower>()?.Amount);
     }
@@ -59,8 +62,12 @@ public sealed class DefenseAwareDebuffPreviewInteropTests : SunqianCombatTestSui
         AssertPowerOrder(enemy, poison, burning);
 
         int hpBefore = enemy.CurrentHp;
-        Assert.Equal(0, CalculatePoisonUiPreview(poison));
-        Assert.Equal(4, CalculateBurningPreview(burning));
+        HealthBarForecastSegment? poisonSegment = GetOrderedPoisonPreviews(poison)
+            .SingleOrDefault();
+        HealthBarForecastSegment burningSegment = GetBurningPreview(burning);
+        Assert.Null(poisonSegment);
+        Assert.Equal(4, burningSegment.Amount);
+        Assert.Equal(1, burningSegment.Order);
         Assert.Equal(hpBefore, enemy.CurrentHp);
         Assert.Equal(1, enemy.GetPower<BufferPower>()?.Amount);
     }
@@ -170,8 +177,25 @@ public sealed class DefenseAwareDebuffPreviewInteropTests : SunqianCombatTestSui
     }
 
     private static int CalculateBurningPreview(BurningPower burning) =>
-        burning.GetHealthBarForecastSegments(new(burning.Owner))
-            .Sum(segment => segment.Amount);
+        GetBurningPreview(burning).Amount;
+
+    private static HealthBarForecastSegment GetBurningPreview(BurningPower burning) =>
+        Assert.Single(burning.GetHealthBarForecastSegments(new(burning.Owner)));
+
+    private static HealthBarForecastSegment GetOrderedPoisonPreview(PoisonPower poison) =>
+        Assert.Single(GetOrderedPoisonPreviews(poison));
+
+    private static IEnumerable<HealthBarForecastSegment> GetOrderedPoisonPreviews(
+        PoisonPower poison)
+    {
+        Type sourceType = typeof(BurningPower).Assembly.GetType(
+            "Squ.Combat.OrderedPoisonHealthBarForecastSource")
+            ?? throw new InvalidOperationException("Ordered Poison forecast source was not found.");
+        var source = Assert.IsAssignableFrom<IHealthBarForecastSource>(
+            Activator.CreateInstance(sourceType, nonPublic: true));
+
+        return source.GetHealthBarForecastSegments(new(poison.Owner));
+    }
 
     private static int CalculatePoisonUiPreview(PoisonPower poison)
     {

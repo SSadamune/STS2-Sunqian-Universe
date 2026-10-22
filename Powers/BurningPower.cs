@@ -251,7 +251,8 @@ public sealed class BurningPower : ModPowerTemplate, IHealthBarForecastSource
 		return HealthBarForecasts.Single(
 			hpLoss,
 			BurningLethalColor,
-			HealthBarForecastGrowthDirection.FromRight);
+			HealthBarForecastGrowthDirection.FromRight,
+			OrderedPoisonHealthBarForecastSource.GetTriggerOrder(context.Creature, this));
 	}
 
 	private static void PlayFiendFireDamageVfx(Creature target)

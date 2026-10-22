@@ -1,3 +1,4 @@
+using System.Reflection;
 using MegaCrit.Sts2.Core.Combat;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.Entities.Creatures;
@@ -46,6 +47,42 @@ public sealed class OptionalModDegradeTests : SunqianCombatTestSuite
     }
 
     [Fact]
+    public async Task Poison_then_Burning_places_Poison_closer_to_the_current_hp_edge()
+    {
+        Creature enemy = EnemyAt(0);
+        await ApplyPower<PoisonPower>(enemy, 5);
+        await ApplyPower<BurningPower>(enemy, 4);
+        var poison = Assert.IsType<PoisonPower>(enemy.GetPower<PoisonPower>());
+        var burning = Assert.IsType<BurningPower>(enemy.GetPower<BurningPower>());
+
+        HealthBarForecastSegment poisonSegment = GetOrderedPoisonSegment(poison);
+        HealthBarForecastSegment burningSegment = Assert.Single(
+            burning.GetHealthBarForecastSegments(new(enemy)));
+
+        Assert.True(poisonSegment.Order < burningSegment.Order);
+        Assert.Equal(0, CalculatePoisonInHealthBarScope(poison));
+        Assert.Equal(5, poison.CalculateTotalDamageNextTurn());
+    }
+
+    [Fact]
+    public async Task Burning_then_Poison_places_Burning_closer_to_the_current_hp_edge()
+    {
+        Creature enemy = EnemyAt(0);
+        await ApplyPower<BurningPower>(enemy, 4);
+        await ApplyPower<PoisonPower>(enemy, 5);
+        var burning = Assert.IsType<BurningPower>(enemy.GetPower<BurningPower>());
+        var poison = Assert.IsType<PoisonPower>(enemy.GetPower<PoisonPower>());
+
+        HealthBarForecastSegment burningSegment = Assert.Single(
+            burning.GetHealthBarForecastSegments(new(enemy)));
+        HealthBarForecastSegment poisonSegment = GetOrderedPoisonSegment(poison);
+
+        Assert.True(burningSegment.Order < poisonSegment.Order);
+        Assert.Equal(0, CalculatePoisonInHealthBarScope(poison));
+        Assert.Equal(5, poison.CalculateTotalDamageNextTurn());
+    }
+
+    [Fact]
     public async Task Missing_Yjcm_keeps_Shangfanggu_and_GoodFire_fully_functional()
     {
         AssertOptionalModsUnavailable();
@@ -71,6 +108,42 @@ public sealed class OptionalModDegradeTests : SunqianCombatTestSuite
             * (1m + ShangfangguSigh.UpgradedBonusPercent / 100m));
         int expectedBurning = expectedBurningPerApplication * 2;
         CardTestAssertions.AssertPowerAmount<BurningPower>(enemy, expectedBurning);
+    }
+
+    private static HealthBarForecastSegment GetOrderedPoisonSegment(PoisonPower poison)
+    {
+        Type sourceType = typeof(BurningPower).Assembly.GetType(
+            "Squ.Combat.OrderedPoisonHealthBarForecastSource")
+            ?? throw new InvalidOperationException("Ordered Poison forecast source was not found.");
+        var source = Assert.IsAssignableFrom<IHealthBarForecastSource>(
+            Activator.CreateInstance(sourceType, nonPublic: true));
+
+        return Assert.Single(source.GetHealthBarForecastSegments(new(poison.Owner)));
+    }
+
+    private static int CalculatePoisonInHealthBarScope(PoisonPower poison)
+    {
+        Type scope = typeof(BurningPower).Assembly.GetType(
+            "Squ.Patches.PoisonHealthBarPreviewScopePatch")
+            ?? throw new InvalidOperationException("Poison UI scope was not found.");
+        MethodInfo enter = scope.GetMethod(
+            "EnterPreviewScope",
+            BindingFlags.NonPublic | BindingFlags.Static)
+            ?? throw new MissingMethodException(scope.FullName, "EnterPreviewScope");
+        MethodInfo exit = scope.GetMethod(
+            "ExitPreviewScope",
+            BindingFlags.NonPublic | BindingFlags.Static)
+            ?? throw new MissingMethodException(scope.FullName, "ExitPreviewScope");
+
+        enter.Invoke(null, null);
+        try
+        {
+            return poison.CalculateTotalDamageNextTurn();
+        }
+        finally
+        {
+            exit.Invoke(null, new object?[] { null });
+        }
     }
 
     [Fact]
