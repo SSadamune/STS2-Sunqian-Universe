@@ -7,6 +7,7 @@ using MegaCrit.Sts2.Core.Nodes.Combat;
 using STS2RitsuLib.Data.Models;
 using STS2RitsuLib.Interop.AutoRegistration;
 using STS2RitsuLib.Scaffolding.Characters;
+using STS2RitsuLib.Scaffolding.Content;
 using STS2RitsuLib.Scaffolding.Godot;
 using STS2RitsuLib.Scaffolding.Visuals;
 using STS2RitsuLib.Scaffolding.Visuals.StateMachine;
@@ -58,7 +59,16 @@ public sealed class SunqianCharacter : ModCharacterTemplate<SunqianCardPool, Sun
 				.Single("cast", "res://images/character/Longtao.png", 0.5f)
 				.Single("dead", "res://images/character/Longtao-dead.png")
 				.Single("relaxed", "res://images/character/Longtao.png")
-				.Build()
+				.Build(),
+			VanillaRelicVisualOverrides:
+			[
+				new(
+					"YUMMY_COOKIE",
+					new RelicAssetProfile(
+						IconPath: "res://images/relics/YummyCookieSunqian.png",
+						IconOutlinePath: "res://images/relics/YummyCookieSunqianOutline.png",
+						BigIconPath: "res://images/relics/YummyCookieSunqianBig.png"))
+			]
 		));
 
 	public override float AttackAnimDelay => 0f;
