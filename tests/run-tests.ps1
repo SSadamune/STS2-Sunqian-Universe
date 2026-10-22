@@ -7,7 +7,8 @@ param(
     [int]$TimeoutSeconds = 180,
     [switch]$ListOnly,
     [switch]$SkipModInstall,
-    [switch]$JointModTests
+    [switch]$JointModTests,
+    [switch]$DefenseAwareDebuffPreviewTests
 )
 
 $ErrorActionPreference = "Stop"
@@ -29,6 +30,9 @@ if (-not (Test-Path -LiteralPath $TestProject -PathType Leaf)) {
 }
 if ($TimeoutSeconds -le 0) {
     throw "TimeoutSeconds must be greater than zero."
+}
+if ($JointModTests -and $DefenseAwareDebuffPreviewTests) {
+    throw "JointModTests and DefenseAwareDebuffPreviewTests are separate test modes."
 }
 
 $RitsuManifestPath = Join-Path $RitsuLibDir "mod_manifest.json"
@@ -76,6 +80,9 @@ if (-not [string]::IsNullOrWhiteSpace($Filter)) {
 }
 if ($JointModTests) {
     $MsBuildArgs += "-p:Sts2JointModTests=true"
+}
+if ($DefenseAwareDebuffPreviewTests) {
+    $MsBuildArgs += "-p:Sts2DefenseAwareDebuffPreviewTests=true"
 }
 
 Write-Host "$Target via TestTheSpire..." -ForegroundColor Cyan

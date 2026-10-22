@@ -1,5 +1,6 @@
 using MegaCrit.Sts2.Core.Combat;
 using MegaCrit.Sts2.Core.Entities.Cards;
+using MegaCrit.Sts2.Core.Entities.Creatures;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.Cards;
 using MegaCrit.Sts2.Core.Models.Characters;
@@ -8,6 +9,7 @@ using MegaCrit.Sts2.Core.Models.Powers;
 using Squ.Cards;
 using Squ.Interop;
 using Squ.Powers;
+using STS2RitsuLib.Combat.HealthBars;
 using TestTheSpire;
 using Xunit;
 
@@ -25,6 +27,23 @@ public sealed class OptionalModDegradeTests : SunqianCombatTestSuite
             .Player<Ironclad>()
             .AddEnemy<BigDummy>()
             .WithSeed("optional-mod-interop-degrade");
+
+    [Fact]
+    public async Task Missing_DefenseAwareDebuffPreview_keeps_vanilla_Poison_and_basic_Burning_forecasts()
+    {
+        AssertOptionalModsUnavailable();
+        Creature enemy = EnemyAt(0);
+        await ApplyPower<BurningPower>(enemy, 4);
+        await ApplyPower<PoisonPower>(enemy, 4);
+        await ApplyPower<SlipperyPower>(enemy, 1);
+        var burning = Assert.IsType<BurningPower>(enemy.GetPower<BurningPower>());
+        var poison = Assert.IsType<PoisonPower>(enemy.GetPower<PoisonPower>());
+        HealthBarForecastSegment[] segments =
+            burning.GetHealthBarForecastSegments(new(enemy)).ToArray();
+
+        Assert.Equal(4, poison.CalculateTotalDamageNextTurn());
+        Assert.Equal(4, Assert.Single(segments).Amount);
+    }
 
     [Fact]
     public async Task Missing_Yjcm_keeps_Shangfanggu_and_GoodFire_fully_functional()
@@ -132,6 +151,12 @@ public sealed class OptionalModDegradeTests : SunqianCombatTestSuite
             assembly => string.Equals(
                 assembly.GetName().Name,
                 "newsanguo",
+                StringComparison.OrdinalIgnoreCase));
+        Assert.DoesNotContain(
+            AppDomain.CurrentDomain.GetAssemblies(),
+            assembly => string.Equals(
+                assembly.GetName().Name,
+                "DefenseAwareDebuffPreview",
                 StringComparison.OrdinalIgnoreCase));
     }
 

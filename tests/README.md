@@ -23,6 +23,16 @@
 .\tests\run-tests.ps1 -Filter FlameStrike
 ```
 
+加载 `DefenseAwareDebuffPreview` 的独立互操作测试模式：
+
+```powershell
+.\tests\run-tests.ps1 -DefenseAwareDebuffPreviewTests -Filter DefenseAwareDebuffPreview
+```
+
+该模式要求游戏的 `mods/DefenseAwareDebuffPreview` 中已安装 v0.1.1，
+并通过 `Sts2RequiredModIds` 将它真正加入 TestTheSpire 载荷。普通模式不会加载它，
+因此两种模式分别覆盖可选模组缺失时的基础色块和存在时的防御感知色块。
+
 脚本会构建并安装当前模组，把完整的 Workshop RitsuLib 同步到游戏的
 `mods/STS2-RitsuLib`，再由 TestTheSpire 安装 runner、xUnit 断言程序集和测试模组。
 测试配置与存档位于 `SunqianUniverse.Tests/obj/Sts2TestData`，不会覆盖正常游戏配置。

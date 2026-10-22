@@ -25,12 +25,20 @@
     <Sts2RequiredModIds>STS2-RitsuLib;Yjcm;newsanguo</Sts2RequiredModIds>
   </PropertyGroup>
 
-  <ItemGroup Condition="'$(Sts2JointModTests)' == 'true'">
+  <PropertyGroup Condition="'$(Sts2DefenseAwareDebuffPreviewTests)' == 'true'">
+    <Sts2RequiredModIds>STS2-RitsuLib;DefenseAwareDebuffPreview</Sts2RequiredModIds>
+  </PropertyGroup>
+
+  <ItemGroup Condition="'$(Sts2JointModTests)' == 'true' Or '$(Sts2DefenseAwareDebuffPreviewTests)' == 'true'">
     <Compile Remove="Degrade\**\*.cs" />
   </ItemGroup>
 
   <ItemGroup Condition="'$(Sts2JointModTests)' != 'true'">
     <Compile Remove="JointMods\**\*.cs" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(Sts2DefenseAwareDebuffPreviewTests)' != 'true'">
+    <Compile Remove="DefenseAwareDebuffPreview\**\*.cs" />
   </ItemGroup>
 
   <ItemGroup>
