@@ -19,7 +19,7 @@ public sealed class TwoWordPoetScriptTests : SunqianCombatTestSuite
         int firstHp = first.CurrentHp;
         int secondHp = second.CurrentHp;
 
-        await Play(Upgrade(await AddToHand<TwoWordPoetScript>()));
+        await PlayAndActivateScript(Upgrade(await AddToHand<TwoWordPoetScript>()));
 
         int dealt = TwoWordPoetScript.CanonicalDamage * TwoWordPoetScript.CanonicalHits;
         Assert.Equal(firstHp - dealt, first.CurrentHp);

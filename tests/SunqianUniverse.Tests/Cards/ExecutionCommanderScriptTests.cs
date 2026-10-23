@@ -23,7 +23,7 @@ public sealed class ExecutionCommanderScriptTests : SunqianCombatTestSuite
     {
         var card = await AddToHand<ExecutionCommanderScript>();
 
-        await Play(card);
+        await PlayAndActivateScript(card);
 
         Assert.Equal(
             ExecutionCommanderScript.GeneratedStrikeCount,

@@ -61,7 +61,7 @@ public sealed class ScriptBurningLinkedCampsPower : ScriptPowerTemplate
 	{
 		Player? player = oldOwner.Player;
 		ICombatState? combatState = oldOwner.CombatState;
-		if (!ScriptSystem.SuppressScriptEndEffects
+		if (!SuppressScriptEndEffects
 			&& player is not null
 			&& combatState is not null)
 		{

@@ -18,12 +18,12 @@ public sealed class BurningLinkedCampsScriptTests : SunqianCombatTestSuite
     public async Task Replacing_upgraded_script_generates_burn_and_upgraded_shangfanggu_sigh()
     {
         var previousTop = await AddToDrawPileTop<Wound>();
-        await Play(Upgrade(await AddToHand<BurningLinkedCampsScript>()));
+        await PlayAndActivateScript(Upgrade(await AddToHand<BurningLinkedCampsScript>()));
         CardTestAssertions.AssertPowerAmount<TinderPower>(
             Player.Creature,
             BurningLinkedCampsScript.UpgradedTinderStacks);
 
-        await Play(await AddToHand<ServantScript>());
+        await PlayAndActivateScript(await AddToHand<ServantScript>());
 
         Assert.Contains(PileType.Hand.GetPile(Player).Cards, card => card is Burn);
         CardPile drawPile = PileType.Draw.GetPile(Player);
@@ -36,7 +36,7 @@ public sealed class BurningLinkedCampsScriptTests : SunqianCombatTestSuite
     [Fact]
     public async Task Tinder_amplifies_all_burning_from_one_water_fire_play_and_its_block_uses_applied_amount()
     {
-        await Play(Upgrade(await AddToHand<BurningLinkedCampsScript>()));
+        await PlayAndActivateScript(Upgrade(await AddToHand<BurningLinkedCampsScript>()));
         var enemy = EnemyAt(0);
 
         await Play(await AddToHand<WaterFireInvincible>(), enemy);

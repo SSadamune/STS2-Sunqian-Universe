@@ -75,7 +75,7 @@ public sealed class ScriptPartTimeGeneralPower : ScriptPowerTemplate
 
 	public override async Task AfterRemoved(Creature oldOwner)
 	{
-		if (!ScriptSystem.SuppressScriptEndEffects
+		if (!SuppressScriptEndEffects
 			&& oldOwner is { IsAlive: true, Player: { } player, CombatState: { } combatState }
 			&& !CombatManager.Instance.IsOverOrEnding)
 		{

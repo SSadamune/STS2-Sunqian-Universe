@@ -1,8 +1,10 @@
 using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
+using MegaCrit.Sts2.Core.Entities.Creatures;
 using MegaCrit.Sts2.Core.Entities.Players;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Nodes.CommonUi;
+using Squ.Cards;
 using Squ.Powers;
 using TestTheSpire;
 using Xunit;
@@ -21,6 +23,30 @@ public abstract class SunqianCombatTestSuite : CombatTestSuite
 
     protected static void AssertAllSelectionsConsumed(ScriptedCardSelector selector) =>
         Assert.Equal(0, selector.PendingSteps);
+
+    protected async Task PlayAndActivateScript(ScriptCardTemplate card)
+    {
+        Type recordType = card.CreateScriptRecordPreview().GetType();
+        var selector = new ScriptedCardSelector()
+            .ThenSelectWhere(candidate => candidate.GetType() == recordType);
+        using (UseCardSelector(selector))
+        {
+            await Play(card);
+        }
+        AssertAllSelectionsConsumed(selector);
+    }
+
+    protected async Task PlayAndActivateScript(ScriptCardTemplate card, Creature target)
+    {
+        Type recordType = card.CreateScriptRecordPreview().GetType();
+        var selector = new ScriptedCardSelector()
+            .ThenSelectWhere(candidate => candidate.GetType() == recordType);
+        using (UseCardSelector(selector))
+        {
+            await Play(card, target);
+        }
+        AssertAllSelectionsConsumed(selector);
+    }
 
     protected async Task<TCard> AddCardToPile<TCard>(
         PileType pileType,

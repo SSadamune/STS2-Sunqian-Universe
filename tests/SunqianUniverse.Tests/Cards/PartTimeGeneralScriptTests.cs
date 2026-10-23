@@ -23,7 +23,9 @@ public sealed class PartTimeGeneralScriptTests : SunqianCombatTestSuite
     public async Task Expiring_script_offers_recorded_strikes_and_adds_the_selected_copy_to_hand()
     {
         int hp = EnemyAt(0).CurrentHp;
-        await Play(Upgrade(await AddToHand<PartTimeGeneralScript>()), EnemyAt(0));
+        await PlayAndActivateScript(
+            Upgrade(await AddToHand<PartTimeGeneralScript>()),
+            EnemyAt(0));
         Assert.True(EnemyAt(0).CurrentHp < hp);
         var script = Assert.IsType<ScriptPartTimeGeneralPower>(
             Player.Creature.GetPower<ScriptPartTimeGeneralPower>());
@@ -31,11 +33,13 @@ public sealed class PartTimeGeneralScriptTests : SunqianCombatTestSuite
             script.DynamicVars[ScriptPartTimeGeneralPower.RecordedCardsVarName].ToString()));
         await PlayerCmd.SetEnergy(3, Player);
         CardModel? selected = null;
-        var selector = new ScriptedCardSelector().ThenSelect(options =>
-        {
-            selected = options[0];
-            return [selected];
-        });
+        var selector = new ScriptedCardSelector()
+            .ThenSelectWhere(card => card is ServantScriptRecord)
+            .ThenSelect(options =>
+            {
+                selected = options[0];
+                return [selected];
+            });
 
         using (UseCardSelector(selector))
         {
@@ -55,7 +59,9 @@ public sealed class PartTimeGeneralScriptTests : SunqianCombatTestSuite
         await PlayerCmd.SetEnergy(0, Player);
         int hp = EnemyAt(0).CurrentHp;
 
-        await Play(await AddToHand<PartTimeGeneralScript>(), EnemyAt(0));
+        await PlayAndActivateScript(
+            await AddToHand<PartTimeGeneralScript>(),
+            EnemyAt(0));
 
         Assert.Equal(hp, EnemyAt(0).CurrentHp);
         var script = Assert.IsType<ScriptPartTimeGeneralPower>(
@@ -64,7 +70,7 @@ public sealed class PartTimeGeneralScriptTests : SunqianCombatTestSuite
             script.DynamicVars[ScriptPartTimeGeneralPower.RecordedCardsVarName].ToString()));
 
         await PlayerCmd.SetEnergy(2, Player);
-        await Play(await AddToHand<ServantScript>());
+        await PlayAndActivateScript(await AddToHand<ServantScript>());
 
         AssertOnlyScript<ScriptServantPower>();
     }
@@ -94,7 +100,9 @@ public sealed class PartTimeGeneralScriptTests : SunqianCombatTestSuite
             prefix: new HarmonyMethod(typeof(PartTimeGeneralScriptTests), nameof(ForcePommelStrike)));
         try
         {
-            await Play(await AddToHand<PartTimeGeneralScript>(), EnemyAt(0));
+            await PlayAndActivateScript(
+                await AddToHand<PartTimeGeneralScript>(),
+                EnemyAt(0));
         }
         finally
         {

@@ -24,7 +24,7 @@ public sealed class HeadsmanScriptTests : SunqianCombatTestSuite
         var enemy = EnemyAt(0);
         var card = await AddToHand<HeadsmanScript>();
 
-        await Play(card, enemy);
+        await PlayAndActivateScript(card, enemy);
 
         CardTestAssertions.AssertPowerAmount<VigorPower>(
             Player.Creature,

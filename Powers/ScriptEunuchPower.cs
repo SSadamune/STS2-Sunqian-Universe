@@ -63,7 +63,7 @@ public sealed class ScriptEunuchPower : ScriptPowerTemplate
 	public override async Task AfterRemoved(Creature oldOwner)
 	{
 		Player? player = oldOwner.Player;
-		if (!ScriptSystem.SuppressScriptEndEffects
+		if (!SuppressScriptEndEffects
 			&& player is not null
 			&& oldOwner.CombatState is not null
 			&& !CombatManager.Instance.IsOverOrEnding)

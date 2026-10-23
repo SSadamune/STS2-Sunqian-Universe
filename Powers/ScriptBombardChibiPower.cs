@@ -20,7 +20,7 @@ public sealed class ScriptBombardChibiPower : ScriptPowerTemplate
 
 	public override async Task AfterRemoved(Creature oldOwner)
 	{
-		if (!ScriptSystem.SuppressScriptEndEffects && oldOwner.Player is { } player)
+		if (!SuppressScriptEndEffects && oldOwner.Player is { } player)
 		{
 			SquSfx.Play(SquSfx.BombardChibiZhouYuPlanEvent);
 			await PlayerCmd.GainEnergy(1, player);

@@ -67,7 +67,7 @@ public sealed class ScriptSunqianPower : ScriptPowerTemplate
 				null);
 		}
 
-		if (!ScriptSystem.SuppressScriptEndEffects
+		if (!SuppressScriptEndEffects
 			&& oldOwner.Player is { } player
 			&& !CombatManager.Instance.IsOverOrEnding)
 		{

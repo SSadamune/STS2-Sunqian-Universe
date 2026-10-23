@@ -18,6 +18,9 @@ namespace Squ.Powers;
 /// </summary>
 public abstract class ScriptPowerTemplate : ModPowerTemplate
 {
+	private int _suppressLiftDepth;
+	private int _suppressEndEffectsDepth;
+
 	public override PowerType Type => PowerType.Buff;
 
 	public override PowerStackType StackType => PowerStackType.None;
@@ -27,6 +30,8 @@ public abstract class ScriptPowerTemplate : ModPowerTemplate
 	public override Color AmountLabelColor => PowerModel._normalAmountLabelColor;
 
 	protected override IEnumerable<string> RegisteredKeywordIds => [SquKeywords.ScriptId];
+
+	internal bool SuppressScriptEndEffects => _suppressEndEffectsDepth > 0;
 
 	public sealed override async Task AfterApplied(Creature? applier, CardModel? cardSource)
 	{
@@ -44,9 +49,33 @@ public abstract class ScriptPowerTemplate : ModPowerTemplate
 	{
 		await base.AfterRemoved(oldOwner);
 
-		if (!ScriptSystem.SuppressLiftNotification)
+		if (_suppressLiftDepth == 0)
 		{
 			await ScriptSystem.NotifyScriptLiftedAsync(oldOwner, new ThrowingPlayerChoiceContext());
+		}
+	}
+
+	internal void BeginRemoval(bool notifyLift, bool resolveEndEffects)
+	{
+		if (!notifyLift)
+		{
+			_suppressLiftDepth++;
+		}
+		if (!resolveEndEffects)
+		{
+			_suppressEndEffectsDepth++;
+		}
+	}
+
+	internal void EndRemoval(bool notifyLift, bool resolveEndEffects)
+	{
+		if (!resolveEndEffects)
+		{
+			_suppressEndEffectsDepth--;
+		}
+		if (!notifyLift)
+		{
+			_suppressLiftDepth--;
 		}
 	}
 }

@@ -29,7 +29,7 @@ public sealed class BowangParadoxTests : SunqianCombatTestSuite
         var ordinarySkill = await AddToHand<DefendLongtao>();
         var bowang = await AddToHand<BowangParadoxScript>();
 
-        await Play(bowang);
+        await PlayAndActivateScript(bowang);
 
         AssertInPile(unretainedAttack, PileType.Discard);
         AssertInPile(retainedAttack, PileType.Hand);
@@ -48,7 +48,7 @@ public sealed class BowangParadoxTests : SunqianCombatTestSuite
         var bowang = await AddToHand<BowangParadoxScript>();
 
         Assert.True(retainedAttack.ShouldRetainThisTurn);
-        await Play(bowang);
+        await PlayAndActivateScript(bowang);
 
         AssertInPile(retainedAttack, PileType.Hand);
         AssertOnlyScript<ScriptBowangParadoxPower>();
@@ -66,7 +66,7 @@ public sealed class BowangParadoxTests : SunqianCombatTestSuite
         Assert.False(attack.ShouldRetainThisTurn);
 
         var bowang = await AddToHand<BowangParadoxScript>();
-        await Play(bowang);
+        await PlayAndActivateScript(bowang);
 
         AssertInPile(attack, PileType.Discard);
         AssertOnlyScript<ScriptBowangParadoxPower>();
@@ -76,7 +76,7 @@ public sealed class BowangParadoxTests : SunqianCombatTestSuite
     public async Task BP_04_replacement_discards_only_unretained_burning_cards()
     {
         var bowang = await AddToHand<BowangParadoxScript>();
-        await Play(bowang);
+        await PlayAndActivateScript(bowang);
 
         var burningAttack = await AddToHand<FlameStrike>();
         var burningSkill = await AddToHand<BlockFirefighting>();
@@ -84,7 +84,7 @@ public sealed class BowangParadoxTests : SunqianCombatTestSuite
         var nonBurningSkill = await AddToHand<DefendLongtao>();
         var replacement = await AddToHand<ServantScript>();
 
-        await Play(replacement);
+        await PlayAndActivateScript(replacement);
 
         AssertInPile(burningAttack, PileType.Discard);
         AssertInPile(burningSkill, PileType.Discard);
@@ -100,14 +100,14 @@ public sealed class BowangParadoxTests : SunqianCombatTestSuite
     public async Task BP_05_eunuch_protects_newly_drawn_burning_cards_from_old_bowang()
     {
         var bowang = await AddToHand<BowangParadoxScript>();
-        await Play(bowang);
+        await PlayAndActivateScript(bowang);
 
         var preexistingBurning = await AddToHand<FlameStrike>();
         var drawnSecond = await AddToDrawPileTop<BlockFirefighting>();
         var drawnFirst = await AddToDrawPileTop<FlameStrike>();
         var eunuch = await AddToHand<EunuchScript>();
 
-        await Play(eunuch);
+        await PlayAndActivateScript(eunuch);
 
         AssertInPile(preexistingBurning, PileType.Discard);
         AssertEunuchProtectedInHand(drawnFirst);
@@ -122,7 +122,7 @@ public sealed class BowangParadoxTests : SunqianCombatTestSuite
     public async Task BP_06_upgraded_eunuch_protects_all_three_drawn_burning_cards()
     {
         var bowang = await AddToHand<BowangParadoxScript>();
-        await Play(bowang);
+        await PlayAndActivateScript(bowang);
 
         var drawnThird = await AddToDrawPileTop<FlameStrike>();
         var drawnSecond = await AddToDrawPileTop<BlockFirefighting>();
@@ -130,7 +130,7 @@ public sealed class BowangParadoxTests : SunqianCombatTestSuite
         var eunuch = Upgrade(await AddToHand<EunuchScript>());
 
         Assert.True(eunuch.IsUpgraded);
-        await Play(eunuch);
+        await PlayAndActivateScript(eunuch);
 
         AssertEunuchProtectedInHand(drawnFirst);
         AssertEunuchProtectedInHand(drawnSecond);

@@ -17,7 +17,7 @@ public sealed class OneManOneCityTests : SunqianCombatTestSuite
     [Fact]
     public async Task Script_spends_an_extra_plating_stack_and_grants_a_second_block_instance_at_turn_end()
     {
-        await Play(await AddToHand<OneManOneCity>());
+        await PlayAndActivateScript(await AddToHand<OneManOneCity>());
         var plating = Assert.IsType<PlatingPower>(Player.Creature.GetPower<PlatingPower>());
         var script = Assert.IsType<ScriptOneManOneCityPower>(
             Player.Creature.GetPower<ScriptOneManOneCityPower>());
@@ -43,7 +43,7 @@ public sealed class OneManOneCityTests : SunqianCombatTestSuite
     [Fact]
     public async Task Upgrade_applies_plating_and_installs_its_script()
     {
-        await Play(Upgrade(await AddToHand<OneManOneCity>()));
+        await PlayAndActivateScript(Upgrade(await AddToHand<OneManOneCity>()));
 
         CardTestAssertions.AssertPowerAmount<PlatingPower>(Player.Creature, OneManOneCity.UpgradedPlatingStacks);
         AssertOnlyScript<ScriptOneManOneCityPower>();

@@ -17,7 +17,7 @@ public sealed class BombardChibiScriptTests : SunqianCombatTestSuite
     [Fact]
     public async Task Upgrade_burns_and_temporarily_weakens_every_enemy_and_becomes_the_script()
     {
-        await Play(Upgrade(await AddToHand<BombardChibiScript>()));
+        await PlayAndActivateScript(Upgrade(await AddToHand<BombardChibiScript>()));
 
         foreach (var enemy in new[] { EnemyAt(0), EnemyAt(1) })
         {
@@ -30,10 +30,10 @@ public sealed class BombardChibiScriptTests : SunqianCombatTestSuite
     [Fact]
     public async Task Replacing_bombard_script_refunds_one_energy()
     {
-        await Play(await AddToHand<BombardChibiScript>());
+        await PlayAndActivateScript(await AddToHand<BombardChibiScript>());
         await PlayerCmd.SetEnergy(2, Player);
 
-        await Play(await AddToHand<ServantScript>());
+        await PlayAndActivateScript(await AddToHand<ServantScript>());
 
         Assert.Equal(1, Player.PlayerCombatState!.Energy);
         AssertOnlyScript<ScriptServantPower>();

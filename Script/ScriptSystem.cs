@@ -29,14 +29,8 @@ public static class ScriptSystem
 		new("cards", "SUNQIAN_UNIVERSE_CARD_SCRIPT_SELECTION_PROMPT");
 
 	private static bool _initialized;
-	private static int _suppressLiftDepth;
-	private static int _suppressEndEffectsDepth;
 
 	public static PileType ScriptCollectionPile { get; private set; }
-
-	internal static bool SuppressLiftNotification => _suppressLiftDepth > 0;
-
-	internal static bool SuppressScriptEndEffects => _suppressEndEffectsDepth > 0;
 
 	public static void RegisterPile()
 	{
@@ -50,7 +44,7 @@ public static class ScriptSystem
 					new Vector2(100f, -105f)),
 				IconPath = "res://images/ui/ScriptCollectionPile.png",
 				OnOpen = context => context.ShowDefaultPileScreen(),
-				VisibleWhen = context => context.Player?.Creature.CombatState is not null,
+				VisibleWhen = context => context.Pile?.Cards.Count > 0,
 			}).PileType;
 	}
 
@@ -258,14 +252,7 @@ public static class ScriptSystem
 		bool notifyLift = true,
 		bool resolveEndEffects = true)
 	{
-		if (!notifyLift)
-		{
-			_suppressLiftDepth++;
-		}
-		if (!resolveEndEffects)
-		{
-			_suppressEndEffectsDepth++;
-		}
+		power.BeginRemoval(notifyLift, resolveEndEffects);
 
 		try
 		{
@@ -273,14 +260,7 @@ public static class ScriptSystem
 		}
 		finally
 		{
-			if (!resolveEndEffects)
-			{
-				_suppressEndEffectsDepth--;
-			}
-			if (!notifyLift)
-			{
-				_suppressLiftDepth--;
-			}
+			power.EndRemoval(notifyLift, resolveEndEffects);
 		}
 	}
 

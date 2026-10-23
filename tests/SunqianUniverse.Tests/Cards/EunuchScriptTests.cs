@@ -20,13 +20,13 @@ public sealed class EunuchScriptTests : SunqianCombatTestSuite
     }
 
     [Fact]
-    public async Task EU_01_new_eunuch_replaces_old_without_consuming_new_marks()
+    public async Task EU_01_replaying_active_eunuch_keeps_power_and_all_marks()
     {
         var oldMarkedSecond = await AddToDrawPileTop<DefendLongtao>();
         var oldMarkedFirst = await AddToDrawPileTop<FlameStrike>();
         var firstEunuch = await AddToHand<EunuchScript>();
 
-        await Play(firstEunuch);
+        await PlayAndActivateScript(firstEunuch);
 
         var oldPower = Assert.IsType<ScriptEunuchPower>(
             Player.Creature.GetPower<ScriptEunuchPower>());
@@ -37,18 +37,15 @@ public sealed class EunuchScriptTests : SunqianCombatTestSuite
         var newMarkedFirst = await AddToDrawPileTop<FingerSnapStrike>();
         var secondEunuch = await AddToHand<EunuchScript>();
 
-        await Play(secondEunuch);
+        await PlayAndActivateScript(secondEunuch);
 
         var newPower = Assert.IsType<ScriptEunuchPower>(
             Player.Creature.GetPower<ScriptEunuchPower>());
-        Assert.NotSame(oldPower, newPower);
+        Assert.Same(oldPower, newPower);
         AssertOnlyScript<ScriptEunuchPower>();
 
-        AssertInPile(oldMarkedFirst, PileType.Exhaust);
-        AssertInPile(oldMarkedSecond, PileType.Exhaust);
-        Assert.False(oldMarkedFirst.HasEunuchMessage());
-        Assert.False(oldMarkedSecond.HasEunuchMessage());
-
+        AssertMarkedInHand(oldMarkedFirst);
+        AssertMarkedInHand(oldMarkedSecond);
         AssertMarkedInHand(newMarkedFirst);
         AssertMarkedInHand(newMarkedSecond);
     }
@@ -60,7 +57,7 @@ public sealed class EunuchScriptTests : SunqianCombatTestSuite
         var playedCard = await AddToDrawPileTop<DefendLongtao>();
         var eunuch = await AddToHand<EunuchScript>();
 
-        await Play(eunuch);
+        await PlayAndActivateScript(eunuch);
 
         AssertMarkedInHand(playedCard);
         AssertMarkedInHand(stillTracked);
@@ -71,7 +68,7 @@ public sealed class EunuchScriptTests : SunqianCombatTestSuite
         Assert.False(playedCard.HasEunuchMessage());
 
         var replacement = await AddToHand<BowangParadoxScript>();
-        await Play(replacement);
+        await PlayAndActivateScript(replacement);
 
         AssertInPile(playedCard, PileType.Discard);
         Assert.False(playedCard.HasEunuchMessage());

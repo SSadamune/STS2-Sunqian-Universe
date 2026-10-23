@@ -24,7 +24,7 @@ public sealed class ServantScriptTests : SunqianCombatTestSuite
     {
         var card = await AddToHand<ServantScript>();
 
-        await Play(card);
+        await PlayAndActivateScript(card);
 
         Assert.Equal(ServantScript.BaseBlock, Player.Creature.Block);
         AssertOnlyScript<ScriptServantPower>();

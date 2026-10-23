@@ -63,7 +63,7 @@ public sealed class ScriptBowangParadoxPower : ScriptPowerTemplate
 
 	public override async Task AfterRemoved(Creature oldOwner)
 	{
-		if (ScriptSystem.SuppressScriptEndEffects)
+		if (SuppressScriptEndEffects)
 		{
 			await base.AfterRemoved(oldOwner);
 			return;

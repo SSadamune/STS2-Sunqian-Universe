@@ -16,7 +16,7 @@ public sealed class NightRaidWuchaoScriptTests : SunqianCombatTestSuite
     public async Task Generated_strikes_are_upgraded_exhausting_and_inherit_script_burning()
     {
         var enemy = EnemyAt(0);
-        await Play(Upgrade(await AddToHand<NightRaidWuchaoScript>()));
+        await PlayAndActivateScript(Upgrade(await AddToHand<NightRaidWuchaoScript>()));
         var strikes = PileType.Hand.GetPile(Player).Cards.OfType<StarryNightStrike>().ToArray();
 
         Assert.Equal(NightRaidWuchaoScript.GeneratedStrikeCount, strikes.Length);

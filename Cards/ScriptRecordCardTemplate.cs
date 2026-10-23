@@ -11,6 +11,7 @@ using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.CardPools;
 using MegaCrit.Sts2.Core.Saves.Runs;
+using Squ.Character;
 using Squ.Powers;
 using STS2RitsuLib.Interop.AutoRegistration;
 using STS2RitsuLib.Scaffolding.Content;
@@ -34,7 +35,9 @@ public abstract class ScriptRecordCardTemplate : ModCardTemplate
 
 	public sealed override string Title => TitleLocString.GetFormattedText();
 
-	public override IEnumerable<CardKeyword> CanonicalKeywords => [CardKeyword.Unplayable];
+	public sealed override CardPoolModel VisualCardPool => ModelDb.CardPool<SunqianCardPool>();
+
+	public override IEnumerable<CardKeyword> CanonicalKeywords => [];
 
 	protected ScriptRecordCardTemplate()
 		: base(0, CardType.Skill, CardRarity.Token, TargetType.Self, showInCardLibrary: false)

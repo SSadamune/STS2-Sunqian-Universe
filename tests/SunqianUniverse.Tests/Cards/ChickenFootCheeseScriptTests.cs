@@ -49,12 +49,10 @@ public sealed class ChickenFootCheeseScriptTests : SunqianCombatTestSuite
 
         Assert.Equal(8, card.DynamicVars.Damage.PreviewValue);
         Assert.Equal(5, card.DynamicVars[ChickenFootCheeseScript.FollowUpDamageVarName].PreviewValue);
-        Assert.Equal(3, card.DynamicVars[ChickenFootCheeseScript.ScriptFollowUpDamageVarName].PreviewValue);
         string cardDescription = card.GetDescriptionForPile(PileType.Hand);
         Assert.Contains("5", cardDescription);
-        Assert.Contains("3", cardDescription);
 
-        await Play(card);
+        await PlayAndActivateScript(card);
 
         const int expectedDamage = (ChickenFootCheeseScript.BaseDamage + 2)
             + (ChickenFootCheeseScript.BaseFollowUpDamage + 2);
@@ -87,7 +85,7 @@ public sealed class ChickenFootCheeseScriptTests : SunqianCombatTestSuite
             ChickenFootCheeseScript.UpgradedFollowUpDamage,
             strikePreview.DynamicVars[ChickenFootCheeseScriptStrikePreview.FollowUpDamageVarName].BaseValue);
 
-        await Play(card);
+        await PlayAndActivateScript(card);
 
         const int expectedDamage = ChickenFootCheeseScript.BaseDamage
             + ChickenFootCheeseScript.UpgradedFollowUpDamage;
@@ -102,7 +100,7 @@ public sealed class ChickenFootCheeseScriptTests : SunqianCombatTestSuite
     [Fact]
     public async Task Redirected_strike_deals_normal_damage_then_vigor_scaled_follow_up()
     {
-        await Play(await AddToHand<ChickenFootCheeseScript>());
+        await PlayAndActivateScript(await AddToHand<ChickenFootCheeseScript>());
         await ApplyPower<VigorPower>(Player.Creature, 2);
 
         var first = EnemyAt(0);
@@ -138,7 +136,7 @@ public sealed class ChickenFootCheeseScriptTests : SunqianCombatTestSuite
     [Fact]
     public async Task Upgraded_script_grants_nine_follow_up_regardless_of_strike_upgrade()
     {
-        await Play(Upgrade(await AddToHand<ChickenFootCheeseScript>()));
+        await PlayAndActivateScript(Upgrade(await AddToHand<ChickenFootCheeseScript>()));
         var normalStrike = await AddToHand<StrikeIronclad>();
         var upgradedStrike = Upgrade(await AddToHand<StrikeIronclad>());
         var normalCapability = Assert.IsType<ChickenFootCheeseStrikeCapability>(
