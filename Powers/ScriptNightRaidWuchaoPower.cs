@@ -19,11 +19,11 @@ using STS2RitsuLib.Scaffolding.Content;
 namespace Squ.Powers;
 
 /// <summary>
-/// 可叠层剧本：夜袭乌巢。<see cref="CardTag.Strike"/> 卡牌攻击后，额外给予目标 <see cref="Amount"/> 层灼烧。
+/// 剧本：夜袭乌巢。<see cref="CardTag.Strike"/> 卡牌攻击后，额外给予目标 <see cref="Amount"/> 层灼烧。
 /// 叠层时 <see cref="Amount"/> 累加（未升级 +4，升级 +6）。
 /// </summary>
 [RegisterPower]
-public sealed class ScriptNightRaidWuchaoPower : StackableScriptPowerTemplate
+public sealed class ScriptNightRaidWuchaoPower : ScriptPowerTemplate
 {
 	public override PowerAssetProfile AssetProfile => new(
 		IconPath: "res://images/powers/ScriptNightRaidWuchaoPower.png",
@@ -36,29 +36,15 @@ public sealed class ScriptNightRaidWuchaoPower : StackableScriptPowerTemplate
 
 	protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
 	[
-		..base.AdditionalHoverTips,
 		HoverTipFactory.FromPower<BurningPower>(),
 	];
 
-	protected override void OnStackedFrom(CardModel? cardSource)
+	protected override Task OnScriptApplied(Creature? applier, CardModel? cardSource)
 	{
 		SyncDisplayVars();
 		if (Owner.Player is { } player)
 		{
 			NightRaidWuchaoStrikeSystem.EnsureCapabilities(player);
-		}
-	}
-
-	public override Task AfterPowerAmountChanged(
-		PlayerChoiceContext choiceContext,
-		PowerModel power,
-		decimal amount,
-		Creature? applier,
-		CardModel? cardSource)
-	{
-		if (power == this && amount > 0m)
-		{
-			OnStackedFrom(cardSource);
 		}
 
 		return Task.CompletedTask;

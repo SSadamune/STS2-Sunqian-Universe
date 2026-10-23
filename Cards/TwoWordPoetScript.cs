@@ -24,7 +24,7 @@ using STS2RitsuLib.Scaffolding.Content;
 namespace Squ.Cards;
 
 [RegisterCard(typeof(SunqianCardPool), StableEntryStem = "two_word_poet_script")]
-public sealed class TwoWordPoetScript : ScriptCardTemplate
+public sealed class TwoWordPoetScript : ScriptCardTemplate<TwoWordPoetScriptRecord>
 {
 	public const int CanonicalDamage = 2;
 	public const int CanonicalHits = 2;
@@ -40,11 +40,6 @@ public sealed class TwoWordPoetScript : ScriptCardTemplate
 	[
 		SquKeywords.Script,
 		CardKeyword.Exhaust,
-	];
-
-	protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
-	[
-		HoverTipFactory.FromKeyword(SquKeywords.StackableScript),
 	];
 
 	public override CardAssetProfile AssetProfile => new(
@@ -85,13 +80,11 @@ public sealed class TwoWordPoetScript : ScriptCardTemplate
 			await attack.Targeting(target).Execute(choiceContext);
 		}
 
-		await PowerCmd.Apply<ScriptTwoWordPoetPower>(
-			choiceContext,
-			Owner.Creature,
-			snapshotDamagePerHit,
-			Owner.Creature,
-			this);
+		await UnlockScriptAsync(choiceContext, snapshotDamagePerHit);
 	}
+
+	internal override int GetScriptPowerAmountForPreview() =>
+		(int)DynamicVars[ScriptTwoWordPoetPower.SnapshotDamageVarName].BaseValue;
 
 	/// <summary>
 	/// 剧本行预览与 <see cref="ScriptTwoWordPoetPower.CalculateSnapshotDamagePerHit"/> 对齐：

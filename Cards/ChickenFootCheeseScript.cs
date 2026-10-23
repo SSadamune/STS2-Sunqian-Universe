@@ -20,7 +20,7 @@ using STS2RitsuLib.Scaffolding.Content;
 namespace Squ.Cards;
 
 [RegisterCard(typeof(SunqianCardPool), StableEntryStem = "chicken_foot_cheese_script")]
-public sealed class ChickenFootCheeseScript : ScriptCardTemplate, IRandomEnemyTargetCount
+public sealed class ChickenFootCheeseScript : ScriptCardTemplate<ChickenFootCheeseScriptRecord>, IRandomEnemyTargetCount
 {
 	public const int BaseDamage = 6;
 	public const int BaseFollowUpDamage = ScriptChickenFootCheesePower.BaseFollowUpDamage;
@@ -86,12 +86,7 @@ public sealed class ChickenFootCheeseScript : ScriptCardTemplate, IRandomEnemyTa
 			cardPlay: cardPlay,
 			beforeHit: SquHitVfx.SmallMagicMissiles);
 
-		await PowerCmd.Apply<ScriptChickenFootCheesePower>(
-			choiceContext,
-			Owner.Creature,
-			1m,
-			Owner.Creature,
-			this);
+		await UnlockScriptAsync(choiceContext);
 	}
 
 	protected override void OnUpgrade()

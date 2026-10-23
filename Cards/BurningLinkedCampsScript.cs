@@ -19,7 +19,7 @@ using STS2RitsuLib.Scaffolding.Content;
 namespace Squ.Cards;
 
 [RegisterCard(typeof(SunqianCardPool), StableEntryStem = "burning_linked_camps_script")]
-public sealed class BurningLinkedCampsScript : ScriptCardTemplate
+public sealed class BurningLinkedCampsScript : ScriptCardTemplate<BurningLinkedCampsScriptRecord>
 {
 	public const int TinderStacks = 5;
 
@@ -63,12 +63,7 @@ public sealed class BurningLinkedCampsScript : ScriptCardTemplate
 			Owner.Creature,
 			this);
 
-		await PowerCmd.Apply<ScriptBurningLinkedCampsPower>(
-			choiceContext,
-			Owner.Creature,
-			1m,
-			Owner.Creature,
-			this);
+		await UnlockScriptAsync(choiceContext);
 	}
 
 	protected override void OnUpgrade()

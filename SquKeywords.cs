@@ -27,11 +27,6 @@ public static class SquKeywords
 
 	public static readonly CardKeyword DoomKillThreshold = DoomKillThresholdId.GetModCardKeyword();
 
-	public static readonly string StackableScriptId = ModContentRegistry
-		.GetQualifiedKeywordId(SquMod.ModId, "stackable_script");
-
-	public static readonly CardKeyword StackableScript = StackableScriptId.GetModCardKeyword();
-
 	public static readonly string MultiTargetId = ModContentRegistry
 		.GetQualifiedKeywordId(SquMod.ModId, "multi_target");
 

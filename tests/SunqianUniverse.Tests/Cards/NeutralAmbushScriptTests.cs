@@ -19,7 +19,13 @@ public sealed class NeutralAmbushScriptTests : SunqianCombatTestSuite
     [Fact]
     public async Task Generates_upgraded_rocks_and_salvos_and_becomes_active_script()
     {
-        await Play(Upgrade(await AddToHand<NeutralAmbushScript>()));
+        var selector = new ScriptedCardSelector()
+            .ThenSelectWhere(card => card is NeutralAmbushScriptRecord);
+        using (UseCardSelector(selector))
+        {
+            await Play(Upgrade(await AddToHand<NeutralAmbushScript>()));
+        }
+        AssertAllSelectionsConsumed(selector);
 
         var rocks = PileType.Draw.GetPile(Player).Cards.OfType<GiantRock>().ToArray();
         var salvos = PileType.Draw.GetPile(Player).Cards.OfType<SalvoStrike>().ToArray();

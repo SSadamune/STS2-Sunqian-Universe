@@ -30,7 +30,7 @@ namespace Squ.Cards;
 /// 非初始 Strike 牌，作为不存在的牌对指定目标自动打出。
 /// </summary>
 [RegisterCard(typeof(SunqianCardPool), StableEntryStem = "part_time_general_script")]
-public sealed class PartTimeGeneralScript : ScriptCardTemplate
+public sealed class PartTimeGeneralScript : ScriptCardTemplate<PartTimeGeneralScriptRecord>
 {
 	protected override bool HasEnergyCostX => true;
 
@@ -117,17 +117,9 @@ public sealed class PartTimeGeneralScript : ScriptCardTemplate
 			finale?.PlayOutro();
 		}
 
-		var scriptPower = (ScriptPartTimeGeneralPower)ModelDb
-			.Power<ScriptPartTimeGeneralPower>()
-			.ToMutable();
-		scriptPower.RecordPlayedCards(playedCards);
-		await PowerCmd.Apply(
+		await UnlockScriptAsync(
 			choiceContext,
-			scriptPower,
-			Owner.Creature,
-			1m,
-			Owner.Creature,
-			this);
+			configureRecord: record => record.RecordPlayedCards(playedCards));
 	}
 
 	private static async Task PlayStrikeShakeAsync()

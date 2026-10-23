@@ -19,7 +19,7 @@ using STS2RitsuLib.Scaffolding.Content;
 namespace Squ.Cards;
 
 [RegisterCard(typeof(SunqianCardPool), StableEntryStem = "servant_script")]
-public sealed class ServantScript : ScriptCardTemplate
+public sealed class ServantScript : ScriptCardTemplate<ServantScriptRecord>
 {
 	public const int BaseBlock = 12;
 	public const int UpgradedBlock = 16;
@@ -56,12 +56,7 @@ public sealed class ServantScript : ScriptCardTemplate
 		SquSfx.Play(SquSfx.HouseServantsComeEvent);
 		await CreatureCmd.GainBlock(Owner.Creature, DynamicVars.Block, cardPlay);
 
-		await PowerCmd.Apply<ScriptServantPower>(
-			choiceContext,
-			Owner.Creature,
-			1m,
-			Owner.Creature,
-			this);
+		await UnlockScriptAsync(choiceContext);
 	}
 
 	protected override void OnUpgrade()

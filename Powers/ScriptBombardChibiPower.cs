@@ -3,6 +3,7 @@ using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Creatures;
 using MegaCrit.Sts2.Core.Models;
 using Squ.Audio;
+using Squ.Script;
 using STS2RitsuLib.Interop.AutoRegistration;
 using STS2RitsuLib.Scaffolding.Content;
 
@@ -19,7 +20,7 @@ public sealed class ScriptBombardChibiPower : ScriptPowerTemplate
 
 	public override async Task AfterRemoved(Creature oldOwner)
 	{
-		if (oldOwner.Player is { } player)
+		if (!ScriptSystem.SuppressScriptEndEffects && oldOwner.Player is { } player)
 		{
 			SquSfx.Play(SquSfx.BombardChibiZhouYuPlanEvent);
 			await PlayerCmd.GainEnergy(1, player);

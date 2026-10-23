@@ -61,7 +61,9 @@ public sealed class ScriptBurningLinkedCampsPower : ScriptPowerTemplate
 	{
 		Player? player = oldOwner.Player;
 		ICombatState? combatState = oldOwner.CombatState;
-		if (player is not null && combatState is not null)
+		if (!ScriptSystem.SuppressScriptEndEffects
+			&& player is not null
+			&& combatState is not null)
 		{
 			await GeneratedCombatCards.AddToHandInCombat<Burn>(
 				combatState,

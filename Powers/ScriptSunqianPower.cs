@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using MegaCrit.Sts2.Core.Combat;
 using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.Entities.Creatures;
@@ -7,8 +8,10 @@ using MegaCrit.Sts2.Core.Entities.Players;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.Models;
+using MegaCrit.Sts2.Core.Models.Powers;
 using Squ.Audio;
 using Squ.Cards;
+using Squ.Script;
 using STS2RitsuLib.Interop.AutoRegistration;
 using STS2RitsuLib.Scaffolding.Content;
 
@@ -21,7 +24,7 @@ public sealed class ScriptSunqianPower : ScriptPowerTemplate
 {
 	private sealed class Data
 	{
-		public int DrawOnLift;
+		public int GrantedDexterity;
 	}
 
 	public override PowerAssetProfile AssetProfile => new(
@@ -30,27 +33,46 @@ public sealed class ScriptSunqianPower : ScriptPowerTemplate
 
 	protected override IEnumerable<DynamicVar> CanonicalVars =>
 	[
+		new PowerVar<DexterityPower>(SunqianScript.BaseDexterity),
 		new CardsVar(1),
 	];
 
 	protected override object InitInternalData() => new Data();
 
-	protected override Task OnScriptApplied(Creature? applier, CardModel? cardSource)
+	protected override async Task OnScriptApplied(Creature? applier, CardModel? cardSource)
 	{
-		int drawOnLift = cardSource is SunqianScript { IsUpgraded: true } ? 2 : 1;
-		GetInternalData<Data>().DrawOnLift = drawOnLift;
-		DynamicVars.Cards.BaseValue = drawOnLift;
-		return Task.CompletedTask;
+		int dexterity = cardSource is SunqianScript { IsUpgraded: true }
+			? SunqianScript.UpgradedDexterity
+			: SunqianScript.BaseDexterity;
+		GetInternalData<Data>().GrantedDexterity = dexterity;
+		DynamicVars[nameof(DexterityPower)].BaseValue = dexterity;
+		await PowerCmd.Apply<DexterityPower>(
+			new ThrowingPlayerChoiceContext(),
+			Owner,
+			dexterity,
+			Owner,
+			cardSource);
 	}
 
 	public override async Task AfterRemoved(Creature oldOwner)
 	{
-		SquSfx.Play(SquSfx.SunqianScriptRemovedEvent);
-		int drawOnLift = GetInternalData<Data>().DrawOnLift;
-		Player? player = oldOwner.Player;
-		if (drawOnLift > 0 && player is not null)
+		int dexterity = GetInternalData<Data>().GrantedDexterity;
+		if (dexterity > 0 && oldOwner.GetPower<DexterityPower>() is { } dexterityPower)
 		{
-			await CardPileCmd.Draw(new ThrowingPlayerChoiceContext(), drawOnLift, player);
+			await PowerCmd.ModifyAmount(
+				new ThrowingPlayerChoiceContext(),
+				dexterityPower,
+				-dexterity,
+				oldOwner,
+				null);
+		}
+
+		if (!ScriptSystem.SuppressScriptEndEffects
+			&& oldOwner.Player is { } player
+			&& !CombatManager.Instance.IsOverOrEnding)
+		{
+			SquSfx.Play(SquSfx.SunqianScriptRemovedEvent);
+			await CardPileCmd.Draw(new ThrowingPlayerChoiceContext(), 1, player);
 		}
 
 		await base.AfterRemoved(oldOwner);

@@ -10,6 +10,7 @@ using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.Models;
 using Squ;
 using Squ.Cards;
+using Squ.Script;
 using STS2RitsuLib.Interop.AutoRegistration;
 using STS2RitsuLib.Scaffolding.Content;
 
@@ -33,20 +34,18 @@ public sealed class ScriptEunuchPower : ScriptPowerTemplate
 
 	protected override Task OnScriptApplied(Creature? applier, CardModel? cardSource)
 	{
-		if (cardSource is not EunuchScript script)
+		if (Owner.Player is not { } player)
 		{
 			return Task.CompletedTask;
 		}
 
 		Data data = GetInternalData<Data>();
-		foreach (CardModel card in script.DrawnCardsForCurrentPlay)
+		foreach (CardModel card in PileType.Hand.GetPile(player).Cards)
 		{
-			if (card.Pile?.Type != PileType.Hand)
+			if (!card.HasEunuchMessage())
 			{
 				continue;
 			}
-
-			ApplyMark(card);
 			data.MarkedCards.Add(card);
 		}
 
@@ -64,7 +63,8 @@ public sealed class ScriptEunuchPower : ScriptPowerTemplate
 	public override async Task AfterRemoved(Creature oldOwner)
 	{
 		Player? player = oldOwner.Player;
-		if (player is not null
+		if (!ScriptSystem.SuppressScriptEndEffects
+			&& player is not null
 			&& oldOwner.CombatState is not null
 			&& !CombatManager.Instance.IsOverOrEnding)
 		{
@@ -80,11 +80,14 @@ public sealed class ScriptEunuchPower : ScriptPowerTemplate
 		await base.AfterRemoved(oldOwner);
 	}
 
-	private static void ApplyMark(CardModel card)
+	internal static void ApplyMark(CardModel card)
 	{
 		if (!card.HasEunuchMessage())
 		{
 			CardCmd.ApplyKeyword(card, SquKeywords.EunuchMessage);
 		}
 	}
+
+	internal void TrackMarkedCard(CardModel card) =>
+		GetInternalData<Data>().MarkedCards.Add(card);
 }

@@ -21,7 +21,7 @@ using STS2RitsuLib.Scaffolding.Content;
 namespace Squ.Cards;
 
 [RegisterCard(typeof(SunqianCardPool), StableEntryStem = "xiliang_savage_script")]
-public sealed class XiliangSavageScript : ScriptCardTemplate
+public sealed class XiliangSavageScript : ScriptCardTemplate<XiliangSavageScriptRecord>
 {
 	public const int BaseBlock = 11;
 	public const int UpgradedBlock = 16;
@@ -74,12 +74,7 @@ public sealed class XiliangSavageScript : ScriptCardTemplate
 			Owner.Creature,
 			this);
 
-		await PowerCmd.Apply<ScriptXiliangSavagePower>(
-			choiceContext,
-			Owner.Creature,
-			1m,
-			Owner.Creature,
-			this);
+		await UnlockScriptAsync(choiceContext);
 	}
 
 	protected override void OnUpgrade()

@@ -20,7 +20,7 @@ namespace Squ.Cards;
 
 [RegisterCard(typeof(SunqianCardPool), StableEntryStem = "sunqian_script")]
 [RegisterCharacterStarterCard(typeof(SunqianCharacter), 1)]
-public sealed class SunqianScript : ScriptCardTemplate
+public sealed class SunqianScript : ScriptCardTemplate<SunqianScriptRecord>
 {
 	public const int BaseDexterity = 2;
 	public const int UpgradedDexterity = 3;
@@ -38,6 +38,7 @@ public sealed class SunqianScript : ScriptCardTemplate
 	public override IEnumerable<CardKeyword> CanonicalKeywords =>
 	[
 		SquKeywords.Script,
+		CardKeyword.Exhaust,
 	];
 
 	public override CardAssetProfile AssetProfile => new(
@@ -63,19 +64,7 @@ public sealed class SunqianScript : ScriptCardTemplate
 			? SquSfx.SunqianScriptFrequentAppearanceEvent
 			: SquSfx.SunqianScriptRareTrueFormEvent);
 
-		await PowerCmd.Apply<TempDexPower>(
-			choiceContext,
-			Owner.Creature,
-			DynamicVars[nameof(DexterityPower)].BaseValue,
-			Owner.Creature,
-			this);
-
-		await PowerCmd.Apply<ScriptSunqianPower>(
-			choiceContext,
-			Owner.Creature,
-			1m,
-			Owner.Creature,
-			this);
+		await UnlockScriptAsync(choiceContext);
 	}
 
 	protected override void OnUpgrade()

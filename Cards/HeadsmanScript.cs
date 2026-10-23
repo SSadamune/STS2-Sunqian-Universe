@@ -21,7 +21,7 @@ using STS2RitsuLib.Scaffolding.Content;
 namespace Squ.Cards;
 
 [RegisterCard(typeof(SunqianCardPool), StableEntryStem = "headsman_script")]
-public sealed class HeadsmanScript : ScriptCardTemplate
+public sealed class HeadsmanScript : ScriptCardTemplate<HeadsmanScriptRecord>
 {
 	public const int BaseVigor = 3;
 	public const int UpgradedVigor = 5;
@@ -82,12 +82,7 @@ public sealed class HeadsmanScript : ScriptCardTemplate
 			Owner.Creature,
 			this);
 
-		await PowerCmd.Apply<ScriptHeadsmanPower>(
-			choiceContext,
-			Owner.Creature,
-			1m,
-			Owner.Creature,
-			this);
+		await UnlockScriptAsync(choiceContext);
 	}
 
 	protected override void OnUpgrade()

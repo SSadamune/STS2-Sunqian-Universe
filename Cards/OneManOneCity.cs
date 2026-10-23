@@ -18,7 +18,7 @@ using STS2RitsuLib.Scaffolding.Content;
 namespace Squ.Cards;
 
 [RegisterCard(typeof(SunqianCardPool), StableEntryStem = "one_man_one_city")]
-public sealed class OneManOneCity : ScriptCardTemplate
+public sealed class OneManOneCity : ScriptCardTemplate<OneManOneCityScriptRecord>
 {
 	public const int PlatingStacks = 6;
 
@@ -38,6 +38,7 @@ public sealed class OneManOneCity : ScriptCardTemplate
 	public override IEnumerable<CardKeyword> CanonicalKeywords =>
 	[
 		SquKeywords.Script,
+		CardKeyword.Exhaust,
 	];
 
 	public override CardAssetProfile AssetProfile => new(
@@ -58,12 +59,7 @@ public sealed class OneManOneCity : ScriptCardTemplate
 			Owner.Creature,
 			this);
 
-		await PowerCmd.Apply<ScriptOneManOneCityPower>(
-			choiceContext,
-			Owner.Creature,
-			1m,
-			Owner.Creature,
-			this);
+		await UnlockScriptAsync(choiceContext);
 	}
 
 	protected override void OnUpgrade()

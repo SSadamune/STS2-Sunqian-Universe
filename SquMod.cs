@@ -38,6 +38,7 @@ public static class SquMod
 
 		Logger = RitsuLibFramework.CreateLogger(ModId);
 		RegisterCommonLocalization();
+		ScriptSystem.RegisterPile();
 		SquTargetTypes.Register();
 		RitsuLibFramework.EnsureGodotScriptsRegistered(assembly, Logger);
 		ModTypeDiscoveryHub.RegisterModAssembly(ModId, assembly);
@@ -49,7 +50,6 @@ public static class SquMod
 			.CharacterStarterRelic<SunqianCharacter, BoxLunchRelic>(1)
 			.CardKeywordOwnedByLocNamespace("script")
 			.CardKeywordOwnedByLocNamespace("doom_kill_threshold")
-			.CardKeywordOwnedByLocNamespace("stackable_script")
 			.CardKeywordOwnedByLocNamespace("multi_target")
 			.CardKeywordOwnedByLocNamespace("environmental")
 			.CardKeywordOwnedByLocNamespace("piercing_damage")

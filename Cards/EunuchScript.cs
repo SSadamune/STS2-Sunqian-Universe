@@ -19,7 +19,7 @@ using STS2RitsuLib.Scaffolding.Content;
 namespace Squ.Cards;
 
 [RegisterCard(typeof(SunqianCardPool), StableEntryStem = "eunuch_script")]
-public sealed class EunuchScript : ScriptCardTemplate
+public sealed class EunuchScript : ScriptCardTemplate<EunuchScriptRecord>
 {
 	public const int BaseDraw = 2;
 	public const int UpgradedDraw = 3;
@@ -65,12 +65,12 @@ public sealed class EunuchScript : ScriptCardTemplate
 		try
 		{
 			_drawnCardsForCurrentPlay = drawn;
-			await PowerCmd.Apply<ScriptEunuchPower>(
-				choiceContext,
-				Owner.Creature,
-				1m,
-				Owner.Creature,
-				this);
+			foreach (CardModel card in drawn.Where(card => card.Pile?.Type == PileType.Hand))
+			{
+				ScriptEunuchPower.ApplyMark(card);
+				Owner.Creature.GetPower<ScriptEunuchPower>()?.TrackMarkedCard(card);
+			}
+			await UnlockScriptAsync(choiceContext);
 		}
 		finally
 		{

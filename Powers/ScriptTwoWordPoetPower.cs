@@ -24,7 +24,7 @@ using STS2RitsuLib.Scaffolding.Content;
 namespace Squ.Powers;
 
 [RegisterPower]
-public sealed class ScriptTwoWordPoetPower : StackableScriptPowerTemplate
+public sealed class ScriptTwoWordPoetPower : ScriptPowerTemplate
 {
 	public const string SnapshotDamageVarName = "SnapshotDamage";
 
@@ -45,7 +45,6 @@ public sealed class ScriptTwoWordPoetPower : StackableScriptPowerTemplate
 
 	protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
 	[
-		..base.AdditionalHoverTips,
 		HoverTipFactory.FromKeyword(SquKeywords.Environmental),
 	];
 
@@ -76,17 +75,18 @@ public sealed class ScriptTwoWordPoetPower : StackableScriptPowerTemplate
 			out _);
 	}
 
-	protected override void OnStackedFrom(CardModel? cardSource)
+	protected override Task OnScriptApplied(Creature? applier, CardModel? cardSource)
 	{
 		if (cardSource is not TwoWordPoetScript script)
 		{
-			return;
+			return Task.CompletedTask;
 		}
 
 		Data data = GetInternalData<Data>();
-		MergeUpgradedFlag(ref data.TargetsAllEnemies, script);
-		data.SourceCard = PreferUpgradedSourceCard(data.SourceCard, cardSource);
+		data.TargetsAllEnemies = script.IsUpgraded;
+		data.SourceCard = cardSource;
 		SyncDisplayVars(data);
+		return Task.CompletedTask;
 	}
 
 	public override async Task AfterSideTurnStart(

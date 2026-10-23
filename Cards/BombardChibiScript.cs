@@ -22,7 +22,7 @@ using STS2RitsuLib.Scaffolding.Content;
 namespace Squ.Cards;
 
 [RegisterCard(typeof(SunqianCardPool), StableEntryStem = "bombard_chibi_script")]
-public sealed class BombardChibiScript : ScriptCardTemplate
+public sealed class BombardChibiScript : ScriptCardTemplate<BombardChibiScriptRecord>
 {
 	public const int BaseBurning = 8;
 	public const int UpgradedBurning = 11;
@@ -88,12 +88,7 @@ public sealed class BombardChibiScript : ScriptCardTemplate
 				this);
 		}
 
-		await PowerCmd.Apply<ScriptBombardChibiPower>(
-			choiceContext,
-			Owner.Creature,
-			1m,
-			Owner.Creature,
-			this);
+		await UnlockScriptAsync(choiceContext);
 	}
 
 	protected override void OnUpgrade()

@@ -6,7 +6,6 @@ using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Localization;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.Relics;
-using Squ.Powers;
 using Squ.Relics;
 
 #nullable enable
@@ -14,7 +13,7 @@ using Squ.Relics;
 namespace Squ.Patches;
 
 /// <summary>
-/// 先古之民把初始遗物换成丰盛盒饭时，选项悬停只保留升级后的遗物与能力，
+/// 先古之民把初始遗物换成丰盛盒饭时，选项悬停只保留升级后的遗物，
 /// 并把相对盒饭新增的词标成绿色。遗物栏和战斗内的正式描述保持原色。
 /// </summary>
 [HarmonyPatch(typeof(TouchOfOrobas), "get_ExtraHoverTips")]
@@ -29,8 +28,6 @@ internal static class AbundantBoxLunchOrobasHoverPatch
 			return;
 		}
 
-		string sentryId = ModelDb.Power<ScriptSentryPower>().Id.ToString();
-		string viceGeneralId = ModelDb.Power<ScriptViceGeneralPower>().Id.ToString();
 		List<IHoverTip> tips = __result.ToList();
 		int upgradedIndex = tips.FindIndex(static tip =>
 			tip is HoverTip hover && hover.CanonicalModel is AbundantBoxLunchRelic);
@@ -39,9 +36,7 @@ internal static class AbundantBoxLunchOrobasHoverPatch
 			tips.RemoveRange(0, upgradedIndex);
 		}
 
-		tips.RemoveAll(tip =>
-			tip is HoverTip hover
-			&& (hover.CanonicalModel is BoxLunchRelic || hover.Id == sentryId));
+		tips.RemoveAll(tip => tip is HoverTip hover && hover.CanonicalModel is BoxLunchRelic);
 
 		for (int i = 0; i < tips.Count; i++)
 		{
@@ -53,10 +48,6 @@ internal static class AbundantBoxLunchOrobasHoverPatch
 			if (hover.CanonicalModel is AbundantBoxLunchRelic)
 			{
 				tips[i] = CreateRelicPreview(hover);
-			}
-			else if (hover.Id == viceGeneralId)
-			{
-				tips[i] = CreatePowerPreview(hover, viceGeneralId);
 			}
 		}
 
@@ -75,17 +66,6 @@ internal static class AbundantBoxLunchOrobasHoverPatch
 		}
 
 		preview.Id = original.Id;
-		return preview;
-	}
-
-	private static HoverTip CreatePowerPreview(HoverTip original, string viceGeneralId)
-	{
-		PowerModel power = ModelDb.Power<ScriptViceGeneralPower>();
-		LocString description = new("powers", power.Id.Entry + PreviewSuffix);
-		HoverTip preview = new(power, description.GetFormattedText(), original.IsSmart)
-		{
-			Id = viceGeneralId,
-		};
 		return preview;
 	}
 }

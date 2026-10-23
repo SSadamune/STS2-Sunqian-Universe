@@ -20,7 +20,7 @@ using STS2RitsuLib.Scaffolding.Content;
 namespace Squ.Cards;
 
 [RegisterCard(typeof(SunqianCardPool), StableEntryStem = "bowang_paradox_script")]
-public sealed class BowangParadoxScript : ScriptCardTemplate
+public sealed class BowangParadoxScript : ScriptCardTemplate<BowangParadoxScriptRecord>
 {
 	public const int BaseVigor = 6;
 	public const int UpgradedVigor = 9;
@@ -73,12 +73,7 @@ public sealed class BowangParadoxScript : ScriptCardTemplate
 			await CardCmd.DiscardAndDraw(choiceContext, attackCards, 0);
 		}
 
-		await PowerCmd.Apply<ScriptBowangParadoxPower>(
-			choiceContext,
-			Owner.Creature,
-			1m,
-			Owner.Creature,
-			this);
+		await UnlockScriptAsync(choiceContext);
 	}
 
 	protected override void OnUpgrade()
