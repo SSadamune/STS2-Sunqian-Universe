@@ -5,10 +5,12 @@ using MegaCrit.Sts2.Core.Commands.Builders;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.Entities.Creatures;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
+using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.Powers;
 using MegaCrit.Sts2.Core.ValueProps;
 using Squ.Combat;
+using Squ.Interop;
 using STS2RitsuLib.Interop.AutoRegistration;
 using STS2RitsuLib.Scaffolding.Content;
 
@@ -33,13 +35,32 @@ public sealed class ScriptXiliangSavagePower : ScriptPowerTemplate
 		public Dictionary<AttackCommand, PendingAttack> PendingAttacks { get; } = [];
 
 		public Dictionary<CardModel, PendingCardBonuses> PendingCardBonuses { get; } = [];
+
+		public Dictionary<CardModel, ResourceSnapshot> ResourceSnapshots { get; } = [];
+	}
+
+	private sealed class ResourceSnapshot
+	{
+		public required decimal VigorBonus { get; init; }
+
+		public required decimal DrunkenMightBonus { get; init; }
+
+		public bool HasSeenPoweredAttack { get; set; }
+
+		public HashSet<string> RetainedDamageVars { get; } = [];
+
+		public bool HasRetainedBurning { get; set; }
 	}
 
 	private sealed class PendingAttack
 	{
 		public required CardModel Card { get; init; }
 
-		public required decimal VigorBonus { get; init; }
+		public required string DamageVarName { get; init; }
+
+		public required decimal RetainedBonus { get; init; }
+
+		public required bool RetainBurning { get; init; }
 	}
 
 	private sealed class PendingCardBonuses
@@ -49,11 +70,30 @@ public sealed class ScriptXiliangSavagePower : ScriptPowerTemplate
 		public decimal Burning;
 	}
 
+	protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
+		NewsanguoDrunkenMightEffect.HoverTips();
+
 	public override PowerAssetProfile AssetProfile => new(
 		IconPath: "res://images/powers/ScriptXiliangSavagePower.png",
 		BigIconPath: "res://images/powers/ScriptXiliangSavagePowerBig.png");
 
 	protected override object InitInternalData() => new Data();
+
+	public override Task BeforeCardPlayed(CardPlay cardPlay)
+	{
+		if (cardPlay.Card.Owner.Creature == Owner
+			&& cardPlay.Card.Type == CardType.Attack
+			&& cardPlay.IsFirstInSeries)
+		{
+			GetInternalData<Data>().ResourceSnapshots[cardPlay.Card] = new ResourceSnapshot
+			{
+				VigorBonus = SquVigorSnapshot.GetEffectiveAmount(Owner, cardPlay.Card),
+				DrunkenMightBonus = NewsanguoDrunkenMightEffect.GetBonus(Owner, cardPlay.Card),
+			};
+		}
+
+		return Task.CompletedTask;
+	}
 
 	public override Task BeforeAttack(AttackCommand command)
 	{
@@ -67,24 +107,67 @@ public sealed class ScriptXiliangSavagePower : ScriptPowerTemplate
 			return Task.CompletedTask;
 		}
 
-		decimal vigorBonus = Owner.GetPower<VigorPower>()?.Amount ?? 0m;
+		Data data = GetInternalData<Data>();
+		if (!data.ResourceSnapshots.TryGetValue(card, out ResourceSnapshot? snapshot))
+		{
+			snapshot = new ResourceSnapshot
+			{
+				VigorBonus = SquVigorSnapshot.GetEffectiveAmount(Owner, card),
+				DrunkenMightBonus = NewsanguoDrunkenMightEffect.GetBonus(Owner, card),
+			};
+			data.ResourceSnapshots[card] = snapshot;
+		}
+
+		decimal inheritedVigorBonus = 0m;
 		if (SupremeGeneralKeywordSystem.TryGetInheritedVigorBonus(
 			card,
 			command.CardPlay,
 			out decimal inheritedVigor))
 		{
-			vigorBonus += inheritedVigor;
+			inheritedVigorBonus = inheritedVigor;
 		}
 
-		if (vigorBonus <= 0m)
+		decimal carriedVigorBonus = snapshot.VigorBonus + inheritedVigorBonus;
+		decimal drunkenMightBonus = snapshot.DrunkenMightBonus;
+		drunkenMightBonus += SupremeGeneralKeywordSystem.GetInheritedDrunkenMightBonus(
+			card,
+			command.CardPlay);
+		string? damageVarName = CardValueRetain.ResolveDamageVarName(
+			card,
+			command,
+			carriedVigorBonus);
+		if (damageVarName is null)
 		{
 			return Task.CompletedTask;
 		}
 
-		GetInternalData<Data>().PendingAttacks[command] = new PendingAttack
+		bool rawDamageCarriesSnapshot = CardValueRetain.TryGetRawAttackDamage(
+			command,
+			out decimal rawDamage)
+			&& card.DynamicVars[damageVarName].BaseValue == rawDamage - carriedVigorBonus;
+		decimal retainedVigorBonus = !snapshot.HasSeenPoweredAttack
+			|| rawDamageCarriesSnapshot
+			|| SquVigorSnapshot.GetAmount(Owner) > 0
+				? carriedVigorBonus
+				: inheritedVigorBonus;
+		snapshot.HasSeenPoweredAttack = true;
+		decimal retainedBonus = retainedVigorBonus + drunkenMightBonus;
+
+		if (retainedBonus <= 0m || !snapshot.RetainedDamageVars.Add(damageVarName))
+		{
+			return Task.CompletedTask;
+		}
+
+		bool retainBurning = card.DynamicVars.ContainsKey(BurningVarName)
+			&& !snapshot.HasRetainedBurning;
+		snapshot.HasRetainedBurning |= retainBurning;
+
+		data.PendingAttacks[command] = new PendingAttack
 		{
 			Card = card,
-			VigorBonus = vigorBonus,
+			DamageVarName = damageVarName,
+			RetainedBonus = retainedBonus,
+			RetainBurning = retainBurning,
 		};
 
 		return Task.CompletedTask;
@@ -98,16 +181,19 @@ public sealed class ScriptXiliangSavagePower : ScriptPowerTemplate
 			return Task.CompletedTask;
 		}
 
-		decimal vigorBonus = pending.VigorBonus;
-		if (vigorBonus <= 0m)
+		decimal retainedBonus = pending.RetainedBonus;
+		if (retainedBonus <= 0m)
 		{
 			return Task.CompletedTask;
 		}
 
-		bool retained = CardValueRetain.TryAddBaseDamage(pending.Card, vigorBonus);
-		if (pending.Card.DynamicVars.ContainsKey(BurningVarName))
+		bool retained = CardValueRetain.TryAddBaseValue(
+			pending.Card,
+			pending.DamageVarName,
+			retainedBonus);
+		if (pending.RetainBurning)
 		{
-			QueueCardBonus(pending.Card, burning: vigorBonus);
+			QueueCardBonus(pending.Card, burning: retainedBonus);
 			retained = true;
 		}
 
@@ -126,8 +212,7 @@ public sealed class ScriptXiliangSavagePower : ScriptPowerTemplate
 		Creature? applier,
 		CardModel? cardSource)
 	{
-		if (power is not VigorPower
-			|| power.Owner != Owner
+		if (!NewsanguoDrunkenMightEffect.IsEffectResource(power, Owner)
 			|| amount >= 0m
 			|| cardSource is null
 			|| cardSource.Owner.Creature != Owner
@@ -136,12 +221,20 @@ public sealed class ScriptXiliangSavagePower : ScriptPowerTemplate
 			return Task.CompletedTask;
 		}
 
-		QueueCardBonus(cardSource, block: -amount);
+		decimal retainedBlock = power is VigorPower
+			? SquVigorSnapshot.ApplyBonusPercentage(Owner, cardSource, -amount)
+			: -amount * NewsanguoDrunkenMightEffect.GetAttackScale(Owner, cardSource);
+		QueueCardBonus(cardSource, block: retainedBlock);
 		return Task.CompletedTask;
 	}
 
 	public override Task AfterCardPlayedLate(PlayerChoiceContext choiceContext, CardPlay cardPlay)
 	{
+		if (cardPlay.IsLastInSeries)
+		{
+			GetInternalData<Data>().ResourceSnapshots.Remove(cardPlay.Card);
+		}
+
 		if (cardPlay.Card.Owner.Creature != Owner
 			|| cardPlay.PlayIndex != cardPlay.PlayCount - 1
 			|| !GetInternalData<Data>().PendingCardBonuses.Remove(

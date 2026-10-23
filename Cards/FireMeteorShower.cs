@@ -65,7 +65,7 @@ public sealed class FireMeteorShower : SlightRevisionDerivedCardTemplate, IRando
 		}
 
 		List<Creature> damageTargets = SquRandomEnemyTargeting
-			.SelectRandomEnemies(this, GetRandomEnemyTargetCount());
+			.SelectRandomEnemies(this, GetRandomEnemyTargetCount(), cardPlay.Target);
 		if (damageTargets.Count == 0)
 		{
 			return;

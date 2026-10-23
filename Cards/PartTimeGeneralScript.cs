@@ -74,7 +74,7 @@ public sealed class PartTimeGeneralScript : ScriptCardTemplate
 		NPartTimeGeneralFinaleVfx? finale = null;
 		if (willPlayStrikes)
 		{
-			await SupremeGeneralKeywordSystem.ConsumeVigorForRootWithoutAttack(
+			await SupremeGeneralKeywordSystem.ConsumeResourcesForRootWithoutAttack(
 				choiceContext,
 				cardPlay);
 			SquSfx.Play(SquSfx.PartTimeGeneralShadowCloneEvent);

@@ -10,6 +10,7 @@ using MegaCrit.Sts2.Core.Models.Cards;
 using Squ;
 using Squ.Audio;
 using Squ.Character;
+using Squ.Combat;
 using Squ.Powers;
 using Squ.Script;
 using STS2RitsuLib.Interop.AutoRegistration;
@@ -21,7 +22,7 @@ namespace Squ.Cards;
 
 /// <summary>
 /// 将原版 <see cref="GiantRock"/> 与 <see cref="SalvoStrike"/> 洗入抽牌堆，
-/// 并在剧本存续期间于抽到二者之一时自动对随机目标打出。
+/// 并在剧本存续期间每次抽到二者之一时自动对随机目标打出。
 /// </summary>
 [RegisterCard(typeof(SunqianCardPool), StableEntryStem = "neutral_ambush_script")]
 public sealed class NeutralAmbushScript : ScriptCardTemplate
@@ -31,8 +32,8 @@ public sealed class NeutralAmbushScript : ScriptCardTemplate
 
 	protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
 	[
-		..HoverTipFactory.FromCardWithCardHoverTips<GiantRock>(IsUpgraded),
-		..HoverTipFactory.FromCardWithCardHoverTips<SalvoStrike>(IsUpgraded),
+		..SquCardHoverTipFactory.FromCardWithCardHoverTips<GiantRock>(this, IsUpgraded),
+		..SquCardHoverTipFactory.FromCardWithCardHoverTips<SalvoStrike>(this, IsUpgraded),
 	];
 
 	public override IEnumerable<CardKeyword> CanonicalKeywords =>

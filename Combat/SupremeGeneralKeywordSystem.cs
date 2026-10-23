@@ -12,6 +12,8 @@ using MegaCrit.Sts2.Core.Models.Enchantments;
 using MegaCrit.Sts2.Core.Models.Powers;
 using MegaCrit.Sts2.Core.Rooms;
 using MegaCrit.Sts2.Core.ValueProps;
+using Squ.Interop;
+using Squ.Powers;
 using STS2RitsuLib.Interop.AutoRegistration;
 using STS2RitsuLib.Keywords;
 using STS2RitsuLib.Models;
@@ -35,6 +37,8 @@ public sealed class SupremeGeneralKeywordSystem : HookedSingletonModel
 		public required CardModel RootCard { get; init; }
 
 		public decimal ConsumedVigor { get; set; }
+
+		public int DrunkenMightSnapshot { get; init; }
 
 		public decimal VigorousEnchantmentBonus { get; init; }
 
@@ -74,6 +78,7 @@ public sealed class SupremeGeneralKeywordSystem : HookedSingletonModel
 		{
 			RootPlay = cardPlay,
 			RootCard = cardPlay.Card,
+			DrunkenMightSnapshot = NewsanguoDrunkenMightEffect.GetAmount(cardPlay.Player.Creature),
 			VigorousEnchantmentBonus = GetVigorousEnchantmentBonus(cardPlay.Card),
 		});
 
@@ -123,13 +128,19 @@ public sealed class SupremeGeneralKeywordSystem : HookedSingletonModel
 	{
 		if (!props.IsPoweredAttack()
 			|| cardSource is null
-			|| !TryGetInheritedVigorBonus(cardSource, cardPlay, out decimal inheritedVigor)
 			|| dealer != cardSource.Owner.Creature)
 		{
 			return 0m;
 		}
 
-		return inheritedVigor;
+		decimal bonus = 0m;
+		if (TryGetInheritedVigorBonus(cardSource, cardPlay, out decimal inheritedVigor))
+		{
+			bonus += inheritedVigor;
+		}
+
+		bonus += GetInheritedDrunkenMightBonus(cardSource, cardPlay);
+		return bonus;
 	}
 
 	internal static bool TryGetInheritedVigorBonus(
@@ -156,6 +167,32 @@ public sealed class SupremeGeneralKeywordSystem : HookedSingletonModel
 		return true;
 	}
 
+	/// <summary>
+	/// 同一持有者的嵌套攻击已经吃到当前酒力；这里只补上被后续攻击减半掉的差额，
+	/// 使每张子牌都视为具有上将军开打时的酒力。跨角色子牌没有这份酒力，整段加上。
+	/// 吾亦过江和活力增幅会把这份加成再算一次。子牌自己吃不到活力增幅，差额里要把那一份补上。
+	/// </summary>
+	internal static decimal GetInheritedDrunkenMightBonus(CardModel card, CardPlay? cardPlay)
+	{
+		if (!TryGetSupremeGeneralChildWindow(card, cardPlay, out ResolutionWindow window)
+			|| window.DrunkenMightSnapshot <= 0)
+		{
+			return 0m;
+		}
+
+		Creature rootOwner = window.RootCard.Owner.Creature;
+		decimal desired = window.DrunkenMightSnapshot
+			* NewsanguoDrunkenMightEffect.GetAttackScale(rootOwner, window.RootCard);
+		if (card.Owner != window.RootCard.Owner)
+		{
+			return desired;
+		}
+
+		decimal already = NewsanguoDrunkenMightEffect.GetAmount(card.Owner.Creature)
+			* NewsanguoDrunkenMightEffect.GetAttackScale(card.Owner.Creature, card);
+		return Math.Max(0m, desired - already);
+	}
+
 	internal static bool ShouldSuppressSameOwnerChildAttackResources(
 		CardModel card,
 		CardPlay? cardPlay) =>
@@ -163,10 +200,11 @@ public sealed class SupremeGeneralKeywordSystem : HookedSingletonModel
 		&& card.Owner == window.RootCard.Owner;
 
 	/// <summary>
-	/// Lets a non-damaging Supreme General root card consume Vigor as though it had issued its own
-	/// powered Attack, then exposes the amount actually consumed to its nested auto-played Attacks.
+	/// Lets a non-damaging Supreme General root card consume Vigor and Drunken Might as though it
+	/// had issued its own powered Attack, then exposes the snapshotted bonuses to its nested
+	/// auto-played Attacks.
 	/// </summary>
-	internal static async Task ConsumeVigorForRootWithoutAttack(
+	internal static async Task ConsumeResourcesForRootWithoutAttack(
 		PlayerChoiceContext choiceContext,
 		CardPlay cardPlay)
 	{
@@ -184,6 +222,11 @@ public sealed class SupremeGeneralKeywordSystem : HookedSingletonModel
 		{
 			window.ConsumedVigor += consumed;
 		}
+
+		await NewsanguoDrunkenMightEffect.SpendForAttack(
+			choiceContext,
+			owner,
+			cardPlay.Card);
 	}
 
 	private static bool TryGetSupremeGeneralChildWindow(

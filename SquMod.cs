@@ -43,6 +43,7 @@ public static class SquMod
 		ModTypeDiscoveryHub.RegisterModAssembly(ModId, assembly);
 		SquSfx.Register();
 		SquSettingsPage.Register();
+		OrderedPoisonHealthBarForecastSource.Register();
 
 		RitsuLibFramework.CreateContentPack(ModId)
 			.CharacterStarterRelic<SunqianCharacter, BoxLunchRelic>(1)
@@ -97,6 +98,7 @@ public static class SquMod
 		AllInResolutionTracker.Initialize();
 		RitsuLibFramework.RegisterModelCapability<SlightRevisionCapability>(ModId);
 		RitsuLibFramework.RegisterModelCapability<NightRaidWuchaoStrikeCapability>(ModId);
+		RitsuLibFramework.RegisterModelCapability<ChickenFootCheeseStrikeCapability>(ModId);
 		ContentSettingsRunData.Initialize();
 		RunReloadCount.Initialize();
 		DailyWageRunData.Initialize();
@@ -104,6 +106,7 @@ public static class SquMod
 		ScriptSystem.Initialize();
 		SlightRevisionSystem.Initialize();
 		NightRaidWuchaoStrikeSystem.Initialize();
+		ChickenFootCheeseStrikeSystem.Initialize();
 		RitsuLibFramework.SubscribeLifecycle<CombatEndedEvent>(_ => WarFeedsWarResolutionTracker.ClearCombat());
 
 		var harmony = new Harmony($"{ModId}.patches");

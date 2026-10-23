@@ -48,6 +48,22 @@ public static class SunqianUniversePublicApi
 	public static bool IsCharacterMechanicBound(CardModel? card) =>
 		SquCardTags.IsCharacterMechanicBound(card);
 
+	/// <summary>
+	/// 「灼烧」卡牌标签的稳定限定 ID。
+	/// 带有该标签的牌会被火种等效果识别为灼烧牌。
+	/// </summary>
+	public static string BurningCardTagId => SquCardTags.BurningId;
+
+	/// <summary>
+	/// 「灼烧」卡牌标签。外部卡牌可将它加入自己的 CanonicalTags，
+	/// 从而被火种等效果视为灼烧牌。
+	/// </summary>
+	public static CardTag BurningCardTag => SquCardTags.Burning;
+
+	/// <summary>判断卡牌是否带有「灼烧」卡牌标签。</summary>
+	public static bool IsBurningCard(CardModel? card) =>
+		SquCardTags.IsBurningCard(card);
+
 	/// <summary>判断角色是否为本模组的「龙套演员」。</summary>
 	public static bool IsSupportingActorCharacter(CharacterModel? character) =>
 		character is SunqianCharacter;

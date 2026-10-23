@@ -13,6 +13,7 @@ using MegaCrit.Sts2.Core.Models.Cards;
 using MegaCrit.Sts2.Core.Models.Powers;
 using Squ.Audio;
 using Squ.Character;
+using Squ.Combat;
 using Squ.Powers;
 using STS2RitsuLib.Interop.AutoRegistration;
 using STS2RitsuLib.Scaffolding.Content;
@@ -39,7 +40,7 @@ public sealed class OpenDefecation : ModCardTemplate
 		HoverTipFactory.FromPower<DexterityPower>(),
 		HoverTipFactory.FromKeyword(CardKeyword.Unplayable),
 		HoverTipFactory.FromKeyword(SquKeywords.CountsAsPlayed),
-		HoverTipFactory.FromCard<Splash>(IsUpgraded),
+		SquCardHoverTipFactory.FromCard<Splash>(this, IsUpgraded),
 	];
 
 	public override CardAssetProfile AssetProfile => new(

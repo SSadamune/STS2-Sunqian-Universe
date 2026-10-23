@@ -22,6 +22,12 @@ public sealed class SquSettings
 	public const NeutralContentPermissionMode DefaultNeutralCardRegistrationMode =
 		NeutralContentPermissionMode.Allow;
 
+	public const NeutralContentPermissionMode DefaultNeutralRelicRegistrationMode =
+		NeutralContentPermissionMode.Allow;
+
+	public const NeutralContentPermissionMode DefaultEventRegistrationMode =
+		NeutralContentPermissionMode.Allow;
+
 	/// <summary>
 	/// 100% 时的线性倍率，也是实例音量在削波前大致还能往上走的上限。
 	/// </summary>
@@ -46,6 +52,12 @@ public sealed class SquSettings
 
 	public NeutralContentPermissionMode NeutralCardRegistration { get; set; } =
 		DefaultNeutralCardRegistrationMode;
+
+	public NeutralContentPermissionMode NeutralRelicRegistration { get; set; } =
+		DefaultNeutralRelicRegistrationMode;
+
+	public NeutralContentPermissionMode EventRegistration { get; set; } =
+		DefaultEventRegistrationMode;
 
 	/// <summary>
 	/// 传给 <c>SfxCmd.Play</c> 的线性倍率。设置 50% 为 0 dB，100% 为 <see cref="PeakSfxGain"/>。

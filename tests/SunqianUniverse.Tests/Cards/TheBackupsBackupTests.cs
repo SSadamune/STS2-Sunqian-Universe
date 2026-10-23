@@ -77,7 +77,7 @@ public sealed class TheBackupsBackupTests : SunqianCombatTestSuite
     }
 
     [Fact]
-    public async Task Upgrade_offers_three_non_common_cards_to_each_player_even_when_decks_are_common_only()
+    public async Task Upgrade_fills_with_three_non_common_non_ancient_cards_when_decks_are_common_only()
     {
         var ally = Players.Single(player => player != Player);
         var offeredSets = new List<CardModel[]>();
@@ -103,7 +103,11 @@ public sealed class TheBackupsBackupTests : SunqianCombatTestSuite
         Assert.All(offeredSets, offered =>
         {
             Assert.Equal(3, offered.Length);
-            Assert.All(offered, card => Assert.NotEqual(CardRarity.Common, card.Rarity));
+            Assert.All(offered, card =>
+            {
+                Assert.NotEqual(CardRarity.Common, card.Rarity);
+                Assert.NotEqual(CardRarity.Ancient, card.Rarity);
+            });
         });
     }
 

@@ -67,11 +67,25 @@ public static class SquSettingsPage
 				static (s, v) => ContentSettingsRunData.TryWriteLocalCardMode(s, v)),
 			static () => SquSettings.DefaultNeutralCardRegistrationMode);
 
-	private static readonly IModSettingsValueBinding<NeutralContentPermissionMode> NeutralRelicRegistrationPlaceholderBinding =
-		CreateAllowOnlyPlaceholderBinding();
+	private static readonly IModSettingsValueBinding<NeutralContentPermissionMode> NeutralRelicRegistrationBinding =
+		new DefaultModSettingsValueBinding<NeutralContentPermissionMode>(
+			new ModSettingsValueBinding<SquSettings, NeutralContentPermissionMode>(
+				SquMod.ModId,
+				SquSettings.DataKey,
+				SaveScope.Global,
+				static s => ContentSettingsRunData.DisplayedRelicMode(s),
+				static (s, v) => ContentSettingsRunData.TryWriteLocalRelicMode(s, v)),
+			static () => SquSettings.DefaultNeutralRelicRegistrationMode);
 
-	private static readonly IModSettingsValueBinding<NeutralContentPermissionMode> EventRegistrationPlaceholderBinding =
-		CreateAllowOnlyPlaceholderBinding();
+	private static readonly IModSettingsValueBinding<NeutralContentPermissionMode> EventRegistrationBinding =
+		new DefaultModSettingsValueBinding<NeutralContentPermissionMode>(
+			new ModSettingsValueBinding<SquSettings, NeutralContentPermissionMode>(
+				SquMod.ModId,
+				SquSettings.DataKey,
+				SaveScope.Global,
+				static s => ContentSettingsRunData.DisplayedEventMode(s),
+				static (s, v) => ContentSettingsRunData.TryWriteLocalEventMode(s, v)),
+			static () => SquSettings.DefaultEventRegistrationMode);
 
 	public static void Register()
 	{
@@ -138,24 +152,28 @@ public static class SquSettingsPage
 							description: Loc("SUNQIAN_UNIVERSE_COMMON.SETTINGS.neutralCardRegistrationDescription", "是否允许本模组向中立牌池添加卡牌（例如「哀兵必胜」）。"),
 							presentation: ModSettingsChoicePresentation.Dropdown)
 						.AddChoice(
-							id: "neutral_relic_registration_placeholder",
-							label: Loc("SUNQIAN_UNIVERSE_COMMON.SETTINGS.neutralRelicRegistrationLabel", "允许添加中立遗物（施工中）"),
-							binding: NeutralRelicRegistrationPlaceholderBinding,
+							id: "neutral_relic_registration",
+							label: Loc("SUNQIAN_UNIVERSE_COMMON.SETTINGS.neutralRelicRegistrationLabel", "允许添加中立遗物"),
+							binding: NeutralRelicRegistrationBinding,
 							options:
 							[
 								new(NeutralContentPermissionMode.Allow, Loc("SUNQIAN_UNIVERSE_COMMON.SETTINGS.neutralPotionModification.allow", "允许")),
+								new(NeutralContentPermissionMode.WhenModCharacterPresent, Loc("SUNQIAN_UNIVERSE_COMMON.SETTINGS.neutralPotionModification.whenModCharacterPresent", "有本模组角色时允许")),
+								new(NeutralContentPermissionMode.Deny, Loc("SUNQIAN_UNIVERSE_COMMON.SETTINGS.neutralPotionModification.deny", "不允许")),
 							],
-							description: Loc("SUNQIAN_UNIVERSE_COMMON.SETTINGS.neutralRelicRegistrationDescription", "是否允许本模组添加中立遗物。此功能仍在施工中。"),
+							description: Loc("SUNQIAN_UNIVERSE_COMMON.SETTINGS.neutralRelicRegistrationDescription", "是否允许本模组向中立遗物池添加遗物（例如「七星宝刀」）。"),
 							presentation: ModSettingsChoicePresentation.Dropdown)
 						.AddChoice(
-							id: "event_registration_placeholder",
-							label: Loc("SUNQIAN_UNIVERSE_COMMON.SETTINGS.eventRegistrationLabel", "允许添加事件（施工中）"),
-							binding: EventRegistrationPlaceholderBinding,
+							id: "event_registration",
+							label: Loc("SUNQIAN_UNIVERSE_COMMON.SETTINGS.eventRegistrationLabel", "允许添加事件"),
+							binding: EventRegistrationBinding,
 							options:
 							[
 								new(NeutralContentPermissionMode.Allow, Loc("SUNQIAN_UNIVERSE_COMMON.SETTINGS.neutralPotionModification.allow", "允许")),
+								new(NeutralContentPermissionMode.WhenModCharacterPresent, Loc("SUNQIAN_UNIVERSE_COMMON.SETTINGS.neutralPotionModification.whenModCharacterPresent", "有本模组角色时允许")),
+								new(NeutralContentPermissionMode.Deny, Loc("SUNQIAN_UNIVERSE_COMMON.SETTINGS.neutralPotionModification.deny", "不允许")),
 							],
-							description: Loc("SUNQIAN_UNIVERSE_COMMON.SETTINGS.eventRegistrationDescription", "是否允许本模组添加事件。此功能仍在施工中。"),
+							description: Loc("SUNQIAN_UNIVERSE_COMMON.SETTINGS.eventRegistrationDescription", "是否允许本模组向事件池添加事件（例如「原生家庭」和「不速之客」）。"),
 							presentation: ModSettingsChoicePresentation.Dropdown);
 				});
 		});
@@ -207,16 +225,6 @@ public static class SquSettingsPage
 		new("hole", Loc("SUNQIAN_UNIVERSE_COMMON.SETTINGS.previewSfx.hole", "透明窟窿")),
 		new("poet", Loc("SUNQIAN_UNIVERSE_COMMON.SETTINGS.previewSfx.poet", "二言诗人剧本")),
 	];
-
-	private static IModSettingsValueBinding<NeutralContentPermissionMode> CreateAllowOnlyPlaceholderBinding() =>
-		new DefaultModSettingsValueBinding<NeutralContentPermissionMode>(
-			new ModSettingsValueBinding<SquSettings, NeutralContentPermissionMode>(
-				SquMod.ModId,
-				SquSettings.DataKey,
-				SaveScope.Global,
-				static _ => NeutralContentPermissionMode.Allow,
-				static (_, _) => { }),
-			static () => NeutralContentPermissionMode.Allow);
 
 	private static ModSettingsText Loc(string key, string fallback) =>
 		ModSettingsText.LocString(SquCommonL10n.Table, key, fallback);

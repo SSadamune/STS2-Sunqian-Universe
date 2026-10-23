@@ -14,15 +14,15 @@ using STS2RitsuLib.Scaffolding.Content;
 namespace Squ.Powers;
 
 /// <summary>
-/// 「剧本：鸡脚芝士」：剧本存续期间，基础 <see cref="CardTag.Strike"/> 牌改为随机两名敌人目标。
-/// 强化过的剧本使每次伤害变为三次。
+/// 「剧本：鸡脚芝士」：剧本存续期间，基础 <see cref="CardTag.Strike"/> 牌改为随机两名敌人目标，
+/// 并追加 3 点伤害；强化剧本改为追加 9 点伤害。
 /// </summary>
 [RegisterPower]
 public sealed class ScriptChickenFootCheesePower : ScriptPowerTemplate
 {
 	private sealed class Data
 	{
-		public int HitCountPerTarget = BaseHitCount;
+		public int FollowUpDamage = BaseFollowUpDamage;
 	}
 
 	public override PowerAssetProfile AssetProfile => new(
@@ -30,13 +30,13 @@ public sealed class ScriptChickenFootCheesePower : ScriptPowerTemplate
 		BigIconPath: "res://images/powers/ScriptChickenFootCheesePowerBig.png");
 
 	public const int RedirectRandomEnemyCount = 2;
-	public const int BaseHitCount = 2;
-	public const int UpgradedHitCount = 3;
+	public const int BaseFollowUpDamage = 3;
+	public const int UpgradedFollowUpDamage = 9;
 
-	public int HitCountPerTarget => GetInternalData<Data>().HitCountPerTarget;
+	public int FollowUpDamage => GetInternalData<Data>().FollowUpDamage;
 
 	protected override string SmartDescriptionLocKey =>
-		HitCountPerTarget >= UpgradedHitCount
+		FollowUpDamage >= UpgradedFollowUpDamage
 			? base.Id.Entry + ".smartDescriptionUpgraded"
 			: base.SmartDescriptionLocKey;
 
@@ -69,9 +69,15 @@ public sealed class ScriptChickenFootCheesePower : ScriptPowerTemplate
 
 	protected override Task OnScriptApplied(Creature? applier, CardModel? cardSource)
 	{
-		int hits = cardSource is { IsUpgraded: true } ? UpgradedHitCount : BaseHitCount;
-		GetInternalData<Data>().HitCountPerTarget = hits;
+		int damage = cardSource is { IsUpgraded: true }
+			? UpgradedFollowUpDamage
+			: BaseFollowUpDamage;
+		GetInternalData<Data>().FollowUpDamage = damage;
 		SquStrikeRedirectPatches.EnsureApplied();
+		if (Owner.Player is { } player)
+		{
+			ChickenFootCheeseStrikeSystem.EnsureCapabilities(player);
+		}
 		RefreshOnTable(Owner);
 		return Task.CompletedTask;
 	}

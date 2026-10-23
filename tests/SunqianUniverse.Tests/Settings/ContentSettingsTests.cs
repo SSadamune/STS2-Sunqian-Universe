@@ -7,9 +7,12 @@ using MegaCrit.Sts2.Core.Models.CardPools;
 using MegaCrit.Sts2.Core.Models.Characters;
 using MegaCrit.Sts2.Core.Models.Monsters;
 using MegaCrit.Sts2.Core.Models.Potions;
+using MegaCrit.Sts2.Core.Models.RelicPools;
 using Squ.Character;
 using Squ.Cards;
+using Squ.Events;
 using Squ.Powers;
+using Squ.Relics;
 using Squ.RunData;
 using Squ.Settings;
 using STS2RitsuLib.Data;
@@ -37,6 +40,12 @@ public sealed class ContentSettingsTests : SunqianCombatTestSuite
         Assert.Equal(
             NeutralContentPermissionMode.Allow,
             settings.NeutralCardRegistration);
+        Assert.Equal(
+            NeutralContentPermissionMode.Allow,
+            settings.NeutralRelicRegistration);
+        Assert.Equal(
+            NeutralContentPermissionMode.Allow,
+            settings.EventRegistration);
     }
 
     [Fact]
@@ -110,9 +119,13 @@ public sealed class ContentSettingsTests : SunqianCombatTestSuite
         WithLocalSettings(
             mode,
             mode,
+            mode,
+            mode,
             () =>
             {
                 Assert.Equal(expected, NeutralCardRegistrationPolicy.ShouldInclude());
+                Assert.Equal(expected, NeutralRelicRegistrationPolicy.ShouldInclude());
+                Assert.Equal(expected, EventRegistrationPolicy.ShouldInclude(Player.RunState));
                 Assert.Equal(
                     expected,
                     NeutralPotionModificationPolicy.ShouldApply(ModelDb.Potion<FirePotion>()));
@@ -125,11 +138,15 @@ public sealed class ContentSettingsTests : SunqianCombatTestSuite
         SquSettings local = GetLocalSettings();
         NeutralContentPermissionMode originalPotion = local.NeutralPotionModification;
         NeutralContentPermissionMode originalCard = local.NeutralCardRegistration;
+        NeutralContentPermissionMode originalRelic = local.NeutralRelicRegistration;
+        NeutralContentPermissionMode originalEvent = local.EventRegistration;
 
         try
         {
             local.NeutralPotionModification = NeutralContentPermissionMode.Allow;
             local.NeutralCardRegistration = NeutralContentPermissionMode.Deny;
+            local.NeutralRelicRegistration = NeutralContentPermissionMode.WhenModCharacterPresent;
+            local.EventRegistration = NeutralContentPermissionMode.Deny;
             RefreshSnapshot();
 
             Assert.True(ContentSettingsRunData.IsReadOnly);
@@ -139,6 +156,12 @@ public sealed class ContentSettingsTests : SunqianCombatTestSuite
             Assert.Equal(
                 NeutralContentPermissionMode.Deny,
                 ContentSettingsRunData.DisplayedCardMode(local));
+            Assert.Equal(
+                NeutralContentPermissionMode.WhenModCharacterPresent,
+                ContentSettingsRunData.DisplayedRelicMode(local));
+            Assert.Equal(
+                NeutralContentPermissionMode.Deny,
+                ContentSettingsRunData.DisplayedEventMode(local));
 
             Assert.False(ContentSettingsRunData.TryWriteLocalPotionMode(
                 local,
@@ -146,13 +169,25 @@ public sealed class ContentSettingsTests : SunqianCombatTestSuite
             Assert.False(ContentSettingsRunData.TryWriteLocalCardMode(
                 local,
                 NeutralContentPermissionMode.Allow));
+            Assert.False(ContentSettingsRunData.TryWriteLocalRelicMode(
+                local,
+                NeutralContentPermissionMode.Deny));
+            Assert.False(ContentSettingsRunData.TryWriteLocalEventMode(
+                local,
+                NeutralContentPermissionMode.Allow));
             Assert.Equal(NeutralContentPermissionMode.Allow, local.NeutralPotionModification);
             Assert.Equal(NeutralContentPermissionMode.Deny, local.NeutralCardRegistration);
+            Assert.Equal(
+                NeutralContentPermissionMode.WhenModCharacterPresent,
+                local.NeutralRelicRegistration);
+            Assert.Equal(NeutralContentPermissionMode.Deny, local.EventRegistration);
         }
         finally
         {
             local.NeutralPotionModification = originalPotion;
             local.NeutralCardRegistration = originalCard;
+            local.NeutralRelicRegistration = originalRelic;
+            local.EventRegistration = originalEvent;
             RefreshSnapshot();
         }
     }
@@ -161,6 +196,8 @@ public sealed class ContentSettingsTests : SunqianCombatTestSuite
     public void Neutral_card_setting_filters_the_actual_colorless_reward_pool()
     {
         WithLocalSettings(
+            NeutralContentPermissionMode.Allow,
+            NeutralContentPermissionMode.Allow,
             NeutralContentPermissionMode.Allow,
             NeutralContentPermissionMode.Allow,
             () =>
@@ -173,7 +210,55 @@ public sealed class ContentSettingsTests : SunqianCombatTestSuite
         WithLocalSettings(
             NeutralContentPermissionMode.Allow,
             NeutralContentPermissionMode.Deny,
+            NeutralContentPermissionMode.Allow,
+            NeutralContentPermissionMode.Allow,
             () => Assert.Empty(GetAffectedUnlockedColorlessCards()));
+    }
+
+    [Fact]
+    public void Neutral_relic_setting_filters_the_actual_shared_relic_pool()
+    {
+        WithLocalSettings(
+            NeutralContentPermissionMode.Allow,
+            NeutralContentPermissionMode.Allow,
+            NeutralContentPermissionMode.Allow,
+            NeutralContentPermissionMode.Allow,
+            () => Assert.Contains(
+                typeof(SevenStarDaggerRelic),
+                GetAffectedUnlockedSharedRelics()));
+
+        WithLocalSettings(
+            NeutralContentPermissionMode.Allow,
+            NeutralContentPermissionMode.Allow,
+            NeutralContentPermissionMode.Deny,
+            NeutralContentPermissionMode.Allow,
+            () => Assert.Empty(GetAffectedUnlockedSharedRelics()));
+    }
+
+    [Fact]
+    public void Event_setting_controls_both_registered_events_actual_eligibility()
+    {
+        WithLocalSettings(
+            NeutralContentPermissionMode.Allow,
+            NeutralContentPermissionMode.Allow,
+            NeutralContentPermissionMode.Allow,
+            NeutralContentPermissionMode.Allow,
+            () =>
+            {
+                Assert.True(ModelDb.Event<FamilyOfOrigin>().IsAllowed(Player.RunState));
+                Assert.True(ModelDb.Event<UnfriendlyVisitors>().IsAllowed(Player.RunState));
+            });
+
+        WithLocalSettings(
+            NeutralContentPermissionMode.Allow,
+            NeutralContentPermissionMode.Allow,
+            NeutralContentPermissionMode.Allow,
+            NeutralContentPermissionMode.Deny,
+            () =>
+            {
+                Assert.False(ModelDb.Event<FamilyOfOrigin>().IsAllowed(Player.RunState));
+                Assert.False(ModelDb.Event<UnfriendlyVisitors>().IsAllowed(Player.RunState));
+            });
     }
 
     [Fact]
@@ -183,6 +268,8 @@ public sealed class ContentSettingsTests : SunqianCombatTestSuite
 
         await WithLocalSettingsAsync(
             NeutralContentPermissionMode.Deny,
+            NeutralContentPermissionMode.Allow,
+            NeutralContentPermissionMode.Allow,
             NeutralContentPermissionMode.Allow,
             async () =>
             {
@@ -194,6 +281,8 @@ public sealed class ContentSettingsTests : SunqianCombatTestSuite
             });
 
         await WithLocalSettingsAsync(
+            NeutralContentPermissionMode.Allow,
+            NeutralContentPermissionMode.Allow,
             NeutralContentPermissionMode.Allow,
             NeutralContentPermissionMode.Allow,
             async () =>
@@ -212,6 +301,8 @@ public sealed class ContentSettingsTests : SunqianCombatTestSuite
         WithLocalSettings(
             (NeutralContentPermissionMode)999,
             (NeutralContentPermissionMode)999,
+            (NeutralContentPermissionMode)999,
+            (NeutralContentPermissionMode)999,
             () =>
             {
                 Assert.Equal(
@@ -220,22 +311,34 @@ public sealed class ContentSettingsTests : SunqianCombatTestSuite
                 Assert.Equal(
                     SquSettings.DefaultNeutralCardRegistrationMode,
                     ContentSettingsRunData.NeutralCardRegistration);
+                Assert.Equal(
+                    SquSettings.DefaultNeutralRelicRegistrationMode,
+                    ContentSettingsRunData.NeutralRelicRegistration);
+                Assert.Equal(
+                    SquSettings.DefaultEventRegistrationMode,
+                    ContentSettingsRunData.EventRegistration);
             });
     }
 
     private void WithLocalSettings(
         NeutralContentPermissionMode potionMode,
         NeutralContentPermissionMode cardMode,
+        NeutralContentPermissionMode relicMode,
+        NeutralContentPermissionMode eventMode,
         Action assertion)
     {
         SquSettings local = GetLocalSettings();
         NeutralContentPermissionMode originalPotion = local.NeutralPotionModification;
         NeutralContentPermissionMode originalCard = local.NeutralCardRegistration;
+        NeutralContentPermissionMode originalRelic = local.NeutralRelicRegistration;
+        NeutralContentPermissionMode originalEvent = local.EventRegistration;
 
         try
         {
             local.NeutralPotionModification = potionMode;
             local.NeutralCardRegistration = cardMode;
+            local.NeutralRelicRegistration = relicMode;
+            local.EventRegistration = eventMode;
             RefreshSnapshot();
             assertion();
         }
@@ -243,6 +346,8 @@ public sealed class ContentSettingsTests : SunqianCombatTestSuite
         {
             local.NeutralPotionModification = originalPotion;
             local.NeutralCardRegistration = originalCard;
+            local.NeutralRelicRegistration = originalRelic;
+            local.EventRegistration = originalEvent;
             RefreshSnapshot();
         }
     }
@@ -250,16 +355,22 @@ public sealed class ContentSettingsTests : SunqianCombatTestSuite
     private async Task WithLocalSettingsAsync(
         NeutralContentPermissionMode potionMode,
         NeutralContentPermissionMode cardMode,
+        NeutralContentPermissionMode relicMode,
+        NeutralContentPermissionMode eventMode,
         Func<Task> assertion)
     {
         SquSettings local = GetLocalSettings();
         NeutralContentPermissionMode originalPotion = local.NeutralPotionModification;
         NeutralContentPermissionMode originalCard = local.NeutralCardRegistration;
+        NeutralContentPermissionMode originalRelic = local.NeutralRelicRegistration;
+        NeutralContentPermissionMode originalEvent = local.EventRegistration;
 
         try
         {
             local.NeutralPotionModification = potionMode;
             local.NeutralCardRegistration = cardMode;
+            local.NeutralRelicRegistration = relicMode;
+            local.EventRegistration = eventMode;
             RefreshSnapshot();
             await assertion();
         }
@@ -267,6 +378,8 @@ public sealed class ContentSettingsTests : SunqianCombatTestSuite
         {
             local.NeutralPotionModification = originalPotion;
             local.NeutralCardRegistration = originalCard;
+            local.NeutralRelicRegistration = originalRelic;
+            local.EventRegistration = originalEvent;
             RefreshSnapshot();
         }
     }
@@ -276,6 +389,13 @@ public sealed class ContentSettingsTests : SunqianCombatTestSuite
             .GetUnlockedCards(Player.UnlockState, Player.RunState.CardMultiplayerConstraint)
             .Where(card => card is TheArrogantFall or TheGrievingPrevail or KnowWrongDenyWrong)
             .Select(card => card.GetType())
+            .ToArray();
+
+    private Type[] GetAffectedUnlockedSharedRelics() =>
+        ModelDb.RelicPool<SharedRelicPool>()
+            .GetUnlockedRelics(Player.UnlockState)
+            .Where(relic => relic is SevenStarDaggerRelic)
+            .Select(relic => relic.GetType())
             .ToArray();
 
     private async Task UseFirePotionDirectly(Creature target)
@@ -321,20 +441,28 @@ public sealed class ConditionalContentSettingsWithoutSunqianTests : SunqianComba
             .Get<SquSettings>(SquSettings.DataKey);
         NeutralContentPermissionMode originalPotion = local.NeutralPotionModification;
         NeutralContentPermissionMode originalCard = local.NeutralCardRegistration;
+        NeutralContentPermissionMode originalRelic = local.NeutralRelicRegistration;
+        NeutralContentPermissionMode originalEvent = local.EventRegistration;
 
         try
         {
             local.NeutralPotionModification = NeutralContentPermissionMode.WhenModCharacterPresent;
             local.NeutralCardRegistration = NeutralContentPermissionMode.WhenModCharacterPresent;
+            local.NeutralRelicRegistration = NeutralContentPermissionMode.WhenModCharacterPresent;
+            local.EventRegistration = NeutralContentPermissionMode.WhenModCharacterPresent;
             RefreshSnapshot();
 
             Assert.False(NeutralCardRegistrationPolicy.ShouldInclude());
+            Assert.False(NeutralRelicRegistrationPolicy.ShouldInclude());
+            Assert.False(EventRegistrationPolicy.ShouldInclude(Player.RunState));
             Assert.False(NeutralPotionModificationPolicy.ShouldApply(ModelDb.Potion<FirePotion>()));
         }
         finally
         {
             local.NeutralPotionModification = originalPotion;
             local.NeutralCardRegistration = originalCard;
+            local.NeutralRelicRegistration = originalRelic;
+            local.EventRegistration = originalEvent;
             RefreshSnapshot();
         }
     }
