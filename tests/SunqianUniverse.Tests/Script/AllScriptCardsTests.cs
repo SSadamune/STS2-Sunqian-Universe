@@ -85,20 +85,14 @@ public sealed class AllScriptCardsTests : SunqianCombatTestSuite
         Assert.Contains(CardKeyword.Exhaust, card.Keywords);
 
         await PlayerCmd.SetEnergy(card is PartTimeGeneralScript ? 0 : 10, Player);
-        var selector = new ScriptedCardSelector()
-            .ThenSelectWhere(candidate => candidate.GetType() == recordType);
-        using (UseCardSelector(selector))
+        if (card.TargetType == TargetType.AnyEnemy)
         {
-            if (card.TargetType == TargetType.AnyEnemy)
-            {
-                await Play(card, EnemyAt(0));
-            }
-            else
-            {
-                await Play(card);
-            }
+            await Play(card, EnemyAt(0));
         }
-        AssertAllSelectionsConsumed(selector);
+        else
+        {
+            await Play(card);
+        }
 
         ScriptRecordCardTemplate record = Assert.IsAssignableFrom<ScriptRecordCardTemplate>(
             Assert.Single(
@@ -111,6 +105,8 @@ public sealed class AllScriptCardsTests : SunqianCombatTestSuite
         Assert.False(record.ShouldShowInCardLibrary);
         Assert.DoesNotContain(CardKeyword.Unplayable, record.Keywords);
         Assert.Same(ModelDb.CardPool<SunqianCardPool>(), record.VisualCardPool);
+        Assert.True(record.ShouldGlowGold);
+        Assert.NotEmpty(record.GetDescriptionForPile(record.Pile!.Type));
 
         ScriptPowerTemplate active = Assert.Single(
             Player.Creature.Powers.OfType<ScriptPowerTemplate>());

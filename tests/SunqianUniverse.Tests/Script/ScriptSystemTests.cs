@@ -1,5 +1,6 @@
 using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
+using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.Cards;
 using MegaCrit.Sts2.Core.Models.Characters;
@@ -20,30 +21,34 @@ public sealed class ScriptSystemTests : SunqianCombatTestSuite
         battle.Player<Ironclad>().AddEnemy<BigDummy>().WithSeed("script-system-rework");
 
     [Fact]
-    public async Task Unlocks_records_and_keeps_the_same_selected_script_active()
+    public async Task Playing_a_new_script_auto_activates_it_and_replaces_the_only_active_script()
     {
-        await PlaySelecting<NeutralAmbushScript, NeutralAmbushScriptRecord>();
-        var firstPower = Assert.IsType<ScriptNeutralAmbushPower>(
-            Player.Creature.GetPower<ScriptNeutralAmbushPower>());
+        await PlayScript<NeutralAmbushScript>();
+        NeutralAmbushScriptRecord neutralRecord = Assert.Single(
+            ScriptSystem.ScriptCollectionPile.GetPile(Player).Cards
+                .OfType<NeutralAmbushScriptRecord>());
+        Assert.True(neutralRecord.ShouldGlowGold);
 
-        await PlaySelecting<ServantScript, NeutralAmbushScriptRecord>();
+        await PlayScript<ServantScript>();
 
         CardModel[] records = ScriptSystem.ScriptCollectionPile.GetPile(Player).Cards.ToArray();
         Assert.Contains(records, card => card is NeutralAmbushScriptRecord);
         Assert.Contains(records, card => card is ServantScriptRecord);
-        Assert.Same(firstPower, Player.Creature.GetPower<ScriptNeutralAmbushPower>());
-        Assert.Null(Player.Creature.GetPower<ScriptServantPower>());
-        Assert.Equal(0, ScriptSystem.GetScriptLiftsThisTurn(Player));
+        Assert.Null(Player.Creature.GetPower<ScriptNeutralAmbushPower>());
+        Assert.NotNull(Player.Creature.GetPower<ScriptServantPower>());
+        Assert.False(neutralRecord.ShouldGlowGold);
+        Assert.True(Assert.Single(records.OfType<ServantScriptRecord>()).ShouldGlowGold);
+        Assert.Equal(1, ScriptSystem.GetScriptLiftsThisTurn(Player));
     }
 
     [Fact]
     public async Task Playing_a_reinforceable_script_again_strengthens_one_existing_record()
     {
-        await PlaySelecting<ExecutionCommanderScript, ExecutionCommanderScriptRecord>();
+        await PlayScript<ExecutionCommanderScript>();
         var firstPower = Assert.IsType<ScriptExecutionCommanderPower>(
             Player.Creature.GetPower<ScriptExecutionCommanderPower>());
 
-        await PlaySelecting<ExecutionCommanderScript, ExecutionCommanderScriptRecord>();
+        await PlayScript<ExecutionCommanderScript>();
 
         ExecutionCommanderScriptRecord record = Assert.Single(
             ScriptSystem.ScriptCollectionPile.GetPile(Player).Cards
@@ -59,13 +64,13 @@ public sealed class ScriptSystemTests : SunqianCombatTestSuite
     [Fact]
     public async Task Sunqian_dexterity_is_removed_and_one_card_is_drawn_when_switched_out()
     {
-        await PlaySelecting<SunqianScript, SunqianScriptRecord>();
+        await PlayScript<SunqianScript>();
         CardTestAssertions.AssertPowerAmount<DexterityPower>(
             Player.Creature,
             SunqianScript.BaseDexterity);
         var drawn = await AddToDrawPileTop<DefendIronclad>();
 
-        await PlaySelecting<ServantScript, ServantScriptRecord>();
+        await PlayScript<ServantScript>();
 
         Assert.Null(Player.Creature.GetPower<DexterityPower>());
         AssertInPile(drawn, PileType.Hand);
@@ -77,17 +82,17 @@ public sealed class ScriptSystemTests : SunqianCombatTestSuite
     {
         CardModel first = await AddToDrawPileTop<StrikeIronclad>();
         CardModel second = await AddToDrawPileTop<DefendIronclad>();
-        await PlaySelecting<EunuchScript, EunuchScriptRecord>();
+        await PlayScript<EunuchScript>();
         var active = Assert.IsType<ScriptEunuchPower>(
             Player.Creature.GetPower<ScriptEunuchPower>());
 
         CardModel third = await AddToDrawPileTop<Bash>();
         CardModel fourth = await AddToDrawPileTop<Wound>();
-		await PlaySelecting<EunuchScript, EunuchScriptRecord>();
+		await PlayScript<EunuchScript>();
 
 		Assert.Same(active, Player.Creature.GetPower<ScriptEunuchPower>());
 		await PlayerCmd.SetEnergy(3, Player);
-		await PlaySelecting<ServantScript, ServantScriptRecord>();
+		await PlayScript<ServantScript>();
 
         foreach (CardModel card in new[] { first, second, third, fourth })
         {
@@ -102,10 +107,10 @@ public sealed class ScriptSystemTests : SunqianCombatTestSuite
         Player.AddRelicInternal(relic, silent: true);
         await PlayerCmd.SetEnergy(0, Player);
 
-        await PlaySelecting<ExecutionCommanderScript, ExecutionCommanderScriptRecord>();
+        await PlayScript<ExecutionCommanderScript>();
         Assert.Equal(1, Player.PlayerCombatState!.Energy);
 
-        await PlaySelecting<ExecutionCommanderScript, ExecutionCommanderScriptRecord>();
+        await PlayScript<ExecutionCommanderScript>();
         Assert.Equal(1, Player.PlayerCombatState.Energy);
     }
 
@@ -116,22 +121,13 @@ public sealed class ScriptSystemTests : SunqianCombatTestSuite
         Player.AddRelicInternal(relic, silent: true);
         await PlayerCmd.SetEnergy(0, Player);
 
-        await PlaySelecting<ExecutionCommanderScript, ExecutionCommanderScriptRecord>();
-        await PlaySelecting<ExecutionCommanderScript, ExecutionCommanderScriptRecord>();
+        await PlayScript<ExecutionCommanderScript>();
+        await PlayScript<ExecutionCommanderScript>();
         Assert.Equal(2, Player.PlayerCombatState!.Energy);
 
         await PlayerCmd.SetEnergy(10, Player);
-        await PlaySelecting<NeutralAmbushScript, NeutralAmbushScriptRecord>();
-
-        var selector = new ScriptedCardSelector()
-            .ThenSelectWhere(
-                card => card is NeutralAmbushScriptRecord,
-                card => card is ServantScriptRecord);
-        using (UseCardSelector(selector))
-        {
-            await Play(await AddToHand<ServantScript>());
-        }
-        AssertAllSelectionsConsumed(selector);
+        await PlayScript<NeutralAmbushScript>();
+        await PlayScript<ServantScript>();
 
         Assert.Equal(2, ScriptSystem.GetActivationLimit(Player));
         Assert.Equal(2, Player.Creature.Powers.OfType<ScriptPowerTemplate>().Count());
@@ -139,16 +135,62 @@ public sealed class ScriptSystemTests : SunqianCombatTestSuite
         Assert.NotNull(Player.Creature.GetPower<ScriptServantPower>());
     }
 
-    private async Task PlaySelecting<TScript, TSelectedRecord>()
-        where TScript : ScriptCardTemplate
-        where TSelectedRecord : ScriptRecordCardTemplate
+    [Fact]
+    public async Task Playing_a_new_script_with_multiple_active_scripts_asks_which_old_script_ends()
     {
+        var relic = (AbundantBoxLunchRelic)ModelDb.Relic<AbundantBoxLunchRelic>().ToMutable();
+        Player.AddRelicInternal(relic, silent: true);
+        await PlayerCmd.SetEnergy(10, Player);
+
+        await PlayScript<ExecutionCommanderScript>();
+        await PlayScript<NeutralAmbushScript>();
+        await PlayScript<ServantScript>();
+
         var selector = new ScriptedCardSelector()
-            .ThenSelectWhere(card => card is TSelectedRecord);
+            .ThenSelectWhere(card => card is NeutralAmbushScriptRecord);
         using (UseCardSelector(selector))
         {
-            await Play(await AddToHand<TScript>());
+            await PlayScript<BowangParadoxScript>();
         }
         AssertAllSelectionsConsumed(selector);
+
+        Assert.Equal(2, Player.Creature.Powers.OfType<ScriptPowerTemplate>().Count());
+        Assert.Null(Player.Creature.GetPower<ScriptNeutralAmbushPower>());
+        Assert.NotNull(Player.Creature.GetPower<ScriptServantPower>());
+        Assert.NotNull(Player.Creature.GetPower<ScriptBowangParadoxPower>());
     }
+
+    [Fact]
+    public async Task Active_record_gold_glow_tracks_manual_reselection()
+    {
+        await PlayScript<NeutralAmbushScript>();
+        await PlayScript<ServantScript>();
+        NeutralAmbushScriptRecord neutralRecord = Assert.Single(
+            ScriptSystem.ScriptCollectionPile.GetPile(Player).Cards
+                .OfType<NeutralAmbushScriptRecord>());
+        ServantScriptRecord servantRecord = Assert.Single(
+            ScriptSystem.ScriptCollectionPile.GetPile(Player).Cards
+                .OfType<ServantScriptRecord>());
+        Assert.False(neutralRecord.ShouldGlowGold);
+        Assert.True(servantRecord.ShouldGlowGold);
+
+        var selector = new ScriptedCardSelector()
+            .ThenSelectWhere(card => card is NeutralAmbushScriptRecord);
+        using (UseCardSelector(selector))
+        {
+            bool selected = await ScriptSystem.ChooseActiveScriptsAsync(
+                new BlockingPlayerChoiceContext(),
+                Player,
+                cancelable: false);
+            Assert.True(selected);
+        }
+        AssertAllSelectionsConsumed(selector);
+
+        Assert.True(neutralRecord.ShouldGlowGold);
+        Assert.False(servantRecord.ShouldGlowGold);
+    }
+
+    private async Task PlayScript<TScript>()
+        where TScript : ScriptCardTemplate
+        => await Play(await AddToHand<TScript>());
 }

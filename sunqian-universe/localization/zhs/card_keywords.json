@@ -1,10 +1,10 @@
 {
   "SUNQIAN_UNIVERSE_CARDTAG_SCRIPT.title": "剧本",
-  "SUNQIAN_UNIVERSE_CARDTAG_SCRIPT.description": "能将对应衍生牌加入[gold]剧本集[/gold]，并允许你选择要激活的剧本。",
+  "SUNQIAN_UNIVERSE_CARDTAG_SCRIPT.description": "能将对应衍生牌加入[gold]剧本集[/gold]，并自动激活对应剧本。",
   "SUNQIAN_UNIVERSE_CARDTAG_BURNING.title": "灼烧",
   "SUNQIAN_UNIVERSE_CARDTAG_BURNING.description": "能给予[gold]灼烧[/gold]的牌。",
   "SUNQIAN_UNIVERSE_KEYWORD_SCRIPT.title": "剧本",
-  "SUNQIAN_UNIVERSE_KEYWORD_SCRIPT.description": "打出后解锁对应剧本，并允许你从[gold]剧本集[/gold]中重新选择要激活的剧本。",
+  "SUNQIAN_UNIVERSE_KEYWORD_SCRIPT.description": "打出后解锁并自动激活对应剧本。若已有多个剧本正在激活，则选择其中一个失效。",
   "SUNQIAN_UNIVERSE_KEYWORD_DOOM_KILL_THRESHOLD.title": "灾厄斩杀线",
   "SUNQIAN_UNIVERSE_KEYWORD_DOOM_KILL_THRESHOLD.description": "表示该敌人再失去多少生命值后将死于[gold]灾厄[/gold]。\n即，其当前生命值减去[gold]中毒[/gold]、[gold]灼烧[/gold]与[gold]灾厄[/gold]层数后的剩余值。",
   "SUNQIAN_UNIVERSE_KEYWORD_MULTI_TARGET.title": "群体目标",

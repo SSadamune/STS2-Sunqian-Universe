@@ -25,28 +25,10 @@ public abstract class SunqianCombatTestSuite : CombatTestSuite
         Assert.Equal(0, selector.PendingSteps);
 
     protected async Task PlayAndActivateScript(ScriptCardTemplate card)
-    {
-        Type recordType = card.CreateScriptRecordPreview().GetType();
-        var selector = new ScriptedCardSelector()
-            .ThenSelectWhere(candidate => candidate.GetType() == recordType);
-        using (UseCardSelector(selector))
-        {
-            await Play(card);
-        }
-        AssertAllSelectionsConsumed(selector);
-    }
+        => await Play(card);
 
     protected async Task PlayAndActivateScript(ScriptCardTemplate card, Creature target)
-    {
-        Type recordType = card.CreateScriptRecordPreview().GetType();
-        var selector = new ScriptedCardSelector()
-            .ThenSelectWhere(candidate => candidate.GetType() == recordType);
-        using (UseCardSelector(selector))
-        {
-            await Play(card, target);
-        }
-        AssertAllSelectionsConsumed(selector);
-    }
+        => await Play(card, target);
 
     protected async Task<TCard> AddCardToPile<TCard>(
         PileType pileType,

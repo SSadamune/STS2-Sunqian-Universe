@@ -1,10 +1,10 @@
 {
   "SUNQIAN_UNIVERSE_CARDTAG_SCRIPT.title": "Script",
-  "SUNQIAN_UNIVERSE_CARDTAG_SCRIPT.description": "Adds its derived card to the [gold]Script Collection[/gold] and lets you choose active Scripts.",
+  "SUNQIAN_UNIVERSE_CARDTAG_SCRIPT.description": "Adds its derived card to the [gold]Script Collection[/gold] and automatically activates that Script.",
   "SUNQIAN_UNIVERSE_CARDTAG_BURNING.title": "Burning",
   "SUNQIAN_UNIVERSE_CARDTAG_BURNING.description": "A card that can apply [gold]Burning[/gold].",
   "SUNQIAN_UNIVERSE_KEYWORD_SCRIPT.title": "Script",
-  "SUNQIAN_UNIVERSE_KEYWORD_SCRIPT.description": "Playing this unlocks its Script and lets you choose active Scripts from the [gold]Script Collection[/gold].",
+  "SUNQIAN_UNIVERSE_KEYWORD_SCRIPT.description": "Playing this unlocks and automatically activates its Script. If multiple Scripts are already active, choose one of them to end.",
   "SUNQIAN_UNIVERSE_KEYWORD_DOOM_KILL_THRESHOLD.title": "Doom kill threshold",
   "SUNQIAN_UNIVERSE_KEYWORD_DOOM_KILL_THRESHOLD.description": "That enemy's HP minus its [gold]Poison[/gold], [gold]Burning[/gold], and [gold]Doom[/gold].",
   "SUNQIAN_UNIVERSE_KEYWORD_MULTI_TARGET.title": "Multi-target",

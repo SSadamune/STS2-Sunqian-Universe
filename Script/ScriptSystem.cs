@@ -27,6 +27,8 @@ public static class ScriptSystem
 
 	private static readonly LocString SelectionPrompt =
 		new("cards", "SUNQIAN_UNIVERSE_CARD_SCRIPT_SELECTION_PROMPT");
+	private static readonly LocString InvalidationPrompt =
+		new("cards", "SUNQIAN_UNIVERSE_CARD_SCRIPT_INVALIDATION_PROMPT");
 
 	private static bool _initialized;
 
@@ -124,11 +126,97 @@ public static class ScriptSystem
 			await handler.AfterScriptCardPlayedAsync(player, record, wasNewUnlock);
 		}
 
-		await ChooseActiveScriptsAsync(
+		await ActivatePlayedScriptAsync(
 			choiceContext,
 			player,
-			cancelable: false,
-			forceRefresh: wasReinforced ? record : null);
+			record,
+			forceRefresh: wasReinforced);
+	}
+
+	private static async Task ActivatePlayedScriptAsync(
+		PlayerChoiceContext choiceContext,
+		Player player,
+		ScriptRecordCardTemplate record,
+		bool forceRefresh)
+	{
+		List<ScriptPowerTemplate> activeScripts = player.Creature.Powers
+			.OfType<ScriptPowerTemplate>()
+			.ToList();
+		ScriptPowerTemplate? sameType = activeScripts
+			.FirstOrDefault(power => power.GetType() == record.PowerType);
+		if (sameType is not null)
+		{
+			if (forceRefresh)
+			{
+				await RemoveScriptPowerAsync(
+					sameType,
+					notifyLift: false,
+					resolveEndEffects: false);
+				await record.ActivateAsync(choiceContext, player);
+			}
+
+			return;
+		}
+
+		int removalCount = Math.Max(
+			0,
+			activeScripts.Count - GetActivationLimit(player) + 1);
+		if (removalCount > 0)
+		{
+			IReadOnlyList<ScriptPowerTemplate> scriptsToRemove = activeScripts.Count > 1
+				? await ChooseScriptsToInvalidateAsync(
+					choiceContext,
+					player,
+					activeScripts,
+					removalCount)
+				: activeScripts.Take(removalCount).ToList();
+			foreach (ScriptPowerTemplate active in scriptsToRemove)
+			{
+				await RemoveScriptPowerAsync(active);
+			}
+		}
+
+		await record.ActivateAsync(choiceContext, player);
+	}
+
+	private static async Task<IReadOnlyList<ScriptPowerTemplate>> ChooseScriptsToInvalidateAsync(
+		PlayerChoiceContext choiceContext,
+		Player player,
+		IReadOnlyList<ScriptPowerTemplate> activeScripts,
+		int selectCount)
+	{
+		HashSet<Type> activeTypes = activeScripts
+			.Select(power => power.GetType())
+			.ToHashSet();
+		var prefs = new CardSelectorPrefs(InvalidationPrompt, selectCount)
+		{
+			Cancelable = false,
+			RequireManualConfirmation = true,
+			PretendCardsCanBePlayed = true,
+		};
+		List<Type> selectedTypes = (await CardSelectCmd.FromCombatPile(
+			choiceContext,
+			ScriptCollectionPile.GetPile(player),
+			player,
+			prefs,
+			card => card is ScriptRecordCardTemplate record
+				&& activeTypes.Contains(record.PowerType)))
+			.OfType<ScriptRecordCardTemplate>()
+			.Select(record => record.PowerType)
+			.ToList();
+
+		List<ScriptPowerTemplate> selected = activeScripts
+			.Where(power => selectedTypes.Contains(power.GetType()))
+			.Take(selectCount)
+			.ToList();
+		if (selected.Count < selectCount)
+		{
+			selected.AddRange(activeScripts
+				.Where(power => !selected.Contains(power))
+				.Take(selectCount - selected.Count));
+		}
+
+		return selected;
 	}
 
 	public static async Task<bool> ChooseActiveScriptsAsync(
@@ -146,18 +234,12 @@ public static class ScriptSystem
 			return false;
 		}
 
-		HashSet<Type> activeTypes = player.Creature.Powers
-			.OfType<ScriptPowerTemplate>()
-			.Select(power => power.GetType())
-			.ToHashSet();
 		int selectCount = Math.Min(GetActivationLimit(player), records.Count);
 		var prefs = new CardSelectorPrefs(SelectionPrompt, selectCount)
 		{
 			Cancelable = cancelable,
 			RequireManualConfirmation = true,
 			PretendCardsCanBePlayed = true,
-			ShouldGlowGold = card => card is ScriptRecordCardTemplate record
-				&& activeTypes.Contains(record.PowerType),
 		};
 
 		List<ScriptRecordCardTemplate> selected = (await CardSelectCmd.FromCombatPile(

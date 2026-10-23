@@ -7,11 +7,14 @@ using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.Entities.Players;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
+using MegaCrit.Sts2.Core.HoverTips;
+using MegaCrit.Sts2.Core.Localization;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.CardPools;
 using MegaCrit.Sts2.Core.Saves.Runs;
 using Squ.Character;
+using Squ.Interop;
 using Squ.Powers;
 using STS2RitsuLib.Interop.AutoRegistration;
 using STS2RitsuLib.Scaffolding.Content;
@@ -38,6 +41,11 @@ public abstract class ScriptRecordCardTemplate : ModCardTemplate
 	public sealed override CardPoolModel VisualCardPool => ModelDb.CardPool<SunqianCardPool>();
 
 	public override IEnumerable<CardKeyword> CanonicalKeywords => [];
+
+	protected override bool ShouldGlowGoldInternal =>
+		Owner?.Creature.Powers
+			.OfType<ScriptPowerTemplate>()
+			.Any(power => power.GetType() == PowerType) == true;
 
 	protected ScriptRecordCardTemplate()
 		: base(0, CardType.Skill, CardRarity.Token, TargetType.Self, showInCardLibrary: false)
@@ -253,12 +261,34 @@ public sealed class ExecutionCommanderScriptRecord : ReinforceableScriptRecordCa
 public sealed class HeadsmanScriptRecord : ScriptRecordCardTemplate<ScriptHeadsmanPower, HeadsmanScript>
 {
 	public override CardAssetProfile AssetProfile => new(PortraitPath: "res://images/cards/HeadsmanScript.png");
+
+	protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
+	[
+		..NewsanguoDrunkenMightEffect.HoverTips(),
+	];
+
+	protected override void AddExtraArgsToDescription(LocString description)
+	{
+		base.AddExtraArgsToDescription(description);
+		NewsanguoDrunkenMightEffect.AddOrText(description);
+	}
 }
 
 [RegisterCard(typeof(TokenCardPool), StableEntryStem = "script_record_xiliang_savage")]
 public sealed class XiliangSavageScriptRecord : ScriptRecordCardTemplate<ScriptXiliangSavagePower, XiliangSavageScript>
 {
 	public override CardAssetProfile AssetProfile => new(PortraitPath: "res://images/cards/XiliangSavageScript.png");
+
+	protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
+	[
+		..NewsanguoDrunkenMightEffect.HoverTips(),
+	];
+
+	protected override void AddExtraArgsToDescription(LocString description)
+	{
+		base.AddExtraArgsToDescription(description);
+		NewsanguoDrunkenMightEffect.AddOrText(description);
+	}
 }
 
 [RegisterCard(typeof(TokenCardPool), StableEntryStem = "script_record_bombard_chibi")]

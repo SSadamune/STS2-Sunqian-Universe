@@ -1,5 +1,5 @@
 {
   "SUNQIAN_UNIVERSE_CARDPILE_SCRIPT_COLLECTION.title": "Script Collection",
-  "SUNQIAN_UNIVERSE_CARDPILE_SCRIPT_COLLECTION.description": "Scripts unlocked this combat. Play a Script card or use a start-of-turn reselect effect to choose active Scripts.",
+  "SUNQIAN_UNIVERSE_CARDPILE_SCRIPT_COLLECTION.description": "Scripts unlocked this combat. Currently active Scripts have a gold glow.",
   "SUNQIAN_UNIVERSE_CARDPILE_SCRIPT_COLLECTION.empty": "The Script Collection is empty."
 }

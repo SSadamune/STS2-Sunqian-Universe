@@ -34,7 +34,6 @@ public sealed class PartTimeGeneralScriptTests : SunqianCombatTestSuite
         await PlayerCmd.SetEnergy(3, Player);
         CardModel? selected = null;
         var selector = new ScriptedCardSelector()
-            .ThenSelectWhere(card => card is ServantScriptRecord)
             .ThenSelect(options =>
             {
                 selected = options[0];
