@@ -18,6 +18,7 @@ namespace Squ.Cards;
 public sealed class NextOfKin : FamilyCardTemplate, IRowKeywordsCard
 {
 	public const int DrawAmount = 2;
+	public const int UpgradedDrawAmount = 3;
 
 	public override CardAssetProfile AssetProfile => new(
 		PortraitPath: "res://images/cards/NextOfKin.png");
@@ -54,4 +55,9 @@ public sealed class NextOfKin : FamilyCardTemplate, IRowKeywordsCard
 		Player owner,
 		decimal drawAmount) =>
 		CardPileCmd.Draw(choiceContext, drawAmount, owner);
+
+	protected override void OnUpgrade()
+	{
+		DynamicVars.Cards.UpgradeValueBy(UpgradedDrawAmount - DrawAmount);
+	}
 }

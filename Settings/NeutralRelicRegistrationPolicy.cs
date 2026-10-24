@@ -6,6 +6,7 @@ using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.RelicPools;
 using MegaCrit.Sts2.Core.Runs;
+using MegaCrit.Sts2.Core.Unlocks;
 using Squ.Character;
 using Squ.Relics;
 using Squ.RunData;
@@ -60,12 +61,15 @@ public static class NeutralRelicRegistrationPolicy
 		}
 	}
 
-	[HarmonyPatch(typeof(RelicPoolModel), nameof(RelicPoolModel.GetUnlockedRelics))]
+	[HarmonyPatch(
+		typeof(SharedRelicPool),
+		nameof(SharedRelicPool.GetUnlockedRelics),
+		[typeof(UnlockState)])]
 	private static class GetUnlockedRelicsPatch
 	{
-		private static void Postfix(RelicPoolModel __instance, ref IEnumerable<RelicModel> __result)
+		private static void Postfix(ref IEnumerable<RelicModel> __result)
 		{
-			if (__instance is SharedRelicPool && !ShouldInclude())
+			if (!ShouldInclude())
 			{
 				__result = __result.Where(relic => !IsAffectedRelic(relic));
 			}

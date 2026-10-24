@@ -30,6 +30,9 @@ public sealed class NeverHadTheseRelic : ModRelicTemplate
 	private int _removedCutePets;
 	private int _removedBelovedPartners;
 	private int _removedNextOfKin;
+	private int _removedUpgradedCutePets;
+	private int _removedUpgradedBelovedPartners;
+	private int _removedUpgradedNextOfKin;
 
 	public override RelicRarity Rarity => RelicRarity.Event;
 
@@ -89,6 +92,39 @@ public sealed class NeverHadTheseRelic : ModRelicTemplate
 		}
 	}
 
+	[SavedProperty(SerializationCondition.SaveIfNotTypeDefault)]
+	public int RemovedUpgradedCutePets
+	{
+		get => _removedUpgradedCutePets;
+		set
+		{
+			AssertMutable();
+			_removedUpgradedCutePets = value;
+		}
+	}
+
+	[SavedProperty(SerializationCondition.SaveIfNotTypeDefault)]
+	public int RemovedUpgradedBelovedPartners
+	{
+		get => _removedUpgradedBelovedPartners;
+		set
+		{
+			AssertMutable();
+			_removedUpgradedBelovedPartners = value;
+		}
+	}
+
+	[SavedProperty(SerializationCondition.SaveIfNotTypeDefault)]
+	public int RemovedUpgradedNextOfKin
+	{
+		get => _removedUpgradedNextOfKin;
+		set
+		{
+			AssertMutable();
+			_removedUpgradedNextOfKin = value;
+		}
+	}
+
 	public override Task BeforeCardRemoved(CardModel card)
 	{
 		if (card.Owner == Owner && card.HasFamily())
@@ -96,15 +132,27 @@ public sealed class NeverHadTheseRelic : ModRelicTemplate
 			RemovedFamilyCards++;
 			switch (card)
 			{
-				case CutePet:
-					RemovedCutePets++;
-					break;
-				case BelovedPartner:
-					RemovedBelovedPartners++;
-					break;
-				case NextOfKin:
-					RemovedNextOfKin++;
-					break;
+			case CutePet:
+				RemovedCutePets++;
+				if (card.IsUpgraded)
+				{
+					RemovedUpgradedCutePets++;
+				}
+				break;
+			case BelovedPartner:
+				RemovedBelovedPartners++;
+				if (card.IsUpgraded)
+				{
+					RemovedUpgradedBelovedPartners++;
+				}
+				break;
+			case NextOfKin:
+				RemovedNextOfKin++;
+				if (card.IsUpgraded)
+				{
+					RemovedUpgradedNextOfKin++;
+				}
+				break;
 			}
 			Flash();
 		}
@@ -134,7 +182,9 @@ public sealed class NeverHadTheseRelic : ModRelicTemplate
 			await CutePet.ResolveExhaustEffect(
 				choiceContext,
 				Owner,
-				CutePet.SummonAmount,
+				index < RemovedUpgradedCutePets
+					? CutePet.UpgradedSummonAmount
+					: CutePet.SummonAmount,
 				this);
 		}
 
@@ -143,7 +193,9 @@ public sealed class NeverHadTheseRelic : ModRelicTemplate
 			await BelovedPartner.ResolveExhaustEffect(
 				choiceContext,
 				Owner,
-				BelovedPartner.RegenAmount,
+				index < RemovedUpgradedBelovedPartners
+					? BelovedPartner.UpgradedRegenAmount
+					: BelovedPartner.RegenAmount,
 				BelovedPartner.TinderAmount,
 				null);
 		}
@@ -153,7 +205,9 @@ public sealed class NeverHadTheseRelic : ModRelicTemplate
 			await NextOfKin.ResolveExhaustEffect(
 				choiceContext,
 				Owner,
-				NextOfKin.DrawAmount);
+				index < RemovedUpgradedNextOfKin
+					? NextOfKin.UpgradedDrawAmount
+					: NextOfKin.DrawAmount);
 		}
 	}
 }

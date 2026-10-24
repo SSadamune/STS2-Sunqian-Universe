@@ -87,6 +87,11 @@ public sealed class FamilyQuestCardTests : SunqianCombatTestSuite
             Assert.Contains(
                 card.HoverTips.OfType<HoverTip>(),
                 tip => tip.Id.Contains("KEYWORD_FAMILY", StringComparison.Ordinal));
+            foreach (CardKeyword keyword in card.Keywords)
+            {
+                string keywordTipId = HoverTipFactory.FromKeyword(keyword).Id;
+                Assert.Contains(card.HoverTips, tip => tip.Id == keywordTipId);
+            }
             Assert.DoesNotContain(
                 card.HoverTips.OfType<HoverTip>(),
                 tip => tip.Id.Contains(SquCommonL10n.PlayRateTitleKey, StringComparison.Ordinal));
@@ -183,6 +188,30 @@ public sealed class FamilyQuestCardTests : SunqianCombatTestSuite
         Assert.Equal(drawBefore - NextOfKin.DrawAmount, PileType.Draw.GetPile(Player).Cards.Count);
         Assert.Contains(deckCard, Player.Deck.Cards);
         Assert.Same(deckCard, card.DeckVersion);
+    }
+
+    [Fact]
+    public async Task Upgraded_family_cards_strengthen_their_exhaust_effects_once()
+    {
+        var cutePet = Upgrade(await AddToHand<CutePet>());
+        var belovedPartner = Upgrade(await AddToHand<BelovedPartner>());
+        var nextOfKin = Upgrade(await AddToHand<NextOfKin>());
+        int petsBefore = Combat.Creatures.Count(creature => creature.IsPet);
+        int drawBefore = PileType.Draw.GetPile(Player).Cards.Count;
+
+        await CardCmd.Exhaust(new BlockingPlayerChoiceContext(), cutePet);
+        await CardCmd.Exhaust(new BlockingPlayerChoiceContext(), belovedPartner);
+        await CardCmd.Exhaust(new BlockingPlayerChoiceContext(), nextOfKin);
+
+        var pet = Assert.Single(Combat.Creatures.Where(creature => creature.IsPet).Skip(petsBefore));
+        Assert.Equal(CutePet.UpgradedSummonAmount, pet.MaxHp);
+        CardTestAssertions.AssertPowerAmount<RegenPower>(
+            Player.Creature,
+            BelovedPartner.UpgradedRegenAmount);
+        CardTestAssertions.AssertPowerAmount<TinderPower>(Player.Creature, BelovedPartner.TinderAmount);
+        Assert.Equal(
+            drawBefore - NextOfKin.UpgradedDrawAmount,
+            PileType.Draw.GetPile(Player).Cards.Count);
     }
 
     [Fact]

@@ -74,6 +74,35 @@ public sealed class NeverHadTheseRelicTests : SunqianCombatTestSuite
     }
 
     [Fact]
+    public async Task Upgraded_family_cards_keep_their_stronger_effects_after_deck_removal()
+    {
+        NeverHadTheseRelic relic = CreateRelic();
+        await relic.BeforeCardRemoved(Upgrade(Player.RunState.CreateCard<CutePet>(Player)));
+        await relic.BeforeCardRemoved(Upgrade(Player.RunState.CreateCard<BelovedPartner>(Player)));
+        await relic.BeforeCardRemoved(Upgrade(Player.RunState.CreateCard<NextOfKin>(Player)));
+        int energyBefore = Player.PlayerCombatState!.Energy;
+        int drawBefore = PileType.Draw.GetPile(Player).Cards.Count;
+        int petsBefore = Combat.Creatures.Count(creature => creature.IsPet);
+
+        await relic.AfterSideTurnStart(CombatSide.Player, [Player.Creature], Combat);
+
+        Assert.Equal(3, relic.RemovedFamilyCards);
+        Assert.Equal(1, relic.RemovedUpgradedCutePets);
+        Assert.Equal(1, relic.RemovedUpgradedBelovedPartners);
+        Assert.Equal(1, relic.RemovedUpgradedNextOfKin);
+        Assert.Equal(energyBefore + 3, Player.PlayerCombatState.Energy);
+        Assert.Equal(
+            drawBefore - NextOfKin.UpgradedDrawAmount,
+            PileType.Draw.GetPile(Player).Cards.Count);
+        var pet = Assert.Single(Combat.Creatures.Where(creature => creature.IsPet).Skip(petsBefore));
+        Assert.Equal(CutePet.UpgradedSummonAmount, pet.MaxHp);
+        CardTestAssertions.AssertPowerAmount<RegenPower>(
+            Player.Creature,
+            BelovedPartner.UpgradedRegenAmount);
+        CardTestAssertions.AssertPowerAmount<TinderPower>(Player.Creature, BelovedPartner.TinderAmount);
+    }
+
+    [Fact]
     public async Task Zero_counter_or_a_turn_without_the_owner_does_not_grant_rewards()
     {
         NeverHadTheseRelic relic = CreateRelic();
