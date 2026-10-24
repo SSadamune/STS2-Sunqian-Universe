@@ -8,9 +8,8 @@ using MegaCrit.Sts2.Core.Models;
 namespace Squ.Interop;
 
 /// <summary>
-/// Optional Yjcm extension for Tinder. Its gameplay effect only requires the
-/// public API, while its combat UI is shown only when the party contains a
-/// Yjcm character.
+/// Optional Yjcm extension for Tinder. Its gameplay effect and combat UI are
+/// enabled whenever the public API is available.
 /// </summary>
 internal static class YjcmTinderInterop
 {
@@ -18,34 +17,20 @@ internal static class YjcmTinderInterop
 		YjcmPublicApiInterop.IsReady
 		&& YjcmPublicApiInterop.IsHuoGongPower(power);
 
-	public static IEnumerable<IHoverTip> HuoGongHoverTips(PowerModel power)
+	public static IEnumerable<IHoverTip> HuoGongHoverTips()
 	{
-		JointModPresentationMode mode = PresentationMode;
-		if (mode == JointModPresentationMode.HoverOnly)
-		{
-			yield return new HoverTip(
-				SquCommonL10n.YjcmGoodFireHoverTitle(),
-				SquCommonL10n.YjcmTinderLibraryHover());
-			yield break;
-		}
-
-		if (mode == JointModPresentationMode.InlineKeywords
+		if (YjcmPublicApiInterop.IsReady
 			&& YjcmPublicApiInterop.CreateHuoGongHoverTip() is { } huoGongTip)
 		{
 			yield return huoGongTip;
 		}
 	}
 
-	public static void AddCombatDescriptionArgs(LocString description, PowerModel power) =>
+	public static void AddCombatDescriptionArgs(LocString description) =>
 		description.Add(
 			"YjcmTinderHuoGongText",
-			PresentationMode == JointModPresentationMode.InlineKeywords
+			YjcmPublicApiInterop.IsReady
 				? SquCommonL10n.YjcmTinderInlineText().GetFormattedText()
 				: string.Empty);
-
-	private static JointModPresentationMode PresentationMode =>
-		JointModPresentation.Resolve(
-			YjcmPublicApiInterop.IsReady,
-			YjcmPublicApiInterop.IsYjcmCharacter);
 
 }

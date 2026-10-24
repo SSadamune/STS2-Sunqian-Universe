@@ -36,8 +36,6 @@ public static class SquCommonL10n
 		"SUNQIAN_UNIVERSE_COMMON.YJCM_GOOD_FIRE.inlineText";
 	public const string YjcmTinderInlineTextKey =
 		"SUNQIAN_UNIVERSE_COMMON.YJCM_TINDER.inlineText";
-	public const string YjcmTinderLibraryHoverKey =
-		"SUNQIAN_UNIVERSE_COMMON.YJCM_TINDER.libraryHover";
 	public const string ScrySelectionPromptWithSourceKey =
 		"SUNQIAN_UNIVERSE_COMMON.SCRY.selectionPromptWithSource";
 	public const string NeutralCardAddedAnnotationKey =
@@ -94,9 +92,6 @@ public static class SquCommonL10n
 
 	public static LocString YjcmTinderInlineText() =>
 		new(Table, YjcmTinderInlineTextKey);
-
-	public static LocString YjcmTinderLibraryHover() =>
-		new(Table, YjcmTinderLibraryHoverKey);
 
 	public static LocString ScrySelectionPromptWithSource() =>
 		new(Table, ScrySelectionPromptWithSourceKey);

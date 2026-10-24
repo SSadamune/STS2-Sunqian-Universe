@@ -22,7 +22,7 @@ internal static class InteropPowerDescriptionPatch
 				YjcmGoodFireInterop.AddCombatCondition(__result, __instance);
 				break;
 			case TinderPower:
-				YjcmTinderInterop.AddCombatDescriptionArgs(__result, __instance);
+				YjcmTinderInterop.AddCombatDescriptionArgs(__result);
 				break;
 			case KeepVigorPower:
 			case CrossTheRiverPower:

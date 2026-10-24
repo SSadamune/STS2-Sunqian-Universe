@@ -45,7 +45,7 @@ public sealed class TinderPower : ModPowerTemplate
 	protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
 	[
 		HoverTipFactory.FromPower<BurningPower>(),
-		..YjcmTinderInterop.HuoGongHoverTips(this),
+		..YjcmTinderInterop.HuoGongHoverTips(),
 	];
 
 	public override LocString Description
@@ -53,7 +53,7 @@ public sealed class TinderPower : ModPowerTemplate
 		get
 		{
 			LocString description = base.Description;
-			YjcmTinderInterop.AddCombatDescriptionArgs(description, this);
+			YjcmTinderInterop.AddCombatDescriptionArgs(description);
 			return description;
 		}
 	}
