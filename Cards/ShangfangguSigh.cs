@@ -6,8 +6,10 @@ using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Localization;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
+using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.CardPools;
 using Squ.Audio;
+using Squ.Character;
 using Squ.Interop;
 using Squ.Powers;
 using STS2RitsuLib.Interop.AutoRegistration;
@@ -37,6 +39,8 @@ public sealed class ShangfangguSigh : ModCardTemplate
 
 	public override CardAssetProfile AssetProfile => new(
 		PortraitPath: "res://images/cards/ShangfangguSigh.png");
+
+	public override CardPoolModel VisualCardPool => ModelDb.CardPool<SunqianCardPool>();
 
 	public ShangfangguSigh()
 		: base(1, CardType.Power, CardRarity.Token, TargetType.Self)

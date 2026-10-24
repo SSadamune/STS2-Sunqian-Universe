@@ -6,6 +6,7 @@ using MegaCrit.Sts2.Core.Models.Characters;
 using MegaCrit.Sts2.Core.Models.Monsters;
 using MegaCrit.Sts2.Core.Models.Powers;
 using Squ.Cards;
+using Squ.Character;
 using Squ.Interop;
 using Squ.Powers;
 using TestTheSpire;
@@ -69,6 +70,14 @@ public sealed class ShangfangguSighTests : SunqianCombatTestSuite
 {
     protected override void ConfigureBattle(CombatTestBattleBuilder battle) =>
         battle.Player<Ironclad>().AddEnemy<BigDummy>().WithSeed("shangfanggu-sigh");
+
+    [Fact]
+    public void Uses_the_supporting_actor_character_frame()
+    {
+        Assert.Same(
+            ModelDb.CardPool<SunqianCardPool>(),
+            ModelDb.Card<ShangfangguSigh>().VisualCardPool);
+    }
 
     [Fact]
     public async Task Good_fire_also_multiplies_yjcm_fire_attack_for_yjcm_characters()
