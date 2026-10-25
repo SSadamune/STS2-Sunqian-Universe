@@ -42,11 +42,6 @@ public sealed class ChickenFootCheeseScript : ScriptCardTemplate<ChickenFootChee
 		CardKeyword.Exhaust,
 	];
 
-	protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
-	[
-		..SquCardHoverTipFactory.FromCardWithCardHoverTips<ChickenFootCheeseScriptStrikePreview>(this, IsUpgraded),
-	];
-
 	public override CardAssetProfile AssetProfile => new(
 		PortraitPath: "res://images/cards/ChickenFootCheeseScript.png");
 

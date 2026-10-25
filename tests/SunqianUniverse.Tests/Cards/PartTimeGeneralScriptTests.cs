@@ -78,6 +78,9 @@ public sealed class PartTimeGeneralScriptTests : SunqianCombatTestSuite
         Assert.Equal(
             "—",
             script.DynamicVars[ScriptPartTimeGeneralPower.RecordedCardsVarName].ToString());
+        Assert.DoesNotContain(
+            "—",
+            record.GetDescriptionForPile(record.Pile!.Type));
 
         await PlayerCmd.SetEnergy(2, Player);
         await PlayAndActivateScript(await AddToHand<ServantScript>());
@@ -160,6 +163,9 @@ public sealed class PartTimeGeneralScriptTests : SunqianCombatTestSuite
             Squ.Script.ScriptSystem.ScriptCollectionPile.GetPile(Player).Cards
                 .OfType<PartTimeGeneralScriptRecord>());
         Assert.Equal(2, record.RecordedCards.Count);
+        Assert.Contains(
+            ModelDb.Card<PommelStrike>().Title,
+            record.GetDescriptionForPile(record.Pile!.Type));
 
         CardModel? selected = null;
         var selector = new ScriptedCardSelector()

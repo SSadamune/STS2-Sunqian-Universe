@@ -1,5 +1,6 @@
 using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
+using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.CardPools;
 using MegaCrit.Sts2.Core.Models.Characters;
@@ -58,6 +59,19 @@ public sealed class AllScriptCardsTests : SunqianCombatTestSuite
         Assert.Equal(expected, registered);
     }
 
+    [Fact]
+    public void Canonical_script_cards_can_render_in_the_card_library()
+    {
+        foreach (ScriptCase testCase in Cases)
+        {
+            CardModel canonical = ModelDb.GetById<CardModel>(ModelDb.GetId(testCase.CardType));
+
+            Assert.False(canonical.IsMutable);
+            Assert.NotEmpty(canonical.GetDescriptionForPile(PileType.Deck));
+            Assert.NotEmpty(canonical.HoverTips.OfType<CardHoverTip>());
+        }
+    }
+
     [Theory]
     [InlineData(typeof(BombardChibiScript), typeof(BombardChibiScriptRecord), typeof(ScriptBombardChibiPower), false)]
     [InlineData(typeof(BowangParadoxScript), typeof(BowangParadoxScriptRecord), typeof(ScriptBowangParadoxPower), false)]
@@ -92,7 +106,17 @@ public sealed class AllScriptCardsTests : SunqianCombatTestSuite
         }
 
         await PlayerCmd.SetEnergy(card is PartTimeGeneralScript ? 0 : 10, Player);
-        if (card.TargetType == TargetType.AnyEnemy)
+        if (card is BowangParadoxScript)
+        {
+            var selector = new ScriptedCardSelector()
+                .ThenSelectWhere(candidate => candidate is BowangParadoxVigorChoice);
+            using (UseCardSelector(selector))
+            {
+                await Play(card);
+            }
+            AssertAllSelectionsConsumed(selector);
+        }
+        else if (card.TargetType == TargetType.AnyEnemy)
         {
             await Play(card, EnemyAt(0));
         }

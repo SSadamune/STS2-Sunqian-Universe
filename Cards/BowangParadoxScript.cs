@@ -22,11 +22,14 @@ namespace Squ.Cards;
 [RegisterCard(typeof(SunqianCardPool), StableEntryStem = "bowang_paradox_script")]
 public sealed class BowangParadoxScript : ScriptCardTemplate<BowangParadoxScriptRecord>
 {
-	public const int BaseTinderStacks = 6;
+	public const int BaseVigor = 7;
+	public const int UpgradedVigor = 9;
+	public const int BaseTinderStacks = 7;
 	public const int UpgradedTinderStacks = 9;
 
 	protected override IEnumerable<DynamicVar> CanonicalVars =>
 	[
+		new PowerVar<VigorPower>(BaseVigor),
 		new PowerVar<TinderPower>(BaseTinderStacks),
 	];
 
@@ -59,6 +62,7 @@ public sealed class BowangParadoxScript : ScriptCardTemplate<BowangParadoxScript
 
 	protected override void OnUpgrade()
 	{
+		DynamicVars[nameof(VigorPower)].UpgradeValueBy(UpgradedVigor - BaseVigor);
 		DynamicVars[nameof(TinderPower)].UpgradeValueBy(UpgradedTinderStacks - BaseTinderStacks);
 	}
 }

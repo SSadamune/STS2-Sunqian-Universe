@@ -302,6 +302,7 @@ public static class ScriptSystem
 			await RemoveScriptPowerAsync(target.Powers.OfType<ScriptPowerTemplate>().First());
 		}
 
+		power.SetActivationChoiceContext(choiceContext);
 		await PowerCmd.Apply(choiceContext, power, target, amount, applier, cardSource, silent);
 	}
 

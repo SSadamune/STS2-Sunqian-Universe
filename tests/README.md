@@ -46,10 +46,10 @@ Windows 下脚本会把 `APPDATA`、`LOCALAPPDATA` 和 `XDG_DATA_HOME` 同时重
 ## 当前覆盖
 
 - `FlameStrikeTests`：烈焰打击的伤害与燃烧分支烟雾测试。
-- `BowangParadoxTests`：BP-01 至 BP-06，覆盖混合手牌、单回合保留、脚本失效弃牌，
-  以及普通/升级小黄门对新抽燃烧牌的保护顺序。
-- `EunuchScriptTests`：EU-01、EU-02，覆盖新旧小黄门替换、各能力实例的口信牌归属隔离，
-  以及口信牌离手后的标记清理与停止追踪。
+- `BowangParadoxTests`：覆盖混合手牌、单回合保留、二选一激活与剧本失效行为。
+- `EunuchScriptTests`：EU-01 至 EU-06，覆盖打出时赋予临时虚无、打出后移除、
+  激活期间将所有手牌虚无视为保留、抑制虚无消耗、触发保留钩子、博望悖论交互，
+  以及《灼伤》一类具有独立回合末效果的牌。
 - Common 卡牌遵循“一张牌一个 `*Tests.cs`”的结构，覆盖直接伤害、格挡、状态、
   牌堆、自动打出、蓄能、回收和剧本生成等行为。
 - `CommonCardPoolTests`：从孙乾运行时卡池审计全部 20 张 Common 卡；新增 Common 卡却

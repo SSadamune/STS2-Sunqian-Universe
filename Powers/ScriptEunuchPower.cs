@@ -1,17 +1,9 @@
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
-using MegaCrit.Sts2.Core.Combat;
 using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.Entities.Creatures;
-using MegaCrit.Sts2.Core.Entities.Players;
-using MegaCrit.Sts2.Core.GameActions.Multiplayer;
-using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.Models;
 using Squ;
-using Squ.Cards;
-using Squ.Script;
 using STS2RitsuLib.Interop.AutoRegistration;
 using STS2RitsuLib.Scaffolding.Content;
 
@@ -22,79 +14,40 @@ namespace Squ.Powers;
 [RegisterPower]
 public sealed class ScriptEunuchPower : ScriptPowerTemplate
 {
-	protected override IEnumerable<DynamicVar> CanonicalVars =>
-	[
-		new CardsVar(EunuchScript.BaseDraw),
-	];
-
-	private sealed class Data
-	{
-		public HashSet<CardModel> MarkedCards { get; } = [];
-	}
-
 	public override PowerAssetProfile AssetProfile => new(
 		IconPath: "res://images/powers/ScriptEunuchPower.png",
 		BigIconPath: "res://images/powers/ScriptEunuchPowerBig.png");
 
-	protected override object InitInternalData() => new Data();
+	protected override Task OnScriptApplied(Creature? applier, CardModel? cardSource) =>
+		Task.CompletedTask;
 
-	protected override async Task OnScriptApplied(Creature? applier, CardModel? cardSource)
+	public override bool ShouldEtherealTrigger(CardModel card) =>
+		!TreatsEtherealAsRetain(card);
+
+	public static bool TreatsEtherealAsRetain(CardModel card) =>
+		card.Pile?.Type == PileType.Hand
+		&& card.Keywords.Contains(CardKeyword.Ethereal)
+		&& card.Owner?.Creature.GetPower<ScriptEunuchPower>() is not null;
+
+	internal static void ApplyTemporaryEthereal(CardModel card)
 	{
-		if (Owner.Player is not { } player)
+		if (card.Keywords.Contains(CardKeyword.Ethereal))
 		{
 			return;
 		}
 
-		Data data = GetInternalData<Data>();
-		int draw = cardSource is EunuchScript { IsUpgraded: true }
-			? EunuchScript.UpgradedDraw
-			: EunuchScript.BaseDraw;
-		DynamicVars.Cards.BaseValue = draw;
-		List<CardModel> drawn = (await CardPileCmd.Draw(
-			new ThrowingPlayerChoiceContext(),
-			draw,
-			player)).ToList();
-		foreach (CardModel card in drawn.Where(card => card.Pile?.Type == PileType.Hand))
-		{
-			ApplyMark(card);
-			data.MarkedCards.Add(card);
-		}
+		CardCmd.ApplyKeyword(card, CardKeyword.Ethereal);
+		CardCmd.ApplyKeyword(card, SquKeywords.EunuchMessage);
 	}
 
-	public static void ClearMarkIfPresent(CardModel card)
-	{
-		if (card.HasEunuchMessage())
-		{
-			CardCmd.RemoveKeyword(card, SquKeywords.EunuchMessage);
-		}
-	}
-
-	public override async Task AfterRemoved(Creature oldOwner)
-	{
-		Player? player = oldOwner.Player;
-		if (!SuppressScriptEndEffects
-			&& player is not null
-			&& oldOwner.CombatState is not null
-			&& !CombatManager.Instance.IsOverOrEnding)
-		{
-			List<CardModel> toExhaust = GetInternalData<Data>().MarkedCards
-				.Where(card => card.Pile?.Type == PileType.Hand && card.HasEunuchMessage())
-				.ToList();
-			foreach (CardModel card in toExhaust)
-			{
-				await CardCmd.Exhaust(new ThrowingPlayerChoiceContext(), card);
-			}
-		}
-
-		await base.AfterRemoved(oldOwner);
-	}
-
-	internal static void ApplyMark(CardModel card)
+	internal static void ClearTemporaryEtherealIfPresent(CardModel card)
 	{
 		if (!card.HasEunuchMessage())
 		{
-			CardCmd.ApplyKeyword(card, SquKeywords.EunuchMessage);
+			return;
 		}
-	}
 
+		CardCmd.RemoveKeyword(card, CardKeyword.Ethereal);
+		CardCmd.RemoveKeyword(card, SquKeywords.EunuchMessage);
+	}
 }

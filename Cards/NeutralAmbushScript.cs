@@ -30,12 +30,6 @@ public sealed class NeutralAmbushScript : ScriptCardTemplate<NeutralAmbushScript
 	public const int BoulderCount = 1;
 	public const int SalvoStrikeCount = 2;
 
-	protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
-	[
-		..SquCardHoverTipFactory.FromCardWithCardHoverTips<GiantRock>(this, IsUpgraded),
-		..SquCardHoverTipFactory.FromCardWithCardHoverTips<SalvoStrike>(this, IsUpgraded),
-	];
-
 	public override IEnumerable<CardKeyword> CanonicalKeywords =>
 	[
 		SquKeywords.Script,

@@ -16,7 +16,7 @@ using STS2RitsuLib.Scaffolding.Content;
 
 namespace Squ.Powers;
 
-/// <summary>剧本：一人一城。激活时立即按正常规则触发一次覆甲。</summary>
+/// <summary>剧本：一人一城。覆甲获得双倍格挡，并在正常衰减之外额外减少1层。</summary>
 [RegisterPower]
 public sealed class ScriptOneManOneCityPower : ScriptPowerTemplate
 {
@@ -29,21 +29,42 @@ public sealed class ScriptOneManOneCityPower : ScriptPowerTemplate
 		HoverTipFactory.FromPower<PlatingPower>(),
 	];
 
-	protected override async Task OnScriptApplied(Creature? applier, CardModel? cardSource)
+	public override async Task BeforeSideTurnEndEarly(
+		PlayerChoiceContext choiceContext,
+		CombatSide side,
+		IEnumerable<Creature> participants)
 	{
+		if (!participants.Contains(Owner))
+		{
+			return;
+		}
+
 		PlatingPower? plating = Owner.GetPower<PlatingPower>();
 		if (plating is null || plating.Amount <= 0)
 		{
 			return;
 		}
 
-		await PowerCmd.Decrement(plating);
-		if (plating.Amount <= 0)
+		Flash();
+		await CreatureCmd.GainBlock(Owner, plating.Amount, ValueProp.Unpowered, null);
+	}
+
+	public override async Task AfterSideTurnStart(
+		CombatSide side,
+		IReadOnlyList<Creature> participants,
+		ICombatState combatState)
+	{
+		if (!participants.Contains(Owner)
+			|| Owner.Player?.PlayerCombatState?.TurnNumber == 1)
 		{
 			return;
 		}
 
-		Flash();
-		await CreatureCmd.GainBlock(Owner, plating.Amount, ValueProp.Unpowered, null);
+		PlatingPower? plating = Owner.GetPower<PlatingPower>();
+		if (plating is not null && plating.Amount > 0)
+		{
+			Flash();
+			await PowerCmd.Decrement(plating);
+		}
 	}
 }

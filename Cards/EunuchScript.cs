@@ -5,6 +5,7 @@ using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
+using MegaCrit.Sts2.Core.Models;
 using Squ;
 using Squ.Audio;
 using Squ.Character;
@@ -29,6 +30,7 @@ public sealed class EunuchScript : ScriptCardTemplate<EunuchScriptRecord>
 
 	protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
 	[
+		HoverTipFactory.FromKeyword(CardKeyword.Ethereal),
 		HoverTipFactory.FromKeyword(CardKeyword.Retain),
 		HoverTipFactory.FromKeyword(CardKeyword.Exhaust),
 	];
@@ -50,6 +52,15 @@ public sealed class EunuchScript : ScriptCardTemplate<EunuchScriptRecord>
 	protected override async Task PlayScriptAsync(PlayerChoiceContext choiceContext, CardPlay cardPlay)
 	{
 		SquSfx.Play(SquSfx.EunuchScriptEvent);
+		IEnumerable<CardModel> drawn = await CardPileCmd.Draw(
+			choiceContext,
+			DynamicVars.Cards.IntValue,
+			Owner);
+		foreach (CardModel card in drawn)
+		{
+			ScriptEunuchPower.ApplyTemporaryEthereal(card);
+		}
+
 		await UnlockScriptAsync(choiceContext);
 	}
 

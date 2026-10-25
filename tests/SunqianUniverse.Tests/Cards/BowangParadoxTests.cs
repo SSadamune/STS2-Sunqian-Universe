@@ -29,13 +29,40 @@ public sealed class BowangParadoxTests : SunqianCombatTestSuite
         var ordinarySkill = await AddToHand<DefendLongtao>();
         var bowang = await AddToHand<BowangParadoxScript>();
 
-        await PlayAndActivateScript(bowang);
+        await PlayAndChooseVigor(bowang);
 
         AssertInPile(unretainedAttack, PileType.Discard);
         AssertInPile(retainedAttack, PileType.Hand);
         AssertInPile(burningSkill, PileType.Hand);
         AssertInPile(ordinarySkill, PileType.Hand);
-        Assert.Null(Player.Creature.GetPower<VigorPower>());
+        CardTestAssertions.AssertPowerAmount<VigorPower>(
+            Player.Creature,
+            BowangParadoxScript.BaseVigor);
+        AssertOnlyScript<ScriptBowangParadoxPower>();
+    }
+
+    [Fact]
+    public async Task BP_07_upgraded_vigor_choice_grants_nine_vigor()
+    {
+        var bowang = Upgrade(await AddToHand<BowangParadoxScript>());
+
+        await PlayAndChooseVigor(bowang);
+
+        CardTestAssertions.AssertPowerAmount<VigorPower>(
+            Player.Creature,
+            BowangParadoxScript.UpgradedVigor);
+        AssertOnlyScript<ScriptBowangParadoxPower>();
+    }
+
+    [Fact]
+    public async Task BP_08_upgraded_tinder_choice_grants_nine_tinder()
+    {
+        var bowang = Upgrade(await AddToHand<BowangParadoxScript>());
+        await PlayAndChooseTinder(bowang);
+
+        CardTestAssertions.AssertPowerAmount<TinderPower>(
+            Player.Creature,
+            BowangParadoxScript.UpgradedTinderStacks);
         AssertOnlyScript<ScriptBowangParadoxPower>();
     }
 
@@ -46,7 +73,7 @@ public sealed class BowangParadoxTests : SunqianCombatTestSuite
         var bowang = await AddToHand<BowangParadoxScript>();
 
         Assert.True(retainedAttack.ShouldRetainThisTurn);
-        await PlayAndActivateScript(bowang);
+        await PlayAndChooseVigor(bowang);
 
         AssertInPile(retainedAttack, PileType.Hand);
         AssertOnlyScript<ScriptBowangParadoxPower>();
@@ -64,25 +91,22 @@ public sealed class BowangParadoxTests : SunqianCombatTestSuite
         Assert.False(attack.ShouldRetainThisTurn);
 
         var bowang = await AddToHand<BowangParadoxScript>();
-        await PlayAndActivateScript(bowang);
+        await PlayAndChooseVigor(bowang);
 
         AssertInPile(attack, PileType.Discard);
         AssertOnlyScript<ScriptBowangParadoxPower>();
     }
 
     [Fact]
-    public async Task BP_04_replacement_discards_only_unretained_burning_cards()
+    public async Task BP_04_tinder_choice_discards_only_unretained_burning_cards()
     {
-        var bowang = await AddToHand<BowangParadoxScript>();
-        await PlayAndActivateScript(bowang);
-
         var burningAttack = await AddToHand<FlameStrike>();
         var burningSkill = await AddToHand<BlockFirefighting>();
         var retainedBurning = GiveSingleTurnRetain(await AddToHand<FlameStrike>());
         var nonBurningSkill = await AddToHand<DefendLongtao>();
-        var replacement = await AddToHand<ServantScript>();
+        var bowang = await AddToHand<BowangParadoxScript>();
 
-        await PlayAndActivateScript(replacement);
+        await PlayAndChooseTinder(bowang);
 
         AssertInPile(burningAttack, PileType.Discard);
         AssertInPile(burningSkill, PileType.Discard);
@@ -91,58 +115,62 @@ public sealed class BowangParadoxTests : SunqianCombatTestSuite
         CardTestAssertions.AssertPowerAmount<TinderPower>(
             Player.Creature,
             BowangParadoxScript.BaseTinderStacks);
+        AssertOnlyScript<ScriptBowangParadoxPower>();
+    }
+
+    [Fact]
+    public async Task BP_05_deactivation_has_no_effect()
+    {
+        var bowang = await AddToHand<BowangParadoxScript>();
+        await PlayAndChooseVigor(bowang);
+
+        var burningSkill = await AddToHand<BlockFirefighting>();
+        var replacement = await AddToHand<ServantScript>();
+
+        await PlayAndActivateScript(replacement);
+
+        AssertInPile(burningSkill, PileType.Hand);
+        Assert.Null(Player.Creature.GetPower<TinderPower>());
         AssertOnlyScript<ScriptServantPower>();
     }
 
     [Fact]
-    public async Task BP_05_eunuch_protects_newly_drawn_burning_cards_from_old_bowang()
+    public async Task BP_06_reactivation_offers_a_fresh_choice()
     {
-        var bowang = await AddToHand<BowangParadoxScript>();
-        await PlayAndActivateScript(bowang);
+        await PlayAndChooseVigor(await AddToHand<BowangParadoxScript>());
 
-        var preexistingBurning = await AddToHand<FlameStrike>();
-        var drawnSecond = await AddToDrawPileTop<BlockFirefighting>();
-        var drawnFirst = await AddToDrawPileTop<FlameStrike>();
-        var eunuch = await AddToHand<EunuchScript>();
+        var burningSkill = await AddToHand<BlockFirefighting>();
+        await PlayAndChooseTinder(await AddToHand<BowangParadoxScript>());
 
-        await PlayAndActivateScript(eunuch);
-
-        AssertInPile(preexistingBurning, PileType.Discard);
-        AssertEunuchProtectedInHand(drawnFirst);
-        AssertEunuchProtectedInHand(drawnSecond);
+        AssertInPile(burningSkill, PileType.Discard);
+        CardTestAssertions.AssertPowerAmount<VigorPower>(
+            Player.Creature,
+            BowangParadoxScript.BaseVigor);
         CardTestAssertions.AssertPowerAmount<TinderPower>(
             Player.Creature,
             BowangParadoxScript.BaseTinderStacks);
-        AssertOnlyScript<ScriptEunuchPower>();
+        AssertOnlyScript<ScriptBowangParadoxPower>();
     }
 
-    [Fact]
-    public async Task BP_06_upgraded_eunuch_protects_all_three_drawn_burning_cards()
+    private async Task PlayAndChooseVigor(BowangParadoxScript bowang)
     {
-        var bowang = await AddToHand<BowangParadoxScript>();
-        await PlayAndActivateScript(bowang);
-
-        var drawnThird = await AddToDrawPileTop<FlameStrike>();
-        var drawnSecond = await AddToDrawPileTop<BlockFirefighting>();
-        var drawnFirst = await AddToDrawPileTop<FlameStrike>();
-        var eunuch = Upgrade(await AddToHand<EunuchScript>());
-
-        Assert.True(eunuch.IsUpgraded);
-        await PlayAndActivateScript(eunuch);
-
-        AssertEunuchProtectedInHand(drawnFirst);
-        AssertEunuchProtectedInHand(drawnSecond);
-        AssertEunuchProtectedInHand(drawnThird);
-        CardTestAssertions.AssertPowerAmount<TinderPower>(
-            Player.Creature,
-            BowangParadoxScript.BaseTinderStacks);
-        AssertOnlyScript<ScriptEunuchPower>();
+        var selector = new ScriptedCardSelector()
+            .ThenSelectWhere(card => card is BowangParadoxVigorChoice);
+        using (UseCardSelector(selector))
+        {
+            await PlayAndActivateScript(bowang);
+        }
+        AssertAllSelectionsConsumed(selector);
     }
 
-    private static void AssertEunuchProtectedInHand(CardModel card)
+    private async Task PlayAndChooseTinder(BowangParadoxScript bowang)
     {
-        AssertInPile(card, PileType.Hand);
-        Assert.True(card.HasEunuchMessage());
-        Assert.True(card.ShouldRetainThisTurn);
+        var selector = new ScriptedCardSelector()
+            .ThenSelectWhere(card => card is BowangParadoxTinderChoice);
+        using (UseCardSelector(selector))
+        {
+            await PlayAndActivateScript(bowang);
+        }
+        AssertAllSelectionsConsumed(selector);
     }
 }

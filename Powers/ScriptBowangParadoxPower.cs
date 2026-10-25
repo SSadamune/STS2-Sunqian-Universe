@@ -1,18 +1,13 @@
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
-using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.Entities.Creatures;
-using MegaCrit.Sts2.Core.Entities.Players;
-using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.Models;
-using Squ;
-using Squ.Audio;
+using MegaCrit.Sts2.Core.Models.Powers;
 using Squ.Cards;
-using Squ.Script;
+using Squ.Combat;
 using STS2RitsuLib.Interop.AutoRegistration;
 using STS2RitsuLib.Scaffolding.Content;
 
@@ -20,25 +15,15 @@ using STS2RitsuLib.Scaffolding.Content;
 
 namespace Squ.Powers;
 
-/// <summary>
-/// 博望悖论剧本：失效时，获得一次性的火种层数，并丢弃手牌中所有能造成灼烧的牌。
-/// 火种的具体层数在打出时（<see cref="OnScriptApplied"/>）根据牌是否已升级快照到内部数据，
-/// 失效结算（<see cref="AfterRemoved"/>）时直接读取快照值，不依赖届时的 DynamicVars 状态。
-/// </summary>
+/// <summary>博望悖论剧本：激活时在活力弃攻和火种弃火之间选择一项。</summary>
 [RegisterPower]
 public sealed class ScriptBowangParadoxPower : ScriptPowerTemplate
 {
-	private sealed class Data
-	{
-		public decimal TinderStacks;
-	}
-
 	protected override IEnumerable<DynamicVar> CanonicalVars =>
 	[
+		new PowerVar<VigorPower>(BowangParadoxScript.BaseVigor),
 		new PowerVar<TinderPower>(BowangParadoxScript.BaseTinderStacks),
 	];
-
-	protected override object InitInternalData() => new Data();
 
 	public override PowerAssetProfile AssetProfile => new(
 		IconPath: "res://images/powers/ScriptBowangParadoxPower.png",
@@ -46,6 +31,7 @@ public sealed class ScriptBowangParadoxPower : ScriptPowerTemplate
 
 	protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
 	[
+		HoverTipFactory.FromPower<VigorPower>(),
 		..HoverTipFactory.FromPowerWithPowerHoverTips<TinderPower>(),
 		HoverTipFactory.FromPower<BurningPower>(),
 		HoverTipFactory.FromKeyword(CardKeyword.Retain),
@@ -53,60 +39,22 @@ public sealed class ScriptBowangParadoxPower : ScriptPowerTemplate
 
 	protected override async Task OnScriptApplied(Creature? applier, CardModel? cardSource)
 	{
-		decimal stacks = cardSource is BowangParadoxScript { IsUpgraded: true }
+		bool upgraded = cardSource is BowangParadoxScript { IsUpgraded: true };
+		decimal tinder = upgraded
 			? BowangParadoxScript.UpgradedTinderStacks
 			: BowangParadoxScript.BaseTinderStacks;
-		GetInternalData<Data>().TinderStacks = stacks;
-		DynamicVars[nameof(TinderPower)].BaseValue = stacks;
-
-		if (Owner.Player is not { } player)
+		DynamicVars[nameof(TinderPower)].BaseValue = tinder;
+		int vigor = upgraded
+			? BowangParadoxScript.UpgradedVigor
+			: BowangParadoxScript.BaseVigor;
+		DynamicVars[nameof(VigorPower)].BaseValue = vigor;
+		if (Owner.Player is { } player)
 		{
-			return;
+			await BowangParadoxChoice.OfferAsync(
+				ActivationChoiceContext,
+				player,
+				cardSource,
+				upgraded);
 		}
-
-		List<CardModel> attackCards = PileType.Hand.GetPile(player).Cards
-			.Where(card => card.Type == CardType.Attack && !card.ShouldRetainThisTurn)
-			.ToList();
-		if (attackCards.Count > 0)
-		{
-			await CardCmd.DiscardAndDraw(
-				new ThrowingPlayerChoiceContext(),
-				attackCards,
-				0);
-		}
-	}
-
-	public override async Task AfterRemoved(Creature oldOwner)
-	{
-		if (SuppressScriptEndEffects)
-		{
-			await base.AfterRemoved(oldOwner);
-			return;
-		}
-
-		SquSfx.Play(SquSfx.BowangParadoxRemovedEvent);
-		decimal stacks = GetInternalData<Data>().TinderStacks;
-		Player? player = oldOwner.Player;
-		if (stacks > 0 && player is not null)
-		{
-			PlayerChoiceContext choiceContext = new ThrowingPlayerChoiceContext();
-
-			await PowerCmd.Apply<TinderPower>(
-				choiceContext,
-				oldOwner,
-				stacks,
-				oldOwner,
-				null);
-
-			List<CardModel> burningCards = PileType.Hand.GetPile(player).Cards
-				.Where(card => SquCardTags.AppliesBurning(card) && !card.ShouldRetainThisTurn)
-				.ToList();
-			if (burningCards.Count > 0)
-			{
-				await CardCmd.DiscardAndDraw(choiceContext, burningCards, 0);
-			}
-		}
-
-		await base.AfterRemoved(oldOwner);
 	}
 }

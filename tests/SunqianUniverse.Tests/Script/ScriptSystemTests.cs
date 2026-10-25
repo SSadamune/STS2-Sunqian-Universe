@@ -79,7 +79,7 @@ public sealed class ScriptSystemTests : SunqianCombatTestSuite
     }
 
     [Fact]
-    public async Task Replaying_the_active_eunuch_invalidates_old_instance_before_drawing_new_cards()
+    public async Task Replaying_the_active_eunuch_rebuilds_the_power_and_both_plays_keep_their_drawn_cards()
     {
         CardModel first = await AddToDrawPileTop<StrikeIronclad>();
         CardModel second = await AddToDrawPileTop<DefendIronclad>();
@@ -93,18 +93,18 @@ public sealed class ScriptSystemTests : SunqianCombatTestSuite
 
         Assert.NotSame(active, Player.Creature.GetPower<ScriptEunuchPower>());
         Assert.Equal(1, ScriptSystem.GetScriptLiftsThisTurn(Player));
-        AssertInPile(first, PileType.Exhaust);
-        AssertInPile(second, PileType.Exhaust);
+        AssertInPile(first, PileType.Hand);
+        AssertInPile(second, PileType.Hand);
         AssertInPile(third, PileType.Hand);
         AssertInPile(fourth, PileType.Hand);
-        Assert.False(first.HasEunuchMessage());
-        Assert.False(second.HasEunuchMessage());
+        Assert.True(first.HasEunuchMessage());
+        Assert.True(second.HasEunuchMessage());
         Assert.True(third.HasEunuchMessage());
         Assert.True(fourth.HasEunuchMessage());
     }
 
     [Fact]
-    public async Task Box_lunch_reselecting_active_eunuch_invalidates_only_the_old_instance()
+    public async Task Box_lunch_reselecting_active_eunuch_rebuilds_power_without_drawing_or_moving_cards()
     {
         var relic = (BoxLunchRelic)ModelDb.Relic<BoxLunchRelic>().ToMutable();
         Player.AddRelicInternal(relic, silent: true);
@@ -129,14 +129,14 @@ public sealed class ScriptSystemTests : SunqianCombatTestSuite
 
         Assert.NotSame(oldPower, Player.Creature.GetPower<ScriptEunuchPower>());
         Assert.Equal(1, ScriptSystem.GetScriptLiftsThisTurn(Player));
-        AssertInPile(oldFirst, PileType.Exhaust);
-        AssertInPile(oldSecond, PileType.Exhaust);
-        AssertInPile(newFirst, PileType.Hand);
-        AssertInPile(newSecond, PileType.Hand);
-        Assert.False(oldFirst.HasEunuchMessage());
-        Assert.False(oldSecond.HasEunuchMessage());
-        Assert.True(newFirst.HasEunuchMessage());
-        Assert.True(newSecond.HasEunuchMessage());
+        AssertInPile(oldFirst, PileType.Hand);
+        AssertInPile(oldSecond, PileType.Hand);
+        AssertInPile(newFirst, PileType.Draw);
+        AssertInPile(newSecond, PileType.Draw);
+        Assert.True(oldFirst.HasEunuchMessage());
+        Assert.True(oldSecond.HasEunuchMessage());
+        Assert.False(newFirst.HasEunuchMessage());
+        Assert.False(newSecond.HasEunuchMessage());
     }
 
     [Fact]
@@ -238,7 +238,8 @@ public sealed class ScriptSystemTests : SunqianCombatTestSuite
         await PlayScript<ServantScript>();
 
         var selector = new ScriptedCardSelector()
-            .ThenSelectWhere(card => card is NeutralAmbushScriptRecord);
+            .ThenSelectWhere(card => card is NeutralAmbushScriptRecord)
+            .ThenSelectWhere(card => card is BowangParadoxVigorChoice);
         using (UseCardSelector(selector))
         {
             await PlayScript<BowangParadoxScript>();
@@ -279,6 +280,38 @@ public sealed class ScriptSystemTests : SunqianCombatTestSuite
 
         Assert.True(neutralRecord.ShouldGlowGold);
         Assert.False(servantRecord.ShouldGlowGold);
+    }
+
+    [Fact]
+    public async Task Manual_reselection_passes_its_choice_context_to_bowang_paradox()
+    {
+        var initialSelector = new ScriptedCardSelector()
+            .ThenSelectWhere(card => card is BowangParadoxVigorChoice);
+        using (UseCardSelector(initialSelector))
+        {
+            await PlayScript<BowangParadoxScript>();
+        }
+        AssertAllSelectionsConsumed(initialSelector);
+
+        CardModel burning = await AddToHand<BlockFirefighting>();
+        var reselectSelector = new ScriptedCardSelector()
+            .ThenSelectWhere(card => card is BowangParadoxScriptRecord)
+            .ThenSelectWhere(card => card is BowangParadoxTinderChoice);
+        using (UseCardSelector(reselectSelector))
+        {
+            bool selected = await ScriptSystem.ChooseActiveScriptsAsync(
+                new BlockingPlayerChoiceContext(),
+                Player,
+                cancelable: false);
+            Assert.True(selected);
+        }
+        AssertAllSelectionsConsumed(reselectSelector);
+
+        AssertInPile(burning, PileType.Discard);
+        CardTestAssertions.AssertPowerAmount<TinderPower>(
+            Player.Creature,
+            BowangParadoxScript.BaseTinderStacks);
+        AssertOnlyScript<ScriptBowangParadoxPower>();
     }
 
     private async Task PlayScript<TScript>()

@@ -55,6 +55,30 @@ public sealed class HoverCardUpgradePreviewTests : SunqianCombatTestSuite
         Assert.DoesNotContain("[green]", salvo.GetDescriptionForPile(PileType.Hand));
     }
 
+    [Fact]
+    public void Upgraded_script_hover_cards_highlight_every_changed_script_effect()
+    {
+        AssertScriptRecordUpgradePreviewIsGreen<ServantScript, ServantScriptRecord>();
+        AssertScriptRecordUpgradePreviewIsGreen<TwoWordPoetScript, TwoWordPoetScriptRecord>();
+        AssertScriptRecordUpgradePreviewIsGreen<SunqianScript, SunqianScriptRecord>();
+        AssertScriptRecordUpgradePreviewIsGreen<ChickenFootCheeseScript, ChickenFootCheeseScriptRecord>();
+        AssertScriptRecordUpgradePreviewIsGreen<ExecutionCommanderScript, ExecutionCommanderScriptRecord>();
+        AssertScriptRecordUpgradePreviewIsGreen<HeadsmanScript, HeadsmanScriptRecord>();
+        AssertScriptRecordUpgradePreviewIsGreen<XiliangSavageScript, XiliangSavageScriptRecord>();
+        AssertScriptRecordUpgradePreviewIsGreen<NightRaidWuchaoScript, NightRaidWuchaoScriptRecord>();
+        AssertScriptRecordUpgradePreviewIsGreen<BowangParadoxScript, BowangParadoxScriptRecord>();
+    }
+
+    [Fact]
+    public void Script_effect_card_previews_are_nested_after_their_script_record()
+    {
+        AssertRecordOwnsDerivedCard<ChickenFootCheeseScript, ChickenFootCheeseScriptRecord,
+            ChickenFootCheeseScriptStrikePreview>();
+        AssertRecordOwnsDerivedCard<ServantScript, ServantScriptRecord, ThrowHimOut>();
+        AssertRecordOwnsDerivedCard<NeutralAmbushScript, NeutralAmbushScriptRecord, GiantRock>();
+        AssertRecordOwnsDerivedCard<NeutralAmbushScript, NeutralAmbushScriptRecord, SalvoStrike>();
+    }
+
     private void AssertUpgradePreviewIsGreen<TSource, TTarget>(bool expectDescriptionHighlight = true)
         where TSource : CardModel
         where TTarget : CardModel
@@ -75,6 +99,37 @@ public sealed class HoverCardUpgradePreviewTests : SunqianCombatTestSuite
         {
             Assert.DoesNotContain("[green]", description);
         }
+    }
+
+    private void AssertScriptRecordUpgradePreviewIsGreen<TSource, TRecord>()
+        where TSource : ScriptCardTemplate
+        where TRecord : ScriptRecordCardTemplate
+    {
+        TSource source = Combat.CreateCard<TSource>(Player);
+        source.UpgradePreviewType = CardUpgradePreviewType.Deck;
+        source.UpgradeInternal();
+        TRecord record = (TRecord)GetHoverCard<TRecord>(source);
+
+        Assert.True(record.IsUpgraded);
+        Assert.True(record.SourceUpgraded);
+        Assert.NotEqual(CardUpgradePreviewType.None, record.UpgradePreviewType);
+        Assert.Contains("[green]", record.GetDescriptionForUpgradePreview());
+    }
+
+    private void AssertRecordOwnsDerivedCard<TSource, TRecord, TDerived>()
+        where TSource : ScriptCardTemplate
+        where TRecord : ScriptRecordCardTemplate
+        where TDerived : CardModel
+    {
+        TSource source = Combat.CreateCard<TSource>(Player);
+        CardHoverTip[] sourceCards = source.HoverTips.OfType<CardHoverTip>().ToArray();
+        int recordIndex = Array.FindIndex(sourceCards, tip => tip.Card is TRecord);
+        int derivedIndex = Array.FindIndex(sourceCards, tip => tip.Card is TDerived);
+
+        Assert.True(recordIndex >= 0);
+        Assert.True(derivedIndex > recordIndex);
+        TRecord record = Assert.IsType<TRecord>(sourceCards[recordIndex].Card);
+        Assert.Contains(record.HoverTips.OfType<CardHoverTip>(), tip => tip.Card is TDerived);
     }
 
     private static CardModel GetHoverCard<TTarget>(CardModel source)

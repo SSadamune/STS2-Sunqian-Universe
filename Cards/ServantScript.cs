@@ -31,12 +31,6 @@ public sealed class ServantScript : ScriptCardTemplate<ServantScriptRecord>
 
 	public override bool GainsBlock => true;
 
-	// 对齐 BEGONE：悬停预览实际生成的卡牌（含升级态）。
-	protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
-	[
-		SquCardHoverTipFactory.FromCard<ThrowHimOut>(this, IsUpgraded),
-	];
-
 	public override IEnumerable<CardKeyword> CanonicalKeywords =>
 	[
 		SquKeywords.Script,

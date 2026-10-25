@@ -87,8 +87,12 @@ public abstract class ScriptCardTemplate<TRecord> : ScriptCardTemplate
 	protected override void AddExtraArgsToDescription(LocString description)
 	{
 		base.AddExtraArgsToDescription(description);
-		var owner = Owner;
-		bool inCombat = CombatManager.Instance.IsInProgress && owner is not null;
+		// Card-library entries are canonical models. Accessing Owner on a canonical
+		// model throws, so only inspect combat ownership for mutable card instances.
+		var owner = IsMutable ? Owner : null;
+		bool inCombat = IsMutable
+			&& CombatManager.Instance.IsInProgress
+			&& owner is not null;
 		bool unlocked = inCombat && ScriptSystem.IsUnlocked<TRecord>(owner!);
 		string key;
 		if (!IsReinforceableScript)
