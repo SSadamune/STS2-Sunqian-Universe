@@ -20,7 +20,7 @@ public sealed class EunuchScriptTests : SunqianCombatTestSuite
     }
 
     [Fact]
-    public async Task EU_01_replaying_active_eunuch_keeps_power_and_all_marks()
+    public async Task EU_01_replaying_active_eunuch_exhausts_only_old_cards_then_tracks_new_cards()
     {
         var oldMarkedSecond = await AddToDrawPileTop<DefendLongtao>();
         var oldMarkedFirst = await AddToDrawPileTop<FlameStrike>();
@@ -41,11 +41,13 @@ public sealed class EunuchScriptTests : SunqianCombatTestSuite
 
         var newPower = Assert.IsType<ScriptEunuchPower>(
             Player.Creature.GetPower<ScriptEunuchPower>());
-        Assert.Same(oldPower, newPower);
+        Assert.NotSame(oldPower, newPower);
         AssertOnlyScript<ScriptEunuchPower>();
 
-        AssertMarkedInHand(oldMarkedFirst);
-        AssertMarkedInHand(oldMarkedSecond);
+        AssertInPile(oldMarkedFirst, PileType.Exhaust);
+        AssertInPile(oldMarkedSecond, PileType.Exhaust);
+        Assert.False(oldMarkedFirst.HasEunuchMessage());
+        Assert.False(oldMarkedSecond.HasEunuchMessage());
         AssertMarkedInHand(newMarkedFirst);
         AssertMarkedInHand(newMarkedSecond);
     }

@@ -1,12 +1,13 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
+using System.Linq;
 using MegaCrit.Sts2.Core.Combat;
+using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.Entities.Creatures;
 using MegaCrit.Sts2.Core.Entities.Players;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.HoverTips;
-using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.Cards;
 using Squ.Cards;
@@ -21,65 +22,58 @@ namespace Squ.Powers;
 [RegisterPower]
 public sealed class ScriptBurningLinkedCampsPower : ScriptPowerTemplate
 {
-	public const string GeneratedCardVarName = "GeneratedCard";
-
-	private sealed class Data
-	{
-		public bool GrantUpgradedShangfangguSigh;
-	}
+	public const int BurnTinder = 6;
 
 	public override PowerAssetProfile AssetProfile => new(
 		IconPath: "res://images/powers/ScriptBurningLinkedCampsPower.png",
 		BigIconPath: "res://images/powers/ScriptBurningLinkedCampsPowerBig.png");
 
-	protected override IEnumerable<DynamicVar> CanonicalVars =>
-	[
-		new StringVar(
-			GeneratedCardVarName,
-			GeneratedCombatCards.GetDisplayTitle<ShangfangguSigh>(upgraded: false)),
-	];
-
 	protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
 	[
-		HoverTipFactory.FromCard<Burn>(),
-		HoverTipFactory.FromCard<ShangfangguSigh>(GetInternalData<Data>().GrantUpgradedShangfangguSigh),
+		..HoverTipFactory.FromPowerWithPowerHoverTips<TinderPower>(),
+		HoverTipFactory.FromPower<BurningPower>(),
 	];
 
-	protected override object InitInternalData() => new Data();
-
-	protected override Task OnScriptApplied(Creature? applier, CardModel? cardSource)
+	public override async Task AfterDamageReceived(
+		PlayerChoiceContext choiceContext,
+		Creature target,
+		DamageResult result,
+		MegaCrit.Sts2.Core.ValueProps.ValueProp props,
+		Creature? dealer,
+		CardModel? cardSource)
 	{
-		bool upgraded = cardSource is BurningLinkedCampsScript { IsUpgraded: true };
-		Data data = GetInternalData<Data>();
-		data.GrantUpgradedShangfangguSigh = upgraded;
-		((StringVar)DynamicVars[GeneratedCardVarName]).StringValue =
-			$"[gold]{GeneratedCombatCards.GetDisplayTitle<ShangfangguSigh>(upgraded)}[/gold]";
-		return Task.CompletedTask;
-	}
-
-	public override async Task AfterRemoved(Creature oldOwner)
-	{
-		Player? player = oldOwner.Player;
-		ICombatState? combatState = oldOwner.CombatState;
-		if (!SuppressScriptEndEffects
-			&& player is not null
-			&& combatState is not null)
+		if (target != Owner
+			|| cardSource is not Burn
+			|| result.TotalDamage + result.OverkillDamage <= 0)
 		{
-			await GeneratedCombatCards.AddToHandInCombat<Burn>(
-				combatState,
-				player,
-				upgraded: false,
-				player);
-
-			await GeneratedCombatCards.AddToDrawPileInCombat<ShangfangguSigh>(
-				combatState,
-				player,
-				1,
-				upgraded: GetInternalData<Data>().GrantUpgradedShangfangguSigh,
-				player,
-				position: CardPilePosition.Top);
+			return;
 		}
 
-		await base.AfterRemoved(oldOwner);
+		await GainTinderAsync(choiceContext, BurnTinder, cardSource);
+	}
+
+	internal Task AfterBurningDamage(
+		PlayerChoiceContext choiceContext,
+		IEnumerable<DamageResult> results,
+		CardModel? cardSource)
+	{
+		int damageDealt = results.Sum(result => result.TotalDamage + result.OverkillDamage);
+		return damageDealt > 0
+			? GainTinderAsync(choiceContext, damageDealt, cardSource)
+			: Task.CompletedTask;
+	}
+
+	private async Task GainTinderAsync(
+		PlayerChoiceContext choiceContext,
+		decimal amount,
+		CardModel? cardSource)
+	{
+		Flash();
+		await PowerCmd.Apply<TinderPower>(
+			choiceContext,
+			Owner,
+			amount,
+			Owner,
+			cardSource);
 	}
 }

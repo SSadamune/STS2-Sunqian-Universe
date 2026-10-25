@@ -33,4 +33,15 @@ public sealed class ExecutionCommanderScriptTests : SunqianCombatTestSuite
             ExecutionCommanderScript.BaseBonusPercent);
         AssertOnlyScript<ScriptExecutionCommanderPower>();
     }
+
+    [Fact]
+    public async Task Upgraded_script_adds_seventy_five_percent_to_the_record()
+    {
+        await PlayAndActivateScript(Upgrade(await AddToHand<ExecutionCommanderScript>()));
+
+        CardTestAssertions.AssertPowerAmount<ScriptExecutionCommanderPower>(
+            Player.Creature,
+            ExecutionCommanderScript.UpgradedBonusPercent);
+        Assert.Equal(75, ExecutionCommanderScript.UpgradedBonusPercent);
+    }
 }

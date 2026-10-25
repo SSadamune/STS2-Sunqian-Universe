@@ -9,7 +9,6 @@ using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.Entities.Creatures;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.Hooks;
-using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.ValueProps;
@@ -30,28 +29,21 @@ public sealed class ScriptTwoWordPoetPower : ScriptPowerTemplate
 
 	public const string TargetingDescriptionVarName = "TargetingDescription";
 
-	public const int TurnStartHitCount = 2;
+	public const int ActivationHitCount = 2;
 
 	private sealed class Data
 	{
 		public bool TargetsAllEnemies;
-
-		public CardModel? SourceCard;
 	}
 
 	public override PowerAssetProfile AssetProfile => new(
 		IconPath: "res://images/powers/ScriptTwoWordPoetPower.png",
 		BigIconPath: "res://images/powers/ScriptTwoWordPoetPowerBig.png");
 
-	protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
-	[
-		HoverTipFactory.FromKeyword(SquKeywords.Environmental),
-	];
-
 	protected override IEnumerable<DynamicVar> CanonicalVars =>
 	[
 		new DamageVar(SnapshotDamageVarName, 0m, ValueProp.Move),
-		new RepeatVar(TurnStartHitCount),
+		new RepeatVar(ActivationHitCount),
 		new StringVar(TargetingDescriptionVarName, "随机对敌人"),
 	];
 
@@ -75,35 +67,18 @@ public sealed class ScriptTwoWordPoetPower : ScriptPowerTemplate
 			out _);
 	}
 
-	protected override Task OnScriptApplied(Creature? applier, CardModel? cardSource)
+	protected override async Task OnScriptApplied(Creature? applier, CardModel? cardSource)
 	{
-		if (cardSource is not TwoWordPoetScript script)
+		if (cardSource is not TwoWordPoetScript script
+			|| Owner.IsDead
+			|| Owner.CombatState is not { } combatState)
 		{
-			return Task.CompletedTask;
+			return;
 		}
 
 		Data data = GetInternalData<Data>();
 		data.TargetsAllEnemies = script.IsUpgraded;
-		data.SourceCard = cardSource;
 		SyncDisplayVars(data);
-		return Task.CompletedTask;
-	}
-
-	public override async Task AfterSideTurnStart(
-		CombatSide side,
-		IReadOnlyList<Creature> participants,
-		ICombatState combatState)
-	{
-		if (side != Owner.Side || !participants.Contains(Owner) || Owner.IsDead)
-		{
-			return;
-		}
-
-		Data data = GetInternalData<Data>();
-		if (Amount <= 0m || data.SourceCard is not CardModel sourceCard)
-		{
-			return;
-		}
 
 		Flash();
 		SquSfx.PlayRandom(combatState.RunState, SquSfx.TwoWordPoetTriggerEvents);
@@ -111,8 +86,8 @@ public sealed class ScriptTwoWordPoetPower : ScriptPowerTemplate
 
 		AttackCommand attack = DamageCmd.Attack(Amount)
 			.Unpowered()
-			.WithHitCount(TurnStartHitCount)
-			.FromCard(sourceCard, null);
+			.WithHitCount(ActivationHitCount)
+			.FromCard(cardSource, null);
 		if (data.TargetsAllEnemies)
 		{
 			attack.BeforeDamage(() =>
@@ -145,7 +120,7 @@ public sealed class ScriptTwoWordPoetPower : ScriptPowerTemplate
 	private void SyncDisplayVars(Data data)
 	{
 		DynamicVars[SnapshotDamageVarName].BaseValue = Amount;
-		DynamicVars.Repeat.BaseValue = TurnStartHitCount;
+		DynamicVars.Repeat.BaseValue = ActivationHitCount;
 		((StringVar)DynamicVars[TargetingDescriptionVarName]).StringValue =
 			data.TargetsAllEnemies ? "对所有敌人" : "随机对敌人";
 	}

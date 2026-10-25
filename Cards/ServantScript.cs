@@ -21,8 +21,8 @@ namespace Squ.Cards;
 [RegisterCard(typeof(SunqianCardPool), StableEntryStem = "servant_script")]
 public sealed class ServantScript : ScriptCardTemplate<ServantScriptRecord>
 {
-	public const int BaseBlock = 12;
-	public const int UpgradedBlock = 16;
+	public const int BaseBlock = 10;
+	public const int UpgradedBlock = 12;
 
 	protected override IEnumerable<DynamicVar> CanonicalVars =>
 	[

@@ -24,7 +24,7 @@ namespace Squ.Cards;
 public sealed class HeadsmanScript : ScriptCardTemplate<HeadsmanScriptRecord>
 {
 	public const int BaseVigor = 3;
-	public const int UpgradedVigor = 5;
+	public const int UpgradedVigor = 4;
 
 	public const int VulnerableAmount = 2;
 
@@ -67,13 +67,6 @@ public sealed class HeadsmanScript : ScriptCardTemplate<HeadsmanScriptRecord>
 	{
 		ArgumentNullException.ThrowIfNull(cardPlay.Target, nameof(cardPlay.Target));
 		SquSfx.Play(SquSfx.HeadsmanScriptEvent);
-
-		await PowerCmd.Apply<VigorPower>(
-			choiceContext,
-			Owner.Creature,
-			DynamicVars[nameof(VigorPower)].BaseValue,
-			Owner.Creature,
-			this);
 
 		await PowerCmd.Apply<VulnerablePower>(
 			choiceContext,

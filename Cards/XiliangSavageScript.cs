@@ -23,10 +23,10 @@ namespace Squ.Cards;
 [RegisterCard(typeof(SunqianCardPool), StableEntryStem = "xiliang_savage_script")]
 public sealed class XiliangSavageScript : ScriptCardTemplate<XiliangSavageScriptRecord>
 {
-	public const int BaseBlock = 11;
-	public const int UpgradedBlock = 16;
-	public const int BaseVigor = 4;
-	public const int UpgradedVigor = 6;
+	public const int BaseBlock = 16;
+	public const int UpgradedBlock = 19;
+	public const int BaseVigor = 3;
+	public const int UpgradedVigor = 5;
 
 	protected override IEnumerable<DynamicVar> CanonicalVars =>
 	[
@@ -58,7 +58,7 @@ public sealed class XiliangSavageScript : ScriptCardTemplate<XiliangSavageScript
 		PortraitPath: "res://images/cards/XiliangSavageScript.png");
 
 	public XiliangSavageScript()
-		: base(2, CardType.Skill, CardRarity.Uncommon, TargetType.Self, true)
+		: base(3, CardType.Skill, CardRarity.Uncommon, TargetType.Self, true)
 	{
 	}
 
@@ -66,13 +66,6 @@ public sealed class XiliangSavageScript : ScriptCardTemplate<XiliangSavageScript
 	{
 		SquSfx.Play(SquSfx.XiliangSavageEvent);
 		await CreatureCmd.GainBlock(Owner.Creature, DynamicVars.Block, cardPlay);
-
-		await PowerCmd.Apply<VigorPower>(
-			choiceContext,
-			Owner.Creature,
-			DynamicVars[nameof(VigorPower)].BaseValue,
-			Owner.Creature,
-			this);
 
 		await UnlockScriptAsync(choiceContext);
 	}

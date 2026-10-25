@@ -7,6 +7,7 @@ using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.Entities.Creatures;
 using MegaCrit.Sts2.Core.Entities.Players;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
+using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.Models;
 using Squ;
 using Squ.Cards;
@@ -21,6 +22,11 @@ namespace Squ.Powers;
 [RegisterPower]
 public sealed class ScriptEunuchPower : ScriptPowerTemplate
 {
+	protected override IEnumerable<DynamicVar> CanonicalVars =>
+	[
+		new CardsVar(EunuchScript.BaseDraw),
+	];
+
 	private sealed class Data
 	{
 		public HashSet<CardModel> MarkedCards { get; } = [];
@@ -32,24 +38,27 @@ public sealed class ScriptEunuchPower : ScriptPowerTemplate
 
 	protected override object InitInternalData() => new Data();
 
-	protected override Task OnScriptApplied(Creature? applier, CardModel? cardSource)
+	protected override async Task OnScriptApplied(Creature? applier, CardModel? cardSource)
 	{
 		if (Owner.Player is not { } player)
 		{
-			return Task.CompletedTask;
+			return;
 		}
 
 		Data data = GetInternalData<Data>();
-		foreach (CardModel card in PileType.Hand.GetPile(player).Cards)
+		int draw = cardSource is EunuchScript { IsUpgraded: true }
+			? EunuchScript.UpgradedDraw
+			: EunuchScript.BaseDraw;
+		DynamicVars.Cards.BaseValue = draw;
+		List<CardModel> drawn = (await CardPileCmd.Draw(
+			new ThrowingPlayerChoiceContext(),
+			draw,
+			player)).ToList();
+		foreach (CardModel card in drawn.Where(card => card.Pile?.Type == PileType.Hand))
 		{
-			if (!card.HasEunuchMessage())
-			{
-				continue;
-			}
+			ApplyMark(card);
 			data.MarkedCards.Add(card);
 		}
-
-		return Task.CompletedTask;
 	}
 
 	public static void ClearMarkIfPresent(CardModel card)
@@ -88,6 +97,4 @@ public sealed class ScriptEunuchPower : ScriptPowerTemplate
 		}
 	}
 
-	internal void TrackMarkedCard(CardModel card) =>
-		GetInternalData<Data>().MarkedCards.Add(card);
 }

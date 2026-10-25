@@ -38,7 +38,6 @@ public sealed class OneManOneCity : ScriptCardTemplate<OneManOneCityScriptRecord
 	public override IEnumerable<CardKeyword> CanonicalKeywords =>
 	[
 		SquKeywords.Script,
-		CardKeyword.Exhaust,
 	];
 
 	public override CardAssetProfile AssetProfile => new(

@@ -6,10 +6,12 @@ using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.Entities.Creatures;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.HoverTips;
+using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.Powers;
 using MegaCrit.Sts2.Core.ValueProps;
 using Squ.Combat;
+using Squ.Cards;
 using Squ.Interop;
 using STS2RitsuLib.Interop.AutoRegistration;
 using STS2RitsuLib.Scaffolding.Content;
@@ -29,6 +31,11 @@ public sealed class ScriptXiliangSavagePower : ScriptPowerTemplate
 {
 	private const string BlockVarName = "Block";
 	private static readonly string BurningVarName = nameof(BurningPower);
+
+	protected override IEnumerable<DynamicVar> CanonicalVars =>
+	[
+		new PowerVar<VigorPower>(XiliangSavageScript.BaseVigor),
+	];
 
 	private sealed class Data
 	{
@@ -78,6 +85,20 @@ public sealed class ScriptXiliangSavagePower : ScriptPowerTemplate
 		BigIconPath: "res://images/powers/ScriptXiliangSavagePowerBig.png");
 
 	protected override object InitInternalData() => new Data();
+
+	protected override async Task OnScriptApplied(Creature? applier, CardModel? cardSource)
+	{
+		int vigor = cardSource is XiliangSavageScript { IsUpgraded: true }
+			? XiliangSavageScript.UpgradedVigor
+			: XiliangSavageScript.BaseVigor;
+		DynamicVars[nameof(VigorPower)].BaseValue = vigor;
+		await PowerCmd.Apply<VigorPower>(
+			new ThrowingPlayerChoiceContext(),
+			Owner,
+			vigor,
+			Owner,
+			cardSource);
+	}
 
 	public override Task BeforeCardPlayed(CardPlay cardPlay)
 	{

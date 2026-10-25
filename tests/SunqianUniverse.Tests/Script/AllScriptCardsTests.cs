@@ -32,7 +32,7 @@ public sealed class AllScriptCardsTests : SunqianCombatTestSuite
         new(typeof(NeutralAmbushScript), typeof(NeutralAmbushScriptRecord), typeof(ScriptNeutralAmbushPower), false),
         new(typeof(NightRaidWuchaoScript), typeof(NightRaidWuchaoScriptRecord), typeof(ScriptNightRaidWuchaoPower), true),
         new(typeof(OneManOneCity), typeof(OneManOneCityScriptRecord), typeof(ScriptOneManOneCityPower), false),
-        new(typeof(PartTimeGeneralScript), typeof(PartTimeGeneralScriptRecord), typeof(ScriptPartTimeGeneralPower), false),
+        new(typeof(PartTimeGeneralScript), typeof(PartTimeGeneralScriptRecord), typeof(ScriptPartTimeGeneralPower), true),
         new(typeof(ServantScript), typeof(ServantScriptRecord), typeof(ScriptServantPower), false),
         new(typeof(SunqianScript), typeof(SunqianScriptRecord), typeof(ScriptSunqianPower), false),
         new(typeof(TwoWordPoetScript), typeof(TwoWordPoetScriptRecord), typeof(ScriptTwoWordPoetPower), true),
@@ -69,7 +69,7 @@ public sealed class AllScriptCardsTests : SunqianCombatTestSuite
     [InlineData(typeof(NeutralAmbushScript), typeof(NeutralAmbushScriptRecord), typeof(ScriptNeutralAmbushPower), false)]
     [InlineData(typeof(NightRaidWuchaoScript), typeof(NightRaidWuchaoScriptRecord), typeof(ScriptNightRaidWuchaoPower), true)]
     [InlineData(typeof(OneManOneCity), typeof(OneManOneCityScriptRecord), typeof(ScriptOneManOneCityPower), false)]
-    [InlineData(typeof(PartTimeGeneralScript), typeof(PartTimeGeneralScriptRecord), typeof(ScriptPartTimeGeneralPower), false)]
+    [InlineData(typeof(PartTimeGeneralScript), typeof(PartTimeGeneralScriptRecord), typeof(ScriptPartTimeGeneralPower), true)]
     [InlineData(typeof(ServantScript), typeof(ServantScriptRecord), typeof(ScriptServantPower), false)]
     [InlineData(typeof(SunqianScript), typeof(SunqianScriptRecord), typeof(ScriptSunqianPower), false)]
     [InlineData(typeof(TwoWordPoetScript), typeof(TwoWordPoetScriptRecord), typeof(ScriptTwoWordPoetPower), true)]
@@ -82,7 +82,14 @@ public sealed class AllScriptCardsTests : SunqianCombatTestSuite
     {
         CardModel card = await AddToHand(ModelDb.GetId(cardType));
         Assert.IsAssignableFrom<ScriptCardTemplate>(card);
-        Assert.Contains(CardKeyword.Exhaust, card.Keywords);
+        if (card is OneManOneCity)
+        {
+            Assert.DoesNotContain(CardKeyword.Exhaust, card.Keywords);
+        }
+        else
+        {
+            Assert.Contains(CardKeyword.Exhaust, card.Keywords);
+        }
 
         await PlayerCmd.SetEnergy(card is PartTimeGeneralScript ? 0 : 10, Player);
         if (card.TargetType == TargetType.AnyEnemy)

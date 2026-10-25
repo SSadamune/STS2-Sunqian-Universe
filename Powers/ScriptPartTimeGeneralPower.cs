@@ -13,6 +13,7 @@ using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Nodes.Combat;
 using Squ.Audio;
+using Squ.Cards;
 using Squ.Script;
 using STS2RitsuLib.Interop.AutoRegistration;
 using STS2RitsuLib.Scaffolding.Content;
@@ -22,19 +23,17 @@ using STS2RitsuLib.Scaffolding.Content;
 namespace Squ.Powers;
 
 /// <summary>
-/// 剧本：兼职将军。记录卡牌打出时生成的 Strike；剧本失效后让持有者从记录中
-/// 选择一种，并将同升级状态的新副本加入手牌。
+/// 剧本：兼职将军。记录卡牌打出时生成的 Strike；剧本失效后让持有者移去一项
+/// 记录，并将同升级状态、可免费打出一次的新副本加入手牌。
 /// </summary>
 [RegisterPower]
 public sealed class ScriptPartTimeGeneralPower : ScriptPowerTemplate
 {
 	public const string RecordedCardsVarName = "RecordedCards";
 
-	private sealed record RecordedCard(ModelId Id, bool Upgraded);
-
 	private sealed class Data
 	{
-		public List<RecordedCard> PlayedCards { get; } = [];
+		public PartTimeGeneralScriptRecord? Record;
 	}
 
 	private static readonly LocString SelectionPrompt =
@@ -50,27 +49,18 @@ public sealed class ScriptPartTimeGeneralPower : ScriptPowerTemplate
 	];
 
 	protected override string SmartDescriptionLocKey =>
-		IsMutable && GetInternalData<Data>().PlayedCards.Count > 0
+		IsMutable && GetInternalData<Data>().Record?.RecordedCards.Count > 0
 			? Id.Entry + ".smartDescription"
 			: Id.Entry + ".smartDescriptionEmpty";
 
 	protected override object InitInternalData() => new Data();
 
-	internal void RecordPlayedCards(IEnumerable<CardModel> cards)
+	internal void AttachRecord(PartTimeGeneralScriptRecord record)
 	{
-		List<CardModel> cardList = cards.ToList();
 		Data data = GetInternalData<Data>();
-		foreach (CardModel card in cardList)
-		{
-			data.PlayedCards.Add(new RecordedCard(card.Id, card.IsUpgraded));
-		}
-
-		string separator = new LocString(
-			"powers",
-			Id.Entry + ".cardSeparator").GetFormattedText() ?? ", ";
-		((StringVar)DynamicVars[RecordedCardsVarName]).StringValue = string.Join(
-			separator,
-			cardList.Select(card => $"[gold]{card.Title}[/gold]"));
+		data.Record = record;
+		((StringVar)DynamicVars[RecordedCardsVarName]).StringValue =
+			record.DynamicVars[RecordedCardsVarName].ToString();
 	}
 
 	public override async Task AfterRemoved(Creature oldOwner)
@@ -88,8 +78,14 @@ public sealed class ScriptPartTimeGeneralPower : ScriptPowerTemplate
 
 	private async Task ChooseRecordedCard(ICombatState combatState, Player player)
 	{
-		List<RecordedCard> recordedCards = GetInternalData<Data>().PlayedCards
-			.Distinct()
+		PartTimeGeneralScriptRecord? record = GetInternalData<Data>().Record;
+		if (record is null)
+		{
+			return;
+		}
+
+		List<CardModel> recordedCards = record.RecordedCards
+			.Select(CardModel.FromSerializable)
 			.ToList();
 		if (recordedCards.Count == 0)
 		{
@@ -97,12 +93,12 @@ public sealed class ScriptPartTimeGeneralPower : ScriptPowerTemplate
 		}
 
 		List<CardModel> options = [];
-		foreach (RecordedCard recorded in recordedCards)
+		foreach (CardModel recorded in recordedCards)
 		{
 			CardModel option = combatState.CreateCard(
 				ModelDb.GetById<CardModel>(recorded.Id),
 				player);
-			if (recorded.Upgraded && option.IsUpgradable)
+			if (recorded.IsUpgraded && option.IsUpgradable)
 			{
 				option.UpgradeInternal();
 				option.FinalizeUpgradeInternal();
@@ -122,6 +118,9 @@ public sealed class ScriptPartTimeGeneralPower : ScriptPowerTemplate
 			player,
 			prefs)).FirstOrDefault();
 		selected ??= options[0];
+		int selectedIndex = options.IndexOf(selected);
+		record.RemoveRecordedCardAt(selectedIndex);
+		selected.EnergyCost.SetUntilPlayed(0);
 
 		await CardPileCmd.AddGeneratedCardToCombat(
 			selected,

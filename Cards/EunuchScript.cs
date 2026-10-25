@@ -1,12 +1,10 @@
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
-using MegaCrit.Sts2.Core.Models;
 using Squ;
 using Squ.Audio;
 using Squ.Character;
@@ -23,11 +21,6 @@ public sealed class EunuchScript : ScriptCardTemplate<EunuchScriptRecord>
 {
 	public const int BaseDraw = 2;
 	public const int UpgradedDraw = 3;
-
-	private List<CardModel>? _drawnCardsForCurrentPlay;
-
-	internal IReadOnlyList<CardModel> DrawnCardsForCurrentPlay =>
-		_drawnCardsForCurrentPlay ?? [];
 
 	protected override IEnumerable<DynamicVar> CanonicalVars =>
 	[
@@ -57,25 +50,7 @@ public sealed class EunuchScript : ScriptCardTemplate<EunuchScriptRecord>
 	protected override async Task PlayScriptAsync(PlayerChoiceContext choiceContext, CardPlay cardPlay)
 	{
 		SquSfx.Play(SquSfx.EunuchScriptEvent);
-		List<CardModel> drawn = (await CardPileCmd.Draw(
-			choiceContext,
-			DynamicVars.Cards.BaseValue,
-			Owner)).ToList();
-
-		try
-		{
-			_drawnCardsForCurrentPlay = drawn;
-			foreach (CardModel card in drawn.Where(card => card.Pile?.Type == PileType.Hand))
-			{
-				ScriptEunuchPower.ApplyMark(card);
-				Owner.Creature.GetPower<ScriptEunuchPower>()?.TrackMarkedCard(card);
-			}
-			await UnlockScriptAsync(choiceContext);
-		}
-		finally
-		{
-			_drawnCardsForCurrentPlay = null;
-		}
+		await UnlockScriptAsync(choiceContext);
 	}
 
 	protected override void OnUpgrade()

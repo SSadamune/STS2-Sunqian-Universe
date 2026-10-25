@@ -11,7 +11,11 @@ namespace Squ.Tests;
 /// </summary>
 public sealed class ScriptedCardSelector : ICardSelector
 {
-    private readonly Queue<Func<IReadOnlyList<CardModel>, IReadOnlyList<CardModel>>> _steps = [];
+    private readonly Queue<SelectionStep> _steps = [];
+
+    private sealed record SelectionStep(
+        Func<IReadOnlyList<CardModel>, IReadOnlyList<CardModel>> Select,
+        bool IsExplicitSkip);
 
     public int PendingSteps => _steps.Count;
 
@@ -26,13 +30,16 @@ public sealed class ScriptedCardSelector : ICardSelector
     public ScriptedCardSelector ThenSelectFirst(int count = 1) =>
         ThenSelect(options => options.Take(count).ToArray());
 
-    public ScriptedCardSelector ThenSkip() =>
-        ThenSelect(_ => []);
+    public ScriptedCardSelector ThenSkip()
+    {
+        _steps.Enqueue(new SelectionStep(_ => [], IsExplicitSkip: true));
+        return this;
+    }
 
     public ScriptedCardSelector ThenSelect(
         Func<IReadOnlyList<CardModel>, IReadOnlyList<CardModel>> selection)
     {
-        _steps.Enqueue(selection);
+        _steps.Enqueue(new SelectionStep(selection, IsExplicitSkip: false));
         return this;
     }
 
@@ -48,11 +55,14 @@ public sealed class ScriptedCardSelector : ICardSelector
         }
 
         IReadOnlyList<CardModel> available = options.ToArray();
-        IReadOnlyList<CardModel> selected = _steps.Dequeue()(available);
+        SelectionStep step = _steps.Dequeue();
+        IReadOnlyList<CardModel> selected = step.Select(available);
         int effectiveMinimum = Math.Min(minSelect, available.Count);
         int effectiveMaximum = Math.Min(maxSelect, available.Count);
 
-        if (selected.Count < effectiveMinimum || selected.Count > effectiveMaximum)
+        bool explicitlySkipped = step.IsExplicitSkip && selected.Count == 0;
+        if ((!explicitlySkipped && selected.Count < effectiveMinimum)
+            || selected.Count > effectiveMaximum)
         {
             throw new InvalidOperationException(
                 $"Script selected {selected.Count} card(s), but prompt allows " +

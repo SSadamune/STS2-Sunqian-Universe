@@ -25,7 +25,7 @@ public sealed class ExecutionCommanderScript : ScriptCardTemplate<ExecutionComma
 {
 	public const int GeneratedStrikeCount = 2;
 	public const int BaseBonusPercent = 50;
-	public const int UpgradedBonusPercent = 100;
+	public const int UpgradedBonusPercent = 75;
 
 	private const string BonusPercentVarName = "BonusPercent";
 

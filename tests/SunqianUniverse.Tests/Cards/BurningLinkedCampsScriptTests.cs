@@ -1,7 +1,10 @@
+using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
+using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.Models.Cards;
 using MegaCrit.Sts2.Core.Models.Characters;
 using MegaCrit.Sts2.Core.Models.Monsters;
+using MegaCrit.Sts2.Core.ValueProps;
 using Squ.Cards;
 using Squ.Powers;
 using TestTheSpire;
@@ -15,36 +18,50 @@ public sealed class BurningLinkedCampsScriptTests : SunqianCombatTestSuite
         battle.Player<Ironclad>().AddEnemy<BigDummy>().WithSeed("burning-linked-camps");
 
     [Fact]
-    public async Task Replacing_upgraded_script_generates_burn_and_upgraded_shangfanggu_sigh()
+    public async Task Playing_upgraded_script_generates_burn_and_adds_upgraded_sigh_to_draw_pile()
     {
         var previousTop = await AddToDrawPileTop<Wound>();
         await PlayAndActivateScript(Upgrade(await AddToHand<BurningLinkedCampsScript>()));
-        CardTestAssertions.AssertPowerAmount<TinderPower>(
-            Player.Creature,
-            BurningLinkedCampsScript.UpgradedTinderStacks);
-
-        await PlayAndActivateScript(await AddToHand<ServantScript>());
 
         Assert.Contains(PileType.Hand.GetPile(Player).Cards, card => card is Burn);
         CardPile drawPile = PileType.Draw.GetPile(Player);
-        var generated = Assert.IsType<ShangfangguSigh>(drawPile.Cards[0]);
+        var generated = Assert.Single(drawPile.Cards.OfType<ShangfangguSigh>());
         Assert.True(generated.IsUpgraded);
-        Assert.Same(previousTop, drawPile.Cards[1]);
-        AssertOnlyScript<ScriptServantPower>();
+        Assert.Contains(previousTop, drawPile.Cards);
+        Assert.Null(Player.Creature.GetPower<TinderPower>());
+        AssertOnlyScript<ScriptBurningLinkedCampsPower>();
     }
 
     [Fact]
-    public async Task Tinder_amplifies_all_burning_from_one_water_fire_play_and_its_block_uses_applied_amount()
+    public async Task Fully_blocked_burn_damage_still_grants_six_tinder()
     {
-        await PlayAndActivateScript(Upgrade(await AddToHand<BurningLinkedCampsScript>()));
-        var enemy = EnemyAt(0);
+        await PlayAndActivateScript(await AddToHand<BurningLinkedCampsScript>());
+        int hp = Player.Creature.CurrentHp;
+        await CreatureCmd.GainBlock(Player.Creature, 100, ValueProp.Unpowered, null);
 
-        await Play(await AddToHand<WaterFireInvincible>(), enemy);
+        await EndTurn();
 
-        int expected = WaterFireInvincible.BaseDamage
-            + BurningLinkedCampsScript.UpgradedTinderStacks;
-        CardTestAssertions.AssertPowerAmount<BurningPower>(enemy, expected);
-        Assert.Equal(expected, Player.Creature.Block);
-        Assert.Null(Player.Creature.GetPower<TinderPower>());
+        Assert.Equal(hp, Player.Creature.CurrentHp);
+        CardTestAssertions.AssertPowerAmount<TinderPower>(
+            Player.Creature,
+            ScriptBurningLinkedCampsPower.BurnTinder);
+    }
+
+    [Fact]
+    public async Task Fully_blocked_burning_damage_grants_tinder_equal_to_total_damage()
+    {
+        const int burning = 7;
+        await PlayAndActivateScript(await AddToHand<BurningLinkedCampsScript>());
+        await CreatureCmd.GainBlock(Player.Creature, 100, ValueProp.Unpowered, null);
+        int hp = Player.Creature.CurrentHp;
+        await ApplyPower<BurningPower>(Player.Creature, burning);
+        var burningPower = Assert.IsType<BurningPower>(Player.Creature.GetPower<BurningPower>());
+
+        await burningPower.TriggerAsync(
+            new BlockingPlayerChoiceContext(),
+            shouldCheckExtinguish: false);
+
+        Assert.Equal(hp, Player.Creature.CurrentHp);
+        CardTestAssertions.AssertPowerAmount<TinderPower>(Player.Creature, burning);
     }
 }

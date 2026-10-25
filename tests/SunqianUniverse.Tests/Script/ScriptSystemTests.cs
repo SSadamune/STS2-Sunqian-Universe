@@ -1,3 +1,4 @@
+using MegaCrit.Sts2.Core.Combat;
 using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
@@ -78,7 +79,7 @@ public sealed class ScriptSystemTests : SunqianCombatTestSuite
     }
 
     [Fact]
-    public async Task Replaying_the_active_eunuch_tracks_new_messages_without_invalidating_it()
+    public async Task Replaying_the_active_eunuch_invalidates_old_instance_before_drawing_new_cards()
     {
         CardModel first = await AddToDrawPileTop<StrikeIronclad>();
         CardModel second = await AddToDrawPileTop<DefendIronclad>();
@@ -88,16 +89,106 @@ public sealed class ScriptSystemTests : SunqianCombatTestSuite
 
         CardModel third = await AddToDrawPileTop<Bash>();
         CardModel fourth = await AddToDrawPileTop<Wound>();
-		await PlayScript<EunuchScript>();
+        await PlayScript<EunuchScript>();
 
-		Assert.Same(active, Player.Creature.GetPower<ScriptEunuchPower>());
-		await PlayerCmd.SetEnergy(3, Player);
-		await PlayScript<ServantScript>();
+        Assert.NotSame(active, Player.Creature.GetPower<ScriptEunuchPower>());
+        Assert.Equal(1, ScriptSystem.GetScriptLiftsThisTurn(Player));
+        AssertInPile(first, PileType.Exhaust);
+        AssertInPile(second, PileType.Exhaust);
+        AssertInPile(third, PileType.Hand);
+        AssertInPile(fourth, PileType.Hand);
+        Assert.False(first.HasEunuchMessage());
+        Assert.False(second.HasEunuchMessage());
+        Assert.True(third.HasEunuchMessage());
+        Assert.True(fourth.HasEunuchMessage());
+    }
 
-        foreach (CardModel card in new[] { first, second, third, fourth })
+    [Fact]
+    public async Task Box_lunch_reselecting_active_eunuch_invalidates_only_the_old_instance()
+    {
+        var relic = (BoxLunchRelic)ModelDb.Relic<BoxLunchRelic>().ToMutable();
+        Player.AddRelicInternal(relic, silent: true);
+        CardModel oldSecond = await AddToDrawPileTop<DefendIronclad>();
+        CardModel oldFirst = await AddToDrawPileTop<StrikeIronclad>();
+        await PlayScript<EunuchScript>();
+        var oldPower = Assert.IsType<ScriptEunuchPower>(
+            Player.Creature.GetPower<ScriptEunuchPower>());
+
+        CardModel newSecond = await AddToDrawPileTop<Wound>();
+        CardModel newFirst = await AddToDrawPileTop<Bash>();
+        var selector = new ScriptedCardSelector()
+            .ThenSelectWhere(card => card is EunuchScriptRecord);
+        using (UseCardSelector(selector))
         {
-            AssertInPile(card, PileType.Exhaust);
+            await relic.AfterSideTurnStart(
+                CombatSide.Player,
+                [Player.Creature],
+                Combat);
         }
+        AssertAllSelectionsConsumed(selector);
+
+        Assert.NotSame(oldPower, Player.Creature.GetPower<ScriptEunuchPower>());
+        Assert.Equal(1, ScriptSystem.GetScriptLiftsThisTurn(Player));
+        AssertInPile(oldFirst, PileType.Exhaust);
+        AssertInPile(oldSecond, PileType.Exhaust);
+        AssertInPile(newFirst, PileType.Hand);
+        AssertInPile(newSecond, PileType.Hand);
+        Assert.False(oldFirst.HasEunuchMessage());
+        Assert.False(oldSecond.HasEunuchMessage());
+        Assert.True(newFirst.HasEunuchMessage());
+        Assert.True(newSecond.HasEunuchMessage());
+    }
+
+    [Fact]
+    public async Task Box_lunch_skip_keeps_active_script_without_triggering_deactivation()
+    {
+        var relic = (BoxLunchRelic)ModelDb.Relic<BoxLunchRelic>().ToMutable();
+        Player.AddRelicInternal(relic, silent: true);
+        await PlayScript<SunqianScript>();
+        var active = Assert.IsType<ScriptSunqianPower>(
+            Player.Creature.GetPower<ScriptSunqianPower>());
+        CardModel wouldBeDrawn = await AddToDrawPileTop<DefendIronclad>();
+        var selector = new ScriptedCardSelector().ThenSkip();
+
+        using (UseCardSelector(selector))
+        {
+            await relic.AfterSideTurnStart(
+                CombatSide.Player,
+                [Player.Creature],
+                Combat);
+        }
+        AssertAllSelectionsConsumed(selector);
+
+        Assert.Same(active, Player.Creature.GetPower<ScriptSunqianPower>());
+        AssertInPile(wouldBeDrawn, PileType.Draw);
+        CardTestAssertions.AssertPowerAmount<DexterityPower>(
+            Player.Creature,
+            SunqianScript.BaseDexterity);
+        Assert.Equal(0, ScriptSystem.GetScriptLiftsThisTurn(Player));
+    }
+
+    [Fact]
+    public async Task Box_lunch_reselecting_reinforceable_script_rebuilds_without_deactivation()
+    {
+        var relic = (BoxLunchRelic)ModelDb.Relic<BoxLunchRelic>().ToMutable();
+        Player.AddRelicInternal(relic, silent: true);
+        await PlayScript<ExecutionCommanderScript>();
+        var active = Assert.IsType<ScriptExecutionCommanderPower>(
+            Player.Creature.GetPower<ScriptExecutionCommanderPower>());
+        var selector = new ScriptedCardSelector()
+            .ThenSelectWhere(card => card is ExecutionCommanderScriptRecord);
+
+        using (UseCardSelector(selector))
+        {
+            await relic.AfterSideTurnStart(
+                CombatSide.Player,
+                [Player.Creature],
+                Combat);
+        }
+        AssertAllSelectionsConsumed(selector);
+
+        Assert.NotSame(active, Player.Creature.GetPower<ScriptExecutionCommanderPower>());
+        Assert.Equal(0, ScriptSystem.GetScriptLiftsThisTurn(Player));
     }
 
     [Fact]

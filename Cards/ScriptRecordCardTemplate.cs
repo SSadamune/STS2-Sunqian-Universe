@@ -12,6 +12,7 @@ using MegaCrit.Sts2.Core.Localization;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.CardPools;
+using MegaCrit.Sts2.Core.Models.Powers;
 using MegaCrit.Sts2.Core.Saves.Runs;
 using Squ.Character;
 using Squ.Interop;
@@ -262,6 +263,16 @@ public sealed class HeadsmanScriptRecord : ScriptRecordCardTemplate<ScriptHeadsm
 {
 	public override CardAssetProfile AssetProfile => new(PortraitPath: "res://images/cards/HeadsmanScript.png");
 
+	protected override IEnumerable<DynamicVar> CanonicalVars =>
+	[
+		new PowerVar<VigorPower>(HeadsmanScript.BaseVigor),
+	];
+
+	protected override void SyncDisplayVars() =>
+		DynamicVars[nameof(VigorPower)].BaseValue = SourceUpgraded
+			? HeadsmanScript.UpgradedVigor
+			: HeadsmanScript.BaseVigor;
+
 	protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
 	[
 		..NewsanguoDrunkenMightEffect.HoverTips(),
@@ -278,6 +289,16 @@ public sealed class HeadsmanScriptRecord : ScriptRecordCardTemplate<ScriptHeadsm
 public sealed class XiliangSavageScriptRecord : ScriptRecordCardTemplate<ScriptXiliangSavagePower, XiliangSavageScript>
 {
 	public override CardAssetProfile AssetProfile => new(PortraitPath: "res://images/cards/XiliangSavageScript.png");
+
+	protected override IEnumerable<DynamicVar> CanonicalVars =>
+	[
+		new PowerVar<VigorPower>(XiliangSavageScript.BaseVigor),
+	];
+
+	protected override void SyncDisplayVars() =>
+		DynamicVars[nameof(VigorPower)].BaseValue = SourceUpgraded
+			? XiliangSavageScript.UpgradedVigor
+			: XiliangSavageScript.BaseVigor;
 
 	protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
 	[
@@ -313,6 +334,16 @@ public sealed class BowangParadoxScriptRecord : ScriptRecordCardTemplate<ScriptB
 public sealed class EunuchScriptRecord : ScriptRecordCardTemplate<ScriptEunuchPower, EunuchScript>
 {
 	public override CardAssetProfile AssetProfile => new(PortraitPath: "res://images/cards/EunuchScript.png");
+
+	protected override IEnumerable<DynamicVar> CanonicalVars =>
+	[
+		new CardsVar(EunuchScript.BaseDraw),
+	];
+
+	protected override void SyncDisplayVars() =>
+		DynamicVars.Cards.BaseValue = SourceUpgraded
+			? EunuchScript.UpgradedDraw
+			: EunuchScript.BaseDraw;
 }
 
 [RegisterCard(typeof(TokenCardPool), StableEntryStem = "script_record_part_time_general")]
@@ -321,18 +352,31 @@ public sealed class PartTimeGeneralScriptRecord : ScriptRecordCardTemplate<Scrip
 	[SavedProperty]
 	public List<SerializableCard> RecordedCards { get; set; } = [];
 
+	public override bool CanBeReinforced => true;
+
 	protected override IEnumerable<DynamicVar> CanonicalVars => [new StringVar("RecordedCards", string.Empty)];
 
 	public override CardAssetProfile AssetProfile => new(PortraitPath: "res://images/cards/PartTimeGeneralScript.png");
 
 	internal void RecordPlayedCards(IEnumerable<CardModel> cards)
 	{
-		RecordedCards = cards.Select(card => card.ToSerializable()).ToList();
+		RecordedCards.AddRange(cards.Select(card => card.ToSerializable()));
 		SyncDisplayVars();
 	}
 
 	protected override void ConfigurePower(ScriptPartTimeGeneralPower power, PartTimeGeneralScript source, Player player) =>
-		power.RecordPlayedCards(RecordedCards.Select(CardModel.FromSerializable));
+		power.AttachRecord(this);
+
+	internal void RemoveRecordedCardAt(int index)
+	{
+		if ((uint)index >= (uint)RecordedCards.Count)
+		{
+			return;
+		}
+
+		RecordedCards.RemoveAt(index);
+		SyncDisplayVars();
+	}
 
 	protected override void SyncDisplayVars()
 	{

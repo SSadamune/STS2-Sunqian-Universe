@@ -9,10 +9,12 @@ using MegaCrit.Sts2.Core.Entities.Players;
 using MegaCrit.Sts2.Core.Entities.Powers;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.HoverTips;
+using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.Powers;
 using MegaCrit.Sts2.Core.ValueProps;
 using Squ.Combat;
+using Squ.Cards;
 using Squ.Interop;
 using STS2RitsuLib.Interop.AutoRegistration;
 using STS2RitsuLib.Scaffolding.Content;
@@ -33,6 +35,11 @@ namespace Squ.Powers;
 [RegisterPower]
 public sealed class ScriptHeadsmanPower : ScriptPowerTemplate
 {
+	protected override IEnumerable<DynamicVar> CanonicalVars =>
+	[
+		new PowerVar<VigorPower>(HeadsmanScript.BaseVigor),
+	];
+
 	private sealed class Data
 	{
 		public bool RestoreEnergy;
@@ -64,10 +71,19 @@ public sealed class ScriptHeadsmanPower : ScriptPowerTemplate
 	protected override string SmartDescriptionLocKey =>
 		base.Id.Entry + ".smartDescription";
 
-	protected override Task OnScriptApplied(Creature? applier, CardModel? cardSource)
+	protected override async Task OnScriptApplied(Creature? applier, CardModel? cardSource)
 	{
 		GetInternalData<Data>().RestoreEnergy = true;
-		return Task.CompletedTask;
+		int vigor = cardSource is HeadsmanScript { IsUpgraded: true }
+			? HeadsmanScript.UpgradedVigor
+			: HeadsmanScript.BaseVigor;
+		DynamicVars[nameof(VigorPower)].BaseValue = vigor;
+		await PowerCmd.Apply<VigorPower>(
+			new ThrowingPlayerChoiceContext(),
+			Owner,
+			vigor,
+			Owner,
+			cardSource);
 	}
 
 	/// <summary>

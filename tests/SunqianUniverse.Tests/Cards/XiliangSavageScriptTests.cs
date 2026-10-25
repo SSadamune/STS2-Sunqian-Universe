@@ -19,9 +19,24 @@ public sealed class XiliangSavageScriptTests : SunqianCombatTestSuite
         .WithSeed("xiliang-savage-script");
 
     [Fact]
+    public async Task Upgraded_script_costs_three_gains_nineteen_block_and_grants_five_vigor_on_activation()
+    {
+        var card = Upgrade(await AddToHand<XiliangSavageScript>());
+        Assert.Equal(3, card.EnergyCost.Canonical);
+
+        await PlayAndActivateScript(card);
+
+        Assert.Equal(XiliangSavageScript.UpgradedBlock, Player.Creature.Block);
+        CardTestAssertions.AssertPowerAmount<VigorPower>(
+            Player.Creature,
+            XiliangSavageScript.UpgradedVigor);
+    }
+
+    [Fact]
     public async Task Vigor_used_by_flame_strike_is_permanently_written_into_its_damage_and_burning()
     {
         await PlayAndActivateScript(Upgrade(await AddToHand<XiliangSavageScript>()));
+        await PlayerCmd.SetEnergy(3, Player);
         var flame = await AddToHand<FlameStrike>();
 
         await Play(flame, EnemyAt(0));
@@ -38,8 +53,11 @@ public sealed class XiliangSavageScriptTests : SunqianCombatTestSuite
         await ApplyPower<CrossTheRiverPower>(Player.Creature, 1);
         await ApplyPower<VigorAmplificationPower>(Player.Creature, 1);
         var flame = await AddToHand<FlameStrike>();
-        Assert.Equal(18, SquVigorSnapshot.GetEffectiveAmount(Player.Creature, flame));
+        Assert.Equal(
+            XiliangSavageScript.UpgradedVigor * 3,
+            SquVigorSnapshot.GetEffectiveAmount(Player.Creature, flame));
 
+        await PlayerCmd.SetEnergy(3, Player);
         await Play(flame, EnemyAt(0));
 
         const int effectiveVigor = XiliangSavageScript.UpgradedVigor * 3;
@@ -55,6 +73,7 @@ public sealed class XiliangSavageScriptTests : SunqianCombatTestSuite
         await PlayAndActivateScript(Upgrade(await AddToHand<XiliangSavageScript>()));
         var chickenFoot = await AddToHand<ChickenFootCheeseScript>();
 
+        await PlayerCmd.SetEnergy(3, Player);
         await PlayAndActivateScript(chickenFoot);
 
         Assert.Equal(

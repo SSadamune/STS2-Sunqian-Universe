@@ -22,20 +22,16 @@ namespace Squ.Cards;
 [RegisterCard(typeof(SunqianCardPool), StableEntryStem = "bowang_paradox_script")]
 public sealed class BowangParadoxScript : ScriptCardTemplate<BowangParadoxScriptRecord>
 {
-	public const int BaseVigor = 6;
-	public const int UpgradedVigor = 9;
 	public const int BaseTinderStacks = 6;
 	public const int UpgradedTinderStacks = 9;
 
 	protected override IEnumerable<DynamicVar> CanonicalVars =>
 	[
-		new PowerVar<VigorPower>(BaseVigor),
 		new PowerVar<TinderPower>(BaseTinderStacks),
 	];
 
 	protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
 	[
-		HoverTipFactory.FromPower<VigorPower>(),
 		..HoverTipFactory.FromPowerWithPowerHoverTips<TinderPower>(),
 		HoverTipFactory.FromPower<BurningPower>(),
 		HoverTipFactory.FromKeyword(CardKeyword.Retain),
@@ -58,27 +54,11 @@ public sealed class BowangParadoxScript : ScriptCardTemplate<BowangParadoxScript
 	protected override async Task PlayScriptAsync(PlayerChoiceContext choiceContext, CardPlay cardPlay)
 	{
 		SquSfx.Play(SquSfx.BowangParadoxPlayEvent);
-		await PowerCmd.Apply<VigorPower>(
-			choiceContext,
-			Owner.Creature,
-			DynamicVars[nameof(VigorPower)].BaseValue,
-			Owner.Creature,
-			this);
-
-		List<CardModel> attackCards = PileType.Hand.GetPile(Owner).Cards
-			.Where(card => card.Type == CardType.Attack && !card.ShouldRetainThisTurn)
-			.ToList();
-		if (attackCards.Count > 0)
-		{
-			await CardCmd.DiscardAndDraw(choiceContext, attackCards, 0);
-		}
-
 		await UnlockScriptAsync(choiceContext);
 	}
 
 	protected override void OnUpgrade()
 	{
-		DynamicVars[nameof(VigorPower)].UpgradeValueBy(UpgradedVigor - BaseVigor);
 		DynamicVars[nameof(TinderPower)].UpgradeValueBy(UpgradedTinderStacks - BaseTinderStacks);
 	}
 }

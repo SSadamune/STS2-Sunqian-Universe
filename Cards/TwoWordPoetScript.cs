@@ -15,6 +15,7 @@ using Squ;
 using Squ.Audio;
 using Squ.Character;
 using Squ.Combat;
+using Squ.Interop;
 using Squ.Powers;
 using STS2RitsuLib.Interop.AutoRegistration;
 using STS2RitsuLib.Scaffolding.Content;
@@ -45,40 +46,24 @@ public sealed class TwoWordPoetScript : ScriptCardTemplate<TwoWordPoetScriptReco
 	public override CardAssetProfile AssetProfile => new(
 		PortraitPath: "res://images/cards/TwoWordPoetScript.png");
 
-	public override TargetType TargetType =>
-		IsUpgraded ? TargetType.AllEnemies : TargetType.AnyEnemy;
+	public override TargetType TargetType => TargetType.Self;
 
 	public TwoWordPoetScript()
-		: base(1, CardType.Attack, CardRarity.Uncommon, TargetType.AnyEnemy, true)
+		: base(1, CardType.Attack, CardRarity.Uncommon, TargetType.Self, true)
 	{
 	}
 
 	protected override async Task PlayScriptAsync(PlayerChoiceContext choiceContext, CardPlay cardPlay)
 	{
 		SquSfx.Play(SquSfx.TwoWordWineAndSongEvent);
-		SquHitVfx.Scream(Owner.Creature);
 		decimal snapshotDamagePerHit = ScriptTwoWordPoetPower.CalculateSnapshotDamagePerHit(
 			this,
 			Owner.Creature);
-
-		AttackCommand attack = DamageCmd.Attack(DynamicVars.Damage.BaseValue)
-			.WithHitCount(DynamicVars.Repeat.IntValue)
-			.FromCard(this, cardPlay);
-		if (IsUpgraded)
-		{
-			ArgumentNullException.ThrowIfNull(CombatState, "CombatState");
-			ICombatState combatState = CombatState;
-			attack.BeforeDamage(() =>
-				SquHitVfx.BlackSmallMagicMissiles(combatState.HittableEnemies));
-			await attack.TargetingAllOpponents(combatState).Execute(choiceContext);
-		}
-		else
-		{
-			ArgumentNullException.ThrowIfNull(cardPlay.Target, "cardPlay.Target");
-			Creature target = cardPlay.Target;
-			attack.BeforeDamage(() => SquHitVfx.BlackSmallMagicMissile(target));
-			await attack.Targeting(target).Execute(choiceContext);
-		}
+		await SquVigorSnapshot.SpendAll(choiceContext, Owner.Creature, this);
+		await NewsanguoDrunkenMightEffect.SpendForAttack(
+			choiceContext,
+			Owner.Creature,
+			this);
 
 		await UnlockScriptAsync(choiceContext, snapshotDamagePerHit);
 	}

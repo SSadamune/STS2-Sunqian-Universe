@@ -51,14 +51,29 @@ public sealed class ScriptBowangParadoxPower : ScriptPowerTemplate
 		HoverTipFactory.FromKeyword(CardKeyword.Retain),
 	];
 
-	protected override Task OnScriptApplied(Creature? applier, CardModel? cardSource)
+	protected override async Task OnScriptApplied(Creature? applier, CardModel? cardSource)
 	{
 		decimal stacks = cardSource is BowangParadoxScript { IsUpgraded: true }
 			? BowangParadoxScript.UpgradedTinderStacks
 			: BowangParadoxScript.BaseTinderStacks;
 		GetInternalData<Data>().TinderStacks = stacks;
 		DynamicVars[nameof(TinderPower)].BaseValue = stacks;
-		return Task.CompletedTask;
+
+		if (Owner.Player is not { } player)
+		{
+			return;
+		}
+
+		List<CardModel> attackCards = PileType.Hand.GetPile(player).Cards
+			.Where(card => card.Type == CardType.Attack && !card.ShouldRetainThisTurn)
+			.ToList();
+		if (attackCards.Count > 0)
+		{
+			await CardCmd.DiscardAndDraw(
+				new ThrowingPlayerChoiceContext(),
+				attackCards,
+				0);
+		}
 	}
 
 	public override async Task AfterRemoved(Creature oldOwner)

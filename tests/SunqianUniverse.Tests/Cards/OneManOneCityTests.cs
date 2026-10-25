@@ -1,4 +1,5 @@
 using MegaCrit.Sts2.Core.Combat;
+using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.Models.Characters;
 using MegaCrit.Sts2.Core.Models.Monsters;
@@ -15,29 +16,18 @@ public sealed class OneManOneCityTests : SunqianCombatTestSuite
     protected override void ConfigureBattle(CombatTestBattleBuilder battle) => battle.Player<Ironclad>().AddEnemy<BigDummy>().WithSeed("one-man-one-city");
 
     [Fact]
-    public async Task Script_spends_an_extra_plating_stack_and_grants_a_second_block_instance_at_turn_end()
+    public async Task Activation_spends_one_plating_and_immediately_triggers_the_remaining_amount()
     {
-        await PlayAndActivateScript(await AddToHand<OneManOneCity>());
+        var card = await AddToHand<OneManOneCity>();
+        Assert.DoesNotContain(CardKeyword.Exhaust, card.Keywords);
+        await PlayAndActivateScript(card);
         var plating = Assert.IsType<PlatingPower>(Player.Creature.GetPower<PlatingPower>());
-        var script = Assert.IsType<ScriptOneManOneCityPower>(
-            Player.Creature.GetPower<ScriptOneManOneCityPower>());
-        var context = new BlockingPlayerChoiceContext();
-
-        await plating.BeforeSideTurnEndEarly(
-            context,
-            CombatSide.Player,
-            [Player.Creature]);
-        await script.BeforeSideTurnEnd(
-            context,
-            CombatSide.Player,
-            [Player.Creature]);
 
         CardTestAssertions.AssertPowerAmount<PlatingPower>(
             Player.Creature,
             OneManOneCity.PlatingStacks - 1);
-        Assert.Equal(
-            OneManOneCity.PlatingStacks + OneManOneCity.PlatingStacks - 1,
-            Player.Creature.Block);
+        Assert.Equal(OneManOneCity.PlatingStacks - 1, Player.Creature.Block);
+        Assert.Null(card.Pile);
     }
 
     [Fact]
@@ -45,7 +35,10 @@ public sealed class OneManOneCityTests : SunqianCombatTestSuite
     {
         await PlayAndActivateScript(Upgrade(await AddToHand<OneManOneCity>()));
 
-        CardTestAssertions.AssertPowerAmount<PlatingPower>(Player.Creature, OneManOneCity.UpgradedPlatingStacks);
+        CardTestAssertions.AssertPowerAmount<PlatingPower>(
+            Player.Creature,
+            OneManOneCity.UpgradedPlatingStacks - 1);
+        Assert.Equal(OneManOneCity.UpgradedPlatingStacks - 1, Player.Creature.Block);
         AssertOnlyScript<ScriptOneManOneCityPower>();
     }
 }

@@ -6,6 +6,7 @@ using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Creatures;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.HoverTips;
+using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.Powers;
 using MegaCrit.Sts2.Core.ValueProps;
 using STS2RitsuLib.Interop.AutoRegistration;
@@ -15,9 +16,7 @@ using STS2RitsuLib.Scaffolding.Content;
 
 namespace Squ.Powers;
 
-/// <summary>
-/// 剧本：一人一城。原版覆甲回合结束触发后，额外损失 1 层并再获得等量于当前层数的格挡。
-/// </summary>
+/// <summary>剧本：一人一城。激活时立即按正常规则触发一次覆甲。</summary>
 [RegisterPower]
 public sealed class ScriptOneManOneCityPower : ScriptPowerTemplate
 {
@@ -30,19 +29,8 @@ public sealed class ScriptOneManOneCityPower : ScriptPowerTemplate
 		HoverTipFactory.FromPower<PlatingPower>(),
 	];
 
-	/// <summary>
-	/// 晚于 <see cref="PlatingPower.BeforeSideTurnEndEarly"/>，在原版覆甲获得格挡之后再结算剧本。
-	/// </summary>
-	public override async Task BeforeSideTurnEnd(
-		PlayerChoiceContext choiceContext,
-		CombatSide side,
-		IEnumerable<Creature> participants)
+	protected override async Task OnScriptApplied(Creature? applier, CardModel? cardSource)
 	{
-		if (!participants.Contains(Owner))
-		{
-			return;
-		}
-
 		PlatingPower? plating = Owner.GetPower<PlatingPower>();
 		if (plating is null || plating.Amount <= 0)
 		{

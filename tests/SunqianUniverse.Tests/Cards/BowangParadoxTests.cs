@@ -35,9 +35,7 @@ public sealed class BowangParadoxTests : SunqianCombatTestSuite
         AssertInPile(retainedAttack, PileType.Hand);
         AssertInPile(burningSkill, PileType.Hand);
         AssertInPile(ordinarySkill, PileType.Hand);
-        CardTestAssertions.AssertPowerAmount<VigorPower>(
-            Player.Creature,
-            BowangParadoxScript.BaseVigor);
+        Assert.Null(Player.Creature.GetPower<VigorPower>());
         AssertOnlyScript<ScriptBowangParadoxPower>();
     }
 

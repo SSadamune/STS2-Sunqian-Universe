@@ -99,7 +99,6 @@ public static class ScriptSystem
 		CardPile pile = ScriptCollectionPile.GetPile(player);
 		TRecord? record = pile.Cards.OfType<TRecord>().FirstOrDefault();
 		bool wasNewUnlock = record is null;
-		bool wasReinforced = false;
 
 		if (record is null)
 		{
@@ -118,7 +117,6 @@ public static class ScriptSystem
 		{
 			record.ReinforceFrom(source, amount);
 			configureRecord?.Invoke(record);
-			wasReinforced = true;
 		}
 
 		foreach (IAfterScriptCardPlayed handler in EnumeratePlayerModels(player).OfType<IAfterScriptCardPlayed>())
@@ -129,15 +127,13 @@ public static class ScriptSystem
 		await ActivatePlayedScriptAsync(
 			choiceContext,
 			player,
-			record,
-			forceRefresh: wasReinforced);
+			record);
 	}
 
 	private static async Task ActivatePlayedScriptAsync(
 		PlayerChoiceContext choiceContext,
 		Player player,
-		ScriptRecordCardTemplate record,
-		bool forceRefresh)
+		ScriptRecordCardTemplate record)
 	{
 		List<ScriptPowerTemplate> activeScripts = player.Creature.Powers
 			.OfType<ScriptPowerTemplate>()
@@ -146,15 +142,8 @@ public static class ScriptSystem
 			.FirstOrDefault(power => power.GetType() == record.PowerType);
 		if (sameType is not null)
 		{
-			if (forceRefresh)
-			{
-				await RemoveScriptPowerAsync(
-					sameType,
-					notifyLift: false,
-					resolveEndEffects: false);
-				await record.ActivateAsync(choiceContext, player);
-			}
-
+			await RemoveForReactivationAsync(sameType, record);
+			await record.ActivateAsync(choiceContext, player);
 			return;
 		}
 
@@ -222,8 +211,7 @@ public static class ScriptSystem
 	public static async Task<bool> ChooseActiveScriptsAsync(
 		PlayerChoiceContext choiceContext,
 		Player player,
-		bool cancelable,
-		ScriptRecordCardTemplate? forceRefresh = null)
+		bool cancelable)
 	{
 		CardPile pile = ScriptCollectionPile.GetPile(player);
 		List<ScriptRecordCardTemplate> records = pile.Cards
@@ -269,9 +257,9 @@ public static class ScriptSystem
 			ScriptPowerTemplate? active = player.Creature.Powers
 				.OfType<ScriptPowerTemplate>()
 				.FirstOrDefault(power => power.GetType() == record.PowerType);
-			if (active is not null && ReferenceEquals(record, forceRefresh))
+			if (active is not null)
 			{
-				await RemoveScriptPowerAsync(active, notifyLift: false, resolveEndEffects: false);
+				await RemoveForReactivationAsync(active, record);
 				active = null;
 			}
 
@@ -283,6 +271,13 @@ public static class ScriptSystem
 
 		return true;
 	}
+
+	private static Task RemoveForReactivationAsync(
+		ScriptPowerTemplate active,
+		ScriptRecordCardTemplate record) =>
+		record.CanBeReinforced
+			? RemoveScriptPowerAsync(active, notifyLift: false, resolveEndEffects: false)
+			: RemoveScriptPowerAsync(active);
 
 	public static async Task ApplyExternalScriptPowerAsync(
 		PlayerChoiceContext choiceContext,

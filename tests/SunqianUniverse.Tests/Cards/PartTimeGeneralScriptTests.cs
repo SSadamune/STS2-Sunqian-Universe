@@ -29,6 +29,10 @@ public sealed class PartTimeGeneralScriptTests : SunqianCombatTestSuite
         Assert.True(EnemyAt(0).CurrentHp < hp);
         var script = Assert.IsType<ScriptPartTimeGeneralPower>(
             Player.Creature.GetPower<ScriptPartTimeGeneralPower>());
+        var record = Assert.Single(
+            Squ.Script.ScriptSystem.ScriptCollectionPile.GetPile(Player).Cards
+                .OfType<PartTimeGeneralScriptRecord>());
+        int recordsBeforeExpiration = record.RecordedCards.Count;
         Assert.False(string.IsNullOrWhiteSpace(
             script.DynamicVars[ScriptPartTimeGeneralPower.RecordedCardsVarName].ToString()));
         await PlayerCmd.SetEnergy(3, Player);
@@ -49,6 +53,8 @@ public sealed class PartTimeGeneralScriptTests : SunqianCombatTestSuite
         CardModel chosen = Assert.IsAssignableFrom<CardModel>(selected);
         AssertInPile(chosen, PileType.Hand);
         Assert.True(chosen.IsUpgraded);
+        Assert.Equal(0, chosen.EnergyCost.GetResolved());
+        Assert.Equal(recordsBeforeExpiration - 1, record.RecordedCards.Count);
         AssertOnlyScript<ScriptServantPower>();
     }
 
@@ -65,8 +71,13 @@ public sealed class PartTimeGeneralScriptTests : SunqianCombatTestSuite
         Assert.Equal(hp, EnemyAt(0).CurrentHp);
         var script = Assert.IsType<ScriptPartTimeGeneralPower>(
             Player.Creature.GetPower<ScriptPartTimeGeneralPower>());
-        Assert.True(string.IsNullOrWhiteSpace(
-            script.DynamicVars[ScriptPartTimeGeneralPower.RecordedCardsVarName].ToString()));
+        var record = Assert.Single(
+            Squ.Script.ScriptSystem.ScriptCollectionPile.GetPile(Player).Cards
+                .OfType<PartTimeGeneralScriptRecord>());
+        Assert.Empty(record.RecordedCards);
+        Assert.Equal(
+            "—",
+            script.DynamicVars[ScriptPartTimeGeneralPower.RecordedCardsVarName].ToString());
 
         await PlayerCmd.SetEnergy(2, Player);
         await PlayAndActivateScript(await AddToHand<ServantScript>());
@@ -116,6 +127,59 @@ public sealed class PartTimeGeneralScriptTests : SunqianCombatTestSuite
         Assert.Contains(
             ModelDb.Card<PommelStrike>().Title,
             script.DynamicVars[ScriptPartTimeGeneralPower.RecordedCardsVarName].ToString());
+    }
+
+    [Fact]
+    public async Task Repeated_plays_merge_duplicate_records_and_expiration_removes_only_one()
+    {
+        MethodInfo chooseStrikes = AccessTools.DeclaredMethod(
+                typeof(PartTimeGeneralScript),
+                "ChooseStrikeCards")
+            ?? throw new InvalidOperationException("ChooseStrikeCards was not found.");
+        var harmony = new Harmony("squ.tests.force-duplicate-pommel-strikes");
+        harmony.Patch(
+            chooseStrikes,
+            prefix: new HarmonyMethod(typeof(PartTimeGeneralScriptTests), nameof(ForcePommelStrike)));
+        try
+        {
+            await PlayerCmd.SetEnergy(1, Player);
+            await PlayAndActivateScript(
+                await AddToHand<PartTimeGeneralScript>(),
+                EnemyAt(0));
+            await PlayerCmd.SetEnergy(1, Player);
+            await PlayAndActivateScript(
+                await AddToHand<PartTimeGeneralScript>(),
+                EnemyAt(0));
+        }
+        finally
+        {
+            harmony.UnpatchAll(harmony.Id);
+        }
+
+        var record = Assert.Single(
+            Squ.Script.ScriptSystem.ScriptCollectionPile.GetPile(Player).Cards
+                .OfType<PartTimeGeneralScriptRecord>());
+        Assert.Equal(2, record.RecordedCards.Count);
+
+        CardModel? selected = null;
+        var selector = new ScriptedCardSelector()
+            .ThenSelect(options =>
+            {
+                Assert.Equal(2, options.Count);
+                selected = options[0];
+                return [selected];
+            });
+        await PlayerCmd.SetEnergy(3, Player);
+        using (UseCardSelector(selector))
+        {
+            await PlayAndActivateScript(await AddToHand<ServantScript>());
+        }
+
+        AssertAllSelectionsConsumed(selector);
+        Assert.Single(record.RecordedCards);
+        CardModel returned = Assert.IsAssignableFrom<CardModel>(selected);
+        AssertInPile(returned, PileType.Hand);
+        Assert.Equal(0, returned.EnergyCost.GetResolved());
     }
 
     private static bool ForcePommelStrike(int count, ref List<CardModel> __result)

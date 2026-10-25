@@ -44,26 +44,13 @@ public sealed class ScriptServantPower : ScriptPowerTemplate
 
 	protected override object InitInternalData() => new Data();
 
-	protected override Task OnScriptApplied(Creature? applier, CardModel? cardSource)
+	protected override async Task OnScriptApplied(Creature? applier, CardModel? cardSource)
 	{
 		bool upgraded = cardSource is ServantScript { IsUpgraded: true };
 		Data data = GetInternalData<Data>();
 		data.GrantUpgradedThrowHimOut = upgraded;
 		((StringVar)DynamicVars[GeneratedCardVarName]).StringValue =
 			$"[gold]{GeneratedCombatCards.GetDisplayTitle<ThrowHimOut>(upgraded)}[/gold]";
-		return Task.CompletedTask;
-	}
-
-	public override async Task AfterSideTurnStart(
-		CombatSide side,
-		IReadOnlyList<Creature> participants,
-		ICombatState combatState)
-	{
-		if (!participants.Contains(Owner) || Owner.IsDead)
-		{
-			return;
-		}
-
 		Player? player = Owner.Player;
 		if (player is null || Owner.CombatState is not { } ownerCombatState)
 		{
