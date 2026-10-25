@@ -38,7 +38,11 @@ internal static class NeverHadTheseRelicDescriptionPatch
 			"CutePetEffect",
 			relic.Id.Entry + ".cutePetEffect",
 			relic.RemovedCutePets,
-			effect => effect.Add("Summon", CutePet.SummonAmount * relic.RemovedCutePets));
+			effect => effect.Add(
+				"Summon",
+				CutePet.SummonAmount * relic.RemovedCutePets
+					+ (CutePet.UpgradedSummonAmount - CutePet.SummonAmount)
+						* relic.RemovedUpgradedCutePets));
 		AddOptionalEffect(
 			line,
 			"BelovedPartnerEffect",
@@ -46,7 +50,11 @@ internal static class NeverHadTheseRelicDescriptionPatch
 			relic.RemovedBelovedPartners,
 			effect =>
 			{
-				effect.Add("Regen", BelovedPartner.RegenAmount * relic.RemovedBelovedPartners);
+				effect.Add(
+					"Regen",
+					BelovedPartner.RegenAmount * relic.RemovedBelovedPartners
+						+ (BelovedPartner.UpgradedRegenAmount - BelovedPartner.RegenAmount)
+							* relic.RemovedUpgradedBelovedPartners);
 				effect.Add("Tinder", BelovedPartner.TinderAmount * relic.RemovedBelovedPartners);
 			});
 		AddOptionalEffect(
@@ -54,7 +62,11 @@ internal static class NeverHadTheseRelicDescriptionPatch
 			"NextOfKinEffect",
 			relic.Id.Entry + ".nextOfKinEffect",
 			relic.RemovedNextOfKin,
-			effect => effect.Add("Cards", NextOfKin.DrawAmount * relic.RemovedNextOfKin));
+			effect => effect.Add(
+				"Cards",
+				NextOfKin.DrawAmount * relic.RemovedNextOfKin
+					+ (NextOfKin.UpgradedDrawAmount - NextOfKin.DrawAmount)
+						* relic.RemovedUpgradedNextOfKin));
 		SquKeywords.AddNestedLoc(__result, TriggeredEffectsLineVar, line);
 	}
 

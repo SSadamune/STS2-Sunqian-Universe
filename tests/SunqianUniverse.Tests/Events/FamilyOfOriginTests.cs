@@ -200,15 +200,18 @@ public sealed class FamilyOfOriginTests : SunqianCombatTestSuite
 
         Assert.Empty(Player.Deck.Cards.Where(card => card is FamilyCardTemplate));
         AssertFamilyRemovalCounts(familyRelic, expectedCopiesOfEachCard: 2);
+        Assert.Equal(1, familyRelic.RemovedUpgradedCutePets);
+        Assert.Equal(1, familyRelic.RemovedUpgradedBelovedPartners);
+        Assert.Equal(1, familyRelic.RemovedUpgradedNextOfKin);
 
         var description = familyRelic.DynamicDescription;
         familyRelic.DynamicVars.AddTo(description);
         string formattedDescription = description.GetFormattedText();
-        Assert.Contains("召唤[/gold]8", formattedDescription);
+        Assert.Contains("召唤[/gold]10", formattedDescription);
         Assert.Contains(
-            $"获得{BelovedPartner.RegenAmount * 2}层[gold]再生[/gold]和{BelovedPartner.TinderAmount * 2}层[gold]火种[/gold]",
+            $"获得{BelovedPartner.RegenAmount + BelovedPartner.UpgradedRegenAmount}层[gold]再生[/gold]和{BelovedPartner.TinderAmount * 2}层[gold]火种[/gold]",
             formattedDescription);
-        Assert.Contains("抽4张牌", formattedDescription);
+        Assert.Contains("抽5张牌", formattedDescription);
 
         Player.RemoveRelicInternal(familyRelic, silent: true);
     }
@@ -217,11 +220,13 @@ public sealed class FamilyOfOriginTests : SunqianCombatTestSuite
     public async Task Rejecting_the_first_chapter_adds_normal_thinking_and_uses_the_extended_ending()
     {
         FamilyOfOrigin evt = await BeginEvent();
+        int maxHpBefore = Player.Creature.MaxHp;
 
         await evt.CurrentOptions[1].Chosen();
 
         AssertFinishedOn(evt, "FIRST_REJECTED");
         Assert.Single(Player.Deck.Cards.OfType<NormalThinking>());
+        Assert.Equal(maxHpBefore + FamilyOfOrigin.FirstRejectMaxHpGain, Player.Creature.MaxHp);
         Assert.Empty(Player.Relics.OfType<NeverHadTheseRelic>());
     }
 
@@ -277,6 +282,13 @@ public sealed class FamilyOfOriginTests : SunqianCombatTestSuite
         IHoverTip[] all = tips.ToArray();
         Assert.Contains(all, tip => tip is CardHoverTip cardTip && cardTip.Card is TCard);
         Assert.Contains(all, tip => tip.CanonicalModel is NeverHadTheseRelic);
+        string[] suppressedTipIds =
+        [
+            HoverTipFactory.FromKeyword(CardKeyword.Exhaust).Id,
+            HoverTipFactory.FromKeyword(CardKeyword.Unplayable).Id,
+            HoverTipFactory.FromKeyword(SquKeywords.Family).Id,
+        ];
+        Assert.DoesNotContain(all, tip => suppressedTipIds.Contains(tip.Id));
         string dexterityTipId = ModelDb.Power<DexterityPower>().Id.ToString();
         Assert.DoesNotContain(
             all.OfType<HoverTip>(),
