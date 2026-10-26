@@ -28,4 +28,16 @@ public sealed class WrapUpTests : SunqianCombatTestSuite
             Player.Creature,
             WrapUp.BaseVigor);
     }
+
+    [Fact]
+    public async Task Upgrade_grants_five_vigor()
+    {
+        Assert.Equal(5, WrapUp.UpgradedVigor);
+
+        await Play(Upgrade(await AddToHand<WrapUp>()));
+
+        CardTestAssertions.AssertPowerAmount<VigorPower>(
+            Player.Creature,
+            WrapUp.UpgradedVigor);
+    }
 }

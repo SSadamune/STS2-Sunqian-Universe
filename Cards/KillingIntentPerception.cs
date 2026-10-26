@@ -21,6 +21,7 @@ using MegaCrit.Sts2.Core.Nodes.Rooms;
 using MegaCrit.Sts2.Core.Nodes.Vfx;
 using MegaCrit.Sts2.Core.Runs;
 using MegaCrit.Sts2.Core.ValueProps;
+using Squ.Audio;
 using Squ.Character;
 using Squ.Combat;
 using STS2RitsuLib.Interop.AutoRegistration;
@@ -69,6 +70,8 @@ public sealed class KillingIntentPerception : ModCardTemplate
 
 	protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
 	{
+		SquSfx.Play(SquSfx.KillingIntentPerceptionPlayEvent);
+
 		ICombatState combatState = CombatState
 			?? throw new InvalidOperationException(
 				"KillingIntentPerception requires an active combat.");

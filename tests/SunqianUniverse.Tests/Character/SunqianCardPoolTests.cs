@@ -34,7 +34,7 @@ public sealed class SunqianCardPoolTests : SunqianCombatTestSuite
         Assert.Equal(11, deck.Count());
         Assert.Equal(4, deck.OfType<StrikeLongtao>().Count());
         Assert.Equal(4, deck.OfType<DefendLongtao>().Count());
-        Assert.Single(deck.OfType<SecurityGuardScript>());
+        Assert.Single(deck.OfType<GruntScript>());
         Assert.Single(deck.OfType<SunqianScript>());
         Assert.Single(deck.OfType<WrapUp>());
     }

@@ -22,7 +22,7 @@ namespace Squ.Cards;
 public sealed class WrapUp : ModCardTemplate
 {
 	public const int BaseVigor = 3;
-	public const int UpgradedVigor = 4;
+	public const int UpgradedVigor = 5;
 
 	protected override IEnumerable<DynamicVar> CanonicalVars =>
 	[

@@ -47,7 +47,7 @@ public sealed class SunqianUniverse : ModCardTemplate
 
 	protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
 	{
-		SquSfx.Play(SquSfx.SunqianUniverseManyFormsEvent);
+		SquSfx.Play(SquSfx.SunqianUniverseEnterCourtEvent);
 		await PowerCmd.Apply<DexterityPower>(
 			choiceContext,
 			Owner.Creature,

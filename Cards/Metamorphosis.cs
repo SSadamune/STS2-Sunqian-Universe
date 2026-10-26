@@ -10,6 +10,7 @@ using MegaCrit.Sts2.Core.Entities.Powers;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Models;
+using Squ.Audio;
 using Squ.Character;
 using Squ.Powers;
 using STS2RitsuLib.Interop.AutoRegistration;
@@ -51,6 +52,8 @@ public sealed class Metamorphosis : ModCardTemplate
 
 	protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
 	{
+		SquSfx.Play(SquSfx.MetamorphosisPlayEvent);
+
 		List<MetamorphosisCandidate> candidates =
 			CandidateProvider.BuildChoices(this, ChoiceCount).ToList();
 		if (candidates.Count == 0)

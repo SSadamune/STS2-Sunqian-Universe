@@ -207,11 +207,29 @@ public abstract class ReinforceableScriptRecordCardTemplate<TPower, TSource>
 		DynamicVars["ScriptAmount"].BaseValue = StoredAmount;
 }
 
-[RegisterCard(typeof(TokenCardPool), StableEntryStem = "script_record_security_guard")]
-public sealed class SecurityGuardScriptRecord
-	: ScriptRecordCardTemplate<ScriptSecurityGuardPower, SecurityGuardScript>
+[RegisterCard(typeof(TokenCardPool), StableEntryStem = "script_record_grunt")]
+public sealed class GruntScriptRecord
+	: ScriptRecordCardTemplate<ScriptGruntPower, GruntScript>
 {
-	public override CardAssetProfile AssetProfile => new();
+	internal override bool HasUpgradedVersion => true;
+
+	protected override IEnumerable<DynamicVar> CanonicalVars =>
+	[
+		new DynamicVar("BonusDamage", ScriptGruntPower.BaseBonusDamage),
+	];
+
+	public override CardAssetProfile AssetProfile => new(
+		PortraitPath: "res://images/cards/GruntScript.png");
+
+	protected override void SyncDisplayVars() =>
+		DynamicVars["BonusDamage"].BaseValue = SourceUpgraded
+			? ScriptGruntPower.UpgradedBonusDamage
+			: ScriptGruntPower.BaseBonusDamage;
+
+	protected override void OnUpgrade() =>
+		DynamicVars["BonusDamage"].UpgradeValueBy(
+			ScriptGruntPower.UpgradedBonusDamage
+			- ScriptGruntPower.BaseBonusDamage);
 }
 
 [RegisterCard(typeof(TokenCardPool), StableEntryStem = "script_record_neutral_ambush")]

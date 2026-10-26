@@ -34,7 +34,7 @@ public sealed class AllScriptCardsTests : SunqianCombatTestSuite
         new(typeof(NightRaidWuchaoScript), typeof(NightRaidWuchaoScriptRecord), typeof(ScriptNightRaidWuchaoPower), true),
         new(typeof(OneManOneCity), typeof(OneManOneCityScriptRecord), typeof(ScriptOneManOneCityPower), false),
         new(typeof(PartTimeGeneralScript), typeof(PartTimeGeneralScriptRecord), typeof(ScriptPartTimeGeneralPower), true),
-        new(typeof(SecurityGuardScript), typeof(SecurityGuardScriptRecord), typeof(ScriptSecurityGuardPower), false),
+        new(typeof(GruntScript), typeof(GruntScriptRecord), typeof(ScriptGruntPower), false),
         new(typeof(ServantScript), typeof(ServantScriptRecord), typeof(ScriptServantPower), false),
         new(typeof(SunqianScript), typeof(SunqianScriptRecord), typeof(ScriptSunqianPower), false),
         new(typeof(TwoWordPoetScript), typeof(TwoWordPoetScriptRecord), typeof(ScriptTwoWordPoetPower), true),
@@ -87,11 +87,11 @@ public sealed class AllScriptCardsTests : SunqianCombatTestSuite
     [Fact]
     public void Script_activation_text_only_colors_the_script_title_gold()
     {
-        string ordinary = ModelDb.Card<SecurityGuardScript>().GetDescriptionForPile(PileType.Deck);
+        string ordinary = ModelDb.Card<GruntScript>().GetDescriptionForPile(PileType.Deck);
         string reinforceable = ModelDb.Card<ExecutionCommanderScript>().GetDescriptionForPile(PileType.Deck);
         string partTimeGeneral = ModelDb.Card<PartTimeGeneralScript>().GetDescriptionForPile(PileType.Deck);
 
-        Assert.Contains("激活[gold]剧本：保安[/gold]。", ordinary);
+        Assert.Contains("激活[gold]剧本：杂兵[/gold]。", ordinary);
         Assert.Contains(
             "激活[gold]剧本：行刑指挥官[/gold]，若已激活则还会将数值叠加。",
             reinforceable);
@@ -114,7 +114,7 @@ public sealed class AllScriptCardsTests : SunqianCombatTestSuite
     [InlineData(typeof(NightRaidWuchaoScript), typeof(NightRaidWuchaoScriptRecord), typeof(ScriptNightRaidWuchaoPower), true)]
     [InlineData(typeof(OneManOneCity), typeof(OneManOneCityScriptRecord), typeof(ScriptOneManOneCityPower), false)]
     [InlineData(typeof(PartTimeGeneralScript), typeof(PartTimeGeneralScriptRecord), typeof(ScriptPartTimeGeneralPower), true)]
-    [InlineData(typeof(SecurityGuardScript), typeof(SecurityGuardScriptRecord), typeof(ScriptSecurityGuardPower), false)]
+    [InlineData(typeof(GruntScript), typeof(GruntScriptRecord), typeof(ScriptGruntPower), false)]
     [InlineData(typeof(ServantScript), typeof(ServantScriptRecord), typeof(ScriptServantPower), false)]
     [InlineData(typeof(SunqianScript), typeof(SunqianScriptRecord), typeof(ScriptSunqianPower), false)]
     [InlineData(typeof(TwoWordPoetScript), typeof(TwoWordPoetScriptRecord), typeof(ScriptTwoWordPoetPower), true)]

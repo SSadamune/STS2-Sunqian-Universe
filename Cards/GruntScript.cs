@@ -19,11 +19,12 @@ using STS2RitsuLib.Scaffolding.Content;
 
 namespace Squ.Cards;
 
-[RegisterCard(typeof(SunqianCardPool), StableEntryStem = "security_guard_script")]
+[RegisterCard(typeof(SunqianCardPool), StableEntryStem = "grunt_script")]
 [RegisterCharacterStarterCard(typeof(SunqianCharacter), 1)]
-public sealed class SecurityGuardScript : ScriptCardTemplate<SecurityGuardScriptRecord>
+public sealed class GruntScript : ScriptCardTemplate<GruntScriptRecord>
 {
 	public const int DamageAmount = 8;
+	public const int UpgradedDamageAmount = 11;
 
 	protected override IEnumerable<DynamicVar> CanonicalVars =>
 	[
@@ -41,10 +42,10 @@ public sealed class SecurityGuardScript : ScriptCardTemplate<SecurityGuardScript
 		CardKeyword.Exhaust,
 	];
 
-	// Deliberately uses the framework's placeholder portrait until bespoke art is supplied.
-	public override CardAssetProfile AssetProfile => new();
+	public override CardAssetProfile AssetProfile => new(
+		PortraitPath: "res://images/cards/GruntScript.png");
 
-	public SecurityGuardScript()
+	public GruntScript()
 		: base(2, CardType.Attack, CardRarity.Basic, TargetType.AnyEnemy, true)
 	{
 	}
@@ -81,5 +82,6 @@ public sealed class SecurityGuardScript : ScriptCardTemplate<SecurityGuardScript
 
 	protected override void OnUpgrade()
 	{
+		DynamicVars.Damage.UpgradeValueBy(UpgradedDamageAmount - DamageAmount);
 	}
 }

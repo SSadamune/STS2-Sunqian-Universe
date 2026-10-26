@@ -67,6 +67,7 @@ public sealed class HoverCardUpgradePreviewTests : SunqianCombatTestSuite
         AssertScriptRecordUpgradePreviewIsGreen<XiliangSavageScript, XiliangSavageScriptRecord>("5");
         AssertScriptRecordUpgradePreviewIsGreen<NightRaidWuchaoScript, NightRaidWuchaoScriptRecord>("4");
         AssertScriptRecordUpgradePreviewIsGreen<BowangParadoxScript, BowangParadoxScriptRecord>("9", "9");
+        AssertScriptRecordUpgradePreviewIsGreen<GruntScript, GruntScriptRecord>("4");
     }
 
     [Fact]
@@ -78,7 +79,6 @@ public sealed class HoverCardUpgradePreviewTests : SunqianCombatTestSuite
         AssertScriptRecordHasNoUpgradedVersion<NeutralAmbushScript, NeutralAmbushScriptRecord>();
         AssertScriptRecordHasNoUpgradedVersion<OneManOneCity, OneManOneCityScriptRecord>();
         AssertScriptRecordHasNoUpgradedVersion<PartTimeGeneralScript, PartTimeGeneralScriptRecord>();
-        AssertScriptRecordHasNoUpgradedVersion<SecurityGuardScript, SecurityGuardScriptRecord>();
     }
 
     [Fact]

@@ -6,6 +6,7 @@ using MegaCrit.Sts2.Core.Entities.Creatures;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.Powers;
+using Squ.Audio;
 using Squ.Cards;
 using STS2RitsuLib.Interop.AutoRegistration;
 using STS2RitsuLib.Scaffolding.Content;
@@ -28,6 +29,8 @@ public sealed class ScriptSunqianPower : ScriptPowerTemplate
 
 	protected override async Task OnScriptApplied(Creature? applier, CardModel? cardSource)
 	{
+		SquSfx.Play(SquSfx.SunqianScriptActivatedEvent);
+
 		int dexterity = cardSource is SunqianScript { IsUpgraded: true }
 			? SunqianScript.UpgradedDexterity
 			: SunqianScript.BaseDexterity;

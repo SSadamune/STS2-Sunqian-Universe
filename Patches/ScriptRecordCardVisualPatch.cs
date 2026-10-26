@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using HarmonyLib;
 using Godot;
+using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Nodes.Cards;
 using MegaCrit.Sts2.Core.Nodes.Cards.Holders;
 using MegaCrit.Sts2.addons.mega_text;
@@ -10,6 +11,65 @@ using STS2RitsuLib.Keywords;
 #nullable enable
 
 namespace Squ.Patches;
+
+/// <summary>
+/// Register active script records in the grid's own persistent highlight set before
+/// it creates or reassigns card nodes. This keeps the highlight alive in both the
+/// read-only pile screen and the combat selection screen, including after a selected
+/// active card is toggled off again.
+/// </summary>
+[HarmonyPatch(typeof(NCardGrid), nameof(NCardGrid.SetCards))]
+internal static class ScriptRecordCardGridStatePatch
+{
+	private static readonly AccessTools.FieldRef<NCardGrid, List<CardModel>> HighlightedCards =
+		AccessTools.FieldRefAccess<NCardGrid, List<CardModel>>("_highlightedCards");
+
+	[HarmonyPrefix]
+	private static void Prefix(NCardGrid __instance, IReadOnlyList<CardModel> cardsToDisplay)
+	{
+		List<CardModel> highlightedCards = HighlightedCards(__instance);
+		highlightedCards.RemoveAll(card => card is ScriptRecordCardTemplate);
+
+		foreach (CardModel card in cardsToDisplay)
+		{
+			if (card is ScriptRecordCardTemplate { ShouldGlowGold: true })
+			{
+				highlightedCards.Add(card);
+			}
+		}
+	}
+
+	internal static void RestoreActiveHighlight(
+		NCardGrid grid,
+		ScriptRecordCardTemplate record)
+	{
+		List<CardModel> highlightedCards = HighlightedCards(grid);
+		if (!highlightedCards.Contains(record))
+		{
+			highlightedCards.Add(record);
+		}
+
+		if (grid.GetCardNode(record) is { } card)
+		{
+			card.CardHighlight.Modulate = NCardHighlight.gold;
+			card.CardHighlight.AnimShow();
+		}
+	}
+}
+
+/// <summary>An active script remains marked after the selection UI toggles it off.</summary>
+[HarmonyPatch(typeof(NCardGrid), nameof(NCardGrid.UnhighlightCard))]
+internal static class ScriptRecordCardGridUnhighlightPatch
+{
+	[HarmonyPostfix]
+	private static void Postfix(NCardGrid __instance, CardModel card)
+	{
+		if (card is ScriptRecordCardTemplate { ShouldGlowGold: true } record)
+		{
+			ScriptRecordCardGridStatePatch.RestoreActiveHighlight(__instance, record);
+		}
+	}
+}
 
 /// <summary>履历牌在规则层仍按技能处理，但在卡面上显示自有类别“剧本”。</summary>
 [HarmonyPatch(typeof(NCard), "UpdateTypePlaque")]
@@ -67,7 +127,9 @@ internal static class ScriptRecordCardGridHighlightPatch
 				continue;
 			}
 
-			card.CardHighlight.Modulate = NCardHighlight.gold;
+			card.CardHighlight.Modulate = record.ShouldGlowGold
+				? NCardHighlight.gold
+				: NCardHighlight.playableColor;
 			if (record.ShouldGlowGold)
 			{
 				card.CardHighlight.AnimShow();
