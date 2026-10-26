@@ -123,7 +123,9 @@ public sealed class ChickenFootCheeseScriptTests : SunqianCombatTestSuite
         Assert.Equal(
             5,
             capability.DynamicVars[ChickenFootCheeseStrikeCapability.FollowUpDamageVarName].PreviewValue);
-        Assert.Contains("5", strike.GetDescriptionForPile(PileType.Hand));
+        Assert.Equal(
+            "对随机两名敌人先造成[green]8[/green]点伤害，再造成[green]5[/green]点伤害。",
+            strike.GetDescriptionForPile(PileType.Hand));
 
         await Play(strike);
 

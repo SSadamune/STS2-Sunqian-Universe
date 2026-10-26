@@ -10,6 +10,7 @@ using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.Entities.Creatures;
 using MegaCrit.Sts2.Core.Entities.Players;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
+using MegaCrit.Sts2.Core.Helpers;
 using MegaCrit.Sts2.Core.Localization;
 using MegaCrit.Sts2.Core.Models;
 using Squ.Cards;
@@ -27,6 +28,11 @@ public static class ScriptSystem
 
 	private static readonly LocString SelectionPrompt =
 		new("cards", "SUNQIAN_UNIVERSE_CARD_SCRIPT_SELECTION_PROMPT");
+	internal const string PaidSelectionPromptKey =
+		"SUNQIAN_UNIVERSE_CARD_SCRIPT_PAID_SELECTION_PROMPT";
+	internal const string FreeSelectionCountVariable = "FreeSelectionCount";
+	internal const string EnergyCostVariable = "EnergyCost";
+	internal const string EnergyPrefixVariable = "energyPrefix";
 	private static readonly LocString InvalidationPrompt =
 		new("cards", "SUNQIAN_UNIVERSE_CARD_SCRIPT_INVALIDATION_PROMPT");
 
@@ -243,6 +249,76 @@ public static class ScriptSystem
 			return false;
 		}
 
+		await ApplySelectedScriptsAsync(choiceContext, player, selected);
+		return true;
+	}
+
+	public static async Task<bool> ChooseActiveScriptsWithEnergyAsync(
+		PlayerChoiceContext choiceContext,
+		Player player,
+		bool cancelable)
+	{
+		CardPile pile = ScriptCollectionPile.GetPile(player);
+		List<ScriptRecordCardTemplate> records = pile.Cards
+			.OfType<ScriptRecordCardTemplate>()
+			.ToList();
+		if (records.Count == 0 || player.Creature.IsDead)
+		{
+			return false;
+		}
+
+		int freeSelectionCount = Math.Min(GetActivationLimit(player), records.Count);
+		int availableEnergy = Math.Max(0, player.PlayerCombatState?.Energy ?? 0);
+		int maxSelect = Math.Min(records.Count, freeSelectionCount + availableEnergy);
+		var prefs = new CardSelectorPrefs(
+			CreatePaidSelectionPrompt(
+				freeSelectionCount,
+				energyCost: 0,
+				EnergyIconHelper.GetPrefix(records[0])),
+			minCount: 0,
+			maxSelect)
+		{
+			Cancelable = cancelable,
+			RequireManualConfirmation = true,
+			PretendCardsCanBePlayed = true,
+		};
+
+		List<ScriptRecordCardTemplate> selected = (await CardSelectCmd.FromCombatPile(
+			choiceContext,
+			pile,
+			player,
+			prefs,
+			card => card is ScriptRecordCardTemplate))
+			.OfType<ScriptRecordCardTemplate>()
+			.ToList();
+		if (selected.Count == 0 && cancelable)
+		{
+			return false;
+		}
+
+		int energyCost = Math.Max(0, selected.Count - freeSelectionCount);
+		await PlayerCmd.LoseEnergy(energyCost, player);
+		await ApplySelectedScriptsAsync(choiceContext, player, selected);
+		return true;
+	}
+
+	internal static LocString CreatePaidSelectionPrompt(
+		int freeSelectionCount,
+		int energyCost,
+		string energyPrefix)
+	{
+		LocString prompt = new("cards", PaidSelectionPromptKey);
+		prompt.Add(FreeSelectionCountVariable, freeSelectionCount);
+		prompt.Add(EnergyCostVariable, energyCost);
+		prompt.Add(EnergyPrefixVariable, energyPrefix);
+		return prompt;
+	}
+
+	private static async Task ApplySelectedScriptsAsync(
+		PlayerChoiceContext choiceContext,
+		Player player,
+		IReadOnlyList<ScriptRecordCardTemplate> selected)
+	{
 		HashSet<Type> selectedTypes = selected.Select(record => record.PowerType).ToHashSet();
 		foreach (ScriptPowerTemplate active in player.Creature.Powers
 			.OfType<ScriptPowerTemplate>()
@@ -268,8 +344,6 @@ public static class ScriptSystem
 				await record.ActivateAsync(choiceContext, player);
 			}
 		}
-
-		return true;
 	}
 
 	private static Task RemoveForReactivationAsync(

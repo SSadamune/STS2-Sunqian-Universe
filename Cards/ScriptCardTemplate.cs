@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using MegaCrit.Sts2.Core.Combat;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.HoverTips;
@@ -42,6 +41,10 @@ public abstract class ScriptCardTemplate : ModCardTemplate
 
 	internal abstract bool IsReinforceableScript { get; }
 
+	internal abstract bool HasUpgradedScriptEffect { get; }
+
+	protected virtual bool UsesReinforceActivationText => IsReinforceableScript;
+
 	internal abstract string ScriptRecordTitle { get; }
 
 	protected override HashSet<CardTag> CanonicalTags => [SquCardTags.Script];
@@ -65,6 +68,9 @@ public abstract class ScriptCardTemplate<TRecord> : ScriptCardTemplate
 	internal sealed override bool IsReinforceableScript =>
 		ModelDb.Card<TRecord>().CanBeReinforced;
 
+	internal sealed override bool HasUpgradedScriptEffect =>
+		ModelDb.Card<TRecord>().HasUpgradedVersion;
+
 	internal sealed override string ScriptRecordTitle => ModelDb.Card<TRecord>().Title;
 
 	internal sealed override ScriptRecordCardTemplate CreateScriptRecordPreview()
@@ -87,33 +93,19 @@ public abstract class ScriptCardTemplate<TRecord> : ScriptCardTemplate
 	protected override void AddExtraArgsToDescription(LocString description)
 	{
 		base.AddExtraArgsToDescription(description);
-		// Card-library entries are canonical models. Accessing Owner on a canonical
-		// model throws, so only inspect combat ownership for mutable card instances.
-		var owner = IsMutable ? Owner : null;
-		bool inCombat = IsMutable
-			&& CombatManager.Instance.IsInProgress
-			&& owner is not null;
-		bool unlocked = inCombat && ScriptSystem.IsUnlocked<TRecord>(owner!);
-		string key;
-		if (!IsReinforceableScript)
-		{
-			key = unlocked ? "SCRIPT_UNLOCK_ALREADY" : "SCRIPT_UNLOCK_NEW";
-		}
-		else if (!inCombat)
-		{
-			key = "SCRIPT_UNLOCK_OR_REINFORCE";
-		}
-		else if (unlocked)
-		{
-			key = "SCRIPT_REINFORCE_AVAILABLE";
-		}
-		else
-		{
-			key = "SCRIPT_UNLOCK_AVAILABLE";
-		}
-
-		LocString text = new("cards", $"SUNQIAN_UNIVERSE_CARD_{key}");
-		text.Add("ScriptTitle", ScriptRecordTitle);
+		string key = UsesReinforceActivationText
+			? "SUNQIAN_UNIVERSE_CARD_SCRIPT_ACTIVATE_REINFORCE"
+			: "SUNQIAN_UNIVERSE_CARD_SCRIPT_ACTIVATE";
+		LocString text = new("cards", key);
+		string scriptTitle = HasUpgradedScriptEffect && IsUpgraded
+			? ScriptRecordTitle + "+"
+			: ScriptRecordTitle;
+		string titleColor = HasUpgradedScriptEffect
+			&& IsUpgraded
+			&& UpgradePreviewType != CardUpgradePreviewType.None
+				? "green"
+				: "gold";
+		text.Add("ScriptTitle", $"[{titleColor}]{scriptTitle}[/{titleColor}]");
 		description.Add("ScriptUnlockText", text.GetFormattedText());
 	}
 }

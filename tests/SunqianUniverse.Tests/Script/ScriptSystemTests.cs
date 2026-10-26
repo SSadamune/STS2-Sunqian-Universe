@@ -63,19 +63,47 @@ public sealed class ScriptSystemTests : SunqianCombatTestSuite
     }
 
     [Fact]
-    public async Task Sunqian_dexterity_is_removed_and_one_card_is_drawn_when_switched_out()
+    public async Task Sunqian_draws_on_play_and_its_temporary_dexterity_survives_switching_out()
     {
+        var drawn = await AddToDrawPileTop<DefendIronclad>();
         await PlayScript<SunqianScript>();
+        AssertInPile(drawn, PileType.Hand);
         CardTestAssertions.AssertPowerAmount<DexterityPower>(
             Player.Creature,
             SunqianScript.BaseDexterity);
-        var drawn = await AddToDrawPileTop<DefendIronclad>();
+        CardTestAssertions.AssertPowerAmount<TempDexPower>(
+            Player.Creature,
+            SunqianScript.BaseDexterity);
+        var staysInDrawPile = await AddToDrawPileTop<StrikeIronclad>();
 
         await PlayScript<ServantScript>();
 
-        Assert.Null(Player.Creature.GetPower<DexterityPower>());
-        AssertInPile(drawn, PileType.Hand);
+        CardTestAssertions.AssertPowerAmount<DexterityPower>(
+            Player.Creature,
+            SunqianScript.BaseDexterity);
+        CardTestAssertions.AssertPowerAmount<TempDexPower>(
+            Player.Creature,
+            SunqianScript.BaseDexterity);
+        AssertInPile(staysInDrawPile, PileType.Draw);
         AssertOnlyScript<ScriptServantPower>();
+    }
+
+    [Fact]
+    public async Task Upgraded_sunqian_draws_two_and_grants_three_temporary_dexterity()
+    {
+        CardModel second = await AddToDrawPileTop<DefendIronclad>();
+        CardModel first = await AddToDrawPileTop<StrikeIronclad>();
+
+        await Play(Upgrade(await AddToHand<SunqianScript>()));
+
+        AssertInPile(first, PileType.Hand);
+        AssertInPile(second, PileType.Hand);
+        CardTestAssertions.AssertPowerAmount<TempDexPower>(
+            Player.Creature,
+            SunqianScript.UpgradedDexterity);
+        CardTestAssertions.AssertPowerAmount<DexterityPower>(
+            Player.Creature,
+            SunqianScript.UpgradedDexterity);
     }
 
     [Fact]
@@ -192,53 +220,91 @@ public sealed class ScriptSystemTests : SunqianCombatTestSuite
     }
 
     [Fact]
-    public async Task Box_lunch_grants_energy_only_for_a_new_unlock()
+    public async Task Box_lunch_adds_exactly_one_slot_once_four_scripts_are_unlocked()
     {
         var relic = (BoxLunchRelic)ModelDb.Relic<BoxLunchRelic>().ToMutable();
         Player.AddRelicInternal(relic, silent: true);
         await PlayerCmd.SetEnergy(0, Player);
 
         await PlayScript<ExecutionCommanderScript>();
-        Assert.Equal(1, Player.PlayerCombatState!.Energy);
-
-        await PlayScript<ExecutionCommanderScript>();
-        Assert.Equal(1, Player.PlayerCombatState.Energy);
-    }
-
-    [Fact]
-    public async Task Abundant_box_lunch_rewards_every_play_and_adds_a_slot_per_three_unlocks()
-    {
-        var relic = (AbundantBoxLunchRelic)ModelDb.Relic<AbundantBoxLunchRelic>().ToMutable();
-        Player.AddRelicInternal(relic, silent: true);
-        await PlayerCmd.SetEnergy(0, Player);
-
-        await PlayScript<ExecutionCommanderScript>();
-        await PlayScript<ExecutionCommanderScript>();
-        Assert.Equal(2, Player.PlayerCombatState!.Energy);
+        Assert.Equal(0, Player.PlayerCombatState!.Energy);
+        Assert.Equal(1, ScriptSystem.GetActivationLimit(Player));
 
         await PlayerCmd.SetEnergy(10, Player);
         await PlayScript<NeutralAmbushScript>();
         await PlayScript<ServantScript>();
+        await PlayScript<SunqianScript>();
 
         Assert.Equal(2, ScriptSystem.GetActivationLimit(Player));
+        Assert.Equal(1, relic.GetAdditionalScriptActivationSlots(Player, 8));
         Assert.Equal(2, Player.Creature.Powers.OfType<ScriptPowerTemplate>().Count());
+        Assert.NotNull(Player.Creature.GetPower<ScriptServantPower>());
+        Assert.NotNull(Player.Creature.GetPower<ScriptSunqianPower>());
+    }
+
+    [Fact]
+    public async Task Abundant_box_lunch_gains_energy_per_four_scripts_and_pays_for_each_excess_selection()
+    {
+        var relic = (AbundantBoxLunchRelic)ModelDb.Relic<AbundantBoxLunchRelic>().ToMutable();
+        Player.AddRelicInternal(relic, silent: true);
+        await PlayerCmd.SetEnergy(10, Player);
+        await PlayScript<ExecutionCommanderScript>();
+        await PlayScript<NeutralAmbushScript>();
+        await PlayScript<ServantScript>();
+        await PlayScript<SunqianScript>();
+
+        Assert.Equal(6, Player.PlayerCombatState!.Energy);
+        Assert.Equal(1, ScriptSystem.GetActivationLimit(Player));
+
+        await PlayerCmd.SetEnergy(1, Player);
+        var selector = new ScriptedCardSelector()
+            .ThenSelectWhere(
+                card => card is ExecutionCommanderScriptRecord,
+                card => card is NeutralAmbushScriptRecord,
+                card => card is ServantScriptRecord);
+        using (UseCardSelector(selector))
+        {
+            await relic.AfterSideTurnStart(
+                CombatSide.Player,
+                [Player.Creature],
+                Combat);
+        }
+        AssertAllSelectionsConsumed(selector);
+
+        Assert.Equal(0, Player.PlayerCombatState.Energy);
+        Assert.Equal(1, ScriptSystem.GetActivationLimit(Player));
+        Assert.Equal(3, Player.Creature.Powers.OfType<ScriptPowerTemplate>().Count());
+        Assert.NotNull(Player.Creature.GetPower<ScriptExecutionCommanderPower>());
         Assert.NotNull(Player.Creature.GetPower<ScriptNeutralAmbushPower>());
         Assert.NotNull(Player.Creature.GetPower<ScriptServantPower>());
     }
 
     [Fact]
+    public void Abundant_box_lunch_selection_prompt_displays_the_current_energy_cost()
+    {
+        string prompt = ScriptSystem.CreatePaidSelectionPrompt(
+            freeSelectionCount: 1,
+            energyCost: 2,
+            energyPrefix: "sunqian").GetFormattedText();
+
+        Assert.Contains("当前花费", prompt);
+        Assert.Contains("[blue]2[/blue]", prompt);
+    }
+
+    [Fact]
     public async Task Playing_a_new_script_with_multiple_active_scripts_asks_which_old_script_ends()
     {
-        var relic = (AbundantBoxLunchRelic)ModelDb.Relic<AbundantBoxLunchRelic>().ToMutable();
+        var relic = (BoxLunchRelic)ModelDb.Relic<BoxLunchRelic>().ToMutable();
         Player.AddRelicInternal(relic, silent: true);
         await PlayerCmd.SetEnergy(10, Player);
 
         await PlayScript<ExecutionCommanderScript>();
         await PlayScript<NeutralAmbushScript>();
         await PlayScript<ServantScript>();
+        await PlayScript<SunqianScript>();
 
         var selector = new ScriptedCardSelector()
-            .ThenSelectWhere(card => card is NeutralAmbushScriptRecord)
+            .ThenSelectWhere(card => card is ServantScriptRecord)
             .ThenSelectWhere(card => card is BowangParadoxVigorChoice);
         using (UseCardSelector(selector))
         {
@@ -248,7 +314,8 @@ public sealed class ScriptSystemTests : SunqianCombatTestSuite
 
         Assert.Equal(2, Player.Creature.Powers.OfType<ScriptPowerTemplate>().Count());
         Assert.Null(Player.Creature.GetPower<ScriptNeutralAmbushPower>());
-        Assert.NotNull(Player.Creature.GetPower<ScriptServantPower>());
+        Assert.Null(Player.Creature.GetPower<ScriptServantPower>());
+        Assert.NotNull(Player.Creature.GetPower<ScriptSunqianPower>());
         Assert.NotNull(Player.Creature.GetPower<ScriptBowangParadoxPower>());
     }
 

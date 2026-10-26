@@ -34,6 +34,7 @@ public sealed class AllScriptCardsTests : SunqianCombatTestSuite
         new(typeof(NightRaidWuchaoScript), typeof(NightRaidWuchaoScriptRecord), typeof(ScriptNightRaidWuchaoPower), true),
         new(typeof(OneManOneCity), typeof(OneManOneCityScriptRecord), typeof(ScriptOneManOneCityPower), false),
         new(typeof(PartTimeGeneralScript), typeof(PartTimeGeneralScriptRecord), typeof(ScriptPartTimeGeneralPower), true),
+        new(typeof(SecurityGuardScript), typeof(SecurityGuardScriptRecord), typeof(ScriptSecurityGuardPower), false),
         new(typeof(ServantScript), typeof(ServantScriptRecord), typeof(ScriptServantPower), false),
         new(typeof(SunqianScript), typeof(SunqianScriptRecord), typeof(ScriptSunqianPower), false),
         new(typeof(TwoWordPoetScript), typeof(TwoWordPoetScriptRecord), typeof(ScriptTwoWordPoetPower), true),
@@ -72,6 +73,35 @@ public sealed class AllScriptCardsTests : SunqianCombatTestSuite
         }
     }
 
+    [Fact]
+    public void Script_record_descriptions_do_not_color_numbers_blue()
+    {
+        foreach (ScriptCase testCase in Cases)
+        {
+            CardModel record = ModelDb.GetById<CardModel>(ModelDb.GetId(testCase.RecordType));
+
+            Assert.DoesNotContain("[blue]", record.GetDescriptionForPile(PileType.Deck));
+        }
+    }
+
+    [Fact]
+    public void Script_activation_text_only_colors_the_script_title_gold()
+    {
+        string ordinary = ModelDb.Card<SecurityGuardScript>().GetDescriptionForPile(PileType.Deck);
+        string reinforceable = ModelDb.Card<ExecutionCommanderScript>().GetDescriptionForPile(PileType.Deck);
+        string partTimeGeneral = ModelDb.Card<PartTimeGeneralScript>().GetDescriptionForPile(PileType.Deck);
+
+        Assert.Contains("激活[gold]剧本：保安[/gold]。", ordinary);
+        Assert.Contains(
+            "激活[gold]剧本：行刑指挥官[/gold]，若已激活则还会将数值叠加。",
+            reinforceable);
+        Assert.Contains("激活[gold]剧本：兼职将军[/gold]。", partTimeGeneral);
+        Assert.DoesNotContain("若已激活则还会将数值叠加", partTimeGeneral);
+        Assert.DoesNotContain("[gold]激活", ordinary);
+        Assert.DoesNotContain("[gold]激活", reinforceable);
+        Assert.DoesNotContain("[gold]激活", partTimeGeneral);
+    }
+
     [Theory]
     [InlineData(typeof(BombardChibiScript), typeof(BombardChibiScriptRecord), typeof(ScriptBombardChibiPower), false)]
     [InlineData(typeof(BowangParadoxScript), typeof(BowangParadoxScriptRecord), typeof(ScriptBowangParadoxPower), false)]
@@ -84,6 +114,7 @@ public sealed class AllScriptCardsTests : SunqianCombatTestSuite
     [InlineData(typeof(NightRaidWuchaoScript), typeof(NightRaidWuchaoScriptRecord), typeof(ScriptNightRaidWuchaoPower), true)]
     [InlineData(typeof(OneManOneCity), typeof(OneManOneCityScriptRecord), typeof(ScriptOneManOneCityPower), false)]
     [InlineData(typeof(PartTimeGeneralScript), typeof(PartTimeGeneralScriptRecord), typeof(ScriptPartTimeGeneralPower), true)]
+    [InlineData(typeof(SecurityGuardScript), typeof(SecurityGuardScriptRecord), typeof(ScriptSecurityGuardPower), false)]
     [InlineData(typeof(ServantScript), typeof(ServantScriptRecord), typeof(ScriptServantPower), false)]
     [InlineData(typeof(SunqianScript), typeof(SunqianScriptRecord), typeof(ScriptSunqianPower), false)]
     [InlineData(typeof(TwoWordPoetScript), typeof(TwoWordPoetScriptRecord), typeof(ScriptTwoWordPoetPower), true)]

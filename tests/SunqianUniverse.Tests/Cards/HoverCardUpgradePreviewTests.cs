@@ -58,15 +58,27 @@ public sealed class HoverCardUpgradePreviewTests : SunqianCombatTestSuite
     [Fact]
     public void Upgraded_script_hover_cards_highlight_every_changed_script_effect()
     {
-        AssertScriptRecordUpgradePreviewIsGreen<ServantScript, ServantScriptRecord>();
-        AssertScriptRecordUpgradePreviewIsGreen<TwoWordPoetScript, TwoWordPoetScriptRecord>();
-        AssertScriptRecordUpgradePreviewIsGreen<SunqianScript, SunqianScriptRecord>();
-        AssertScriptRecordUpgradePreviewIsGreen<ChickenFootCheeseScript, ChickenFootCheeseScriptRecord>();
-        AssertScriptRecordUpgradePreviewIsGreen<ExecutionCommanderScript, ExecutionCommanderScriptRecord>();
-        AssertScriptRecordUpgradePreviewIsGreen<HeadsmanScript, HeadsmanScriptRecord>();
-        AssertScriptRecordUpgradePreviewIsGreen<XiliangSavageScript, XiliangSavageScriptRecord>();
-        AssertScriptRecordUpgradePreviewIsGreen<NightRaidWuchaoScript, NightRaidWuchaoScriptRecord>();
-        AssertScriptRecordUpgradePreviewIsGreen<BowangParadoxScript, BowangParadoxScriptRecord>();
+        AssertScriptRecordUpgradePreviewIsGreen<ServantScript, ServantScriptRecord>("叉出去+");
+		AssertScriptRecordUpgradePreviewIsGreen<TwoWordPoetScript, TwoWordPoetScriptRecord>("所有");
+        AssertScriptRecordUpgradePreviewIsGreen<SunqianScript, SunqianScriptRecord>("3");
+        AssertScriptRecordUpgradePreviewIsGreen<ChickenFootCheeseScript, ChickenFootCheeseScriptRecord>("9");
+        AssertScriptRecordUpgradePreviewIsGreen<ExecutionCommanderScript, ExecutionCommanderScriptRecord>("75");
+        AssertScriptRecordUpgradePreviewIsGreen<HeadsmanScript, HeadsmanScriptRecord>("4");
+        AssertScriptRecordUpgradePreviewIsGreen<XiliangSavageScript, XiliangSavageScriptRecord>("5");
+        AssertScriptRecordUpgradePreviewIsGreen<NightRaidWuchaoScript, NightRaidWuchaoScriptRecord>("4");
+        AssertScriptRecordUpgradePreviewIsGreen<BowangParadoxScript, BowangParadoxScriptRecord>("9", "9");
+    }
+
+    [Fact]
+    public void Scripts_without_upgraded_script_effects_keep_the_record_title_unupgraded()
+    {
+        AssertScriptRecordHasNoUpgradedVersion<BombardChibiScript, BombardChibiScriptRecord>();
+        AssertScriptRecordHasNoUpgradedVersion<BurningLinkedCampsScript, BurningLinkedCampsScriptRecord>();
+        AssertScriptRecordHasNoUpgradedVersion<EunuchScript, EunuchScriptRecord>();
+        AssertScriptRecordHasNoUpgradedVersion<NeutralAmbushScript, NeutralAmbushScriptRecord>();
+        AssertScriptRecordHasNoUpgradedVersion<OneManOneCity, OneManOneCityScriptRecord>();
+        AssertScriptRecordHasNoUpgradedVersion<PartTimeGeneralScript, PartTimeGeneralScriptRecord>();
+        AssertScriptRecordHasNoUpgradedVersion<SecurityGuardScript, SecurityGuardScriptRecord>();
     }
 
     [Fact]
@@ -101,7 +113,7 @@ public sealed class HoverCardUpgradePreviewTests : SunqianCombatTestSuite
         }
     }
 
-    private void AssertScriptRecordUpgradePreviewIsGreen<TSource, TRecord>()
+    private void AssertScriptRecordUpgradePreviewIsGreen<TSource, TRecord>(params string[] changedTexts)
         where TSource : ScriptCardTemplate
         where TRecord : ScriptRecordCardTemplate
     {
@@ -112,8 +124,41 @@ public sealed class HoverCardUpgradePreviewTests : SunqianCombatTestSuite
 
         Assert.True(record.IsUpgraded);
         Assert.True(record.SourceUpgraded);
+        Assert.True(record.HasUpgradedVersion);
         Assert.NotEqual(CardUpgradePreviewType.None, record.UpgradePreviewType);
-        Assert.Contains("[green]", record.GetDescriptionForUpgradePreview());
+        Assert.EndsWith("+", record.Title);
+        Assert.Contains(
+            $"[green]{record.Title}[/green]",
+            source.GetDescriptionForUpgradePreview());
+        string description = record.GetDescriptionForUpgradePreview();
+        int searchStart = 0;
+        foreach (string changedText in changedTexts)
+        {
+            string highlightedText = $"[green]{changedText}[/green]";
+            int match = description.IndexOf(highlightedText, searchStart, StringComparison.Ordinal);
+            Assert.True(match >= 0, $"Expected '{highlightedText}' in '{description}'.");
+            searchStart = match + highlightedText.Length;
+        }
+    }
+
+    private void AssertScriptRecordHasNoUpgradedVersion<TSource, TRecord>()
+        where TSource : ScriptCardTemplate
+        where TRecord : ScriptRecordCardTemplate
+    {
+        TSource source = Combat.CreateCard<TSource>(Player);
+        source.UpgradePreviewType = CardUpgradePreviewType.Deck;
+        source.UpgradeInternal();
+        TRecord record = (TRecord)GetHoverCard<TRecord>(source);
+
+        Assert.True(source.IsUpgraded);
+        Assert.True(record.SourceUpgraded);
+        Assert.False(record.HasUpgradedVersion);
+        Assert.False(record.IsUpgraded);
+		Assert.False(record.Title.EndsWith("+", StringComparison.Ordinal));
+        Assert.NotEqual(CardUpgradePreviewType.None, record.UpgradePreviewType);
+        string sourceDescription = source.GetDescriptionForUpgradePreview();
+        Assert.Contains($"[gold]{record.Title}[/gold]", sourceDescription);
+        Assert.DoesNotContain($"[green]{record.Title}", sourceDescription);
     }
 
     private void AssertRecordOwnsDerivedCard<TSource, TRecord, TDerived>()

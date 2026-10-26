@@ -28,7 +28,8 @@ public sealed class AbundantBoxLunchOrobasHoverTests : SunqianCombatTestSuite
 		Assert.Equal(1, tips.Count(tip => tip.Id.Contains("ENERGY.title", StringComparison.Ordinal)));
 
 		HoverTip abundant = Assert.Single(tips, tip => tip.CanonicalModel is AbundantBoxLunchRelic);
-		Assert.Contains("[green]三种[/green]", abundant.Description);
+		Assert.Contains("[green]你激活的剧本数可以超过上限", abundant.Description);
+		Assert.Contains("[green]每回合开始时", abundant.Description);
 
 		Assert.DoesNotContain("[green]", ModelDb.Relic<AbundantBoxLunchRelic>().HoverTip.Description);
 	}

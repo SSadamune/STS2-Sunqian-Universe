@@ -39,7 +39,11 @@ public abstract class ScriptRecordCardTemplate : ModCardTemplate
 
 	public virtual bool CanBeReinforced => false;
 
-	public sealed override string Title => TitleLocString.GetFormattedText();
+	internal virtual bool HasUpgradedVersion => false;
+
+	public sealed override string Title => HasUpgradedVersion
+		? base.Title
+		: TitleLocString.GetFormattedText();
 
 	public sealed override CardPoolModel VisualCardPool => ModelDb.CardPool<SunqianCardPool>();
 
@@ -109,7 +113,7 @@ public abstract class ScriptRecordCardTemplate : ModCardTemplate
 
 	private void ApplyStoredUpgrade()
 	{
-		if (!SourceUpgraded || IsUpgraded || !IsUpgradable)
+		if (!HasUpgradedVersion || !SourceUpgraded || IsUpgraded || !IsUpgradable)
 		{
 			return;
 		}
@@ -203,6 +207,13 @@ public abstract class ReinforceableScriptRecordCardTemplate<TPower, TSource>
 		DynamicVars["ScriptAmount"].BaseValue = StoredAmount;
 }
 
+[RegisterCard(typeof(TokenCardPool), StableEntryStem = "script_record_security_guard")]
+public sealed class SecurityGuardScriptRecord
+	: ScriptRecordCardTemplate<ScriptSecurityGuardPower, SecurityGuardScript>
+{
+	public override CardAssetProfile AssetProfile => new();
+}
+
 [RegisterCard(typeof(TokenCardPool), StableEntryStem = "script_record_neutral_ambush")]
 public sealed class NeutralAmbushScriptRecord : ScriptRecordCardTemplate<ScriptNeutralAmbushPower, NeutralAmbushScript>
 {
@@ -218,6 +229,8 @@ public sealed class NeutralAmbushScriptRecord : ScriptRecordCardTemplate<ScriptN
 [RegisterCard(typeof(TokenCardPool), StableEntryStem = "script_record_servant")]
 public sealed class ServantScriptRecord : ScriptRecordCardTemplate<ScriptServantPower, ServantScript>
 {
+	internal override bool HasUpgradedVersion => true;
+
 	public override CardAssetProfile AssetProfile => new(PortraitPath: "res://images/cards/ServantScript.png");
 
 	protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
@@ -229,12 +242,16 @@ public sealed class ServantScriptRecord : ScriptRecordCardTemplate<ScriptServant
 [RegisterCard(typeof(TokenCardPool), StableEntryStem = "script_record_two_word_poet")]
 public sealed class TwoWordPoetScriptRecord : ReinforceableScriptRecordCardTemplate<ScriptTwoWordPoetPower, TwoWordPoetScript>
 {
+	internal override bool HasUpgradedVersion => true;
+
 	public override CardAssetProfile AssetProfile => new(PortraitPath: "res://images/cards/TwoWordPoetScript.png");
 }
 
 [RegisterCard(typeof(TokenCardPool), StableEntryStem = "script_record_sunqian")]
 public sealed class SunqianScriptRecord : ScriptRecordCardTemplate<ScriptSunqianPower, SunqianScript>
 {
+	internal override bool HasUpgradedVersion => true;
+
 	protected override IEnumerable<DynamicVar> CanonicalVars => [new DynamicVar("Dexterity", SunqianScript.BaseDexterity)];
 
 	public override CardAssetProfile AssetProfile => new(PortraitPath: "res://images/cards/SunqianScript.png");
@@ -264,6 +281,8 @@ public sealed class OneManOneCityScriptRecord : ScriptRecordCardTemplate<ScriptO
 [RegisterCard(typeof(TokenCardPool), StableEntryStem = "script_record_chicken_foot_cheese")]
 public sealed class ChickenFootCheeseScriptRecord : ScriptRecordCardTemplate<ScriptChickenFootCheesePower, ChickenFootCheeseScript>
 {
+	internal override bool HasUpgradedVersion => true;
+
 	protected override IEnumerable<DynamicVar> CanonicalVars => [new DynamicVar("FollowUpDamage", ScriptChickenFootCheesePower.BaseFollowUpDamage)];
 
 	public override CardAssetProfile AssetProfile => new(PortraitPath: "res://images/cards/ChickenFootCheeseScript.png");
@@ -289,6 +308,8 @@ public sealed class ChickenFootCheeseScriptRecord : ScriptRecordCardTemplate<Scr
 [RegisterCard(typeof(TokenCardPool), StableEntryStem = "script_record_execution_commander")]
 public sealed class ExecutionCommanderScriptRecord : ReinforceableScriptRecordCardTemplate<ScriptExecutionCommanderPower, ExecutionCommanderScript>
 {
+	internal override bool HasUpgradedVersion => true;
+
 	public override CardAssetProfile AssetProfile => new(PortraitPath: "res://images/cards/ExecutionCommanderScript.png");
 
 	protected override void OnUpgrade() =>
@@ -300,6 +321,8 @@ public sealed class ExecutionCommanderScriptRecord : ReinforceableScriptRecordCa
 [RegisterCard(typeof(TokenCardPool), StableEntryStem = "script_record_headsman")]
 public sealed class HeadsmanScriptRecord : ScriptRecordCardTemplate<ScriptHeadsmanPower, HeadsmanScript>
 {
+	internal override bool HasUpgradedVersion => true;
+
 	public override CardAssetProfile AssetProfile => new(PortraitPath: "res://images/cards/HeadsmanScript.png");
 
 	protected override IEnumerable<DynamicVar> CanonicalVars =>
@@ -331,6 +354,8 @@ public sealed class HeadsmanScriptRecord : ScriptRecordCardTemplate<ScriptHeadsm
 [RegisterCard(typeof(TokenCardPool), StableEntryStem = "script_record_xiliang_savage")]
 public sealed class XiliangSavageScriptRecord : ScriptRecordCardTemplate<ScriptXiliangSavagePower, XiliangSavageScript>
 {
+	internal override bool HasUpgradedVersion => true;
+
 	public override CardAssetProfile AssetProfile => new(PortraitPath: "res://images/cards/XiliangSavageScript.png");
 
 	protected override IEnumerable<DynamicVar> CanonicalVars =>
@@ -368,6 +393,8 @@ public sealed class BombardChibiScriptRecord : ScriptRecordCardTemplate<ScriptBo
 [RegisterCard(typeof(TokenCardPool), StableEntryStem = "script_record_night_raid_wuchao")]
 public sealed class NightRaidWuchaoScriptRecord : ReinforceableScriptRecordCardTemplate<ScriptNightRaidWuchaoPower, NightRaidWuchaoScript>
 {
+	internal override bool HasUpgradedVersion => true;
+
 	public override CardAssetProfile AssetProfile => new(PortraitPath: "res://images/cards/NightRaidWuchaoScript.png");
 
 	protected override void OnUpgrade() =>
@@ -378,6 +405,8 @@ public sealed class NightRaidWuchaoScriptRecord : ReinforceableScriptRecordCardT
 [RegisterCard(typeof(TokenCardPool), StableEntryStem = "script_record_bowang_paradox")]
 public sealed class BowangParadoxScriptRecord : ScriptRecordCardTemplate<ScriptBowangParadoxPower, BowangParadoxScript>
 {
+	internal override bool HasUpgradedVersion => true;
+
 	protected override IEnumerable<DynamicVar> CanonicalVars =>
 	[
 		new PowerVar<VigorPower>(BowangParadoxScript.BaseVigor),

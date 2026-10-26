@@ -5,7 +5,6 @@ using MegaCrit.Sts2.Core.Combat;
 using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.Entities.Creatures;
-using MegaCrit.Sts2.Core.Entities.Players;
 using MegaCrit.Sts2.Core.Entities.Relics;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.Rooms;
@@ -20,11 +19,9 @@ using STS2RitsuLib.Scaffolding.Content;
 namespace Squ.Relics;
 
 [RegisterRelic(typeof(SunqianRelicPool), StableEntryStem = "abundant_box_lunch")]
-public sealed class AbundantBoxLunchRelic : ScriptRelicTemplate,
-	IAfterScriptCardPlayed,
-	IScriptActivationLimitProvider
+public sealed class AbundantBoxLunchRelic : ScriptRelicTemplate
 {
-	public const int UnlocksPerAdditionalSlot = 3;
+	public const int ScriptsPerEnergy = 4;
 
 	public override RelicRarity Rarity => RelicRarity.Starter;
 
@@ -34,18 +31,6 @@ public sealed class AbundantBoxLunchRelic : ScriptRelicTemplate,
 		IconPath: "res://images/relics/AbundantBoxLunchRelic.png",
 		IconOutlinePath: "res://images/relics/AbundantBoxLunchRelicOutline.png",
 		BigIconPath: "res://images/relics/AbundantBoxLunchRelicBig.png");
-
-	public async Task AfterScriptCardPlayedAsync(
-		Player player,
-		ScriptRecordCardTemplate record,
-		bool wasNewUnlock)
-	{
-		Flash();
-		await PlayerCmd.GainEnergy(1m, player);
-	}
-
-	public int GetAdditionalScriptActivationSlots(Player player, int unlockedScriptCount) =>
-		unlockedScriptCount / UnlocksPerAdditionalSlot;
 
 	public override async Task AfterSideTurnStart(
 		CombatSide side,
@@ -59,13 +44,23 @@ public sealed class AbundantBoxLunchRelic : ScriptRelicTemplate,
 			return;
 		}
 
+		int scriptCount = ScriptSystem.ScriptCollectionPile.GetPile(Owner).Cards
+			.OfType<ScriptRecordCardTemplate>()
+			.Count();
 		Status = RelicStatus.Active;
 		Flash();
-		await ScriptSystem.ChooseActiveScriptsAsync(
-			new BlockingPlayerChoiceContext(),
-			Owner,
-			cancelable: true);
-		Status = RelicStatus.Normal;
+		try
+		{
+			await PlayerCmd.GainEnergy(scriptCount / ScriptsPerEnergy, Owner);
+			await ScriptSystem.ChooseActiveScriptsWithEnergyAsync(
+				new BlockingPlayerChoiceContext(),
+				Owner,
+				cancelable: true);
+		}
+		finally
+		{
+			Status = RelicStatus.Normal;
+		}
 	}
 
 	public override Task AfterCombatEnd(CombatRoom room)

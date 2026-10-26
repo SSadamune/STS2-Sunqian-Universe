@@ -24,10 +24,13 @@ public sealed class SunqianScript : ScriptCardTemplate<SunqianScriptRecord>
 {
 	public const int BaseDexterity = 2;
 	public const int UpgradedDexterity = 3;
+	public const int BaseDraw = 1;
+	public const int UpgradedDraw = 2;
 
 	protected override IEnumerable<DynamicVar> CanonicalVars =>
 	[
 		new PowerVar<DexterityPower>(BaseDexterity),
+		new CardsVar(BaseDraw),
 	];
 
 	protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
@@ -64,6 +67,10 @@ public sealed class SunqianScript : ScriptCardTemplate<SunqianScriptRecord>
 			? SquSfx.SunqianScriptFrequentAppearanceEvent
 			: SquSfx.SunqianScriptRareTrueFormEvent);
 
+		await CardPileCmd.Draw(
+			choiceContext,
+			(int)DynamicVars.Cards.BaseValue,
+			Owner);
 		await UnlockScriptAsync(choiceContext);
 	}
 
@@ -71,5 +78,6 @@ public sealed class SunqianScript : ScriptCardTemplate<SunqianScriptRecord>
 	{
 		DynamicVars[nameof(DexterityPower)]
 			.UpgradeValueBy(UpgradedDexterity - BaseDexterity);
+		DynamicVars.Cards.UpgradeValueBy(UpgradedDraw - BaseDraw);
 	}
 }

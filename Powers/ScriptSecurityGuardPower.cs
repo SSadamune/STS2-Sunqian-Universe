@@ -11,8 +11,10 @@ using STS2RitsuLib.Scaffolding.Content;
 namespace Squ.Powers;
 
 [RegisterPower]
-public sealed class ScriptSentryPower : ScriptPowerTemplate
+public sealed class ScriptSecurityGuardPower : ScriptPowerTemplate
 {
+	public const int BonusDamage = 3;
+
 	public override PowerAssetProfile AssetProfile => new(
 		IconPath: "res://images/powers/ScriptSentryPower.png",
 		BigIconPath: "res://images/powers/ScriptSentryPowerBig.png");
@@ -30,11 +32,6 @@ public sealed class ScriptSentryPower : ScriptPowerTemplate
 			return 0m;
 		}
 
-		if (!card.Tags.Contains(CardTag.Strike))
-		{
-			return 0m;
-		}
-
-		return 1m;
+		return card.Tags.Contains(CardTag.Strike) ? BonusDamage : 0m;
 	}
 }
