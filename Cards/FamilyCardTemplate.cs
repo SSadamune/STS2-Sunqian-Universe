@@ -87,12 +87,17 @@ public abstract class FamilyCardTemplate : ModCardTemplate
 			return;
 		}
 
+		PlayExhaustSfx();
+
+		await ResolveAdditionalExhaust(choiceContext, causedByEthereal);
+	}
+
+	internal void PlayExhaustSfx()
+	{
 		if (ExhaustSfxEvent is { } eventPath)
 		{
 			SquSfx.Play(eventPath);
 		}
-
-		await ResolveAdditionalExhaust(choiceContext, causedByEthereal);
 	}
 
 	public override async Task AfterSideTurnEnd(

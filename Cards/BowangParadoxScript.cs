@@ -57,8 +57,11 @@ public sealed class BowangParadoxScript : ScriptCardTemplate<BowangParadoxScript
 	protected override async Task PlayScriptAsync(PlayerChoiceContext choiceContext, CardPlay cardPlay)
 	{
 		SquSfx.Play(SquSfx.BowangParadoxPlayEvent);
-		await UnlockScriptAsync(choiceContext);
+		await UnlockScriptAsync(choiceContext, DynamicVars[nameof(VigorPower)].BaseValue);
 	}
+
+	internal override int GetScriptPowerAmountForPreview() =>
+		(int)DynamicVars[nameof(VigorPower)].BaseValue;
 
 	protected override void OnUpgrade()
 	{

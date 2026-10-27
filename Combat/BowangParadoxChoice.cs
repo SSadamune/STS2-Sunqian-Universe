@@ -28,7 +28,8 @@ public static class BowangParadoxChoice
 		PlayerChoiceContext choiceContext,
 		Player player,
 		CardModel? source,
-		bool upgraded)
+		bool upgraded,
+		decimal? reinforcedAmount = null)
 	{
 		if (player.Creature.CombatState is not { } combatState)
 		{
@@ -42,6 +43,11 @@ public static class BowangParadoxChoice
 			UpgradeAndFinalize(vigorChoice);
 			UpgradeAndFinalize(tinderChoice);
 		}
+		decimal effectAmount = reinforcedAmount ?? (upgraded
+			? BowangParadoxScript.UpgradedVigor
+			: BowangParadoxScript.BaseVigor);
+		vigorChoice.DynamicVars[nameof(VigorPower)].BaseValue = effectAmount;
+		tinderChoice.DynamicVars[nameof(TinderPower)].BaseValue = effectAmount;
 
 		CardModel? chosen = await CardSelectCmd.FromChooseACardScreen(
 			choiceContext,
@@ -53,7 +59,7 @@ public static class BowangParadoxChoice
 			await PowerCmd.Apply<VigorPower>(
 				choiceContext,
 				player.Creature,
-				upgraded ? BowangParadoxScript.UpgradedVigor : BowangParadoxScript.BaseVigor,
+				effectAmount,
 				player.Creature,
 				source);
 			await DiscardMatchingCards(
@@ -66,9 +72,7 @@ public static class BowangParadoxChoice
 			await PowerCmd.Apply<TinderPower>(
 				choiceContext,
 				player.Creature,
-				upgraded
-					? BowangParadoxScript.UpgradedTinderStacks
-					: BowangParadoxScript.BaseTinderStacks,
+				effectAmount,
 				player.Creature,
 				source);
 			await DiscardMatchingCards(

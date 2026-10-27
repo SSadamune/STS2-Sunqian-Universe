@@ -119,9 +119,12 @@ public static class ScriptSystem
 				await handler.AfterScriptUnlockedAsync(player, record);
 			}
 		}
-		else if (record.CanBeReinforced)
+		else
 		{
-			record.ReinforceFrom(source, amount);
+			if (record.CanBeReinforced)
+			{
+				record.ReinforceFrom(source, amount);
+			}
 			configureRecord?.Invoke(record);
 		}
 

@@ -24,7 +24,7 @@ public sealed class AllScriptCardsTests : SunqianCombatTestSuite
     private static readonly ScriptCase[] Cases =
     [
         new(typeof(BombardChibiScript), typeof(BombardChibiScriptRecord), typeof(ScriptBombardChibiPower), false),
-        new(typeof(BowangParadoxScript), typeof(BowangParadoxScriptRecord), typeof(ScriptBowangParadoxPower), false),
+        new(typeof(BowangParadoxScript), typeof(BowangParadoxScriptRecord), typeof(ScriptBowangParadoxPower), true),
         new(typeof(BurningLinkedCampsScript), typeof(BurningLinkedCampsScriptRecord), typeof(ScriptBurningLinkedCampsPower), false),
         new(typeof(ChickenFootCheeseScript), typeof(ChickenFootCheeseScriptRecord), typeof(ScriptChickenFootCheesePower), false),
         new(typeof(EunuchScript), typeof(EunuchScriptRecord), typeof(ScriptEunuchPower), false),
@@ -37,7 +37,7 @@ public sealed class AllScriptCardsTests : SunqianCombatTestSuite
         new(typeof(GruntScript), typeof(GruntScriptRecord), typeof(ScriptGruntPower), false),
         new(typeof(ServantScript), typeof(ServantScriptRecord), typeof(ScriptServantPower), false),
         new(typeof(SunqianScript), typeof(SunqianScriptRecord), typeof(ScriptSunqianPower), false),
-        new(typeof(TwoWordPoetScript), typeof(TwoWordPoetScriptRecord), typeof(ScriptTwoWordPoetPower), true),
+        new(typeof(TwoWordPoetScript), typeof(TwoWordPoetScriptRecord), typeof(ScriptTwoWordPoetPower), false),
         new(typeof(XiliangSavageScript), typeof(XiliangSavageScriptRecord), typeof(ScriptXiliangSavagePower), false),
     ];
 
@@ -90,6 +90,7 @@ public sealed class AllScriptCardsTests : SunqianCombatTestSuite
         string ordinary = ModelDb.Card<GruntScript>().GetDescriptionForPile(PileType.Deck);
         string reinforceable = ModelDb.Card<ExecutionCommanderScript>().GetDescriptionForPile(PileType.Deck);
         string partTimeGeneral = ModelDb.Card<PartTimeGeneralScript>().GetDescriptionForPile(PileType.Deck);
+		string twoWordPoet = ModelDb.Card<TwoWordPoetScript>().GetDescriptionForPile(PileType.Deck);
 
         Assert.Contains("激活[gold]剧本：杂兵[/gold]。", ordinary);
         Assert.Contains(
@@ -97,6 +98,8 @@ public sealed class AllScriptCardsTests : SunqianCombatTestSuite
             reinforceable);
         Assert.Contains("激活[gold]剧本：兼职将军[/gold]。", partTimeGeneral);
         Assert.DoesNotContain("若已激活则还会将数值叠加", partTimeGeneral);
+		Assert.Contains("激活[gold]剧本：二言诗人[/gold]。", twoWordPoet);
+		Assert.DoesNotContain("若已激活则还会将数值叠加", twoWordPoet);
         Assert.DoesNotContain("[gold]激活", ordinary);
         Assert.DoesNotContain("[gold]激活", reinforceable);
         Assert.DoesNotContain("[gold]激活", partTimeGeneral);
@@ -104,7 +107,7 @@ public sealed class AllScriptCardsTests : SunqianCombatTestSuite
 
     [Theory]
     [InlineData(typeof(BombardChibiScript), typeof(BombardChibiScriptRecord), typeof(ScriptBombardChibiPower), false)]
-    [InlineData(typeof(BowangParadoxScript), typeof(BowangParadoxScriptRecord), typeof(ScriptBowangParadoxPower), false)]
+    [InlineData(typeof(BowangParadoxScript), typeof(BowangParadoxScriptRecord), typeof(ScriptBowangParadoxPower), true)]
     [InlineData(typeof(BurningLinkedCampsScript), typeof(BurningLinkedCampsScriptRecord), typeof(ScriptBurningLinkedCampsPower), false)]
     [InlineData(typeof(ChickenFootCheeseScript), typeof(ChickenFootCheeseScriptRecord), typeof(ScriptChickenFootCheesePower), false)]
     [InlineData(typeof(EunuchScript), typeof(EunuchScriptRecord), typeof(ScriptEunuchPower), false)]
@@ -117,7 +120,7 @@ public sealed class AllScriptCardsTests : SunqianCombatTestSuite
     [InlineData(typeof(GruntScript), typeof(GruntScriptRecord), typeof(ScriptGruntPower), false)]
     [InlineData(typeof(ServantScript), typeof(ServantScriptRecord), typeof(ScriptServantPower), false)]
     [InlineData(typeof(SunqianScript), typeof(SunqianScriptRecord), typeof(ScriptSunqianPower), false)]
-    [InlineData(typeof(TwoWordPoetScript), typeof(TwoWordPoetScriptRecord), typeof(ScriptTwoWordPoetPower), true)]
+    [InlineData(typeof(TwoWordPoetScript), typeof(TwoWordPoetScriptRecord), typeof(ScriptTwoWordPoetPower), false)]
     [InlineData(typeof(XiliangSavageScript), typeof(XiliangSavageScriptRecord), typeof(ScriptXiliangSavagePower), false)]
     public async Task Playing_script_unlocks_matching_record_and_activates_matching_power(
         Type cardType,

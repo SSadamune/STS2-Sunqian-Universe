@@ -15,6 +15,7 @@ using MegaCrit.Sts2.Core.Models.Cards;
 using MegaCrit.Sts2.Core.Models.CardPools;
 using MegaCrit.Sts2.Core.Models.Powers;
 using MegaCrit.Sts2.Core.Saves.Runs;
+using MegaCrit.Sts2.Core.ValueProps;
 using Squ.Character;
 using Squ.Combat;
 using Squ.Interop;
@@ -76,8 +77,7 @@ public abstract class ScriptRecordCardTemplate : ModCardTemplate
 		}
 
 		StoredAmount += Math.Max(1, (int)amount);
-		SourceUpgraded |= source.IsUpgraded;
-		ApplyStoredUpgrade();
+		MergeSourceUpgrade(source);
 		SyncDisplayVars();
 		OnReinforcedFrom(source);
 	}
@@ -103,6 +103,12 @@ public abstract class ScriptRecordCardTemplate : ModCardTemplate
 
 	protected virtual void SyncDisplayVars()
 	{
+	}
+
+	protected void MergeSourceUpgrade(ScriptCardTemplate source)
+	{
+		SourceUpgraded |= source.IsUpgraded;
+		ApplyStoredUpgrade();
 	}
 
 	protected override void AfterDeserialized()
@@ -258,11 +264,33 @@ public sealed class ServantScriptRecord : ScriptRecordCardTemplate<ScriptServant
 }
 
 [RegisterCard(typeof(TokenCardPool), StableEntryStem = "script_record_two_word_poet")]
-public sealed class TwoWordPoetScriptRecord : ReinforceableScriptRecordCardTemplate<ScriptTwoWordPoetPower, TwoWordPoetScript>
+public sealed class TwoWordPoetScriptRecord : ScriptRecordCardTemplate<ScriptTwoWordPoetPower, TwoWordPoetScript>
 {
 	internal override bool HasUpgradedVersion => true;
 
+	protected override IEnumerable<DynamicVar> CanonicalVars =>
+	[
+		new DamageVar(
+			ScriptTwoWordPoetPower.ScriptDamageVarName,
+			TwoWordPoetScript.CanonicalDamage,
+			ValueProp.Move),
+		new RepeatVar(TwoWordPoetScript.CanonicalHits),
+	];
+
 	public override CardAssetProfile AssetProfile => new(PortraitPath: "res://images/cards/TwoWordPoetScript.png");
+
+	internal void AddConsumedVigor(TwoWordPoetScript source, int amount)
+	{
+		StoredAmount += Math.Max(0, amount);
+		MergeSourceUpgrade(source);
+		SyncDisplayVars();
+	}
+
+	protected override void SyncDisplayVars()
+	{
+		DynamicVars[ScriptTwoWordPoetPower.ScriptDamageVarName].BaseValue = StoredAmount;
+		DynamicVars.Repeat.BaseValue = TwoWordPoetScript.CanonicalHits;
+	}
 }
 
 [RegisterCard(typeof(TokenCardPool), StableEntryStem = "script_record_sunqian")]
@@ -421,7 +449,7 @@ public sealed class NightRaidWuchaoScriptRecord : ReinforceableScriptRecordCardT
 }
 
 [RegisterCard(typeof(TokenCardPool), StableEntryStem = "script_record_bowang_paradox")]
-public sealed class BowangParadoxScriptRecord : ScriptRecordCardTemplate<ScriptBowangParadoxPower, BowangParadoxScript>
+public sealed class BowangParadoxScriptRecord : ReinforceableScriptRecordCardTemplate<ScriptBowangParadoxPower, BowangParadoxScript>
 {
 	internal override bool HasUpgradedVersion => true;
 
@@ -435,12 +463,8 @@ public sealed class BowangParadoxScriptRecord : ScriptRecordCardTemplate<ScriptB
 
 	protected override void SyncDisplayVars()
 	{
-		DynamicVars[nameof(VigorPower)].BaseValue = SourceUpgraded
-			? BowangParadoxScript.UpgradedVigor
-			: BowangParadoxScript.BaseVigor;
-		DynamicVars[nameof(TinderPower)].BaseValue = SourceUpgraded
-			? BowangParadoxScript.UpgradedTinderStacks
-			: BowangParadoxScript.BaseTinderStacks;
+		DynamicVars[nameof(VigorPower)].BaseValue = StoredAmount;
+		DynamicVars[nameof(TinderPower)].BaseValue = StoredAmount;
 	}
 
 	protected override void OnUpgrade()

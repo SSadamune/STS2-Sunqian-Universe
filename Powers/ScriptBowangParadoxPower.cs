@@ -40,21 +40,16 @@ public sealed class ScriptBowangParadoxPower : ScriptPowerTemplate
 	protected override async Task OnScriptApplied(Creature? applier, CardModel? cardSource)
 	{
 		bool upgraded = cardSource is BowangParadoxScript { IsUpgraded: true };
-		decimal tinder = upgraded
-			? BowangParadoxScript.UpgradedTinderStacks
-			: BowangParadoxScript.BaseTinderStacks;
-		DynamicVars[nameof(TinderPower)].BaseValue = tinder;
-		int vigor = upgraded
-			? BowangParadoxScript.UpgradedVigor
-			: BowangParadoxScript.BaseVigor;
-		DynamicVars[nameof(VigorPower)].BaseValue = vigor;
+		DynamicVars[nameof(TinderPower)].BaseValue = Amount;
+		DynamicVars[nameof(VigorPower)].BaseValue = Amount;
 		if (Owner.Player is { } player)
 		{
 			await BowangParadoxChoice.OfferAsync(
 				ActivationChoiceContext,
 				player,
 				cardSource,
-				upgraded);
+				upgraded,
+				Amount);
 		}
 	}
 }

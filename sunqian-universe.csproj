@@ -30,4 +30,7 @@
     <!-- The root Godot project otherwise compiles source files from nested test projects. -->
     <Compile Remove="tests\**\*.cs" />
   </ItemGroup>
+  <ItemGroup>
+    <InternalsVisibleTo Include="sunqian-universe.Tests" />
+  </ItemGroup>
 </Project>

@@ -148,7 +148,14 @@ public sealed class BowangParadoxTests : SunqianCombatTestSuite
             BowangParadoxScript.BaseVigor);
         CardTestAssertions.AssertPowerAmount<TinderPower>(
             Player.Creature,
-            BowangParadoxScript.BaseTinderStacks);
+            BowangParadoxScript.BaseTinderStacks * 2);
+        BowangParadoxScriptRecord record = Assert.Single(
+            Squ.Script.ScriptSystem.ScriptCollectionPile.GetPile(Player).Cards
+                .OfType<BowangParadoxScriptRecord>());
+        Assert.Equal(BowangParadoxScript.BaseVigor * 2, record.StoredAmount);
+        CardTestAssertions.AssertPowerAmount<ScriptBowangParadoxPower>(
+            Player.Creature,
+            BowangParadoxScript.BaseVigor * 2);
         AssertOnlyScript<ScriptBowangParadoxPower>();
     }
 

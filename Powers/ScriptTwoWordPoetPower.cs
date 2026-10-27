@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -8,7 +7,6 @@ using MegaCrit.Sts2.Core.Commands.Builders;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.Entities.Creatures;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
-using MegaCrit.Sts2.Core.Hooks;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.ValueProps;
@@ -25,7 +23,7 @@ namespace Squ.Powers;
 [RegisterPower]
 public sealed class ScriptTwoWordPoetPower : ScriptPowerTemplate
 {
-	public const string SnapshotDamageVarName = "SnapshotDamage";
+	public const string ScriptDamageVarName = "ScriptDamage";
 
 	public const string TargetingDescriptionVarName = "TargetingDescription";
 
@@ -42,30 +40,12 @@ public sealed class ScriptTwoWordPoetPower : ScriptPowerTemplate
 
 	protected override IEnumerable<DynamicVar> CanonicalVars =>
 	[
-		new DamageVar(SnapshotDamageVarName, 0m, ValueProp.Move),
+		new DamageVar(ScriptDamageVarName, TwoWordPoetScript.CanonicalDamage, ValueProp.Move),
 		new RepeatVar(ActivationHitCount),
 		new StringVar(TargetingDescriptionVarName, "随机对敌人"),
 	];
 
 	protected override object InitInternalData() => new Data();
-
-	public static decimal CalculateSnapshotDamagePerHit(CardModel card, Creature dealer)
-	{
-		DamageVar damageVar = card.DynamicVars.Damage;
-		using IDisposable suppression = AllInResolutionTracker.SuppressBonus();
-		return Hook.ModifyDamage(
-			card.Owner.RunState,
-			card.CombatState,
-			null,
-			dealer,
-			damageVar.BaseValue,
-			damageVar.Props,
-			card,
-			null,
-			ModifyDamageHookType.All,
-			CardPreviewMode.None,
-			out _);
-	}
 
 	protected override async Task OnScriptApplied(Creature? applier, CardModel? cardSource)
 	{
@@ -85,7 +65,6 @@ public sealed class ScriptTwoWordPoetPower : ScriptPowerTemplate
 		SquHitVfx.SpookyScream(Owner);
 
 		AttackCommand attack = DamageCmd.Attack(Amount)
-			.Unpowered()
 			.WithHitCount(ActivationHitCount)
 			.FromCard(cardSource, null);
 		if (data.TargetsAllEnemies)
@@ -119,7 +98,7 @@ public sealed class ScriptTwoWordPoetPower : ScriptPowerTemplate
 
 	private void SyncDisplayVars(Data data)
 	{
-		DynamicVars[SnapshotDamageVarName].BaseValue = Amount;
+		DynamicVars[ScriptDamageVarName].BaseValue = Amount;
 		DynamicVars.Repeat.BaseValue = ActivationHitCount;
 		((StringVar)DynamicVars[TargetingDescriptionVarName]).StringValue =
 			data.TargetsAllEnemies ? "对所有敌人" : "随机对敌人";

@@ -1,15 +1,8 @@
-using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using MegaCrit.Sts2.Core.Combat;
-using MegaCrit.Sts2.Core.Commands;
-using MegaCrit.Sts2.Core.Commands.Builders;
 using MegaCrit.Sts2.Core.Entities.Cards;
-using MegaCrit.Sts2.Core.Entities.Creatures;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
-using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
-using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.ValueProps;
 using Squ;
 using Squ.Audio;
@@ -33,7 +26,6 @@ public sealed class TwoWordPoetScript : ScriptCardTemplate<TwoWordPoetScriptReco
 	protected override IEnumerable<DynamicVar> CanonicalVars =>
 	[
 		new DamageVar(CanonicalDamage, ValueProp.Move),
-		new SnapshotDamageVar(CanonicalDamage),
 		new RepeatVar(CanonicalHits),
 	];
 
@@ -56,47 +48,17 @@ public sealed class TwoWordPoetScript : ScriptCardTemplate<TwoWordPoetScriptReco
 	protected override async Task PlayScriptAsync(PlayerChoiceContext choiceContext, CardPlay cardPlay)
 	{
 		SquSfx.Play(SquSfx.TwoWordWineAndSongEvent);
-		decimal snapshotDamagePerHit = ScriptTwoWordPoetPower.CalculateSnapshotDamagePerHit(
-			this,
-			Owner.Creature);
-		await SquVigorSnapshot.SpendAll(choiceContext, Owner.Creature, this);
-		await NewsanguoDrunkenMightEffect.SpendForAttack(
+		int spentVigor = await SquVigorSnapshot.SpendAll(choiceContext, Owner.Creature, this);
+		int spentDrunkenMight = await NewsanguoDrunkenMightEffect.SpendForAttack(
 			choiceContext,
 			Owner.Creature,
 			this);
 
-		await UnlockScriptAsync(choiceContext, snapshotDamagePerHit);
+		await UnlockScriptAsync(
+			choiceContext,
+			CanonicalDamage,
+			record => record.AddConsumedVigor(this, spentVigor + spentDrunkenMight));
 	}
 
-	internal override int GetScriptPowerAmountForPreview() =>
-		(int)DynamicVars[ScriptTwoWordPoetPower.SnapshotDamageVarName].BaseValue;
-
-	/// <summary>
-	/// 剧本行预览与 <see cref="ScriptTwoWordPoetPower.CalculateSnapshotDamagePerHit"/> 对齐：
-	/// 含力量、活力等攻击方修正，不含当前指向目标的易伤、缓慢。
-	/// </summary>
-	private sealed class SnapshotDamageVar : DamageVar
-	{
-		public SnapshotDamageVar(decimal damage)
-			: base(ScriptTwoWordPoetPower.SnapshotDamageVarName, damage, ValueProp.Move)
-		{
-		}
-
-		public override void UpdateCardPreview(
-			CardModel card,
-			CardPreviewMode previewMode,
-			Creature? target,
-			bool runGlobalHooks)
-		{
-			BaseValue = card.DynamicVars.Damage.BaseValue;
-			using (AllInResolutionTracker.SuppressBonus())
-			{
-				base.UpdateCardPreview(card, previewMode, target: null, runGlobalHooks);
-			}
-			if (runGlobalHooks && card.Owner?.Creature is { } dealer)
-			{
-				PreviewValue = ScriptTwoWordPoetPower.CalculateSnapshotDamagePerHit(card, dealer);
-			}
-		}
-	}
+	internal override int GetScriptPowerAmountForPreview() => CanonicalDamage;
 }
