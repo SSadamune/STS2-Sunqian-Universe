@@ -7,7 +7,9 @@ using MegaCrit.Sts2.Core.Models.Cards;
 using MegaCrit.Sts2.Core.Models.Characters;
 using MegaCrit.Sts2.Core.Models.Monsters;
 using MegaCrit.Sts2.Core.Models.Powers;
+using MegaCrit.Sts2.Core.Nodes.Cards;
 using Squ.Cards;
+using Squ.Patches;
 using Squ.Powers;
 using Squ.Relics;
 using Squ.Script;
@@ -144,8 +146,7 @@ public sealed class ScriptSystemTests : SunqianCombatTestSuite
 
         CardModel newSecond = await AddToDrawPileTop<Wound>();
         CardModel newFirst = await AddToDrawPileTop<Bash>();
-        var selector = new ScriptedCardSelector()
-            .ThenSelectWhere(card => card is EunuchScriptRecord);
+        var selector = new ScriptedCardSelector();
         using (UseCardSelector(selector))
         {
             await relic.AfterSideTurnStart(
@@ -155,6 +156,7 @@ public sealed class ScriptSystemTests : SunqianCombatTestSuite
         }
         AssertAllSelectionsConsumed(selector);
 
+        Assert.Equal(0, selector.SelectionRequestCount);
         Assert.NotSame(oldPower, Player.Creature.GetPower<ScriptEunuchPower>());
         Assert.Equal(1, ScriptSystem.GetScriptLiftsThisTurn(Player));
         AssertInPile(oldFirst, PileType.Hand);
@@ -168,15 +170,14 @@ public sealed class ScriptSystemTests : SunqianCombatTestSuite
     }
 
     [Fact]
-    public async Task Box_lunch_skip_keeps_active_script_without_triggering_deactivation()
+    public async Task Box_lunch_requires_one_selection_when_two_scripts_are_available()
     {
         var relic = (BoxLunchRelic)ModelDb.Relic<BoxLunchRelic>().ToMutable();
         Player.AddRelicInternal(relic, silent: true);
         await PlayScript<SunqianScript>();
-        var active = Assert.IsType<ScriptSunqianPower>(
-            Player.Creature.GetPower<ScriptSunqianPower>());
-        CardModel wouldBeDrawn = await AddToDrawPileTop<DefendIronclad>();
-        var selector = new ScriptedCardSelector().ThenSkip();
+        await PlayScript<ExecutionCommanderScript>();
+        var selector = new ScriptedCardSelector()
+            .ThenSelectWhere(card => card is SunqianScriptRecord);
 
         using (UseCardSelector(selector))
         {
@@ -187,12 +188,10 @@ public sealed class ScriptSystemTests : SunqianCombatTestSuite
         }
         AssertAllSelectionsConsumed(selector);
 
-        Assert.Same(active, Player.Creature.GetPower<ScriptSunqianPower>());
-        AssertInPile(wouldBeDrawn, PileType.Draw);
-        CardTestAssertions.AssertPowerAmount<DexterityPower>(
-            Player.Creature,
-            SunqianScript.BaseDexterity);
-        Assert.Equal(0, ScriptSystem.GetScriptLiftsThisTurn(Player));
+        Assert.Equal(1, selector.SelectionRequestCount);
+        Assert.Equal(1, selector.LastMinSelect);
+        Assert.Equal(1, selector.LastMaxSelect);
+        AssertOnlyScript<ScriptSunqianPower>();
     }
 
     [Fact]
@@ -203,8 +202,7 @@ public sealed class ScriptSystemTests : SunqianCombatTestSuite
         await PlayScript<ExecutionCommanderScript>();
         var active = Assert.IsType<ScriptExecutionCommanderPower>(
             Player.Creature.GetPower<ScriptExecutionCommanderPower>());
-        var selector = new ScriptedCardSelector()
-            .ThenSelectWhere(card => card is ExecutionCommanderScriptRecord);
+        var selector = new ScriptedCardSelector();
 
         using (UseCardSelector(selector))
         {
@@ -215,6 +213,7 @@ public sealed class ScriptSystemTests : SunqianCombatTestSuite
         }
         AssertAllSelectionsConsumed(selector);
 
+        Assert.Equal(0, selector.SelectionRequestCount);
         Assert.NotSame(active, Player.Creature.GetPower<ScriptExecutionCommanderPower>());
         Assert.Equal(0, ScriptSystem.GetScriptLiftsThisTurn(Player));
     }
@@ -271,6 +270,8 @@ public sealed class ScriptSystemTests : SunqianCombatTestSuite
         }
         AssertAllSelectionsConsumed(selector);
 
+        Assert.Equal(1, selector.LastMinSelect);
+        Assert.Equal(3, selector.LastMaxSelect);
         Assert.Equal(0, Player.PlayerCombatState.Energy);
         Assert.Equal(1, ScriptSystem.GetActivationLimit(Player));
         Assert.Equal(3, Player.Creature.Powers.OfType<ScriptPowerTemplate>().Count());
@@ -289,6 +290,54 @@ public sealed class ScriptSystemTests : SunqianCombatTestSuite
 
         Assert.Contains("当前花费", prompt);
         Assert.Contains("[blue]2[/blue]", prompt);
+    }
+
+    [Fact]
+    public void Script_activation_selection_replaces_the_oldest_choice_when_full()
+    {
+        CardModel a = ModelDb.Card<SunqianScriptRecord>();
+        CardModel b = ModelDb.Card<ServantScriptRecord>();
+        CardModel c = ModelDb.Card<NeutralAmbushScriptRecord>();
+        CardModel d = ModelDb.Card<GruntScriptRecord>();
+        var selected = new HashSet<CardModel>();
+        var order = new ScriptActivationSelectionOrder();
+
+        Click(b);
+        Click(c);
+        Click(a);
+        Click(d);
+
+        Assert.DoesNotContain(b, selected);
+        Assert.Equal([c, a, d], order.Cards);
+
+        void Click(CardModel card)
+        {
+            CardModel? removed = order.MakeRoomFor(selected, card, maxSelect: 3);
+            if (removed is not null)
+            {
+                selected.Remove(removed);
+            }
+
+            if (!selected.Remove(card))
+            {
+                selected.Add(card);
+            }
+            order.RecordResult(selected, card);
+        }
+    }
+
+    [Fact]
+    public void Selected_script_highlight_blue_takes_priority_over_active_white()
+    {
+        Assert.Equal(
+            ScriptRecordCardHighlight.ActiveColor,
+            ScriptRecordCardHighlight.ResolveColor(isActive: true, isSelected: false));
+        Assert.Equal(
+            NCardHighlight.playableColor,
+            ScriptRecordCardHighlight.ResolveColor(isActive: true, isSelected: true));
+        Assert.Equal(1f, ScriptRecordCardHighlight.ActiveColor.R);
+        Assert.Equal(1f, ScriptRecordCardHighlight.ActiveColor.G);
+        Assert.Equal(1f, ScriptRecordCardHighlight.ActiveColor.B);
     }
 
     [Fact]
@@ -320,7 +369,7 @@ public sealed class ScriptSystemTests : SunqianCombatTestSuite
     }
 
     [Fact]
-    public async Task Active_record_gold_glow_tracks_manual_reselection()
+    public async Task Active_record_highlight_tracks_manual_reselection()
     {
         await PlayScript<NeutralAmbushScript>();
         await PlayScript<ServantScript>();
@@ -362,7 +411,6 @@ public sealed class ScriptSystemTests : SunqianCombatTestSuite
 
         CardModel burning = await AddToHand<BlockFirefighting>();
         var reselectSelector = new ScriptedCardSelector()
-            .ThenSelectWhere(card => card is BowangParadoxScriptRecord)
             .ThenSelectWhere(card => card is BowangParadoxTinderChoice);
         using (UseCardSelector(reselectSelector))
         {

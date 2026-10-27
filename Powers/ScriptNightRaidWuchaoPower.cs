@@ -5,6 +5,7 @@ using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Commands.Builders;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.Entities.Creatures;
+using MegaCrit.Sts2.Core.Entities.Powers;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
@@ -25,6 +26,8 @@ namespace Squ.Powers;
 [RegisterPower]
 public sealed class ScriptNightRaidWuchaoPower : ScriptPowerTemplate
 {
+	public override PowerStackType StackType => PowerStackType.Counter;
+
 	public override PowerAssetProfile AssetProfile => new(
 		IconPath: "res://images/powers/ScriptNightRaidWuchaoPower.png",
 		BigIconPath: "res://images/powers/ScriptNightRaidWuchaoPowerBig.png");
@@ -36,6 +39,7 @@ public sealed class ScriptNightRaidWuchaoPower : ScriptPowerTemplate
 
 	protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
 	[
+		HoverTipFactory.FromKeyword(SquKeywords.VariousStrikeCards),
 		HoverTipFactory.FromPower<BurningPower>(),
 	];
 

@@ -26,8 +26,10 @@ public static class ScriptSystem
 {
 	private const string ScriptCollectionStem = "script_collection";
 
+	internal const string SelectionPromptKey =
+		"SUNQIAN_UNIVERSE_CARD_SCRIPT_SELECTION_PROMPT";
 	private static readonly LocString SelectionPrompt =
-		new("cards", "SUNQIAN_UNIVERSE_CARD_SCRIPT_SELECTION_PROMPT");
+		new("cards", SelectionPromptKey);
 	internal const string PaidSelectionPromptKey =
 		"SUNQIAN_UNIVERSE_CARD_SCRIPT_PAID_SELECTION_PROMPT";
 	internal const string FreeSelectionCountVariable = "FreeSelectionCount";
@@ -98,7 +100,8 @@ public static class ScriptSystem
 		PlayerChoiceContext choiceContext,
 		ScriptCardTemplate source,
 		decimal amount,
-		Action<TRecord>? configureRecord = null)
+		Action<TRecord>? configureRecord = null,
+		Action<TRecord>? afterActivation = null)
 		where TRecord : ScriptRecordCardTemplate
 	{
 		Player player = source.Owner;
@@ -137,6 +140,7 @@ public static class ScriptSystem
 			choiceContext,
 			player,
 			record);
+		afterActivation?.Invoke(record);
 	}
 
 	private static async Task ActivatePlayedScriptAsync(
@@ -230,9 +234,16 @@ public static class ScriptSystem
 		{
 			return false;
 		}
+		if (records.Count == 1)
+		{
+			await ApplySelectedScriptsAsync(choiceContext, player, records);
+			return true;
+		}
 
-		int selectCount = Math.Min(GetActivationLimit(player), records.Count);
-		var prefs = new CardSelectorPrefs(SelectionPrompt, selectCount)
+		int activationLimit = GetActivationLimit(player);
+		int maxSelect = Math.Min(activationLimit, records.Count);
+		int minSelect = records.Count < activationLimit ? 1 : maxSelect;
+		var prefs = new CardSelectorPrefs(SelectionPrompt, minSelect, maxSelect)
 		{
 			Cancelable = cancelable,
 			RequireManualConfirmation = true,
@@ -247,7 +258,7 @@ public static class ScriptSystem
 			card => card is ScriptRecordCardTemplate))
 			.OfType<ScriptRecordCardTemplate>()
 			.ToList();
-		if (selected.Count == 0 && cancelable)
+		if (selected.Count == 0)
 		{
 			return false;
 		}
@@ -269,16 +280,23 @@ public static class ScriptSystem
 		{
 			return false;
 		}
+		if (records.Count == 1)
+		{
+			await ApplySelectedScriptsAsync(choiceContext, player, records);
+			return true;
+		}
 
-		int freeSelectionCount = Math.Min(GetActivationLimit(player), records.Count);
+		int activationLimit = GetActivationLimit(player);
+		int freeSelectionCount = Math.Min(activationLimit, records.Count);
 		int availableEnergy = Math.Max(0, player.PlayerCombatState?.Energy ?? 0);
 		int maxSelect = Math.Min(records.Count, freeSelectionCount + availableEnergy);
+		int minSelect = records.Count < activationLimit ? 1 : freeSelectionCount;
 		var prefs = new CardSelectorPrefs(
 			CreatePaidSelectionPrompt(
 				freeSelectionCount,
 				energyCost: 0,
 				EnergyIconHelper.GetPrefix(records[0])),
-			minCount: 0,
+			minSelect,
 			maxSelect)
 		{
 			Cancelable = cancelable,
@@ -294,7 +312,7 @@ public static class ScriptSystem
 			card => card is ScriptRecordCardTemplate))
 			.OfType<ScriptRecordCardTemplate>()
 			.ToList();
-		if (selected.Count == 0 && cancelable)
+		if (selected.Count == 0)
 		{
 			return false;
 		}

@@ -55,7 +55,7 @@ public sealed class AbundantBoxLunchRelic : ScriptRelicTemplate
 			await ScriptSystem.ChooseActiveScriptsWithEnergyAsync(
 				new BlockingPlayerChoiceContext(),
 				Owner,
-				cancelable: true);
+				cancelable: false);
 		}
 		finally
 		{

@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using HarmonyLib;
 using Godot;
@@ -12,47 +13,134 @@ using STS2RitsuLib.Keywords;
 
 namespace Squ.Patches;
 
-/// <summary>
-/// Register active script records in the grid's own persistent highlight set before
-/// it creates or reassigns card nodes. This keeps the highlight alive in both the
-/// read-only pile screen and the combat selection screen, including after a selected
-/// active card is toggled off again.
-/// </summary>
-[HarmonyPatch(typeof(NCardGrid), nameof(NCardGrid.SetCards))]
-internal static class ScriptRecordCardGridStatePatch
+internal static class ScriptRecordCardHighlight
 {
-	private static readonly AccessTools.FieldRef<NCardGrid, List<CardModel>> HighlightedCards =
-		AccessTools.FieldRefAccess<NCardGrid, List<CardModel>>("_highlightedCards");
+	internal static readonly Color ActiveColor = new(1f, 1f, 1f, 0.98f);
 
-	[HarmonyPrefix]
-	private static void Prefix(NCardGrid __instance, IReadOnlyList<CardModel> cardsToDisplay)
+	internal static bool ShouldHighlight(CardModel? model) =>
+		model is ScriptRecordCardTemplate { ShouldGlowGold: true };
+
+	internal static Color ResolveColor(bool isActive, bool isSelected) =>
+		isActive && !isSelected
+			? ActiveColor
+			: NCardHighlight.playableColor;
+
+	/// <summary>
+	/// Set the color without changing visibility. NCardGrid owns ordinary selection
+	/// visibility, so inactive records selected by the player must remain highlighted.
+	/// </summary>
+	internal static bool ApplyColor(NCard? card)
 	{
-		List<CardModel> highlightedCards = HighlightedCards(__instance);
-		highlightedCards.RemoveAll(card => card is ScriptRecordCardTemplate);
-
-		foreach (CardModel card in cardsToDisplay)
+		if (card is null)
 		{
-			if (card is ScriptRecordCardTemplate { ShouldGlowGold: true })
-			{
-				highlightedCards.Add(card);
-			}
+			return false;
+		}
+		if (card.Model is not ScriptRecordCardTemplate record)
+		{
+			card.CardHighlight.Modulate = NCardHighlight.playableColor;
+			return false;
+		}
+
+		bool shouldHighlight = ShouldHighlight(record);
+		card.CardHighlight.Modulate = ResolveColor(shouldHighlight, isSelected: false);
+		return shouldHighlight;
+	}
+
+	internal static void ShowSelected(NCard? card)
+	{
+		if (card is null)
+		{
+			return;
+		}
+
+		card.CardHighlight.Modulate = ResolveColor(
+			ShouldHighlight(card.Model),
+			isSelected: true);
+		card.CardHighlight.AnimShow();
+	}
+
+	internal static void ShowIfActive(NCard? card)
+	{
+		if (ApplyColor(card))
+		{
+			card!.CardHighlight.AnimShow();
 		}
 	}
 
-	internal static void RestoreActiveHighlight(
-		NCardGrid grid,
-		ScriptRecordCardTemplate record)
+	internal static void RestoreHighlights(
+		IEnumerable<NGridCardHolder> holders,
+		ICollection<CardModel> selectedCards)
 	{
-		List<CardModel> highlightedCards = HighlightedCards(grid);
-		if (!highlightedCards.Contains(record))
+		foreach (NGridCardHolder holder in holders)
 		{
-			highlightedCards.Add(record);
+			if (selectedCards.Contains(holder.CardModel))
+			{
+				ShowSelected(holder.CardNode);
+			}
+			else
+			{
+				ShowIfActive(holder.CardNode);
+			}
 		}
+	}
+}
 
-		if (grid.GetCardNode(record) is { } card)
+/// <summary>
+/// The first grid allocation creates NCard instances directly and never calls
+/// ReassignToCard or AssignCardsToRow. Apply active-script highlights after that
+/// initial allocation has finished.
+/// </summary>
+[HarmonyPatch(typeof(NCardGrid), "InitGrid", new Type[] { })]
+internal static class ScriptRecordCardGridInitialHighlightPatch
+{
+	[HarmonyPostfix]
+	[HarmonyPriority(Priority.Last)]
+	private static void Postfix(
+		NCardGrid __instance,
+		List<CardModel> ____highlightedCards) =>
+		ScriptRecordCardHighlight.RestoreHighlights(
+			__instance.CurrentlyDisplayedCardHolders,
+			____highlightedCards);
+}
+
+/// <summary>
+/// Pile and selection grids recycle card holders. Reset the color whenever a holder
+/// receives a card; the grid still makes the final visibility decision afterwards.
+/// </summary>
+[HarmonyPatch(typeof(NCardHolder), nameof(NCardHolder.ReassignToCard))]
+internal static class ScriptRecordCardHolderHighlightPatch
+{
+	[HarmonyPostfix]
+	private static void Postfix(NCardHolder __instance) =>
+		ScriptRecordCardHighlight.ApplyColor(__instance.CardNode);
+}
+
+/// <summary>
+/// In 0.111.0 AssignCardsToRow calls ReassignToCard and then immediately hides any
+/// card absent from NCardGrid's private selection list. Reapply the persistent active
+/// script highlight after that final grid-owned show/hide step.
+/// </summary>
+[HarmonyPatch(typeof(NCardGrid), "AssignCardsToRow")]
+internal static class ScriptRecordCardGridRowHighlightPatch
+{
+	[HarmonyPostfix]
+	[HarmonyPriority(Priority.Last)]
+	private static void Postfix(
+		List<NGridCardHolder> row,
+		List<CardModel> ____highlightedCards) =>
+		ScriptRecordCardHighlight.RestoreHighlights(row, ____highlightedCards);
+}
+
+/// <summary>Vanilla selection blue takes priority over the persistent active-script white.</summary>
+[HarmonyPatch(typeof(NCardGrid), nameof(NCardGrid.HighlightCard))]
+internal static class ScriptRecordCardGridHighlightPatch
+{
+	[HarmonyPostfix]
+	private static void Postfix(NCardGrid __instance, CardModel card)
+	{
+		if (card is ScriptRecordCardTemplate)
 		{
-			card.CardHighlight.Modulate = NCardHighlight.gold;
-			card.CardHighlight.AnimShow();
+			ScriptRecordCardHighlight.ShowSelected(__instance.GetCardNode(card));
 		}
 	}
 }
@@ -64,9 +152,9 @@ internal static class ScriptRecordCardGridUnhighlightPatch
 	[HarmonyPostfix]
 	private static void Postfix(NCardGrid __instance, CardModel card)
 	{
-		if (card is ScriptRecordCardTemplate { ShouldGlowGold: true } record)
+		if (ScriptRecordCardHighlight.ShouldHighlight(card))
 		{
-			ScriptRecordCardGridStatePatch.RestoreActiveHighlight(__instance, record);
+			ScriptRecordCardHighlight.ShowIfActive(__instance.GetCardNode(card));
 		}
 	}
 }
@@ -105,39 +193,5 @@ internal static class ScriptRecordCardEnergyVisualPatch
 
 		__instance.GetNode<TextureRect>("%EnergyIcon").Visible = false;
 		__instance.GetNode<TextureRect>("%UnplayableEnergyIcon").Visible = false;
-	}
-}
-
-/// <summary>
-/// Card grids own highlight visibility and hide it after assigning each card, so
-/// model-level ShouldGlowGold is not enough on pile and selection screens.
-/// Reapply the script state after the row has finished assigning its cards.
-/// </summary>
-[HarmonyPatch(typeof(NCardGrid), "AssignCardsToRow")]
-internal static class ScriptRecordCardGridHighlightPatch
-{
-	[HarmonyPostfix]
-	private static void Postfix(List<NGridCardHolder> row)
-	{
-		foreach (NGridCardHolder holder in row)
-		{
-			if (holder.CardNode is not NCard card
-				|| card.Model is not ScriptRecordCardTemplate record)
-			{
-				continue;
-			}
-
-			card.CardHighlight.Modulate = record.ShouldGlowGold
-				? NCardHighlight.gold
-				: NCardHighlight.playableColor;
-			if (record.ShouldGlowGold)
-			{
-				card.CardHighlight.AnimShow();
-			}
-			else
-			{
-				card.CardHighlight.AnimHide();
-			}
-		}
 	}
 }

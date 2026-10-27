@@ -55,6 +55,7 @@ public static class SquMod
 			.CardKeywordOwnedByLocNamespace("piercing_damage")
 			.CardKeywordOwnedByLocNamespace("scry")
 			.CardKeywordOwnedByLocNamespace("counts_as_played")
+			.CardKeywordOwnedByLocNamespace("various_strike_cards")
 			.CardKeywordOwnedByLocNamespace("charge")
 			.CardKeywordOwnedByLocNamespace(
 				"family",
@@ -77,7 +78,7 @@ public static class SquMod
 			.CardKeywordOwnedByLocNamespace(
 				"eunuch_message",
 				iconPath: null,
-				ModKeywordCardDescriptionPlacement.BeforeCardDescription,
+				ModKeywordCardDescriptionPlacement.None,
 				includeInCardHoverTip: true)
 			.CardKeywordOwnedByLocNamespace(
 				"fit",

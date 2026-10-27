@@ -1,6 +1,7 @@
 using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
+using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.Characters;
 using MegaCrit.Sts2.Core.Models.Cards;
@@ -34,6 +35,17 @@ public sealed class EunuchScriptTests : SunqianCombatTestSuite
 
         AssertTemporaryEtherealInHand(playedCard);
         AssertTemporaryEtherealInHand(movedCard);
+		string playedDescription = playedCard.GetDescriptionForPile(PileType.Hand);
+		Assert.Contains(KeywordMarker(CardKeyword.Ethereal), playedDescription);
+		Assert.DoesNotContain(KeywordMarker(CardKeyword.Retain), playedDescription);
+		Assert.DoesNotContain("小黄门的口信", playedDescription);
+		HoverTip markerTip = Assert.Single(
+			playedCard.HoverTips.OfType<HoverTip>(),
+			tip => tip.Id == HoverTipFactory.FromKeyword(SquKeywords.EunuchMessage).Id);
+		Assert.Equal("小黄门的口信", markerTip.Title);
+		Assert.Equal(
+			"因[gold]小黄门[/gold]的效果，这张牌在被打出前具有[gold]保留[/gold]。",
+			markerTip.Description);
 
         await CardPileCmd.Add(movedCard, PileType.Discard);
         AssertInPile(movedCard, PileType.Discard);
@@ -43,6 +55,9 @@ public sealed class EunuchScriptTests : SunqianCombatTestSuite
         AssertInPile(playedCard, PileType.Discard);
         Assert.False(playedCard.HasEunuchMessage());
         Assert.DoesNotContain(CardKeyword.Ethereal, playedCard.Keywords);
+		Assert.DoesNotContain(
+			playedCard.HoverTips,
+			tip => tip.Id == HoverTipFactory.FromKeyword(SquKeywords.EunuchMessage).Id);
     }
 
     [Fact]
@@ -119,6 +134,10 @@ public sealed class EunuchScriptTests : SunqianCombatTestSuite
         AssertInPile(second, PileType.Hand);
         Assert.False(first.ShouldRetainThisTurn);
         Assert.False(second.ShouldRetainThisTurn);
+		HoverTip inactiveMessage = Assert.Single(
+			first.HoverTips.OfType<HoverTip>(),
+			tip => tip.Id == HoverTipFactory.FromKeyword(SquKeywords.EunuchMessage).Id);
+		Assert.Contains("[gold]虚无[/gold]", inactiveMessage.Description);
 
         await EndTurn();
 
@@ -140,6 +159,66 @@ public sealed class EunuchScriptTests : SunqianCombatTestSuite
         AssertTemporaryEtherealInHand(burn);
     }
 
+    [Fact]
+    public async Task EU_07_intrinsic_ethereal_is_neither_marked_nor_removed_and_does_not_gain_a_retain_line()
+    {
+        var intrinsicEthereal = await AddToHand<WhyDoubtWei>();
+        string descriptionBeforeActivation =
+            intrinsicEthereal.GetDescriptionForPile(PileType.Hand);
+        await AddToDrawPileTop<DefendLongtao>();
+        await AddToDrawPileTop<FlameStrike>();
+
+        await PlayAndActivateScript(await AddToHand<EunuchScript>());
+
+        Assert.False(intrinsicEthereal.HasEunuchMessage());
+        Assert.Contains(CardKeyword.Ethereal, intrinsicEthereal.Keywords);
+        Assert.True(intrinsicEthereal.ShouldRetainThisTurn);
+        string activeDescription = intrinsicEthereal.GetDescriptionForPile(PileType.Hand);
+        Assert.Equal(
+            CountOccurrences(descriptionBeforeActivation, KeywordMarker(CardKeyword.Ethereal)),
+            CountOccurrences(activeDescription, KeywordMarker(CardKeyword.Ethereal)));
+        Assert.Equal(
+            CountOccurrences(descriptionBeforeActivation, KeywordMarker(CardKeyword.Retain)),
+            CountOccurrences(activeDescription, KeywordMarker(CardKeyword.Retain)));
+        Assert.DoesNotContain("小黄门的口信", activeDescription);
+
+        await Play(intrinsicEthereal, EnemyAt(0));
+
+        Assert.Contains(CardKeyword.Ethereal, intrinsicEthereal.Keywords);
+        Assert.False(intrinsicEthereal.HasEunuchMessage());
+    }
+
+    [Fact]
+    public async Task EU_08_intrinsic_retain_survives_message_cleanup_without_duplicate_card_text()
+    {
+        await AddToDrawPileTop<DefendLongtao>();
+        var intrinsicRetain = await AddToDrawPileTop<KeepCalm>();
+        string descriptionBeforeMessage =
+            intrinsicRetain.GetDescriptionForPile(PileType.Hand);
+
+        await PlayAndActivateScript(await AddToHand<EunuchScript>());
+
+        AssertTemporaryEtherealInHand(intrinsicRetain);
+        Assert.Contains(CardKeyword.Retain, intrinsicRetain.Keywords);
+        string activeDescription = intrinsicRetain.GetDescriptionForPile(PileType.Hand);
+        Assert.Equal(
+            CountOccurrences(descriptionBeforeMessage, KeywordMarker(CardKeyword.Retain)),
+            CountOccurrences(activeDescription, KeywordMarker(CardKeyword.Retain)));
+        Assert.Equal(
+            CountOccurrences(descriptionBeforeMessage, KeywordMarker(CardKeyword.Ethereal)) + 1,
+            CountOccurrences(activeDescription, KeywordMarker(CardKeyword.Ethereal)));
+        Assert.DoesNotContain("小黄门的口信", activeDescription);
+
+        await Play(intrinsicRetain);
+
+        Assert.Contains(CardKeyword.Retain, intrinsicRetain.Keywords);
+        Assert.DoesNotContain(CardKeyword.Ethereal, intrinsicRetain.Keywords);
+        Assert.False(intrinsicRetain.HasEunuchMessage());
+        Assert.DoesNotContain(
+            intrinsicRetain.HoverTips,
+            tip => tip.Id == HoverTipFactory.FromKeyword(SquKeywords.EunuchMessage).Id);
+    }
+
     private static void AssertTemporaryEtherealInHand(CardModel card)
     {
         AssertInPile(card, PileType.Hand);
@@ -152,4 +231,13 @@ public sealed class EunuchScriptTests : SunqianCombatTestSuite
         Assert.True(card.HasEunuchMessage());
         Assert.Contains(CardKeyword.Ethereal, card.Keywords);
     }
+
+    private static string KeywordMarker(CardKeyword keyword)
+    {
+        HoverTip tip = Assert.IsType<HoverTip>(HoverTipFactory.FromKeyword(keyword));
+        return $"[gold]{tip.Title}[/gold]";
+    }
+
+    private static int CountOccurrences(string text, string value) =>
+        text.Split(value, StringSplitOptions.None).Length - 1;
 }

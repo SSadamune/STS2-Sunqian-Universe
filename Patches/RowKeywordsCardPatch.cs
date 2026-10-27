@@ -5,6 +5,7 @@ using System.Reflection;
 using HarmonyLib;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.HoverTips;
+using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.Models;
 using Squ.Cards;
 using STS2RitsuLib.Keywords;
@@ -58,6 +59,13 @@ internal static class RowKeywordsCardPatch
 			{
 				keywordMarkers.Add(GetKeywordMarker(keyword));
 			}
+		}
+
+		if (card.DynamicVars.ContainsKey(ForgeVar.defaultName)
+			&& HoverTipFactory.Static(StaticHoverTip.Forge) is HoverTip forgeTip
+			&& !string.IsNullOrEmpty(forgeTip.Title))
+		{
+			keywordMarkers.Add($"[gold]{forgeTip.Title}[/gold]");
 		}
 
 		int count = 0;

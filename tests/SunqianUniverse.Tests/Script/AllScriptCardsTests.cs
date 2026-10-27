@@ -1,5 +1,6 @@
 using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
+using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.CardPools;
@@ -103,6 +104,53 @@ public sealed class AllScriptCardsTests : SunqianCombatTestSuite
         Assert.DoesNotContain("[gold]激活", ordinary);
         Assert.DoesNotContain("[gold]激活", reinforceable);
         Assert.DoesNotContain("[gold]激活", partTimeGeneral);
+    }
+
+    [Fact]
+    public async Task Various_strike_cards_text_has_the_registered_hover_tip_everywhere()
+    {
+        const string marker = "[gold]各种打击牌[/gold]";
+        CardModel[] cards =
+        [
+            ModelDb.Card<BenevolenceRighteousnessDualSwords>(),
+            ModelDb.Card<PartTimeGeneralScript>(),
+            ModelDb.Card<GruntScriptRecord>(),
+            ModelDb.Card<NightRaidWuchaoScriptRecord>(),
+        ];
+        foreach (CardModel card in cards)
+        {
+            Assert.Contains(marker, card.GetDescriptionForPile(PileType.Deck));
+        }
+
+        HoverTip expectedTip = Assert.IsType<HoverTip>(
+            HoverTipFactory.FromKeyword(SquKeywords.VariousStrikeCards));
+        Assert.Equal("各种打击牌", expectedTip.Title);
+        Assert.Equal(
+            "牌名中包含「打击」的攻击牌，均被称为[gold]各种打击牌[/gold]。",
+            expectedTip.Description);
+
+        var choiceContext = new BlockingPlayerChoiceContext();
+        PowerModel[] powers =
+        [
+            Assert.IsType<ScriptGruntPower>(await PowerCmd.Apply<ScriptGruntPower>(
+                choiceContext, Player.Creature, 1m, Player.Creature, null)),
+            Assert.IsType<ScriptViceGeneralPower>(await PowerCmd.Apply<ScriptViceGeneralPower>(
+                choiceContext, Player.Creature, 1m, Player.Creature, null)),
+            Assert.IsType<ScriptNightRaidWuchaoPower>(await PowerCmd.Apply<ScriptNightRaidWuchaoPower>(
+                choiceContext, Player.Creature, 1m, Player.Creature, null)),
+            Assert.IsType<BenevolenceRighteousnessDualSwordsPower>(
+                await PowerCmd.Apply<BenevolenceRighteousnessDualSwordsPower>(
+                    choiceContext, Player.Creature, 1m, Player.Creature, null)),
+        ];
+        IEnumerable<IHoverTip>[] hoverTipSets =
+        [
+            ..cards.Select(card => card.HoverTips),
+            ..powers.Select(power => power.HoverTips),
+        ];
+        foreach (IEnumerable<IHoverTip> hoverTips in hoverTipSets)
+        {
+            Assert.Contains(hoverTips, tip => tip.Id == expectedTip.Id);
+        }
     }
 
     [Theory]

@@ -50,7 +50,7 @@ public sealed class BoxLunchRelic : ScriptRelicTemplate, IScriptActivationLimitP
 		await ScriptSystem.ChooseActiveScriptsAsync(
 			new BlockingPlayerChoiceContext(),
 			Owner,
-			cancelable: true);
+			cancelable: false);
 		Status = RelicStatus.Normal;
 	}
 

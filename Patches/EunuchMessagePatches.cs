@@ -7,9 +7,7 @@ using HarmonyLib;
 using MegaCrit.Sts2.Core.Combat;
 using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
-using MegaCrit.Sts2.Core.Entities.Creatures;
 using MegaCrit.Sts2.Core.HoverTips;
-using MegaCrit.Sts2.Core.Localization;
 using MegaCrit.Sts2.Core.Models;
 using Squ;
 using Squ.Powers;
@@ -34,44 +32,39 @@ internal static class EunuchMessageRetainPatch
 }
 
 /// <summary>
-/// 临时虚无使用自定义关键词保存“由小黄门赋予”这一状态；该内部标记不应出现在卡面。
+/// 《剧本：小黄门》只在规则层把虚无视为保留；卡面仍应显示真实的“虚无”，
+/// 而不应因为 <see cref="CardModel.ShouldRetainThisTurn"/> 被改写而额外显示“保留”。
+/// 卡牌本来就具有的保留不在此处移除。
 /// </summary>
 [HarmonyPatch]
-internal static class EunuchMessageHideInternalMarkerTextPatch
+internal static class EunuchVirtualRetainDescriptionPatch
 {
-	private static MethodBase TargetMethod()
-	{
-		Type previewType = typeof(CardModel).GetNestedType("DescriptionPreviewType", BindingFlags.NonPublic)
-			?? throw new MissingMemberException(typeof(CardModel).FullName, "DescriptionPreviewType");
-		return AccessTools.Method(
-			typeof(CardModel),
-			"GetDescriptionForPile",
-			[typeof(PileType), previewType, typeof(Creature)])
-			?? throw new MissingMethodException(typeof(CardModel).FullName, "GetDescriptionForPile");
-	}
+	private static MethodBase TargetMethod() =>
+		AccessTools.GetDeclaredMethods(typeof(CardModel)).Single(method =>
+			method.Name == "GetDescriptionForPile"
+			&& method.GetParameters().Length == 3);
 
 	[HarmonyPostfix]
-	[HarmonyPriority(Priority.First)]
+	[HarmonyPriority(Priority.Last)]
 	private static void Postfix(CardModel __instance, ref string __result)
 	{
-		if (string.IsNullOrEmpty(__result) || !__instance.HasEunuchMessage())
+		if (string.IsNullOrEmpty(__result)
+			|| __instance.Keywords.Contains(CardKeyword.Retain)
+			|| !ScriptEunuchPower.TreatsEtherealAsRetain(__instance))
 		{
 			return;
 		}
 
-		string markerTitle = new LocString(
-			"card_keywords",
-			SquKeywords.EunuchMessageId + ".title").GetFormattedText() ?? "";
-		if (markerTitle.Length == 0)
+		HoverTip retainTip = (HoverTip)HoverTipFactory.FromKeyword(CardKeyword.Retain);
+		string marker = $"[gold]{retainTip.Title}[/gold]";
+		List<string> lines = __result.Split('\n').ToList();
+		int virtualRetainLine = lines.FindIndex(line =>
+			line.StartsWith(marker, StringComparison.Ordinal));
+		if (virtualRetainLine >= 0)
 		{
-			return;
+			lines.RemoveAt(virtualRetainLine);
+			__result = string.Join('\n', lines);
 		}
-
-		string marker = "[gold]" + markerTitle + "[/gold]";
-		string[] kept = __result.Split('\n')
-			.Where(line => !line.StartsWith(marker, StringComparison.Ordinal))
-			.ToArray();
-		__result = string.Join('\n', kept);
 	}
 }
 
@@ -160,7 +153,9 @@ internal static class EunuchMessageRetainHoverTipPatch
 		List<IHoverTip> tips = __result.ToList();
 		if (__instance.HasEunuchMessage())
 		{
-			tips.Remove(HoverTipFactory.FromKeyword(SquKeywords.EunuchMessage));
+			IHoverTip genericMessageTip = HoverTipFactory.FromKeyword(SquKeywords.EunuchMessage);
+			tips.RemoveAll(tip => tip.Id == genericMessageTip.Id);
+			tips.Add(SquKeywords.CreateEunuchMessageHoverTip(__instance));
 		}
 
 		if (ScriptEunuchPower.TreatsEtherealAsRetain(__instance))

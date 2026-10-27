@@ -83,12 +83,14 @@ public abstract class ScriptCardTemplate<TRecord> : ScriptCardTemplate
 	protected Task UnlockScriptAsync(
 		PlayerChoiceContext choiceContext,
 		decimal amount = 1m,
-		System.Action<TRecord>? configureRecord = null) =>
+		System.Action<TRecord>? configureRecord = null,
+		System.Action<TRecord>? afterActivation = null) =>
 		ScriptSystem.UnlockOrReinforceAsync(
 			choiceContext,
 			this,
 			amount,
-			configureRecord);
+			configureRecord,
+			afterActivation);
 
 	protected override void AddExtraArgsToDescription(LocString description)
 	{

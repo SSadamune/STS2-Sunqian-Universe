@@ -27,7 +27,8 @@ public sealed class HoverCardUpgradePreviewTests : SunqianCombatTestSuite
         AssertUpgradePreviewIsGreen<ExecutionCommanderScript, SalvoStrike>();
         AssertUpgradePreviewIsGreen<GuanDiForm, GuanYuCivilVer>();
         AssertUpgradePreviewIsGreen<GuanDiForm, GuanYuMartialVer>();
-        AssertUpgradePreviewIsGreen<NightRaidWuchaoScript, StarryNightStrike>();
+        AssertUpgradePreviewIsGreen<NightRaidWuchaoScript,
+            NightRaidWuchaoScriptStarryNightStrikePreview>();
         AssertUpgradePreviewIsGreen<NeutralAmbushScript, GiantRock>();
         AssertUpgradePreviewIsGreen<NeutralAmbushScript, SalvoStrike>();
         AssertUpgradePreviewIsGreen<OpenDefecation, Splash>();
@@ -89,6 +90,8 @@ public sealed class HoverCardUpgradePreviewTests : SunqianCombatTestSuite
         AssertRecordOwnsDerivedCard<ServantScript, ServantScriptRecord, ThrowHimOut>();
         AssertRecordOwnsDerivedCard<NeutralAmbushScript, NeutralAmbushScriptRecord, GiantRock>();
         AssertRecordOwnsDerivedCard<NeutralAmbushScript, NeutralAmbushScriptRecord, SalvoStrike>();
+        AssertRecordOwnsDerivedCard<NightRaidWuchaoScript, NightRaidWuchaoScriptRecord,
+            NightRaidWuchaoScriptStarryNightStrikePreview>();
     }
 
     private void AssertUpgradePreviewIsGreen<TSource, TTarget>(bool expectDescriptionHighlight = true)

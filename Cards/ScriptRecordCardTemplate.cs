@@ -227,6 +227,11 @@ public sealed class GruntScriptRecord
 	public override CardAssetProfile AssetProfile => new(
 		PortraitPath: "res://images/cards/GruntScript.png");
 
+	protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
+	[
+		HoverTipFactory.FromKeyword(SquKeywords.VariousStrikeCards),
+	];
+
 	protected override void SyncDisplayVars() =>
 		DynamicVars["BonusDamage"].BaseValue = SourceUpgraded
 			? ScriptGruntPower.UpgradedBonusDamage
@@ -440,6 +445,14 @@ public sealed class BombardChibiScriptRecord : ScriptRecordCardTemplate<ScriptBo
 public sealed class NightRaidWuchaoScriptRecord : ReinforceableScriptRecordCardTemplate<ScriptNightRaidWuchaoPower, NightRaidWuchaoScript>
 {
 	internal override bool HasUpgradedVersion => true;
+
+	protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
+	[
+		..SquCardHoverTipFactory.FromCardWithCardHoverTips<NightRaidWuchaoScriptStarryNightStrikePreview>(
+			this,
+			SourceUpgraded),
+		HoverTipFactory.FromKeyword(SquKeywords.VariousStrikeCards),
+	];
 
 	public override CardAssetProfile AssetProfile => new(PortraitPath: "res://images/cards/NightRaidWuchaoScript.png");
 

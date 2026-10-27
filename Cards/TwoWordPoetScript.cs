@@ -1,8 +1,11 @@
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using MegaCrit.Sts2.Core.Entities.Cards;
+using MegaCrit.Sts2.Core.Entities.Enchantments;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
+using MegaCrit.Sts2.Core.Models.Enchantments;
 using MegaCrit.Sts2.Core.ValueProps;
 using Squ;
 using Squ.Audio;
@@ -48,16 +51,32 @@ public sealed class TwoWordPoetScript : ScriptCardTemplate<TwoWordPoetScriptReco
 	protected override async Task PlayScriptAsync(PlayerChoiceContext choiceContext, CardPlay cardPlay)
 	{
 		SquSfx.Play(SquSfx.TwoWordWineAndSongEvent);
-		int spentVigor = await SquVigorSnapshot.SpendAll(choiceContext, Owner.Creature, this);
-		int spentDrunkenMight = await NewsanguoDrunkenMightEffect.SpendForAttack(
-			choiceContext,
-			Owner.Creature,
-			this);
+		int vigorToStore = SquVigorSnapshot.GetAmount(Owner.Creature);
+		int drunkenMightToStore = NewsanguoDrunkenMightEffect.ConsumedByAttack(Owner.Creature);
+		int enchantedVigorToStore = GetVigorousEnchantmentAmount();
 
 		await UnlockScriptAsync(
 			choiceContext,
 			CanonicalDamage,
-			record => record.AddConsumedVigor(this, spentVigor + spentDrunkenMight));
+			afterActivation: record => StoreConsumedVigor(
+				record,
+				vigorToStore + drunkenMightToStore + enchantedVigorToStore));
+	}
+
+	private int GetVigorousEnchantmentAmount()
+	{
+		if (Enchantment is not Vigorous { Status: EnchantmentStatus.Normal } vigorous)
+		{
+			return 0;
+		}
+
+		return Math.Max(0, vigorous.Amount);
+	}
+
+	private void StoreConsumedVigor(TwoWordPoetScriptRecord record, int amount)
+	{
+		record.AddConsumedVigor(this, amount);
+		Owner.Creature.GetPower<ScriptTwoWordPoetPower>()?.SyncStoredDamage(record.StoredAmount);
 	}
 
 	internal override int GetScriptPowerAmountForPreview() => CanonicalDamage;

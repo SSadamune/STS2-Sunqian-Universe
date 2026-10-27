@@ -1,6 +1,8 @@
 using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
+using MegaCrit.Sts2.Core.Entities.Enchantments;
 using MegaCrit.Sts2.Core.Models.Characters;
+using MegaCrit.Sts2.Core.Models.Enchantments;
 using MegaCrit.Sts2.Core.Models.Monsters;
 using MegaCrit.Sts2.Core.Models.Powers;
 using Squ.Cards;
@@ -68,6 +70,30 @@ public sealed class TwoWordPoetScriptTests : SunqianCombatTestSuite
         CardTestAssertions.AssertPowerAmount<ScriptTwoWordPoetPower>(
             Player.Creature,
             record.StoredAmount);
+    }
+
+    [Fact]
+    public async Task Vigorous_enchantment_is_stored_and_does_not_apply_twice_on_immediate_activation()
+    {
+        const int enchantedVigor = 6;
+        var card = await AddToHand<TwoWordPoetScript>();
+        Vigorous enchantment = Assert.IsType<Vigorous>(
+            CardCmd.Enchant<Vigorous>(card, enchantedVigor));
+        int hpBefore = EnemyAt(0).CurrentHp + EnemyAt(1).CurrentHp;
+
+        await PlayAndActivateScript(card);
+
+        int storedDamage = TwoWordPoetScript.CanonicalDamage + enchantedVigor;
+        Assert.Equal(
+            hpBefore - storedDamage * TwoWordPoetScript.CanonicalHits,
+            EnemyAt(0).CurrentHp + EnemyAt(1).CurrentHp);
+        CardTestAssertions.AssertPowerAmount<ScriptTwoWordPoetPower>(
+            Player.Creature,
+            storedDamage);
+        TwoWordPoetScriptRecord record = Assert.Single(
+            ScriptSystem.ScriptCollectionPile.GetPile(Player).Cards.OfType<TwoWordPoetScriptRecord>());
+        Assert.Equal(storedDamage, record.StoredAmount);
+        Assert.Equal(EnchantmentStatus.Disabled, enchantment.Status);
     }
 
     [Fact]

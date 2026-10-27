@@ -22,7 +22,7 @@ namespace Squ.Cards;
 /// 写回牌组原卡，并通过存档属性永久保存。
 /// </summary>
 [RegisterCard(typeof(SunqianCardPool), StableEntryStem = "sharpen_sword_for_decades")]
-public sealed class SharpenSwordForDecades : ChargeCardTemplate
+public sealed class SharpenSwordForDecades : ChargeCardTemplate, IRowKeywordsCard
 {
 	public const int BaseForge = 0;
 	public const int BaseChargeForge = 3;

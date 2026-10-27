@@ -13,6 +13,7 @@ using MegaCrit.Sts2.Core.ValueProps;
 using Squ;
 using Squ.Audio;
 using Squ.Character;
+using Squ.Script;
 using STS2RitsuLib.Interop.AutoRegistration;
 using STS2RitsuLib.Scaffolding.Content;
 
@@ -28,6 +29,11 @@ public sealed class VoiceChange : ModCardTemplate
 
 	public const int BaseBlock = 7;
 	public const int UpgradedBlock = 8;
+
+	public override IEnumerable<CardKeyword> CanonicalKeywords =>
+	[
+		SquKeywords.Wrap,
+	];
 
 	protected override IEnumerable<DynamicVar> CanonicalVars =>
 	[
@@ -49,10 +55,14 @@ public sealed class VoiceChange : ModCardTemplate
 	{
 	}
 
+	protected override bool ShouldGlowGoldInternal =>
+		SquKeywords.ShouldGlowForWrap(this);
+
 	protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
 	{
 		SquSfx.PlayRandom(RunState, SquSfx.VoiceChangeEvents);
 		await CreatureCmd.GainBlock(Owner.Creature, DynamicVars.Block, cardPlay);
+		bool wrap = await ScriptSystem.TryConsumeWrapAsync(Owner.Creature);
 
 		CardPile exhaustPile = PileType.Exhaust.GetPile(Owner);
 		if (!exhaustPile.Cards.Any(IsScriptCard))
@@ -71,11 +81,6 @@ public sealed class VoiceChange : ModCardTemplate
 		CardModel? scriptCard = selected.FirstOrDefault();
 		if (scriptCard?.Pile?.Type == PileType.Exhaust)
 		{
-			if (scriptCard.IsUpgradable)
-			{
-				CardCmd.Upgrade(scriptCard);
-			}
-
 			if (IsUpgraded)
 			{
 				await CardPileCmd.Add(scriptCard, PileType.Hand);
@@ -83,6 +88,11 @@ public sealed class VoiceChange : ModCardTemplate
 			else
 			{
 				await CardPileCmd.Add(scriptCard, PileType.Draw, CardPilePosition.Top);
+			}
+
+			if (wrap && scriptCard.IsUpgradable)
+			{
+				CardCmd.Upgrade(scriptCard);
 			}
 		}
 	}

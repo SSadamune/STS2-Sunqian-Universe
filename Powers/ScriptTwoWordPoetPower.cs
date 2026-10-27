@@ -103,4 +103,10 @@ public sealed class ScriptTwoWordPoetPower : ScriptPowerTemplate
 		((StringVar)DynamicVars[TargetingDescriptionVarName]).StringValue =
 			data.TargetsAllEnemies ? "对所有敌人" : "随机对敌人";
 	}
+
+	internal void SyncStoredDamage(int amount)
+	{
+		SetAmount(amount);
+		SyncDisplayVars(GetInternalData<Data>());
+	}
 }

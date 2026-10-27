@@ -19,6 +19,12 @@ public sealed class ScriptedCardSelector : ICardSelector
 
     public int PendingSteps => _steps.Count;
 
+    public int SelectionRequestCount { get; private set; }
+
+    public int LastMinSelect { get; private set; }
+
+    public int LastMaxSelect { get; private set; }
+
     public ScriptedCardSelector ThenSelect(params CardModel[] cards) =>
         ThenSelect(_ => cards);
 
@@ -48,6 +54,10 @@ public sealed class ScriptedCardSelector : ICardSelector
         int minSelect,
         int maxSelect)
     {
+        SelectionRequestCount++;
+        LastMinSelect = minSelect;
+        LastMaxSelect = maxSelect;
+
         if (_steps.Count == 0)
         {
             throw new InvalidOperationException(

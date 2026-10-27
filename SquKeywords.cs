@@ -57,6 +57,11 @@ public static class SquKeywords
 
 	public static readonly CardKeyword CountsAsPlayed = CountsAsPlayedId.GetModCardKeyword();
 
+	public static readonly string VariousStrikeCardsId = ModContentRegistry
+		.GetQualifiedKeywordId(SquMod.ModId, "various_strike_cards");
+
+	public static readonly CardKeyword VariousStrikeCards = VariousStrikeCardsId.GetModCardKeyword();
+
 	public static readonly string EunuchMessageId = ModContentRegistry
 		.GetQualifiedKeywordId(SquMod.ModId, "eunuch_message");
 
@@ -109,6 +114,26 @@ public static class SquKeywords
 		LocString description = new("card_keywords", "SUNQIAN_UNIVERSE_KEYWORD_WAR_FEEDS_WAR.cardHover");
 		description.Add("CardName", card.Title);
 		return new HoverTip(title, description, icon: null);
+	}
+
+	public static IHoverTip CreateEunuchMessageHoverTip(CardModel card)
+	{
+		CardKeyword displayedKeyword = card.Owner?.Creature
+			.GetPower<global::Squ.Powers.ScriptEunuchPower>() is not null
+			? CardKeyword.Retain
+			: CardKeyword.Ethereal;
+		HoverTip displayedKeywordTip = (HoverTip)HoverTipFactory.FromKeyword(displayedKeyword);
+		LocString description = new(
+			"card_keywords",
+			"SUNQIAN_UNIVERSE_KEYWORD_EUNUCH_MESSAGE.cardHover");
+		description.Add("DisplayedKeyword", displayedKeywordTip.Title ?? string.Empty);
+
+		HoverTip result = new(
+			ModKeywordRegistry.GetTitle(EunuchMessageId),
+			description,
+			icon: null);
+		result.Id = HoverTipFactory.FromKeyword(EunuchMessage).Id;
+		return result;
 	}
 
 	/// <summary>
