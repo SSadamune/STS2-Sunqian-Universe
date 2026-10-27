@@ -123,7 +123,7 @@ internal static class ScriptActivationSelectionRotationPatch
 	}
 
 	private static bool IsScriptActivationPrompt(CardSelectorPrefs prefs) =>
-		prefs.Prompt.LocTable == "cards"
+		prefs.Prompt.LocTable == SquCommonL10n.Table
 		&& (prefs.Prompt.LocEntryKey == ScriptSystem.SelectionPromptKey
 			|| prefs.Prompt.LocEntryKey == ScriptSystem.PaidSelectionPromptKey);
 }

@@ -35,11 +35,11 @@ public sealed class VoiceChangeTests : SunqianCombatTestSuite
         AssertInPile(selected, PileType.Hand);
         Assert.True(selected.IsUpgraded);
         AssertInPile(first, PileType.Exhaust);
-        Assert.Null(Player.Creature.GetPower<ScriptServantPower>());
+        Assert.NotNull(Player.Creature.GetPower<ScriptServantPower>());
     }
 
     [Fact]
-    public async Task VoiceChange_without_wrap_returns_the_only_exhausted_script_without_upgrading_it()
+    public async Task VoiceChange_returns_the_only_exhausted_script_and_upgrades_it()
     {
         var exhaustedScript = await AddCardToPile<SunqianScript>(PileType.Exhaust);
         var voiceChange = await AddToHand<VoiceChange>();
@@ -47,7 +47,7 @@ public sealed class VoiceChangeTests : SunqianCombatTestSuite
         await Play(voiceChange);
 
         Assert.Equal(VoiceChange.BaseBlock, Player.Creature.Block);
-        Assert.False(exhaustedScript.IsUpgraded);
+        Assert.True(exhaustedScript.IsUpgraded);
         AssertInPile(exhaustedScript, PileType.Draw);
         Assert.Same(exhaustedScript, PileType.Draw.GetPile(Player).Cards[0]);
     }

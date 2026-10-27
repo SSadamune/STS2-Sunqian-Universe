@@ -31,6 +31,7 @@ public sealed class TooKindToBeTruePower : ModPowerTemplate
 
 	protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
 	[
+		HoverTipFactory.FromKeyword(SquKeywords.VariousDefendCards),
 		HoverTipFactory.Static(StaticHoverTip.Block),
 	];
 

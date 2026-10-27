@@ -5,7 +5,9 @@ using MegaCrit.Sts2.Core.Models.Cards;
 using MegaCrit.Sts2.Core.Models.Characters;
 using MegaCrit.Sts2.Core.Models.Monsters;
 using MegaCrit.Sts2.Core.ValueProps;
+using MegaCrit.Sts2.Core.Models;
 using Squ.Cards;
+using Squ.Character;
 using Squ.Powers;
 using TestTheSpire;
 using Xunit;
@@ -27,6 +29,7 @@ public sealed class BurningLinkedCampsScriptTests : SunqianCombatTestSuite
         CardPile drawPile = PileType.Draw.GetPile(Player);
         var generated = Assert.Single(drawPile.Cards.OfType<ShangfangguSigh>());
         Assert.True(generated.IsUpgraded);
+        Assert.Same(ModelDb.CardPool<SunqianCardPool>(), generated.VisualCardPool);
         Assert.Contains(previousTop, drawPile.Cards);
         Assert.Null(Player.Creature.GetPower<TinderPower>());
         AssertOnlyScript<ScriptBurningLinkedCampsPower>();

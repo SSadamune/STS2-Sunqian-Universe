@@ -56,6 +56,7 @@ public static class SquMod
 			.CardKeywordOwnedByLocNamespace("scry")
 			.CardKeywordOwnedByLocNamespace("counts_as_played")
 			.CardKeywordOwnedByLocNamespace("various_strike_cards")
+			.CardKeywordOwnedByLocNamespace("various_defend_cards")
 			.CardKeywordOwnedByLocNamespace("charge")
 			.CardKeywordOwnedByLocNamespace(
 				"family",
@@ -96,6 +97,7 @@ public static class SquMod
 
 		CardDrawPlayRateTracker.Initialize();
 		CardResolutionTracker.Initialize();
+		HeadsmanRewardTracker.Initialize();
 		AllInResolutionTracker.Initialize();
 		RitsuLibFramework.RegisterModelCapability<SlightRevisionCapability>(ModId);
 		RitsuLibFramework.RegisterModelCapability<NightRaidWuchaoStrikeCapability>(ModId);

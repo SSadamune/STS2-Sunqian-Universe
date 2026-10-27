@@ -1,5 +1,5 @@
 {
   "SUNQIAN_UNIVERSE_CARDPILE_SCRIPT_COLLECTION.title": "Script Collection",
-  "SUNQIAN_UNIVERSE_CARDPILE_SCRIPT_COLLECTION.description": "Scripts unlocked this combat. Currently active Scripts have a white glow.",
+  "SUNQIAN_UNIVERSE_CARDPILE_SCRIPT_COLLECTION.description": "Scripts unlocked this combat. Currently active Scripts have a white glow.\nWhen the Script Collection contains at least 4 kinds of Script, you may activate 2 Scripts at once.",
   "SUNQIAN_UNIVERSE_CARDPILE_SCRIPT_COLLECTION.empty": "The Script Collection is empty."
 }

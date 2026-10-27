@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Reflection;
 using HarmonyLib;
 using Godot;
 using MegaCrit.Sts2.Core.Models;
@@ -26,8 +27,73 @@ internal static class ScriptRecordCardHighlight
 			: NCardHighlight.playableColor;
 
 	/// <summary>
-	/// Set the color without changing visibility. NCardGrid owns ordinary selection
-	/// visibility, so inactive records selected by the player must remain highlighted.
+	/// Active white is the same <see cref="NCardHighlight"/> node as the selection glow.
+	/// Hiding that node to clear blue also clears white, so an active record that is no
+	/// longer selected must stay visible.
+	/// </summary>
+	internal static bool KeepVisibleOnHide(bool isActive, bool isSelected) =>
+		isActive && !isSelected;
+
+	private static readonly FieldInfo? HighlightedCardsField =
+		AccessTools.Field(typeof(NCardGrid), "_highlightedCards");
+
+	internal static bool IsSelectionHighlighted(NCard card)
+	{
+		CardModel? shown = card.Model;
+		NGridCardHolder? holder = null;
+		for (Node? current = card.GetParent(); current != null; current = current.GetParent())
+		{
+			holder ??= current as NGridCardHolder;
+			if (current is not NCardGrid grid)
+			{
+				continue;
+			}
+
+			if (HighlightedCardsField?.GetValue(grid) is not List<CardModel> selected)
+			{
+				return false;
+			}
+
+			if (shown is not null && selected.Contains(shown))
+			{
+				return true;
+			}
+
+			return holder?.CardModel is CardModel source && selected.Contains(source);
+		}
+
+		return false;
+	}
+
+	internal static NCard? FindCard(Node node)
+	{
+		for (Node? current = node; current != null; current = current.GetParent())
+		{
+			if (current is NCard card)
+			{
+				return card;
+			}
+		}
+
+		return null;
+	}
+
+	internal static NCardGrid? FindGrid(Node node)
+	{
+		for (Node? current = node; current != null; current = current.GetParent())
+		{
+			if (current is NCardGrid grid)
+			{
+				return grid;
+			}
+		}
+
+		return null;
+	}
+
+	/// <summary>
+	/// The grid has only one highlight node. Selection uses its default blue, so an
+	/// active record switches to that color while it is in <c>_highlightedCards</c>.
 	/// </summary>
 	internal static bool ApplyColor(NCard? card)
 	{
@@ -41,9 +107,10 @@ internal static class ScriptRecordCardHighlight
 			return false;
 		}
 
-		bool shouldHighlight = ShouldHighlight(record);
-		card.CardHighlight.Modulate = ResolveColor(shouldHighlight, isSelected: false);
-		return shouldHighlight;
+		bool isActive = ShouldHighlight(record);
+		bool isSelected = IsSelectionHighlighted(card);
+		card.CardHighlight.Modulate = ResolveColor(isActive, isSelected);
+		return KeepVisibleOnHide(isActive, isSelected);
 	}
 
 	internal static void ShowSelected(NCard? card)
@@ -156,6 +223,67 @@ internal static class ScriptRecordCardGridUnhighlightPatch
 		{
 			ScriptRecordCardHighlight.ShowIfActive(__instance.GetCardNode(card));
 		}
+	}
+}
+
+/// <summary>
+/// <see cref="NCardHighlight.AnimShow"/> only changes the shader width, so every show
+/// has to reapply white or the default selection blue.
+/// </summary>
+[HarmonyPatch(typeof(NCardHighlight), nameof(NCardHighlight.AnimShow))]
+internal static class ScriptRecordCardHighlightShowPatch
+{
+	[HarmonyPostfix]
+	[HarmonyPriority(Priority.Last)]
+	private static void Postfix(NCardHighlight __instance)
+	{
+		NCard? card = ScriptRecordCardHighlight.FindCard(__instance);
+		if (card?.Model is ScriptRecordCardTemplate)
+		{
+			ScriptRecordCardHighlight.ApplyColor(card);
+		}
+	}
+}
+
+/// <summary>
+/// UnhighlightCard and AssignCardsToRow hide the shared highlight node. Skipping that
+/// hide keeps an active script's white glow when the player clears the blue selection.
+/// </summary>
+[HarmonyPatch(typeof(NCardHighlight), nameof(NCardHighlight.AnimHide))]
+internal static class ScriptRecordCardHighlightHidePatch
+{
+	private static bool _restoringActiveHighlight;
+
+	[HarmonyPrefix]
+	private static bool Prefix(NCardHighlight __instance)
+	{
+		if (_restoringActiveHighlight)
+		{
+			return true;
+		}
+
+		NCard? card = ScriptRecordCardHighlight.FindCard(__instance);
+		if (card?.Model is not ScriptRecordCardTemplate
+			|| ScriptRecordCardHighlight.FindGrid(__instance) is null
+			|| !ScriptRecordCardHighlight.KeepVisibleOnHide(
+				ScriptRecordCardHighlight.ShouldHighlight(card.Model),
+				ScriptRecordCardHighlight.IsSelectionHighlighted(card)))
+		{
+			return true;
+		}
+
+		_restoringActiveHighlight = true;
+		try
+		{
+			ScriptRecordCardHighlight.ApplyColor(card);
+			__instance.AnimShow();
+		}
+		finally
+		{
+			_restoringActiveHighlight = false;
+		}
+
+		return false;
 	}
 }
 

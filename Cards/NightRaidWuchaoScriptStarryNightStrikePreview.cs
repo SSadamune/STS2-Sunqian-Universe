@@ -1,6 +1,8 @@
 using System.Collections.Generic;
 using MegaCrit.Sts2.Core.Entities.Cards;
+using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.CardPools;
+using Squ.Character;
 using STS2RitsuLib.Interop.AutoRegistration;
 
 namespace Squ.Cards;
@@ -12,6 +14,8 @@ namespace Squ.Cards;
 [RegisterCard(typeof(TokenCardPool), StableEntryStem = "night_raid_wuchao_script_starry_night_strike_preview")]
 public sealed class NightRaidWuchaoScriptStarryNightStrikePreview : StarryNightStrike
 {
+	public override CardPoolModel VisualCardPool => ModelDb.CardPool<SunqianCardPool>();
+
 	public override IEnumerable<CardKeyword> CanonicalKeywords =>
 	[
 		CardKeyword.Exhaust,

@@ -19,7 +19,7 @@ internal static class AbundantBoxLunchSelectionCostPatch
 		HashSet<CardModel> ____selectedCards,
 		MegaRichTextLabel ____infoLabel)
 	{
-		if (____prefs.Prompt.LocTable != "cards"
+		if (____prefs.Prompt.LocTable != SquCommonL10n.Table
 			|| ____prefs.Prompt.LocEntryKey != ScriptSystem.PaidSelectionPromptKey
 			|| !____prefs.Prompt.Variables.TryGetValue(
 				ScriptSystem.FreeSelectionCountVariable,

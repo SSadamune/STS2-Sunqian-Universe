@@ -5,7 +5,6 @@ using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Commands.Builders;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.Entities.Creatures;
-using MegaCrit.Sts2.Core.Entities.Players;
 using MegaCrit.Sts2.Core.Entities.Powers;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.HoverTips;
@@ -40,25 +39,6 @@ public sealed class ScriptHeadsmanPower : ScriptPowerTemplate
 		new PowerVar<VigorPower>(HeadsmanScript.BaseVigor),
 	];
 
-	private sealed class Data
-	{
-		public bool RestoreEnergy;
-
-		/// <summary>只为整条嵌套结算链最外层的攻击牌建立记录。</summary>
-		public Dictionary<CardModel, AttackPlayTrack> ActivePlays { get; } = [];
-	}
-
-	private sealed class AttackPlayTrack
-	{
-		public required int EnergySpent { get; init; }
-
-		/// <summary>整条结算链中明确登记的攻击所消耗的资源。</summary>
-		public required AttackResourceSpendTransaction ResourceSpend { get; init; }
-
-		/// <summary>本次打出期间是否至少击杀过一个敌人（不关心具体次数）。</summary>
-		public bool AnyKill { get; set; }
-	}
-
 	protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
 		NewsanguoDrunkenMightEffect.HoverTips();
 
@@ -66,14 +46,13 @@ public sealed class ScriptHeadsmanPower : ScriptPowerTemplate
 		IconPath: "res://images/powers/ScriptHeadsmanPower.png",
 		BigIconPath: "res://images/powers/ScriptHeadsmanPowerBig.png");
 
-	protected override object InitInternalData() => new Data();
+	internal void FlashReward() => Flash();
 
 	protected override string SmartDescriptionLocKey =>
 		base.Id.Entry + ".smartDescription";
 
 	protected override async Task OnScriptApplied(Creature? applier, CardModel? cardSource)
 	{
-		GetInternalData<Data>().RestoreEnergy = true;
 		int vigor = cardSource is HeadsmanScript { IsUpgraded: true }
 			? HeadsmanScript.UpgradedVigor
 			: HeadsmanScript.BaseVigor;
@@ -102,19 +81,12 @@ public sealed class ScriptHeadsmanPower : ScriptPowerTemplate
 
 		if (!CardResolutionTracker.IsOutermostCardPlay(cardPlay))
 		{
-			if (TryGetRootTrack(out AttackPlayTrack? rootTrack))
-			{
-				rootTrack.ResourceSpend.RegisterSource(cardPlay.Card);
-			}
-
+			// A nested attack can satisfy the kill condition, but the refund is based only
+			// on resources spent by the outer (mother) card.
 			return Task.CompletedTask;
 		}
 
-		GetInternalData<Data>().ActivePlays[cardPlay.Card] = new AttackPlayTrack
-		{
-			EnergySpent = cardPlay.Resources.EnergySpent,
-			ResourceSpend = new AttackResourceSpendTransaction(Owner, cardPlay.Card),
-		};
+		HeadsmanRewardTracker.Begin(this, cardPlay);
 
 		return Task.CompletedTask;
 	}
@@ -126,8 +98,7 @@ public sealed class ScriptHeadsmanPower : ScriptPowerTemplate
 	public override Task AfterAttack(PlayerChoiceContext choiceContext, AttackCommand command)
 	{
 		if (Owner.IsDead
-			|| !TryGetQualifyingAttackCard(command, out _)
-			|| !TryGetRootTrack(out AttackPlayTrack? track))
+			|| !TryGetQualifyingAttackCard(command, out _))
 		{
 			return Task.CompletedTask;
 		}
@@ -137,7 +108,7 @@ public sealed class ScriptHeadsmanPower : ScriptPowerTemplate
 			.Any(result => result.WasTargetKilled);
 		if (killed)
 		{
-			track.AnyKill = true;
+			HeadsmanRewardTracker.RecordKill(Owner);
 		}
 
 		return Task.CompletedTask;
@@ -154,12 +125,12 @@ public sealed class ScriptHeadsmanPower : ScriptPowerTemplate
 		Creature? applier,
 		CardModel? cardSource)
 	{
-		if (Owner.IsDead || !TryGetRootTrack(out AttackPlayTrack? track))
+		if (Owner.IsDead)
 		{
 			return Task.CompletedTask;
 		}
 
-		track.ResourceSpend.Record(power, amount, cardSource);
+		HeadsmanRewardTracker.RecordResourceSpend(Owner, power, amount, cardSource);
 
 		return Task.CompletedTask;
 	}
@@ -176,52 +147,7 @@ public sealed class ScriptHeadsmanPower : ScriptPowerTemplate
 			return;
 		}
 
-		Data data = GetInternalData<Data>();
-		if (!data.ActivePlays.Remove(cardPlay.Card, out AttackPlayTrack? track) || !track.AnyKill)
-		{
-			return;
-		}
-
-		bool restored = false;
-
-		decimal vigorToRestore = track.ResourceSpend.GetRestorableVigor();
-		if (vigorToRestore > 0m)
-		{
-			await PowerCmd.Apply<VigorPower>(
-				choiceContext,
-				Owner,
-				vigorToRestore,
-				Owner,
-				cardPlay.Card);
-			if (Owner.GetPower<VigorPower>() is { } restoredVigor)
-			{
-				AttackVigorResolution.ClearVigorAttackBinding(restoredVigor);
-			}
-			restored = true;
-		}
-
-		decimal drunkenMightToRestore = track.ResourceSpend.GetRestorableDrunkenMight();
-		if (drunkenMightToRestore > 0m)
-		{
-			await NewsanguoPublicApiInterop.ApplyDrunkenMight(
-				choiceContext,
-				Owner,
-				drunkenMightToRestore,
-				Owner,
-				cardPlay.Card);
-			restored = true;
-		}
-
-		if (data.RestoreEnergy && track.EnergySpent > 0 && Owner.Player is Player player)
-		{
-			await PlayerCmd.GainEnergy(track.EnergySpent, player);
-			restored = true;
-		}
-
-		if (restored)
-		{
-			Flash();
-		}
+		await HeadsmanRewardTracker.ResolveAsync(choiceContext, cardPlay.Card);
 	}
 
 	private bool TryGetQualifyingAttackCard(AttackCommand command, out CardModel card)
@@ -246,12 +172,4 @@ public sealed class ScriptHeadsmanPower : ScriptPowerTemplate
 		return true;
 	}
 
-	private bool TryGetRootTrack(out AttackPlayTrack track)
-	{
-		track = null!;
-		return CardResolutionTracker.TryGetOutermostCard(Owner.Player, out CardModel rootCard)
-			&& rootCard.Type == CardType.Attack
-			&& rootCard.Owner.Creature == Owner
-			&& GetInternalData<Data>().ActivePlays.TryGetValue(rootCard, out track!);
-	}
 }

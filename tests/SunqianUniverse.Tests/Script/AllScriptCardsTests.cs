@@ -151,6 +151,13 @@ public sealed class AllScriptCardsTests : SunqianCombatTestSuite
         {
             Assert.Contains(hoverTips, tip => tip.Id == expectedTip.Id);
         }
+
+        HoverTip defendTip = Assert.IsType<HoverTip>(
+            HoverTipFactory.FromKeyword(SquKeywords.VariousDefendCards));
+        Assert.Equal("各种防御牌", defendTip.Title);
+        Assert.Contains(
+            powers.OfType<ScriptViceGeneralPower>().Single().HoverTips,
+            tip => tip.Id == defendTip.Id);
     }
 
     [Theory]

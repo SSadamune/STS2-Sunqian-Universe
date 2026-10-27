@@ -104,7 +104,7 @@ public sealed class JuggleMultipleShoots : ModCardTemplate
 
 	protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
 	{
-		bool wrap = await ScriptSystem.TryConsumeWrapAsync(Owner.Creature);
+		bool wrap = await ScriptSystem.TryConsumeWrapAsync(choiceContext, Owner.Creature);
 
 		int remainingEnergy = Owner.PlayerCombatState?.Energy ?? 0;
 		int energyBudget = remainingEnergy + (wrap ? 1 : 0);

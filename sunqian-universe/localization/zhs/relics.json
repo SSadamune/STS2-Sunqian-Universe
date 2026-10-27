@@ -1,7 +1,7 @@
 {
   "SEA_GLASS.SUNQIAN_UNIVERSE_CHARACTER_SUNQIAN_CHARACTER.title": "群演海玻璃",
   "SUNQIAN_UNIVERSE_RELIC_BOX_LUNCH.title": "盒饭",
-  "SUNQIAN_UNIVERSE_RELIC_BOX_LUNCH.description": "每回合开始后，从[gold]剧本集[/gold]中重新选择激活的[gold]剧本[/gold]。\n如果剧本集中有至少四种剧本，你可以多激活一种剧本。",
+  "SUNQIAN_UNIVERSE_RELIC_BOX_LUNCH.description": "你每回合可以从[gold]剧本集[/gold]中重新选择一次要激活的剧本。",
   "SUNQIAN_UNIVERSE_RELIC_BOX_LUNCH.flavor": "没有盒饭我们吃什么？",
   "SUNQIAN_UNIVERSE_RELIC_ABUNDANT_BOX_LUNCH.title": "丰盛盒饭",
   "SUNQIAN_UNIVERSE_RELIC_ABUNDANT_BOX_LUNCH.description": "每回合开始后，从[gold]剧本集[/gold]中选择激活的[gold]剧本[/gold]，你激活的剧本数可以超过上限但会花费{energyPrefix:energyIcons(1)}。\n每回合开始时，[gold]剧本集[/gold]中每有四种[gold]剧本[/gold]，获得{energyPrefix:energyIcons(1)}。",

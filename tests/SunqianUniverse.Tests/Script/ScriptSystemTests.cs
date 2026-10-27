@@ -1,3 +1,5 @@
+using Godot;
+using MegaCrit.Sts2.Core.CardSelection;
 using MegaCrit.Sts2.Core.Combat;
 using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
@@ -8,6 +10,10 @@ using MegaCrit.Sts2.Core.Models.Characters;
 using MegaCrit.Sts2.Core.Models.Monsters;
 using MegaCrit.Sts2.Core.Models.Powers;
 using MegaCrit.Sts2.Core.Nodes.Cards;
+using MegaCrit.Sts2.Core.Nodes.CommonUi;
+using MegaCrit.Sts2.Core.Nodes.GodotExtensions;
+using MegaCrit.Sts2.Core.Nodes.Screens.CardSelection;
+using MegaCrit.Sts2.Core.Nodes.Screens.Overlays;
 using Squ.Cards;
 using Squ.Patches;
 using Squ.Powers;
@@ -146,17 +152,15 @@ public sealed class ScriptSystemTests : SunqianCombatTestSuite
 
         CardModel newSecond = await AddToDrawPileTop<Wound>();
         CardModel newFirst = await AddToDrawPileTop<Bash>();
-        var selector = new ScriptedCardSelector();
+        var selector = new ScriptedCardSelector()
+            .ThenSelectWhere(card => card is EunuchScriptRecord);
         using (UseCardSelector(selector))
         {
-            await relic.AfterSideTurnStart(
-                CombatSide.Player,
-                [Player.Creature],
-                Combat);
+            Assert.True(await relic.ReselectFromScriptCollectionAsync());
         }
         AssertAllSelectionsConsumed(selector);
 
-        Assert.Equal(0, selector.SelectionRequestCount);
+        Assert.Equal(1, selector.SelectionRequestCount);
         Assert.NotSame(oldPower, Player.Creature.GetPower<ScriptEunuchPower>());
         Assert.Equal(1, ScriptSystem.GetScriptLiftsThisTurn(Player));
         AssertInPile(oldFirst, PileType.Hand);
@@ -167,6 +171,7 @@ public sealed class ScriptSystemTests : SunqianCombatTestSuite
         Assert.True(oldSecond.HasEunuchMessage());
         Assert.False(newFirst.HasEunuchMessage());
         Assert.False(newSecond.HasEunuchMessage());
+        Assert.False(await relic.ReselectFromScriptCollectionAsync());
     }
 
     [Fact]
@@ -181,10 +186,7 @@ public sealed class ScriptSystemTests : SunqianCombatTestSuite
 
         using (UseCardSelector(selector))
         {
-            await relic.AfterSideTurnStart(
-                CombatSide.Player,
-                [Player.Creature],
-                Combat);
+            Assert.True(await relic.ReselectFromScriptCollectionAsync());
         }
         AssertAllSelectionsConsumed(selector);
 
@@ -195,6 +197,65 @@ public sealed class ScriptSystemTests : SunqianCombatTestSuite
     }
 
     [Fact]
+    public async Task Box_lunch_cancel_keeps_the_active_script_and_does_not_spend_the_turns_reselection()
+    {
+        var relic = (BoxLunchRelic)ModelDb.Relic<BoxLunchRelic>().ToMutable();
+        Player.AddRelicInternal(relic, silent: true);
+        await PlayScript<SunqianScript>();
+        await PlayScript<ExecutionCommanderScript>();
+        var original = Assert.IsType<ScriptExecutionCommanderPower>(
+            Player.Creature.GetPower<ScriptExecutionCommanderPower>());
+
+        var cancelSelector = new ScriptedCardSelector().ThenSkip();
+        using (UseCardSelector(cancelSelector))
+        {
+            Assert.False(await relic.ReselectFromScriptCollectionAsync());
+        }
+        AssertAllSelectionsConsumed(cancelSelector);
+        Assert.Same(original, Player.Creature.GetPower<ScriptExecutionCommanderPower>());
+
+        var confirmSelector = new ScriptedCardSelector()
+            .ThenSelectWhere(card => card is SunqianScriptRecord);
+        using (UseCardSelector(confirmSelector))
+        {
+            Assert.True(await relic.ReselectFromScriptCollectionAsync());
+        }
+        AssertAllSelectionsConsumed(confirmSelector);
+        AssertOnlyScript<ScriptSunqianPower>();
+    }
+
+    [Fact]
+    public async Task Cancelable_script_selection_adds_the_native_back_button_and_returns_an_empty_choice()
+    {
+        await PlayScript<SunqianScript>();
+        await PlayScript<ExecutionCommanderScript>();
+        var prefs = new CardSelectorPrefs(
+            new MegaCrit.Sts2.Core.Localization.LocString(
+                SquCommonL10n.Table,
+                ScriptSystem.SelectionPromptKey),
+            1)
+        {
+            Cancelable = true,
+            RequireManualConfirmation = true,
+            PretendCardsCanBePlayed = true,
+        };
+        NCombatPileCardSelectScreen screen = NCombatPileCardSelectScreen.Create(
+            ScriptSystem.ScriptCollectionPile.GetPile(Player),
+            prefs,
+            card => card is ScriptRecordCardTemplate);
+        NOverlayStack.Instance!.Push(screen);
+        await Engine.GetMainLoop().ToSignal(
+            Engine.GetMainLoop(),
+            SceneTree.SignalName.ProcessFrame);
+
+        NBackButton backButton = screen.GetNode<NBackButton>("ScriptSelectionBackButton");
+        Task<IEnumerable<CardModel>> selectedTask = screen.CardsSelected();
+        backButton.EmitSignal(NClickableControl.SignalName.Released, backButton);
+
+        Assert.Empty(await selectedTask);
+    }
+
+    [Fact]
     public async Task Box_lunch_reselecting_reinforceable_script_rebuilds_without_deactivation()
     {
         var relic = (BoxLunchRelic)ModelDb.Relic<BoxLunchRelic>().ToMutable();
@@ -202,27 +263,23 @@ public sealed class ScriptSystemTests : SunqianCombatTestSuite
         await PlayScript<ExecutionCommanderScript>();
         var active = Assert.IsType<ScriptExecutionCommanderPower>(
             Player.Creature.GetPower<ScriptExecutionCommanderPower>());
-        var selector = new ScriptedCardSelector();
+        var selector = new ScriptedCardSelector()
+            .ThenSelectWhere(card => card is ExecutionCommanderScriptRecord);
 
         using (UseCardSelector(selector))
         {
-            await relic.AfterSideTurnStart(
-                CombatSide.Player,
-                [Player.Creature],
-                Combat);
+            Assert.True(await relic.ReselectFromScriptCollectionAsync());
         }
         AssertAllSelectionsConsumed(selector);
 
-        Assert.Equal(0, selector.SelectionRequestCount);
+        Assert.Equal(1, selector.SelectionRequestCount);
         Assert.NotSame(active, Player.Creature.GetPower<ScriptExecutionCommanderPower>());
         Assert.Equal(0, ScriptSystem.GetScriptLiftsThisTurn(Player));
     }
 
     [Fact]
-    public async Task Box_lunch_adds_exactly_one_slot_once_four_scripts_are_unlocked()
+    public async Task Script_collection_adds_exactly_one_slot_once_four_scripts_are_unlocked_without_a_relic()
     {
-        var relic = (BoxLunchRelic)ModelDb.Relic<BoxLunchRelic>().ToMutable();
-        Player.AddRelicInternal(relic, silent: true);
         await PlayerCmd.SetEnergy(0, Player);
 
         await PlayScript<ExecutionCommanderScript>();
@@ -235,7 +292,6 @@ public sealed class ScriptSystemTests : SunqianCombatTestSuite
         await PlayScript<SunqianScript>();
 
         Assert.Equal(2, ScriptSystem.GetActivationLimit(Player));
-        Assert.Equal(1, relic.GetAdditionalScriptActivationSlots(Player, 8));
         Assert.Equal(2, Player.Creature.Powers.OfType<ScriptPowerTemplate>().Count());
         Assert.NotNull(Player.Creature.GetPower<ScriptServantPower>());
         Assert.NotNull(Player.Creature.GetPower<ScriptSunqianPower>());
@@ -253,7 +309,7 @@ public sealed class ScriptSystemTests : SunqianCombatTestSuite
         await PlayScript<SunqianScript>();
 
         Assert.Equal(6, Player.PlayerCombatState!.Energy);
-        Assert.Equal(1, ScriptSystem.GetActivationLimit(Player));
+        Assert.Equal(2, ScriptSystem.GetActivationLimit(Player));
 
         await PlayerCmd.SetEnergy(1, Player);
         var selector = new ScriptedCardSelector()
@@ -270,10 +326,10 @@ public sealed class ScriptSystemTests : SunqianCombatTestSuite
         }
         AssertAllSelectionsConsumed(selector);
 
-        Assert.Equal(1, selector.LastMinSelect);
-        Assert.Equal(3, selector.LastMaxSelect);
-        Assert.Equal(0, Player.PlayerCombatState.Energy);
-        Assert.Equal(1, ScriptSystem.GetActivationLimit(Player));
+        Assert.Equal(2, selector.LastMinSelect);
+        Assert.Equal(4, selector.LastMaxSelect);
+        Assert.Equal(1, Player.PlayerCombatState.Energy);
+        Assert.Equal(2, ScriptSystem.GetActivationLimit(Player));
         Assert.Equal(3, Player.Creature.Powers.OfType<ScriptPowerTemplate>().Count());
         Assert.NotNull(Player.Creature.GetPower<ScriptExecutionCommanderPower>());
         Assert.NotNull(Player.Creature.GetPower<ScriptNeutralAmbushPower>());
@@ -338,6 +394,9 @@ public sealed class ScriptSystemTests : SunqianCombatTestSuite
         Assert.Equal(1f, ScriptRecordCardHighlight.ActiveColor.R);
         Assert.Equal(1f, ScriptRecordCardHighlight.ActiveColor.G);
         Assert.Equal(1f, ScriptRecordCardHighlight.ActiveColor.B);
+        Assert.True(ScriptRecordCardHighlight.KeepVisibleOnHide(isActive: true, isSelected: false));
+        Assert.False(ScriptRecordCardHighlight.KeepVisibleOnHide(isActive: true, isSelected: true));
+        Assert.False(ScriptRecordCardHighlight.KeepVisibleOnHide(isActive: false, isSelected: false));
     }
 
     [Fact]

@@ -54,7 +54,7 @@ public sealed class WrapUp : ModCardTemplate
 	protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
 	{
 		SquSfx.PlayRandom(RunState, SquSfx.WrapUpEvents);
-		bool wrap = await ScriptSystem.TryConsumeWrapAsync(Owner.Creature);
+		bool wrap = await ScriptSystem.TryConsumeWrapAsync(choiceContext, Owner.Creature);
 		await ApplyVigor(choiceContext, DynamicVars[nameof(VigorPower)].BaseValue);
 		if (wrap)
 		{

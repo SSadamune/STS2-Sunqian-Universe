@@ -62,6 +62,11 @@ public static class SquKeywords
 
 	public static readonly CardKeyword VariousStrikeCards = VariousStrikeCardsId.GetModCardKeyword();
 
+	public static readonly string VariousDefendCardsId = ModContentRegistry
+		.GetQualifiedKeywordId(SquMod.ModId, "various_defend_cards");
+
+	public static readonly CardKeyword VariousDefendCards = VariousDefendCardsId.GetModCardKeyword();
+
 	public static readonly string EunuchMessageId = ModContentRegistry
 		.GetQualifiedKeywordId(SquMod.ModId, "eunuch_message");
 

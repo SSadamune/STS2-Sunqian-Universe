@@ -29,6 +29,7 @@ public sealed class ScriptViceGeneralPower : ScriptPowerTemplate
 	protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
 	[
 		HoverTipFactory.FromKeyword(SquKeywords.VariousStrikeCards),
+		HoverTipFactory.FromKeyword(SquKeywords.VariousDefendCards),
 	];
 
 	public override decimal ModifyDamageAdditive(

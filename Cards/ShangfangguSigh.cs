@@ -6,8 +6,10 @@ using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Localization;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
+using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.CardPools;
 using Squ.Audio;
+using Squ.Character;
 using Squ.Interop;
 using Squ.Powers;
 using STS2RitsuLib.Interop.AutoRegistration;
@@ -21,6 +23,8 @@ namespace Squ.Cards;
 public sealed class ShangfangguSigh : ModCardTemplate
 {
 	public const int BaseBonusPercent = 100;
+
+	public override CardPoolModel VisualCardPool => ModelDb.CardPool<SunqianCardPool>();
 	public const int UpgradedBonusPercent = 150;
 
 	protected override IEnumerable<DynamicVar> CanonicalVars =>

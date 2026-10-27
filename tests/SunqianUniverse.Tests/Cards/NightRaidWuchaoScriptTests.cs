@@ -5,6 +5,7 @@ using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.Characters;
 using MegaCrit.Sts2.Core.Models.Monsters;
 using Squ.Cards;
+using Squ.Character;
 using Squ.Powers;
 using TestTheSpire;
 using Xunit;
@@ -44,5 +45,7 @@ public sealed class NightRaidWuchaoScriptTests : SunqianCombatTestSuite
 
         Assert.Contains(CardKeyword.Exhaust, preview.Keywords);
         Assert.DoesNotContain(CardKeyword.Exhaust, ModelDb.Card<StarryNightStrike>().Keywords);
+        Assert.Same(ModelDb.CardPool<SunqianCardPool>(), preview.VisualCardPool);
+        Assert.Same(ModelDb.CardPool<SunqianCardPool>(), ModelDb.Card<StarryNightStrike>().Pool);
     }
 }

@@ -1,7 +1,7 @@
 {
   "SEA_GLASS.SUNQIAN_UNIVERSE_CHARACTER_SUNQIAN_CHARACTER.title": "Extra Sea Glass",
   "SUNQIAN_UNIVERSE_RELIC_BOX_LUNCH.title": "Box Lunch",
-  "SUNQIAN_UNIVERSE_RELIC_BOX_LUNCH.description": "After each turn starts, reselect active [gold]Scripts[/gold] from your [gold]Script Collection[/gold].\nIf your Script Collection contains at least 4 kinds of Script, you may activate 1 additional Script.",
+  "SUNQIAN_UNIVERSE_RELIC_BOX_LUNCH.description": "Once per turn, you may reselect the Scripts to activate from your [gold]Script Collection[/gold].",
   "SUNQIAN_UNIVERSE_RELIC_BOX_LUNCH.flavor": "No box lunch, what to eat?",
   "SUNQIAN_UNIVERSE_RELIC_ABUNDANT_BOX_LUNCH.title": "Abundant Box Lunch",
   "SUNQIAN_UNIVERSE_RELIC_ABUNDANT_BOX_LUNCH.description": "After each turn starts, choose active [gold]Scripts[/gold] from your [gold]Script Collection[/gold]. You may exceed your active Script limit, but doing so costs {energyPrefix:energyIcons(1)} per additional Script.\nAt the start of each turn, gain {energyPrefix:energyIcons(1)} for every 4 kinds of Script in your [gold]Script Collection[/gold].",

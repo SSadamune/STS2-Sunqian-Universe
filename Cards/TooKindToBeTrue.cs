@@ -40,6 +40,7 @@ public sealed class TooKindToBeTrue : ModCardTemplate
 	protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
 	[
 		HoverTipFactory.FromKeyword(SquKeywords.SlightRevision),
+		HoverTipFactory.FromKeyword(SquKeywords.VariousDefendCards),
 		..SquCardHoverTipFactory.FromCardWithCardHoverTips<UltimateDefend>(this, IsUpgraded),
 		new HoverTip(
 			SquCommonL10n.AnnotationTitle(),

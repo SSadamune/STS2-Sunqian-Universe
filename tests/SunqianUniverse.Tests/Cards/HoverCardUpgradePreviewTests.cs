@@ -5,6 +5,7 @@ using MegaCrit.Sts2.Core.Models.Cards;
 using MegaCrit.Sts2.Core.Models.Characters;
 using MegaCrit.Sts2.Core.Models.Monsters;
 using Squ.Cards;
+using Squ.Character;
 using TestTheSpire;
 using Xunit;
 
@@ -105,6 +106,10 @@ public sealed class HoverCardUpgradePreviewTests : SunqianCombatTestSuite
 
         Assert.True(target.IsUpgraded);
         Assert.NotEqual(CardUpgradePreviewType.None, target.UpgradePreviewType);
+        if (target is ShangfangguSigh or NightRaidWuchaoScriptStarryNightStrikePreview)
+        {
+            Assert.Same(ModelDb.CardPool<SunqianCardPool>(), target.VisualCardPool);
+        }
         string description = target.GetDescriptionForUpgradePreview();
         if (expectDescriptionHighlight)
         {
