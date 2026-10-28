@@ -20,8 +20,8 @@ namespace Squ.Cards;
 [RegisterCard(typeof(TokenCardPool), StableEntryStem = "throw_him_out")]
 public sealed class ThrowHimOut : ModCardTemplate
 {
-	public const int BaseDamage = 3;
-	public const int UpgradedDamage = 5;
+	public const int BaseDamage = 4;
+	public const int UpgradedDamage = 6;
 
 	protected override IEnumerable<DynamicVar> CanonicalVars =>
 	[

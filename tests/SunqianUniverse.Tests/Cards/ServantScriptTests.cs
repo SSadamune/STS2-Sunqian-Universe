@@ -43,8 +43,8 @@ public sealed class ServantScriptTests : SunqianCombatTestSuite
         Assert.Equal(CardType.Attack, card.Type);
         await Play(card, enemy);
 
-        Assert.Equal(hp - ThrowHimOut.BaseDamage, enemy.CurrentHp);
-        Assert.Equal(ThrowHimOut.BaseDamage, Player.Creature.Block);
+        Assert.Equal(hp - 4, enemy.CurrentHp);
+        Assert.Equal(4, Player.Creature.Block);
         AssertInPile(card, PileType.Exhaust);
     }
 
@@ -59,7 +59,7 @@ public sealed class ServantScriptTests : SunqianCombatTestSuite
         await Play(card, enemy);
 
         Assert.Equal(hp, enemy.CurrentHp);
-        Assert.Equal(ThrowHimOut.UpgradedDamage, Player.Creature.Block);
+        Assert.Equal(6, Player.Creature.Block);
         AssertInPile(card, PileType.Exhaust);
     }
 }

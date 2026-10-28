@@ -46,6 +46,7 @@ public sealed class TextSynchronizationTests : SunqianCombatTestSuite
         string wrap = keywords.RootElement.GetProperty("SUNQIAN_UNIVERSE_KEYWORD_WRAP.description").GetString()!;
         Assert.DoesNotContain(language == "zhs" ? "若有多个" : "If multiple", wrap);
         Assert.Contains(language == "zhs" ? "[gold]剧本[/gold]能力" : "[gold]Script[/gold] Power", wrap);
+        Assert.Contains(language == "zhs" ? "令所有剧本失效" : "end all Scripts", wrap);
         foreach (var table in new[] { cards, powers, keywords })
         {
             foreach (var entry in table.RootElement.EnumerateObject())
@@ -72,8 +73,25 @@ public sealed class TextSynchronizationTests : SunqianCombatTestSuite
         Assert.Contains(language == "zhs" ? "你的牌被[gold]消耗[/gold]后" : "After one of your cards is [gold]Exhausted[/gold]",
             Card("RUTHLESS_STRIKE.chargeEffect"));
         Assert.Contains("{ChargeForge:diff()}", Card("SHARPEN_SWORD_FOR_DECADES.chargeEffect"));
+        Assert.DoesNotContain("[blue]", Card("FINGER_SNAP_STRIKE.chargeEffect"));
+        Assert.Contains("{IfUpgraded:show:", Card("DISTRIBUTED_SCREENWRITER.description"));
+        Assert.False(powers.RootElement.TryGetProperty(
+            "SUNQIAN_UNIVERSE_POWER_DISTRIBUTED_SCREENWRITER_POWER.smartDescriptionWithDraw", out _));
         if (language == "zhs")
         {
+            Assert.Equal("你打出的攻击牌会保留[gold]活力[/gold]加成。",
+                Card("SCRIPT_RECORD_XILIANG_SAVAGE.description"));
+            Assert.Equal("博望悖论・进军", Card("SCRIPT_RECORD_BOWANG_PARADOX_ADVANCE.title"));
+            Assert.Equal("博望悖论・放火", Card("SCRIPT_RECORD_BOWANG_PARADOX_ARSON.title"));
+            Assert.DoesNotContain("你", Card("SEND_HORSE_WITHOUT_HAY.chargeEffect"));
+            Assert.DoesNotContain("当", Card("STARGAZING.description"));
+            Assert.Contains("少于", Card("TRANSPARENT_HOLE.description"));
+            foreach (var entry in cards.RootElement.EnumerateObject().Where(entry =>
+                entry.Name.StartsWith("SUNQIAN_UNIVERSE_CARD_FLAME_STRIKE.")))
+            {
+                Assert.DoesNotContain("如果", entry.Value.GetString()!);
+                Assert.DoesNotContain("两", entry.Value.GetString()!);
+            }
             Assert.Contains("回合结束时[gold]铸造[/gold]", Card("SHARPEN_SWORD_FOR_DECADES.chargeEffect"));
         }
         Assert.Equal(2, Card("BOMBARD_CHIBI_SCRIPT.description").Count(c => c == '\n'));

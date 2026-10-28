@@ -22,7 +22,7 @@ public sealed class SunqianScript : ScriptCardTemplate<SunqianScriptRecord>
 {
 	public const int BaseDexterity = 2;
 	public const int UpgradedDexterity = 3;
-	public const int BaseDraw = 1;
+	public const int BaseDraw = 2;
 	public const int UpgradedDraw = 2;
 
 	protected override IEnumerable<DynamicVar> CanonicalVars =>
@@ -63,6 +63,5 @@ public sealed class SunqianScript : ScriptCardTemplate<SunqianScriptRecord>
 	{
 		DynamicVars[nameof(DexterityPower)]
 			.UpgradeValueBy(UpgradedDexterity - BaseDexterity);
-		DynamicVars.Cards.UpgradeValueBy(UpgradedDraw - BaseDraw);
 	}
 }

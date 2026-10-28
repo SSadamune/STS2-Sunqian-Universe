@@ -22,6 +22,7 @@ public sealed class FingerSnapStrikeTests : SunqianCombatTestSuite
         var enemy = EnemyAt(0);
         int hpBefore = enemy.CurrentHp;
         var card = await AddToHand<FingerSnapStrike>();
+        Assert.DoesNotContain("[blue]", card.GetDescriptionForPile(MegaCrit.Sts2.Core.Entities.Cards.PileType.Hand));
 
         await Play(card, enemy);
 

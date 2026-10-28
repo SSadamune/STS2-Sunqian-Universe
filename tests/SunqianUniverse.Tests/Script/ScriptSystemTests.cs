@@ -190,9 +190,11 @@ public sealed class ScriptSystemTests : SunqianCombatTestSuite
     [Fact]
     public async Task Sunqian_draws_on_play_and_its_temporary_dexterity_survives_switching_out()
     {
+        var second = await AddToDrawPileTop<StrikeIronclad>();
         var drawn = await AddToDrawPileTop<DefendIronclad>();
         await PlayScript<SunqianScript>();
         AssertInPile(drawn, PileType.Hand);
+        AssertInPile(second, PileType.Hand);
         CardTestAssertions.AssertPowerAmount<DexterityPower>(
             Player.Creature,
             SunqianScript.BaseDexterity);
@@ -593,6 +595,8 @@ public sealed class ScriptSystemTests : SunqianCombatTestSuite
         var selector = new ScriptedCardSelector()
             .ThenSelectWhere(card => card is BowangParadoxAdvanceScriptRecord)
             .ThenSelectWhere(card => card is ServantScriptRecord);
+        foreach (var handCard in PileType.Hand.GetPile(Player).Cards.ToArray())
+            await CardPileCmd.Add(handCard, PileType.Discard);
         using (UseCardSelector(selector))
         {
             await PlayScript<BowangParadoxScript>();

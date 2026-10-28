@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using Godot;
 using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Creatures;
+using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.Entities.Players;
 using MegaCrit.Sts2.Core.Entities.Powers;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
@@ -10,6 +11,8 @@ using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Models;
 using Squ;
 using Squ.Script;
+using Squ.Cards;
+using STS2RitsuLib.Keywords;
 using STS2RitsuLib.Interop.AutoRegistration;
 using STS2RitsuLib.Scaffolding.Content;
 
@@ -18,7 +21,7 @@ using STS2RitsuLib.Scaffolding.Content;
 namespace Squ.Powers;
 
 [RegisterPower]
-public sealed class SunqianUniversePower : ModPowerTemplate, IScriptLiftHandler
+public sealed class SunqianUniversePower : ModPowerTemplate
 {
 	public override PowerType Type => PowerType.Buff;
 
@@ -32,19 +35,20 @@ public sealed class SunqianUniversePower : ModPowerTemplate, IScriptLiftHandler
 
 	protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
 	[
-		HoverTipFactory.FromKeyword(SquKeywords.Script),
+		HoverTipFactory.FromKeyword(SquKeywords.ScriptCollectionId.GetModCardKeyword()),
 	];
 
-	public async Task OnScriptLiftAsync(ScriptLiftContext context)
+	public override async Task AfterCardChangedPiles(CardModel card, PileType oldPileType, AbstractModel? clonedBy)
 	{
 		int drawCount = Amount;
-		Player? player = Owner.Player;
-		if (drawCount <= 0 || player is null)
+		if (drawCount <= 0 || Owner.Player is not { } player || card.Owner != player
+			|| oldPileType == ScriptSystem.ScriptCollectionPile
+			|| card.Pile?.Type != ScriptSystem.ScriptCollectionPile)
 		{
 			return;
 		}
 
 		Flash();
-		await CardPileCmd.Draw(context.ChoiceContext, drawCount, player);
+		await CardPileCmd.Draw(new BlockingPlayerChoiceContext(), drawCount, player);
 	}
 }

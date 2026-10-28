@@ -24,6 +24,7 @@ namespace Squ.Cards;
 [RegisterCard(typeof(SunqianCardPool), StableEntryStem = "bowang_paradox_script")]
 public sealed class BowangParadoxScript : ScriptCardTemplate<BowangParadoxAdvanceScriptRecord>
 {
+	protected override bool MergeScriptActivationKeywords => false;
 	public const int BaseVigor = 7;
 	public const int UpgradedVigor = 9;
 	public const int BaseTinderStacks = 7;

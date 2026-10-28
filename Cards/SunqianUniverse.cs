@@ -12,6 +12,7 @@ using Squ.Character;
 using Squ.Powers;
 using STS2RitsuLib.Interop.AutoRegistration;
 using STS2RitsuLib.Scaffolding.Content;
+using STS2RitsuLib.Keywords;
 
 #nullable enable
 
@@ -20,10 +21,11 @@ namespace Squ.Cards;
 [RegisterCard(typeof(SunqianCardPool), StableEntryStem = "sunqian_universe")]
 public sealed class SunqianUniverse : ModCardTemplate
 {
-	public const int BaseDexterity = 2;
+	public const int BaseDexterity = 3;
 	public const int UpgradedDexterity = 3;
-	public const int BaseDraw = 1;
+	public const int BaseDraw = 2;
 	public const int UpgradedDraw = 2;
+
 
 	protected override IEnumerable<DynamicVar> CanonicalVars =>
 	[
@@ -33,7 +35,7 @@ public sealed class SunqianUniverse : ModCardTemplate
 
 	protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
 	[
-		HoverTipFactory.FromKeyword(SquKeywords.Script),
+		HoverTipFactory.FromKeyword(SquKeywords.ScriptCollectionId.GetModCardKeyword()),
 		HoverTipFactory.FromPower<DexterityPower>(),
 	];
 
@@ -65,8 +67,6 @@ public sealed class SunqianUniverse : ModCardTemplate
 
 	protected override void OnUpgrade()
 	{
-		DynamicVars[nameof(DexterityPower)]
-			.UpgradeValueBy(UpgradedDexterity - BaseDexterity);
-		DynamicVars.Cards.UpgradeValueBy(UpgradedDraw - BaseDraw);
+		AddKeyword(CardKeyword.Innate);
 	}
 }

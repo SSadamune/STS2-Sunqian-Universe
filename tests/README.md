@@ -45,6 +45,9 @@ Windows 下脚本会把 `APPDATA`、`LOCALAPPDATA` 和 `XDG_DATA_HOME` 同时重
 
 ## 当前覆盖
 
+- `SunqianUniverseTests`：覆盖升级获得固有、固定3敏捷、剧本集增加牌时抽2张、能力叠加、
+  直接加入与返回剧本集，以及重复激活、重复加入和排序不抽牌。
+- `DistributedScreenwriterTests`：覆盖普通变化、升级后生成强化剧本且不额外抽牌，以及混合叠加。
 - `BurningLinkedCampsBonusTests`：覆盖灼伤使已有好火啊增加20个百分点、隐藏加成累积并由下一张
   《上方谷之叹》消耗、手牌和打出中的绿色预览，以及隐藏加成在剧本失效后保留。
 - `XiliangSavageScriptTests`：覆盖打出时获得5/8活力与16/21格挡、重新激活不获得活力，
@@ -59,7 +62,7 @@ Windows 下脚本会把 `APPDATA`、`LOCALAPPDATA` 和 `XDG_DATA_HOME` 同时重
   以及无遗物、次数耗尽和能量不足时的只读界面下方文本；重选界面同时检查提示文本、
   选满后的轮换和返回按钮取消行为。
 - `FlameStrikeTests`：烈焰打击的伤害与燃烧分支烟雾测试。
-- `BowangParadoxTests`：覆盖“伺机进军”和“伺机放火”的独立记录与激活、重复打出不叠加、
+- `BowangParadoxTests`：覆盖“进军”和“放火”的独立记录与激活、重复打出不叠加、
   两种记录计入激活上限门槛、盒饭直接激活、混合手牌、单回合保留与剧本失效行为。
 - `EunuchScriptTests`：EU-01 至 EU-06，覆盖打出时赋予临时虚无、打出后移除、
   激活期间将所有手牌虚无视为保留、抑制虚无消耗、触发保留钩子、博望悖论交互，

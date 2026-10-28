@@ -122,6 +122,7 @@ public sealed class AllScriptCardsTests : SunqianCombatTestSuite
                 {
                     Assert.Contains("从两种剧本中选择一种激活，另一种也会加入剧本集。", description);
                     Assert.DoesNotContain("数值叠加", description);
+                    Assert.Contains("\n" + exhaust, description);
                     return;
                 }
                 Assert.Contains(activation, description);

@@ -32,7 +32,7 @@ public sealed class TransparentHole : ModCardTemplate, IRandomEnemyTargetCount, 
 
 	private const float RepeatAttackDelaySeconds = 0.3f;
 
-	public const decimal CascadeDamageMultiplier = 0.3m;
+	public const decimal CascadeDamageMultiplier = 0.25m;
 
 	private const string CascadeDamageMultiplierVarName = "CascadeDamageMultiplier";
 

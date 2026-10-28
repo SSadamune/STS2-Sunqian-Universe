@@ -567,19 +567,10 @@ public static class ScriptSystem
 			return false;
 		}
 
-		ScriptPowerTemplate scriptToRemove = activeScripts[0];
-		if (activeScripts.Count > 1 && creature.Player is { } player)
+		foreach (ScriptPowerTemplate script in activeScripts)
 		{
-			IReadOnlyList<ScriptPowerTemplate> selected =
-				await ChooseScriptsToInvalidateAsync(
-					choiceContext,
-					player,
-					activeScripts,
-					selectCount: 1);
-			scriptToRemove = selected[0];
+			await RemoveScriptPowerAsync(script);
 		}
-
-		await RemoveScriptPowerAsync(scriptToRemove);
 		return true;
 	}
 

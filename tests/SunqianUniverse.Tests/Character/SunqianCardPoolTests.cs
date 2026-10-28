@@ -27,12 +27,12 @@ public sealed class SunqianCardPoolTests : SunqianCombatTestSuite
     }
 
     [Fact]
-    public void Starting_deck_contains_eleven_cards_with_two_basic_scripts()
+    public void Starting_deck_contains_twelve_cards_with_two_basic_scripts()
     {
         var deck = ModelDb.Character<SunqianCharacter>().StartingDeck;
 
-        Assert.Equal(11, deck.Count());
-        Assert.Equal(4, deck.OfType<StrikeLongtao>().Count());
+        Assert.Equal(12, deck.Count());
+        Assert.Equal(5, deck.OfType<StrikeLongtao>().Count());
         Assert.Equal(4, deck.OfType<DefendLongtao>().Count());
         Assert.Single(deck.OfType<GruntScript>());
         Assert.Single(deck.OfType<SunqianScript>());

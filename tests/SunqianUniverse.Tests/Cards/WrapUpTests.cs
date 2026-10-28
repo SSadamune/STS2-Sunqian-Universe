@@ -1,4 +1,5 @@
 using MegaCrit.Sts2.Core.Commands;
+using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.Models.Characters;
 using MegaCrit.Sts2.Core.Models.Monsters;
 using MegaCrit.Sts2.Core.Models;
@@ -45,7 +46,7 @@ public sealed class WrapUpTests : SunqianCombatTestSuite
     }
 
     [Fact]
-    public async Task Wrap_asks_which_script_to_end_when_multiple_scripts_are_active()
+    public async Task Wrap_ends_all_active_scripts_without_a_selection()
     {
         var boxLunch = (BoxLunchRelic)ModelDb.Relic<BoxLunchRelic>().ToMutable();
         Player.AddRelicInternal(boxLunch, silent: true);
@@ -59,9 +60,10 @@ public sealed class WrapUpTests : SunqianCombatTestSuite
         Assert.NotNull(Player.Creature.GetPower<ScriptServantPower>());
         Assert.NotNull(Player.Creature.GetPower<ScriptSunqianPower>());
 
+        foreach (var handCard in PileType.Hand.GetPile(Player).Cards.ToArray())
+            await CardPileCmd.Add(handCard, PileType.Discard);
         await PlayerCmd.SetEnergy(0, Player);
-        var selector = new ScriptedCardSelector()
-            .ThenSelectWhere(card => card is ServantScriptRecord);
+        var selector = new ScriptedCardSelector();
         using (UseCardSelector(selector))
         {
             await Play(await AddToHand<WrapUp>());
@@ -69,8 +71,24 @@ public sealed class WrapUpTests : SunqianCombatTestSuite
         AssertAllSelectionsConsumed(selector);
 
         Assert.Null(Player.Creature.GetPower<ScriptServantPower>());
-        Assert.NotNull(Player.Creature.GetPower<ScriptSunqianPower>());
-        Assert.Single(Player.Creature.Powers.OfType<ScriptPowerTemplate>());
+        Assert.Null(Player.Creature.GetPower<ScriptSunqianPower>());
+        Assert.Empty(Player.Creature.Powers.OfType<ScriptPowerTemplate>());
         Assert.Equal(1, Player.PlayerCombatState!.Energy);
+    }
+
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public async Task No_active_script_does_not_trigger_wrap_even_with_collection_records(bool hasRecord)
+    {
+        if (hasRecord)
+            await AddCardToPile<ServantScriptRecord>(ScriptSystem.ScriptCollectionPile);
+        await PlayerCmd.SetEnergy(0, Player);
+
+        await Play(await AddToHand<WrapUp>());
+
+        Assert.Equal(0, Player.PlayerCombatState!.Energy);
+        Assert.Equal(0, ScriptSystem.GetScriptLiftsThisTurn(Player));
+        CardTestAssertions.AssertPowerAmount<VigorPower>(Player.Creature, WrapUp.BaseVigor);
     }
 }
