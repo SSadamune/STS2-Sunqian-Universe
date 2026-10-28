@@ -195,6 +195,13 @@ public static class ScriptSystem
 		Player player,
 		ScriptRecordCardTemplate record)
 	{
+		foreach (ScriptPowerTemplate conflict in player.Creature.Powers.OfType<ScriptPowerTemplate>()
+			.Where(power => record.MutuallyExclusiveGroup is not null
+				&& power.MutuallyExclusiveGroup == record.MutuallyExclusiveGroup
+				&& power.GetType() != record.PowerType).ToList())
+		{
+			await RemoveScriptPowerAsync(conflict);
+		}
 		List<ScriptPowerTemplate> activeScripts = player.Creature.Powers
 			.OfType<ScriptPowerTemplate>()
 			.ToList();
@@ -207,9 +214,10 @@ public static class ScriptSystem
 			return;
 		}
 
-		int removalCount = Math.Max(
+		activeScripts = activeScripts.Where(power => power.CountsTowardActivationLimit).ToList();
+		int removalCount = record.CountsTowardActivationLimit ? Math.Max(
 			0,
-			activeScripts.Count - GetActivationLimit(player) + 1);
+			activeScripts.Count - GetActivationLimit(player) + 1) : 0;
 		if (removalCount > 0)
 		{
 			IReadOnlyList<ScriptPowerTemplate> scriptsToRemove = activeScripts.Count > 1
@@ -309,9 +317,7 @@ public static class ScriptSystem
 			return records;
 		}
 
-		int activationLimit = GetActivationLimit(player);
-		int maxSelect = Math.Min(activationLimit, records.Count);
-		int minSelect = records.Count < activationLimit ? 1 : maxSelect;
+		(int minSelect, int maxSelect) = GetSelectionBounds(player, records);
 		var prefs = new CardSelectorPrefs(prompt ?? SelectionPrompt, minSelect, maxSelect)
 		{
 			Cancelable = cancelable,
@@ -327,8 +333,31 @@ public static class ScriptSystem
 			card => card is ScriptRecordCardTemplate))
 			.OfType<ScriptRecordCardTemplate>()
 			.ToList();
-		return selected.Count == 0 ? null : selected;
+		if (selected.Count == 0)
+		{
+			return null;
+		}
+		return IsValidActiveSelection(player, selected)
+			? selected
+			: await ChooseActiveScriptRecordsAsync(choiceContext, player, cancelable, true, prompt);
 	}
+
+	internal static (int Min, int Max) GetSelectionBounds(
+		Player player, IReadOnlyList<ScriptRecordCardTemplate> records)
+	{
+		int limit = GetActivationLimit(player);
+		int regular = records.Count(record => record.CountsTowardActivationLimit);
+		int free = records.Where(record => !record.CountsTowardActivationLimit)
+			.GroupBy(record => record.MutuallyExclusiveGroup ?? record.Id.ToString()).Count();
+		int max = Math.Min(limit, regular) + free;
+		return (free > 0 || records.Count < limit ? 1 : max, max);
+	}
+
+	internal static bool IsValidActiveSelection(Player player, IReadOnlyList<ScriptRecordCardTemplate> selected) =>
+		selected.Count > 0
+		&& selected.Count(record => record.CountsTowardActivationLimit) <= GetActivationLimit(player)
+		&& selected.Where(record => record.MutuallyExclusiveGroup is not null)
+			.GroupBy(record => record.MutuallyExclusiveGroup).All(group => group.Count() == 1);
 
 	internal static bool IsSameActiveSelection(
 		Player player,
@@ -423,8 +452,7 @@ public static class ScriptSystem
 		List<ScriptRecordCardTemplate> records = ScriptCollectionPile.GetPile(player).Cards
 			.OfType<ScriptRecordCardTemplate>()
 			.ToList();
-		int maxSelect = Math.Min(GetActivationLimit(player), records.Count);
-		int minSelect = records.Count < GetActivationLimit(player) ? 1 : maxSelect;
+		(int minSelect, int maxSelect) = GetSelectionBounds(player, records);
 		if (payload.SelectedRecordIds.Length < minSelect
 			|| payload.SelectedRecordIds.Length > maxSelect
 			|| payload.SelectedRecordIds.Distinct(StringComparer.Ordinal).Count()
@@ -446,6 +474,10 @@ public static class ScriptSystem
 			resolved.Add(record);
 		}
 
+		if (!IsValidActiveSelection(player, resolved))
+		{
+			return false;
+		}
 		selected = resolved;
 		return true;
 	}
@@ -506,10 +538,17 @@ public static class ScriptSystem
 			await RemoveScriptPowerAsync(sameType, notifyLift: false, resolveEndEffects: false);
 		}
 
-		int limit = target.Player is { } player ? GetActivationLimit(player) : 1;
-		while (target.Powers.OfType<ScriptPowerTemplate>().Count() >= limit)
+		foreach (ScriptPowerTemplate conflict in target.Powers.OfType<ScriptPowerTemplate>()
+			.Where(active => power.MutuallyExclusiveGroup is not null
+				&& active.MutuallyExclusiveGroup == power.MutuallyExclusiveGroup).ToList())
 		{
-			await RemoveScriptPowerAsync(target.Powers.OfType<ScriptPowerTemplate>().First());
+			await RemoveScriptPowerAsync(conflict);
+		}
+		int limit = target.Player is { } player ? GetActivationLimit(player) : 1;
+		while (power.CountsTowardActivationLimit
+			&& target.Powers.OfType<ScriptPowerTemplate>().Count(active => active.CountsTowardActivationLimit) >= limit)
+		{
+			await RemoveScriptPowerAsync(target.Powers.OfType<ScriptPowerTemplate>().First(active => active.CountsTowardActivationLimit));
 		}
 
 		power.SetActivationChoiceContext(choiceContext);

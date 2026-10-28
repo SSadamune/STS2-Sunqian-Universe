@@ -3,6 +3,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Godot;
 using MegaCrit.Sts2.Core.Combat;
+using MegaCrit.Sts2.Core.Combat.History.Entries;
 using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Commands.Builders;
 using MegaCrit.Sts2.Core.Entities.Cards;
@@ -31,6 +32,7 @@ namespace Squ.Powers;
 [RegisterPower]
 public sealed class VigorAmplificationPower : ModPowerTemplate
 {
+	internal bool OnlyFirstAttackThisTurn { get; set; }
 	public const int BonusStacksPerForm = 1;
 
 	private sealed class Data
@@ -80,6 +82,15 @@ public sealed class VigorAmplificationPower : ModPowerTemplate
 		}
 
 		CardModel? activeCard = GetInternalData<Data>().ActiveCard;
+		if (OnlyFirstAttackThisTurn && activeCard is null
+			&& CombatManager.Instance.History.CardPlaysStarted.Any(entry =>
+				entry.HappenedThisTurn(CombatState) && entry.CardPlay.Player == Owner.Player
+				&& entry.CardPlay.Card.Type == CardType.Attack
+				&& !ChaosHarmedYou.DoesNotConsumeAttackPlayTracking(entry.CardPlay.Card)
+				&& !(ReferenceEquals(entry.CardPlay.Card, card) && card.Pile?.Type == PileType.Play)))
+		{
+			return 0;
+		}
 		return activeCard is null || ReferenceEquals(activeCard, card)
 			? Amount
 			: 0;
@@ -170,7 +181,7 @@ public sealed class VigorAmplificationPower : ModPowerTemplate
 		bool spentResource = data.ResourceSpend is { SpentAny: true };
 		data.ActiveCard = null;
 		data.ResourceSpend = null;
-		if (spentResource)
+		if (spentResource || OnlyFirstAttackThisTurn)
 		{
 			await PowerCmd.Remove(this);
 		}

@@ -1,4 +1,5 @@
 using MegaCrit.Sts2.Core.Commands;
+using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.Models.Characters;
 using MegaCrit.Sts2.Core.Models.Monsters;
 using MegaCrit.Sts2.Core.Models.Powers;
@@ -18,18 +19,52 @@ public sealed class XiliangSavageScriptTests : SunqianCombatTestSuite
         .AddEnemy<BigDummy>()
         .WithSeed("xiliang-savage-script");
 
-    [Fact]
-    public async Task Upgraded_script_costs_three_gains_nineteen_block_and_grants_five_vigor_on_activation()
+    [Theory]
+    [InlineData(false, 16, 5)]
+    [InlineData(true, 21, 8)]
+    public async Task Playing_script_costs_three_and_grants_its_block_and_vigor(bool upgraded, int block, int vigor)
     {
-        var card = Upgrade(await AddToHand<XiliangSavageScript>());
+        var card = await AddToHand<XiliangSavageScript>();
+        if (upgraded) Upgrade(card);
         Assert.Equal(3, card.EnergyCost.Canonical);
+        string[] lines = card.GetDescriptionForPile(PileType.Hand).Split('\n');
+        Assert.Contains("[gold]格挡[/gold]。", lines[0]);
+        Assert.Contains("[gold]活力[/gold]。", lines[1]);
 
         await PlayAndActivateScript(card);
 
-        Assert.Equal(XiliangSavageScript.UpgradedBlock, Player.Creature.Block);
+        Assert.Equal(block, Player.Creature.Block);
         CardTestAssertions.AssertPowerAmount<VigorPower>(
             Player.Creature,
-            XiliangSavageScript.UpgradedVigor);
+            vigor);
+    }
+
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public async Task Reactivating_script_does_not_grant_vigor_but_playing_another_copy_does(bool upgraded)
+    {
+        await PlayerCmd.SetEnergy(10, Player);
+        var card = await AddToHand<XiliangSavageScript>();
+        if (upgraded) Upgrade(card);
+        await Play(card);
+        int expected = upgraded ? 8 : 5;
+        var record = Squ.Script.ScriptSystem.ScriptCollectionPile.GetPile(Player).Cards
+            .OfType<XiliangSavageScriptRecord>().Single();
+        for (int i = 0; i < 2; i++)
+        {
+            await Squ.Script.ScriptSystem.ActivatePlayedScriptAsync(
+                new MegaCrit.Sts2.Core.GameActions.Multiplayer.BlockingPlayerChoiceContext(), Player, record);
+            CardTestAssertions.AssertPowerAmount<VigorPower>(Player.Creature, expected);
+        }
+        await PowerCmd.Remove<VigorPower>(Player.Creature);
+        await Squ.Script.ScriptSystem.ActivatePlayedScriptAsync(
+            new MegaCrit.Sts2.Core.GameActions.Multiplayer.BlockingPlayerChoiceContext(), Player, record);
+        Assert.Null(Player.Creature.GetPower<VigorPower>());
+        var next = await AddToHand<XiliangSavageScript>();
+        if (upgraded) Upgrade(next);
+        await Play(next);
+        CardTestAssertions.AssertPowerAmount<VigorPower>(Player.Creature, expected);
     }
 
     [Fact]

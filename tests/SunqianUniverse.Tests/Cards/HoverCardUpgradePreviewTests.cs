@@ -26,8 +26,6 @@ public sealed class HoverCardUpgradePreviewTests : SunqianCombatTestSuite
         AssertUpgradePreviewIsGreen<BurningLinkedCampsScript, ShangfangguSigh>();
         AssertUpgradePreviewIsGreen<ChickenFootCheeseScript, ChickenFootCheeseScriptStrikePreview>();
         AssertUpgradePreviewIsGreen<ExecutionCommanderScript, SalvoStrike>();
-        AssertUpgradePreviewIsGreen<GuanDiForm, GuanYuCivilVer>();
-        AssertUpgradePreviewIsGreen<GuanDiForm, GuanYuMartialVer>();
         AssertUpgradePreviewIsGreen<NightRaidWuchaoScript,
             NightRaidWuchaoScriptStarryNightStrikePreview>();
         AssertUpgradePreviewIsGreen<NeutralAmbushScript, GiantRock>();
@@ -66,7 +64,6 @@ public sealed class HoverCardUpgradePreviewTests : SunqianCombatTestSuite
         AssertScriptRecordUpgradePreviewIsGreen<ChickenFootCheeseScript, ChickenFootCheeseScriptRecord>("9");
         AssertScriptRecordUpgradePreviewIsGreen<ExecutionCommanderScript, ExecutionCommanderScriptRecord>("75");
         AssertScriptRecordUpgradePreviewIsGreen<HeadsmanScript, HeadsmanScriptRecord>("4");
-        AssertScriptRecordUpgradePreviewIsGreen<XiliangSavageScript, XiliangSavageScriptRecord>("5");
         AssertScriptRecordUpgradePreviewIsGreen<NightRaidWuchaoScript, NightRaidWuchaoScriptRecord>("4");
         AssertScriptRecordUpgradePreviewIsGreen<BowangParadoxScript, BowangParadoxAdvanceScriptRecord>("9");
         AssertScriptRecordUpgradePreviewIsGreen<BowangParadoxScript, BowangParadoxArsonScriptRecord>("9");
@@ -76,6 +73,9 @@ public sealed class HoverCardUpgradePreviewTests : SunqianCombatTestSuite
     [Fact]
     public void Scripts_without_upgraded_script_effects_keep_the_record_title_unupgraded()
     {
+        AssertScriptRecordHasNoUpgradedVersion<XiliangSavageScript, XiliangSavageScriptRecord>();
+        AssertScriptRecordHasNoUpgradedVersion<GuanDiForm, GuanYuCivilVer>();
+        AssertScriptRecordHasNoUpgradedVersion<GuanDiForm, GuanYuMartialVer>();
         AssertScriptRecordHasNoUpgradedVersion<BombardChibiScript, BombardChibiScriptRecord>();
         AssertScriptRecordHasNoUpgradedVersion<BurningLinkedCampsScript, BurningLinkedCampsScriptRecord>();
         AssertScriptRecordHasNoUpgradedVersion<EunuchScript, EunuchScriptRecord>();
@@ -163,7 +163,7 @@ public sealed class HoverCardUpgradePreviewTests : SunqianCombatTestSuite
 		Assert.False(record.Title.EndsWith("+", StringComparison.Ordinal));
         Assert.NotEqual(CardUpgradePreviewType.None, record.UpgradePreviewType);
         string sourceDescription = source.GetDescriptionForUpgradePreview();
-        Assert.Contains("激活此[gold]剧本[/gold]", sourceDescription);
+        Assert.Contains(source is GuanDiForm ? "加入剧本集" : "激活此[gold]剧本[/gold]", sourceDescription);
         Assert.DoesNotContain($"[green]{record.Title}", sourceDescription);
     }
 

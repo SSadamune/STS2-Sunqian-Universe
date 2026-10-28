@@ -36,7 +36,7 @@ public sealed class BurningLinkedCampsScriptTests : SunqianCombatTestSuite
     }
 
     [Fact]
-    public async Task Fully_blocked_burn_damage_still_grants_six_tinder()
+    public async Task Fully_blocked_burn_damage_accumulates_hidden_bonus_without_granting_tinder()
     {
         await PlayAndActivateScript(await AddToHand<BurningLinkedCampsScript>());
         int hp = Player.Creature.CurrentHp;
@@ -45,9 +45,11 @@ public sealed class BurningLinkedCampsScriptTests : SunqianCombatTestSuite
         await EndTurn();
 
         Assert.Equal(hp, Player.Creature.CurrentHp);
-        CardTestAssertions.AssertPowerAmount<TinderPower>(
+        CardTestAssertions.AssertPowerAmount<PendingGoodFirePower>(
             Player.Creature,
-            ScriptBurningLinkedCampsPower.BurnTinder);
+            ScriptBurningLinkedCampsPower.BurnBonusPercent);
+        Assert.False(Player.Creature.GetPower<PendingGoodFirePower>()!.IsVisible);
+        Assert.Null(Player.Creature.GetPower<TinderPower>());
     }
 
     [Fact]

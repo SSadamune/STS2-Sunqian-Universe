@@ -36,6 +36,8 @@ public sealed class PartTimeGeneralScript : ScriptCardTemplate<PartTimeGeneralSc
 
 	protected override bool UsesReinforceActivationText => false;
 
+	protected override bool MergeScriptActivationKeywords => true;
+
 	public override IEnumerable<CardKeyword> CanonicalKeywords =>
 	[
 		SquKeywords.Script,

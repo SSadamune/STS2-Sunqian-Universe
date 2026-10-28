@@ -42,6 +42,18 @@ public sealed class TextSynchronizationTests : SunqianCombatTestSuite
     {
         using var cards = ReadTable(language, "cards");
         using var powers = ReadTable(language, "powers");
+        using var keywords = ReadTable(language, "card_keywords");
+        string wrap = keywords.RootElement.GetProperty("SUNQIAN_UNIVERSE_KEYWORD_WRAP.description").GetString()!;
+        Assert.DoesNotContain(language == "zhs" ? "若有多个" : "If multiple", wrap);
+        Assert.Contains(language == "zhs" ? "[gold]剧本[/gold]能力" : "[gold]Script[/gold] Power", wrap);
+        foreach (var table in new[] { cards, powers, keywords })
+        {
+            foreach (var entry in table.RootElement.EnumerateObject())
+            {
+                string value = entry.Value.GetString()!.Replace("[gold]", "").Replace("[/gold]", "");
+                Assert.DoesNotContain("剧本状态", value);
+            }
+        }
         string Card(string suffix) => cards.RootElement.GetProperty(
             "SUNQIAN_UNIVERSE_CARD_" + suffix).GetString()!;
         string Power(string suffix) => powers.RootElement.GetProperty(

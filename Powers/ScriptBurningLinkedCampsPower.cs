@@ -22,7 +22,7 @@ namespace Squ.Powers;
 [RegisterPower]
 public sealed class ScriptBurningLinkedCampsPower : ScriptPowerTemplate
 {
-	public const int BurnTinder = 6;
+	public const int BurnBonusPercent = 20;
 
 	public override PowerAssetProfile AssetProfile => new(
 		IconPath: "res://images/powers/ScriptBurningLinkedCampsPower.png",
@@ -49,7 +49,15 @@ public sealed class ScriptBurningLinkedCampsPower : ScriptPowerTemplate
 			return;
 		}
 
-		await GainTinderAsync(choiceContext, BurnTinder, cardSource);
+		Flash();
+		if (Owner.GetPower<GoodFirePower>() is { } goodFire)
+		{
+			await PowerCmd.ModifyAmount(choiceContext, goodFire, BurnBonusPercent, Owner, cardSource);
+		}
+		else
+		{
+			await PowerCmd.Apply<PendingGoodFirePower>(choiceContext, Owner, BurnBonusPercent, Owner, cardSource);
+		}
 	}
 
 	internal Task AfterBurningDamage(

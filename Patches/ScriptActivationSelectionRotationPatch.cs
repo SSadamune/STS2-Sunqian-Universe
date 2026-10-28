@@ -73,6 +73,29 @@ internal sealed class ScriptActivationSelectionOrder
 /// </summary>
 internal static class CardGridSelectionRotation
 {
+	internal static CardModel? FindScriptConstraintRemoval(
+		IReadOnlyCollection<CardModel> selected, CardModel clicked, IReadOnlyList<CardModel> ordered)
+	{
+		if (selected.Contains(clicked) || clicked is not ScriptRecordCardTemplate incoming)
+		{
+			return null;
+		}
+		CardModel? conflict = selected.OfType<ScriptRecordCardTemplate>().FirstOrDefault(record =>
+			incoming.MutuallyExclusiveGroup is not null
+			&& record.MutuallyExclusiveGroup == incoming.MutuallyExclusiveGroup);
+		if (conflict is not null)
+		{
+			return conflict;
+		}
+		if (incoming.CountsTowardActivationLimit
+			&& selected.OfType<ScriptRecordCardTemplate>().Count(record => record.CountsTowardActivationLimit)
+				>= ScriptSystem.GetActivationLimit(incoming.Owner))
+		{
+			return ordered.Concat(selected).OfType<ScriptRecordCardTemplate>().FirstOrDefault(record =>
+				selected.Contains(record) && record.CountsTowardActivationLimit);
+		}
+		return null;
+	}
 	private static readonly ConditionalWeakTable<
 		NCardGridSelectionScreen,
 		ScriptActivationSelectionOrder> SelectionOrders = new();
@@ -105,7 +128,9 @@ internal static class CardGridSelectionRotation
 		ScriptActivationSelectionOrder order = SelectionOrders.GetValue(
 			screen,
 			_ => new ScriptActivationSelectionOrder());
-		CardModel? removed = order.MakeRoomFor(selectedCards, card, prefs.MaxSelect);
+		order.MakeRoomFor(selectedCards, card, int.MaxValue);
+		CardModel? removed = FindScriptConstraintRemoval(selectedCards, card, order.Cards)
+			?? order.MakeRoomFor(selectedCards, card, prefs.MaxSelect);
 		if (removed is null || !selectedCards.Remove(removed))
 		{
 			return;

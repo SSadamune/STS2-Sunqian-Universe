@@ -27,7 +27,7 @@ using STS2RitsuLib.Scaffolding.Content;
 
 namespace Squ.Cards;
 
-/// <summary>剧本集中展示并保存战斗内剧本状态的衍生牌。</summary>
+/// <summary>剧本集中展示并保存战斗内剧本能力的衍生牌。</summary>
 public abstract class ScriptRecordCardTemplate : ModCardTemplate
 {
 	[SavedProperty]
@@ -39,6 +39,10 @@ public abstract class ScriptRecordCardTemplate : ModCardTemplate
 	public abstract Type PowerType { get; }
 
 	public virtual bool CanBeReinforced => false;
+
+	public virtual bool CountsTowardActivationLimit => true;
+
+	public virtual string? MutuallyExclusiveGroup => null;
 
 	internal virtual bool HasUpgradedVersion => false;
 
@@ -320,6 +324,8 @@ public sealed class SunqianScriptRecord : ScriptRecordCardTemplate<ScriptSunqian
 [RegisterCard(typeof(TokenCardPool), StableEntryStem = "script_record_burning_linked_camps")]
 public sealed class BurningLinkedCampsScriptRecord : ScriptRecordCardTemplate<ScriptBurningLinkedCampsPower, BurningLinkedCampsScript>
 {
+	protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
+		[HoverTipFactory.FromPower<BurningPower>()];
 	public override CardAssetProfile AssetProfile => new(PortraitPath: "res://images/cards/BurningLinkedCampsScript.png");
 }
 
@@ -405,23 +411,7 @@ public sealed class HeadsmanScriptRecord : ScriptRecordCardTemplate<ScriptHeadsm
 [RegisterCard(typeof(TokenCardPool), StableEntryStem = "script_record_xiliang_savage")]
 public sealed class XiliangSavageScriptRecord : ScriptRecordCardTemplate<ScriptXiliangSavagePower, XiliangSavageScript>
 {
-	internal override bool HasUpgradedVersion => true;
-
 	public override CardAssetProfile AssetProfile => new(PortraitPath: "res://images/cards/XiliangSavageScript.png");
-
-	protected override IEnumerable<DynamicVar> CanonicalVars =>
-	[
-		new PowerVar<VigorPower>(XiliangSavageScript.BaseVigor),
-	];
-
-	protected override void SyncDisplayVars() =>
-		DynamicVars[nameof(VigorPower)].BaseValue = SourceUpgraded
-			? XiliangSavageScript.UpgradedVigor
-			: XiliangSavageScript.BaseVigor;
-
-	protected override void OnUpgrade() =>
-		DynamicVars[nameof(VigorPower)].UpgradeValueBy(
-			XiliangSavageScript.UpgradedVigor - XiliangSavageScript.BaseVigor);
 
 	protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
 	[

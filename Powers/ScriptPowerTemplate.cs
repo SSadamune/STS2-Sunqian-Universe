@@ -18,6 +18,9 @@ namespace Squ.Powers;
 /// </summary>
 public abstract class ScriptPowerTemplate : ModPowerTemplate
 {
+	public virtual bool CountsTowardActivationLimit => true;
+
+	public virtual string? MutuallyExclusiveGroup => null;
 	private int _suppressLiftDepth;
 	private int _suppressEndEffectsDepth;
 	private PlayerChoiceContext? _activationChoiceContext;

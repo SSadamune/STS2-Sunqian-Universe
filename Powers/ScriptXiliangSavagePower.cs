@@ -32,11 +32,6 @@ public sealed class ScriptXiliangSavagePower : ScriptPowerTemplate
 	private const string BlockVarName = "Block";
 	private static readonly string BurningVarName = nameof(BurningPower);
 
-	protected override IEnumerable<DynamicVar> CanonicalVars =>
-	[
-		new PowerVar<VigorPower>(XiliangSavageScript.BaseVigor),
-	];
-
 	private sealed class Data
 	{
 		public Dictionary<AttackCommand, PendingAttack> PendingAttacks { get; } = [];
@@ -85,20 +80,6 @@ public sealed class ScriptXiliangSavagePower : ScriptPowerTemplate
 		BigIconPath: "res://images/powers/ScriptXiliangSavagePowerBig.png");
 
 	protected override object InitInternalData() => new Data();
-
-	protected override async Task OnScriptApplied(Creature? applier, CardModel? cardSource)
-	{
-		int vigor = cardSource is XiliangSavageScript { IsUpgraded: true }
-			? XiliangSavageScript.UpgradedVigor
-			: XiliangSavageScript.BaseVigor;
-		DynamicVars[nameof(VigorPower)].BaseValue = vigor;
-		await PowerCmd.Apply<VigorPower>(
-			new ThrowingPlayerChoiceContext(),
-			Owner,
-			vigor,
-			Owner,
-			cardSource);
-	}
 
 	public override Task BeforeCardPlayed(CardPlay cardPlay)
 	{

@@ -26,6 +26,7 @@ public sealed class AllScriptCardsTests : SunqianCombatTestSuite
     [
         new(typeof(BombardChibiScript), typeof(BombardChibiScriptRecord), typeof(ScriptBombardChibiPower), false),
         new(typeof(BowangParadoxScript), typeof(BowangParadoxAdvanceScriptRecord), typeof(ScriptBowangParadoxAdvancePower), false),
+        new(typeof(GuanDiForm), typeof(GuanYuCivilVer), typeof(GuanYuCivilVerPower), false),
         new(typeof(BurningLinkedCampsScript), typeof(BurningLinkedCampsScriptRecord), typeof(ScriptBurningLinkedCampsPower), false),
         new(typeof(ChickenFootCheeseScript), typeof(ChickenFootCheeseScriptRecord), typeof(ScriptChickenFootCheesePower), false),
         new(typeof(EunuchScript), typeof(EunuchScriptRecord), typeof(ScriptEunuchPower), false),
@@ -78,13 +79,21 @@ public sealed class AllScriptCardsTests : SunqianCombatTestSuite
     }
 
     [Fact]
-    public void Script_record_descriptions_do_not_color_numbers_blue()
+    public void Script_record_descriptions_only_color_the_fixed_civil_multiplier_blue()
     {
         foreach (ScriptCase testCase in Cases)
         {
             CardModel record = ModelDb.GetById<CardModel>(ModelDb.GetId(testCase.RecordType));
 
-            Assert.DoesNotContain("[blue]", record.GetDescriptionForPile(PileType.Deck));
+            string description = record.GetDescriptionForPile(PileType.Deck);
+            if (record is GuanYuCivilVer)
+            {
+                Assert.Contains("[blue]2[/blue]", description);
+            }
+            else
+            {
+                Assert.DoesNotContain("[blue]", description);
+            }
         }
     }
 
@@ -104,6 +113,11 @@ public sealed class AllScriptCardsTests : SunqianCombatTestSuite
 
             void AssertDescription(string description, CardModel card)
             {
+                if (card is GuanDiForm)
+                {
+                    Assert.Contains("将剧本：[gold]文关羽[/gold]和剧本：[gold]武关羽[/gold]加入剧本集。", description);
+                    return;
+                }
                 if (card is BowangParadoxScript)
                 {
                     Assert.Contains("从两种剧本中选择一种激活，另一种也会加入剧本集。", description);
@@ -119,7 +133,7 @@ public sealed class AllScriptCardsTests : SunqianCombatTestSuite
                 {
                     Assert.DoesNotContain(exhaust, description);
                 }
-                else if (testCase.CanBeReinforced)
+                else if (testCase.CanBeReinforced && card is not PartTimeGeneralScript)
                 {
                     Assert.DoesNotContain(exhaust, activationLine);
                     Assert.Contains("\n" + exhaust, description);
@@ -198,6 +212,7 @@ public sealed class AllScriptCardsTests : SunqianCombatTestSuite
     [Theory]
     [InlineData(typeof(BombardChibiScript), typeof(BombardChibiScriptRecord), typeof(ScriptBombardChibiPower), false)]
     [InlineData(typeof(BowangParadoxScript), typeof(BowangParadoxAdvanceScriptRecord), typeof(ScriptBowangParadoxAdvancePower), false)]
+    [InlineData(typeof(GuanDiForm), typeof(GuanYuCivilVer), typeof(GuanYuCivilVerPower), false)]
     [InlineData(typeof(BurningLinkedCampsScript), typeof(BurningLinkedCampsScriptRecord), typeof(ScriptBurningLinkedCampsPower), false)]
     [InlineData(typeof(ChickenFootCheeseScript), typeof(ChickenFootCheeseScriptRecord), typeof(ScriptChickenFootCheesePower), false)]
     [InlineData(typeof(EunuchScript), typeof(EunuchScriptRecord), typeof(ScriptEunuchPower), false)]
@@ -220,7 +235,7 @@ public sealed class AllScriptCardsTests : SunqianCombatTestSuite
     {
         CardModel card = await AddToHand(ModelDb.GetId(cardType));
         Assert.IsAssignableFrom<ScriptCardTemplate>(card);
-        if (card is OneManOneCity)
+        if (card is OneManOneCity or GuanDiForm)
         {
             Assert.DoesNotContain(CardKeyword.Exhaust, card.Keywords);
         }
@@ -230,6 +245,15 @@ public sealed class AllScriptCardsTests : SunqianCombatTestSuite
         }
 
         await PlayerCmd.SetEnergy(card is PartTimeGeneralScript ? 0 : 10, Player);
+        if (card is GuanDiForm)
+        {
+            await Play(card);
+            var records = Squ.Script.ScriptSystem.ScriptCollectionPile.GetPile(Player).Cards;
+            Assert.Single(records.OfType<GuanYuCivilVer>());
+            Assert.Single(records.OfType<GuanYuMartialVer>());
+            Assert.Empty(Player.Creature.Powers.OfType<ScriptPowerTemplate>());
+            return;
+        }
         if (card is BowangParadoxScript)
         {
             var selector = new ScriptedCardSelector()

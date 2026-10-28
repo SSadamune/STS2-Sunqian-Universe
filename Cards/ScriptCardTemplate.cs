@@ -48,7 +48,9 @@ public abstract class ScriptCardTemplate : ModCardTemplate, IRowKeywordsCard
 
 	protected virtual bool UsesReinforceActivationText => IsReinforceableScript;
 
-	bool IRowKeywordsCard.MergeTrailingKeywordsWithLastRule => !IsReinforceableScript;
+	protected virtual bool MergeScriptActivationKeywords => !IsReinforceableScript;
+
+	bool IRowKeywordsCard.MergeTrailingKeywordsWithLastRule => MergeScriptActivationKeywords;
 
 	protected override HashSet<CardTag> CanonicalTags => [SquCardTags.Script];
 
