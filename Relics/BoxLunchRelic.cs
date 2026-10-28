@@ -1,8 +1,10 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using MegaCrit.Sts2.Core.Combat;
 using MegaCrit.Sts2.Core.Entities.Cards;
+using MegaCrit.Sts2.Core.Entities.Creatures;
 using MegaCrit.Sts2.Core.Entities.Relics;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.Rooms;
@@ -23,6 +25,16 @@ public class BoxLunchRelic : ScriptRelicTemplate
 	private int _switchesThisTurn;
 	private int _pendingEnergyCost;
 	private bool _selectionInProgress;
+	private int _cooldown;
+	private int _lastCommittedTurn = int.MinValue;
+	private int _committedSwitches;
+
+	public const int SleepTurns = 2;
+	internal virtual int CooldownAfterActivation => SleepTurns;
+	internal int CooldownTurnsRemaining => _cooldown;
+	public override bool ShowCounter => DisplayAmount > 0;
+	public override int DisplayAmount => !IsCanonical && CombatManager.Instance.IsInProgress && _cooldown > 0
+		? _cooldown : -1;
 
 	public override RelicRarity Rarity => RelicRarity.Starter;
 
@@ -47,13 +59,13 @@ public class BoxLunchRelic : ScriptRelicTemplate
 				return 0;
 			}
 			SyncTurn(turn);
-			return Math.Max(0, SwitchesPerTurn - _switchesThisTurn);
+			return _cooldown > 0 ? 0 : Math.Max(0, SwitchesPerTurn - _switchesThisTurn);
 		}
 	}
 
 	internal bool CanReselectFromScriptCollection()
 	{
-		if (_selectionInProgress
+		if (_selectionInProgress || _cooldown > 0
 			|| Owner.PlayerCombatState?.TurnNumber is not int turn
 			|| !CombatManager.Instance.IsPartOfPlayerTurn(Owner)
 			|| ScriptSystem.ScriptCollectionPile.GetPile(Owner).Cards.Count == 0)
@@ -87,7 +99,8 @@ public class BoxLunchRelic : ScriptRelicTemplate
 					Owner,
 					cancelable: true,
 					requireManualSelection: true,
-					prompt: ScriptSystem.CreateReselectionPrompt(RemainingSwitchesThisTurn));
+					prompt: ScriptSystem.CreateReselectionPrompt(RemainingSwitchesThisTurn),
+					localOnly: true);
 			if (selected is null)
 			{
 				return false;
@@ -116,7 +129,7 @@ public class BoxLunchRelic : ScriptRelicTemplate
 		finally
 		{
 			_selectionInProgress = false;
-			Status = RelicStatus.Normal;
+			RefreshStatus();
 		}
 	}
 
@@ -130,6 +143,38 @@ public class BoxLunchRelic : ScriptRelicTemplate
 	}
 
 	internal void ReserveEnergyCost() => _pendingEnergyCost += EnergyCostPerSwitch;
+
+	internal bool TryCommitReselection(int turnNumber, int switchesUsed)
+	{
+		if (_cooldown > 0 || (_lastCommittedTurn == turnNumber && switchesUsed <= _committedSwitches))
+			return false;
+		MarkSwitchesUsed(turnNumber, switchesUsed);
+		_lastCommittedTurn = turnNumber;
+		_committedSwitches = switchesUsed;
+		_cooldown = CooldownAfterActivation;
+		InvokeDisplayAmountChanged();
+		RefreshStatus();
+		return true;
+	}
+
+	public override Task AfterSideTurnStart(
+		CombatSide side, IReadOnlyList<Creature> participants, ICombatState combatState)
+	{
+		if (side == Owner.Creature.Side && participants.Contains(Owner.Creature) && !Owner.Creature.IsDead)
+		{
+			SyncTurn(Owner.PlayerCombatState!.TurnNumber);
+			if (_cooldown > 0)
+			{
+				_cooldown--;
+				InvokeDisplayAmountChanged();
+			}
+			RefreshStatus();
+		}
+		return Task.CompletedTask;
+	}
+
+	private void RefreshStatus() => Status = _cooldown == 0 && RemainingSwitchesThisTurn > 0
+		? RelicStatus.Active : RelicStatus.Normal;
 
 	internal void ReleaseEnergyCost(int cost)
 	{
@@ -147,7 +192,11 @@ public class BoxLunchRelic : ScriptRelicTemplate
 		_switchesThisTurn = 0;
 		_pendingEnergyCost = 0;
 		_selectionInProgress = false;
+		_cooldown = 0;
+		_lastCommittedTurn = int.MinValue;
+		_committedSwitches = 0;
 		Status = RelicStatus.Normal;
+		InvokeDisplayAmountChanged();
 		return Task.CompletedTask;
 	}
 

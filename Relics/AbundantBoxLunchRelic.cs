@@ -17,7 +17,7 @@ namespace Squ.Relics;
 public sealed class AbundantBoxLunchRelic : BoxLunchRelic
 {
 	public const int TurnStartEnergy = 1;
-	public const int SwitchesPerTurnLimit = 2;
+	public const int SwitchesPerTurnLimit = 1;
 
 	public override RelicRarity Rarity => RelicRarity.Starter;
 
@@ -31,12 +31,14 @@ public sealed class AbundantBoxLunchRelic : BoxLunchRelic
 	internal override int SwitchesPerTurn => SwitchesPerTurnLimit;
 
 	internal override int EnergyCostPerSwitch => TurnStartEnergy;
+	internal override int CooldownAfterActivation => 0;
 
 	public override async Task AfterSideTurnStart(
 		CombatSide side,
 		IReadOnlyList<Creature> participants,
 		ICombatState combatState)
 	{
+		await base.AfterSideTurnStart(side, participants, combatState);
 		if (side != Owner.Creature.Side
 			|| !participants.Contains(Owner.Creature)
 			|| Owner.Creature.IsDead)

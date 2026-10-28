@@ -15,6 +15,9 @@ using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.Helpers;
 using MegaCrit.Sts2.Core.Localization;
 using MegaCrit.Sts2.Core.Models;
+using MegaCrit.Sts2.Core.Nodes.Combat;
+using MegaCrit.Sts2.Core.Nodes.Screens.CardSelection;
+using MegaCrit.Sts2.Core.Nodes.Screens.Overlays;
 using MegaCrit.Sts2.Core.Runs;
 using Squ.Cards;
 using Squ.Powers;
@@ -302,7 +305,8 @@ public static class ScriptSystem
 			Player player,
 			bool cancelable,
 			bool requireManualSelection,
-			LocString? prompt = null)
+			LocString? prompt = null,
+			bool localOnly = false)
 	{
 		CardPile pile = ScriptCollectionPile.GetPile(player);
 		List<ScriptRecordCardTemplate> records = pile.Cards
@@ -325,12 +329,11 @@ public static class ScriptSystem
 			PretendCardsCanBePlayed = true,
 		};
 
-		List<ScriptRecordCardTemplate> selected = (await CardSelectCmd.FromCombatPile(
-			choiceContext,
-			pile,
-			player,
-			prefs,
-			card => card is ScriptRecordCardTemplate))
+		IEnumerable<CardModel> selection = localOnly
+			? await SelectLocalScriptRecordsAsync(pile, prefs)
+			: await CardSelectCmd.FromCombatPile(
+				choiceContext, pile, player, prefs, card => card is ScriptRecordCardTemplate);
+		List<ScriptRecordCardTemplate> selected = selection
 			.OfType<ScriptRecordCardTemplate>()
 			.ToList();
 		if (selected.Count == 0)
@@ -339,7 +342,25 @@ public static class ScriptSystem
 		}
 		return IsValidActiveSelection(player, selected)
 			? selected
-			: await ChooseActiveScriptRecordsAsync(choiceContext, player, cancelable, true, prompt);
+			: await ChooseActiveScriptRecordsAsync(choiceContext, player, cancelable, true, prompt, localOnly);
+	}
+
+	private static async Task<IEnumerable<CardModel>> SelectLocalScriptRecordsAsync(
+		CardPile pile, CardSelectorPrefs prefs)
+	{
+		// Box Lunch broadcasts its confirmed selection as a managed action. Opening
+		// or canceling its local UI must not reserve or send a synchronized choice.
+		if ((CardSelectCmd.Selector ?? CardSelectCmd.LocalSelector) is { } selector)
+		{
+			return await selector.GetSelectedCards(
+				pile.Cards.OfType<ScriptRecordCardTemplate>(), prefs.MinSelect, prefs.MaxSelect);
+		}
+
+		NPlayerHand.Instance?.CancelAllCardPlay();
+		var screen = NCombatPileCardSelectScreen.Create(
+			pile, prefs, card => card is ScriptRecordCardTemplate);
+		NOverlayStack.Instance!.Push(screen);
+		return await screen.CardsSelected();
 	}
 
 	internal static (int Min, int Max) GetSelectionBounds(
@@ -430,7 +451,11 @@ public static class ScriptSystem
 			return;
 		}
 
-		boxLunch.MarkSwitchesUsed(payload.TurnNumber, payload.SwitchesUsed);
+		if (!boxLunch.TryCommitReselection(payload.TurnNumber, payload.SwitchesUsed))
+		{
+			boxLunch.ReleaseEnergyCost(payload.EnergyCost);
+			return;
+		}
 		if (payload.EnergyCost > 0)
 		{
 			await PlayerCmd.LoseEnergy(payload.EnergyCost, player);

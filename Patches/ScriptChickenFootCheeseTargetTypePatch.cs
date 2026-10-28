@@ -33,6 +33,8 @@ internal static class ScriptChickenFootCheeseTargetTypePatch
 [HarmonyPatch]
 internal static class ScriptChickenFootCheeseDescriptionPatch
 {
+	private static readonly MethodInfo AddExtraArgsMethod =
+		AccessTools.Method(typeof(CardModel), "AddExtraArgsToDescription");
 	private const string DescriptionKey =
 		"SUNQIAN_UNIVERSE_CHICKEN_FOOT_CHEESE_STRIKE.descriptionFragment";
 
@@ -51,7 +53,12 @@ internal static class ScriptChickenFootCheeseDescriptionPatch
 			return;
 		}
 
-		string baseDescription = Format(__instance.Description, __instance.DynamicVars.Values);
+		LocString originalDescription = __instance.Description;
+		__instance.DynamicVars.AddTo(originalDescription);
+		// Match the card's own description setup: custom Strike bodies may be
+		// nested LocStrings (BodyText), rather than a standalone Damage template.
+		AddExtraArgsMethod.Invoke(__instance, [originalDescription]);
+		string baseDescription = originalDescription.GetFormattedText() ?? string.Empty;
 		LocString redirectedDescription = new("cards", DescriptionKey);
 		string replacement = Format(
 			redirectedDescription,

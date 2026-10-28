@@ -43,6 +43,13 @@ public sealed class TextSynchronizationTests : SunqianCombatTestSuite
         using var cards = ReadTable(language, "cards");
         using var powers = ReadTable(language, "powers");
         using var keywords = ReadTable(language, "card_keywords");
+        using var relics = ReadTable(language, "relics");
+        string boxLunch = relics.RootElement.GetProperty("SUNQIAN_UNIVERSE_RELIC_BOX_LUNCH.description").GetString()!;
+        string abundantBoxLunch = relics.RootElement.GetProperty("SUNQIAN_UNIVERSE_RELIC_ABUNDANT_BOX_LUNCH.description").GetString()!;
+        Assert.Contains("[blue]2[/blue]", boxLunch);
+        Assert.Contains(language == "zhs" ? "休眠" : "falls asleep", boxLunch);
+        Assert.Contains(language == "zhs" ? "每回合限一次" : "Once per turn", abundantBoxLunch);
+        Assert.Equal(2, abundantBoxLunch.Split("{energyPrefix:energyIcons(1)}").Length - 1);
         string wrap = keywords.RootElement.GetProperty("SUNQIAN_UNIVERSE_KEYWORD_WRAP.description").GetString()!;
         Assert.DoesNotContain(language == "zhs" ? "若有多个" : "If multiple", wrap);
         Assert.Contains(language == "zhs" ? "[gold]剧本[/gold]能力" : "[gold]Script[/gold] Power", wrap);

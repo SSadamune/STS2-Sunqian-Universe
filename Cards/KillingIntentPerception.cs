@@ -94,7 +94,11 @@ public sealed class KillingIntentPerception : ModCardTemplate
 			return;
 		}
 
-		List<CardModel> attacks = await ChooseAttacks(choiceContext, ally);
+		// Keep cross-player selection and its nested auto-plays in this resolution.
+		// Branching back to the original player from a nested attack would otherwise
+		// try to resume the original PlayCardAction after a hook action took over.
+		var allyChoiceContext = new BlockingPlayerChoiceContext();
+		List<CardModel> attacks = await ChooseAttacks(allyChoiceContext, ally);
 		foreach (CardModel attack in attacks)
 		{
 			if (attack.Pile?.Type != PileType.Hand)
@@ -102,7 +106,7 @@ public sealed class KillingIntentPerception : ModCardTemplate
 				continue;
 			}
 
-			await CardCmd.AutoPlay(choiceContext, attack, null);
+			await CardCmd.AutoPlay(allyChoiceContext, attack, null);
 		}
 	}
 

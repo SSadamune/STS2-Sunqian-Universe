@@ -1,4 +1,5 @@
 using MegaCrit.Sts2.Core.Entities.Cards;
+using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Models.Cards;
 using MegaCrit.Sts2.Core.Models.Characters;
 using MegaCrit.Sts2.Core.Models.Monsters;
@@ -133,6 +134,31 @@ public sealed class ChickenFootCheeseScriptTests : SunqianCombatTestSuite
             + (ScriptChickenFootCheesePower.BaseFollowUpDamage + 2);
         Assert.Equal(firstHpBefore - expectedDamage, first.CurrentHp);
         Assert.Equal(secondHpBefore - expectedDamage, second.CurrentHp);
+    }
+
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public async Task Longtao_strike_nested_body_is_replaced_in_hand_and_during_play(bool upgraded)
+    {
+        await PlayAndActivateScript(await AddToHand<ChickenFootCheeseScript>());
+        var strike = await AddToHand<StrikeLongtao>();
+        if (upgraded) Upgrade(strike);
+        await ApplyPower<VigorPower>(Player.Creature, 1);
+        var capability = strike.Capability<ChickenFootCheeseStrikeCapability>()!;
+        strike.DynamicVars.Damage.UpdateCardPreview(strike, CardPreviewMode.Normal, EnemyAt(0), true);
+        capability.DynamicVars[ChickenFootCheeseStrikeCapability.FollowUpDamageVarName]
+            .UpdateCardPreview(strike, CardPreviewMode.Normal, EnemyAt(0), true);
+        string damage = upgraded ? "10" : "7";
+        string expected = $"对随机两名敌人先造成[green]{damage}[/green]点伤害，再造成[green]4[/green]点伤害。";
+
+        foreach (PileType pile in new[] { PileType.Hand, PileType.Play })
+        {
+            await CardPileCmd.Add(strike, pile);
+            string text = strike.GetDescriptionForPile(pile);
+            Assert.Equal(expected, text);
+            Assert.DoesNotContain("BodyText", text);
+        }
     }
 
     [Fact]
