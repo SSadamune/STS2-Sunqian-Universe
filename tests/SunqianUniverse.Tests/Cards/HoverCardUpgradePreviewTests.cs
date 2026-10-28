@@ -68,7 +68,8 @@ public sealed class HoverCardUpgradePreviewTests : SunqianCombatTestSuite
         AssertScriptRecordUpgradePreviewIsGreen<HeadsmanScript, HeadsmanScriptRecord>("4");
         AssertScriptRecordUpgradePreviewIsGreen<XiliangSavageScript, XiliangSavageScriptRecord>("5");
         AssertScriptRecordUpgradePreviewIsGreen<NightRaidWuchaoScript, NightRaidWuchaoScriptRecord>("4");
-        AssertScriptRecordUpgradePreviewIsGreen<BowangParadoxScript, BowangParadoxScriptRecord>("9", "9");
+        AssertScriptRecordUpgradePreviewIsGreen<BowangParadoxScript, BowangParadoxAdvanceScriptRecord>("9");
+        AssertScriptRecordUpgradePreviewIsGreen<BowangParadoxScript, BowangParadoxArsonScriptRecord>("9");
         AssertScriptRecordUpgradePreviewIsGreen<GruntScript, GruntScriptRecord>("4");
     }
 
@@ -135,9 +136,6 @@ public sealed class HoverCardUpgradePreviewTests : SunqianCombatTestSuite
         Assert.True(record.HasUpgradedVersion);
         Assert.NotEqual(CardUpgradePreviewType.None, record.UpgradePreviewType);
         Assert.EndsWith("+", record.Title);
-        Assert.Contains(
-            $"[green]{record.Title}[/green]",
-            source.GetDescriptionForUpgradePreview());
         string description = record.GetDescriptionForUpgradePreview();
         int searchStart = 0;
         foreach (string changedText in changedTexts)
@@ -165,7 +163,7 @@ public sealed class HoverCardUpgradePreviewTests : SunqianCombatTestSuite
 		Assert.False(record.Title.EndsWith("+", StringComparison.Ordinal));
         Assert.NotEqual(CardUpgradePreviewType.None, record.UpgradePreviewType);
         string sourceDescription = source.GetDescriptionForUpgradePreview();
-        Assert.Contains($"[gold]{record.Title}[/gold]", sourceDescription);
+        Assert.Contains("激活此[gold]剧本[/gold]", sourceDescription);
         Assert.DoesNotContain($"[green]{record.Title}", sourceDescription);
     }
 

@@ -21,9 +21,9 @@ internal static class ScriptCardHoverTipPatch
 			return;
 		}
 
-		ScriptRecordCardTemplate record = script.CreateScriptRecordPreview();
-		__result = __result
-			.Append(new CardHoverTip(record))
-			.Concat(record.HoverTips);
+		foreach (ScriptRecordCardTemplate record in script.CreateScriptRecordPreviews())
+		{
+			__result = __result.Append(new CardHoverTip(record)).Concat(record.HoverTips);
+		}
 	}
 }

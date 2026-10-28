@@ -49,6 +49,7 @@ public static class SquMod
 		RitsuLibFramework.CreateContentPack(ModId)
 			.CharacterStarterRelic<SunqianCharacter, BoxLunchRelic>(1)
 			.CardKeywordOwnedByLocNamespace("script")
+			.CardKeywordOwnedByLocNamespace("script_collection")
 			.CardKeywordOwnedByLocNamespace("doom_kill_threshold")
 			.CardKeywordOwnedByLocNamespace("multi_target")
 			.CardKeywordOwnedByLocNamespace("environmental")

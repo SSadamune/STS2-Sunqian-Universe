@@ -1,0 +1,81 @@
+using System.Text.Json;
+using MegaCrit.Sts2.Core.Entities.Cards;
+using MegaCrit.Sts2.Core.Models.Characters;
+using MegaCrit.Sts2.Core.Models.Monsters;
+using Squ.Cards;
+using Squ.Powers;
+using TestTheSpire;
+using Xunit;
+
+namespace Squ.Tests.Cards;
+
+public sealed class TextSynchronizationTests : SunqianCombatTestSuite
+{
+    protected override void ConfigureBattle(CombatTestBattleBuilder battle) =>
+        battle.Player<Ironclad>().AddEnemy<BigDummy>().WithSeed("text-synchronization");
+
+    [Theory]
+    [InlineData(false, 3)]
+    [InlineData(true, 4)]
+    public async Task Defend_block_bonus_wording_tracks_base_and_upgraded_values_in_card_and_power(
+        bool upgraded, int amount)
+    {
+        var card = await AddToHand<TooKindToBeTrue>();
+        if (upgraded)
+        {
+            Upgrade(card);
+        }
+        Assert.Contains($"给予的[gold]格挡[/gold]+{amount}。",
+            card.GetDescriptionForPile(PileType.Hand));
+        await ApplyPower<TooKindToBeTruePower>(Player.Creature, amount);
+        var power = Player.Creature.GetPower<TooKindToBeTruePower>()!;
+        var description = power.SmartDescription;
+        description.Add("Amount", power.Amount);
+        Assert.Contains($"给予的[gold]格挡[/gold]+[blue]{amount}[/blue]。",
+            description.GetFormattedText());
+    }
+
+    [Theory]
+    [InlineData("zhs")]
+    [InlineData("eng")]
+    public void Both_languages_preserve_the_updated_text_and_dynamic_variables(string language)
+    {
+        using var cards = ReadTable(language, "cards");
+        using var powers = ReadTable(language, "powers");
+        string Card(string suffix) => cards.RootElement.GetProperty(
+            "SUNQIAN_UNIVERSE_CARD_" + suffix).GetString()!;
+        string Power(string suffix) => powers.RootElement.GetProperty(
+            "SUNQIAN_UNIVERSE_POWER_TOO_KIND_TO_BE_TRUE_POWER." + suffix).GetString()!;
+
+        Assert.Contains(language == "zhs" ? "[gold]可能有用[/gold]" : "[gold]potentially useful[/gold]",
+            Card("METAMORPHOSIS.description"));
+        Assert.Equal(language == "zhs"
+                ? "取决于资源和战况，会出现不同的备选牌。"
+                : "Different card choices appear depending on your resources and the combat situation.",
+            Card("METAMORPHOSIS.potentiallyUsefulDescription"));
+        Assert.Equal(language == "zhs"
+                ? "激活此[gold]剧本[/gold]，若激活过则还会将数值叠加。"
+                : "Activate this [gold]Script[/gold]; if it has been activated before, also stack its values.",
+            Card("SCRIPT_ACTIVATE_REINFORCE"));
+        Assert.Contains(language == "zhs" ? "你的牌被[gold]消耗[/gold]后" : "After one of your cards is [gold]Exhausted[/gold]",
+            Card("RUTHLESS_STRIKE.chargeEffect"));
+        Assert.Contains("{ChargeForge:diff()}", Card("SHARPEN_SWORD_FOR_DECADES.chargeEffect"));
+        if (language == "zhs")
+        {
+            Assert.Contains("回合结束时[gold]铸造[/gold]", Card("SHARPEN_SWORD_FOR_DECADES.chargeEffect"));
+        }
+        Assert.Equal(2, Card("BOMBARD_CHIBI_SCRIPT.description").Count(c => c == '\n'));
+        Assert.Contains("+{ExtraBlock:diff()}", Card("TOO_KIND_TO_BE_TRUE.description"));
+        Assert.Equal(Power("description"), Power("smartDescription"));
+        Assert.Contains("+[blue]{Amount}[/blue]", Power("description"));
+        foreach (var entry in cards.RootElement.EnumerateObject().Where(entry =>
+            entry.Name.StartsWith("SUNQIAN_UNIVERSE_CARD_SCRIPT_RECORD_") && entry.Name.EndsWith(".title")))
+        {
+            Assert.DoesNotContain(language == "zhs" ? "剧本：" : "Script: ", entry.Value.GetString()!);
+        }
+    }
+
+    private static JsonDocument ReadTable(string language, string table) =>
+        JsonDocument.Parse(Godot.FileAccess.GetFileAsString(
+            $"res://sunqian-universe/localization/{language}/{table}.json"));
+}

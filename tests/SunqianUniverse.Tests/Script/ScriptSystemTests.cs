@@ -13,6 +13,12 @@ using MegaCrit.Sts2.Core.Nodes.Cards;
 using MegaCrit.Sts2.Core.Nodes.CommonUi;
 using MegaCrit.Sts2.Core.Nodes.GodotExtensions;
 using MegaCrit.Sts2.Core.Nodes.Screens.CardSelection;
+using MegaCrit.Sts2.Core.Nodes.Screens;
+using MegaCrit.Sts2.Core.Nodes.Screens.Capstones;
+using MegaCrit.Sts2.Core.Localization;
+using MegaCrit.Sts2.Core.HoverTips;
+using STS2RitsuLib.Keywords;
+using MegaCrit.Sts2.addons.mega_text;
 using MegaCrit.Sts2.Core.Nodes.Screens.Overlays;
 using Squ;
 using Squ.Cards;
@@ -29,6 +35,116 @@ public sealed class ScriptSystemTests : SunqianCombatTestSuite
 {
     protected override void ConfigureBattle(CombatTestBattleBuilder battle) =>
         battle.Player<Ironclad>().AddEnemy<BigDummy>().WithSeed("script-system-rework");
+
+    [Fact]
+    public void Box_lunch_relics_reference_the_script_collection_keyword()
+    {
+        var expected = Assert.IsType<HoverTip>(HoverTipFactory.FromKeyword(
+            SquKeywords.ScriptCollectionId.GetModCardKeyword()));
+        Assert.Equal("剧本集", expected.Title);
+        Assert.Equal("当前战斗中，被激活过的所有剧本将记录在[gold]剧本集[/gold]。\n若剧本集中有至少四种剧本，则你的[gold]激活上限[/gold]+1。", expected.Description);
+        foreach (var relic in new MegaCrit.Sts2.Core.Models.RelicModel[]
+            { ModelDb.Relic<BoxLunchRelic>(), ModelDb.Relic<AbundantBoxLunchRelic>() })
+        {
+            Assert.Contains(relic.HoverTips.OfType<HoverTip>(), tip =>
+                tip.Title == expected.Title && tip.Description == expected.Description);
+        }
+        var script = Assert.IsType<HoverTip>(HoverTipFactory.FromKeyword(SquKeywords.Script));
+        Assert.Equal("一种特殊的能力。剧本的[gold]激活上限[/gold]默认为1，因此激活新的剧本会导致旧的剧本失效。", script.Description);
+    }
+
+    [Fact]
+    public async Task Abundant_box_lunch_can_reactivate_the_current_script_twice_and_pays_for_each_activation()
+    {
+        var relic = (AbundantBoxLunchRelic)ModelDb.Relic<AbundantBoxLunchRelic>().ToMutable();
+        Player.AddRelicInternal(relic, silent: true);
+        await PlayScript<ExecutionCommanderScript>();
+        await PlayerCmd.SetEnergy(2, Player);
+        for (int remaining = 1; remaining >= 0; remaining--)
+        {
+            var old = Player.Creature.GetPower<ScriptExecutionCommanderPower>()!;
+            var selector = new ScriptedCardSelector().ThenSelectWhere(card => card is ExecutionCommanderScriptRecord);
+            using (UseCardSelector(selector))
+            {
+                Assert.True(await relic.ReselectFromScriptCollectionAsync());
+            }
+            AssertAllSelectionsConsumed(selector);
+            var current = Player.Creature.GetPower<ScriptExecutionCommanderPower>()!;
+            Assert.NotSame(old, current);
+            Assert.Equal(old.Amount, current.Amount);
+            Assert.Equal(remaining, Player.PlayerCombatState!.Energy);
+            Assert.Equal(remaining, relic.RemainingSwitchesThisTurn);
+        }
+        Assert.False(relic.CanReselectFromScriptCollection());
+    }
+
+    [Theory]
+    [InlineData(1)]
+    [InlineData(2)]
+    public void Script_reselection_prompt_formats_the_remaining_count(int remaining)
+    {
+        Assert.Contains(ScriptSystem.CreateReselectionPrompt(remaining).GetFormattedText(), new[]
+        {
+            $"你可以重新选择要激活的剧本（本回合剩余{remaining}次）。",
+            $"You may reselect Scripts to activate ({remaining} remaining this turn).",
+        });
+    }
+
+    [Theory]
+    [InlineData("no_relic")]
+    [InlineData("spent_charge")]
+    [InlineData("no_energy")]
+    public async Task Script_collection_view_shows_the_read_only_footer(string reason)
+    {
+        await PlayScript<ExecutionCommanderScript>();
+        if (reason != "no_relic")
+        {
+            BoxLunchRelic relic = reason == "no_energy"
+                ? (AbundantBoxLunchRelic)ModelDb.Relic<AbundantBoxLunchRelic>().ToMutable()
+                : (BoxLunchRelic)ModelDb.Relic<BoxLunchRelic>().ToMutable();
+            Player.AddRelicInternal(relic, silent: true);
+            if (reason == "no_energy")
+            {
+                await PlayerCmd.SetEnergy(0, Player);
+                Assert.Equal(2, relic.RemainingSwitchesThisTurn);
+            }
+            else
+            {
+                relic.MarkSwitchesUsed(Player.PlayerCombatState!.TurnNumber, 1);
+                Assert.Equal(0, relic.RemainingSwitchesThisTurn);
+            }
+            Assert.False(relic.CanReselectFromScriptCollection());
+        }
+
+        NCardPileScreen screen = NCardPileScreen.ShowScreen(
+            ScriptSystem.ScriptCollectionPile.GetPile(Player), []);
+        try
+        {
+            var label = screen.GetNode<MegaRichTextLabel>("%BottomLabel");
+            Assert.True(label.Visible);
+            Assert.Contains(label.Text, new[]
+            {
+                "[center]查看本场战斗中激活过的剧本。",
+                "[center]View Scripts activated during this combat.",
+            });
+        }
+        finally
+        {
+            NCapstoneContainer.Instance!.Close();
+        }
+    }
+
+    [Fact]
+    public void Script_collection_hover_explains_history_and_the_four_script_threshold()
+    {
+        string description = new LocString("static_hover_tips",
+            "SUNQIAN_UNIVERSE_CARDPILE_SCRIPT_COLLECTION.description").GetFormattedText();
+        Assert.Contains(description, new[]
+        {
+            "点击查看本场战斗中激活过、以及正在激活的剧本。\n若剧本集中有至少四种剧本，则你的[gold]激活上限[/gold]+1。",
+            "Click to view Scripts previously activated during this combat and those currently active.\nIf the Script Collection contains at least four kinds of Script, your [gold]activation limit[/gold] +1.",
+        });
+    }
 
     [Fact]
     public async Task Playing_a_new_script_auto_activates_it_and_replaces_the_only_active_script()
@@ -141,7 +257,7 @@ public sealed class ScriptSystemTests : SunqianCombatTestSuite
     }
 
     [Fact]
-    public async Task Box_lunch_confirming_the_same_script_does_not_switch_or_spend_the_charge()
+    public async Task Box_lunch_reactivates_the_same_script_and_spends_the_charge()
     {
         var relic = (BoxLunchRelic)ModelDb.Relic<BoxLunchRelic>().ToMutable();
         Player.AddRelicInternal(relic, silent: true);
@@ -154,17 +270,16 @@ public sealed class ScriptSystemTests : SunqianCombatTestSuite
         CardModel newSecond = await AddToDrawPileTop<Wound>();
         CardModel newFirst = await AddToDrawPileTop<Bash>();
         var selector = new ScriptedCardSelector()
-            .ThenSelectWhere(card => card is EunuchScriptRecord)
             .ThenSelectWhere(card => card is EunuchScriptRecord);
         using (UseCardSelector(selector))
         {
-            Assert.False(await relic.ReselectFromScriptCollectionAsync());
+            Assert.True(await relic.ReselectFromScriptCollectionAsync());
             Assert.False(await relic.ReselectFromScriptCollectionAsync());
         }
         AssertAllSelectionsConsumed(selector);
 
-        Assert.Same(oldPower, Player.Creature.GetPower<ScriptEunuchPower>());
-        Assert.Equal(0, ScriptSystem.GetScriptLiftsThisTurn(Player));
+        Assert.NotSame(oldPower, Player.Creature.GetPower<ScriptEunuchPower>());
+        Assert.Equal(1, ScriptSystem.GetScriptLiftsThisTurn(Player));
         AssertInPile(oldFirst, PileType.Hand);
         AssertInPile(oldSecond, PileType.Hand);
         AssertInPile(newFirst, PileType.Draw);
@@ -173,7 +288,8 @@ public sealed class ScriptSystemTests : SunqianCombatTestSuite
         Assert.True(oldSecond.HasEunuchMessage());
         Assert.False(newFirst.HasEunuchMessage());
         Assert.False(newSecond.HasEunuchMessage());
-        Assert.True(relic.CanReselectFromScriptCollection());
+        Assert.False(relic.CanReselectFromScriptCollection());
+        Assert.Equal(0, relic.RemainingSwitchesThisTurn);
     }
 
     [Fact]
@@ -196,6 +312,13 @@ public sealed class ScriptSystemTests : SunqianCombatTestSuite
         Assert.Equal(1, selector.LastMinSelect);
         Assert.Equal(1, selector.LastMaxSelect);
         AssertOnlyScript<ScriptSunqianPower>();
+        Assert.Equal(0, relic.RemainingSwitchesThisTurn);
+        Assert.False(relic.CanReselectFromScriptCollection());
+
+        await EndTurn();
+
+        Assert.Equal(1, relic.RemainingSwitchesThisTurn);
+        Assert.True(relic.CanReselectFromScriptCollection());
     }
 
     [Fact]
@@ -232,9 +355,7 @@ public sealed class ScriptSystemTests : SunqianCombatTestSuite
         await PlayScript<SunqianScript>();
         await PlayScript<ExecutionCommanderScript>();
         var prefs = new CardSelectorPrefs(
-            new MegaCrit.Sts2.Core.Localization.LocString(
-                SquCommonL10n.Table,
-                ScriptSystem.SelectionPromptKey),
+            ScriptSystem.CreateReselectionPrompt(2),
             1)
         {
             Cancelable = true,
@@ -251,6 +372,14 @@ public sealed class ScriptSystemTests : SunqianCombatTestSuite
             SceneTree.SignalName.ProcessFrame);
 
         NBackButton backButton = screen.GetNode<NBackButton>("ScriptSelectionBackButton");
+        Assert.True(CardGridSelectionRotation.UsesRotation(prefs));
+        Assert.Equal(prefs.Prompt.GetFormattedText(),
+            screen.GetNode<Control>("%BottomText").GetNode<MegaRichTextLabel>("%BottomLabel").Text);
+        Assert.Contains(prefs.Prompt.GetFormattedText(), new[]
+        {
+            "你可以重新选择要激活的剧本（本回合剩余2次）。",
+            "You may reselect Scripts to activate (2 remaining this turn).",
+        });
         Task<IEnumerable<CardModel>> selectedTask = screen.CardsSelected();
         backButton.EmitSignal(NClickableControl.SignalName.Released, backButton);
 
@@ -258,7 +387,7 @@ public sealed class ScriptSystemTests : SunqianCombatTestSuite
     }
 
     [Fact]
-    public async Task Box_lunch_confirming_the_same_reinforceable_script_does_not_rebuild_it()
+    public async Task Box_lunch_reactivates_the_same_reinforceable_script_without_stacking_its_values()
     {
         var relic = (BoxLunchRelic)ModelDb.Relic<BoxLunchRelic>().ToMutable();
         Player.AddRelicInternal(relic, silent: true);
@@ -270,13 +399,16 @@ public sealed class ScriptSystemTests : SunqianCombatTestSuite
 
         using (UseCardSelector(selector))
         {
-            Assert.False(await relic.ReselectFromScriptCollectionAsync());
+            Assert.True(await relic.ReselectFromScriptCollectionAsync());
         }
         AssertAllSelectionsConsumed(selector);
 
-        Assert.Same(active, Player.Creature.GetPower<ScriptExecutionCommanderPower>());
+        var reactivated = Assert.IsType<ScriptExecutionCommanderPower>(
+            Player.Creature.GetPower<ScriptExecutionCommanderPower>());
+        Assert.NotSame(active, reactivated);
+        Assert.Equal(active.Amount, reactivated.Amount);
         Assert.Equal(0, ScriptSystem.GetScriptLiftsThisTurn(Player));
-        Assert.True(relic.CanReselectFromScriptCollection());
+        Assert.False(relic.CanReselectFromScriptCollection());
     }
 
     [Fact]
@@ -330,14 +462,8 @@ public sealed class ScriptSystemTests : SunqianCombatTestSuite
         await PlayScript<SunqianScript>();
         await PlayerCmd.SetEnergy(2, Player);
 
-        var unchanged = new ScriptedCardSelector()
-            .ThenSelectWhere(card => card is SunqianScriptRecord);
-        using (UseCardSelector(unchanged))
-        {
-            Assert.False(await relic.ReselectFromScriptCollectionAsync());
-        }
-        AssertAllSelectionsConsumed(unchanged);
         Assert.Equal(2, Player.PlayerCombatState!.Energy);
+        Assert.Equal(2, relic.RemainingSwitchesThisTurn);
         AssertOnlyScript<ScriptSunqianPower>();
 
         var cancel = new ScriptedCardSelector().ThenSkip();
@@ -357,6 +483,7 @@ public sealed class ScriptSystemTests : SunqianCombatTestSuite
         }
         AssertAllSelectionsConsumed(toCommander);
         Assert.Equal(1, Player.PlayerCombatState.Energy);
+        Assert.Equal(1, relic.RemainingSwitchesThisTurn);
         AssertOnlyScript<ScriptExecutionCommanderPower>();
 
         var backToSunqian = new ScriptedCardSelector()
@@ -367,6 +494,7 @@ public sealed class ScriptSystemTests : SunqianCombatTestSuite
         }
         AssertAllSelectionsConsumed(backToSunqian);
         Assert.Equal(0, Player.PlayerCombatState.Energy);
+        Assert.Equal(0, relic.RemainingSwitchesThisTurn);
         AssertOnlyScript<ScriptSunqianPower>();
         Assert.False(relic.CanReselectFromScriptCollection());
         Assert.False(await relic.ReselectFromScriptCollectionAsync());
@@ -398,6 +526,9 @@ public sealed class ScriptSystemTests : SunqianCombatTestSuite
         Assert.True(CardGridSelectionRotation.UsesRotation(SelectionPrefs(
             SquCommonL10n.Table,
             ScriptSystem.SelectionPromptKey)));
+        Assert.True(CardGridSelectionRotation.UsesRotation(SelectionPrefs(
+            SquCommonL10n.Table,
+            ScriptSystem.ReselectionPromptKey)));
         Assert.True(CardGridSelectionRotation.UsesRotation(SelectionPrefs(
             "cards",
             FarmingGeneral.SelectionPromptKey)));
@@ -460,8 +591,8 @@ public sealed class ScriptSystemTests : SunqianCombatTestSuite
         await PlayScript<SunqianScript>();
 
         var selector = new ScriptedCardSelector()
-            .ThenSelectWhere(card => card is ServantScriptRecord)
-            .ThenSelectWhere(card => card is BowangParadoxVigorChoice);
+            .ThenSelectWhere(card => card is BowangParadoxAdvanceScriptRecord)
+            .ThenSelectWhere(card => card is ServantScriptRecord);
         using (UseCardSelector(selector))
         {
             await PlayScript<BowangParadoxScript>();
@@ -472,7 +603,7 @@ public sealed class ScriptSystemTests : SunqianCombatTestSuite
         Assert.Null(Player.Creature.GetPower<ScriptNeutralAmbushPower>());
         Assert.Null(Player.Creature.GetPower<ScriptServantPower>());
         Assert.NotNull(Player.Creature.GetPower<ScriptSunqianPower>());
-        Assert.NotNull(Player.Creature.GetPower<ScriptBowangParadoxPower>());
+        Assert.NotNull(Player.Creature.GetPower<ScriptBowangParadoxAdvancePower>());
     }
 
     [Fact]
@@ -509,7 +640,7 @@ public sealed class ScriptSystemTests : SunqianCombatTestSuite
     public async Task Manual_reselection_passes_its_choice_context_to_bowang_paradox()
     {
         var initialSelector = new ScriptedCardSelector()
-            .ThenSelectWhere(card => card is BowangParadoxVigorChoice);
+            .ThenSelectWhere(card => card is BowangParadoxAdvanceScriptRecord);
         using (UseCardSelector(initialSelector))
         {
             await PlayScript<BowangParadoxScript>();
@@ -518,7 +649,7 @@ public sealed class ScriptSystemTests : SunqianCombatTestSuite
 
         CardModel burning = await AddToHand<BlockFirefighting>();
         var reselectSelector = new ScriptedCardSelector()
-            .ThenSelectWhere(card => card is BowangParadoxTinderChoice);
+            .ThenSelectWhere(card => card is BowangParadoxArsonScriptRecord);
         using (UseCardSelector(reselectSelector))
         {
             bool selected = await ScriptSystem.ChooseActiveScriptsAsync(
@@ -533,7 +664,7 @@ public sealed class ScriptSystemTests : SunqianCombatTestSuite
         CardTestAssertions.AssertPowerAmount<TinderPower>(
             Player.Creature,
             BowangParadoxScript.BaseTinderStacks);
-        AssertOnlyScript<ScriptBowangParadoxPower>();
+        AssertOnlyScript<ScriptBowangParadoxArsonPower>();
     }
 
     private async Task PlayScript<TScript>()

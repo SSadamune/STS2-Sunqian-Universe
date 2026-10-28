@@ -22,6 +22,9 @@ public static class SquKeywords
 
 	public static readonly CardKeyword Script = ScriptId.GetModCardKeyword();
 
+	public static readonly string ScriptCollectionId = ModContentRegistry
+		.GetQualifiedKeywordId(SquMod.ModId, "script_collection");
+
 	public static readonly string DoomKillThresholdId = ModContentRegistry
 		.GetQualifiedKeywordId(SquMod.ModId, "doom_kill_threshold");
 

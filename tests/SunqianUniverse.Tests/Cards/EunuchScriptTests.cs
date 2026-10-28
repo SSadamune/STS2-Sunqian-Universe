@@ -101,19 +101,17 @@ public sealed class EunuchScriptTests : SunqianCombatTestSuite
     [Fact]
     public async Task EU_04_bowang_paradox_does_not_discard_an_ethereal_attack_while_eunuch_is_active()
     {
+        await MegaCrit.Sts2.Core.Commands.PlayerCmd.SetEnergy(10, Player);
+        await PlayAndActivateScript(await AddToHand<ServantScript>());
         var protectedAttack = await AddToDrawPileTop<FlameStrike>();
         await AddToDrawPileTop<DefendLongtao>();
         await PlayAndActivateScript(await AddToHand<EunuchScript>());
         var selector = new ScriptedCardSelector()
-            .ThenSelectWhere(card => card is BowangParadoxVigorChoice);
+            .ThenSelectWhere(card => card is BowangParadoxAdvanceScriptRecord);
 
         using (UseCardSelector(selector))
         {
-            await BowangParadoxChoice.OfferAsync(
-                new BlockingPlayerChoiceContext(),
-                Player,
-                source: null,
-                upgraded: false);
+            await PlayAndActivateScript(await AddToHand<BowangParadoxScript>());
         }
         AssertAllSelectionsConsumed(selector);
 

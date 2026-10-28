@@ -12,6 +12,8 @@ using Squ;
 using Squ.Audio;
 using Squ.Character;
 using Squ.Powers;
+using Squ.Script;
+using Squ.Combat;
 using STS2RitsuLib.Interop.AutoRegistration;
 using STS2RitsuLib.Scaffolding.Content;
 
@@ -20,7 +22,7 @@ using STS2RitsuLib.Scaffolding.Content;
 namespace Squ.Cards;
 
 [RegisterCard(typeof(SunqianCardPool), StableEntryStem = "bowang_paradox_script")]
-public sealed class BowangParadoxScript : ScriptCardTemplate<BowangParadoxScriptRecord>
+public sealed class BowangParadoxScript : ScriptCardTemplate<BowangParadoxAdvanceScriptRecord>
 {
 	public const int BaseVigor = 7;
 	public const int UpgradedVigor = 9;
@@ -57,7 +59,20 @@ public sealed class BowangParadoxScript : ScriptCardTemplate<BowangParadoxScript
 	protected override async Task PlayScriptAsync(PlayerChoiceContext choiceContext, CardPlay cardPlay)
 	{
 		SquSfx.Play(SquSfx.BowangParadoxPlayEvent);
-		await UnlockScriptAsync(choiceContext, DynamicVars[nameof(VigorPower)].BaseValue);
+		await ScriptSystem.UnlockOrReinforceAsync<BowangParadoxAdvanceScriptRecord>(
+			choiceContext, this, DynamicVars[nameof(VigorPower)].BaseValue, activate: false);
+		await ScriptSystem.UnlockOrReinforceAsync<BowangParadoxArsonScriptRecord>(
+			choiceContext, this, DynamicVars[nameof(TinderPower)].BaseValue, activate: false);
+		await BowangParadoxChoice.OfferAsync(choiceContext, Owner);
+	}
+
+	internal override IEnumerable<ScriptRecordCardTemplate> CreateScriptRecordPreviews()
+	{
+		var advance = (BowangParadoxAdvanceScriptRecord)ModelDb.Card<BowangParadoxAdvanceScriptRecord>().ToMutable();
+		var arson = (BowangParadoxArsonScriptRecord)ModelDb.Card<BowangParadoxArsonScriptRecord>().ToMutable();
+		advance.PreviewFrom(this);
+		arson.PreviewFrom(this);
+		return [advance, arson];
 	}
 
 	internal override int GetScriptPowerAmountForPreview() =>

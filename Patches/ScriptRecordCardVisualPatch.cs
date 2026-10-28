@@ -291,10 +291,13 @@ internal static class ScriptRecordCardHighlightHidePatch
 [HarmonyPatch(typeof(NCard), "UpdateTypePlaque")]
 internal static class ScriptRecordCardVisualPatch
 {
+	internal static bool UsesScriptTypePlaque(CardModel? model) =>
+		model is ScriptRecordCardTemplate;
+
 	[HarmonyPostfix]
 	private static void Postfix(NCard __instance)
 	{
-		if (__instance.Model is not ScriptRecordCardTemplate)
+		if (!UsesScriptTypePlaque(__instance.Model))
 		{
 			return;
 		}

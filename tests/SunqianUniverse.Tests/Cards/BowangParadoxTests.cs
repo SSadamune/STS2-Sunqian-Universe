@@ -5,6 +5,12 @@ using MegaCrit.Sts2.Core.Models.Monsters;
 using MegaCrit.Sts2.Core.Models.Powers;
 using Squ.Cards;
 using Squ.Powers;
+using Squ.Character;
+using Squ.Patches;
+using Squ.Script;
+using Squ.Relics;
+using MegaCrit.Sts2.Core.Commands;
+using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using TestTheSpire;
 using Xunit;
 
@@ -12,6 +18,92 @@ namespace Squ.Tests.Cards;
 
 public sealed class BowangParadoxTests : SunqianCombatTestSuite
 {
+    [Fact]
+    public async Task First_play_records_both_scripts_but_activates_only_the_chosen_one()
+    {
+        await PlayAndChooseVigor(await AddToHand<BowangParadoxScript>());
+        var records = ScriptSystem.ScriptCollectionPile.GetPile(Player).Cards;
+        var advance = Assert.Single(records.OfType<BowangParadoxAdvanceScriptRecord>());
+        var arson = Assert.Single(records.OfType<BowangParadoxArsonScriptRecord>());
+        Assert.Equal(2, records.Count);
+        Assert.Equal(BowangParadoxScript.BaseVigor, advance.StoredAmount);
+        Assert.Equal(BowangParadoxScript.BaseTinderStacks, arson.StoredAmount);
+        Assert.False(advance.CanBeReinforced);
+        Assert.False(arson.CanBeReinforced);
+        Assert.True(advance.ShouldGlowGold);
+        Assert.False(arson.ShouldGlowGold);
+        AssertOnlyScript<ScriptBowangParadoxAdvancePower>();
+        Assert.Null(Player.Creature.GetPower<TinderPower>());
+    }
+
+    [Fact]
+    public async Task Replay_reactivates_the_current_script_without_stacking_either_record()
+    {
+        await PlayAndChooseVigor(await AddToHand<BowangParadoxScript>());
+        var old = Player.Creature.GetPower<ScriptBowangParadoxAdvancePower>();
+        await PlayerCmd.SetEnergy(10, Player);
+        await PlayAndChooseVigor(await AddToHand<BowangParadoxScript>());
+        Assert.NotSame(old, Player.Creature.GetPower<ScriptBowangParadoxAdvancePower>());
+        Assert.All(ScriptSystem.ScriptCollectionPile.GetPile(Player).Cards
+            .OfType<ScriptRecordCardTemplate>(), record => Assert.Equal(7, record.StoredAmount));
+        CardTestAssertions.AssertPowerAmount<VigorPower>(Player.Creature, 14);
+        Assert.Equal(2, ScriptSystem.ScriptCollectionPile.GetPile(Player).Cards.Count);
+    }
+
+    [Fact]
+    public async Task Both_records_count_toward_the_four_script_threshold_and_can_be_activated_together()
+    {
+        await PlayerCmd.SetEnergy(10, Player);
+        await PlayAndActivateScript(await AddToHand<ServantScript>());
+        await PlayAndActivateScript(await AddToHand<SunqianScript>());
+        await PlayAndChooseVigor(await AddToHand<BowangParadoxScript>());
+        Assert.Equal(4, ScriptSystem.ScriptCollectionPile.GetPile(Player).Cards.Count);
+        Assert.Equal(2, ScriptSystem.GetActivationLimit(Player));
+        Assert.NotNull(Player.Creature.GetPower<ScriptSunqianPower>());
+        var selector = new ScriptedCardSelector().ThenSelectWhere(
+            card => card is BowangParadoxAdvanceScriptRecord,
+            card => card is BowangParadoxArsonScriptRecord);
+        using (UseCardSelector(selector))
+        {
+            Assert.True(await ScriptSystem.ChooseActiveScriptsAsync(
+                new BlockingPlayerChoiceContext(), Player, cancelable: false));
+        }
+        AssertAllSelectionsConsumed(selector);
+        Assert.Equal(2, Player.Creature.Powers.OfType<ScriptPowerTemplate>().Count());
+        Assert.NotNull(Player.Creature.GetPower<ScriptBowangParadoxAdvancePower>());
+        Assert.NotNull(Player.Creature.GetPower<ScriptBowangParadoxArsonPower>());
+    }
+
+    [Fact]
+    public async Task Box_lunch_reactivates_the_selected_independent_script_without_a_second_choice()
+    {
+        var relic = (BoxLunchRelic)ModelDb.Relic<BoxLunchRelic>().ToMutable();
+        Player.AddRelicInternal(relic, silent: true);
+        await PlayAndChooseVigor(await AddToHand<BowangParadoxScript>());
+        var burning = await AddToHand<BlockFirefighting>();
+        var selector = new ScriptedCardSelector().ThenSelectWhere(card => card is BowangParadoxArsonScriptRecord);
+        using (UseCardSelector(selector))
+        {
+            Assert.True(await relic.ReselectFromScriptCollectionAsync());
+        }
+        AssertAllSelectionsConsumed(selector);
+        Assert.Equal(1, selector.SelectionRequestCount);
+        AssertInPile(burning, PileType.Discard);
+        AssertOnlyScript<ScriptBowangParadoxArsonPower>();
+    }
+
+    [Fact]
+    public void Both_script_records_use_the_purple_character_pool_and_script_type_plaque()
+    {
+        CardModel[] choices = [ModelDb.Card<BowangParadoxAdvanceScriptRecord>(), ModelDb.Card<BowangParadoxArsonScriptRecord>()];
+        foreach (CardModel choice in choices)
+        {
+            Assert.Same(ModelDb.CardPool<SunqianCardPool>(), choice.VisualCardPool);
+            Assert.True(ScriptRecordCardVisualPatch.UsesScriptTypePlaque(choice));
+            Assert.False(choice.ShouldShowInCardLibrary);
+        }
+        Assert.False(ScriptRecordCardVisualPatch.UsesScriptTypePlaque(ModelDb.Card<DefendLongtao>()));
+    }
     protected override void ConfigureBattle(CombatTestBattleBuilder battle)
     {
         battle
@@ -38,7 +130,7 @@ public sealed class BowangParadoxTests : SunqianCombatTestSuite
         CardTestAssertions.AssertPowerAmount<VigorPower>(
             Player.Creature,
             BowangParadoxScript.BaseVigor);
-        AssertOnlyScript<ScriptBowangParadoxPower>();
+        AssertOnlyScript<ScriptBowangParadoxAdvancePower>();
     }
 
     [Fact]
@@ -51,7 +143,7 @@ public sealed class BowangParadoxTests : SunqianCombatTestSuite
         CardTestAssertions.AssertPowerAmount<VigorPower>(
             Player.Creature,
             BowangParadoxScript.UpgradedVigor);
-        AssertOnlyScript<ScriptBowangParadoxPower>();
+        AssertOnlyScript<ScriptBowangParadoxAdvancePower>();
     }
 
     [Fact]
@@ -63,7 +155,7 @@ public sealed class BowangParadoxTests : SunqianCombatTestSuite
         CardTestAssertions.AssertPowerAmount<TinderPower>(
             Player.Creature,
             BowangParadoxScript.UpgradedTinderStacks);
-        AssertOnlyScript<ScriptBowangParadoxPower>();
+        AssertOnlyScript<ScriptBowangParadoxArsonPower>();
     }
 
     [Fact]
@@ -76,7 +168,7 @@ public sealed class BowangParadoxTests : SunqianCombatTestSuite
         await PlayAndChooseVigor(bowang);
 
         AssertInPile(retainedAttack, PileType.Hand);
-        AssertOnlyScript<ScriptBowangParadoxPower>();
+        AssertOnlyScript<ScriptBowangParadoxAdvancePower>();
     }
 
     [Fact]
@@ -94,7 +186,7 @@ public sealed class BowangParadoxTests : SunqianCombatTestSuite
         await PlayAndChooseVigor(bowang);
 
         AssertInPile(attack, PileType.Discard);
-        AssertOnlyScript<ScriptBowangParadoxPower>();
+        AssertOnlyScript<ScriptBowangParadoxAdvancePower>();
     }
 
     [Fact]
@@ -115,7 +207,7 @@ public sealed class BowangParadoxTests : SunqianCombatTestSuite
         CardTestAssertions.AssertPowerAmount<TinderPower>(
             Player.Creature,
             BowangParadoxScript.BaseTinderStacks);
-        AssertOnlyScript<ScriptBowangParadoxPower>();
+        AssertOnlyScript<ScriptBowangParadoxArsonPower>();
     }
 
     [Fact]
@@ -148,21 +240,21 @@ public sealed class BowangParadoxTests : SunqianCombatTestSuite
             BowangParadoxScript.BaseVigor);
         CardTestAssertions.AssertPowerAmount<TinderPower>(
             Player.Creature,
-            BowangParadoxScript.BaseTinderStacks * 2);
-        BowangParadoxScriptRecord record = Assert.Single(
+            BowangParadoxScript.BaseTinderStacks);
+        BowangParadoxAdvanceScriptRecord record = Assert.Single(
             Squ.Script.ScriptSystem.ScriptCollectionPile.GetPile(Player).Cards
-                .OfType<BowangParadoxScriptRecord>());
-        Assert.Equal(BowangParadoxScript.BaseVigor * 2, record.StoredAmount);
-        CardTestAssertions.AssertPowerAmount<ScriptBowangParadoxPower>(
+                .OfType<BowangParadoxAdvanceScriptRecord>());
+        Assert.Equal(BowangParadoxScript.BaseVigor, record.StoredAmount);
+        CardTestAssertions.AssertPowerAmount<ScriptBowangParadoxArsonPower>(
             Player.Creature,
-            BowangParadoxScript.BaseVigor * 2);
-        AssertOnlyScript<ScriptBowangParadoxPower>();
+            BowangParadoxScript.BaseVigor);
+        AssertOnlyScript<ScriptBowangParadoxArsonPower>();
     }
 
     private async Task PlayAndChooseVigor(BowangParadoxScript bowang)
     {
         var selector = new ScriptedCardSelector()
-            .ThenSelectWhere(card => card is BowangParadoxVigorChoice);
+            .ThenSelectWhere(card => card is BowangParadoxAdvanceScriptRecord);
         using (UseCardSelector(selector))
         {
             await PlayAndActivateScript(bowang);
@@ -173,7 +265,7 @@ public sealed class BowangParadoxTests : SunqianCombatTestSuite
     private async Task PlayAndChooseTinder(BowangParadoxScript bowang)
     {
         var selector = new ScriptedCardSelector()
-            .ThenSelectWhere(card => card is BowangParadoxTinderChoice);
+            .ThenSelectWhere(card => card is BowangParadoxArsonScriptRecord);
         using (UseCardSelector(selector))
         {
             await PlayAndActivateScript(bowang);

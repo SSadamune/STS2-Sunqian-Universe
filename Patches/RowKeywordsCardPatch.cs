@@ -94,6 +94,11 @@ internal static class RowKeywordsCardPatch
 			count++;
 		}
 
+		if (count > 0 && count < lines.Count
+			&& card is IRowKeywordsCard { MergeTrailingKeywordsWithLastRule: true })
+		{
+			count++;
+		}
 		MergeRange(lines, lines.Count - count, count);
 	}
 

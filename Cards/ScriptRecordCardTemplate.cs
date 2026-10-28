@@ -461,42 +461,6 @@ public sealed class NightRaidWuchaoScriptRecord : ReinforceableScriptRecordCardT
 			NightRaidWuchaoScript.UpgradedBurning - NightRaidWuchaoScript.BaseBurning);
 }
 
-[RegisterCard(typeof(TokenCardPool), StableEntryStem = "script_record_bowang_paradox")]
-public sealed class BowangParadoxScriptRecord : ReinforceableScriptRecordCardTemplate<ScriptBowangParadoxPower, BowangParadoxScript>
-{
-	internal override bool HasUpgradedVersion => true;
-
-	protected override IEnumerable<DynamicVar> CanonicalVars =>
-	[
-		new PowerVar<VigorPower>(BowangParadoxScript.BaseVigor),
-		new PowerVar<TinderPower>(BowangParadoxScript.BaseTinderStacks),
-	];
-
-	public override CardAssetProfile AssetProfile => new(PortraitPath: "res://images/cards/BowangParadoxScript.png");
-
-	protected override void SyncDisplayVars()
-	{
-		DynamicVars[nameof(VigorPower)].BaseValue = StoredAmount;
-		DynamicVars[nameof(TinderPower)].BaseValue = StoredAmount;
-	}
-
-	protected override void OnUpgrade()
-	{
-		DynamicVars[nameof(VigorPower)].UpgradeValueBy(
-			BowangParadoxScript.UpgradedVigor - BowangParadoxScript.BaseVigor);
-		DynamicVars[nameof(TinderPower)].UpgradeValueBy(
-			BowangParadoxScript.UpgradedTinderStacks - BowangParadoxScript.BaseTinderStacks);
-	}
-
-	protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
-	[
-		HoverTipFactory.FromPower<VigorPower>(),
-		..HoverTipFactory.FromPowerWithPowerHoverTips<TinderPower>(),
-		HoverTipFactory.FromPower<BurningPower>(),
-		HoverTipFactory.FromKeyword(CardKeyword.Retain),
-	];
-}
-
 [RegisterCard(typeof(TokenCardPool), StableEntryStem = "script_record_eunuch")]
 public sealed class EunuchScriptRecord : ScriptRecordCardTemplate<ScriptEunuchPower, EunuchScript>
 {

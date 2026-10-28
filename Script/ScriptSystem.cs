@@ -40,6 +40,17 @@ public static class ScriptSystem
 
 	internal const string SelectionPromptKey =
 		"SUNQIAN_UNIVERSE_COMMON.SCRIPT.selectionPrompt";
+	internal const string ReselectionPromptKey =
+		"SUNQIAN_UNIVERSE_COMMON.SCRIPT.reselectionPrompt";
+	internal const string ViewPromptKey =
+		"SUNQIAN_UNIVERSE_COMMON.SCRIPT.viewPrompt";
+
+	internal static LocString CreateReselectionPrompt(int remaining)
+	{
+		var prompt = new LocString(SquCommonL10n.Table, ReselectionPromptKey);
+		prompt.Add("Remaining", remaining);
+		return prompt;
+	}
 	private static readonly LocString SelectionPrompt =
 		new(SquCommonL10n.Table, SelectionPromptKey);
 	private static readonly LocString InvalidationPrompt =
@@ -128,7 +139,8 @@ public static class ScriptSystem
 		ScriptCardTemplate source,
 		decimal amount,
 		Action<TRecord>? configureRecord = null,
-		Action<TRecord>? afterActivation = null)
+		Action<TRecord>? afterActivation = null,
+		bool activate = true)
 		where TRecord : ScriptRecordCardTemplate
 	{
 		Player player = source.Owner;
@@ -163,6 +175,14 @@ public static class ScriptSystem
 			await handler.AfterScriptCardPlayedAsync(player, record, wasNewUnlock);
 		}
 
+		if (!activate)
+		{
+			ScriptPowerTemplate? active = player.Creature.Powers.OfType<ScriptPowerTemplate>()
+				.FirstOrDefault(power => power.GetType() == record.PowerType);
+			active?.SetAmount(record.StoredAmount);
+			return;
+		}
+
 		await ActivatePlayedScriptAsync(
 			choiceContext,
 			player,
@@ -170,7 +190,7 @@ public static class ScriptSystem
 		afterActivation?.Invoke(record);
 	}
 
-	private static async Task ActivatePlayedScriptAsync(
+	internal static async Task ActivatePlayedScriptAsync(
 		PlayerChoiceContext choiceContext,
 		Player player,
 		ScriptRecordCardTemplate record)
@@ -273,7 +293,8 @@ public static class ScriptSystem
 			PlayerChoiceContext choiceContext,
 			Player player,
 			bool cancelable,
-			bool requireManualSelection)
+			bool requireManualSelection,
+			LocString? prompt = null)
 	{
 		CardPile pile = ScriptCollectionPile.GetPile(player);
 		List<ScriptRecordCardTemplate> records = pile.Cards
@@ -291,7 +312,7 @@ public static class ScriptSystem
 		int activationLimit = GetActivationLimit(player);
 		int maxSelect = Math.Min(activationLimit, records.Count);
 		int minSelect = records.Count < activationLimit ? 1 : maxSelect;
-		var prefs = new CardSelectorPrefs(SelectionPrompt, minSelect, maxSelect)
+		var prefs = new CardSelectorPrefs(prompt ?? SelectionPrompt, minSelect, maxSelect)
 		{
 			Cancelable = cancelable,
 			RequireManualConfirmation = true,
@@ -328,8 +349,7 @@ public static class ScriptSystem
 		int energyCost)
 	{
 		if (player.PlayerCombatState?.TurnNumber is not int turnNumber
-			|| selected.Count == 0
-			|| IsSameActiveSelection(player, selected))
+			|| selected.Count == 0)
 		{
 			return false;
 		}
@@ -368,8 +388,7 @@ public static class ScriptSystem
 		if (selected is not List<ScriptRecordCardTemplate> chosen
 			|| payload.SwitchesUsed < 1
 			|| payload.SwitchesUsed > boxLunch.SwitchesPerTurn
-			|| payload.EnergyCost != boxLunch.EnergyCostPerSwitch
-			|| IsSameActiveSelection(player, chosen))
+			|| payload.EnergyCost != boxLunch.EnergyCostPerSwitch)
 		{
 			boxLunch.ReleaseEnergyCost(payload.EnergyCost);
 			return;

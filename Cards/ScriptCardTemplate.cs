@@ -16,7 +16,7 @@ namespace Squ.Cards;
 /// <summary>
 /// 带「剧本」标签的卡牌基类：打出时执行具体效果。
 /// </summary>
-public abstract class ScriptCardTemplate : ModCardTemplate
+public abstract class ScriptCardTemplate : ModCardTemplate, IRowKeywordsCard
 {
 	protected ScriptCardTemplate(
 		int cost,
@@ -37,6 +37,9 @@ public abstract class ScriptCardTemplate : ModCardTemplate
 
 	internal abstract ScriptRecordCardTemplate CreateScriptRecordPreview();
 
+	internal virtual IEnumerable<ScriptRecordCardTemplate> CreateScriptRecordPreviews() =>
+		[CreateScriptRecordPreview()];
+
 	internal virtual int GetScriptPowerAmountForPreview() => 1;
 
 	internal abstract bool IsReinforceableScript { get; }
@@ -45,7 +48,7 @@ public abstract class ScriptCardTemplate : ModCardTemplate
 
 	protected virtual bool UsesReinforceActivationText => IsReinforceableScript;
 
-	internal abstract string ScriptRecordTitle { get; }
+	bool IRowKeywordsCard.MergeTrailingKeywordsWithLastRule => !IsReinforceableScript;
 
 	protected override HashSet<CardTag> CanonicalTags => [SquCardTags.Script];
 
@@ -70,8 +73,6 @@ public abstract class ScriptCardTemplate<TRecord> : ScriptCardTemplate
 
 	internal sealed override bool HasUpgradedScriptEffect =>
 		ModelDb.Card<TRecord>().HasUpgradedVersion;
-
-	internal sealed override string ScriptRecordTitle => ModelDb.Card<TRecord>().Title;
 
 	internal sealed override ScriptRecordCardTemplate CreateScriptRecordPreview()
 	{
@@ -99,15 +100,6 @@ public abstract class ScriptCardTemplate<TRecord> : ScriptCardTemplate
 			? "SUNQIAN_UNIVERSE_CARD_SCRIPT_ACTIVATE_REINFORCE"
 			: "SUNQIAN_UNIVERSE_CARD_SCRIPT_ACTIVATE";
 		LocString text = new("cards", key);
-		string scriptTitle = HasUpgradedScriptEffect && IsUpgraded
-			? ScriptRecordTitle + "+"
-			: ScriptRecordTitle;
-		string titleColor = HasUpgradedScriptEffect
-			&& IsUpgraded
-			&& UpgradePreviewType != CardUpgradePreviewType.None
-				? "green"
-				: "gold";
-		text.Add("ScriptTitle", $"[{titleColor}]{scriptTitle}[/{titleColor}]");
 		description.Add("ScriptUnlockText", text.GetFormattedText());
 	}
 }

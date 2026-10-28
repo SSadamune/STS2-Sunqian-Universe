@@ -26,6 +26,9 @@ public class BoxLunchRelic : ScriptRelicTemplate
 
 	public override RelicRarity Rarity => RelicRarity.Starter;
 
+	protected override IEnumerable<string> RegisteredKeywordIds =>
+		[SquKeywords.ScriptId, SquKeywords.ScriptCollectionId];
+
 	public override RelicAssetProfile AssetProfile => new(
 		IconPath: "res://images/relics/BoxLunchRelic.png",
 		IconOutlinePath: "res://images/relics/BoxLunchRelicOutline.png",
@@ -34,6 +37,19 @@ public class BoxLunchRelic : ScriptRelicTemplate
 	internal virtual int SwitchesPerTurn => 1;
 
 	internal virtual int EnergyCostPerSwitch => 0;
+
+	internal int RemainingSwitchesThisTurn
+	{
+		get
+		{
+			if (Owner.PlayerCombatState?.TurnNumber is not int turn)
+			{
+				return 0;
+			}
+			SyncTurn(turn);
+			return Math.Max(0, SwitchesPerTurn - _switchesThisTurn);
+		}
+	}
 
 	internal bool CanReselectFromScriptCollection()
 	{
@@ -70,8 +86,9 @@ public class BoxLunchRelic : ScriptRelicTemplate
 					new BlockingPlayerChoiceContext(),
 					Owner,
 					cancelable: true,
-					requireManualSelection: true);
-			if (selected is null || ScriptSystem.IsSameActiveSelection(Owner, selected))
+					requireManualSelection: true,
+					prompt: ScriptSystem.CreateReselectionPrompt(RemainingSwitchesThisTurn));
+			if (selected is null)
 			{
 				return false;
 			}

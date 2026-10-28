@@ -1,10 +1,10 @@
 {
   "SEA_GLASS.SUNQIAN_UNIVERSE_CHARACTER_SUNQIAN_CHARACTER.title": "Extra Sea Glass",
   "SUNQIAN_UNIVERSE_RELIC_BOX_LUNCH.title": "Box Lunch",
-  "SUNQIAN_UNIVERSE_RELIC_BOX_LUNCH.description": "Once per turn, you may reselect the Scripts to activate from your [gold]Script Collection[/gold].",
+  "SUNQIAN_UNIVERSE_RELIC_BOX_LUNCH.description": "Once per turn, you may reactivate [gold]Scripts[/gold] in your [gold]Script Collection[/gold].",
   "SUNQIAN_UNIVERSE_RELIC_BOX_LUNCH.flavor": "No box lunch, what to eat?",
   "SUNQIAN_UNIVERSE_RELIC_ABUNDANT_BOX_LUNCH.title": "Abundant Box Lunch",
-  "SUNQIAN_UNIVERSE_RELIC_ABUNDANT_BOX_LUNCH.description": "At the start of each turn, gain {energyPrefix:energyIcons(1)}.\nEach turn, you may reselect Scripts from your [gold]Script Collection[/gold] twice. Each reselection costs {energyPrefix:energyIcons(1)}.",
+  "SUNQIAN_UNIVERSE_RELIC_ABUNDANT_BOX_LUNCH.description": "At the start of each turn, gain {energyPrefix:energyIcons(1)}.\nTwice per turn, you may reactivate [gold]Scripts[/gold] in your [gold]Script Collection[/gold]. Each reactivation costs {energyPrefix:energyIcons(1)}.",
   "SUNQIAN_UNIVERSE_RELIC_ABUNDANT_BOX_LUNCH.orobasHoverPreview": "[green]At the start of each turn, gain {energyPrefix:energyIcons(1)}.[/green]\n[green]Each turn, you may reselect Scripts from your [gold]Script Collection[/gold] twice. Each reselection costs {energyPrefix:energyIcons(1)}.[/green]",
   "SUNQIAN_UNIVERSE_RELIC_ABUNDANT_BOX_LUNCH.flavor": "Naturally, the more roles I play, the better.",
   "SUNQIAN_UNIVERSE_RELIC_MENGDE_NEW_BOOK.title": "Mengde's New Book",

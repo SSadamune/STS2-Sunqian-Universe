@@ -42,7 +42,8 @@ internal static class CancelableScriptSelectionBackButtonPatch
 	{
 		if (!____prefs.Cancelable
 			|| ____prefs.Prompt.LocTable != SquCommonL10n.Table
-			|| ____prefs.Prompt.LocEntryKey != ScriptSystem.SelectionPromptKey)
+			|| (____prefs.Prompt.LocEntryKey != ScriptSystem.SelectionPromptKey
+				&& ____prefs.Prompt.LocEntryKey != ScriptSystem.ReselectionPromptKey))
 		{
 			return;
 		}

@@ -82,7 +82,8 @@ internal static class CardGridSelectionRotation
 		string key = prefs.Prompt.LocEntryKey;
 		if (prefs.Prompt.LocTable == SquCommonL10n.Table)
 		{
-			return key == ScriptSystem.SelectionPromptKey;
+			return key == ScriptSystem.SelectionPromptKey
+				|| key == ScriptSystem.ReselectionPromptKey;
 		}
 
 		return prefs.Prompt.LocTable == "cards"

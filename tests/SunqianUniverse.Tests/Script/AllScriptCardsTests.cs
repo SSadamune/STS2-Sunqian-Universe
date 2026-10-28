@@ -25,7 +25,7 @@ public sealed class AllScriptCardsTests : SunqianCombatTestSuite
     private static readonly ScriptCase[] Cases =
     [
         new(typeof(BombardChibiScript), typeof(BombardChibiScriptRecord), typeof(ScriptBombardChibiPower), false),
-        new(typeof(BowangParadoxScript), typeof(BowangParadoxScriptRecord), typeof(ScriptBowangParadoxPower), true),
+        new(typeof(BowangParadoxScript), typeof(BowangParadoxAdvanceScriptRecord), typeof(ScriptBowangParadoxAdvancePower), false),
         new(typeof(BurningLinkedCampsScript), typeof(BurningLinkedCampsScriptRecord), typeof(ScriptBurningLinkedCampsPower), false),
         new(typeof(ChickenFootCheeseScript), typeof(ChickenFootCheeseScriptRecord), typeof(ScriptChickenFootCheesePower), false),
         new(typeof(EunuchScript), typeof(EunuchScriptRecord), typeof(ScriptEunuchPower), false),
@@ -71,6 +71,9 @@ public sealed class AllScriptCardsTests : SunqianCombatTestSuite
             Assert.False(canonical.IsMutable);
             Assert.NotEmpty(canonical.GetDescriptionForPile(PileType.Deck));
             Assert.NotEmpty(canonical.HoverTips.OfType<CardHoverTip>());
+            CardModel record = ModelDb.GetById<CardModel>(ModelDb.GetId(testCase.RecordType));
+            Assert.DoesNotContain("剧本：", record.Title);
+            Assert.DoesNotContain("Script:", record.Title);
         }
     }
 
@@ -86,24 +89,56 @@ public sealed class AllScriptCardsTests : SunqianCombatTestSuite
     }
 
     [Fact]
-    public void Script_activation_text_only_colors_the_script_title_gold()
+    public void All_script_activation_descriptions_use_this_script_and_preserve_the_expected_keyword_rows()
     {
-        string ordinary = ModelDb.Card<GruntScript>().GetDescriptionForPile(PileType.Deck);
-        string reinforceable = ModelDb.Card<ExecutionCommanderScript>().GetDescriptionForPile(PileType.Deck);
-        string partTimeGeneral = ModelDb.Card<PartTimeGeneralScript>().GetDescriptionForPile(PileType.Deck);
-		string twoWordPoet = ModelDb.Card<TwoWordPoetScript>().GetDescriptionForPile(PileType.Deck);
+        const string activation = "激活此[gold]剧本[/gold]";
+        const string exhaust = "[gold]消耗[/gold]。";
+        foreach (ScriptCase testCase in Cases)
+        {
+            var canonical = (ScriptCardTemplate)ModelDb.GetById<CardModel>(ModelDb.GetId(testCase.CardType));
+            AssertDescription(canonical.GetDescriptionForPile(PileType.Deck), canonical);
+            var upgraded = (ScriptCardTemplate)canonical.ToMutable();
+            upgraded.UpgradeInternal();
+            AssertDescription(upgraded.GetDescriptionForPile(PileType.Deck), upgraded);
+            AssertDescription(upgraded.GetDescriptionForUpgradePreview(), upgraded);
 
-        Assert.Contains("激活[gold]剧本：杂兵[/gold]。", ordinary);
-        Assert.Contains(
-            "激活[gold]剧本：行刑指挥官[/gold]，若已激活则还会将数值叠加。",
-            reinforceable);
-        Assert.Contains("激活[gold]剧本：兼职将军[/gold]。", partTimeGeneral);
-        Assert.DoesNotContain("若已激活则还会将数值叠加", partTimeGeneral);
-		Assert.Contains("激活[gold]剧本：二言诗人[/gold]。", twoWordPoet);
-		Assert.DoesNotContain("若已激活则还会将数值叠加", twoWordPoet);
-        Assert.DoesNotContain("[gold]激活", ordinary);
-        Assert.DoesNotContain("[gold]激活", reinforceable);
-        Assert.DoesNotContain("[gold]激活", partTimeGeneral);
+            void AssertDescription(string description, CardModel card)
+            {
+                if (card is BowangParadoxScript)
+                {
+                    Assert.Contains("从两种剧本中选择一种激活，另一种也会加入剧本集。", description);
+                    Assert.DoesNotContain("数值叠加", description);
+                    return;
+                }
+                Assert.Contains(activation, description);
+                Assert.DoesNotContain("激活[gold]剧本：", description);
+                Assert.DoesNotContain("[gold]激活", description);
+                string activationLine = Assert.Single(description.Split('\n')
+                    .Where(line => line.Contains(activation)));
+                if (!card.Keywords.Contains(CardKeyword.Exhaust))
+                {
+                    Assert.DoesNotContain(exhaust, description);
+                }
+                else if (testCase.CanBeReinforced)
+                {
+                    Assert.DoesNotContain(exhaust, activationLine);
+                    Assert.Contains("\n" + exhaust, description);
+                }
+                else
+                {
+                    Assert.Contains(activation + "。" + exhaust, activationLine);
+                }
+
+                if (testCase.CanBeReinforced && testCase.CardType != typeof(PartTimeGeneralScript))
+                {
+                    Assert.Contains(activation + "，若激活过则还会将数值叠加。", description);
+                }
+                else
+                {
+                    Assert.DoesNotContain("若激活过则还会将数值叠加", description);
+                }
+            }
+        }
     }
 
     [Fact]
@@ -162,7 +197,7 @@ public sealed class AllScriptCardsTests : SunqianCombatTestSuite
 
     [Theory]
     [InlineData(typeof(BombardChibiScript), typeof(BombardChibiScriptRecord), typeof(ScriptBombardChibiPower), false)]
-    [InlineData(typeof(BowangParadoxScript), typeof(BowangParadoxScriptRecord), typeof(ScriptBowangParadoxPower), true)]
+    [InlineData(typeof(BowangParadoxScript), typeof(BowangParadoxAdvanceScriptRecord), typeof(ScriptBowangParadoxAdvancePower), false)]
     [InlineData(typeof(BurningLinkedCampsScript), typeof(BurningLinkedCampsScriptRecord), typeof(ScriptBurningLinkedCampsPower), false)]
     [InlineData(typeof(ChickenFootCheeseScript), typeof(ChickenFootCheeseScriptRecord), typeof(ScriptChickenFootCheesePower), false)]
     [InlineData(typeof(EunuchScript), typeof(EunuchScriptRecord), typeof(ScriptEunuchPower), false)]
@@ -198,7 +233,7 @@ public sealed class AllScriptCardsTests : SunqianCombatTestSuite
         if (card is BowangParadoxScript)
         {
             var selector = new ScriptedCardSelector()
-                .ThenSelectWhere(candidate => candidate is BowangParadoxVigorChoice);
+                .ThenSelectWhere(candidate => candidate is BowangParadoxAdvanceScriptRecord);
             using (UseCardSelector(selector))
             {
                 await Play(card);

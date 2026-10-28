@@ -16,7 +16,7 @@ public sealed class BuddyTangxiaohuTests : SunqianCombatTestSuite
     {
         await Play(Upgrade(await AddToHand<BuddyTangxiaohu>()));
         var selector = new ScriptedCardSelector()
-            .ThenSelectWhere(card => card is BowangParadoxVigorChoice);
+            .ThenSelectWhere(card => card is BowangParadoxAdvanceScriptRecord);
         using (UseCardSelector(selector))
         {
             await PlayAndActivateScript(await AddToHand<BowangParadoxScript>());
