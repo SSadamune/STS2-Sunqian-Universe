@@ -14,6 +14,7 @@ using MegaCrit.Sts2.Core.Nodes.CommonUi;
 using MegaCrit.Sts2.Core.Nodes.GodotExtensions;
 using MegaCrit.Sts2.Core.Nodes.Screens.CardSelection;
 using MegaCrit.Sts2.Core.Nodes.Screens.Overlays;
+using Squ;
 using Squ.Cards;
 using Squ.Patches;
 using Squ.Powers;
@@ -140,7 +141,7 @@ public sealed class ScriptSystemTests : SunqianCombatTestSuite
     }
 
     [Fact]
-    public async Task Box_lunch_reselecting_active_eunuch_rebuilds_power_without_drawing_or_moving_cards()
+    public async Task Box_lunch_confirming_the_same_script_does_not_switch_or_spend_the_charge()
     {
         var relic = (BoxLunchRelic)ModelDb.Relic<BoxLunchRelic>().ToMutable();
         Player.AddRelicInternal(relic, silent: true);
@@ -153,16 +154,17 @@ public sealed class ScriptSystemTests : SunqianCombatTestSuite
         CardModel newSecond = await AddToDrawPileTop<Wound>();
         CardModel newFirst = await AddToDrawPileTop<Bash>();
         var selector = new ScriptedCardSelector()
+            .ThenSelectWhere(card => card is EunuchScriptRecord)
             .ThenSelectWhere(card => card is EunuchScriptRecord);
         using (UseCardSelector(selector))
         {
-            Assert.True(await relic.ReselectFromScriptCollectionAsync());
+            Assert.False(await relic.ReselectFromScriptCollectionAsync());
+            Assert.False(await relic.ReselectFromScriptCollectionAsync());
         }
         AssertAllSelectionsConsumed(selector);
 
-        Assert.Equal(1, selector.SelectionRequestCount);
-        Assert.NotSame(oldPower, Player.Creature.GetPower<ScriptEunuchPower>());
-        Assert.Equal(1, ScriptSystem.GetScriptLiftsThisTurn(Player));
+        Assert.Same(oldPower, Player.Creature.GetPower<ScriptEunuchPower>());
+        Assert.Equal(0, ScriptSystem.GetScriptLiftsThisTurn(Player));
         AssertInPile(oldFirst, PileType.Hand);
         AssertInPile(oldSecond, PileType.Hand);
         AssertInPile(newFirst, PileType.Draw);
@@ -171,7 +173,7 @@ public sealed class ScriptSystemTests : SunqianCombatTestSuite
         Assert.True(oldSecond.HasEunuchMessage());
         Assert.False(newFirst.HasEunuchMessage());
         Assert.False(newSecond.HasEunuchMessage());
-        Assert.False(await relic.ReselectFromScriptCollectionAsync());
+        Assert.True(relic.CanReselectFromScriptCollection());
     }
 
     [Fact]
@@ -256,7 +258,7 @@ public sealed class ScriptSystemTests : SunqianCombatTestSuite
     }
 
     [Fact]
-    public async Task Box_lunch_reselecting_reinforceable_script_rebuilds_without_deactivation()
+    public async Task Box_lunch_confirming_the_same_reinforceable_script_does_not_rebuild_it()
     {
         var relic = (BoxLunchRelic)ModelDb.Relic<BoxLunchRelic>().ToMutable();
         Player.AddRelicInternal(relic, silent: true);
@@ -268,13 +270,13 @@ public sealed class ScriptSystemTests : SunqianCombatTestSuite
 
         using (UseCardSelector(selector))
         {
-            Assert.True(await relic.ReselectFromScriptCollectionAsync());
+            Assert.False(await relic.ReselectFromScriptCollectionAsync());
         }
         AssertAllSelectionsConsumed(selector);
 
-        Assert.Equal(1, selector.SelectionRequestCount);
-        Assert.NotSame(active, Player.Creature.GetPower<ScriptExecutionCommanderPower>());
+        Assert.Same(active, Player.Creature.GetPower<ScriptExecutionCommanderPower>());
         Assert.Equal(0, ScriptSystem.GetScriptLiftsThisTurn(Player));
+        Assert.True(relic.CanReselectFromScriptCollection());
     }
 
     [Fact]
@@ -298,25 +300,14 @@ public sealed class ScriptSystemTests : SunqianCombatTestSuite
     }
 
     [Fact]
-    public async Task Abundant_box_lunch_gains_energy_per_four_scripts_and_pays_for_each_excess_selection()
+    public async Task Abundant_box_lunch_gains_one_energy_at_turn_start_without_opening_selection()
     {
         var relic = (AbundantBoxLunchRelic)ModelDb.Relic<AbundantBoxLunchRelic>().ToMutable();
         Player.AddRelicInternal(relic, silent: true);
-        await PlayerCmd.SetEnergy(10, Player);
         await PlayScript<ExecutionCommanderScript>();
-        await PlayScript<NeutralAmbushScript>();
-        await PlayScript<ServantScript>();
-        await PlayScript<SunqianScript>();
+        await PlayerCmd.SetEnergy(0, Player);
 
-        Assert.Equal(6, Player.PlayerCombatState!.Energy);
-        Assert.Equal(2, ScriptSystem.GetActivationLimit(Player));
-
-        await PlayerCmd.SetEnergy(1, Player);
-        var selector = new ScriptedCardSelector()
-            .ThenSelectWhere(
-                card => card is ExecutionCommanderScriptRecord,
-                card => card is NeutralAmbushScriptRecord,
-                card => card is ServantScriptRecord);
+        var selector = new ScriptedCardSelector();
         using (UseCardSelector(selector))
         {
             await relic.AfterSideTurnStart(
@@ -324,28 +315,66 @@ public sealed class ScriptSystemTests : SunqianCombatTestSuite
                 [Player.Creature],
                 Combat);
         }
-        AssertAllSelectionsConsumed(selector);
 
-        Assert.Equal(2, selector.LastMinSelect);
-        Assert.Equal(4, selector.LastMaxSelect);
-        Assert.Equal(1, Player.PlayerCombatState.Energy);
-        Assert.Equal(2, ScriptSystem.GetActivationLimit(Player));
-        Assert.Equal(3, Player.Creature.Powers.OfType<ScriptPowerTemplate>().Count());
-        Assert.NotNull(Player.Creature.GetPower<ScriptExecutionCommanderPower>());
-        Assert.NotNull(Player.Creature.GetPower<ScriptNeutralAmbushPower>());
-        Assert.NotNull(Player.Creature.GetPower<ScriptServantPower>());
+        Assert.Equal(0, selector.SelectionRequestCount);
+        Assert.Equal(AbundantBoxLunchRelic.TurnStartEnergy, Player.PlayerCombatState!.Energy);
     }
 
     [Fact]
-    public void Abundant_box_lunch_selection_prompt_displays_the_current_energy_cost()
+    public async Task Abundant_box_lunch_pays_one_energy_per_real_switch_and_stops_without_energy_or_charges()
     {
-        string prompt = ScriptSystem.CreatePaidSelectionPrompt(
-            freeSelectionCount: 1,
-            energyCost: 2,
-            energyPrefix: "sunqian").GetFormattedText();
+        var relic = (AbundantBoxLunchRelic)ModelDb.Relic<AbundantBoxLunchRelic>().ToMutable();
+        Player.AddRelicInternal(relic, silent: true);
+        await PlayerCmd.SetEnergy(10, Player);
+        await PlayScript<ExecutionCommanderScript>();
+        await PlayScript<SunqianScript>();
+        await PlayerCmd.SetEnergy(2, Player);
 
-        Assert.Contains("当前花费", prompt);
-        Assert.Contains("[blue]2[/blue]", prompt);
+        var unchanged = new ScriptedCardSelector()
+            .ThenSelectWhere(card => card is SunqianScriptRecord);
+        using (UseCardSelector(unchanged))
+        {
+            Assert.False(await relic.ReselectFromScriptCollectionAsync());
+        }
+        AssertAllSelectionsConsumed(unchanged);
+        Assert.Equal(2, Player.PlayerCombatState!.Energy);
+        AssertOnlyScript<ScriptSunqianPower>();
+
+        var cancel = new ScriptedCardSelector().ThenSkip();
+        using (UseCardSelector(cancel))
+        {
+            Assert.False(await relic.ReselectFromScriptCollectionAsync());
+        }
+        AssertAllSelectionsConsumed(cancel);
+        Assert.Equal(2, Player.PlayerCombatState.Energy);
+        Assert.True(relic.CanReselectFromScriptCollection());
+
+        var toCommander = new ScriptedCardSelector()
+            .ThenSelectWhere(card => card is ExecutionCommanderScriptRecord);
+        using (UseCardSelector(toCommander))
+        {
+            Assert.True(await relic.ReselectFromScriptCollectionAsync());
+        }
+        AssertAllSelectionsConsumed(toCommander);
+        Assert.Equal(1, Player.PlayerCombatState.Energy);
+        AssertOnlyScript<ScriptExecutionCommanderPower>();
+
+        var backToSunqian = new ScriptedCardSelector()
+            .ThenSelectWhere(card => card is SunqianScriptRecord);
+        using (UseCardSelector(backToSunqian))
+        {
+            Assert.True(await relic.ReselectFromScriptCollectionAsync());
+        }
+        AssertAllSelectionsConsumed(backToSunqian);
+        Assert.Equal(0, Player.PlayerCombatState.Energy);
+        AssertOnlyScript<ScriptSunqianPower>();
+        Assert.False(relic.CanReselectFromScriptCollection());
+        Assert.False(await relic.ReselectFromScriptCollectionAsync());
+
+        await PlayerCmd.SetEnergy(5, Player);
+        Assert.False(relic.CanReselectFromScriptCollection());
+        Assert.False(await relic.ReselectFromScriptCollectionAsync());
+        AssertOnlyScript<ScriptSunqianPower>();
     }
 
     [Fact]
@@ -366,6 +395,22 @@ public sealed class ScriptSystemTests : SunqianCombatTestSuite
         Assert.DoesNotContain(b, selected);
         Assert.Equal([c, a, d], order.Cards);
 
+        Assert.True(CardGridSelectionRotation.UsesRotation(SelectionPrefs(
+            SquCommonL10n.Table,
+            ScriptSystem.SelectionPromptKey)));
+        Assert.True(CardGridSelectionRotation.UsesRotation(SelectionPrefs(
+            "cards",
+            FarmingGeneral.SelectionPromptKey)));
+        Assert.True(CardGridSelectionRotation.UsesRotation(SelectionPrefs(
+            "cards",
+            GoldenUprising.SelectionPromptKey)));
+        Assert.False(CardGridSelectionRotation.UsesRotation(SelectionPrefs(
+            SquCommonL10n.Table,
+            "SUNQIAN_UNIVERSE_COMMON.SCRIPT.invalidationPrompt")));
+        Assert.False(CardGridSelectionRotation.UsesRotation(SelectionPrefs(
+            "powers",
+            "SUNQIAN_UNIVERSE_POWER_SCRIPT_PART_TIME_GENERAL_POWER.selectionScreenPrompt")));
+
         void Click(CardModel card)
         {
             CardModel? removed = order.MakeRoomFor(selected, card, maxSelect: 3);
@@ -380,6 +425,9 @@ public sealed class ScriptSystemTests : SunqianCombatTestSuite
             }
             order.RecordResult(selected, card);
         }
+
+        static CardSelectorPrefs SelectionPrefs(string table, string key) =>
+            new(new MegaCrit.Sts2.Core.Localization.LocString(table, key), 2);
     }
 
     [Fact]

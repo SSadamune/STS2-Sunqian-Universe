@@ -264,7 +264,7 @@
   "SUNQIAN_UNIVERSE_CARD_CROSS_THE_RIVER.title": "I Too Crossed the River",
   "SUNQIAN_UNIVERSE_CARD_CROSS_THE_RIVER.description": "Gain {VigorPower:diff()} [gold]Vigor[/gold] and {VulnerablePower:diff()} [gold]Vulnerable[/gold].\nIf any enemy intends to Attack, your Attack cards receive their [gold]Vigor[/gold]{DrunkenMightOr} and [gold]Strength[/gold] bonuses one additional time for {CrossTheRiverPower:diff()} turns.",
   "SUNQIAN_UNIVERSE_CARD_WORRY_WITHOUT_WORRY.title": "Carefree Yet Concerned",
-  "SUNQIAN_UNIVERSE_CARD_WORRY_WITHOUT_WORRY.description": "Gain {Block:diff()} [gold]Block[/gold].\nNext turn, gain {BlockNextTurn:diff()} [gold]Block[/gold].{IfUpgraded:show:\nYour Block is not removed at the start of your next turn.|}",
+  "SUNQIAN_UNIVERSE_CARD_WORRY_WITHOUT_WORRY.description": "Gain {Block:diff()} [gold]Block[/gold].\nNext turn, gain {BlockNextTurn:diff()} [gold]Block[/gold].{IfUpgraded:show:\nYour Block is not removed at the start of your next two turns.|}",
   "SUNQIAN_UNIVERSE_CARD_IRON_CHAIN_BOATS.title": "Chain the Boats",
   "SUNQIAN_UNIVERSE_CARD_IRON_CHAIN_BOATS.description": "Choose an enemy. Whenever it takes [gold]Burning[/gold] damage, all enemies take that much damage.{SlightRevisionText}",
   "SUNQIAN_UNIVERSE_CARD_FARMING_GENERAL.title": "Farming General",

@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using MegaCrit.Sts2.Core.Combat;
@@ -16,9 +17,11 @@ using STS2RitsuLib.Scaffolding.Content;
 namespace Squ.Relics;
 
 [RegisterRelic(typeof(SunqianRelicPool), StableEntryStem = "box_lunch")]
-public sealed class BoxLunchRelic : ScriptRelicTemplate
+public class BoxLunchRelic : ScriptRelicTemplate
 {
-	private int _lastReselectionTurn = int.MinValue;
+	private int _trackedTurn = int.MinValue;
+	private int _switchesThisTurn;
+	private int _pendingEnergyCost;
 	private bool _selectionInProgress;
 
 	public override RelicRarity Rarity => RelicRarity.Starter;
@@ -28,14 +31,24 @@ public sealed class BoxLunchRelic : ScriptRelicTemplate
 		IconOutlinePath: "res://images/relics/BoxLunchRelicOutline.png",
 		BigIconPath: "res://images/relics/BoxLunchRelicBig.png");
 
+	internal virtual int SwitchesPerTurn => 1;
+
+	internal virtual int EnergyCostPerSwitch => 0;
+
 	internal bool CanReselectFromScriptCollection()
 	{
-		int? turn = Owner.PlayerCombatState?.TurnNumber;
-		return !_selectionInProgress
-			&& turn.HasValue
-			&& _lastReselectionTurn != turn.Value
-			&& CombatManager.Instance.IsPartOfPlayerTurn(Owner)
-			&& ScriptSystem.ScriptCollectionPile.GetPile(Owner).Cards.Count > 0;
+		if (_selectionInProgress
+			|| Owner.PlayerCombatState?.TurnNumber is not int turn
+			|| !CombatManager.Instance.IsPartOfPlayerTurn(Owner)
+			|| ScriptSystem.ScriptCollectionPile.GetPile(Owner).Cards.Count == 0)
+		{
+			return false;
+		}
+
+		SyncTurn(turn);
+		int availableEnergy = Math.Max(0, Owner.PlayerCombatState.Energy - _pendingEnergyCost);
+		return _switchesThisTurn < SwitchesPerTurn
+			&& availableEnergy >= EnergyCostPerSwitch;
 	}
 
 	internal async Task<bool> ReselectFromScriptCollectionAsync()
@@ -46,6 +59,7 @@ public sealed class BoxLunchRelic : ScriptRelicTemplate
 		}
 
 		int turn = Owner.PlayerCombatState!.TurnNumber;
+		SyncTurn(turn);
 		_selectionInProgress = true;
 		Status = RelicStatus.Active;
 		Flash();
@@ -53,18 +67,34 @@ public sealed class BoxLunchRelic : ScriptRelicTemplate
 		{
 			IReadOnlyList<ScriptRecordCardTemplate>? selected =
 				await ScriptSystem.ChooseActiveScriptRecordsAsync(
-				new BlockingPlayerChoiceContext(),
-				Owner,
-				cancelable: true,
-				requireManualSelection: true);
-			bool requested = selected is not null
-				&& ScriptSystem.RequestBoxLunchReselection(Owner, selected);
-			if (requested)
+					new BlockingPlayerChoiceContext(),
+					Owner,
+					cancelable: true,
+					requireManualSelection: true);
+			if (selected is null || ScriptSystem.IsSameActiveSelection(Owner, selected))
 			{
-				_lastReselectionTurn = turn;
+				return false;
 			}
 
-			return requested;
+			int switchesUsed = _switchesThisTurn + 1;
+			if (EnergyCostPerSwitch > 0)
+			{
+				ReserveEnergyCost();
+			}
+
+			bool requested = ScriptSystem.RequestBoxLunchReselection(
+				Owner,
+				selected,
+				switchesUsed,
+				EnergyCostPerSwitch);
+			if (!requested)
+			{
+				ReleaseEnergyCost(EnergyCostPerSwitch);
+				return false;
+			}
+
+			MarkSwitchesUsed(turn, switchesUsed);
+			return true;
 		}
 		finally
 		{
@@ -73,14 +103,46 @@ public sealed class BoxLunchRelic : ScriptRelicTemplate
 		}
 	}
 
-	internal void MarkReselectionUsed(int turnNumber) =>
-		_lastReselectionTurn = turnNumber;
+	internal void MarkSwitchesUsed(int turnNumber, int switchesUsed)
+	{
+		SyncTurn(turnNumber);
+		if (switchesUsed > _switchesThisTurn)
+		{
+			_switchesThisTurn = switchesUsed;
+		}
+	}
+
+	internal void ReserveEnergyCost() => _pendingEnergyCost += EnergyCostPerSwitch;
+
+	internal void ReleaseEnergyCost(int cost)
+	{
+		if (cost <= 0)
+		{
+			return;
+		}
+
+		_pendingEnergyCost = Math.Max(0, _pendingEnergyCost - cost);
+	}
 
 	public override Task AfterCombatEnd(CombatRoom room)
 	{
-		_lastReselectionTurn = int.MinValue;
+		_trackedTurn = int.MinValue;
+		_switchesThisTurn = 0;
+		_pendingEnergyCost = 0;
 		_selectionInProgress = false;
 		Status = RelicStatus.Normal;
 		return Task.CompletedTask;
+	}
+
+	private void SyncTurn(int turn)
+	{
+		if (_trackedTurn == turn)
+		{
+			return;
+		}
+
+		_trackedTurn = turn;
+		_switchesThisTurn = 0;
+		_pendingEnergyCost = 0;
 	}
 }

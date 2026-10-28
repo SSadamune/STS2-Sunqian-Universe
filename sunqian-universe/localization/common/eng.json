@@ -48,6 +48,5 @@
   "SUNQIAN_UNIVERSE_COMMON.SETTINGS.eventRegistrationLabel": "Allow Adding Events",
   "SUNQIAN_UNIVERSE_COMMON.SETTINGS.eventRegistrationDescription": "Whether to allow this mod to add events to event pools (for example, Family of Origin and Unfriendly Visitors).",
   "SUNQIAN_UNIVERSE_COMMON.SCRIPT.selectionPrompt": "Choose Scripts to activate.",
-  "SUNQIAN_UNIVERSE_COMMON.SCRIPT.paidSelectionPrompt": "Choose Scripts to activate.\nCurrent cost: [blue]{EnergyCost}[/blue]{energyPrefix:energyIcons(1)}.",
   "SUNQIAN_UNIVERSE_COMMON.SCRIPT.invalidationPrompt": "Choose a Script to end."
 }

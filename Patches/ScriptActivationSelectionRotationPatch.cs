@@ -6,6 +6,7 @@ using MegaCrit.Sts2.Core.CardSelection;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Nodes.Cards;
 using MegaCrit.Sts2.Core.Nodes.Screens.CardSelection;
+using Squ.Cards;
 using Squ.Script;
 
 #nullable enable
@@ -66,64 +67,104 @@ internal sealed class ScriptActivationSelectionOrder
 }
 
 /// <summary>
-/// The vanilla selector ignores a newly clicked card once MaxSelect is reached.
-/// Script activation instead rotates the oldest selection out before vanilla handles
-/// the click, preserving ordinary toggle and confirmation behavior.
+/// The vanilla grid ignores a newly clicked card once MaxSelect is reached.
+/// Opted-in prompts rotate the oldest selection out before vanilla handles the
+/// click, then still require the confirm button.
 /// </summary>
-[HarmonyPatch(typeof(NCombatPileCardSelectScreen), "OnCardClicked")]
-internal static class ScriptActivationSelectionRotationPatch
+internal static class CardGridSelectionRotation
 {
 	private static readonly ConditionalWeakTable<
-		NCombatPileCardSelectScreen,
+		NCardGridSelectionScreen,
 		ScriptActivationSelectionOrder> SelectionOrders = new();
 
-	[HarmonyPrefix]
-	private static void Prefix(
-		NCombatPileCardSelectScreen __instance,
-		CardModel card,
-		CardSelectorPrefs ____prefs,
-		HashSet<CardModel> ____selectedCards)
+	internal static bool UsesRotation(CardSelectorPrefs prefs)
 	{
-		if (!IsScriptActivationPrompt(____prefs))
+		string key = prefs.Prompt.LocEntryKey;
+		if (prefs.Prompt.LocTable == SquCommonL10n.Table)
+		{
+			return key == ScriptSystem.SelectionPromptKey;
+		}
+
+		return prefs.Prompt.LocTable == "cards"
+			&& (key == FarmingGeneral.SelectionPromptKey
+				|| key == GoldenUprising.SelectionPromptKey);
+	}
+
+	internal static void BeforeClick(
+		NCardGridSelectionScreen screen,
+		CardModel card,
+		CardSelectorPrefs prefs,
+		HashSet<CardModel> selectedCards)
+	{
+		if (!UsesRotation(prefs))
 		{
 			return;
 		}
 
 		ScriptActivationSelectionOrder order = SelectionOrders.GetValue(
-			__instance,
+			screen,
 			_ => new ScriptActivationSelectionOrder());
-		CardModel? removed = order.MakeRoomFor(
-			____selectedCards,
-			card,
-			____prefs.MaxSelect);
-		if (removed is null || !____selectedCards.Remove(removed))
+		CardModel? removed = order.MakeRoomFor(selectedCards, card, prefs.MaxSelect);
+		if (removed is null || !selectedCards.Remove(removed))
 		{
 			return;
 		}
 
-		__instance.GetNode<NCardGrid>("%CardGrid").UnhighlightCard(removed);
+		screen.GetNode<NCardGrid>("%CardGrid").UnhighlightCard(removed);
 	}
+
+	internal static void AfterClick(
+		NCardGridSelectionScreen screen,
+		CardModel card,
+		CardSelectorPrefs prefs,
+		HashSet<CardModel> selectedCards)
+	{
+		if (!UsesRotation(prefs))
+		{
+			return;
+		}
+
+		SelectionOrders.GetValue(screen, _ => new ScriptActivationSelectionOrder())
+			.RecordResult(selectedCards, card);
+	}
+}
+
+[HarmonyPatch(typeof(NCombatPileCardSelectScreen), "OnCardClicked")]
+internal static class ScriptActivationSelectionRotationPatch
+{
+	[HarmonyPrefix]
+	private static void Prefix(
+		NCombatPileCardSelectScreen __instance,
+		CardModel card,
+		CardSelectorPrefs ____prefs,
+		HashSet<CardModel> ____selectedCards) =>
+		CardGridSelectionRotation.BeforeClick(__instance, card, ____prefs, ____selectedCards);
 
 	[HarmonyPostfix]
 	private static void Postfix(
 		NCombatPileCardSelectScreen __instance,
 		CardModel card,
 		CardSelectorPrefs ____prefs,
-		HashSet<CardModel> ____selectedCards)
-	{
-		if (!IsScriptActivationPrompt(____prefs))
-		{
-			return;
-		}
+		HashSet<CardModel> ____selectedCards) =>
+		CardGridSelectionRotation.AfterClick(__instance, card, ____prefs, ____selectedCards);
+}
 
-		SelectionOrders.GetValue(
-			__instance,
-			_ => new ScriptActivationSelectionOrder())
-			.RecordResult(____selectedCards, card);
-	}
+[HarmonyPatch(typeof(NSimpleCardSelectScreen), "OnCardClicked")]
+internal static class SimpleCardSelectionRotationPatch
+{
+	[HarmonyPrefix]
+	private static void Prefix(
+		NSimpleCardSelectScreen __instance,
+		CardModel card,
+		CardSelectorPrefs ____prefs,
+		HashSet<CardModel> ____selectedCards) =>
+		CardGridSelectionRotation.BeforeClick(__instance, card, ____prefs, ____selectedCards);
 
-	private static bool IsScriptActivationPrompt(CardSelectorPrefs prefs) =>
-		prefs.Prompt.LocTable == SquCommonL10n.Table
-		&& (prefs.Prompt.LocEntryKey == ScriptSystem.SelectionPromptKey
-			|| prefs.Prompt.LocEntryKey == ScriptSystem.PaidSelectionPromptKey);
+	[HarmonyPostfix]
+	private static void Postfix(
+		NSimpleCardSelectScreen __instance,
+		CardModel card,
+		CardSelectorPrefs ____prefs,
+		HashSet<CardModel> ____selectedCards) =>
+		CardGridSelectionRotation.AfterClick(__instance, card, ____prefs, ____selectedCards);
 }

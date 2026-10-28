@@ -36,7 +36,10 @@ internal static class AbundantBoxLunchOrobasHoverPatch
 			tips.RemoveRange(0, upgradedIndex);
 		}
 
-		tips.RemoveAll(tip => tip is HoverTip hover && hover.CanonicalModel is BoxLunchRelic);
+		tips.RemoveAll(tip =>
+			tip is HoverTip hover
+			&& hover.CanonicalModel is BoxLunchRelic
+			&& hover.CanonicalModel is not AbundantBoxLunchRelic);
 
 		for (int i = 0; i < tips.Count; i++)
 		{

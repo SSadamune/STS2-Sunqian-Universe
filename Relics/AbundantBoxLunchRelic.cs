@@ -3,14 +3,9 @@ using System.Linq;
 using System.Threading.Tasks;
 using MegaCrit.Sts2.Core.Combat;
 using MegaCrit.Sts2.Core.Commands;
-using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.Entities.Creatures;
 using MegaCrit.Sts2.Core.Entities.Relics;
-using MegaCrit.Sts2.Core.GameActions.Multiplayer;
-using MegaCrit.Sts2.Core.Rooms;
-using Squ.Cards;
 using Squ.Character;
-using Squ.Script;
 using STS2RitsuLib.Interop.AutoRegistration;
 using STS2RitsuLib.Scaffolding.Content;
 
@@ -19,9 +14,10 @@ using STS2RitsuLib.Scaffolding.Content;
 namespace Squ.Relics;
 
 [RegisterRelic(typeof(SunqianRelicPool), StableEntryStem = "abundant_box_lunch")]
-public sealed class AbundantBoxLunchRelic : ScriptRelicTemplate
+public sealed class AbundantBoxLunchRelic : BoxLunchRelic
 {
-	public const int ScriptsPerEnergy = 4;
+	public const int TurnStartEnergy = 1;
+	public const int SwitchesPerTurnLimit = 2;
 
 	public override RelicRarity Rarity => RelicRarity.Starter;
 
@@ -32,6 +28,10 @@ public sealed class AbundantBoxLunchRelic : ScriptRelicTemplate
 		IconOutlinePath: "res://images/relics/AbundantBoxLunchRelicOutline.png",
 		BigIconPath: "res://images/relics/AbundantBoxLunchRelicBig.png");
 
+	internal override int SwitchesPerTurn => SwitchesPerTurnLimit;
+
+	internal override int EnergyCostPerSwitch => TurnStartEnergy;
+
 	public override async Task AfterSideTurnStart(
 		CombatSide side,
 		IReadOnlyList<Creature> participants,
@@ -39,33 +39,12 @@ public sealed class AbundantBoxLunchRelic : ScriptRelicTemplate
 	{
 		if (side != Owner.Creature.Side
 			|| !participants.Contains(Owner.Creature)
-			|| ScriptSystem.ScriptCollectionPile.GetPile(Owner).Cards.Count == 0)
+			|| Owner.Creature.IsDead)
 		{
 			return;
 		}
 
-		int scriptCount = ScriptSystem.ScriptCollectionPile.GetPile(Owner).Cards
-			.OfType<ScriptRecordCardTemplate>()
-			.Count();
-		Status = RelicStatus.Active;
 		Flash();
-		try
-		{
-			await PlayerCmd.GainEnergy(scriptCount / ScriptsPerEnergy, Owner);
-			await ScriptSystem.ChooseActiveScriptsWithEnergyAsync(
-				new BlockingPlayerChoiceContext(),
-				Owner,
-				cancelable: false);
-		}
-		finally
-		{
-			Status = RelicStatus.Normal;
-		}
-	}
-
-	public override Task AfterCombatEnd(CombatRoom room)
-	{
-		Status = RelicStatus.Normal;
-		return Task.CompletedTask;
+		await PlayerCmd.GainEnergy(TurnStartEnergy, Owner);
 	}
 }

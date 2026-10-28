@@ -31,7 +31,9 @@ public static class ScriptSystem
 {
 	private readonly record struct BoxLunchReselectionPayload(
 		int TurnNumber,
-		string[] SelectedRecordIds);
+		string[] SelectedRecordIds,
+		int SwitchesUsed,
+		int EnergyCost);
 
 	private const string ScriptCollectionStem = "script_collection";
 	public const int ScriptsRequiredForSecondActivationSlot = 4;
@@ -40,11 +42,6 @@ public static class ScriptSystem
 		"SUNQIAN_UNIVERSE_COMMON.SCRIPT.selectionPrompt";
 	private static readonly LocString SelectionPrompt =
 		new(SquCommonL10n.Table, SelectionPromptKey);
-	internal const string PaidSelectionPromptKey =
-		"SUNQIAN_UNIVERSE_COMMON.SCRIPT.paidSelectionPrompt";
-	internal const string FreeSelectionCountVariable = "FreeSelectionCount";
-	internal const string EnergyCostVariable = "EnergyCost";
-	internal const string EnergyPrefixVariable = "energyPrefix";
 	private static readonly LocString InvalidationPrompt =
 		new(SquCommonL10n.Table, "SUNQIAN_UNIVERSE_COMMON.SCRIPT.invalidationPrompt");
 
@@ -223,7 +220,6 @@ public static class ScriptSystem
 		var prefs = new CardSelectorPrefs(InvalidationPrompt, selectCount)
 		{
 			Cancelable = false,
-			RequireManualConfirmation = true,
 			PretendCardsCanBePlayed = true,
 		};
 		List<Type> selectedTypes = (await CardSelectCmd.FromCombatPile(
@@ -313,19 +309,36 @@ public static class ScriptSystem
 		return selected.Count == 0 ? null : selected;
 	}
 
-	internal static bool RequestBoxLunchReselection(
+	internal static bool IsSameActiveSelection(
 		Player player,
 		IReadOnlyList<ScriptRecordCardTemplate> selected)
 	{
+		HashSet<Type> activeTypes = player.Creature.Powers
+			.OfType<ScriptPowerTemplate>()
+			.Select(power => power.GetType())
+			.ToHashSet();
+		return activeTypes.Count == selected.Count
+			&& selected.All(record => activeTypes.Contains(record.PowerType));
+	}
+
+	internal static bool RequestBoxLunchReselection(
+		Player player,
+		IReadOnlyList<ScriptRecordCardTemplate> selected,
+		int switchesUsed,
+		int energyCost)
+	{
 		if (player.PlayerCombatState?.TurnNumber is not int turnNumber
-			|| selected.Count == 0)
+			|| selected.Count == 0
+			|| IsSameActiveSelection(player, selected))
 		{
 			return false;
 		}
 
 		BoxLunchReselectionPayload payload = new(
 			turnNumber,
-			selected.Select(record => record.Id.ToString()).ToArray());
+			selected.Select(record => record.Id.ToString()).ToArray(),
+			switchesUsed,
+			energyCost);
 		return RitsuLibManagedNetActions.Request(
 			RunManager.Instance,
 			BoxLunchReselectionAction,
@@ -338,14 +351,56 @@ public static class ScriptSystem
 	{
 		BoxLunchReselectionPayload payload = context.Message;
 		Player player = context.Player;
-		if (player.GetRelic<BoxLunchRelic>() is not { } boxLunch
-			|| player.PlayerCombatState?.TurnNumber != payload.TurnNumber
-			|| !CombatManager.Instance.IsPartOfPlayerTurn(player)
-			|| player.Creature.IsDead)
+		if (player.GetRelic<BoxLunchRelic>() is not { } boxLunch)
 		{
 			return;
 		}
 
+		if (player.PlayerCombatState?.TurnNumber != payload.TurnNumber
+			|| !CombatManager.Instance.IsPartOfPlayerTurn(player)
+			|| player.Creature.IsDead
+			|| !TryResolveReselection(player, payload, out List<ScriptRecordCardTemplate>? selected))
+		{
+			boxLunch.ReleaseEnergyCost(payload.EnergyCost);
+			return;
+		}
+
+		if (selected is not List<ScriptRecordCardTemplate> chosen
+			|| payload.SwitchesUsed < 1
+			|| payload.SwitchesUsed > boxLunch.SwitchesPerTurn
+			|| payload.EnergyCost != boxLunch.EnergyCostPerSwitch
+			|| IsSameActiveSelection(player, chosen))
+		{
+			boxLunch.ReleaseEnergyCost(payload.EnergyCost);
+			return;
+		}
+
+		int energy = player.PlayerCombatState?.Energy ?? 0;
+		if (energy < payload.EnergyCost)
+		{
+			boxLunch.ReleaseEnergyCost(payload.EnergyCost);
+			return;
+		}
+
+		boxLunch.MarkSwitchesUsed(payload.TurnNumber, payload.SwitchesUsed);
+		if (payload.EnergyCost > 0)
+		{
+			await PlayerCmd.LoseEnergy(payload.EnergyCost, player);
+		}
+
+		boxLunch.ReleaseEnergyCost(payload.EnergyCost);
+		await ApplySelectedScriptsAsync(
+			context.PlayerChoiceContext,
+			player,
+			chosen);
+	}
+
+	private static bool TryResolveReselection(
+		Player player,
+		BoxLunchReselectionPayload payload,
+		out List<ScriptRecordCardTemplate>? selected)
+	{
+		selected = null;
 		List<ScriptRecordCardTemplate> records = ScriptCollectionPile.GetPile(player).Cards
 			.OfType<ScriptRecordCardTemplate>()
 			.ToList();
@@ -356,94 +411,24 @@ public static class ScriptSystem
 			|| payload.SelectedRecordIds.Distinct(StringComparer.Ordinal).Count()
 				!= payload.SelectedRecordIds.Length)
 		{
-			return;
+			return false;
 		}
 
 		Dictionary<string, ScriptRecordCardTemplate> byId = records
 			.ToDictionary(record => record.Id.ToString(), StringComparer.Ordinal);
-		List<ScriptRecordCardTemplate> selected = [];
+		List<ScriptRecordCardTemplate> resolved = [];
 		foreach (string id in payload.SelectedRecordIds)
 		{
 			if (!byId.TryGetValue(id, out ScriptRecordCardTemplate? record))
 			{
-				return;
+				return false;
 			}
-			selected.Add(record);
+
+			resolved.Add(record);
 		}
 
-		boxLunch.MarkReselectionUsed(payload.TurnNumber);
-		await ApplySelectedScriptsAsync(
-			context.PlayerChoiceContext,
-			player,
-			selected);
-	}
-
-	public static async Task<bool> ChooseActiveScriptsWithEnergyAsync(
-		PlayerChoiceContext choiceContext,
-		Player player,
-		bool cancelable)
-	{
-		CardPile pile = ScriptCollectionPile.GetPile(player);
-		List<ScriptRecordCardTemplate> records = pile.Cards
-			.OfType<ScriptRecordCardTemplate>()
-			.ToList();
-		if (records.Count == 0 || player.Creature.IsDead)
-		{
-			return false;
-		}
-		if (records.Count == 1)
-		{
-			await ApplySelectedScriptsAsync(choiceContext, player, records);
-			return true;
-		}
-
-		int activationLimit = GetActivationLimit(player);
-		int freeSelectionCount = Math.Min(activationLimit, records.Count);
-		int availableEnergy = Math.Max(0, player.PlayerCombatState?.Energy ?? 0);
-		int maxSelect = Math.Min(records.Count, freeSelectionCount + availableEnergy);
-		int minSelect = records.Count < activationLimit ? 1 : freeSelectionCount;
-		var prefs = new CardSelectorPrefs(
-			CreatePaidSelectionPrompt(
-				freeSelectionCount,
-				energyCost: 0,
-				EnergyIconHelper.GetPrefix(records[0])),
-			minSelect,
-			maxSelect)
-		{
-			Cancelable = cancelable,
-			RequireManualConfirmation = true,
-			PretendCardsCanBePlayed = true,
-		};
-
-		List<ScriptRecordCardTemplate> selected = (await CardSelectCmd.FromCombatPile(
-			choiceContext,
-			pile,
-			player,
-			prefs,
-			card => card is ScriptRecordCardTemplate))
-			.OfType<ScriptRecordCardTemplate>()
-			.ToList();
-		if (selected.Count == 0)
-		{
-			return false;
-		}
-
-		int energyCost = Math.Max(0, selected.Count - freeSelectionCount);
-		await PlayerCmd.LoseEnergy(energyCost, player);
-		await ApplySelectedScriptsAsync(choiceContext, player, selected);
+		selected = resolved;
 		return true;
-	}
-
-	internal static LocString CreatePaidSelectionPrompt(
-		int freeSelectionCount,
-		int energyCost,
-		string energyPrefix)
-	{
-		LocString prompt = new(SquCommonL10n.Table, PaidSelectionPromptKey);
-		prompt.Add(FreeSelectionCountVariable, freeSelectionCount);
-		prompt.Add(EnergyCostVariable, energyCost);
-		prompt.Add(EnergyPrefixVariable, energyPrefix);
-		return prompt;
 	}
 
 	private static async Task ApplySelectedScriptsAsync(

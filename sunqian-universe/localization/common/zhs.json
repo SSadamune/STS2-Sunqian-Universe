@@ -48,6 +48,5 @@
   "SUNQIAN_UNIVERSE_COMMON.SETTINGS.eventRegistrationLabel": "允许添加事件",
   "SUNQIAN_UNIVERSE_COMMON.SETTINGS.eventRegistrationDescription": "是否允许本模组向事件池添加事件（例如「原生家庭」和「不速之客」）。",
   "SUNQIAN_UNIVERSE_COMMON.SCRIPT.selectionPrompt": "选择要激活的剧本。",
-  "SUNQIAN_UNIVERSE_COMMON.SCRIPT.paidSelectionPrompt": "选择要激活的剧本。\n当前花费：[blue]{EnergyCost}[/blue]{energyPrefix:energyIcons(1)}。",
   "SUNQIAN_UNIVERSE_COMMON.SCRIPT.invalidationPrompt": "选择要[red]失效[/red]的剧本。"
 }

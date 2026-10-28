@@ -109,7 +109,6 @@ public sealed class ScriptPartTimeGeneralPower : ScriptPowerTemplate
 
 		var prefs = new CardSelectorPrefs(SelectionPrompt, 1)
 		{
-			RequireManualConfirmation = true,
 			PretendCardsCanBePlayed = true,
 		};
 		CardModel? selected = (await CardSelectCmd.FromSimpleGrid(
