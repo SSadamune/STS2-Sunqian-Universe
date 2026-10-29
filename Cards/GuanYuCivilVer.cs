@@ -16,11 +16,13 @@ public sealed class GuanYuCivilVer : ScriptRecordCardTemplate<GuanYuCivilVerPowe
     public const int BlockPerEnergy = 2;
     public const string FormGroup = "guan_yu_form";
     public override bool CanBeGeneratedInCombat => false;
-    public override bool CountsTowardActivationLimit => false;
+    internal override bool HasUpgradedVersion => true;
     public override string MutuallyExclusiveGroup => FormGroup;
-    protected override IEnumerable<DynamicVar> CanonicalVars => [new EnergyVar(1)];
+    protected override IEnumerable<DynamicVar> CanonicalVars => [new EnergyVar(1), new DynamicVar("ScriptAmount", 2)];
     protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
         [HoverTipFactory.FromPower<DexterityPower>(), HoverTipFactory.ForEnergy(this),
             HoverTipFactory.Static(StaticHoverTip.Block)];
+    protected override void SyncDisplayVars() => DynamicVars["ScriptAmount"].BaseValue = StoredAmount;
+    protected override void OnUpgrade() => DynamicVars["ScriptAmount"].UpgradeValueBy(1);
     public override CardAssetProfile AssetProfile => new(PortraitPath: "res://images/cards/GuanDiForm.png");
 }

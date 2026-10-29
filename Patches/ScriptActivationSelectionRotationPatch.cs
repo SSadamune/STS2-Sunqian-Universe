@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Threading.Tasks;
 using HarmonyLib;
 using MegaCrit.Sts2.Core.CardSelection;
 using MegaCrit.Sts2.Core.Models;
@@ -41,6 +42,15 @@ internal sealed class ScriptActivationSelectionOrder
 		return oldest;
 	}
 
+	internal CardModel? MakeRoomForScript(
+		IReadOnlyCollection<CardModel> selectedCards, CardModel clickedCard, int maxSelect)
+	{
+		Reconcile(selectedCards);
+		// An exclusive partner always leaves before the FIFO capacity fallback.
+		return CardGridSelectionRotation.FindScriptConstraintRemoval(selectedCards, clickedCard, _cards)
+			?? MakeRoomFor(selectedCards, clickedCard, maxSelect);
+	}
+
 	internal void RecordResult(
 		IReadOnlyCollection<CardModel> selectedCards,
 		CardModel clickedCard)
@@ -51,6 +61,13 @@ internal sealed class ScriptActivationSelectionOrder
 		{
 			_cards.Add(clickedCard);
 		}
+	}
+
+	internal IReadOnlyList<CardModel> Confirm(IEnumerable<CardModel> selectedCards)
+	{
+		var selected = selectedCards.ToHashSet();
+		Reconcile(selected);
+		return _cards.ToArray();
 	}
 
 	private void Reconcile(IReadOnlyCollection<CardModel> selectedCards)
@@ -100,6 +117,15 @@ internal static class CardGridSelectionRotation
 		NCardGridSelectionScreen,
 		ScriptActivationSelectionOrder> SelectionOrders = new();
 
+	internal static async Task<IEnumerable<CardModel>> PreserveClickOrderAsync(
+		NCardGridSelectionScreen screen, Task<IEnumerable<CardModel>> selection)
+	{
+		IEnumerable<CardModel> selected = await selection;
+		return SelectionOrders.TryGetValue(screen, out var order)
+			? order.Confirm(selected)
+			: selected;
+	}
+
 	internal static bool UsesRotation(CardSelectorPrefs prefs)
 	{
 		string key = prefs.Prompt.LocEntryKey;
@@ -128,9 +154,7 @@ internal static class CardGridSelectionRotation
 		ScriptActivationSelectionOrder order = SelectionOrders.GetValue(
 			screen,
 			_ => new ScriptActivationSelectionOrder());
-		order.MakeRoomFor(selectedCards, card, int.MaxValue);
-		CardModel? removed = FindScriptConstraintRemoval(selectedCards, card, order.Cards)
-			?? order.MakeRoomFor(selectedCards, card, prefs.MaxSelect);
+		CardModel? removed = order.MakeRoomForScript(selectedCards, card, prefs.MaxSelect);
 		if (removed is null || !selectedCards.Remove(removed))
 		{
 			return;
@@ -193,4 +217,15 @@ internal static class SimpleCardSelectionRotationPatch
 		CardSelectorPrefs ____prefs,
 		HashSet<CardModel> ____selectedCards) =>
 		CardGridSelectionRotation.AfterClick(__instance, card, ____prefs, ____selectedCards);
+}
+
+// Both local selection and CardSelectCmd consume this task. Preserve the order
+// before it is serialized into multiplayer choices or script reselection actions.
+[HarmonyPatch(typeof(NCardGridSelectionScreen), nameof(NCardGridSelectionScreen.CardsSelected))]
+internal static class ScriptActivationConfirmedOrderPatch
+{
+    [HarmonyPostfix]
+    private static void Postfix(NCardGridSelectionScreen __instance,
+        ref Task<IEnumerable<CardModel>> __result) =>
+        __result = CardGridSelectionRotation.PreserveClickOrderAsync(__instance, __result);
 }

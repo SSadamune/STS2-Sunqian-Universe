@@ -131,7 +131,7 @@ public static class ScriptSystem
 			.OfType<ScriptRecordCardTemplate>()
 			.Count();
 		int intrinsic = unlockedCount >= ScriptsRequiredForSecondActivationSlot ? 1 : 0;
-		int additional = EnumeratePlayerModels(player)
+		int additional = EnumeratePlayerModels(player).Concat(player.Creature.Powers)
 			.OfType<IScriptActivationLimitProvider>()
 			.Sum(provider => Math.Max(0, provider.GetAdditionalScriptActivationSlots(player, unlockedCount)));
 		return Math.Max(1, 1 + intrinsic + additional);

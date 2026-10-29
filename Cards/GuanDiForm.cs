@@ -1,6 +1,8 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
+using Squ.Powers;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.Models;
 using Squ.Character;
@@ -16,22 +18,22 @@ public sealed class GuanDiForm : ScriptCardTemplate<GuanYuCivilVer>
     public GuanDiForm() : base(3, CardType.Power, CardRarity.Rare, TargetType.Self, true) { }
 
     public override CardAssetProfile AssetProfile => new(PortraitPath: "res://images/cards/GuanDiForm.png");
-    internal override int GetScriptPowerAmountForPreview() => GuanYuCivilVer.BlockPerEnergy;
+    internal override int GetScriptPowerAmountForPreview() => IsUpgraded ? 3 : 2;
     internal override IEnumerable<ScriptRecordCardTemplate> CreateScriptRecordPreviews()
     {
         var civil = (GuanYuCivilVer)ModelDb.Card<GuanYuCivilVer>().ToMutable();
         var martial = (GuanYuMartialVer)ModelDb.Card<GuanYuMartialVer>().ToMutable();
         civil.PreviewFrom(this);
         martial.PreviewFrom(this);
-        martial.StoredAmount = 1;
         return [civil, martial];
     }
 
     protected override async Task PlayScriptAsync(PlayerChoiceContext choiceContext, CardPlay cardPlay)
     {
         await ScriptSystem.UnlockOrReinforceAsync<GuanYuCivilVer>(
-            choiceContext, this, GuanYuCivilVer.BlockPerEnergy, activate: false);
+            choiceContext, this, GetScriptPowerAmountForPreview(), activate: false);
         await ScriptSystem.UnlockOrReinforceAsync<GuanYuMartialVer>(
-            choiceContext, this, 1, activate: false);
+            choiceContext, this, GetScriptPowerAmountForPreview(), activate: false);
+        await PowerCmd.Apply<GuanDiFormPower>(choiceContext, Owner.Creature, 1, Owner.Creature, this);
     }
 }

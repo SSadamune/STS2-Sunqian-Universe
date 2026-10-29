@@ -50,7 +50,7 @@ public sealed class GuanDiFormTests : SunqianCombatTestSuite
     [Theory]
     [InlineData(false)]
     [InlineData(true)]
-    public async Task Play_adds_both_free_scripts_without_activating_or_fetching_sunqian(bool upgraded)
+    public async Task Play_adds_both_scripts_and_one_activation_slot(bool upgraded)
     {
         var sunqian = await AddToDrawPileTop<SunqianScript>();
         var card = await AddToHand<GuanDiForm>();
@@ -63,19 +63,20 @@ public sealed class GuanDiFormTests : SunqianCombatTestSuite
         var civil = Assert.Single(records.OfType<GuanYuCivilVer>());
         var martial = Assert.Single(records.OfType<GuanYuMartialVer>());
         Assert.Equal(2, records.Count);
-        Assert.False(civil.CountsTowardActivationLimit);
-        Assert.False(martial.CountsTowardActivationLimit);
+        Assert.True(civil.CountsTowardActivationLimit);
+        Assert.True(martial.CountsTowardActivationLimit);
         Assert.False(civil.ShouldShowInCardLibrary);
         Assert.False(martial.ShouldShowInCardLibrary);
-        Assert.Equal(2, civil.StoredAmount);
-        Assert.Equal(1, martial.StoredAmount);
+        Assert.Equal(upgraded ? 3 : 2, civil.StoredAmount);
+        Assert.Equal(upgraded ? 3 : 2, martial.StoredAmount);
+        Assert.Equal(2, Squ.Script.ScriptSystem.GetActivationLimit(Player));
         Assert.Empty(Player.Creature.Powers.OfType<ScriptPowerTemplate>());
         AssertInPile(sunqian, PileType.Draw);
         Assert.Equal(0, Player.Creature.Block);
     }
 
     [Fact]
-    public async Task Free_form_and_full_regular_slots_coexist_and_switching_forms_only_removes_the_other_form()
+    public async Task Form_and_full_regular_slots_coexist_and_switching_forms_only_removes_the_other_form()
     {
         await PlayerCmd.SetEnergy(10, Player);
         await Play(await AddToHand<ServantScript>());
@@ -83,7 +84,7 @@ public sealed class GuanDiFormTests : SunqianCombatTestSuite
         await Activate<GuanYuCivilVer>();
         Assert.NotNull(Player.Creature.GetPower<ScriptServantPower>());
         await Play(await AddToHand<SunqianScript>());
-        Assert.Equal(2, Squ.Script.ScriptSystem.GetActivationLimit(Player));
+        Assert.Equal(3, Squ.Script.ScriptSystem.GetActivationLimit(Player));
         Assert.Equal(3, Player.Creature.Powers.OfType<ScriptPowerTemplate>().Count());
         await Activate<GuanYuMartialVer>();
         Assert.Null(Player.Creature.GetPower<GuanYuCivilVerPower>());
@@ -108,6 +109,8 @@ public sealed class GuanDiFormTests : SunqianCombatTestSuite
         await Activate<GuanYuCivilVer>();
         var form = Player.Creature.GetPower<GuanYuCivilVerPower>()!;
         var description = form.SmartDescription;
+        description.Add("Amount", form.Amount);
+        description.Add("energyPrefix", "");
         form.DynamicVars.AddTo(description);
         Assert.Contains("[blue]11[/blue]", description.GetFormattedText());
         await form.BeforeSideTurnEndEarly(new BlockingPlayerChoiceContext(), CombatSide.Enemy, [EnemyAt(0)]);
@@ -136,48 +139,28 @@ public sealed class GuanDiFormTests : SunqianCombatTestSuite
         finally { TestGuanYuCivilBlockOrder.Reset(); }
     }
 
-    [Fact]
-    public async Task Martial_amplifies_only_the_first_attack_and_no_longer_gains_vigor_per_energy()
-    {
-        await SetupMartial();
-        await ApplyPower<VigorPower>(Player.Creature, 4);
-        int hp = EnemyAt(0).CurrentHp;
-        await Play(await AddToHand<StrikeIronclad>(), EnemyAt(0));
-        Assert.Equal(hp - 14, EnemyAt(0).CurrentHp);
-        Assert.Null(Player.Creature.GetPower<VigorAmplificationPower>());
-        Assert.Null(Player.Creature.GetPower<VigorPower>());
-        await ApplyPower<VigorPower>(Player.Creature, 4);
-        hp = EnemyAt(0).CurrentHp;
-        await Play(await AddToHand<StrikeIronclad>(), EnemyAt(0));
-        Assert.Equal(hp - 10, EnemyAt(0).CurrentHp);
-    }
-
-    [Fact]
-    public async Task Martial_activation_after_the_first_attack_does_not_amplify_later_attacks()
+    [Theory]
+    [InlineData(false, 2)]
+    [InlineData(true, 3)]
+    public async Task Martial_gains_vigor_after_card_resolution_for_actual_energy(bool upgraded, int vigor)
     {
         await PlayerCmd.SetEnergy(10, Player);
-        await Play(await AddToHand<StrikeIronclad>(), EnemyAt(0));
-        await Play(await AddToHand<GuanDiForm>());
+        var card = await AddToHand<GuanDiForm>();
+        if (upgraded) Upgrade(card);
+        await Play(card);
         await Activate<GuanYuMartialVer>();
-        Assert.Null(Player.Creature.GetPower<VigorAmplificationPower>());
-        await ApplyPower<VigorPower>(Player.Creature, 4);
+        Assert.Null(Player.Creature.GetPower<VigorPower>());
+        await Play(await AddToHand<DefendIronclad>());
+        Assert.Equal(vigor, Player.Creature.GetPower<VigorPower>()!.Amount);
         int hp = EnemyAt(0).CurrentHp;
         await Play(await AddToHand<StrikeIronclad>(), EnemyAt(0));
-        Assert.Equal(hp - 10, EnemyAt(0).CurrentHp);
-    }
-
-    [Fact]
-    public async Task First_attack_without_vigor_still_uses_martial_bonus_and_reactivation_does_not_reset_it()
-    {
-        await SetupMartial();
-        await Play(await AddToHand<StrikeIronclad>(), EnemyAt(0));
+        Assert.Equal(hp - 6 - vigor, EnemyAt(0).CurrentHp);
+        Assert.Equal(vigor, Player.Creature.GetPower<VigorPower>()!.Amount);
+        var free = await AddToHand<DefendIronclad>();
+        free.EnergyCost.SetUntilPlayed(0);
+        await Play(free);
+        Assert.Equal(vigor, Player.Creature.GetPower<VigorPower>()!.Amount);
         Assert.Null(Player.Creature.GetPower<VigorAmplificationPower>());
-        await Activate<GuanYuMartialVer>();
-        Assert.Null(Player.Creature.GetPower<VigorAmplificationPower>());
-        await ApplyPower<VigorPower>(Player.Creature, 4);
-        int hp = EnemyAt(0).CurrentHp;
-        await Play(await AddToHand<StrikeIronclad>(), EnemyAt(0));
-        Assert.Equal(hp - 10, EnemyAt(0).CurrentHp);
     }
 
     [Fact]
@@ -203,7 +186,7 @@ public sealed class GuanDiFormTests : SunqianCombatTestSuite
         var civil = records.OfType<GuanYuCivilVer>().Single();
         var martial = records.OfType<GuanYuMartialVer>().Single();
         var servant = records.OfType<ServantScriptRecord>().Single();
-        Assert.Equal((1, 2), Squ.Script.ScriptSystem.GetSelectionBounds(Player, records));
+        Assert.Equal((2, 2), Squ.Script.ScriptSystem.GetSelectionBounds(Player, records));
         Assert.True(Squ.Script.ScriptSystem.IsValidActiveSelection(Player, [servant, civil]));
         Assert.True(Squ.Script.ScriptSystem.IsValidActiveSelection(Player, [servant, martial]));
         Assert.False(Squ.Script.ScriptSystem.IsValidActiveSelection(Player, [civil, martial]));
@@ -223,6 +206,32 @@ public sealed class GuanDiFormTests : SunqianCombatTestSuite
         Assert.NotNull(Player.Creature.GetPower<GuanYuCivilVerPower>());
         Assert.NotNull(Player.Creature.GetPower<ScriptServantPower>());
         Assert.Null(Player.Creature.GetPower<GuanYuMartialVerPower>());
+    }
+
+    [Theory]
+    [InlineData(false, false)]
+    [InlineData(false, true)]
+    [InlineData(true, false)]
+    [InlineData(true, true)]
+    public async Task Martial_grants_total_vigor_once_so_buddy_hu_converts_only_once(bool upgraded, bool xCost)
+    {
+        await PlayerCmd.SetEnergy(10, Player);
+        var form = await AddToHand<GuanDiForm>();
+        if (upgraded) Upgrade(form);
+        await Play(form);
+        await Activate<GuanYuMartialVer>();
+        await ApplyPower<BuddyHuPower>(Player.Creature, 1);
+        await PlayerCmd.SetEnergy(3, Player);
+        if (xCost)
+            await Play(await AddToHand<Whirlwind>());
+        else
+        {
+            var card = await AddToHand<DefendIronclad>();
+            card.EnergyCost.SetUntilPlayed(3);
+            await Play(card);
+        }
+        Assert.Equal((upgraded ? 3 : 2) * 3 - 1, Player.Creature.GetPower<VigorPower>()!.Amount);
+        Assert.Equal(1, Player.Creature.GetPower<StrengthPower>()!.Amount);
     }
 
     private async Task Activate<TRecord>() where TRecord : ScriptRecordCardTemplate =>

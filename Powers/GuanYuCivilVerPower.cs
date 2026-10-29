@@ -32,7 +32,6 @@ public sealed class GuanYuCivilVerPower : ScriptPowerTemplate
         protected override decimal GetBaseValueForIConvertible() => CurrentValue;
         public override string ToString() => ((int)CurrentValue).ToString(CultureInfo.InvariantCulture);
     }
-    public override bool CountsTowardActivationLimit => false;
     public override string MutuallyExclusiveGroup => GuanYuCivilVer.FormGroup;
     protected override object InitInternalData() => new Data();
     protected override IEnumerable<DynamicVar> CanonicalVars => [new OwnerEffectiveBlockVar(), new EnergyVar(1)];
@@ -42,7 +41,7 @@ public sealed class GuanYuCivilVerPower : ScriptPowerTemplate
             .Sum(entry => entry.CardPlay.Resources.EnergySpent)
         : 0;
     private decimal EffectiveBlockAtTurnEnd => EnergySpentThisTurn > 0
-        ? Math.Max(0, GuanYuCivilVer.BlockPerEnergy * EnergySpentThisTurn
+        ? Math.Max(0, Amount * EnergySpentThisTurn
             + (Owner.GetPower<DexterityPower>()?.Amount ?? 0)) : 0;
     public override PowerAssetProfile AssetProfile => new(
         IconPath: "res://images/powers/GuanYuCivilVerPower.png",
