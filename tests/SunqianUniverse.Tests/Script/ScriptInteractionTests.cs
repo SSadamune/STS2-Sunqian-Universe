@@ -151,7 +151,7 @@ public sealed class ScriptInteractionTests : SunqianCombatTestSuite
             var frame = node.GetNode<TextureRect>("%Frame");
             Assert.Equal(ScriptRecordCardFrame.TexturePath, frame.Texture.ResourcePath);
             Assert.Null(frame.Material);
-            Assert.Equal(originalPlaqueScale, plaque.Scale);
+            Assert.Equal(originalPlaqueScale * ScriptRecordCardFrame.ScriptPlaqueScale, plaque.Scale);
             float dividerCenterY = frame.Position.Y + frame.Size.Y * ScriptRecordCardFrame.PortraitDividerFraction;
             Assert.Equal(dividerCenterY, plaque.Position.Y + plaque.Size.Y * 0.5f, 3);
             Assert.Equal(130, node.GetNode<Control>("%DescriptionLabel").Size.Y);

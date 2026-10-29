@@ -32,17 +32,16 @@ using STS2RitsuLib.Scaffolding.Content;
 namespace Squ.Cards;
 
 /// <summary>
-/// 杀意感知：攻击所有敌人后，选择一名盟友，再由该盟友从手牌中选择至多一张
-/// （升级后两张）攻击牌，对随机敌人免费自动打出。
-/// 上将军会使这些跨玩家自动打出的攻击牌继承本牌实际消耗的活力加成。
+/// 杀意感知：攻击指定敌人，再让一名（升级后所有）盟友各自选择至多一张攻击牌对该敌人打出。
+/// 随机目标攻击必须包含此目标，并继承上将军的活力加成。
 /// </summary>
 [RegisterCard(typeof(SunqianCardPool), StableEntryStem = "killing_intent_perception")]
 public sealed class KillingIntentPerception : ModCardTemplate
 {
 	public const int BaseDamage = 9;
-	public const int UpgradedDamage = 11;
+	public const int UpgradedDamage = 13;
 	public const int BaseAttackCount = 1;
-	public const int UpgradedAttackCount = 2;
+	public const int UpgradedAttackCount = 1;
 
 	private static readonly LocString SelectionPrompt =
 		new("cards", "SUNQIAN_UNIVERSE_CARD_KILLING_INTENT_PERCEPTION.selectionScreenPrompt");
@@ -64,7 +63,7 @@ public sealed class KillingIntentPerception : ModCardTemplate
 		PortraitPath: "res://images/cards/KillingIntentPerception.png");
 
 	public KillingIntentPerception()
-		: base(1, CardType.Attack, CardRarity.Uncommon, TargetType.AllEnemies)
+		: base(1, CardType.Attack, CardRarity.Uncommon, TargetType.AnyEnemy)
 	{
 	}
 
@@ -76,37 +75,45 @@ public sealed class KillingIntentPerception : ModCardTemplate
 			?? throw new InvalidOperationException(
 				"KillingIntentPerception requires an active combat.");
 
+		ArgumentNullException.ThrowIfNull(cardPlay.Target);
+		Creature target = cardPlay.Target;
 		await DamageCmd.Attack(DynamicVars.Damage.BaseValue)
 			.FromCard(this, cardPlay)
-			.TargetingAllOpponents(combatState)
+			.Targeting(target)
 			.WithHitVfxNode(target => NScratchVfx.Create(target, goingRight: true))
 			.Execute(choiceContext);
 
 		if (combatState.PlayerCreatures.Count(creature => creature.IsAlive) <= 1
-			|| !combatState.HittableEnemies.Any(enemy => enemy.IsAlive))
+			|| !target.IsAlive)
 		{
 			return;
 		}
 
-		Player? ally = await ChooseAlly();
-		if (ally is null || ally.Creature.IsDead)
+		List<Player> allies;
+		if (IsUpgraded)
 		{
-			return;
+			allies = combatState.PlayerCreatures.Where(creature => creature.IsAlive && creature.Player != Owner)
+				.Select(creature => creature.Player!).ToList();
 		}
-
-		// Keep cross-player selection and its nested auto-plays in this resolution.
-		// Branching back to the original player from a nested attack would otherwise
-		// try to resume the original PlayCardAction after a hook action took over.
+		else
+		{
+			Player? ally = await ChooseAlly();
+			allies = ally is null ? [] : [ally];
+		}
+		// Keep nested cross-player choices inside the current resolution.
 		var allyChoiceContext = new BlockingPlayerChoiceContext();
-		List<CardModel> attacks = await ChooseAttacks(allyChoiceContext, ally);
-		foreach (CardModel attack in attacks)
+		foreach (Player ally in allies)
 		{
-			if (attack.Pile?.Type != PileType.Hand)
+			if (!target.IsAlive) break;
+			if (ally.Creature.IsDead) continue;
+			List<CardModel> attacks = await ChooseAttacks(allyChoiceContext, ally);
+			foreach (CardModel attack in attacks)
 			{
-				continue;
+				if (!target.IsAlive) break;
+				if (attack.Pile?.Type != PileType.Hand) continue;
+				using (SquRandomEnemyTargeting.RequireTarget(attack, target))
+					await CardCmd.AutoPlay(allyChoiceContext, attack, target);
 			}
-
-			await CardCmd.AutoPlay(allyChoiceContext, attack, null);
 		}
 	}
 

@@ -22,6 +22,8 @@ namespace Squ.Cards;
 [RegisterCard(typeof(SunqianCardPool), StableEntryStem = "chicken_foot_cheese_script")]
 public sealed class ChickenFootCheeseScript : ScriptCardTemplate<ChickenFootCheeseScriptRecord>, IRandomEnemyTargetCount
 {
+	protected override bool UsesRowKeywordTemplate => false;
+
 	public const int BaseDamage = 6;
 	public const int BaseFollowUpDamage = ScriptChickenFootCheesePower.BaseFollowUpDamage;
 	public const int UpgradedFollowUpDamage = ScriptChickenFootCheesePower.UpgradedFollowUpDamage;

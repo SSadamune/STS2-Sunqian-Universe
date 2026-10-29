@@ -34,7 +34,7 @@ internal static class RowKeywordsCardPatch
 		Exception? __exception)
 	{
 		if (__exception is not null
-			|| __instance is not IRowKeywordsCard
+			|| __instance is not IRowKeywordsCard { MergeKeywordRows: true }
 			|| string.IsNullOrEmpty(__result))
 		{
 			return __exception;

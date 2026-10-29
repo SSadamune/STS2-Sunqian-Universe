@@ -99,7 +99,8 @@ internal static class HeadsmanRewardTracker
 		}
 
 		bool restored = false;
-		decimal vigorToRestore = track.ResourceSpend.GetRestorableVigor();
+		// Each refund effect restores its own recorded debit, independently of other refunds.
+		decimal vigorToRestore = track.ResourceSpend.VigorSpent;
 		if (vigorToRestore > 0m)
 		{
 			await PowerCmd.Apply<VigorPower>(

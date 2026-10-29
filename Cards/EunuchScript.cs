@@ -20,6 +20,8 @@ namespace Squ.Cards;
 [RegisterCard(typeof(SunqianCardPool), StableEntryStem = "eunuch_script")]
 public sealed class EunuchScript : ScriptCardTemplate<EunuchScriptRecord>
 {
+	protected override bool UsesRowKeywordTemplate => false;
+
 	public const int BaseDraw = 2;
 	public const int UpgradedDraw = 3;
 

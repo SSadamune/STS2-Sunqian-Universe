@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Godot;
+using HarmonyLib;
 using MegaCrit.Sts2.Core.Combat;
 using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Commands.Builders;
@@ -23,6 +24,40 @@ namespace Squ.Combat;
 /// </summary>
 public static class SquRandomEnemyTargeting
 {
+	private static readonly Dictionary<CardModel, Stack<Creature>> RequiredTargets = [];
+	internal static IDisposable RequireTarget(CardModel card, Creature target)
+	{
+		if (!RequiredTargets.TryGetValue(card, out var targets)) RequiredTargets[card] = targets = new();
+		targets.Push(target);
+		return new RequiredTargetScope(card);
+	}
+	private sealed class RequiredTargetScope(CardModel card) : IDisposable
+	{
+		public void Dispose()
+		{
+			var targets = RequiredTargets[card];
+			targets.Pop();
+			if (targets.Count == 0) RequiredTargets.Remove(card);
+		}
+	}
+
+	// Native random attacks do not consult CardPlay.Target. Guarantee the first
+	// hit on the required target, then leave the remaining random hits unchanged.
+	[HarmonyPatch(typeof(AttackCommand), "GetPossibleTargets")]
+	private static class RequiredRandomTargetPatch
+	{
+		[HarmonyPostfix, HarmonyPriority(Priority.Last)]
+		private static void Postfix(AttackCommand __instance, ref IReadOnlyList<Creature> __result)
+		{
+			if (!__instance.IsRandomlyTargeted || __instance.ModelSource is not CardModel card
+				|| !RequiredTargets.TryGetValue(card, out var targets)) return;
+			Creature target = targets.Peek();
+			if (target.IsAlive && __result.Contains(target)
+				&& !__instance.Results.SelectMany(hit => hit).Any(result => result.Receiver == target))
+				__result = [target];
+		}
+	}
+
 	public static IEnumerable<Creature> PickRandomEnemiesUnique(
 		ICombatState combatState,
 		int count,

@@ -21,7 +21,7 @@ using STS2RitsuLib.Scaffolding.Content;
 namespace Squ.Powers;
 
 [RegisterPower]
-public sealed class SunqianUniversePower : ModPowerTemplate
+public sealed class SunqianUniversePower : ModPowerTemplate, IScriptLiftHandler
 {
 	public override PowerType Type => PowerType.Buff;
 
@@ -35,20 +35,13 @@ public sealed class SunqianUniversePower : ModPowerTemplate
 
 	protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
 	[
-		HoverTipFactory.FromKeyword(SquKeywords.ScriptCollectionId.GetModCardKeyword()),
+		HoverTipFactory.FromKeyword(SquKeywords.ScriptId.GetModCardKeyword()),
 	];
 
-	public override async Task AfterCardChangedPiles(CardModel card, PileType oldPileType, AbstractModel? clonedBy)
+	public async Task OnScriptLiftAsync(ScriptLiftContext context)
 	{
-		int drawCount = Amount;
-		if (drawCount <= 0 || Owner.Player is not { } player || card.Owner != player
-			|| oldPileType == ScriptSystem.ScriptCollectionPile
-			|| card.Pile?.Type != ScriptSystem.ScriptCollectionPile)
-		{
-			return;
-		}
-
+		if (Amount <= 0 || Owner.Player is not { } player || context.Owner != Owner) return;
 		Flash();
-		await CardPileCmd.Draw(new BlockingPlayerChoiceContext(), drawCount, player);
+		await CardPileCmd.Draw(context.ChoiceContext, Amount, player);
 	}
 }

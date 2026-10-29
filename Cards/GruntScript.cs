@@ -23,6 +23,8 @@ namespace Squ.Cards;
 [RegisterCharacterStarterCard(typeof(SunqianCharacter), 1)]
 public sealed class GruntScript : ScriptCardTemplate<GruntScriptRecord>
 {
+	protected override bool UsesRowKeywordTemplate => false;
+
 	public const int DamageAmount = 8;
 	public const int UpgradedDamageAmount = 11;
 

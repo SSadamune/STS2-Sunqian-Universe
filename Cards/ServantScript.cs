@@ -21,6 +21,8 @@ namespace Squ.Cards;
 [RegisterCard(typeof(SunqianCardPool), StableEntryStem = "servant_script")]
 public sealed class ServantScript : ScriptCardTemplate<ServantScriptRecord>
 {
+	protected override bool UsesRowKeywordTemplate => false;
+
 	public const int BaseBlock = 10;
 	public const int UpgradedBlock = 12;
 

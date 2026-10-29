@@ -17,7 +17,7 @@
   "SUNQIAN_UNIVERSE_RELIC_ZHU_DICTIONARY.description": "Whenever you obtain a [gold]Script[/gold] card, [gold]Upgrade[/gold] it.\nAt the start of each combat, add a random [gold]Upgraded[/gold] [gold]Script[/gold] card to your hand. It costs 0 this turn.",
   "SUNQIAN_UNIVERSE_RELIC_ZHU_DICTIONARY.flavor": "Master this book, and you're a rhetorician too.",
   "SUNQIAN_UNIVERSE_RELIC_TELEPROMPTER.title": "Teleprompter",
-  "SUNQIAN_UNIVERSE_RELIC_TELEPROMPTER.description": "Whenever [blue]3[/blue] [gold]Scripts[/gold] end, draw [blue]{Cards:diff()}[/blue] {Cards:plural:card|cards}.",
+  "SUNQIAN_UNIVERSE_RELIC_TELEPROMPTER.description": "Every time you add three cards to your [gold]Script Collection[/gold], draw [blue]{Cards:diff()}[/blue] {Cards:plural:card|cards}.",
   "SUNQIAN_UNIVERSE_RELIC_TELEPROMPTER.flavor": "It'd be more useful with pinyin.",
   "SUNQIAN_UNIVERSE_RELIC_SUPPORTING_ACTOR_BADGE.title": "Supporting Actor Badge",
   "SUNQIAN_UNIVERSE_RELIC_SUPPORTING_ACTOR_BADGE.description": "After a [gold]Strong Monster Encounter[/gold], gain combat rewards as if it were an Elite encounter.\nAfter the second-to-last Boss combat in Act 3, gain a [gold]Rare Potion[/gold] and a [gold]Rare Card Reward[/gold].",

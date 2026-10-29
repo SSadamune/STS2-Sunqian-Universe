@@ -91,7 +91,7 @@ public sealed class TextSynchronizationTests : SunqianCombatTestSuite
             Assert.Equal("博望悖论・进军", Card("SCRIPT_RECORD_BOWANG_PARADOX_ADVANCE.title"));
             Assert.Equal("博望悖论・放火", Card("SCRIPT_RECORD_BOWANG_PARADOX_ARSON.title"));
             Assert.DoesNotContain("你", Card("SEND_HORSE_WITHOUT_HAY.chargeEffect"));
-            Assert.DoesNotContain("当", Card("STARGAZING.description"));
+            Assert.Contains("当此牌进入[gold]弃牌堆[/gold]后", Card("STARGAZING.description"));
             Assert.Contains("少于", Card("TRANSPARENT_HOLE.description"));
             foreach (var entry in cards.RootElement.EnumerateObject().Where(entry =>
                 entry.Name.StartsWith("SUNQIAN_UNIVERSE_CARD_FLAME_STRIKE.")))

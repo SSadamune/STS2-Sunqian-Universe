@@ -37,14 +37,14 @@ public sealed class KillingIntentPerceptionMultiplayerTests : SunqianCombatTestS
             .WithSeed("killing-intent-perception-multiplayer");
 
     [Fact]
-    public async Task Upgrade_lets_the_ally_select_up_to_two_playable_attacks_from_their_hand()
+    public async Task Upgrade_still_limits_each_ally_to_one_attack()
     {
         var ally = Players.Single(player => player != Player);
         var firstAttack = await AddCardToPile<StrikeIronclad>(PileType.Hand, owner: ally);
         var secondAttack = await AddCardToPile<Bash>(PileType.Hand, owner: ally);
         var nonAttack = await AddCardToPile<DefendIronclad>(PileType.Hand, owner: ally);
         var card = Upgrade(await AddToHand<KillingIntentPerception>());
-        var selector = new ScriptedCardSelector().ThenSelect(firstAttack, secondAttack);
+        var selector = new ScriptedCardSelector().ThenSelect(firstAttack);
 
         List<CardModel> selected;
         using (UseCardSelector(selector))
@@ -56,7 +56,7 @@ public sealed class KillingIntentPerceptionMultiplayerTests : SunqianCombatTestS
         }
 
         AssertAllSelectionsConsumed(selector);
-        Assert.Equal([firstAttack, secondAttack], selected);
+        Assert.Equal([firstAttack], selected);
         AssertInPile(firstAttack, PileType.Hand);
         AssertInPile(secondAttack, PileType.Hand);
         AssertInPile(nonAttack, PileType.Hand);
@@ -90,14 +90,14 @@ public sealed class KillingIntentPerceptionMultiplayerTests : SunqianCombatTestS
     }
 
     [Fact]
-    public async Task Both_selected_attacks_inherit_supreme_general_vigor()
+    public async Task Selected_attack_inherits_supreme_general_vigor()
     {
         const int vigor = 4;
         var ally = Players.Single(player => player != Player);
         var firstAttack = await AddCardToPile<StrikeIronclad>(PileType.Hand, owner: ally);
         var secondAttack = await AddCardToPile<StrikeIronclad>(PileType.Hand, owner: ally);
         await ApplyPower<VigorPower>(Player.Creature, vigor);
-        var selector = new ScriptedCardSelector().ThenSelect(firstAttack, secondAttack);
+        var selector = new ScriptedCardSelector().ThenSelect(firstAttack);
         var harmony = new Harmony("squ.tests.killing-intent-force-ally");
         _forcedAlly = ally;
         harmony.Patch(
@@ -112,7 +112,7 @@ public sealed class KillingIntentPerceptionMultiplayerTests : SunqianCombatTestS
         {
             using (UseCardSelector(selector))
             {
-                await Play(Upgrade(await AddToHand<KillingIntentPerception>()));
+                await Play(Upgrade(await AddToHand<KillingIntentPerception>()), EnemyAt(0));
             }
         }
         finally
@@ -123,11 +123,11 @@ public sealed class KillingIntentPerceptionMultiplayerTests : SunqianCombatTestS
 
         AssertAllSelectionsConsumed(selector);
         int expectedDamage = KillingIntentPerception.UpgradedDamage + vigor
-            + (int)((strikeDamage + vigor) * 2m);
+            + (int)((strikeDamage + vigor));
         Assert.Equal(hp - expectedDamage, EnemyAt(0).CurrentHp);
         Assert.Null(Player.Creature.GetPower<VigorPower>());
         AssertInPile(firstAttack, PileType.Discard);
-        AssertInPile(secondAttack, PileType.Discard);
+        AssertInPile(secondAttack, PileType.Hand);
     }
 
     [Fact]
@@ -174,7 +174,7 @@ public sealed class KillingIntentPerceptionMultiplayerTests : SunqianCombatTestS
             using (UseCardSelector(selector))
             {
                 await Play(food);
-                await Play(first);
+                await Play(first, EnemyAt(0));
             }
         }
         finally
@@ -216,7 +216,7 @@ public sealed class KillingIntentPerceptionMultiplayerTests : SunqianCombatTestS
         try
         {
             using (UseCardSelector(selector))
-                await Play(await AddToHand<KillingIntentPerception>());
+                await Play(await AddToHand<KillingIntentPerception>(), EnemyAt(0));
         }
         finally
         {
@@ -255,14 +255,14 @@ public sealed class KillingIntentPerceptionMultiplayerTests : SunqianCombatTestS
         try
         {
             using (UseCardSelector(selector))
-                await Play(first);
+                await Play(first, EnemyAt(0));
         }
         finally
         {
             harmony.UnpatchAll(harmony.Id);
         }
         AssertAllSelectionsConsumed(selector);
-        int baseDamage = upgraded ? 11 : 9;
+        int baseDamage = upgraded ? 13 : 9;
         Assert.Equal(baseDamage + ownerVigor, hp - afterFirst);
         Assert.Equal(baseDamage + ownerVigor + allyVigor, afterFirst - afterNested);
         Assert.Equal(6 + ownerVigor + allyVigor, afterNested - EnemyAt(0).CurrentHp);
@@ -287,21 +287,24 @@ public sealed class KillingIntentPerceptionMultiplayerTests : SunqianCombatTestS
         await ApplyPower<VigorPower>(Player.Creature, 5);
         await ApplyPower<VigorPower>(ally.Creature, 3);
         int hp = EnemyAt(0).CurrentHp;
-        var selector = new ScriptedCardSelector().ThenSelect(nested, sibling).ThenSelect(returningAttack);
+        var selector = new ScriptedCardSelector().ThenSelect(nested).ThenSelect(returningAttack);
         var harmony = new Harmony("squ.tests.killing-intent-scoped-nested-vigor");
         harmony.Patch(ChooseAlly, prefix: new HarmonyMethod(
             typeof(KillingIntentPerceptionMultiplayerTests), nameof(ChooseOtherPlayer)));
         try
         {
-            using (UseCardSelector(selector)) await Play(first);
+            using (UseCardSelector(selector)) await Play(first, EnemyAt(0));
         }
         finally
         {
             harmony.UnpatchAll(harmony.Id);
         }
         AssertAllSelectionsConsumed(selector);
-        // A+ = 11+5; B = 9+8; returning strike = 6+8; sibling = 6+5.
-        Assert.Equal(16 + 17 + 14 + 11, hp - EnemyAt(0).CurrentHp);
+        // The nested chain must not leak its inherited Vigor to a later play.
+        Assert.Equal(18 + 17 + 14, hp - EnemyAt(0).CurrentHp);
+        int afterChain = EnemyAt(0).CurrentHp;
+        await CardCmd.AutoPlay(new BlockingPlayerChoiceContext(), sibling, EnemyAt(0));
+        Assert.Equal(6, afterChain - EnemyAt(0).CurrentHp);
     }
 
     private static void CheckNestedChoiceContext(PlayerChoiceContext context, AbstractModel source)
@@ -343,7 +346,7 @@ public sealed class KillingIntentPerceptionMultiplayerTests : SunqianCombatTestS
             typeof(KillingIntentPerceptionMultiplayerTests), nameof(ChooseOtherPlayer)));
         try
         {
-            using (UseCardSelector(selector)) await Play(await AddToHand<KillingIntentPerception>());
+            using (UseCardSelector(selector)) await Play(await AddToHand<KillingIntentPerception>(), EnemyAt(0));
         }
         finally
         {
@@ -384,7 +387,7 @@ public sealed class KillingIntentPerceptionMultiplayerTests : SunqianCombatTestS
             prefix: new HarmonyMethod(typeof(KillingIntentPerceptionMultiplayerTests), nameof(ForceTwoPommelStrikes)));
         try
         {
-            using (UseCardSelector(selector)) await Play(await AddToHand<KillingIntentPerception>());
+            using (UseCardSelector(selector)) await Play(await AddToHand<KillingIntentPerception>(), EnemyAt(0));
         }
         finally
         {

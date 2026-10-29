@@ -35,7 +35,7 @@ public sealed class SunqianUniverse : ModCardTemplate
 
 	protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
 	[
-		HoverTipFactory.FromKeyword(SquKeywords.ScriptCollectionId.GetModCardKeyword()),
+		HoverTipFactory.FromKeyword(SquKeywords.ScriptId.GetModCardKeyword()),
 		HoverTipFactory.FromPower<DexterityPower>(),
 	];
 

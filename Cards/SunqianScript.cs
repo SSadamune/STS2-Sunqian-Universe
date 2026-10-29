@@ -20,6 +20,8 @@ namespace Squ.Cards;
 [RegisterCharacterStarterCard(typeof(SunqianCharacter), 1)]
 public sealed class SunqianScript : ScriptCardTemplate<SunqianScriptRecord>
 {
+	protected override bool UsesRowKeywordTemplate => false;
+
 	public const int BaseDexterity = 2;
 	public const int UpgradedDexterity = 2;
 	public const int BaseDraw = 1;

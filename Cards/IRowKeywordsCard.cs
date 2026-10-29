@@ -6,6 +6,7 @@ namespace Squ.Cards;
 /// </summary>
 public interface IRowKeywordsCard
 {
+	bool MergeKeywordRows => true;
 	/// <summary>Also joins trailing keywords to the final rules-text line when enabled.</summary>
 	bool MergeTrailingKeywordsWithLastRule => false;
 }

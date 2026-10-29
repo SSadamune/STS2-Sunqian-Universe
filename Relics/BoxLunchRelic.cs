@@ -99,7 +99,7 @@ public class BoxLunchRelic : ScriptRelicTemplate
 					Owner,
 					cancelable: true,
 					requireManualSelection: true,
-					prompt: ScriptSystem.CreateReselectionPrompt(RemainingSwitchesThisTurn),
+					prompt: ScriptSystem.CreateReselectionPrompt(),
 					localOnly: true);
 			if (selected is null)
 			{

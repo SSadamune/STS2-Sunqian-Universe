@@ -129,7 +129,8 @@ public sealed class AllScriptCardsTests : SunqianCombatTestSuite
                 {
                     Assert.DoesNotContain(exhaust, description);
                 }
-                else if (testCase.CanBeReinforced && card is not PartTimeGeneralScript)
+                else if ((testCase.CanBeReinforced && card is not PartTimeGeneralScript)
+                    || card is IRowKeywordsCard { MergeKeywordRows: false })
                 {
                     Assert.DoesNotContain(exhaust, activationLine);
                     Assert.Contains("\n" + exhaust, description);
@@ -244,11 +245,13 @@ public sealed class AllScriptCardsTests : SunqianCombatTestSuite
         await PlayerCmd.SetEnergy(card is PartTimeGeneralScript ? 0 : 10, Player);
         if (card is GuanDiForm)
         {
-            await Play(card);
+            var selector = new ScriptedCardSelector().ThenSelectWhere(candidate => candidate is GuanYuCivilVer);
+            using (UseCardSelector(selector)) await Play(card);
+            AssertAllSelectionsConsumed(selector);
             var records = Squ.Script.ScriptSystem.ScriptCollectionPile.GetPile(Player).Cards;
             Assert.Single(records.OfType<GuanYuCivilVer>());
             Assert.Single(records.OfType<GuanYuMartialVer>());
-            Assert.Empty(Player.Creature.Powers.OfType<ScriptPowerTemplate>());
+            AssertOnlyScript<GuanYuCivilVerPower>();
             return;
         }
         if (card is BowangParadoxScript)

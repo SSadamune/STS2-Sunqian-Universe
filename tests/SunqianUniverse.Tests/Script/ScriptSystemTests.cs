@@ -86,15 +86,13 @@ public sealed class ScriptSystemTests : SunqianCombatTestSuite
         Assert.False(relic.CanReselectFromScriptCollection());
     }
 
-    [Theory]
-    [InlineData(1)]
-    [InlineData(2)]
-    public void Script_reselection_prompt_formats_the_remaining_count(int remaining)
+    [Fact]
+    public void Script_reselection_prompt_omits_the_remaining_count()
     {
-        Assert.Contains(ScriptSystem.CreateReselectionPrompt(remaining).GetFormattedText(), new[]
+        Assert.Contains(ScriptSystem.CreateReselectionPrompt().GetFormattedText(), new[]
         {
-            $"你可以重新选择要激活的剧本（本回合剩余{remaining}次）。",
-            $"You may reselect Scripts to activate ({remaining} remaining this turn).",
+            "你可以重新选择要激活的剧本。",
+            "You may reselect Scripts to activate.",
         });
     }
 
@@ -417,7 +415,7 @@ public sealed class ScriptSystemTests : SunqianCombatTestSuite
         await PlayScript<SunqianScript>();
         await PlayScript<ExecutionCommanderScript>();
         var prefs = new CardSelectorPrefs(
-            ScriptSystem.CreateReselectionPrompt(2),
+            ScriptSystem.CreateReselectionPrompt(),
             1)
         {
             Cancelable = true,
@@ -439,8 +437,8 @@ public sealed class ScriptSystemTests : SunqianCombatTestSuite
             screen.GetNode<Control>("%BottomText").GetNode<MegaRichTextLabel>("%BottomLabel").Text);
         Assert.Contains(prefs.Prompt.GetFormattedText(), new[]
         {
-            "你可以重新选择要激活的剧本（本回合剩余2次）。",
-            "You may reselect Scripts to activate (2 remaining this turn).",
+            "你可以重新选择要激活的剧本。",
+            "You may reselect Scripts to activate.",
         });
         Task<IEnumerable<CardModel>> selectedTask = screen.CardsSelected();
         backButton.EmitSignal(NClickableControl.SignalName.Released, backButton);

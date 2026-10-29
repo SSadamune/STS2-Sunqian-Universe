@@ -15,6 +15,7 @@ using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.Helpers;
 using MegaCrit.Sts2.Core.Localization;
 using MegaCrit.Sts2.Core.Models;
+using MegaCrit.Sts2.Core.Models.Relics;
 using MegaCrit.Sts2.Core.Nodes.Combat;
 using MegaCrit.Sts2.Core.Nodes.Screens.CardSelection;
 using MegaCrit.Sts2.Core.Nodes.Screens.Overlays;
@@ -56,12 +57,8 @@ public static class ScriptSystem
 		PretendCardsCanBePlayed = true,
 	};
 
-	internal static LocString CreateReselectionPrompt(int remaining)
-	{
-		var prompt = new LocString(SquCommonL10n.Table, ReselectionPromptKey);
-		prompt.Add("Remaining", remaining);
-		return prompt;
-	}
+	internal static LocString CreateReselectionPrompt() => new(SquCommonL10n.Table, ReselectionPromptKey);
+
 	private static readonly LocString SelectionPrompt =
 		new(SquCommonL10n.Table, SelectionPromptKey);
 	private static readonly LocString InvalidationPrompt =
@@ -325,6 +322,23 @@ public static class ScriptSystem
 		{
 			return null;
 		}
+		if (CardSelectCmd.Selector is VakuuCardSelector)
+		{
+			// Vakuu takes the first MaxSelect cards without checking exclusivity.
+			// Choose a legal subset directly instead of recursively reopening selection.
+			var automatic = new List<ScriptRecordCardTemplate>();
+			var groups = new HashSet<string>();
+			int regularCount = 0;
+			foreach (var record in records)
+			{
+				if (record.MutuallyExclusiveGroup is { } group && groups.Contains(group)) continue;
+				if (record.CountsTowardActivationLimit && regularCount >= GetActivationLimit(player)) continue;
+				automatic.Add(record);
+				if (record.CountsTowardActivationLimit) regularCount++;
+				if (record.MutuallyExclusiveGroup is { } selectedGroup) groups.Add(selectedGroup);
+			}
+			return automatic;
+		}
 		if (records.Count == 1 && !requireManualSelection)
 		{
 			return records;
@@ -376,7 +390,8 @@ public static class ScriptSystem
 		Player player, IReadOnlyList<ScriptRecordCardTemplate> records)
 	{
 		int limit = GetActivationLimit(player);
-		int regular = records.Count(record => record.CountsTowardActivationLimit);
+		int regular = records.Where(record => record.CountsTowardActivationLimit)
+			.GroupBy(record => record.MutuallyExclusiveGroup ?? record.Id.ToString()).Count();
 		int free = records.Where(record => !record.CountsTowardActivationLimit)
 			.GroupBy(record => record.MutuallyExclusiveGroup ?? record.Id.ToString()).Count();
 		int max = Math.Min(limit, regular) + free;

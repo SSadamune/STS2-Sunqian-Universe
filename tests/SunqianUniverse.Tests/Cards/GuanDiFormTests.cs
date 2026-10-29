@@ -10,6 +10,7 @@ using MegaCrit.Sts2.Core.Models.Cards;
 using MegaCrit.Sts2.Core.Models.Characters;
 using MegaCrit.Sts2.Core.Models.Monsters;
 using MegaCrit.Sts2.Core.Models.Powers;
+using MegaCrit.Sts2.Core.Models.Relics;
 using Squ.Cards;
 using Squ.Powers;
 using TestTheSpire;
@@ -50,15 +51,42 @@ public sealed class GuanDiFormTests : SunqianCombatTestSuite
     [Theory]
     [InlineData(false)]
     [InlineData(true)]
+    public async Task Vakuu_auto_play_selects_legal_scripts_without_waiting_for_manual_selection(bool existingRecords)
+    {
+        var form = await AddToHand<GuanDiForm>();
+        if (existingRecords)
+        {
+            var context = new BlockingPlayerChoiceContext();
+            await Squ.Script.ScriptSystem.UnlockOrReinforceAsync<GuanYuCivilVer>(context, form, 2, activate: false);
+            await Squ.Script.ScriptSystem.UnlockOrReinforceAsync<GuanYuMartialVer>(context, form, 2, activate: false);
+            var servant = await AddToHand<ServantScript>();
+            await Squ.Script.ScriptSystem.UnlockOrReinforceAsync<ServantScriptRecord>(context, servant, 1, activate: false);
+        }
+        using (CardSelectCmd.PushSelector(new VakuuCardSelector()))
+            await CardCmd.AutoPlay(new BlockingPlayerChoiceContext(), form, null).WaitAsync(TimeSpan.FromSeconds(5));
+        Assert.NotNull(Player.Creature.GetPower<GuanYuCivilVerPower>());
+        Assert.Null(Player.Creature.GetPower<GuanYuMartialVerPower>());
+        Assert.Equal(existingRecords ? 2 : 1, Player.Creature.Powers.OfType<ScriptPowerTemplate>().Count());
+        Assert.Equal(existingRecords, Player.Creature.GetPower<ScriptServantPower>() is not null);
+        var records = Squ.Script.ScriptSystem.ScriptCollectionPile.GetPile(Player).Cards.OfType<ScriptRecordCardTemplate>().ToArray();
+        Assert.Equal(existingRecords ? (2, 2) : (1, 1), Squ.Script.ScriptSystem.GetSelectionBounds(Player, records));
+    }
+
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
     public async Task Play_adds_both_scripts_and_one_activation_slot(bool upgraded)
     {
         var sunqian = await AddToDrawPileTop<SunqianScript>();
         var card = await AddToHand<GuanDiForm>();
         if (upgraded) Upgrade(card);
         Assert.Equal(3, card.EnergyCost.GetResolved());
-        var selector = new ScriptedCardSelector();
+        var selector = new ScriptedCardSelector().ThenSelectWhere(candidate => candidate is GuanYuCivilVer);
         using (UseCardSelector(selector)) { await Play(card); }
-        Assert.Equal(0, selector.SelectionRequestCount);
+        AssertAllSelectionsConsumed(selector);
+        Assert.Equal(1, selector.SelectionRequestCount);
+        Assert.DoesNotContain(SquCardTags.Script, card.Tags);
+        Assert.DoesNotContain(SquKeywords.Script, card.Keywords);
         var records = Squ.Script.ScriptSystem.ScriptCollectionPile.GetPile(Player).Cards;
         var civil = Assert.Single(records.OfType<GuanYuCivilVer>());
         var martial = Assert.Single(records.OfType<GuanYuMartialVer>());
@@ -70,7 +98,7 @@ public sealed class GuanDiFormTests : SunqianCombatTestSuite
         Assert.Equal(upgraded ? 3 : 2, civil.StoredAmount);
         Assert.Equal(upgraded ? 3 : 2, martial.StoredAmount);
         Assert.Equal(2, Squ.Script.ScriptSystem.GetActivationLimit(Player));
-        Assert.Empty(Player.Creature.Powers.OfType<ScriptPowerTemplate>());
+        AssertOnlyScript<GuanYuCivilVerPower>();
         AssertInPile(sunqian, PileType.Draw);
         Assert.Equal(0, Player.Creature.Block);
     }
@@ -80,7 +108,7 @@ public sealed class GuanDiFormTests : SunqianCombatTestSuite
     {
         await PlayerCmd.SetEnergy(10, Player);
         await Play(await AddToHand<ServantScript>());
-        await Play(await AddToHand<GuanDiForm>());
+        await PlayForm(await AddToHand<GuanDiForm>());
         await Activate<GuanYuCivilVer>();
         Assert.NotNull(Player.Creature.GetPower<ScriptServantPower>());
         await Play(await AddToHand<SunqianScript>());
@@ -103,7 +131,7 @@ public sealed class GuanDiFormTests : SunqianCombatTestSuite
     public async Task Civil_counts_energy_spent_before_activation_and_applies_dexterity_once()
     {
         await PlayerCmd.SetEnergy(10, Player);
-        await Play(await AddToHand<GuanDiForm>());
+        await PlayForm(await AddToHand<GuanDiForm>());
         await Play(await AddToHand<StrikeIronclad>(), EnemyAt(0));
         await ApplyPower<DexterityPower>(Player.Creature, 3);
         await Activate<GuanYuCivilVer>();
@@ -147,7 +175,7 @@ public sealed class GuanDiFormTests : SunqianCombatTestSuite
         await PlayerCmd.SetEnergy(10, Player);
         var card = await AddToHand<GuanDiForm>();
         if (upgraded) Upgrade(card);
-        await Play(card);
+        await PlayForm(card);
         await Activate<GuanYuMartialVer>();
         Assert.Null(Player.Creature.GetPower<VigorPower>());
         await Play(await AddToHand<DefendIronclad>());
@@ -181,7 +209,7 @@ public sealed class GuanDiFormTests : SunqianCombatTestSuite
         Player.AddRelicInternal(relic, silent: true);
         await PlayerCmd.SetEnergy(10, Player);
         await Play(await AddToHand<ServantScript>());
-        await Play(await AddToHand<GuanDiForm>());
+        await PlayForm(await AddToHand<GuanDiForm>());
         var records = Squ.Script.ScriptSystem.ScriptCollectionPile.GetPile(Player).Cards.OfType<ScriptRecordCardTemplate>().ToArray();
         var civil = records.OfType<GuanYuCivilVer>().Single();
         var martial = records.OfType<GuanYuMartialVer>().Single();
@@ -218,7 +246,7 @@ public sealed class GuanDiFormTests : SunqianCombatTestSuite
         await PlayerCmd.SetEnergy(10, Player);
         var form = await AddToHand<GuanDiForm>();
         if (upgraded) Upgrade(form);
-        await Play(form);
+        await PlayForm(form);
         await Activate<GuanYuMartialVer>();
         await ApplyPower<BuddyHuPower>(Player.Creature, 1);
         await PlayerCmd.SetEnergy(3, Player);
@@ -234,6 +262,15 @@ public sealed class GuanDiFormTests : SunqianCombatTestSuite
         Assert.Equal(1, Player.Creature.GetPower<StrengthPower>()!.Amount);
     }
 
+    private async Task PlayForm(GuanDiForm card)
+    {
+        var selector = new ScriptedCardSelector().ThenSelect(options => options
+            .Where(record => record is not GuanYuMartialVer)
+            .Take(Squ.Script.ScriptSystem.GetActivationLimit(Player)).ToArray());
+        using (UseCardSelector(selector)) await Play(card);
+        AssertAllSelectionsConsumed(selector);
+    }
+
     private async Task Activate<TRecord>() where TRecord : ScriptRecordCardTemplate =>
         await Squ.Script.ScriptSystem.ActivatePlayedScriptAsync(new BlockingPlayerChoiceContext(), Player,
             Squ.Script.ScriptSystem.ScriptCollectionPile.GetPile(Player).Cards.OfType<TRecord>().Single());
@@ -241,7 +278,7 @@ public sealed class GuanDiFormTests : SunqianCombatTestSuite
     private async Task SetupMartial()
     {
         await PlayerCmd.SetEnergy(10, Player);
-        await Play(await AddToHand<GuanDiForm>());
+        await PlayForm(await AddToHand<GuanDiForm>());
         await Activate<GuanYuMartialVer>();
     }
 }

@@ -15,6 +15,7 @@ internal static class ScriptRecordCardFrame
     internal const string TexturePath = "res://images/ui/script_record_frame.png";
     internal const float TitleBandCenterY = -159f;
     internal const float TitleLabelHeight = 36f;
+    internal const float ScriptPlaqueScale = 1.08f;
     internal const float PortraitDividerFraction = 808f / 1490f;
     private sealed class Layout
     {
@@ -84,7 +85,7 @@ internal static class ScriptRecordCardFrame
         float dividerCenterY = frame.Position.Y + frame.Size.Y * PortraitDividerFraction;
         plaque.Position = new Vector2(plaque.Position.X, dividerCenterY - plaque.Size.Y * 0.5f);
         plaque.PivotOffset = plaque.Size * 0.5f;
-        plaque.Scale = layout.PlaqueScale;
+        plaque.Scale = layout.PlaqueScale * ScriptPlaqueScale;
         // Keep long rules inside the narrower bound manuscript panel.
         description.Position = new Vector2(-112, 37);
         description.Size = new Vector2(224, 130);

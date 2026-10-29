@@ -15,6 +15,8 @@ namespace Squ.Cards;
 [RegisterCard(typeof(SunqianCardPool), StableEntryStem = "guan_di_form")]
 public sealed class GuanDiForm : ScriptCardTemplate<GuanYuCivilVer>
 {
+    protected override HashSet<CardTag> CanonicalTags => [];
+    public override IEnumerable<CardKeyword> CanonicalKeywords => [];
     public GuanDiForm() : base(3, CardType.Power, CardRarity.Rare, TargetType.Self, true) { }
 
     public override CardAssetProfile AssetProfile => new(PortraitPath: "res://images/cards/GuanDiForm.png");
@@ -35,5 +37,6 @@ public sealed class GuanDiForm : ScriptCardTemplate<GuanYuCivilVer>
         await ScriptSystem.UnlockOrReinforceAsync<GuanYuMartialVer>(
             choiceContext, this, GetScriptPowerAmountForPreview(), activate: false);
         await PowerCmd.Apply<GuanDiFormPower>(choiceContext, Owner.Creature, 1, Owner.Creature, this);
+        await ScriptSystem.ChooseActiveScriptsAsync(choiceContext, Owner, cancelable: false, requireManualSelection: true);
     }
 }

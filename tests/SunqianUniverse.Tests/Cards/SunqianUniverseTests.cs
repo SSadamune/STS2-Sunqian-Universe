@@ -22,7 +22,7 @@ public sealed class SunqianUniverseTests : SunqianCombatTestSuite
     [Theory]
     [InlineData(false, 2, 2)]
     [InlineData(true, 2, 2)]
-    public async Task Universe_grants_dexterity_and_only_draws_for_new_records(bool upgraded, int dexterity, int draw)
+    public async Task Universe_grants_dexterity_and_draws_only_after_a_script_ends(bool upgraded, int dexterity, int draw)
     {
         await PlayerCmd.SetEnergy(20, Player);
         var card = await AddToHand<SunqianUniverse>();
@@ -35,7 +35,7 @@ public sealed class SunqianUniverseTests : SunqianCombatTestSuite
         var expected = new List<CardModel>();
         for (int i = 0; i < draw; i++) expected.Add(await AddToDrawPileTop<Wound>());
         await Play(await AddToHand<ExecutionCommanderScript>());
-        Assert.All(expected, drawn => AssertInPile(drawn, PileType.Hand));
+        Assert.All(expected, drawn => AssertInPile(drawn, PileType.Draw));
         var sentinel = await AddToDrawPileTop<Wound>();
         await Play(await AddToHand<ExecutionCommanderScript>());
         AssertInPile(sentinel, PileType.Draw);
@@ -43,13 +43,13 @@ public sealed class SunqianUniverseTests : SunqianCombatTestSuite
         await ScriptSystem.ActivatePlayedScriptAsync(new BlockingPlayerChoiceContext(), Player, record);
         AssertInPile(sentinel, PileType.Draw);
         await ScriptSystem.RemoveScriptPowerAsync(Player.Creature.GetPower<ScriptExecutionCommanderPower>()!);
-        AssertInPile(sentinel, PileType.Draw);
+        AssertInPile(sentinel, PileType.Hand);
     }
 
     [Theory]
     [InlineData(false, 2)]
     [InlineData(true, 2)]
-    public async Task Adding_two_records_draws_for_each_and_adding_existing_records_does_not_draw(bool upgraded, int draw)
+    public async Task Adding_or_reinforcing_two_records_does_not_trigger_universe(bool upgraded, int draw)
     {
         await PlayerCmd.SetEnergy(20, Player);
         var card = await AddToHand<SunqianUniverse>();
@@ -58,17 +58,17 @@ public sealed class SunqianUniverseTests : SunqianCombatTestSuite
         await ClearHand();
         var expected = new List<CardModel>();
         for (int i = 0; i < draw * 2; i++) expected.Add(await AddToDrawPileTop<Wound>());
-        await Play(await AddToHand<GuanDiForm>());
-        Assert.All(expected, drawn => AssertInPile(drawn, PileType.Hand));
+        await AddFormRecords(await AddToHand<GuanDiForm>());
+        Assert.All(expected, drawn => AssertInPile(drawn, PileType.Draw));
         Assert.Equal(2, ScriptSystem.ScriptCollectionPile.GetPile(Player).Cards.Count);
         var sentinel = await AddToDrawPileTop<Wound>();
-        await Play(await AddToHand<GuanDiForm>());
+        await AddFormRecords(await AddToHand<GuanDiForm>());
         AssertInPile(sentinel, PileType.Draw);
         Assert.Equal(2, ScriptSystem.ScriptCollectionPile.GetPile(Player).Cards.Count);
     }
 
     [Fact]
-    public async Task Normal_and_upgraded_universe_stack_to_draw_four_per_new_record()
+    public async Task Normal_and_upgraded_universe_stack_to_draw_four_per_script_lift()
     {
         await PlayerCmd.SetEnergy(20, Player);
         await Play(await AddToHand<SunqianUniverse>());
@@ -78,24 +78,33 @@ public sealed class SunqianUniverseTests : SunqianCombatTestSuite
         var expected = new List<CardModel>();
         for (int i = 0; i < 4; i++) expected.Add(await AddToDrawPileTop<Wound>());
         await Play(await AddToHand<ExecutionCommanderScript>());
+        Assert.All(expected, drawn => AssertInPile(drawn, PileType.Draw));
+        await ScriptSystem.RemoveScriptPowerAsync(Player.Creature.GetPower<ScriptExecutionCommanderPower>()!);
         Assert.All(expected, drawn => AssertInPile(drawn, PileType.Hand));
     }
 
     [Fact]
-    public async Task Direct_collection_additions_and_returning_records_draw_but_reordering_does_not()
+    public async Task Collection_changes_do_not_trigger_universe()
     {
         await Play(await AddToHand<SunqianUniverse>());
         await ClearHand();
         var first = await AddToDrawPileTop<Wound>();
         var record = await AddCardToPile<ServantScriptRecord>(ScriptSystem.ScriptCollectionPile);
-        AssertInPile(first, PileType.Hand);
+        AssertInPile(first, PileType.Draw);
         var second = await AddToDrawPileTop<Wound>();
         await CardPileCmd.Add(record, ScriptSystem.ScriptCollectionPile);
         AssertInPile(second, PileType.Draw);
         await CardPileCmd.Add(record, PileType.Discard);
         AssertInPile(second, PileType.Draw);
         await CardPileCmd.Add(record, ScriptSystem.ScriptCollectionPile);
-        AssertInPile(second, PileType.Hand);
+        AssertInPile(second, PileType.Draw);
+    }
+
+    private async Task AddFormRecords(GuanDiForm source)
+    {
+        var context = new BlockingPlayerChoiceContext();
+        await ScriptSystem.UnlockOrReinforceAsync<GuanYuCivilVer>(context, source, 2, activate: false);
+        await ScriptSystem.UnlockOrReinforceAsync<GuanYuMartialVer>(context, source, 2, activate: false);
     }
 
     private async Task ClearHand()
