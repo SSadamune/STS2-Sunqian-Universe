@@ -3,11 +3,13 @@ using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.Models.Characters;
 using MegaCrit.Sts2.Core.Models.Monsters;
 using MegaCrit.Sts2.Core.Models;
+using MegaCrit.Sts2.Core.Models.Cards;
 using MegaCrit.Sts2.Core.Models.Powers;
 using Squ.Cards;
 using Squ.Powers;
 using Squ.Relics;
 using Squ.Script;
+using Squ.Patches;
 using TestTheSpire;
 using Xunit;
 
@@ -45,8 +47,10 @@ public sealed class WrapUpTests : SunqianCombatTestSuite
             WrapUp.UpgradedVigor);
     }
 
-    [Fact]
-    public async Task Wrap_ends_all_active_scripts_without_a_selection()
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public async Task Wrap_ends_only_the_clicked_script(bool endSunqian)
     {
         var boxLunch = (BoxLunchRelic)ModelDb.Relic<BoxLunchRelic>().ToMutable();
         Player.AddRelicInternal(boxLunch, silent: true);
@@ -63,17 +67,32 @@ public sealed class WrapUpTests : SunqianCombatTestSuite
         foreach (var handCard in PileType.Hand.GetPile(Player).Cards.ToArray())
             await CardPileCmd.Add(handCard, PileType.Discard);
         await PlayerCmd.SetEnergy(0, Player);
-        var selector = new ScriptedCardSelector();
+        var selector = new ScriptedCardSelector().ThenSelectWhere(card =>
+            endSunqian ? card is SunqianScriptRecord : card is ServantScriptRecord);
+        var top = await AddToDrawPileTop<Wound>();
         using (UseCardSelector(selector))
         {
             await Play(await AddToHand<WrapUp>());
         }
         AssertAllSelectionsConsumed(selector);
 
-        Assert.Null(Player.Creature.GetPower<ScriptServantPower>());
-        Assert.Null(Player.Creature.GetPower<ScriptSunqianPower>());
-        Assert.Empty(Player.Creature.Powers.OfType<ScriptPowerTemplate>());
+        Assert.Equal(endSunqian, Player.Creature.GetPower<ScriptServantPower>() is not null);
+        Assert.Equal(!endSunqian, Player.Creature.GetPower<ScriptSunqianPower>() is not null);
+        Assert.Single(Player.Creature.Powers.OfType<ScriptPowerTemplate>());
+        AssertInPile(top, endSunqian ? PileType.Hand : PileType.Draw);
+        Assert.Equal(1, selector.SelectionRequestCount);
         Assert.Equal(1, Player.PlayerCombatState!.Energy);
+    }
+
+    [Fact]
+    public void Wrap_selection_completes_on_one_click_and_hides_confirmation()
+    {
+        var prefs = ScriptSystem.CreateWrapSelectionPrefs();
+        Assert.Equal(1, prefs.MinSelect);
+        Assert.Equal(1, prefs.MaxSelect);
+        Assert.False(prefs.Cancelable);
+        Assert.False(prefs.RequireManualConfirmation);
+        Assert.True(WrapSelectionScreenPatch.HidesConfirmation(prefs));
     }
 
     [Theory]

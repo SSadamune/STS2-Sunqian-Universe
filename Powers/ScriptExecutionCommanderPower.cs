@@ -16,7 +16,7 @@ namespace Squ.Powers;
 
 /// <summary>
 /// 剧本：行刑指挥官。场上仅有一名敌人时，持有者打出的群体目标攻击牌伤害提高
-/// <see cref="Amount"/>%（未升级剧本叠 +50，升级叠 +75）。
+/// <see cref="Amount"/>%（初始 50%，素材复用每级增加 25%）。
 /// </summary>
 [RegisterPower]
 public sealed class ScriptExecutionCommanderPower : ScriptPowerTemplate

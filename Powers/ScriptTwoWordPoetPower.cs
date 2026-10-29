@@ -47,52 +47,32 @@ public sealed class ScriptTwoWordPoetPower : ScriptPowerTemplate
 
 	protected override object InitInternalData() => new Data();
 
-	protected override async Task OnScriptApplied(Creature? applier, CardModel? cardSource)
+	protected override Task OnScriptApplied(Creature? applier, CardModel? cardSource)
 	{
-		if (cardSource is not TwoWordPoetScript script
-			|| Owner.IsDead
-			|| Owner.CombatState is not { } combatState)
-		{
-			return;
-		}
+		GetInternalData<Data>().TargetsAllEnemies = cardSource is TwoWordPoetScript { IsUpgraded: true };
+		SyncDisplayVars(GetInternalData<Data>());
+		return Task.CompletedTask;
+	}
 
-		Data data = GetInternalData<Data>();
-		data.TargetsAllEnemies = script.IsUpgraded;
-		SyncDisplayVars(data);
-
+	public override async Task AfterSideTurnStart(
+		CombatSide side, IReadOnlyList<Creature> participants, ICombatState combatState)
+	{
+		if (!participants.Contains(Owner) || Owner.IsDead) return;
 		Flash();
 		SquSfx.PlayRandom(combatState.RunState, SquSfx.TwoWordPoetTriggerEvents);
 		SquHitVfx.SpookyScream(Owner);
-
-		AttackCommand attack = DamageCmd.Attack(Amount)
-			.WithHitCount(ActivationHitCount)
-			.FromCard(cardSource, null);
-		if (data.TargetsAllEnemies)
+		var choiceContext = new ThrowingPlayerChoiceContext();
+		for (int hit = 0; hit < ActivationHitCount; hit++)
 		{
-			attack.BeforeDamage(() =>
-				SquHitVfx.BlackSmallMagicMissiles(combatState.HittableEnemies));
-			await attack.TargetingAllOpponents(combatState)
-				.Execute(new ThrowingPlayerChoiceContext());
-		}
-		else
-		{
-			Creature? hitTarget = null;
-			attack.WithHitVfxNode(target =>
-				{
-					hitTarget = target;
-					return null;
-				})
-				.BeforeDamage(() =>
-				{
-					if (hitTarget is not { IsAlive: true } target)
-					{
-						return Task.CompletedTask;
-					}
-
-					return SquHitVfx.BlackSmallMagicMissile(target);
-				});
-			await attack.TargetingRandomOpponents(combatState)
-				.Execute(new ThrowingPlayerChoiceContext());
+			var enemies = combatState.HittableEnemies.ToList();
+			if (enemies.Count == 0) break;
+			if (!GetInternalData<Data>().TargetsAllEnemies)
+			{
+				var target = enemies[Owner.Player!.RunState.Rng.CombatTargets.NextInt(enemies.Count)];
+				enemies = [target];
+			}
+			await SquHitVfx.BlackSmallMagicMissiles(enemies);
+			await CreatureCmd.Damage(choiceContext, enemies, Amount, ValueProp.Unpowered, Owner);
 		}
 	}
 

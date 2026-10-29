@@ -20,7 +20,7 @@
   "SUNQIAN_UNIVERSE_CARD_WRAP_UP.title": "收工",
   "SUNQIAN_UNIVERSE_CARD_WRAP_UP.description": "获得{VigorPower:diff()}点[gold]活力[/gold]。\n[gold]卸妆[/gold]：获得{energyPrefix:energyIcons(1)}。",
   "SUNQIAN_UNIVERSE_CARD_SUNQIAN_SCRIPT.title": "孙乾剧本",
-  "SUNQIAN_UNIVERSE_CARD_SUNQIAN_SCRIPT.description": "抽{Cards:diff()}张牌。\n{ScriptUnlockText}",
+  "SUNQIAN_UNIVERSE_CARD_SUNQIAN_SCRIPT.description": "{ScriptUnlockText}",
   "SUNQIAN_UNIVERSE_CARD_GRUNT_SCRIPT.title": "杂兵剧本",
   "SUNQIAN_UNIVERSE_CARD_GRUNT_SCRIPT.description": "造成{Damage:diff()}点伤害，返还此牌消耗的[gold]活力[/gold]。\n{ScriptUnlockText}",
   "SUNQIAN_UNIVERSE_CARD_THE_GRIEVING_PREVAIL.title": "哀兵必胜",
@@ -46,7 +46,7 @@
   "SUNQIAN_UNIVERSE_CARD_NEUTRAL_AMBUSH_SCRIPT.title": "中立伏兵剧本",
   "SUNQIAN_UNIVERSE_CARD_NEUTRAL_AMBUSH_SCRIPT.description": "将1张[gold]{IfUpgraded:show:巨石+|巨石}[/gold]和2张[gold]{IfUpgraded:show:箭幕打击+|箭幕打击}[/gold]加入[gold]抽牌堆[/gold]。\n{ScriptUnlockText}",
   "SUNQIAN_UNIVERSE_CARD_TWO_WORD_POET_SCRIPT.title": "二言诗人剧本",
-  "SUNQIAN_UNIVERSE_CARD_TWO_WORD_POET_SCRIPT.description": "此剧本伤害会保留此牌的[gold]活力[/gold]加成。\n{ScriptUnlockText}",
+  "SUNQIAN_UNIVERSE_CARD_TWO_WORD_POET_SCRIPT.description": "对{IfUpgraded:show:所有|随机}敌人造成{Damage:diff()}点伤害{Repeat}次。\n剧本伤害继承此牌的[gold]活力[/gold]加成。\n{ScriptUnlockText}",
   "SUNQIAN_UNIVERSE_CARD_JUGGLE_MULTIPLE_SHOOTS.title": "轧戏",
   "SUNQIAN_UNIVERSE_CARD_JUGGLE_MULTIPLE_SHOOTS.description": "从3张其他角色的{IfUpgraded:show:升级后的|}[gold]能力[/gold]牌中获得一张。\n[gold]卸妆[/gold]：此能力牌耗能-1。",
   "SUNQIAN_UNIVERSE_CARD_JUGGLE_MULTIPLE_SHOOTS.annotation": "你剩余的{energyPrefix:energyIcons(1)}越多，就更容易发现高耗能的牌。\n部分强绑定其他角色机制的能力牌不会被发现。",
@@ -302,9 +302,9 @@
   "SUNQIAN_UNIVERSE_CARD_SCRIPT_RECORD_SERVANT.title": "家丁",
   "SUNQIAN_UNIVERSE_CARD_SCRIPT_RECORD_SERVANT.description": "[gold]激活[/gold]时，将1张[gold]{IfUpgraded:show:叉出去+|叉出去}[/gold]加入手牌。",
   "SUNQIAN_UNIVERSE_CARD_SCRIPT_RECORD_TWO_WORD_POET.title": "二言诗人",
-  "SUNQIAN_UNIVERSE_CARD_SCRIPT_RECORD_TWO_WORD_POET.description": "[gold]激活[/gold]时，对{IfUpgraded:show:所有|随机}敌人造成{ScriptDamage}点伤害{Repeat}次。",
+  "SUNQIAN_UNIVERSE_CARD_SCRIPT_RECORD_TWO_WORD_POET.description": "每回合开始时，对{IfUpgraded:show:所有|随机}敌人造成{ScriptDamage}点伤害{Repeat}次。",
   "SUNQIAN_UNIVERSE_CARD_SCRIPT_RECORD_SUNQIAN.title": "孙乾",
-  "SUNQIAN_UNIVERSE_CARD_SCRIPT_RECORD_SUNQIAN.description": "[gold]激活[/gold]时，在本回合获得{Dexterity:diff()}点[gold]敏捷[/gold]。",
+  "SUNQIAN_UNIVERSE_CARD_SCRIPT_RECORD_SUNQIAN.description": "[gold]激活[/gold]时，在本回合获得{Dexterity:diff()}点[gold]敏捷[/gold]。\n[gold]失效[/gold]时，抽{Cards:diff()}张牌。",
   "SUNQIAN_UNIVERSE_CARD_SCRIPT_RECORD_GRUNT.title": "杂兵",
   "SUNQIAN_UNIVERSE_CARD_SCRIPT_RECORD_GRUNT.description": "你的[gold]各种打击牌[/gold]造成的伤害+{BonusDamage:diff()}。",
   "SUNQIAN_UNIVERSE_CARD_SCRIPT_RECORD_BURNING_LINKED_CAMPS.title": "火烧连营",
@@ -331,5 +331,7 @@
   "SUNQIAN_UNIVERSE_CARD_SCRIPT_RECORD_EUNUCH.description": "你[gold]手牌[/gold]中的[gold]虚无[/gold]词条被视为[gold]保留[/gold]。",
   "SUNQIAN_UNIVERSE_CARD_SCRIPT_RECORD_PART_TIME_GENERAL.title": "兼职将军",
   "SUNQIAN_UNIVERSE_CARD_SCRIPT_RECORD_PART_TIME_GENERAL.description": "[gold]失效[/gold]时，将一张记录牌加入[gold]手牌[/gold]并移去该记录，该牌下一次打出免费。{RecordDetails}",
-  "SUNQIAN_UNIVERSE_CARD_SCRIPT_RECORD_PART_TIME_GENERAL.recordDetails": "\n当前记录为：{RecordedCards}。"
+  "SUNQIAN_UNIVERSE_CARD_SCRIPT_RECORD_PART_TIME_GENERAL.recordDetails": "\n当前记录为：{RecordedCards}。",
+  "SUNQIAN_UNIVERSE_CARD_SCRIPT_ACTIVATE_UPGRADABLE": "激活此[gold]{IfUpgraded:show:剧本+|剧本}[/gold]。",
+  "SUNQIAN_UNIVERSE_CARD_SCRIPT_ACTIVATE_REINFORCE_UPGRADABLE": "激活此[gold]{IfUpgraded:show:剧本+|剧本}[/gold]，若激活过则还会将数值叠加。"
 }

@@ -39,6 +39,8 @@ public abstract class ScriptRecordCardTemplate : ModCardTemplate
 	public abstract Type PowerType { get; }
 
 	public virtual bool CanBeReinforced => false;
+	public virtual bool UsesMaterialReuse => false;
+	public override int MaxUpgradeLevel => UsesMaterialReuse ? int.MaxValue : base.MaxUpgradeLevel;
 
 	public virtual bool CountsTowardActivationLimit => true;
 
@@ -52,7 +54,7 @@ public abstract class ScriptRecordCardTemplate : ModCardTemplate
 
 	public sealed override CardPoolModel VisualCardPool => ModelDb.CardPool<SunqianCardPool>();
 
-	public override IEnumerable<CardKeyword> CanonicalKeywords => [];
+	public override IEnumerable<CardKeyword> CanonicalKeywords => UsesMaterialReuse ? [SquKeywords.MaterialReuse] : [];
 
 	protected override bool ShouldGlowGoldInternal =>
 		Owner?.Creature.Powers
@@ -75,6 +77,17 @@ public abstract class ScriptRecordCardTemplate : ModCardTemplate
 
 	internal void ReinforceFrom(ScriptCardTemplate source, decimal amount)
 	{
+		if (UsesMaterialReuse)
+		{
+			for (int i = 0; i < (source.IsUpgraded ? 2 : 1); i++)
+			{
+				UpgradeInternal();
+				FinalizeUpgradeInternal();
+			}
+			SourceUpgraded |= source.IsUpgraded;
+			SyncDisplayVars();
+			return;
+		}
 		if (!CanBeReinforced)
 		{
 			return;
@@ -217,6 +230,30 @@ public abstract class ReinforceableScriptRecordCardTemplate<TPower, TSource>
 		DynamicVars["ScriptAmount"].BaseValue = StoredAmount;
 }
 
+public abstract class MaterialReuseScriptRecordCardTemplate<TPower, TSource>
+	: ReinforceableScriptRecordCardTemplate<TPower, TSource>
+	where TPower : ScriptPowerTemplate
+	where TSource : ScriptCardTemplate
+{
+	public sealed override bool UsesMaterialReuse => true;
+	internal sealed override bool HasUpgradedVersion => true;
+	protected abstract int InitialAmount { get; }
+	protected abstract int AmountPerUpgrade { get; }
+	protected virtual string AmountVarName => "ScriptAmount";
+	protected override IEnumerable<DynamicVar> CanonicalVars => [new DynamicVar(AmountVarName, InitialAmount)];
+	protected override void SyncDisplayVars()
+	{
+		StoredAmount = InitialAmount + CurrentUpgradeLevel * AmountPerUpgrade;
+		DynamicVars[AmountVarName].BaseValue = StoredAmount;
+	}
+	protected override void OnUpgrade()
+	{
+		DynamicVars[AmountVarName].UpgradeValueBy(AmountPerUpgrade);
+		// Save restoration applies upgrades after AfterDeserialized.
+		StoredAmount = InitialAmount + CurrentUpgradeLevel * AmountPerUpgrade;
+	}
+}
+
 [RegisterCard(typeof(TokenCardPool), StableEntryStem = "script_record_grunt")]
 public sealed class GruntScriptRecord
 	: ScriptRecordCardTemplate<ScriptGruntPower, GruntScript>
@@ -306,19 +343,19 @@ public sealed class TwoWordPoetScriptRecord : ScriptRecordCardTemplate<ScriptTwo
 public sealed class SunqianScriptRecord : ScriptRecordCardTemplate<ScriptSunqianPower, SunqianScript>
 {
 	internal override bool HasUpgradedVersion => true;
+	internal void UpdateFrom(SunqianScript source)
+	{
+		MergeSourceUpgrade(source);
+		SyncDisplayVars();
+	}
 
-	protected override IEnumerable<DynamicVar> CanonicalVars => [new DynamicVar("Dexterity", SunqianScript.BaseDexterity)];
-
+	protected override IEnumerable<DynamicVar> CanonicalVars =>
+		[new DynamicVar("Dexterity", SunqianScript.BaseDexterity), new CardsVar(SunqianScript.BaseDraw)];
 	public override CardAssetProfile AssetProfile => new(PortraitPath: "res://images/cards/SunqianScript.png");
+	protected override void SyncDisplayVars() => DynamicVars.Cards.BaseValue =
+		SourceUpgraded ? SunqianScript.UpgradedDraw : SunqianScript.BaseDraw;
+	protected override void OnUpgrade() => DynamicVars.Cards.UpgradeValueBy(1);
 
-	protected override void SyncDisplayVars() =>
-		DynamicVars["Dexterity"].BaseValue = SourceUpgraded
-			? SunqianScript.UpgradedDexterity
-			: SunqianScript.BaseDexterity;
-
-	protected override void OnUpgrade() =>
-		DynamicVars["Dexterity"].UpgradeValueBy(
-			SunqianScript.UpgradedDexterity - SunqianScript.BaseDexterity);
 }
 
 [RegisterCard(typeof(TokenCardPool), StableEntryStem = "script_record_burning_linked_camps")]
@@ -363,38 +400,21 @@ public sealed class ChickenFootCheeseScriptRecord : ScriptRecordCardTemplate<Scr
 }
 
 [RegisterCard(typeof(TokenCardPool), StableEntryStem = "script_record_execution_commander")]
-public sealed class ExecutionCommanderScriptRecord : ReinforceableScriptRecordCardTemplate<ScriptExecutionCommanderPower, ExecutionCommanderScript>
+public sealed class ExecutionCommanderScriptRecord : MaterialReuseScriptRecordCardTemplate<ScriptExecutionCommanderPower, ExecutionCommanderScript>
 {
-	internal override bool HasUpgradedVersion => true;
-
+	protected override int InitialAmount => ExecutionCommanderScript.BaseBonusPercent;
+	protected override int AmountPerUpgrade => 25;
 	public override CardAssetProfile AssetProfile => new(PortraitPath: "res://images/cards/ExecutionCommanderScript.png");
-
-	protected override void OnUpgrade() =>
-		DynamicVars["ScriptAmount"].UpgradeValueBy(
-			ExecutionCommanderScript.UpgradedBonusPercent
-			- ExecutionCommanderScript.BaseBonusPercent);
 }
 
 [RegisterCard(typeof(TokenCardPool), StableEntryStem = "script_record_headsman")]
-public sealed class HeadsmanScriptRecord : ScriptRecordCardTemplate<ScriptHeadsmanPower, HeadsmanScript>
+public sealed class HeadsmanScriptRecord : MaterialReuseScriptRecordCardTemplate<ScriptHeadsmanPower, HeadsmanScript>
 {
-	internal override bool HasUpgradedVersion => true;
-
+	protected override int InitialAmount => HeadsmanScript.BaseVigor;
+	protected override int AmountPerUpgrade => 1;
+	protected override string AmountVarName => nameof(VigorPower);
+	protected override IEnumerable<DynamicVar> CanonicalVars => [new PowerVar<VigorPower>(HeadsmanScript.BaseVigor)];
 	public override CardAssetProfile AssetProfile => new(PortraitPath: "res://images/cards/HeadsmanScript.png");
-
-	protected override IEnumerable<DynamicVar> CanonicalVars =>
-	[
-		new PowerVar<VigorPower>(HeadsmanScript.BaseVigor),
-	];
-
-	protected override void SyncDisplayVars() =>
-		DynamicVars[nameof(VigorPower)].BaseValue = SourceUpgraded
-			? HeadsmanScript.UpgradedVigor
-			: HeadsmanScript.BaseVigor;
-
-	protected override void OnUpgrade() =>
-		DynamicVars[nameof(VigorPower)].UpgradeValueBy(
-			HeadsmanScript.UpgradedVigor - HeadsmanScript.BaseVigor);
 
 	protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
 	[
@@ -432,9 +452,10 @@ public sealed class BombardChibiScriptRecord : ScriptRecordCardTemplate<ScriptBo
 }
 
 [RegisterCard(typeof(TokenCardPool), StableEntryStem = "script_record_night_raid_wuchao")]
-public sealed class NightRaidWuchaoScriptRecord : ReinforceableScriptRecordCardTemplate<ScriptNightRaidWuchaoPower, NightRaidWuchaoScript>
+public sealed class NightRaidWuchaoScriptRecord : MaterialReuseScriptRecordCardTemplate<ScriptNightRaidWuchaoPower, NightRaidWuchaoScript>
 {
-	internal override bool HasUpgradedVersion => true;
+	protected override int InitialAmount => NightRaidWuchaoScript.BaseBurning;
+	protected override int AmountPerUpgrade => 2;
 
 	protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
 	[
@@ -446,9 +467,6 @@ public sealed class NightRaidWuchaoScriptRecord : ReinforceableScriptRecordCardT
 
 	public override CardAssetProfile AssetProfile => new(PortraitPath: "res://images/cards/NightRaidWuchaoScript.png");
 
-	protected override void OnUpgrade() =>
-		DynamicVars["ScriptAmount"].UpgradeValueBy(
-			NightRaidWuchaoScript.UpgradedBurning - NightRaidWuchaoScript.BaseBurning);
 }
 
 [RegisterCard(typeof(TokenCardPool), StableEntryStem = "script_record_eunuch")]

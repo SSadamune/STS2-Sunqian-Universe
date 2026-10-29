@@ -53,9 +53,7 @@ public sealed class ScriptHeadsmanPower : ScriptPowerTemplate
 
 	protected override async Task OnScriptApplied(Creature? applier, CardModel? cardSource)
 	{
-		int vigor = cardSource is HeadsmanScript { IsUpgraded: true }
-			? HeadsmanScript.UpgradedVigor
-			: HeadsmanScript.BaseVigor;
+		int vigor = Amount;
 		DynamicVars[nameof(VigorPower)].BaseValue = vigor;
 		await PowerCmd.Apply<VigorPower>(
 			new ThrowingPlayerChoiceContext(),

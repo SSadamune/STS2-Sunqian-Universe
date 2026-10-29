@@ -21,8 +21,8 @@ namespace Squ.Cards;
 [RegisterCard(typeof(SunqianCardPool), StableEntryStem = "sunqian_universe")]
 public sealed class SunqianUniverse : ModCardTemplate
 {
-	public const int BaseDexterity = 3;
-	public const int UpgradedDexterity = 3;
+	public const int BaseDexterity = 2;
+	public const int UpgradedDexterity = 2;
 	public const int BaseDraw = 2;
 	public const int UpgradedDraw = 2;
 

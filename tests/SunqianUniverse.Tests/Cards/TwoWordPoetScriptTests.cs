@@ -1,4 +1,6 @@
 using MegaCrit.Sts2.Core.Commands;
+using MegaCrit.Sts2.Core.Combat;
+using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.Entities.Enchantments;
 using MegaCrit.Sts2.Core.Models.Characters;
@@ -15,6 +17,38 @@ namespace Squ.Tests.Cards;
 
 public sealed class TwoWordPoetScriptTests : SunqianCombatTestSuite
 {
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public async Task Mixed_upgrade_order_preserves_all_enemy_targeting_and_both_vigor_bonuses(bool upgradedFirst)
+    {
+        await PlayerCmd.SetEnergy(10, Player);
+        await ApplyPower<VigorPower>(Player.Creature, 3);
+        var first = await AddToHand<TwoWordPoetScript>();
+        if (upgradedFirst) Upgrade(first);
+        await Play(first);
+        await ApplyPower<VigorPower>(Player.Creature, 4);
+        var second = await AddToHand<TwoWordPoetScript>();
+        if (!upgradedFirst) Upgrade(second);
+        await Play(second);
+        var record = Assert.Single(ScriptSystem.ScriptCollectionPile.GetPile(Player).Cards.OfType<TwoWordPoetScriptRecord>());
+        Assert.Equal(9, record.StoredAmount);
+        Assert.True(record.IsUpgraded);
+        var power = Player.Creature.GetPower<ScriptTwoWordPoetPower>()!;
+        int firstHp = EnemyAt(0).CurrentHp;
+        int secondHp = EnemyAt(1).CurrentHp;
+        await ApplyPower<VigorPower>(Player.Creature, 7);
+        await power.AfterSideTurnStart(CombatSide.Enemy, [EnemyAt(0), EnemyAt(1)], Combat);
+        Assert.Equal(firstHp, EnemyAt(0).CurrentHp);
+        await EndTurn();
+        Assert.Equal(firstHp - 18, EnemyAt(0).CurrentHp);
+        Assert.Equal(secondHp - 18, EnemyAt(1).CurrentHp);
+        CardTestAssertions.AssertPowerAmount<VigorPower>(Player.Creature, 7);
+        int hpAfterTurnTrigger = EnemyAt(0).CurrentHp + EnemyAt(1).CurrentHp;
+        await record.ActivateAsync(new ThrowingPlayerChoiceContext(), Player);
+        Assert.Equal(hpAfterTurnTrigger, EnemyAt(0).CurrentHp + EnemyAt(1).CurrentHp);
+    }
+
     protected override void ConfigureBattle(CombatTestBattleBuilder battle) =>
         battle.Player<Ironclad>()
             .AddEnemy<BigDummy>()
@@ -22,7 +56,7 @@ public sealed class TwoWordPoetScriptTests : SunqianCombatTestSuite
             .WithSeed("two-word-poet-script");
 
     [Fact]
-    public async Task Upgraded_activation_adds_consumed_vigor_to_each_hit_and_still_uses_current_strength()
+    public async Task Upgraded_play_deals_damage_with_vigor_and_strength_and_stores_only_vigor()
     {
         var first = EnemyAt(0);
         var second = EnemyAt(1);
@@ -73,7 +107,7 @@ public sealed class TwoWordPoetScriptTests : SunqianCombatTestSuite
     }
 
     [Fact]
-    public async Task Vigorous_enchantment_is_stored_and_does_not_apply_twice_on_immediate_activation()
+    public async Task Vigorous_enchantment_is_stored_and_applies_once_to_the_play_damage()
     {
         const int enchantedVigor = 6;
         var card = await AddToHand<TwoWordPoetScript>();
@@ -97,7 +131,7 @@ public sealed class TwoWordPoetScriptTests : SunqianCombatTestSuite
     }
 
     [Fact]
-    public async Task Lethality_affects_the_activation_but_is_not_stored_in_script_damage()
+    public async Task Lethality_affects_the_play_damage_but_is_not_stored_in_script_damage()
     {
         await ApplyPower<LethalityPower>(Player.Creature, 50);
         int hpBefore = EnemyAt(0).CurrentHp + EnemyAt(1).CurrentHp;
@@ -114,7 +148,7 @@ public sealed class TwoWordPoetScriptTests : SunqianCombatTestSuite
     }
 
     [Fact]
-    public async Task Activation_is_a_powered_attack_and_respects_target_vulnerable()
+    public async Task Play_damage_is_a_powered_attack_and_respects_target_vulnerable()
     {
         var first = EnemyAt(0);
         var second = EnemyAt(1);
@@ -132,7 +166,7 @@ public sealed class TwoWordPoetScriptTests : SunqianCombatTestSuite
     }
 
     [Fact]
-    public async Task All_in_affects_the_immediate_activation_but_is_not_stored_in_script_damage()
+    public async Task All_in_affects_the_play_damage_but_is_not_stored_in_script_damage()
     {
         await ApplyPower<AllInPower>(Player.Creature, (int)AllInPower.UpgradedBonusPercent);
         await PlayerCmd.SetEnergy(1, Player);

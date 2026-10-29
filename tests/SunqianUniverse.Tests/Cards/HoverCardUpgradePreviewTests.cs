@@ -60,22 +60,43 @@ public sealed class HoverCardUpgradePreviewTests : SunqianCombatTestSuite
     {
         AssertScriptRecordUpgradePreviewIsGreen<ServantScript, ServantScriptRecord>("叉出去+");
 		AssertScriptRecordUpgradePreviewIsGreen<TwoWordPoetScript, TwoWordPoetScriptRecord>("所有");
-        AssertScriptRecordUpgradePreviewIsGreen<SunqianScript, SunqianScriptRecord>("3");
+        AssertScriptRecordUpgradePreviewIsGreen<SunqianScript, SunqianScriptRecord>("2");
         AssertScriptRecordUpgradePreviewIsGreen<ChickenFootCheeseScript, ChickenFootCheeseScriptRecord>("9");
         AssertScriptRecordUpgradePreviewIsGreen<ExecutionCommanderScript, ExecutionCommanderScriptRecord>("75");
         AssertScriptRecordUpgradePreviewIsGreen<HeadsmanScript, HeadsmanScriptRecord>("4");
-        AssertScriptRecordUpgradePreviewIsGreen<NightRaidWuchaoScript, NightRaidWuchaoScriptRecord>("4");
+        AssertScriptRecordUpgradePreviewIsGreen<NightRaidWuchaoScript, NightRaidWuchaoScriptRecord>("5");
         AssertScriptRecordUpgradePreviewIsGreen<BowangParadoxScript, BowangParadoxAdvanceScriptRecord>("9");
         AssertScriptRecordUpgradePreviewIsGreen<BowangParadoxScript, BowangParadoxArsonScriptRecord>("9");
         AssertScriptRecordUpgradePreviewIsGreen<GruntScript, GruntScriptRecord>("4");
+        AssertScriptRecordUpgradePreviewIsGreen<GuanDiForm, GuanYuCivilVer>("3");
+        AssertScriptRecordUpgradePreviewIsGreen<GuanDiForm, GuanYuMartialVer>("3");
+    }
+
+    [Fact]
+    public void Activation_text_highlights_script_plus_only_when_the_script_has_an_upgrade()
+    {
+        foreach (var canonical in ModelDb.CardPool<SunqianCardPool>().AllCards.OfType<ScriptCardTemplate>())
+        {
+            if (canonical is GuanDiForm or BowangParadoxScript) continue;
+            var card = (ScriptCardTemplate)Combat.CreateCard(canonical, Player);
+            Assert.Contains("激活此[gold]剧本[/gold]", card.GetDescriptionForPile(PileType.Deck));
+            card.UpgradePreviewType = CardUpgradePreviewType.Deck;
+            card.UpgradeInternal();
+            string preview = card.GetDescriptionForUpgradePreview();
+            if (card.HasUpgradedScriptEffect)
+                Assert.Contains("[green]剧本+[/green]", preview);
+            else
+                Assert.DoesNotContain("剧本+", preview);
+            card = Upgrade((ScriptCardTemplate)Combat.CreateCard(canonical, Player));
+            Assert.Contains(card.HasUpgradedScriptEffect ? "激活此[gold]剧本+[/gold]" : "激活此[gold]剧本[/gold]",
+                card.GetDescriptionForPile(PileType.Deck));
+        }
     }
 
     [Fact]
     public void Scripts_without_upgraded_script_effects_keep_the_record_title_unupgraded()
     {
         AssertScriptRecordHasNoUpgradedVersion<XiliangSavageScript, XiliangSavageScriptRecord>();
-        AssertScriptRecordHasNoUpgradedVersion<GuanDiForm, GuanYuCivilVer>();
-        AssertScriptRecordHasNoUpgradedVersion<GuanDiForm, GuanYuMartialVer>();
         AssertScriptRecordHasNoUpgradedVersion<BombardChibiScript, BombardChibiScriptRecord>();
         AssertScriptRecordHasNoUpgradedVersion<BurningLinkedCampsScript, BurningLinkedCampsScriptRecord>();
         AssertScriptRecordHasNoUpgradedVersion<EunuchScript, EunuchScriptRecord>();
@@ -135,7 +156,7 @@ public sealed class HoverCardUpgradePreviewTests : SunqianCombatTestSuite
         Assert.True(record.SourceUpgraded);
         Assert.True(record.HasUpgradedVersion);
         Assert.NotEqual(CardUpgradePreviewType.None, record.UpgradePreviewType);
-        Assert.EndsWith("+", record.Title);
+        Assert.EndsWith(record.MaxUpgradeLevel > 1 ? "+1" : "+", record.Title);
         string description = record.GetDescriptionForUpgradePreview();
         int searchStart = 0;
         foreach (string changedText in changedTexts)

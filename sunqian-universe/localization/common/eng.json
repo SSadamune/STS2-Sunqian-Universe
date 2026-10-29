@@ -50,5 +50,6 @@
   "SUNQIAN_UNIVERSE_COMMON.SCRIPT.selectionPrompt": "Choose Scripts to activate.",
   "SUNQIAN_UNIVERSE_COMMON.SCRIPT.reselectionPrompt": "You may reselect Scripts to activate ({Remaining} remaining this turn).",
   "SUNQIAN_UNIVERSE_COMMON.SCRIPT.viewPrompt": "View Scripts activated during this combat.",
-  "SUNQIAN_UNIVERSE_COMMON.SCRIPT.invalidationPrompt": "Choose a Script to end."
+  "SUNQIAN_UNIVERSE_COMMON.SCRIPT.invalidationPrompt": "Choose a Script to end.",
+  "SUNQIAN_UNIVERSE_COMMON.SCRIPT.wrapSelectionPrompt": "Choose one Script to end."
 }

@@ -73,6 +73,9 @@ public abstract class ScriptCardTemplate<TRecord> : ScriptCardTemplate
 	internal sealed override bool IsReinforceableScript =>
 		ModelDb.Card<TRecord>().CanBeReinforced;
 
+	protected override bool UsesReinforceActivationText =>
+		IsReinforceableScript && !ModelDb.Card<TRecord>().UsesMaterialReuse;
+
 	internal sealed override bool HasUpgradedScriptEffect =>
 		ModelDb.Card<TRecord>().HasUpgradedVersion;
 
@@ -101,7 +104,11 @@ public abstract class ScriptCardTemplate<TRecord> : ScriptCardTemplate
 		string key = UsesReinforceActivationText
 			? "SUNQIAN_UNIVERSE_CARD_SCRIPT_ACTIVATE_REINFORCE"
 			: "SUNQIAN_UNIVERSE_CARD_SCRIPT_ACTIVATE";
+		if (HasUpgradedScriptEffect)
+		{
+			key += "_UPGRADABLE";
+		}
 		LocString text = new("cards", key);
-		description.Add("ScriptUnlockText", text.GetFormattedText());
+		SquKeywords.AddNestedLoc(description, "ScriptUnlockText", text);
 	}
 }

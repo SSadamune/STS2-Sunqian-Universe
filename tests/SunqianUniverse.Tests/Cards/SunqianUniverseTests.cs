@@ -20,8 +20,8 @@ public sealed class SunqianUniverseTests : SunqianCombatTestSuite
         battle.Player<Ironclad>().AddEnemy<BigDummy>().WithSeed("sunqian-universe-collection-growth");
 
     [Theory]
-    [InlineData(false, 3, 2)]
-    [InlineData(true, 3, 2)]
+    [InlineData(false, 2, 2)]
+    [InlineData(true, 2, 2)]
     public async Task Universe_grants_dexterity_and_only_draws_for_new_records(bool upgraded, int dexterity, int draw)
     {
         await PlayerCmd.SetEnergy(20, Player);

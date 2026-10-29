@@ -21,7 +21,7 @@ namespace Squ.Powers;
 
 /// <summary>
 /// 剧本：夜袭乌巢。<see cref="CardTag.Strike"/> 卡牌攻击后，额外给予目标 <see cref="Amount"/> 层灼烧。
-/// 叠层时 <see cref="Amount"/> 累加（未升级 +4，升级 +6）。
+/// 素材复用：初始 3 层，每次剧本升级增加 2 层。
 /// </summary>
 [RegisterPower]
 public sealed class ScriptNightRaidWuchaoPower : ScriptPowerTemplate

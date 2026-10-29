@@ -47,6 +47,14 @@ public static class ScriptSystem
 		"SUNQIAN_UNIVERSE_COMMON.SCRIPT.reselectionPrompt";
 	internal const string ViewPromptKey =
 		"SUNQIAN_UNIVERSE_COMMON.SCRIPT.viewPrompt";
+	internal const string WrapSelectionPromptKey = "SUNQIAN_UNIVERSE_COMMON.SCRIPT.wrapSelectionPrompt";
+	internal static CardSelectorPrefs CreateWrapSelectionPrefs() => new(
+		new LocString(SquCommonL10n.Table, WrapSelectionPromptKey), 1)
+	{
+		Cancelable = false,
+		RequireManualConfirmation = false,
+		PretendCardsCanBePlayed = true,
+	};
 
 	internal static LocString CreateReselectionPrompt(int remaining)
 	{
@@ -243,12 +251,13 @@ public static class ScriptSystem
 		PlayerChoiceContext choiceContext,
 		Player player,
 		IReadOnlyList<ScriptPowerTemplate> activeScripts,
-		int selectCount)
+		int selectCount,
+		bool forWrap = false)
 	{
 		HashSet<Type> activeTypes = activeScripts
 			.Select(power => power.GetType())
 			.ToHashSet();
-		var prefs = new CardSelectorPrefs(InvalidationPrompt, selectCount)
+		var prefs = forWrap ? CreateWrapSelectionPrefs() : new CardSelectorPrefs(InvalidationPrompt, selectCount)
 		{
 			Cancelable = false,
 			PretendCardsCanBePlayed = true,
@@ -592,10 +601,12 @@ public static class ScriptSystem
 			return false;
 		}
 
-		foreach (ScriptPowerTemplate script in activeScripts)
+		ScriptPowerTemplate selected = activeScripts[0];
+		if (activeScripts.Count > 1 && creature.Player is { } player)
 		{
-			await RemoveScriptPowerAsync(script);
+			selected = (await ChooseScriptsToInvalidateAsync(choiceContext, player, activeScripts, 1, forWrap: true))[0];
 		}
+		await RemoveScriptPowerAsync(selected);
 		return true;
 	}
 

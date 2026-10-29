@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
+using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.Entities.Creatures;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.Models;
@@ -25,6 +26,7 @@ public sealed class ScriptSunqianPower : ScriptPowerTemplate
 	protected override IEnumerable<DynamicVar> CanonicalVars =>
 	[
 		new PowerVar<DexterityPower>(SunqianScript.BaseDexterity),
+		new CardsVar(SunqianScript.BaseDraw),
 	];
 
 	protected override async Task OnScriptApplied(Creature? applier, CardModel? cardSource)
@@ -35,11 +37,18 @@ public sealed class ScriptSunqianPower : ScriptPowerTemplate
 			? SunqianScript.UpgradedDexterity
 			: SunqianScript.BaseDexterity;
 		DynamicVars[nameof(DexterityPower)].BaseValue = dexterity;
+		DynamicVars.Cards.BaseValue = cardSource is { IsUpgraded: true } ? SunqianScript.UpgradedDraw : SunqianScript.BaseDraw;
 		await PowerCmd.Apply<TempDexPower>(
 			ActivationChoiceContext,
 			Owner,
 			dexterity,
 			Owner,
 			cardSource);
+	}
+	public override async Task AfterRemoved(Creature oldOwner)
+	{
+		if (!SuppressScriptEndEffects && oldOwner.Player is { } player && !oldOwner.IsDead)
+			await CardPileCmd.Draw(new ThrowingPlayerChoiceContext(), DynamicVars.Cards.IntValue, player);
+		await base.AfterRemoved(oldOwner);
 	}
 }

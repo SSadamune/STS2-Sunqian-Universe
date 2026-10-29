@@ -1,4 +1,5 @@
 using MegaCrit.Sts2.Core.Entities.Cards;
+using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Models.Characters;
 using MegaCrit.Sts2.Core.Models.Monsters;
 using Squ.Cards;
@@ -16,6 +17,18 @@ public sealed class ExecutionCommanderScriptTests : SunqianCombatTestSuite
             .Player<Ironclad>()
             .AddEnemy<BigDummy>()
             .WithSeed("sunqian-execution-commander-script");
+    }
+
+    [Fact]
+    public void ExecutionCommanderScript_upgrade_preview_highlights_seventy_five_percent()
+    {
+        var card = Combat.CreateCard<ExecutionCommanderScript>(Player);
+        card.UpgradePreviewType = CardUpgradePreviewType.Deck;
+        card.UpgradeInternal();
+        var record = Assert.Single(card.HoverTips.OfType<CardHoverTip>()
+            .Select(tip => tip.Card).OfType<ExecutionCommanderScriptRecord>());
+        Assert.Equal(75, record.StoredAmount);
+        Assert.Contains("[green]75[/green]", record.GetDescriptionForUpgradePreview());
     }
 
     [Fact]

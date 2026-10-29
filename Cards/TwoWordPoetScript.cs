@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.Entities.Enchantments;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
@@ -51,14 +52,19 @@ public sealed class TwoWordPoetScript : ScriptCardTemplate<TwoWordPoetScriptReco
 	protected override async Task PlayScriptAsync(PlayerChoiceContext choiceContext, CardPlay cardPlay)
 	{
 		SquSfx.Play(SquSfx.TwoWordWineAndSongEvent);
-		int vigorToStore = SquVigorSnapshot.GetAmount(Owner.Creature);
+		int vigorToStore = SquVigorSnapshot.GetEffectiveAmount(Owner.Creature, this);
 		int drunkenMightToStore = NewsanguoDrunkenMightEffect.ConsumedByAttack(Owner.Creature);
 		int enchantedVigorToStore = GetVigorousEnchantmentAmount();
+		var attack = DamageCmd.Attack(DynamicVars.Damage.BaseValue).WithHitCount(CanonicalHits).FromCard(this, cardPlay);
+		if (IsUpgraded)
+			await attack.TargetingAllOpponents(CombatState!).Execute(choiceContext);
+		else
+			await attack.TargetingRandomOpponents(CombatState!).Execute(choiceContext);
 
 		await UnlockScriptAsync(
 			choiceContext,
 			CanonicalDamage,
-			afterActivation: record => StoreConsumedVigor(
+			configureRecord: record => StoreConsumedVigor(
 				record,
 				vigorToStore + drunkenMightToStore + enchantedVigorToStore));
 	}

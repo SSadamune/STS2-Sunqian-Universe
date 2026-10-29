@@ -25,13 +25,13 @@ public sealed class AllScriptCardsTests : SunqianCombatTestSuite
     private static readonly ScriptCase[] Cases =
     [
         new(typeof(BombardChibiScript), typeof(BombardChibiScriptRecord), typeof(ScriptBombardChibiPower), false),
-        new(typeof(BowangParadoxScript), typeof(BowangParadoxAdvanceScriptRecord), typeof(ScriptBowangParadoxAdvancePower), false),
+        new(typeof(BowangParadoxScript), typeof(BowangParadoxAdvanceScriptRecord), typeof(ScriptBowangParadoxAdvancePower), true),
         new(typeof(GuanDiForm), typeof(GuanYuCivilVer), typeof(GuanYuCivilVerPower), false),
         new(typeof(BurningLinkedCampsScript), typeof(BurningLinkedCampsScriptRecord), typeof(ScriptBurningLinkedCampsPower), false),
         new(typeof(ChickenFootCheeseScript), typeof(ChickenFootCheeseScriptRecord), typeof(ScriptChickenFootCheesePower), false),
         new(typeof(EunuchScript), typeof(EunuchScriptRecord), typeof(ScriptEunuchPower), false),
         new(typeof(ExecutionCommanderScript), typeof(ExecutionCommanderScriptRecord), typeof(ScriptExecutionCommanderPower), true),
-        new(typeof(HeadsmanScript), typeof(HeadsmanScriptRecord), typeof(ScriptHeadsmanPower), false),
+        new(typeof(HeadsmanScript), typeof(HeadsmanScriptRecord), typeof(ScriptHeadsmanPower), true),
         new(typeof(NeutralAmbushScript), typeof(NeutralAmbushScriptRecord), typeof(ScriptNeutralAmbushPower), false),
         new(typeof(NightRaidWuchaoScript), typeof(NightRaidWuchaoScriptRecord), typeof(ScriptNightRaidWuchaoPower), true),
         new(typeof(OneManOneCity), typeof(OneManOneCityScriptRecord), typeof(ScriptOneManOneCityPower), false),
@@ -79,21 +79,14 @@ public sealed class AllScriptCardsTests : SunqianCombatTestSuite
     }
 
     [Fact]
-    public void Script_record_descriptions_only_color_the_fixed_civil_multiplier_blue()
+    public void Script_record_descriptions_do_not_color_dynamic_values_blue()
     {
         foreach (ScriptCase testCase in Cases)
         {
             CardModel record = ModelDb.GetById<CardModel>(ModelDb.GetId(testCase.RecordType));
 
             string description = record.GetDescriptionForPile(PileType.Deck);
-            if (record is GuanYuCivilVer)
-            {
-                Assert.Contains("[blue]2[/blue]", description);
-            }
-            else
-            {
-                Assert.DoesNotContain("[blue]", description);
-            }
+            Assert.DoesNotContain("[blue]", description);
         }
     }
 
@@ -113,9 +106,11 @@ public sealed class AllScriptCardsTests : SunqianCombatTestSuite
 
             void AssertDescription(string description, CardModel card)
             {
+                description = description.Replace("[green]", "").Replace("[/green]", "").Replace("剧本+", "剧本");
                 if (card is GuanDiForm)
                 {
-                    Assert.Contains("将剧本：[gold]文关羽[/gold]和剧本：[gold]武关羽[/gold]加入剧本集。", description);
+                    Assert.Contains("将两张剧本牌加入你的[gold]剧本集[/gold]。", description);
+                    Assert.Contains("你的[gold]激活上限[/gold]+1。", description);
                     return;
                 }
                 if (card is BowangParadoxScript)
@@ -144,7 +139,8 @@ public sealed class AllScriptCardsTests : SunqianCombatTestSuite
                     Assert.Contains(activation + "。" + exhaust, activationLine);
                 }
 
-                if (testCase.CanBeReinforced && testCase.CardType != typeof(PartTimeGeneralScript))
+                if (testCase.CanBeReinforced && !canonical.CreateScriptRecordPreview().UsesMaterialReuse
+                    && testCase.CardType != typeof(PartTimeGeneralScript))
                 {
                     Assert.Contains(activation + "，若激活过则还会将数值叠加。", description);
                 }
@@ -212,13 +208,13 @@ public sealed class AllScriptCardsTests : SunqianCombatTestSuite
 
     [Theory]
     [InlineData(typeof(BombardChibiScript), typeof(BombardChibiScriptRecord), typeof(ScriptBombardChibiPower), false)]
-    [InlineData(typeof(BowangParadoxScript), typeof(BowangParadoxAdvanceScriptRecord), typeof(ScriptBowangParadoxAdvancePower), false)]
+    [InlineData(typeof(BowangParadoxScript), typeof(BowangParadoxAdvanceScriptRecord), typeof(ScriptBowangParadoxAdvancePower), true)]
     [InlineData(typeof(GuanDiForm), typeof(GuanYuCivilVer), typeof(GuanYuCivilVerPower), false)]
     [InlineData(typeof(BurningLinkedCampsScript), typeof(BurningLinkedCampsScriptRecord), typeof(ScriptBurningLinkedCampsPower), false)]
     [InlineData(typeof(ChickenFootCheeseScript), typeof(ChickenFootCheeseScriptRecord), typeof(ScriptChickenFootCheesePower), false)]
     [InlineData(typeof(EunuchScript), typeof(EunuchScriptRecord), typeof(ScriptEunuchPower), false)]
     [InlineData(typeof(ExecutionCommanderScript), typeof(ExecutionCommanderScriptRecord), typeof(ScriptExecutionCommanderPower), true)]
-    [InlineData(typeof(HeadsmanScript), typeof(HeadsmanScriptRecord), typeof(ScriptHeadsmanPower), false)]
+    [InlineData(typeof(HeadsmanScript), typeof(HeadsmanScriptRecord), typeof(ScriptHeadsmanPower), true)]
     [InlineData(typeof(NeutralAmbushScript), typeof(NeutralAmbushScriptRecord), typeof(ScriptNeutralAmbushPower), false)]
     [InlineData(typeof(NightRaidWuchaoScript), typeof(NightRaidWuchaoScriptRecord), typeof(ScriptNightRaidWuchaoPower), true)]
     [InlineData(typeof(OneManOneCity), typeof(OneManOneCityScriptRecord), typeof(ScriptOneManOneCityPower), false)]

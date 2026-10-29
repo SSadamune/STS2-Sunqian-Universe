@@ -50,5 +50,6 @@
   "SUNQIAN_UNIVERSE_COMMON.SCRIPT.selectionPrompt": "选择要激活的剧本。",
   "SUNQIAN_UNIVERSE_COMMON.SCRIPT.reselectionPrompt": "你可以重新选择要激活的剧本（本回合剩余{Remaining}次）。",
   "SUNQIAN_UNIVERSE_COMMON.SCRIPT.viewPrompt": "查看本场战斗中激活过的剧本。",
-  "SUNQIAN_UNIVERSE_COMMON.SCRIPT.invalidationPrompt": "选择要[red]失效[/red]的剧本。"
+  "SUNQIAN_UNIVERSE_COMMON.SCRIPT.invalidationPrompt": "选择要[red]失效[/red]的剧本。",
+  "SUNQIAN_UNIVERSE_COMMON.SCRIPT.wrapSelectionPrompt": "选择一个要[red]失效[/red]的剧本。"
 }

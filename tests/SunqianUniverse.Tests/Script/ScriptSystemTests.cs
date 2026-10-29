@@ -194,7 +194,7 @@ public sealed class ScriptSystemTests : SunqianCombatTestSuite
         ExecutionCommanderScriptRecord record = Assert.Single(
             ScriptSystem.ScriptCollectionPile.GetPile(Player).Cards
                 .OfType<ExecutionCommanderScriptRecord>());
-        Assert.Equal(ExecutionCommanderScript.BaseBonusPercent * 2, record.StoredAmount);
+        Assert.Equal(ExecutionCommanderScript.BaseBonusPercent + 25, record.StoredAmount);
         var reinforcedPower = Assert.IsType<ScriptExecutionCommanderPower>(
             Player.Creature.GetPower<ScriptExecutionCommanderPower>());
         Assert.NotSame(firstPower, reinforcedPower);
@@ -202,50 +202,50 @@ public sealed class ScriptSystemTests : SunqianCombatTestSuite
         Assert.Equal(0, ScriptSystem.GetScriptLiftsThisTurn(Player));
     }
 
-    [Fact]
-    public async Task Sunqian_draws_on_play_and_its_temporary_dexterity_survives_switching_out()
+    [Theory]
+    [InlineData(false, 1)]
+    [InlineData(true, 2)]
+    public async Task Sunqian_draws_only_when_lifted_and_keeps_two_temporary_dexterity(bool upgraded, int drawCount)
     {
+        await PlayerCmd.SetEnergy(10, Player);
         var second = await AddToDrawPileTop<StrikeIronclad>();
-        var drawn = await AddToDrawPileTop<DefendIronclad>();
-        await PlayScript<SunqianScript>();
-        AssertInPile(drawn, PileType.Hand);
-        AssertInPile(second, PileType.Hand);
-        CardTestAssertions.AssertPowerAmount<DexterityPower>(
-            Player.Creature,
-            SunqianScript.BaseDexterity);
-        CardTestAssertions.AssertPowerAmount<TempDexPower>(
-            Player.Creature,
-            SunqianScript.BaseDexterity);
-        var staysInDrawPile = await AddToDrawPileTop<StrikeIronclad>();
-
+        var first = await AddToDrawPileTop<DefendIronclad>();
+        var source = await AddToHand<SunqianScript>();
+        if (upgraded) Upgrade(source);
+        await Play(source);
+        AssertInPile(first, PileType.Draw);
+        AssertInPile(second, PileType.Draw);
+        CardTestAssertions.AssertPowerAmount<DexterityPower>(Player.Creature, 2);
+        CardTestAssertions.AssertPowerAmount<TempDexPower>(Player.Creature, 2);
         await PlayScript<ServantScript>();
-
-        CardTestAssertions.AssertPowerAmount<DexterityPower>(
-            Player.Creature,
-            SunqianScript.BaseDexterity);
-        CardTestAssertions.AssertPowerAmount<TempDexPower>(
-            Player.Creature,
-            SunqianScript.BaseDexterity);
-        AssertInPile(staysInDrawPile, PileType.Draw);
+        AssertInPile(first, PileType.Hand);
+        AssertInPile(second, drawCount == 2 ? PileType.Hand : PileType.Draw);
+        CardTestAssertions.AssertPowerAmount<DexterityPower>(Player.Creature, 2);
+        CardTestAssertions.AssertPowerAmount<TempDexPower>(Player.Creature, 2);
         AssertOnlyScript<ScriptServantPower>();
     }
 
-    [Fact]
-    public async Task Upgraded_sunqian_draws_two_and_grants_three_temporary_dexterity()
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public async Task Sunqian_keeps_the_upgraded_draw_when_played_in_either_order(bool upgradedFirst)
     {
-        CardModel second = await AddToDrawPileTop<DefendIronclad>();
-        CardModel first = await AddToDrawPileTop<StrikeIronclad>();
-
-        await Play(Upgrade(await AddToHand<SunqianScript>()));
-
-        AssertInPile(first, PileType.Hand);
-        AssertInPile(second, PileType.Hand);
-        CardTestAssertions.AssertPowerAmount<TempDexPower>(
-            Player.Creature,
-            SunqianScript.UpgradedDexterity);
-        CardTestAssertions.AssertPowerAmount<DexterityPower>(
-            Player.Creature,
-            SunqianScript.UpgradedDexterity);
+        await PlayerCmd.SetEnergy(10, Player);
+        var first = await AddToHand<SunqianScript>();
+        if (upgradedFirst) Upgrade(first);
+        await Play(first);
+        var second = await AddToHand<SunqianScript>();
+        if (!upgradedFirst) Upgrade(second);
+        await Play(second);
+        var power = Player.Creature.GetPower<ScriptSunqianPower>()!;
+        Assert.Equal(2, power.DynamicVars.Cards.IntValue);
+        foreach (var card in PileType.Hand.GetPile(Player).Cards.ToArray())
+            await CardPileCmd.Add(card, PileType.Discard);
+        var one = await AddToDrawPileTop<Wound>();
+        var two = await AddToDrawPileTop<Wound>();
+        await ScriptSystem.RemoveScriptPowerAsync(power);
+        AssertInPile(one, PileType.Hand);
+        AssertInPile(two, PileType.Hand);
     }
 
     [Fact]

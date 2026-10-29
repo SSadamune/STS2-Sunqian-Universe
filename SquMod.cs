@@ -50,6 +50,10 @@ public static class SquMod
 			.CharacterStarterRelic<SunqianCharacter, BoxLunchRelic>(1)
 			.CardKeywordOwnedByLocNamespace("script")
 			.CardKeywordOwnedByLocNamespace("script_collection")
+			.CardKeywordOwnedByLocNamespace(
+				"material_reuse", iconPath: null,
+				ModKeywordCardDescriptionPlacement.AfterCardDescription,
+				includeInCardHoverTip: true)
 			.CardKeywordOwnedByLocNamespace("doom_kill_threshold")
 			.CardKeywordOwnedByLocNamespace("multi_target")
 			.CardKeywordOwnedByLocNamespace("environmental")

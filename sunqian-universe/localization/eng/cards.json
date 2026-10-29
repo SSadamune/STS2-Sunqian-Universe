@@ -44,7 +44,7 @@
   "SUNQIAN_UNIVERSE_CARD_BURNING_LINKED_CAMPS_SCRIPT.title": "Burning Linked Camps Script",
   "SUNQIAN_UNIVERSE_CARD_BURNING_LINKED_CAMPS_SCRIPT.description": "Add 1 [gold]Burn[/gold] to your [gold]Hand[/gold] and 1 [gold]{IfUpgraded:show:Shangfanggu's Sigh+|Shangfanggu's Sigh}[/gold] to your [gold]Draw Pile[/gold].\n{ScriptUnlockText}",
   "SUNQIAN_UNIVERSE_CARD_TWO_WORD_POET_SCRIPT.title": "Two-Word Poet Script",
-  "SUNQIAN_UNIVERSE_CARD_TWO_WORD_POET_SCRIPT.description": "This Script's damage retains this card's [gold]Vigor[/gold] bonus.\n{ScriptUnlockText}",
+  "SUNQIAN_UNIVERSE_CARD_TWO_WORD_POET_SCRIPT.description": "Deal {Damage:diff()} damage {Repeat} times to {IfUpgraded:show:ALL enemies|random enemies}.\nThis Script's damage retains this card's [gold]Vigor[/gold] bonus.\n{ScriptUnlockText}",
   "SUNQIAN_UNIVERSE_CARD_THROW_HIM_OUT.title": "Throw Him Out",
   "SUNQIAN_UNIVERSE_CARD_THROW_HIM_OUT.description": "Deal {Damage:diff()} damage. Gain [gold]Block[/gold] equal to the damage dealt.",
   "SUNQIAN_UNIVERSE_CARD_SERVANT_SCRIPT.title": "Servant Script",
@@ -97,7 +97,7 @@
   "SUNQIAN_UNIVERSE_CARD_GOLDEN_UPRISING.description": "Spend {Gold:diff()} [gold]Gold[/gold]. Choose {Cards:diff()} from up to 20 cards at the bottom of your [gold]Draw Pile[/gold] and put them into your [gold]Hand[/gold].",
   "SUNQIAN_UNIVERSE_CARD_GOLDEN_UPRISING.selectionScreenPrompt": "Choose {Amount} cards to put into your Hand.",
   "SUNQIAN_UNIVERSE_CARD_SUNQIAN_SCRIPT.title": "Sunqian Script",
-  "SUNQIAN_UNIVERSE_CARD_SUNQIAN_SCRIPT.description": "Draw {Cards:diff()} {Cards:plural:card|cards}.\n{ScriptUnlockText}",
+  "SUNQIAN_UNIVERSE_CARD_SUNQIAN_SCRIPT.description": "{ScriptUnlockText}",
   "SUNQIAN_UNIVERSE_CARD_GRUNT_SCRIPT.title": "Grunt Script",
   "SUNQIAN_UNIVERSE_CARD_GRUNT_SCRIPT.description": "Deal {Damage:diff()} damage. Refund the [gold]Vigor[/gold] spent by this card.\n{ScriptUnlockText}",
   "SUNQIAN_UNIVERSE_CARD_BUDDY_TANGXIAOHU.title": "Buddy Tangxiaohu",
@@ -302,9 +302,9 @@
   "SUNQIAN_UNIVERSE_CARD_SCRIPT_RECORD_SERVANT.title": "Servant",
   "SUNQIAN_UNIVERSE_CARD_SCRIPT_RECORD_SERVANT.description": "When [gold]activated[/gold], add 1 [gold]{IfUpgraded:show:Throw Him Out+|Throw Him Out}[/gold] to your Hand.",
   "SUNQIAN_UNIVERSE_CARD_SCRIPT_RECORD_TWO_WORD_POET.title": "Two-Word Poet",
-  "SUNQIAN_UNIVERSE_CARD_SCRIPT_RECORD_TWO_WORD_POET.description": "When [gold]activated[/gold], deal {ScriptDamage} damage {Repeat} times to {IfUpgraded:show:ALL enemies|a random enemy}.",
+  "SUNQIAN_UNIVERSE_CARD_SCRIPT_RECORD_TWO_WORD_POET.description": "At the start of each turn, deal {ScriptDamage} damage {Repeat} times to {IfUpgraded:show:ALL enemies|random enemies}.",
   "SUNQIAN_UNIVERSE_CARD_SCRIPT_RECORD_SUNQIAN.title": "Sunqian",
-  "SUNQIAN_UNIVERSE_CARD_SCRIPT_RECORD_SUNQIAN.description": "When [gold]activated[/gold], gain {Dexterity:diff()} [gold]Dexterity[/gold] this turn.",
+  "SUNQIAN_UNIVERSE_CARD_SCRIPT_RECORD_SUNQIAN.description": "When [gold]activated[/gold], gain {Dexterity:diff()} [gold]Dexterity[/gold] this turn.\nWhen [gold]deactivated[/gold], draw {Cards:diff()} {Cards:plural:card|cards}.",
   "SUNQIAN_UNIVERSE_CARD_SCRIPT_RECORD_GRUNT.title": "Grunt",
   "SUNQIAN_UNIVERSE_CARD_SCRIPT_RECORD_GRUNT.description": "Your [gold]Strike Cards[/gold] deal {BonusDamage:diff()} additional damage.",
   "SUNQIAN_UNIVERSE_CARD_SCRIPT_RECORD_BURNING_LINKED_CAMPS.title": "Burning Linked Camps",
@@ -331,5 +331,7 @@
   "SUNQIAN_UNIVERSE_CARD_SCRIPT_RECORD_EUNUCH.description": "[gold]Ethereal[/gold] on cards in your [gold]Hand[/gold] is treated as [gold]Retain[/gold].",
   "SUNQIAN_UNIVERSE_CARD_SCRIPT_RECORD_PART_TIME_GENERAL.title": "Part-Time General",
   "SUNQIAN_UNIVERSE_CARD_SCRIPT_RECORD_PART_TIME_GENERAL.description": "When [gold]deactivated[/gold], add a recorded card to your [gold]Hand[/gold]. The next time it is played, it is free. Remove that record.{RecordDetails}",
-  "SUNQIAN_UNIVERSE_CARD_SCRIPT_RECORD_PART_TIME_GENERAL.recordDetails": "\nCurrent records: {RecordedCards}."
+  "SUNQIAN_UNIVERSE_CARD_SCRIPT_RECORD_PART_TIME_GENERAL.recordDetails": "\nCurrent records: {RecordedCards}.",
+  "SUNQIAN_UNIVERSE_CARD_SCRIPT_ACTIVATE_UPGRADABLE": "Activate this [gold]{IfUpgraded:show:Script+|Script}[/gold].",
+  "SUNQIAN_UNIVERSE_CARD_SCRIPT_ACTIVATE_REINFORCE_UPGRADABLE": "Activate this [gold]{IfUpgraded:show:Script+|Script}[/gold]; if it has been activated before, also stack its values."
 }

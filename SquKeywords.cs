@@ -17,6 +17,10 @@ namespace Squ;
 /// </summary>
 public static class SquKeywords
 {
+	public static readonly string MaterialReuseId = ModContentRegistry
+		.GetQualifiedKeywordId(SquMod.ModId, "material_reuse");
+	public static readonly CardKeyword MaterialReuse = MaterialReuseId.GetModCardKeyword();
+
 	public static readonly string ScriptId = ModContentRegistry
 		.GetQualifiedKeywordId(SquMod.ModId, "script");
 

@@ -37,7 +37,7 @@
   "SUNQIAN_UNIVERSE_KEYWORD_ENTHRALLED.title": "执迷",
   "SUNQIAN_UNIVERSE_KEYWORD_ENTHRALLED.description": "如果此牌在你的[gold]手牌[/gold]中，你必须优先打出有[gold]执迷[/gold]的牌。",
   "SUNQIAN_UNIVERSE_KEYWORD_WRAP.title": "卸妆",
-  "SUNQIAN_UNIVERSE_KEYWORD_WRAP.description": "打出此牌时，如果你有[gold]剧本[/gold]能力，则令所有剧本失效并执行卸妆效果。",
+  "SUNQIAN_UNIVERSE_KEYWORD_WRAP.description": "打出此牌时，如果你有[gold]剧本[/gold]能力，则令一个剧本失效并执行卸妆效果。如果有多个激活中的剧本，选择其中一个。",
   "SUNQIAN_UNIVERSE_KEYWORD_STRONG_MONSTER_ENCOUNTER.title": "强怪遭遇战",
   "SUNQIAN_UNIVERSE_KEYWORD_STRONG_MONSTER_ENCOUNTER.description": "如果你在每层打过较多数量的普通怪物遭遇战，则会开始出现较强的怪物组合，即[gold]强怪遭遇战[/gold]：\n第一阶段是从第[blue]四[/blue]个开始；第二、三阶段是从第[blue]三[/blue]个开始。",
   "SUNQIAN_UNIVERSE_KEYWORD_SLIGHT_REVISION.title": "稍作修改",
@@ -48,5 +48,7 @@
   "SUNQIAN_UNIVERSE_KEYWORD_SUPREME_GENERAL.description": "在具有[gold]上将军[/gold]牌的结算过程中，被自动打出的其它攻击牌视为具有[gold]上将军[/gold]的[gold]活力[/gold]加成。",
   "SUNQIAN_UNIVERSE_KEYWORD_SUPREME_GENERAL.descriptionWithDrunkenMight": "在具有[gold]上将军[/gold]牌的结算过程中，被自动打出的其它攻击牌视为具有[gold]上将军[/gold]的[gold]活力[/gold]{DrunkenMightOr}加成。",
   "SUNQIAN_UNIVERSE_KEYWORD_FAMILY.title": "家人",
-  "SUNQIAN_UNIVERSE_KEYWORD_FAMILY.description": "当需要计算[gold]打出率[/gold]时，这张牌的[gold]打出率[/gold]视为[blue]100%[/blue]。"
+  "SUNQIAN_UNIVERSE_KEYWORD_FAMILY.description": "当需要计算[gold]打出率[/gold]时，这张牌的[gold]打出率[/gold]视为[blue]100%[/blue]。",
+  "SUNQIAN_UNIVERSE_KEYWORD_MATERIAL_REUSE.title": "素材复用",
+  "SUNQIAN_UNIVERSE_KEYWORD_MATERIAL_REUSE.description": "如果[gold]剧本集[/gold]中已经存在此剧本，则当你再次打出对应的剧本牌时，会将此剧本升级。"
 }

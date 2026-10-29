@@ -51,9 +51,9 @@ public sealed class TextSynchronizationTests : SunqianCombatTestSuite
         Assert.Contains(language == "zhs" ? "每回合限一次" : "Once per turn", abundantBoxLunch);
         Assert.Equal(2, abundantBoxLunch.Split("{energyPrefix:energyIcons(1)}").Length - 1);
         string wrap = keywords.RootElement.GetProperty("SUNQIAN_UNIVERSE_KEYWORD_WRAP.description").GetString()!;
-        Assert.DoesNotContain(language == "zhs" ? "若有多个" : "If multiple", wrap);
+        Assert.Contains(language == "zhs" ? "选择其中一个" : "choose one", wrap);
         Assert.Contains(language == "zhs" ? "[gold]剧本[/gold]能力" : "[gold]Script[/gold] Power", wrap);
-        Assert.Contains(language == "zhs" ? "令所有剧本失效" : "end all Scripts", wrap);
+        Assert.Contains(language == "zhs" ? "令一个剧本失效" : "end one Script", wrap);
         foreach (var table in new[] { cards, powers, keywords })
         {
             foreach (var entry in table.RootElement.EnumerateObject())

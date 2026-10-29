@@ -10,17 +10,14 @@ using STS2RitsuLib.Scaffolding.Content;
 namespace Squ.Cards;
 
 public abstract class BowangParadoxScriptRecordTemplate<TPower>
-    : ScriptRecordCardTemplate<TPower, BowangParadoxScript>
+    : MaterialReuseScriptRecordCardTemplate<TPower, BowangParadoxScript>
     where TPower : ScriptPowerTemplate
 {
-    internal override bool HasUpgradedVersion => true;
-    protected override IEnumerable<DynamicVar> CanonicalVars =>
-        [new DynamicVar("ScriptAmount", BowangParadoxScript.BaseVigor)];
-    protected override void SyncDisplayVars() => DynamicVars["ScriptAmount"].BaseValue = StoredAmount;
+    protected override int InitialAmount => 7;
+    protected override int AmountPerUpgrade => 2;
     public override CardAssetProfile AssetProfile => new(
         PortraitPath: "res://images/cards/BowangParadoxScript.png");
-    protected override void OnUpgrade() => DynamicVars["ScriptAmount"].UpgradeValueBy(
-        BowangParadoxScript.UpgradedVigor - BowangParadoxScript.BaseVigor);
+
 }
 
 [RegisterCard(typeof(TokenCardPool), StableEntryStem = "script_record_bowang_paradox_advance")]
