@@ -83,11 +83,9 @@ public sealed class VigorAmplificationPower : ModPowerTemplate
 
 		CardModel? activeCard = GetInternalData<Data>().ActiveCard;
 		if (OnlyFirstAttackThisTurn && activeCard is null
-			&& CombatManager.Instance.History.CardPlaysStarted.Any(entry =>
-				entry.HappenedThisTurn(CombatState) && entry.CardPlay.Player == Owner.Player
-				&& entry.CardPlay.Card.Type == CardType.Attack
-				&& !ChaosHarmedYou.DoesNotConsumeAttackPlayTracking(entry.CardPlay.Card)
-				&& !(ReferenceEquals(entry.CardPlay.Card, card) && card.Pile?.Type == PileType.Play)))
+			&& CombatState is { } state
+			&& TurnCardHistory.Get(state).CountAttacks(card.Owner, 1,
+				card.Pile?.Type == PileType.Play ? card : null) > 0)
 		{
 			return 0;
 		}

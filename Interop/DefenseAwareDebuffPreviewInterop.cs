@@ -46,6 +46,22 @@ internal static class DefenseAwareDebuffPreviewInterop
 	private static ApiBinding? _binding;
 	private static bool _resolutionFailed;
 	private static bool _invocationFailureLogged;
+	private static bool _assemblyLookupNeeded = true;
+
+	static DefenseAwareDebuffPreviewInterop()
+	{
+		// Also cache absence: health-bar refreshes must not enumerate all loaded
+		// assemblies every time. A late optional-mod load invalidates that result.
+		AppDomain.CurrentDomain.AssemblyLoad += (_, args) =>
+		{
+			if (string.Equals(args.LoadedAssembly.GetName().Name, AssemblyName,
+				StringComparison.OrdinalIgnoreCase))
+			{
+				lock (BindingLock)
+					_assemblyLookupNeeded = true;
+			}
+		};
+	}
 
 	/// <summary>
 	/// Calculates UI-only HP loss for the requested debuff. Enemy Poison and Burning
@@ -194,19 +210,23 @@ internal static class DefenseAwareDebuffPreviewInterop
 
 	private static bool TryGetBinding(out ApiBinding binding)
 	{
-		Assembly? assembly = AppDomain.CurrentDomain.GetAssemblies()
-			.FirstOrDefault(static candidate => string.Equals(
-				candidate.GetName().Name,
-				AssemblyName,
-				StringComparison.OrdinalIgnoreCase));
-		if (assembly is null)
-		{
-			binding = null!;
-			return false;
-		}
-
 		lock (BindingLock)
 		{
+			if (!_assemblyLookupNeeded)
+			{
+				binding = _binding!;
+				return _binding is not null && !_resolutionFailed;
+			}
+			_assemblyLookupNeeded = false;
+			Assembly? assembly = AppDomain.CurrentDomain.GetAssemblies()
+				.FirstOrDefault(static candidate => string.Equals(
+					candidate.GetName().Name, AssemblyName, StringComparison.OrdinalIgnoreCase));
+			if (assembly is null)
+			{
+				binding = null!;
+				return false;
+			}
+
 			if (ReferenceEquals(assembly, _resolvedAssembly))
 			{
 				binding = _binding!;

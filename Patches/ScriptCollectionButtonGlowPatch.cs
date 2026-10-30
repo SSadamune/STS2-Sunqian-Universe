@@ -38,11 +38,13 @@ internal static class ScriptCollectionButtonGlowPatch
 			};
 			icon.AddChild(glow);
 			glow.SetAnchorsAndOffsetsPreset(Control.LayoutPreset.FullRect);
+			// Layout changes are infrequent; do not send an identical uniform every frame.
+			var material = (ShaderMaterial)glow.Material;
+			material.SetShaderParameter("icon_size", icon.Size.Max(Vector2.One));
+			glow.Resized += () => material.SetShaderParameter("icon_size", glow.Size.Max(Vector2.One));
 		}
 
 		glow.Visible = ____player?.GetRelic<BoxLunchRelic>()?.CanReselectFromScriptCollection() == true;
-		if (glow.Visible)
-			((ShaderMaterial)glow.Material).SetShaderParameter("icon_size", icon.Size.Max(Vector2.One));
 	}
 
 	// Expand the draw geometry so the halo extends beyond the icon's rectangle.

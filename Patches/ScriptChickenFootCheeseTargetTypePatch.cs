@@ -45,9 +45,10 @@ internal static class ScriptChickenFootCheeseDescriptionPatch
 
 	[HarmonyPostfix]
 	[HarmonyPriority(Priority.Last)]
-	private static void Postfix(CardModel __instance, ref string __result)
+	private static void Postfix(CardModel __instance, PileType pileType, ref string __result)
 	{
-		if (!ScriptChickenFootCheesePower.ShouldDisplayRedirectedBasicStrike(__instance)
+		if (pileType is not (PileType.Hand or PileType.Play)
+			|| !ScriptChickenFootCheesePower.ShouldDisplayRedirectedBasicStrike(__instance)
 			|| __instance.Capability<ChickenFootCheeseStrikeCapability>() is not { } capability)
 		{
 			return;

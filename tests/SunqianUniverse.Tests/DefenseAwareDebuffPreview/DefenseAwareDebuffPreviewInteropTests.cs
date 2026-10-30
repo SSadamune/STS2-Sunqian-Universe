@@ -62,10 +62,10 @@ public sealed class DefenseAwareDebuffPreviewInteropTests : SunqianCombatTestSui
         AssertPowerOrder(enemy, poison, burning);
 
         int hpBefore = enemy.CurrentHp;
-        HealthBarForecastSegment? poisonSegment = GetOrderedPoisonPreviews(poison)
-            .SingleOrDefault();
+        // HealthBarForecastSegment is a struct: SingleOrDefault returns a zero
+        // struct for an empty sequence, not a nullable with no value.
+        Assert.Empty(GetOrderedPoisonPreviews(poison));
         HealthBarForecastSegment burningSegment = GetBurningPreview(burning);
-        Assert.Null(poisonSegment);
         Assert.Equal(4, burningSegment.Amount);
         Assert.Equal(1, burningSegment.Order);
         Assert.Equal(hpBefore, enemy.CurrentHp);
@@ -176,8 +176,13 @@ public sealed class DefenseAwareDebuffPreviewInteropTests : SunqianCombatTestSui
         return Assert.IsType<TPower>(target.GetPower<TPower>());
     }
 
-    private static int CalculateBurningPreview(BurningPower burning) =>
-        GetBurningPreview(burning).Amount;
+    private static int CalculateBurningPreview(BurningPower burning)
+    {
+        var segments = burning.GetHealthBarForecastSegments(new(burning.Owner)).ToArray();
+        Assert.InRange(segments.Length, 0, 1);
+        // Zero predicted HP loss intentionally has no visible health-bar segment.
+        return segments.Sum(segment => segment.Amount);
+    }
 
     private static HealthBarForecastSegment GetBurningPreview(BurningPower burning) =>
         Assert.Single(burning.GetHealthBarForecastSegments(new(burning.Owner)));

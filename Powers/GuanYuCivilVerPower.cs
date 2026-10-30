@@ -15,6 +15,7 @@ using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.Powers;
 using MegaCrit.Sts2.Core.ValueProps;
 using Squ.Cards;
+using Squ.Combat;
 using STS2RitsuLib.Interop.AutoRegistration;
 using STS2RitsuLib.Scaffolding.Content;
 
@@ -35,14 +36,18 @@ public sealed class GuanYuCivilVerPower : ScriptPowerTemplate
     public override string MutuallyExclusiveGroup => GuanYuCivilVer.FormGroup;
     protected override object InitInternalData() => new Data();
     protected override IEnumerable<DynamicVar> CanonicalVars => [new OwnerEffectiveBlockVar(), new EnergyVar(1)];
-    private int EnergySpentThisTurn => IsMutable && Owner.Player is { } player
-        ? CombatManager.Instance.History.CardPlaysStarted.Where(entry =>
-            entry.HappenedThisTurn(CombatState) && entry.CardPlay.Player == player && entry.CardPlay.PlayIndex == 0)
-            .Sum(entry => entry.CardPlay.Resources.EnergySpent)
+    private int EnergySpentThisTurn => IsMutable && Owner.Player is { } player && CombatState is { } state
+        ? TurnCardHistory.Get(state).EnergySpent(player)
         : 0;
-    private decimal EffectiveBlockAtTurnEnd => EnergySpentThisTurn > 0
-        ? Math.Max(0, Amount * EnergySpentThisTurn
-            + (Owner.GetPower<DexterityPower>()?.Amount ?? 0)) : 0;
+    private decimal EffectiveBlockAtTurnEnd
+    {
+        get
+        {
+            int energy = EnergySpentThisTurn;
+            return energy > 0 ? Math.Max(0, Amount * energy
+                + (Owner.GetPower<DexterityPower>()?.Amount ?? 0)) : 0;
+        }
+    }
     public override PowerAssetProfile AssetProfile => new(
         IconPath: "res://images/powers/GuanYuCivilVerPower.png",
         BigIconPath: "res://images/powers/GuanYuCivilVerPowerBig.png");

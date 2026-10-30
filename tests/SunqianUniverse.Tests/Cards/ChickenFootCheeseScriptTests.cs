@@ -1,6 +1,8 @@
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.Commands;
+using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.Cards;
+using MegaCrit.Sts2.Core.Multiplayer.Serialization;
 using MegaCrit.Sts2.Core.Models.Characters;
 using MegaCrit.Sts2.Core.Models.Monsters;
 using MegaCrit.Sts2.Core.Models.Powers;
@@ -196,4 +198,51 @@ public sealed class ChickenFootCheeseScriptTests : SunqianCombatTestSuite
         Assert.Equal(firstHpBefore - expectedDamage, first.CurrentHp);
         Assert.Equal(secondHpBefore - expectedDamage, second.CurrentHp);
     }
+    [Theory]
+    [InlineData(PileType.Hand)]
+    [InlineData(PileType.Play)]
+    [InlineData(PileType.Draw)]
+    [InlineData(PileType.Discard)]
+    [InlineData(PileType.Exhaust)]
+    public async Task Local_preview_does_not_change_serialized_state_and_only_displays_in_hand_or_play(PileType pile)
+    {
+        await PlayAndActivateScript(Upgrade(await AddToHand<ChickenFootCheeseScript>()));
+        var strike = await AddToHand<StrikeIronclad>();
+        await CardPileCmd.Add(strike, pile);
+        await ApplyPower<VigorPower>(Player.Creature, 2);
+        var capability = strike.Capability<ChickenFootCheeseStrikeCapability>()!;
+        var damage = capability.DynamicVars[ChickenFootCheeseStrikeCapability.FollowUpDamageVarName];
+        byte[] before = Serialize(strike);
+        string? capabilityState = capability.SaveState()?.ToJsonString();
+
+        foreach (bool globalHooks in new[] { false, true })
+        {
+            damage.UpdateCardPreview(strike, CardPreviewMode.Normal, EnemyAt(0), globalHooks);
+            string text = strike.GetDescriptionForPile(pile);
+            bool onTable = pile is PileType.Hand or PileType.Play;
+            Assert.Equal(onTable ? (globalHooks ? 11 : 9) : 3, damage.PreviewValue);
+            Assert.Equal(3, damage.BaseValue);
+            Assert.Equal(onTable, text.Contains("再造成"));
+            Assert.Equal(before, Serialize(strike));
+            Assert.Equal(capabilityState, capability.SaveState()?.ToJsonString());
+        }
+
+        if (pile is PileType.Hand or PileType.Play)
+        {
+            Assert.DoesNotContain("再造成", strike.GetDescriptionForPile(PileType.Deck));
+            await CardPileCmd.Add(strike, PileType.Draw);
+            damage.UpdateCardPreview(strike, CardPreviewMode.Normal, EnemyAt(0), true);
+            Assert.Equal(3, damage.PreviewValue);
+            Assert.DoesNotContain("再造成", strike.GetDescriptionForPile(PileType.Draw));
+            Assert.Equal(before, Serialize(strike));
+        }
+
+        static byte[] Serialize(CardModel card)
+        {
+            var writer = new PacketWriter();
+            card.ToSerializable().Serialize(writer);
+            return writer.Buffer.Take(writer.BytePosition).ToArray();
+        }
+    }
+
 }

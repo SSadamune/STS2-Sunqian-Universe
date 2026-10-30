@@ -382,10 +382,7 @@ internal sealed class DefaultMetamorphosisCandidateProvider : IMetamorphosisCand
 	{
 		int attacksAndSkills = hand.Count(candidate =>
 			candidate.Type is CardType.Attack or CardType.Skill);
-		int cardsPlayedThisTurn = CombatManager.Instance.History.CardPlaysFinished.Count(entry =>
-			entry.HappenedThisTurn(combatState)
-			&& entry.CardPlay.Player == player
-			&& entry.CardPlay.PlayIndex == 0);
+		int cardsPlayedThisTurn = TurnCardHistory.Get(combatState).FinishedFirstPlays(player);
 		return (remainingEnergy > attacksAndSkills || cardsPlayedThisTurn <= 1)
 			&& (card is Backflip
 				or BurningPact
@@ -529,7 +526,7 @@ internal sealed class DefaultMetamorphosisCandidateProvider : IMetamorphosisCand
 
 	private static bool MatchesSupermassiveGeneratedDensityCondition(CardModel card) =>
 		card is Supermassive
-		&& CombatManager.Instance.History.Entries.OfType<CardGeneratedEntry>().Count() >= 12;
+		&& CombatManager.Instance.History.Entries.OfType<CardGeneratedEntry>().Skip(11).Any();
 
 	private static bool MatchesColossusVulnerableIntentCondition(
 		ICombatState combatState,
