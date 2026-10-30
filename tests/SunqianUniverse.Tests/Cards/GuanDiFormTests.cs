@@ -69,7 +69,7 @@ public sealed class GuanDiFormTests : SunqianCombatTestSuite
         Assert.Equal(existingRecords ? 2 : 1, Player.Creature.Powers.OfType<ScriptPowerTemplate>().Count());
         Assert.Equal(existingRecords, Player.Creature.GetPower<ScriptServantPower>() is not null);
         var records = Squ.Script.ScriptSystem.ScriptCollectionPile.GetPile(Player).Cards.OfType<ScriptRecordCardTemplate>().ToArray();
-        Assert.Equal(existingRecords ? (2, 2) : (1, 1), Squ.Script.ScriptSystem.GetSelectionBounds(Player, records));
+        Assert.Equal(existingRecords ? (1, 2) : (1, 1), Squ.Script.ScriptSystem.GetSelectionBounds(Player, records));
     }
 
     [Theory]
@@ -214,7 +214,7 @@ public sealed class GuanDiFormTests : SunqianCombatTestSuite
         var civil = records.OfType<GuanYuCivilVer>().Single();
         var martial = records.OfType<GuanYuMartialVer>().Single();
         var servant = records.OfType<ServantScriptRecord>().Single();
-        Assert.Equal((2, 2), Squ.Script.ScriptSystem.GetSelectionBounds(Player, records));
+        Assert.Equal((1, 2), Squ.Script.ScriptSystem.GetSelectionBounds(Player, records));
         Assert.True(Squ.Script.ScriptSystem.IsValidActiveSelection(Player, [servant, civil]));
         Assert.True(Squ.Script.ScriptSystem.IsValidActiveSelection(Player, [servant, martial]));
         Assert.False(Squ.Script.ScriptSystem.IsValidActiveSelection(Player, [civil, martial]));

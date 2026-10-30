@@ -45,7 +45,7 @@ public sealed class NightRaidWuchaoScript : ScriptCardTemplate<NightRaidWuchaoSc
 		CardKeyword.Exhaust,
 	];
 
-	protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
+	protected override IEnumerable<IHoverTip> AdditionalScriptHoverTips =>
 	[
 		HoverTipFactory.FromPower<BurningPower>(),
 		HoverTipFactory.FromKeyword(CardKeyword.Exhaust),

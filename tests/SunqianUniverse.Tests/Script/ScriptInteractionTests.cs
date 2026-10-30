@@ -156,7 +156,8 @@ public sealed class ScriptInteractionTests : SunqianCombatTestSuite
             Assert.Equal(dividerCenterY, plaque.Position.Y + plaque.Size.Y * 0.5f, 3);
             Assert.Equal(130, node.GetNode<Control>("%DescriptionLabel").Size.Y);
             Assert.Equal(ScriptRecordCardFrame.TitleBandCenterY, title.Position.Y + title.Size.Y * 0.5f);
-            Assert.True(title.Position.Y + title.Size.Y < portrait.Position.Y, $"Title y={title.Position.Y}, height={title.Size.Y}; portrait y={portrait.Position.Y}");
+            Assert.Equal((ScriptRecordCardFrame.PortraitWindowTopY + dividerCenterY) * 0.5f,
+                portrait.Position.Y + portrait.Size.Y * 0.5f, 3);
             node.UpdateVisuals(PileType.None, CardPreviewMode.Normal);
             Assert.Equal(dividerCenterY, plaque.Position.Y + plaque.Size.Y * 0.5f, 3);
             Assert.Equal(ScriptRecordCardFrame.TitleBandCenterY, title.Position.Y + title.Size.Y * 0.5f);

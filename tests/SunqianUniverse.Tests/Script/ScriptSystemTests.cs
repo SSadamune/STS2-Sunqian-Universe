@@ -719,6 +719,41 @@ public sealed class ScriptSystemTests : SunqianCombatTestSuite
         AssertOnlyScript<ScriptBowangParadoxArsonPower>();
     }
 
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public async Task Activation_selection_can_confirm_one_script_with_three_slots(bool boxLunch)
+    {
+        await ApplyPower<GuanDiFormPower>(Player.Creature, 2);
+        var context = new BlockingPlayerChoiceContext();
+        await ScriptSystem.UnlockOrReinforceAsync<NeutralAmbushScriptRecord>(
+            context, await AddToHand<NeutralAmbushScript>(), 1, activate: false);
+        await ScriptSystem.UnlockOrReinforceAsync<ServantScriptRecord>(
+            context, await AddToHand<ServantScript>(), 1, activate: false);
+        await PlayScript<ExecutionCommanderScript>();
+        Assert.Equal(3, ScriptSystem.GetActivationLimit(Player));
+        Assert.Contains("当前激活 (1/3)", ScriptSystem.CreateActivationSelectionPrompt(Player).GetFormattedText());
+        Assert.Contains("当前激活 (1/3)", ScriptSystem.CreateActivationSelectionPrompt(
+            Player, ScriptSystem.CreateReselectionPrompt()).GetFormattedText());
+
+        var selector = new ScriptedCardSelector().ThenSelectWhere(card => card is ServantScriptRecord);
+        using (UseCardSelector(selector))
+        {
+            if (boxLunch)
+            {
+                var relic = (BoxLunchRelic)ModelDb.Relic<BoxLunchRelic>().ToMutable();
+                Player.AddRelicInternal(relic, silent: true);
+                Assert.True(await relic.ReselectFromScriptCollectionAsync());
+            }
+            else
+                Assert.True(await ScriptSystem.ChooseActiveScriptsAsync(context, Player, cancelable: false));
+        }
+        AssertAllSelectionsConsumed(selector);
+        Assert.Equal(1, selector.LastMinSelect);
+        Assert.Equal(3, selector.LastMaxSelect);
+        AssertOnlyScript<ScriptServantPower>();
+    }
+
     private async Task PlayScript<TScript>()
         where TScript : ScriptCardTemplate
         => await Play(await AddToHand<TScript>());

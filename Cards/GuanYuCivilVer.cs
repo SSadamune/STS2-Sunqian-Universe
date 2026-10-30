@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.HoverTips;
+using MegaCrit.Sts2.Core.Localization;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.Models.CardPools;
 using MegaCrit.Sts2.Core.Models.Powers;
@@ -11,18 +12,19 @@ using STS2RitsuLib.Scaffolding.Content;
 namespace Squ.Cards;
 
 [RegisterCard(typeof(TokenCardPool), StableEntryStem = "guan_yu_civil_ver")]
-public sealed class GuanYuCivilVer : ScriptRecordCardTemplate<GuanYuCivilVerPower, GuanDiForm>
+public sealed class GuanYuCivilVer : MaterialReuseScriptRecordCardTemplate<GuanYuCivilVerPower, GuanDiForm>
 {
     public const int BlockPerEnergy = 2;
     public const string FormGroup = "guan_yu_form";
     public override bool CanBeGeneratedInCombat => false;
-    internal override bool HasUpgradedVersion => true;
+    protected override int InitialAmount => 2;
+    protected override int AmountPerUpgrade => 1;
     public override string MutuallyExclusiveGroup => FormGroup;
+    protected override IEnumerable<IHoverTip> DirectOnlyHoverTips =>
+        [new HoverTip(SquCommonL10n.AnnotationTitle(), new LocString("cards", Id.Entry + ".annotation"))];
     protected override IEnumerable<DynamicVar> CanonicalVars => [new EnergyVar(1), new DynamicVar("ScriptAmount", 2)];
     protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
-        [HoverTipFactory.FromPower<DexterityPower>(), HoverTipFactory.ForEnergy(this),
+        [..base.AdditionalHoverTips, HoverTipFactory.FromPower<DexterityPower>(), HoverTipFactory.ForEnergy(this),
             HoverTipFactory.Static(StaticHoverTip.Block)];
-    protected override void SyncDisplayVars() => DynamicVars["ScriptAmount"].BaseValue = StoredAmount;
-    protected override void OnUpgrade() => DynamicVars["ScriptAmount"].UpgradeValueBy(1);
     public override CardAssetProfile AssetProfile => new(PortraitPath: "res://images/cards/GuanDiForm.png");
 }

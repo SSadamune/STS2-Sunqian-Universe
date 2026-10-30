@@ -36,7 +36,7 @@ public sealed class HeadsmanScript : ScriptCardTemplate<HeadsmanScriptRecord>
 		new PowerVar<VulnerablePower>(VulnerableAmount),
 	];
 
-	protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
+	protected override IEnumerable<IHoverTip> AdditionalScriptHoverTips =>
 	[
 		HoverTipFactory.FromPower<VigorPower>(),
 		HoverTipFactory.FromPower<VulnerablePower>(),

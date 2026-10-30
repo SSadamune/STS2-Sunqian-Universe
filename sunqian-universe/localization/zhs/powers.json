@@ -76,7 +76,7 @@
   "SUNQIAN_UNIVERSE_POWER_SCRIPT_HEADSMAN_POWER.smartDescription": "[gold]激活[/gold]时，获得[blue]{VigorPower:diff()}[/blue]点[gold]活力[/gold]。你打出攻击牌后，若这张牌杀死过敌人，恢复该攻击牌消耗的[gold]活力[/gold]{DrunkenMightOr}和{energyPrefix:energyIcons(1)}。",
   "SUNQIAN_UNIVERSE_POWER_SCRIPT_HEADSMAN_POWER.smartDescriptionUpgraded": "你打出攻击牌后，若这张牌杀死过敌人，恢复该攻击牌消耗的[gold]活力[/gold]{DrunkenMightOr}和{energyPrefix:energyIcons(1)}。",
   "SUNQIAN_UNIVERSE_POWER_SCRIPT_NIGHT_RAID_WUCHAO_POWER.title": "剧本：夜袭乌巢",
-  "SUNQIAN_UNIVERSE_POWER_SCRIPT_NIGHT_RAID_WUCHAO_POWER.smartDescription": "你的[gold]各种打击牌[/gold]额外给予[blue]{Amount}[/blue]点[gold]灼烧[/gold]。",
+  "SUNQIAN_UNIVERSE_POWER_SCRIPT_NIGHT_RAID_WUCHAO_POWER.smartDescription": "你的[gold]各种打击牌[/gold]造成伤害后，给予[blue]{Amount}[/blue]层[gold]灼烧[/gold]。",
   "SUNQIAN_UNIVERSE_POWER_BUDDY_TANGXIAOHU_POWER.title": "好哥们唐小虎",
   "SUNQIAN_UNIVERSE_POWER_BUDDY_TANGXIAOHU_POWER.smartDescription": "当你打出[gold]剧本[/gold]牌后，获得[blue]{Amount}[/blue]点[gold]格挡[/gold]。",
   "SUNQIAN_UNIVERSE_POWER_SCRIPT_XILIANG_SAVAGE_POWER.title": "剧本：西凉野人",

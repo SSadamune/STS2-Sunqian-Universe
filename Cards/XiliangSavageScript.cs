@@ -38,7 +38,7 @@ public sealed class XiliangSavageScript : ScriptCardTemplate<XiliangSavageScript
 
 	public override bool GainsBlock => true;
 
-	protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
+	protected override IEnumerable<IHoverTip> AdditionalScriptHoverTips =>
 	[
 		HoverTipFactory.FromPower<VigorPower>(),
 		..NewsanguoDrunkenMightEffect.HoverTips(),

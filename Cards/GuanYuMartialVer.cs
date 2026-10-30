@@ -11,15 +11,16 @@ using STS2RitsuLib.Scaffolding.Content;
 namespace Squ.Cards;
 
 [RegisterCard(typeof(TokenCardPool), StableEntryStem = "guan_yu_martial_ver")]
-public sealed class GuanYuMartialVer : ScriptRecordCardTemplate<GuanYuMartialVerPower, GuanDiForm>
+public sealed class GuanYuMartialVer : MaterialReuseScriptRecordCardTemplate<GuanYuMartialVerPower, GuanDiForm>
 {
     public override bool CanBeGeneratedInCombat => false;
-    internal override bool HasUpgradedVersion => true;
+    protected override int InitialAmount => 2;
+    protected override int AmountPerUpgrade => 1;
     public override string MutuallyExclusiveGroup => GuanYuCivilVer.FormGroup;
+    protected override IEnumerable<IHoverTip> DirectOnlyHoverTips =>
+        [new HoverTip(SquCommonL10n.AnnotationTitle(), new LocString("cards", Id.Entry + ".annotation"))];
     protected override IEnumerable<DynamicVar> CanonicalVars => [new DynamicVar("ScriptAmount", 2)];
-    protected override void SyncDisplayVars() => DynamicVars["ScriptAmount"].BaseValue = StoredAmount;
-    protected override void OnUpgrade() => DynamicVars["ScriptAmount"].UpgradeValueBy(1);
     protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
-        [HoverTipFactory.FromPower<VigorPower>(), HoverTipFactory.ForEnergy(this)];
+        [..base.AdditionalHoverTips, HoverTipFactory.FromPower<VigorPower>(), HoverTipFactory.ForEnergy(this)];
     public override CardAssetProfile AssetProfile => new(PortraitPath: "res://images/cards/GuanDiForm.png");
 }

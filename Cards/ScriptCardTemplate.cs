@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
@@ -34,6 +35,20 @@ public abstract class ScriptCardTemplate : ModCardTemplate, IRowKeywordsCard
 	}
 
 	protected abstract Task PlayScriptAsync(PlayerChoiceContext choiceContext, CardPlay cardPlay);
+
+	protected virtual IEnumerable<IHoverTip> AdditionalScriptHoverTips => [];
+
+	protected sealed override IEnumerable<IHoverTip> AdditionalHoverTips
+	{
+		get
+		{
+			IEnumerable<IHoverTip> tips = AdditionalScriptHoverTips;
+			foreach (var record in CreateScriptRecordPreviews())
+				tips = tips.Append(new CardHoverTip(record)).Concat(record.NestedHoverTips);
+			return IHoverTip.RemoveDupes(tips);
+		}
+	}
+
 
 	internal abstract ScriptRecordCardTemplate CreateScriptRecordPreview();
 

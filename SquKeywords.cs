@@ -29,6 +29,8 @@ public static class SquKeywords
 	public static readonly string ScriptCollectionId = ModContentRegistry
 		.GetQualifiedKeywordId(SquMod.ModId, "script_collection");
 
+	public static readonly CardKeyword ScriptCollection = ScriptCollectionId.GetModCardKeyword();
+
 	public static readonly string DoomKillThresholdId = ModContentRegistry
 		.GetQualifiedKeywordId(SquMod.ModId, "doom_kill_threshold");
 
@@ -119,6 +121,13 @@ public static class SquKeywords
 		.GetQualifiedKeywordId(SquMod.ModId, "supreme_general");
 
 	public static readonly CardKeyword SupremeGeneral = SupremeGeneralId.GetModCardKeyword();
+
+	public static IHoverTip CreateMaterialReuseHoverTip(string sourceCardTitle)
+	{
+		LocString description = new("card_keywords", "SUNQIAN_UNIVERSE_KEYWORD_MATERIAL_REUSE.cardHover");
+		description.Add("SourceCardName", sourceCardTitle);
+		return new HoverTip(ModKeywordRegistry.GetTitle(MaterialReuseId), description, icon: null);
+	}
 
 	public static IHoverTip CreateWarFeedsWarHoverTip(CardModel card)
 	{

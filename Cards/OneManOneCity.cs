@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
@@ -29,7 +29,7 @@ public sealed class OneManOneCity : ScriptCardTemplate<OneManOneCityScriptRecord
 		new PowerVar<PlatingPower>(PlatingStacks),
 	];
 
-	protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
+	protected override IEnumerable<IHoverTip> AdditionalScriptHoverTips =>
 	[
 		..HoverTipFactory.FromPowerWithPowerHoverTips<PlatingPower>(
 			(int)DynamicVars[nameof(PlatingPower)].BaseValue),

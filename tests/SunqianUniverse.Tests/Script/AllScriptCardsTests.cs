@@ -26,7 +26,7 @@ public sealed class AllScriptCardsTests : SunqianCombatTestSuite
     [
         new(typeof(BombardChibiScript), typeof(BombardChibiScriptRecord), typeof(ScriptBombardChibiPower), false),
         new(typeof(BowangParadoxScript), typeof(BowangParadoxAdvanceScriptRecord), typeof(ScriptBowangParadoxAdvancePower), true),
-        new(typeof(GuanDiForm), typeof(GuanYuCivilVer), typeof(GuanYuCivilVerPower), false),
+        new(typeof(GuanDiForm), typeof(GuanYuCivilVer), typeof(GuanYuCivilVerPower), true),
         new(typeof(BurningLinkedCampsScript), typeof(BurningLinkedCampsScriptRecord), typeof(ScriptBurningLinkedCampsPower), false),
         new(typeof(ChickenFootCheeseScript), typeof(ChickenFootCheeseScriptRecord), typeof(ScriptChickenFootCheesePower), false),
         new(typeof(EunuchScript), typeof(EunuchScriptRecord), typeof(ScriptEunuchPower), false),
@@ -109,13 +109,13 @@ public sealed class AllScriptCardsTests : SunqianCombatTestSuite
                 description = description.Replace("[green]", "").Replace("[/green]", "").Replace("剧本+", "剧本");
                 if (card is GuanDiForm)
                 {
-                    Assert.Contains("将两张剧本牌加入你的[gold]剧本集[/gold]。", description);
+                    Assert.Contains("将两种互斥的[gold]剧本[/gold]加入[gold]剧本集[/gold]。", description);
                     Assert.Contains("你的[gold]激活上限[/gold]+1。", description);
                     return;
                 }
                 if (card is BowangParadoxScript)
                 {
-                    Assert.Contains("从两种剧本中选择一种激活，另一种也会加入剧本集。", description);
+                    Assert.Contains("从两种[gold]剧本[/gold]中选择一种激活，另一种也会加入剧本集。", description);
                     Assert.DoesNotContain("数值叠加", description);
                     Assert.Contains("\n" + exhaust, description);
                     return;
@@ -210,7 +210,7 @@ public sealed class AllScriptCardsTests : SunqianCombatTestSuite
     [Theory]
     [InlineData(typeof(BombardChibiScript), typeof(BombardChibiScriptRecord), typeof(ScriptBombardChibiPower), false)]
     [InlineData(typeof(BowangParadoxScript), typeof(BowangParadoxAdvanceScriptRecord), typeof(ScriptBowangParadoxAdvancePower), true)]
-    [InlineData(typeof(GuanDiForm), typeof(GuanYuCivilVer), typeof(GuanYuCivilVerPower), false)]
+    [InlineData(typeof(GuanDiForm), typeof(GuanYuCivilVer), typeof(GuanYuCivilVerPower), true)]
     [InlineData(typeof(BurningLinkedCampsScript), typeof(BurningLinkedCampsScriptRecord), typeof(ScriptBurningLinkedCampsPower), false)]
     [InlineData(typeof(ChickenFootCheeseScript), typeof(ChickenFootCheeseScriptRecord), typeof(ScriptChickenFootCheesePower), false)]
     [InlineData(typeof(EunuchScript), typeof(EunuchScriptRecord), typeof(ScriptEunuchPower), false)]

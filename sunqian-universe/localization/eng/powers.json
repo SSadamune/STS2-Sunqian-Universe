@@ -76,7 +76,7 @@
   "SUNQIAN_UNIVERSE_POWER_SCRIPT_HEADSMAN_POWER.smartDescription": "When [gold]activated[/gold], gain [blue]{VigorPower:diff()}[/blue] [gold]Vigor[/gold]. After your Attack kills an enemy, restore its spent [gold]Vigor[/gold]{DrunkenMightOr} and {energyPrefix:energyIcons(1)}.",
   "SUNQIAN_UNIVERSE_POWER_SCRIPT_HEADSMAN_POWER.smartDescriptionUpgraded": "After you play an [gold]Attack[/gold], if it has killed an enemy, restore that Attack's spent [gold]Vigor[/gold]{DrunkenMightOr} and {energyPrefix:energyIcons(1)}.",
   "SUNQIAN_UNIVERSE_POWER_SCRIPT_NIGHT_RAID_WUCHAO_POWER.title": "Script: Night Raid on Wuchao",
-  "SUNQIAN_UNIVERSE_POWER_SCRIPT_NIGHT_RAID_WUCHAO_POWER.smartDescription": "Your [gold]Strike Cards[/gold] apply [blue]{Amount}[/blue] additional [gold]Burning[/gold].",
+  "SUNQIAN_UNIVERSE_POWER_SCRIPT_NIGHT_RAID_WUCHAO_POWER.smartDescription": "After your [gold]Strike Cards[/gold] deal damage, apply [blue]{Amount}[/blue] [gold]Burning[/gold].",
   "SUNQIAN_UNIVERSE_POWER_BUDDY_TANGXIAOHU_POWER.title": "Buddy Tangxiaohu",
   "SUNQIAN_UNIVERSE_POWER_BUDDY_TANGXIAOHU_POWER.smartDescription": "After you play a [gold]Script[/gold] card, gain [blue]{Amount}[/blue] [gold]Block[/gold].",
   "SUNQIAN_UNIVERSE_POWER_SCRIPT_XILIANG_SAVAGE_POWER.title": "Script: Xiliang Savage",

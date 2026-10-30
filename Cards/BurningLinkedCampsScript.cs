@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
@@ -22,7 +22,7 @@ namespace Squ.Cards;
 [RegisterCard(typeof(SunqianCardPool), StableEntryStem = "burning_linked_camps_script")]
 public sealed class BurningLinkedCampsScript : ScriptCardTemplate<BurningLinkedCampsScriptRecord>
 {
-	protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
+	protected override IEnumerable<IHoverTip> AdditionalScriptHoverTips =>
 	[
 		HoverTipFactory.FromCard<Burn>(),
 		SquCardHoverTipFactory.FromCard<ShangfangguSigh>(this, IsUpgraded),

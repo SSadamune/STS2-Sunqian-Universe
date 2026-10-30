@@ -33,7 +33,7 @@ public sealed class SunqianScript : ScriptCardTemplate<SunqianScriptRecord>
 		new CardsVar(BaseDraw),
 	];
 
-	protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
+	protected override IEnumerable<IHoverTip> AdditionalScriptHoverTips =>
 	[
 		HoverTipFactory.FromPower<DexterityPower>(),
 	];

@@ -18,6 +18,8 @@ public sealed class MaterialReuseTests : SunqianCombatTestSuite
 
     [Theory]
     [InlineData(typeof(ExecutionCommanderScript), typeof(ExecutionCommanderScriptRecord), 50, 25)]
+    [InlineData(typeof(GuanDiForm), typeof(GuanYuCivilVer), 2, 1)]
+    [InlineData(typeof(GuanDiForm), typeof(GuanYuMartialVer), 2, 1)]
     [InlineData(typeof(HeadsmanScript), typeof(HeadsmanScriptRecord), 3, 1)]
     [InlineData(typeof(BowangParadoxScript), typeof(BowangParadoxAdvanceScriptRecord), 7, 2)]
     [InlineData(typeof(BowangParadoxScript), typeof(BowangParadoxArsonScriptRecord), 7, 2)]
@@ -29,7 +31,7 @@ public sealed class MaterialReuseTests : SunqianCombatTestSuite
             var source = (ScriptCardTemplate)await AddToHand(ModelDb.GetId(sourceType));
             if (play != 1) Upgrade(source);
             var selector = new ScriptedCardSelector();
-            if (source is BowangParadoxScript) selector.ThenSelectWhere(card => card.GetType() == recordType);
+            if (source is BowangParadoxScript or GuanDiForm) selector.ThenSelectWhere(card => card.GetType() == recordType);
             using (UseCardSelector(selector))
             {
                 if (source is HeadsmanScript) await Play(source, EnemyAt(0));
@@ -45,7 +47,7 @@ public sealed class MaterialReuseTests : SunqianCombatTestSuite
             var active = Assert.Single(Player.Creature.Powers.OfType<Squ.Powers.ScriptPowerTemplate>());
             Assert.Equal(record.PowerType, active.GetType());
             Assert.Equal(record.StoredAmount, active.Amount);
-            if (source is BowangParadoxScript)
+            if (source is BowangParadoxScript or GuanDiForm)
                 Assert.All(records, branch => { Assert.Equal(level, branch.CurrentUpgradeLevel); Assert.Equal(initial + level * step, branch.StoredAmount); });
             var restored = Assert.IsAssignableFrom<ScriptRecordCardTemplate>(CardModel.FromSerializable(record.ToSerializable()));
             Assert.Equal(record.Title, restored.Title);

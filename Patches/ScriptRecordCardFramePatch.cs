@@ -17,6 +17,7 @@ internal static class ScriptRecordCardFrame
     internal const float TitleLabelHeight = 36f;
     internal const float ScriptPlaqueScale = 1.08f;
     internal const float PortraitDividerFraction = 808f / 1490f;
+    internal const float PortraitWindowTopY = -138f;
     private sealed class Layout
     {
         public bool Applied;
@@ -81,8 +82,10 @@ internal static class ScriptRecordCardFrame
         // Use moderate title padding and give the freed space back to the art.
         title.Position = new Vector2(layout.TitleRect.Position.X, TitleBandCenterY - TitleLabelHeight * 0.5f);
         title.Size = new Vector2(layout.TitleRect.Size.X, TitleLabelHeight);
-        portrait.Position = new Vector2(layout.PortraitRect.Position.X, -138);
         float dividerCenterY = frame.Position.Y + frame.Size.Y * PortraitDividerFraction;
+        // Center the full portrait behind the shorter visible opening in the frame.
+        portrait.Position = new Vector2(layout.PortraitRect.Position.X,
+            (PortraitWindowTopY + dividerCenterY - portrait.Size.Y) * 0.5f);
         plaque.Position = new Vector2(plaque.Position.X, dividerCenterY - plaque.Size.Y * 0.5f);
         plaque.PivotOffset = plaque.Size * 0.5f;
         plaque.Scale = layout.PlaqueScale * ScriptPlaqueScale;

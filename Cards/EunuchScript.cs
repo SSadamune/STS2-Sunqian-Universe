@@ -30,7 +30,7 @@ public sealed class EunuchScript : ScriptCardTemplate<EunuchScriptRecord>
 		new CardsVar(BaseDraw),
 	];
 
-	protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
+	protected override IEnumerable<IHoverTip> AdditionalScriptHoverTips =>
 	[
 		HoverTipFactory.FromKeyword(CardKeyword.Ethereal),
 		HoverTipFactory.FromKeyword(CardKeyword.Retain),

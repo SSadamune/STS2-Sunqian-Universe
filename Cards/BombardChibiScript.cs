@@ -36,7 +36,7 @@ public sealed class BombardChibiScript : ScriptCardTemplate<BombardChibiScriptRe
 
 	protected override HashSet<CardTag> CanonicalTags => [SquCardTags.Script, SquCardTags.Burning];
 
-	protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
+	protected override IEnumerable<IHoverTip> AdditionalScriptHoverTips =>
 	[
 		HoverTipFactory.FromPower<BurningPower>(),
 		HoverTipFactory.FromPower<StrengthPower>(),

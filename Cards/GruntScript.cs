@@ -33,7 +33,7 @@ public sealed class GruntScript : ScriptCardTemplate<GruntScriptRecord>
 		new DamageVar(DamageAmount, ValueProp.Move),
 	];
 
-	protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
+	protected override IEnumerable<IHoverTip> AdditionalScriptHoverTips =>
 	[
 		HoverTipFactory.FromPower<VigorPower>(),
 	];

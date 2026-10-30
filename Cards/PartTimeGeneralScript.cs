@@ -45,7 +45,7 @@ public sealed class PartTimeGeneralScript : ScriptCardTemplate<PartTimeGeneralSc
 		CardKeyword.Exhaust,
 	];
 
-	protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
+	protected override IEnumerable<IHoverTip> AdditionalScriptHoverTips =>
 	[
 		HoverTipFactory.FromKeyword(SquKeywords.CountsAsPlayed),
 		HoverTipFactory.FromKeyword(SquKeywords.VariousStrikeCards),

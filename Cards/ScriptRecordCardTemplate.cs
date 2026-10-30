@@ -38,8 +38,16 @@ public abstract class ScriptRecordCardTemplate : ModCardTemplate
 
 	public abstract Type PowerType { get; }
 
+	public abstract string SourceCardTitle { get; }
+
 	public virtual bool CanBeReinforced => false;
 	public virtual bool UsesMaterialReuse => false;
+	protected virtual IEnumerable<IHoverTip> DirectOnlyHoverTips => [];
+	internal IEnumerable<IHoverTip> NestedHoverTips => HoverTips.ExceptBy(
+		DirectOnlyHoverTips.Select(tip => tip.Id), tip => tip.Id);
+	protected override IEnumerable<IHoverTip> AdditionalHoverTips => UsesMaterialReuse
+		? [..DirectOnlyHoverTips, SquKeywords.CreateMaterialReuseHoverTip(SourceCardTitle),
+			HoverTipFactory.FromKeyword(SquKeywords.ScriptCollection)] : DirectOnlyHoverTips;
 	public override int MaxUpgradeLevel => UsesMaterialReuse ? int.MaxValue : base.MaxUpgradeLevel;
 
 	public virtual bool CountsTowardActivationLimit => true;
@@ -161,6 +169,7 @@ public abstract class ScriptRecordCardTemplate<TPower, TSource> : ScriptRecordCa
 	where TSource : ScriptCardTemplate
 {
 	public sealed override Type PowerType => typeof(TPower);
+	public sealed override string SourceCardTitle => ModelDb.Card<TSource>().Title;
 
 	internal sealed override async Task ActivateAsync(PlayerChoiceContext choiceContext, Player player)
 	{
@@ -418,6 +427,7 @@ public sealed class HeadsmanScriptRecord : MaterialReuseScriptRecordCardTemplate
 
 	protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
 	[
+		..base.AdditionalHoverTips,
 		..NewsanguoDrunkenMightEffect.HoverTips(),
 	];
 
@@ -459,6 +469,7 @@ public sealed class NightRaidWuchaoScriptRecord : MaterialReuseScriptRecordCardT
 
 	protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
 	[
+		..base.AdditionalHoverTips,
 		..SquCardHoverTipFactory.FromCardWithCardHoverTips<NightRaidWuchaoScriptStarryNightStrikePreview>(
 			this,
 			SourceUpgraded),

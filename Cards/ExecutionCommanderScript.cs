@@ -34,7 +34,7 @@ public sealed class ExecutionCommanderScript : ScriptCardTemplate<ExecutionComma
 		new DynamicVar(BonusPercentVarName, BaseBonusPercent),
 	];
 
-	protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
+	protected override IEnumerable<IHoverTip> AdditionalScriptHoverTips =>
 	[
 		..SquCardHoverTipFactory.FromCardWithCardHoverTips<SalvoStrike>(this, IsUpgraded),
 		HoverTipFactory.FromKeyword(SquKeywords.MultiTarget),

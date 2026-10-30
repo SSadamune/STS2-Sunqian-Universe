@@ -57,10 +57,30 @@ public static class ScriptSystem
 		PretendCardsCanBePlayed = true,
 	};
 
-	internal static LocString CreateReselectionPrompt() => new(SquCommonL10n.Table, ReselectionPromptKey);
+	internal static LocString CreateReselectionPrompt() => CreateSelectionPrompt(ReselectionPromptKey);
+
+	private static LocString CreateSelectionPrompt(string key)
+	{
+		var prompt = new LocString(SquCommonL10n.Table, key);
+		prompt.Add("ActivationStatus", string.Empty);
+		return prompt;
+	}
+
+	internal static LocString CreateActivationSelectionPrompt(Player player, LocString? prompt = null)
+	{
+		prompt ??= SelectionPrompt;
+		var result = new LocString(prompt.LocTable, prompt.LocEntryKey);
+		result.AddVariablesFrom(prompt);
+		var status = new LocString(SquCommonL10n.Table, "SUNQIAN_UNIVERSE_COMMON.SCRIPT.activationStatus");
+		status.Add("ActiveCount", player.Creature.Powers.OfType<ScriptPowerTemplate>()
+			.Count(power => power.CountsTowardActivationLimit));
+		status.Add("ActivationLimit", GetActivationLimit(player));
+		result.Add("ActivationStatus", status.GetFormattedText());
+		return result;
+	}
 
 	private static readonly LocString SelectionPrompt =
-		new(SquCommonL10n.Table, SelectionPromptKey);
+		CreateSelectionPrompt(SelectionPromptKey);
 	private static readonly LocString InvalidationPrompt =
 		new(SquCommonL10n.Table, "SUNQIAN_UNIVERSE_COMMON.SCRIPT.invalidationPrompt");
 
@@ -345,7 +365,7 @@ public static class ScriptSystem
 		}
 
 		(int minSelect, int maxSelect) = GetSelectionBounds(player, records);
-		var prefs = new CardSelectorPrefs(prompt ?? SelectionPrompt, minSelect, maxSelect)
+		var prefs = new CardSelectorPrefs(CreateActivationSelectionPrompt(player, prompt), minSelect, maxSelect)
 		{
 			Cancelable = cancelable,
 			RequireManualConfirmation = true,
@@ -395,7 +415,7 @@ public static class ScriptSystem
 		int free = records.Where(record => !record.CountsTowardActivationLimit)
 			.GroupBy(record => record.MutuallyExclusiveGroup ?? record.Id.ToString()).Count();
 		int max = Math.Min(limit, regular) + free;
-		return (free > 0 || records.Count < limit ? 1 : max, max);
+		return (Math.Min(1, max), max);
 	}
 
 	internal static bool IsValidActiveSelection(Player player, IReadOnlyList<ScriptRecordCardTemplate> selected) =>

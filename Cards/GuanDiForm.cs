@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
+using MegaCrit.Sts2.Core.HoverTips;
 using Squ.Powers;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.Models;
@@ -17,6 +18,7 @@ public sealed class GuanDiForm : ScriptCardTemplate<GuanYuCivilVer>
 {
     protected override HashSet<CardTag> CanonicalTags => [];
     public override IEnumerable<CardKeyword> CanonicalKeywords => [];
+    protected override IEnumerable<IHoverTip> AdditionalScriptHoverTips => [HoverTipFactory.FromKeyword(SquKeywords.ScriptCollection)];
     public GuanDiForm() : base(3, CardType.Power, CardRarity.Rare, TargetType.Self, true) { }
 
     public override CardAssetProfile AssetProfile => new(PortraitPath: "res://images/cards/GuanDiForm.png");

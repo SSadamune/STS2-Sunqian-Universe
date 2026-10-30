@@ -53,7 +53,7 @@ public static class SquMod
 			.CardKeywordOwnedByLocNamespace(
 				"material_reuse", iconPath: null,
 				ModKeywordCardDescriptionPlacement.AfterCardDescription,
-				includeInCardHoverTip: true)
+				includeInCardHoverTip: false)
 			.CardKeywordOwnedByLocNamespace("doom_kill_threshold")
 			.CardKeywordOwnedByLocNamespace("multi_target")
 			.CardKeywordOwnedByLocNamespace("environmental")
@@ -105,7 +105,6 @@ public static class SquMod
 		HeadsmanRewardTracker.Initialize();
 		AllInResolutionTracker.Initialize();
 		RitsuLibFramework.RegisterModelCapability<SlightRevisionCapability>(ModId);
-		RitsuLibFramework.RegisterModelCapability<NightRaidWuchaoStrikeCapability>(ModId);
 		RitsuLibFramework.RegisterModelCapability<ChickenFootCheeseStrikeCapability>(ModId);
 		ContentSettingsRunData.Initialize();
 		RunReloadCount.Initialize();
@@ -113,7 +112,6 @@ public static class SquMod
 		SelfDecapitationReviveData.Initialize();
 		ScriptSystem.Initialize();
 		SlightRevisionSystem.Initialize();
-		NightRaidWuchaoStrikeSystem.Initialize();
 		ChickenFootCheeseStrikeSystem.Initialize();
 		RitsuLibFramework.SubscribeLifecycle<CombatEndedEvent>(_ => WarFeedsWarResolutionTracker.ClearCombat());
 

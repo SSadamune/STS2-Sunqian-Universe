@@ -2,7 +2,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using MegaCrit.Sts2.Core.Commands;
-using MegaCrit.Sts2.Core.Commands.Builders;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.Entities.Creatures;
 using MegaCrit.Sts2.Core.Entities.Powers;
@@ -11,7 +10,7 @@ using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.Models;
 using Squ.Cards;
-using Squ.Combat;
+using MegaCrit.Sts2.Core.ValueProps;
 using STS2RitsuLib.Interop.AutoRegistration;
 using STS2RitsuLib.Scaffolding.Content;
 
@@ -46,78 +45,31 @@ public sealed class ScriptNightRaidWuchaoPower : ScriptPowerTemplate
 	protected override Task OnScriptApplied(Creature? applier, CardModel? cardSource)
 	{
 		SyncDisplayVars();
-		if (Owner.Player is { } player)
-		{
-			NightRaidWuchaoStrikeSystem.EnsureCapabilities(player);
-		}
-
 		return Task.CompletedTask;
 	}
 
-	public override async Task AfterAttack(PlayerChoiceContext choiceContext, AttackCommand command)
+	public override async Task AfterDamageGiven(
+		PlayerChoiceContext choiceContext,
+		Creature? dealer,
+		DamageResult result,
+		ValueProp props,
+		Creature target,
+		CardModel? cardSource)
 	{
-		if (Owner.IsDead
-			|| Amount <= 0m
-			|| !TryGetStrikeAttackCard(command, out CardModel strikeCard))
-		{
-			return;
-		}
-
-		List<Creature> targets = command.Results
-			.SelectMany(results => results)
-			.Select(result => result.Receiver)
-			.Where(creature => creature.IsAlive)
-			.Distinct()
-			.ToList();
-		if (targets.Count == 0)
+		if (Owner.IsDead || Amount <= 0m || dealer != Owner
+			|| cardSource is null || cardSource.Owner?.Creature != Owner
+			|| !cardSource.Tags.Contains(CardTag.Strike)
+			|| result.TotalDamage <= 0 || !result.Receiver.IsAlive)
 		{
 			return;
 		}
 
 		Flash();
-
-		foreach (Creature target in targets)
-		{
-			await PowerCmd.Apply<BurningPower>(
-				choiceContext,
-				target,
-				Amount,
-				Owner,
-				strikeCard);
-		}
-	}
-
-	private bool TryGetStrikeAttackCard(AttackCommand command, out CardModel card)
-	{
-		card = null!;
-		if (command.Attacker != Owner)
-		{
-			return false;
-		}
-
-		if (command.ModelSource is not CardModel cardSource)
-		{
-			return false;
-		}
-
-		if (cardSource.Owner.Creature != Owner || !cardSource.Tags.Contains(CardTag.Strike))
-		{
-			return false;
-		}
-
-		card = cardSource;
-		return true;
+		// The Script applies this Burning independently of the card's own effects.
+		// In particular, a Burning-tagged Strike must not pass its Tinder bonus here.
+		await PowerCmd.Apply<BurningPower>(choiceContext, result.Receiver, Amount, Owner, cardSource: null);
 	}
 
 	private void SyncDisplayVars() =>
 		DynamicVars[nameof(BurningPower)].BaseValue = Amount;
-
-	public override async Task AfterRemoved(Creature oldOwner)
-	{
-		await base.AfterRemoved(oldOwner);
-		if (oldOwner.Player is { } player)
-		{
-			NightRaidWuchaoStrikeSystem.RefreshOnTable(player);
-		}
-	}
 }
