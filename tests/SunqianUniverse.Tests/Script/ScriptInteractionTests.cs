@@ -207,4 +207,3 @@ public sealed class ScriptInteractionTests : SunqianCombatTestSuite
         finally { layer.QueueFree(); }
     }
 }
-

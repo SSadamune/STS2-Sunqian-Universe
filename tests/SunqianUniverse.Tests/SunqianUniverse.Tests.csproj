@@ -19,6 +19,8 @@
     <Sts2TestDependencyPayloadRoot>$(MSBuildProjectDirectory)\obj\Sts2Payload\Dependencies</Sts2TestDependencyPayloadRoot>
 
     <GodotProjectDir>$(MSBuildProjectDirectory)\..\..</GodotProjectDir>
+    <!-- The game hosts this test mod; it does not need a second native Godot entry point. -->
+    <GodotDisabledSourceGenerators>GodotPluginsInitializer</GodotDisabledSourceGenerators>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Sts2JointModTests)' == 'true'">
@@ -43,6 +45,7 @@
 
   <ItemGroup>
     <CompilerVisibleProperty Include="GodotProjectDir" />
+    <CompilerVisibleProperty Include="GodotDisabledSourceGenerators" />
     <Reference Include="sts2">
       <HintPath>..\..\lib\sts2.dll</HintPath>
       <Private>false</Private>
