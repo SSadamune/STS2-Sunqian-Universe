@@ -90,6 +90,65 @@ public sealed class DefenseAwareDebuffPreviewInteropTests : SunqianCombatTestSui
     }
 
     [Fact]
+    public async Task Enemy_turn_start_Burning_and_Poison_reset_defenses_before_they_share_them()
+    {
+        Creature enemy = EnemyAt(0);
+        await ApplyPower<HardenedShellPower>(enemy, 20);
+        await CreatureCmd.Damage(
+            new ThrowingPlayerChoiceContext(),
+            enemy,
+            12m,
+            ValueProp.Unblockable | ValueProp.Unpowered,
+            null,
+            null);
+        await CreatureCmd.GainBlock(enemy, 6m, ValueProp.Unpowered, null);
+        BurningPower burning = await ApplyAndGet<BurningPower>(enemy, 10);
+        PoisonPower poison = await ApplyAndGet<PoisonPower>(enemy, 15);
+        AssertPowerOrder(enemy, burning, poison);
+        HardenedShellPower shell = Assert.IsType<HardenedShellPower>(
+            enemy.GetPower<HardenedShellPower>());
+        Assert.Equal(8, shell.DisplayAmount);
+
+        int hpBefore = enemy.CurrentHp;
+        HealthBarForecastSegment burningSegment = GetBurningPreview(burning);
+        HealthBarForecastSegment poisonSegment = GetOrderedPoisonPreview(poison);
+
+        Assert.Equal(10, burningSegment.Amount);
+        Assert.Equal(10, poisonSegment.Amount);
+        Assert.True(burningSegment.Order < poisonSegment.Order);
+        Assert.Equal(6, enemy.Block);
+        Assert.Equal(8, shell.DisplayAmount);
+        Assert.Equal(hpBefore, enemy.CurrentHp);
+    }
+
+    [Fact]
+    public async Task Player_turn_end_Burning_keeps_current_defenses_while_Poison_uses_the_next_turn()
+    {
+        Creature player = Player.Creature;
+        await ApplyPower<HardenedShellPower>(player, 20);
+        await CreatureCmd.Damage(
+            new ThrowingPlayerChoiceContext(),
+            player,
+            12m,
+            ValueProp.Unblockable | ValueProp.Unpowered,
+            null,
+            null);
+        await CreatureCmd.GainBlock(player, 6m, ValueProp.Unpowered, null);
+        BurningPower burning = await ApplyAndGet<BurningPower>(player, 10);
+        PoisonPower poison = await ApplyAndGet<PoisonPower>(player, 15);
+        HardenedShellPower shell = Assert.IsType<HardenedShellPower>(
+            player.GetPower<HardenedShellPower>());
+        Assert.Equal(8, shell.DisplayAmount);
+
+        int hpBefore = player.CurrentHp;
+        Assert.Equal(4, CalculateBurningPreview(burning));
+        Assert.Equal(15, CalculatePoisonUiPreview(poison));
+        Assert.Equal(6, player.Block);
+        Assert.Equal(8, shell.DisplayAmount);
+        Assert.Equal(hpBefore, player.CurrentHp);
+    }
+
+    [Fact]
     public async Task Player_and_pet_separate_turn_start_Poison_from_turn_end_Burning()
     {
         await AssertSeparateTriggerBatches(Player.Creature);

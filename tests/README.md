@@ -29,7 +29,7 @@
 .\tests\run-tests.ps1 -DefenseAwareDebuffPreviewTests -Filter DefenseAwareDebuffPreview
 ```
 
-该模式要求游戏的 `mods/DefenseAwareDebuffPreview` 中已安装 v0.1.1，
+该模式要求游戏的 `mods/DefenseAwareDebuffPreview` 中已安装 v0.1.2，
 并通过 `Sts2RequiredModIds` 将它真正加入 TestTheSpire 载荷。普通模式不会加载它，
 因此两种模式分别覆盖可选模组缺失时的基础色块和存在时的防御感知色块。
 
