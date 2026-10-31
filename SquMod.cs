@@ -44,6 +44,7 @@ public static class SquMod
 		ModTypeDiscoveryHub.RegisterModAssembly(ModId, assembly);
 		SquSfx.Register();
 		SquSettingsPage.Register();
+		OrderedPoisonHealthBarForecastSource.Register();
 
 		RitsuLibFramework.CreateContentPack(ModId)
 			.CharacterStarterRelic<SunqianCharacter, BoxLunchRelic>(1)
@@ -87,7 +88,7 @@ public static class SquMod
 			.CardKeywordOwnedByLocNamespace(
 				"war_feeds_war",
 				iconPath: null,
-				ModKeywordCardDescriptionPlacement.AfterCardDescription,
+				ModKeywordCardDescriptionPlacement.BeforeCardDescription,
 				includeInCardHoverTip: false)
 			.ArchaicToothTranscendence<SunqianScript, SunqianUniverse>()
 			.TouchOfOrobasRefinement<BoxLunchRelic, AbundantBoxLunchRelic>()
@@ -98,6 +99,7 @@ public static class SquMod
 		AllInResolutionTracker.Initialize();
 		RitsuLibFramework.RegisterModelCapability<SlightRevisionCapability>(ModId);
 		RitsuLibFramework.RegisterModelCapability<NightRaidWuchaoStrikeCapability>(ModId);
+		RitsuLibFramework.RegisterModelCapability<ChickenFootCheeseStrikeCapability>(ModId);
 		ContentSettingsRunData.Initialize();
 		RunReloadCount.Initialize();
 		DailyWageRunData.Initialize();
@@ -106,6 +108,7 @@ public static class SquMod
 		SlightRevisionSystem.Initialize();
 		NightRaidWuchaoStrikeSystem.Initialize();
 		EunuchMessageClearOnLeaveHand.Initialize();
+		ChickenFootCheeseStrikeSystem.Initialize();
 		RitsuLibFramework.SubscribeLifecycle<CombatEndedEvent>(_ => WarFeedsWarResolutionTracker.ClearCombat());
 
 		var harmony = new Harmony($"{ModId}.patches");

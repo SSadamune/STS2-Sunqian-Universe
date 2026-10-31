@@ -9,8 +9,10 @@ using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.Powers;
+using MegaCrit.Sts2.Core.Localization;
 using Squ.Cards;
 using Squ.Combat;
+using Squ.Interop;
 using STS2RitsuLib.Interop.AutoRegistration;
 using STS2RitsuLib.Scaffolding.Content;
 
@@ -19,9 +21,8 @@ using STS2RitsuLib.Scaffolding.Content;
 namespace Squ.Powers;
 
 /// <summary>
-/// Tracks every Attack as its own play. A stack is spent only when that Attack actually consumes
-/// Vigor. Same-owner child Attacks inheriting Vigor from Supreme General neither consume a stack
-/// nor absorb another restoration.
+/// 每张攻击牌单独占一层计数。同一张牌既消耗活力又消耗酒力，也只扣一层，
+/// 并把两种资源一起补回。上将军让同一持有者自动打出的子牌不另占一层。
 /// </summary>
 [RegisterPower]
 public class KeepVigorPower : ModPowerTemplate
@@ -37,7 +38,7 @@ public class KeepVigorPower : ModPowerTemplate
 
 		public required bool ReservesStack { get; init; }
 
-		public decimal VigorSpent { get; set; }
+		public AttackResourceSpendTransaction? ResourceSpend { get; init; }
 	}
 
 	public override PowerType Type => PowerType.Buff;
@@ -53,7 +54,18 @@ public class KeepVigorPower : ModPowerTemplate
 	protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
 	[
 		HoverTipFactory.FromPower<VigorPower>(),
+		..NewsanguoDrunkenMightEffect.HoverTips(),
 	];
+
+	public override LocString Description
+	{
+		get
+		{
+			LocString description = base.Description;
+			NewsanguoDrunkenMightEffect.AddOrText(description);
+			return description;
+		}
+	}
 
 	protected override object InitInternalData() => new Data();
 
@@ -72,10 +84,14 @@ public class KeepVigorPower : ModPowerTemplate
 			|| SupremeGeneralKeywordSystem.ShouldSuppressSameOwnerChildAttackResources(
 				cardPlay.Card,
 				cardPlay);
+		bool reservesStack = !suppress && CountReservedStacks(data) < Amount;
 		data.ActiveAttacks.Add(new AttackPlayTrack
 		{
 			Card = cardPlay.Card,
-			ReservesStack = !suppress && CountReservedStacks(data) < Amount,
+			ReservesStack = reservesStack,
+			ResourceSpend = reservesStack
+				? new AttackResourceSpendTransaction(Owner, cardPlay.Card)
+				: null,
 		});
 		return Task.CompletedTask;
 	}
@@ -87,22 +103,14 @@ public class KeepVigorPower : ModPowerTemplate
 		Creature? applier,
 		CardModel? cardSource)
 	{
-		if (Owner.IsDead
-			|| power is not VigorPower
-			|| power.Owner != Owner
-			|| amount >= 0m)
+		if (Owner.IsDead || amount >= 0m)
 		{
 			return Task.CompletedTask;
 		}
 
-		Data data = GetInternalData<Data>();
-		if (data.ActiveAttacks.Count > 0)
+		foreach (AttackPlayTrack active in GetInternalData<Data>().ActiveAttacks)
 		{
-			AttackPlayTrack active = data.ActiveAttacks[^1];
-			if (active.ReservesStack)
-			{
-				active.VigorSpent += -amount;
-			}
+			active.ResourceSpend?.Record(power, amount, cardSource);
 		}
 
 		return Task.CompletedTask;
@@ -127,7 +135,7 @@ public class KeepVigorPower : ModPowerTemplate
 
 		AttackPlayTrack track = data.ActiveAttacks[trackIndex];
 		data.ActiveAttacks.RemoveAt(trackIndex);
-		if (!track.ReservesStack || track.VigorSpent <= 0m)
+		if (!track.ReservesStack || track.ResourceSpend is not { SpentAny: true } resourceSpend)
 		{
 			return;
 		}
@@ -140,16 +148,31 @@ public class KeepVigorPower : ModPowerTemplate
 			return;
 		}
 
-		await PowerCmd.Apply<VigorPower>(
-			choiceContext,
-			Owner,
-			track.VigorSpent,
-			Owner,
-			cardPlay.Card);
-
-		if (Owner.GetPower<VigorPower>() is { } restoredVigor)
+		decimal vigorToRestore = resourceSpend.GetRestorableVigor();
+		if (vigorToRestore > 0m)
 		{
-			AttackVigorResolution.ClearVigorAttackBinding(restoredVigor);
+			await PowerCmd.Apply<VigorPower>(
+				choiceContext,
+				Owner,
+				vigorToRestore,
+				Owner,
+				cardPlay.Card);
+
+			if (Owner.GetPower<VigorPower>() is { } restoredVigor)
+			{
+				AttackVigorResolution.ClearVigorAttackBinding(restoredVigor);
+			}
+		}
+
+		decimal drunkenMightToRestore = resourceSpend.GetRestorableDrunkenMight();
+		if (drunkenMightToRestore > 0m)
+		{
+			await NewsanguoPublicApiInterop.ApplyDrunkenMight(
+				choiceContext,
+				Owner,
+				drunkenMightToRestore,
+				Owner,
+				cardPlay.Card);
 		}
 	}
 

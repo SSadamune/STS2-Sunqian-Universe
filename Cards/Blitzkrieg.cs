@@ -26,7 +26,7 @@ namespace Squ.Cards;
 /// 「上将军」会让嵌套自动打出的攻击牌继承本牌实际消耗的活力加成。
 /// </summary>
 [RegisterCard(typeof(SunqianCardPool), StableEntryStem = "blitzkrieg")]
-public sealed class Blitzkrieg : ModCardTemplate
+public sealed class Blitzkrieg : ModCardTemplate, IRowKeywordsCard
 {
 	public const int BaseDamage = 11;
 

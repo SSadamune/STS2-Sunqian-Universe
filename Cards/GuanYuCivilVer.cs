@@ -25,26 +25,11 @@ public sealed class GuanYuCivilVer : ModCardTemplate
 
 	private const string UpgradeHighlightVarName = "UpgradeHighlight";
 
-	private sealed class DexterityOnlyBlockVar(decimal baseValue)
-		: BlockVar(baseValue, ValueProp.Unpowered)
-	{
-		public override void UpdateCardPreview(
-			CardModel card,
-			CardPreviewMode previewMode,
-			MegaCrit.Sts2.Core.Entities.Creatures.Creature? target,
-			bool runGlobalHooks)
-		{
-			int dexterity =
-				card.Owner?.Creature.GetPower<DexterityPower>()?.Amount ?? 0;
-			PreviewValue = System.Math.Max(0, BaseValue + dexterity);
-		}
-	}
-
 	public override bool CanBeGeneratedInCombat => false;
 
 	protected override IEnumerable<DynamicVar> CanonicalVars =>
 	[
-		new DexterityOnlyBlockVar(BlockPerEnergy),
+		new BlockVar(BlockPerEnergy, ValueProp.Unpowered),
 		new DynamicVar(UpgradeHighlightVarName, 0),
 	];
 

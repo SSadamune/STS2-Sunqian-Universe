@@ -13,11 +13,11 @@
 
   <ItemGroup>
     <Reference Include="sts2">
-      <HintPath>..\..\lib\sts2.dll</HintPath>
+      <HintPath>..\..\lib\public\sts2.dll</HintPath>
       <Private>false</Private>
     </Reference>
     <Reference Include="GodotSharp">
-      <HintPath>C:\Program Files (x86)\Steam\steamapps\common\Slay the Spire 2\data_sts2_windows_x86_64\GodotSharp.dll</HintPath>
+      <HintPath>..\..\lib\public\GodotSharp.dll</HintPath>
       <Private>false</Private>
     </Reference>
     <PackageReference Include="xunit.v3.assert" Version="3.2.2" />

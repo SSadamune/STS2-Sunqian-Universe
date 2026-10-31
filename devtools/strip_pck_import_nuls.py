@@ -24,9 +24,17 @@ EXCLUDED_ENTRIES = {
     ".godot/global_script_class_cache.cfg",
     ".godot/uid_cache.bin",
 }
-# Exporter bakes these and drops ext_resources that live in the base game.
-# Ship the text scenes so those paths still resolve at runtime.
+# Exporter bakes resource UIDs into binary scenes. A mod PCK cannot safely ship
+# its project-local UID cache because that would override the base game's cache,
+# so keep scenes that reference external resources in text form and resolve them
+# by their explicit res:// paths at runtime.
 TEXT_SCENES = (
+    "scenes/sunqian_bg.tscn",
+    "scenes/sunqian_character.tscn",
+    "scenes/sunqian_character_merchant.tscn",
+    "scenes/sunqian_character_rest_site.tscn",
+    "scenes/sunqian_energy_counter.tscn",
+    "scenes/sunqian_icon.tscn",
     "scenes/vfx/vfx_part_time_general_finale.tscn",
     "scenes/vfx/vfx_grand_finale_anticipation.tscn",
 )

@@ -19,14 +19,15 @@ public static class SquCardTags
 	public const string CharacterMechanicBoundId =
 		"SUNQIAN_UNIVERSE_CARDTAG_CHARACTER_MECHANIC_BOUND";
 
+	/// <summary>「灼烧」卡牌标签的稳定限定 ID。</summary>
+	public const string BurningId = "SUNQIAN_UNIVERSE_CARDTAG_BURNING";
+
 	public static readonly CardTag Script = ModContentRegistry
 		.GetQualifiedCardTagId(SquMod.ModId, "script")
 		.GetModCardTag();
 
 	/// <summary>能造成 <see cref="BurningPower"/> 的卡牌（供火种等效果识别）。</summary>
-	public static readonly CardTag Burning = ModContentRegistry
-		.GetQualifiedCardTagId(SquMod.ModId, "burning")
-		.GetModCardTag();
+	public static readonly CardTag Burning = BurningId.GetModCardTag();
 
 	/// <summary>
 	/// 标记强绑定所属角色机制、不应被《轧戏》或《人体炼成》发现的卡牌。
@@ -38,13 +39,17 @@ public static class SquCardTags
 	public static bool IsCharacterMechanicBound(CardModel? card) =>
 		card?.Tags.Contains(CharacterMechanicBound) == true;
 
+	/// <summary>判断卡牌是否带有「灼烧」卡牌标签。</summary>
+	public static bool IsBurningCard(CardModel? card) =>
+		card?.Tags.Contains(Burning) == true;
+
 	/// <summary>
 	/// 能造成 <see cref="BurningPower"/> 的卡牌。
 	/// 夜袭乌巢生效时，其持有者的 <see cref="CardTag.Strike"/> 攻击牌也视为灼烧牌，
 	/// 但不会修改卡牌的实际标签集合。
 	/// </summary>
 	public static bool AppliesBurning(CardModel card) =>
-		card.Tags.Contains(Burning) || HasNightRaidBurning(card);
+		IsBurningCard(card) || HasNightRaidBurning(card);
 
 	private static bool HasNightRaidBurning(CardModel card) =>
 		card.IsMutable

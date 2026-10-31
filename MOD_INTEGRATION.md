@@ -26,6 +26,10 @@ public static class SunqianUniverseApiInterop
     public static CardTag CharacterMechanicBoundCardTag => default;
     public static bool IsCharacterMechanicBound(CardModel? card) => false;
 
+    public static string BurningCardTagId => "";
+    public static CardTag BurningCardTag => default;
+    public static bool IsBurningCard(CardModel? card) => false;
+
     public static bool IsSupportingActorCharacter(CharacterModel? character) => false;
     public static bool HasSupportingActorInCombat() => false;
 
@@ -92,6 +96,19 @@ protected override HashSet<CardTag> CanonicalTags =>
 ```
 
 采用硬依赖时，可以直接引用 `SunqianUniversePublicApi.CharacterMechanicBoundCardTag`。标签的稳定限定 ID 可从公开属性 `SunqianUniversePublicApi.CharacterMechanicBoundCardTagId` 取得；不希望硬引用程序集时，也可以使用同名 Interop 属性取得 ID。`IsCharacterMechanicBound` 可用于检查任意卡牌是否带有该标记。可选依赖调用方必须先检查 `IsReady`。
+
+## 把外部卡牌标记为灼烧牌
+
+外部模组可以把 `BurningCardTag` 加入卡牌的固有标签。带有该标签的牌会被火种识别为灼烧牌，给予灼烧时获得火种加层：
+
+```csharp
+protected override HashSet<CardTag> CanonicalTags =>
+    SunqianUniverseApiInterop.IsReady
+        ? [SunqianUniverseApiInterop.BurningCardTag]
+        : [];
+```
+
+`IsBurningCard` 检查卡牌是否带有该标签。稳定限定 ID 为 `BurningCardTagId`（`SUNQIAN_UNIVERSE_CARDTAG_BURNING`）。采用硬依赖时，可以直接引用 `SunqianUniversePublicApi.BurningCardTag`。可选依赖调用方必须先检查 `IsReady`。
 
 本模组初始化时已调用 `ModTypeDiscoveryHub.RegisterModAssembly`。请始终先检查 `IsReady`，把未安装孙乾宇宙视为正常分支：
 

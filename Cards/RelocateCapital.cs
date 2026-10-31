@@ -7,6 +7,7 @@ using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.Entities.Creatures;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.HoverTips;
+using MegaCrit.Sts2.Core.Localization;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.Powers;
@@ -14,6 +15,7 @@ using MegaCrit.Sts2.Core.ValueProps;
 using Squ.Audio;
 using Squ.Character;
 using Squ.Combat;
+using Squ.Interop;
 using Squ.Powers;
 using STS2RitsuLib.Interop.AutoRegistration;
 using STS2RitsuLib.Scaffolding.Content;
@@ -46,7 +48,15 @@ public sealed class RelocateCapital : SlightRevisionCardTemplate<BurnCity>
 
 			yield return HoverTipFactory.FromPower<VigorPower>();
 			yield return HoverTipFactory.Static(StaticHoverTip.Block);
-			yield return HoverTipFactory.FromPower<TinderPower>();
+			foreach (IHoverTip tip in HoverTipFactory.FromPowerWithPowerHoverTips<TinderPower>())
+			{
+				yield return tip;
+			}
+
+			foreach (IHoverTip tip in NewsanguoDrunkenMightEffect.HoverTips())
+			{
+				yield return tip;
+			}
 		}
 	}
 
@@ -56,7 +66,9 @@ public sealed class RelocateCapital : SlightRevisionCardTemplate<BurnCity>
 		PortraitPath: "res://images/cards/RelocateCapital.png");
 
 	protected override bool ShouldGlowGoldInternal =>
-		Owner?.Creature is Creature owner && SquVigorSnapshot.GetAmount(owner) > 0;
+		Owner?.Creature is Creature owner
+		&& (SquVigorSnapshot.GetAmount(owner) > 0
+			|| NewsanguoDrunkenMightEffect.ConsumedByAttack(owner) > 0);
 
 	public RelocateCapital()
 		: base(1, CardType.Attack, CardRarity.Uncommon, TargetType.AnyEnemy)
@@ -83,19 +95,26 @@ public sealed class RelocateCapital : SlightRevisionCardTemplate<BurnCity>
 			})
 			.Execute(choiceContext);
 
-		int vigorSpent = vigorBefore - SquVigorSnapshot.GetAmount(owner);
-		if (vigorSpent <= 0)
+		int spent = vigorBefore - SquVigorSnapshot.GetAmount(owner)
+			+ NewsanguoDrunkenMightEffect.ConsumedByAttack(owner);
+		if (spent <= 0)
 		{
 			return;
 		}
 
-		await CreatureCmd.GainBlock(owner, vigorSpent, ValueProp.Move, cardPlay);
+		await CreatureCmd.GainBlock(owner, spent, ValueProp.Move, cardPlay);
 		await PowerCmd.Apply<TinderPower>(
 			choiceContext,
 			owner,
-			vigorSpent,
+			spent,
 			owner,
 			this);
+	}
+
+	protected override void AddExtraArgsToDescription(LocString description)
+	{
+		base.AddExtraArgsToDescription(description);
+		NewsanguoDrunkenMightEffect.AddOrText(description);
 	}
 
 	protected override void OnUpgrade()

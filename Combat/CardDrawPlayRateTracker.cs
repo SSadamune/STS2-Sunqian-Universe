@@ -2,6 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using MegaCrit.Sts2.Core.Combat;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.Entities.Players;
@@ -32,13 +34,20 @@ public static class CardDrawPlayRateTracker
 
 	private const string CelebrateMourningEntrySuffix = "CELEBRATE_MOURNING";
 
-	private static readonly PileType[] CelebrateMourningScanPiles =
+	private static readonly PileType[] CelebrateMourningHookPiles =
 	[
 		PileType.Hand,
 		PileType.Draw,
 		PileType.Discard,
 		PileType.Exhaust,
 		PileType.Play,
+	];
+
+	private static readonly PileType[] CelebrateMourningCandidatePiles =
+	[
+		PileType.Hand,
+		PileType.Draw,
+		PileType.Discard,
 	];
 
 	private static readonly PlayerRunSavedData<PlayerSaveState> SavedData =
@@ -150,6 +159,8 @@ public static class CardDrawPlayRateTracker
 		Func<CardModel, bool>? exclude = null)
 	{
 		List<(CardModel Card, int PlayCount, int Denominator)> ranked = [];
+		var statsCache = new Dictionary<string, (int PlayCount, int Denominator)>(StringComparer.Ordinal);
+		PlayerRuntime runtime = GetOrCreateRuntime(player);
 		foreach (CardModel card in candidates)
 		{
 			if (exclude?.Invoke(card) == true)
@@ -157,13 +168,12 @@ public static class CardDrawPlayRateTracker
 				continue;
 			}
 
-			TryGetStats(
-				player,
+			(int playFromHandCount, int handEntryCount) = GetCachedStats(
+				runtime,
 				card,
 				windowSize,
 				includeCurrentCombat,
-				out int playFromHandCount,
-				out int handEntryCount);
+				statsCache);
 			ranked.Add((card, playFromHandCount, handEntryCount));
 		}
 
@@ -228,7 +238,8 @@ public static class CardDrawPlayRateTracker
 		Func<CardModel, bool>? exclude = null)
 	{
 		List<CardModel> candidates = PileType.Deck.GetPile(player).Cards.ToList();
-		if (card.HasFamily() && ResolveIdentityCard(card) is null)
+		if ((card.HasFamily() || IsCelebrateMourningCard(card))
+			&& ResolveIdentityCard(card) is null)
 		{
 			candidates.Add(card);
 		}
@@ -283,6 +294,32 @@ public static class CardDrawPlayRateTracker
 		}
 
 		return false;
+	}
+
+	/// <summary>
+	/// Returns the live Hand/Draw/Discard candidates used by Celebrate Mourning's
+	/// hover preview.
+	/// </summary>
+	public static List<CardModel> GetCelebrateMourningPlayRateCandidates(Player player) =>
+		CaptureCelebrateMourningCandidates(player);
+
+	/// <summary>
+	/// Returns the result captured when the card entered Exhaust. The compact result
+	/// is shared by every Celebrate Mourning copy, so asynchronous exhaust hooks cannot
+	/// change the comparison and multiple copies do not repeat the full scan.
+	/// </summary>
+	public static bool WasAmongHighestCelebrateMourningCandidatesAtExhaust(
+		Player player,
+		CardModel exhaustedCard)
+	{
+		PlayerRuntime runtime = GetOrCreateRuntime(player);
+		if (runtime.CelebrateMourningExhaustResults.TryGetValue(exhaustedCard, out bool result))
+		{
+			return result;
+		}
+
+		// Defensive fallback for cards exhausted before lifecycle initialization.
+		return IsHighestCelebrateMourningCandidate(player, exhaustedCard);
 	}
 
 	public static bool TryGetStats(
@@ -371,125 +408,6 @@ public static class CardDrawPlayRateTracker
 		SquMod.Logger.Info(builder.ToString());
 	}
 
-	/// <summary>
-	/// 临时诊断：任意牌进入消耗堆时记录打出率排名与「闻丧贺喜」位置（Debug Log Viewer）。
-	/// </summary>
-	public static void LogCardExhaustedDiagnostics(
-		Player player,
-		CardModel exhaustedCard,
-		PileType previousPile,
-		int windowSize = MaxStoredCombats,
-		bool includeCurrentCombat = true)
-	{
-		var builder = new StringBuilder();
-		builder.AppendLine("[CardDrawPlayRateTracker] card exhausted (Celebrate Mourning debug)");
-		builder.Append("  exhaustedFrom: ").AppendLine(previousPile.ToString());
-		builder.Append("  exhaustedCard: ").Append(FormatCardLabel(exhaustedCard));
-		builder.Append(" objectHash=").AppendLine(exhaustedCard.GetHashCode().ToString());
-
-		CardModel? resolvedIdentity = ResolveIdentityCard(exhaustedCard);
-		if (resolvedIdentity is null)
-		{
-			builder.AppendLine("  resolveIdentity: FAILED (no DeckVersion and not in Deck pile)");
-		}
-		else
-		{
-			builder.Append("  resolveIdentity: ").Append(FormatCardLabel(resolvedIdentity))
-				.Append(" [").Append(GetIdentityKey(resolvedIdentity)).AppendLine("]");
-		}
-
-		builder.Append("  deckVersion: ")
-			.AppendLine(exhaustedCard.DeckVersion is null ? "null" : FormatCardLabel(exhaustedCard.DeckVersion));
-
-		if (TryGetStats(
-			    player,
-			    exhaustedCard,
-			    windowSize,
-			    includeCurrentCombat,
-			    out int playFromHandCount,
-			    out int handEntryCount))
-		{
-			builder.Append("  exhaustedCardStats: playFromHandCount=").Append(playFromHandCount)
-				.Append(", handEntryCount=").Append(handEntryCount)
-				.Append(", rate=").AppendLine(FormatRate(playFromHandCount, handEntryCount));
-		}
-		else
-		{
-			builder.AppendLine("  exhaustedCardStats: (no tracked stats for this card)");
-		}
-
-		List<RankedDeckCard> rankedOthers = GetRankedDeckCards(
-			player,
-			windowSize,
-			includeCurrentCombat,
-			exclude: IsCelebrateMourningCard);
-		AppendExhaustedPlayRateRank(builder, exhaustedCard, rankedOthers);
-
-		builder.AppendLine("  highestOtherPlayRateDeckCards:");
-		HashSet<CardModel> highestOthers = GetHighestPlayRateDeckCards(
-			player,
-			windowSize,
-			includeCurrentCombat,
-			exclude: IsCelebrateMourningCard);
-		if (highestOthers.Count == 0)
-		{
-			builder.AppendLine("    (none)");
-		}
-		else
-		{
-			foreach (CardModel deckCard in highestOthers.OrderBy(card => card.Title, StringComparer.Ordinal))
-			{
-				builder.Append("    ").AppendLine(FormatCardLabel(deckCard));
-			}
-		}
-
-		bool isAmongHighestOthers = IsAmongHighestPlayRateDeckCards(
-			player,
-			exhaustedCard,
-			windowSize,
-			includeCurrentCombat,
-			exclude: IsCelebrateMourningCard);
-		bool wasAmongHighestBeforeExhaust = WasAmongHighestPlayRateDeckCardsBeforeExhaust(
-			player,
-			exhaustedCard,
-			windowSize,
-			includeCurrentCombat,
-			exclude: IsCelebrateMourningCard);
-		builder.Append("  isAmongHighestOtherPlayRate: ").AppendLine(isAmongHighestOthers.ToString());
-		builder.Append("  wasAmongHighestBeforeThisExhaust: ")
-			.AppendLine(wasAmongHighestBeforeExhaust.ToString());
-		builder.Append("  isCelebrateMourningCard: ").AppendLine(IsCelebrateMourningCard(exhaustedCard).ToString());
-
-		builder.AppendLine("  deckPlayRateRanking (excluding Celebrate Mourning):");
-		if (rankedOthers.Count == 0)
-		{
-			builder.AppendLine("    (empty deck)");
-		}
-		else
-		{
-			for (int i = 0; i < rankedOthers.Count; i++)
-			{
-				RankedDeckCard entry = rankedOthers[i];
-				builder.Append("    #").Append(i + 1).Append(' ')
-					.Append(FormatCardLabel(entry.Card))
-					.Append(" [").Append(entry.IdentityKey).Append("] rate=")
-					.Append(FormatRate(entry.PlayFromHandCount, entry.HandEntryCount))
-					.AppendLine();
-			}
-		}
-
-		builder.AppendLine("  celebrateMourningInstances:");
-		AppendCelebrateMourningInstances(
-			builder,
-			player,
-			exhaustedCard,
-			windowSize,
-			includeCurrentCombat,
-			wasAmongHighestBeforeExhaust);
-
-		SquMod.Logger.Info(builder.ToString());
-	}
-
 	private static void AppendCardRateLine(
 		StringBuilder builder,
 		string indent,
@@ -528,11 +446,20 @@ public static class CardDrawPlayRateTracker
 			return;
 		}
 
+		PlayerRuntime runtime = GetOrCreateRuntime(player);
+		if (IsCelebrateMourningCard(card))
+		{
+			runtime.CelebrateMourningCards.Add(card);
+		}
+
 		PileType previousPile = evt.PreviousPile;
 		PileType? newPile = card.Pile?.Type;
-		if (newPile == PileType.Exhaust && previousPile != PileType.Exhaust)
+		if (newPile == PileType.Exhaust
+			&& previousPile != PileType.Exhaust
+			&& HasCelebrateMourningHookListener(runtime))
 		{
-			LogCardExhaustedDiagnostics(player, card, previousPile);
+			runtime.CelebrateMourningExhaustResults[card] =
+				IsHighestCelebrateMourningCandidate(player, card);
 		}
 
 		if (!TryGetStatsKey(card, out string statsKey))
@@ -540,7 +467,6 @@ public static class CardDrawPlayRateTracker
 			return;
 		}
 
-		PlayerRuntime runtime = GetOrCreateRuntime(player);
 		if (newPile == PileType.Hand && previousPile != PileType.Hand)
 		{
 			runtime.Current.AddHandEntry(statsKey);
@@ -565,7 +491,11 @@ public static class CardDrawPlayRateTracker
 		foreach (Player player in runState.Players)
 		{
 			LoadSavedState(player);
-			GetOrCreateRuntime(player).Current = new CombatSnapshot();
+			PlayerRuntime runtime = GetOrCreateRuntime(player);
+			runtime.Current = new CombatSnapshot();
+			runtime.CelebrateMourningExhaustResults.Clear();
+			runtime.CelebrateMourningCards.Clear();
+			CaptureCelebrateMourningCards(player, runtime);
 		}
 	}
 
@@ -584,6 +514,8 @@ public static class CardDrawPlayRateTracker
 			}
 
 			runtime.Current = new CombatSnapshot();
+			runtime.CelebrateMourningExhaustResults.Clear();
+			runtime.CelebrateMourningCards.Clear();
 			Persist(player);
 		}
 	}
@@ -618,9 +550,120 @@ public static class CardDrawPlayRateTracker
 		}
 
 		PlayerSaveState saved = SavedData.Get(player);
-		runtime.Recent = CloneCombatList(saved.RecentCombats);
+		runtime.Recent = CloneCombatList(saved.RecentCombats.TakeLast(MaxStoredCombats));
 		runtime.Current = new CombatSnapshot();
+		runtime.CelebrateMourningExhaustResults.Clear();
+		runtime.CelebrateMourningCards.Clear();
+		if (player.PlayerCombatState is not null)
+		{
+			CaptureCelebrateMourningCards(player, runtime);
+		}
 		runtime.SavedStateLoaded = true;
+	}
+
+	private static List<CardModel> CaptureCelebrateMourningCandidates(Player player)
+	{
+		List<CardModel> candidates = [];
+		foreach (PileType pileType in CelebrateMourningCandidatePiles)
+		{
+			foreach (CardModel card in pileType.GetPile(player).Cards)
+			{
+				candidates.Add(card);
+			}
+		}
+
+		return candidates;
+	}
+
+	private static bool IsHighestCelebrateMourningCandidate(Player player, CardModel exhaustedCard)
+	{
+		PlayerRuntime runtime = GetOrCreateRuntime(player);
+		var statsCache = new Dictionary<string, (int PlayCount, int Denominator)>(StringComparer.Ordinal);
+		(int exhaustedPlays, int exhaustedEntries) = GetCachedStats(
+			runtime,
+			exhaustedCard,
+			MaxStoredCombats,
+			includeCurrentCombat: true,
+			statsCache);
+
+		foreach (PileType pileType in CelebrateMourningCandidatePiles)
+		{
+			foreach (CardModel candidate in pileType.GetPile(player).Cards)
+			{
+				if (ReferenceEquals(candidate, exhaustedCard))
+				{
+					continue;
+				}
+
+				(int candidatePlays, int candidateEntries) = GetCachedStats(
+					runtime,
+					candidate,
+					MaxStoredCombats,
+					includeCurrentCombat: true,
+					statsCache);
+				if (CompareEffectiveRate(
+						candidate.HasFamily(),
+						candidatePlays,
+						candidateEntries,
+						exhaustedCard.HasFamily(),
+						exhaustedPlays,
+						exhaustedEntries) > 0)
+				{
+					return false;
+				}
+			}
+		}
+
+		return true;
+	}
+
+	private static void CaptureCelebrateMourningCards(Player player, PlayerRuntime runtime)
+	{
+		foreach (PileType pileType in CelebrateMourningHookPiles)
+		{
+			foreach (CardModel card in pileType.GetPile(player).Cards)
+			{
+				if (IsCelebrateMourningCard(card))
+				{
+					runtime.CelebrateMourningCards.Add(card);
+				}
+			}
+		}
+	}
+
+	private static bool HasCelebrateMourningHookListener(PlayerRuntime runtime)
+	{
+		runtime.CelebrateMourningCards.RemoveWhere(card => card.HasBeenRemovedFromState);
+		return runtime.CelebrateMourningCards.Count > 0;
+	}
+
+	private static (int PlayCount, int Denominator) GetCachedStats(
+		PlayerRuntime runtime,
+		CardModel card,
+		int windowSize,
+		bool includeCurrentCombat,
+		Dictionary<string, (int PlayCount, int Denominator)> statsCache)
+	{
+		if (!TryGetStatsKey(card, out string statsKey))
+		{
+			return (0, 0);
+		}
+
+		if (statsCache.TryGetValue(statsKey, out var stats))
+		{
+			return stats;
+		}
+
+		AggregateWindow(
+			runtime,
+			statsKey,
+			windowSize,
+			includeCurrentCombat,
+			out int playCount,
+			out int denominator);
+		stats = (playCount, denominator);
+		statsCache[statsKey] = stats;
+		return stats;
 	}
 
 	private static bool TryGetStatsKey(CardModel card, out string statsKey)
@@ -711,7 +754,7 @@ public static class CardDrawPlayRateTracker
 		PlayerRuntime runtime = GetOrCreateRuntime(player);
 		SavedData.Modify(player, saved =>
 		{
-			saved.RecentCombats = CloneCombatList(runtime.Recent);
+			saved.RecentCombats = CloneCombatList(runtime.Recent.TakeLast(MaxStoredCombats));
 		});
 	}
 
@@ -841,204 +884,6 @@ public static class CardDrawPlayRateTracker
 		card.Id.Entry.EndsWith(CelebrateMourningEntrySuffix, StringComparison.Ordinal)
 		|| card.DeckVersion?.Id.Entry.EndsWith(CelebrateMourningEntrySuffix, StringComparison.Ordinal) == true;
 
-	private static List<RankedDeckCard> GetRankedDeckCards(
-		Player player,
-		int windowSize,
-		bool includeCurrentCombat,
-		Func<CardModel, bool>? exclude = null)
-	{
-		List<RankedDeckCard> ranked = [];
-		foreach (CardModel deckCard in PileType.Deck.GetPile(player).Cards)
-		{
-			if (exclude?.Invoke(deckCard) == true)
-			{
-				continue;
-			}
-
-			TryGetStats(
-				player,
-				deckCard,
-				windowSize,
-				includeCurrentCombat,
-				out int playFromHandCount,
-				out int handEntryCount);
-			CardModel identity = ResolveIdentityCard(deckCard) ?? deckCard;
-			ranked.Add(new RankedDeckCard(
-				deckCard,
-				deckCard.HasFamily(),
-				playFromHandCount,
-				handEntryCount,
-				GetIdentityKey(identity)));
-		}
-
-		ranked.Sort(CompareRankedDeckCards);
-		return ranked;
-	}
-
-	private static void AppendExhaustedPlayRateRank(
-		StringBuilder builder,
-		CardModel exhaustedCard,
-		IReadOnlyList<RankedDeckCard> rankedOthers)
-	{
-		if (!TryGetExhaustedIdentityKey(exhaustedCard, out string exhaustedKey))
-		{
-			builder.AppendLine("  exhaustedPlayRateRankAmongOthers: (identity unresolved)");
-			return;
-		}
-
-		int rank = -1;
-		for (int i = 0; i < rankedOthers.Count; i++)
-		{
-			if (rankedOthers[i].IdentityKey == exhaustedKey)
-			{
-				rank = i + 1;
-				break;
-			}
-		}
-
-		if (rank < 0)
-		{
-			builder.AppendLine(
-				"  exhaustedPlayRateRankAmongOthers: (not found in deck ranking — likely not a deck card identity)");
-			return;
-		}
-
-		RankedDeckCard entry = rankedOthers[rank - 1];
-		builder.Append("  exhaustedPlayRateRankAmongOthers: #").Append(rank)
-			.Append('/').Append(rankedOthers.Count)
-			.Append(" rate=").Append(FormatRate(entry.PlayFromHandCount, entry.HandEntryCount))
-			.AppendLine();
-	}
-
-	private static void AppendCelebrateMourningInstances(
-		StringBuilder builder,
-		Player player,
-		CardModel exhaustedCard,
-		int windowSize,
-		bool includeCurrentCombat,
-		bool wasAmongHighestBeforeExhaust)
-	{
-		bool found = false;
-		foreach (PileType pileType in CelebrateMourningScanPiles)
-		{
-			IReadOnlyList<CardModel> cards = pileType.GetPile(player).Cards;
-			for (int index = 0; index < cards.Count; index++)
-			{
-				CardModel card = cards[index];
-				if (!IsCelebrateMourningCard(card))
-				{
-					continue;
-				}
-
-				found = true;
-				bool canListen = CanCelebrateMourningListenForReturnTrigger(card.Pile?.Type);
-				bool ownerMatches = exhaustedCard.Owner == card.Owner;
-				bool exhaustedIsSelf = IsCelebrateMourningCard(exhaustedCard);
-				bool wouldTriggerReturn = canListen
-				                          && ownerMatches
-				                          && !exhaustedIsSelf
-				                          && wasAmongHighestBeforeExhaust;
-
-				builder.Append("    ").Append(pileType).Append('[').Append(index).Append("]: ")
-					.Append(FormatCardLabel(card))
-					.Append(" objectHash=").Append(card.GetHashCode())
-					.Append(", canListen=").Append(canListen)
-					.Append(", ownerMatches=").Append(ownerMatches)
-					.Append(", wouldTriggerReturn=").Append(wouldTriggerReturn);
-
-				if (!wouldTriggerReturn)
-				{
-					builder.Append(" (");
-					if (!canListen)
-					{
-						builder.Append("pile not listened; ");
-					}
-
-					if (!ownerMatches)
-					{
-						builder.Append("owner mismatch; ");
-					}
-
-					if (exhaustedIsSelf)
-					{
-						builder.Append("exhausted card is Celebrate Mourning; ");
-					}
-
-					if (!wasAmongHighestBeforeExhaust)
-					{
-						builder.Append("exhausted card not among highest other play rate before this exhaust; ");
-					}
-
-					builder.Append(')');
-				}
-
-				builder.AppendLine();
-			}
-		}
-
-		if (!found)
-		{
-			builder.AppendLine("    (none in Hand/Draw/Discard/Exhaust/Play)");
-		}
-	}
-
-	private static bool TryGetExhaustedIdentityKey(CardModel card, out string identityKey)
-	{
-		CardModel? identity = ResolveIdentityCard(card);
-		if (identity is null)
-		{
-			identityKey = string.Empty;
-			return false;
-		}
-
-		identityKey = GetIdentityKey(identity);
-		return true;
-	}
-
-	private static bool CanCelebrateMourningListenForReturnTrigger(PileType? pileType) =>
-		pileType is PileType.Hand or PileType.Draw or PileType.Discard or PileType.Exhaust;
-
-	private static int CompareRankedDeckCards(RankedDeckCard left, RankedDeckCard right)
-	{
-		int rateCmp = CompareEffectiveRate(
-			left.IsFamily,
-			left.PlayFromHandCount,
-			left.HandEntryCount,
-			right.IsFamily,
-			right.PlayFromHandCount,
-			right.HandEntryCount);
-		if (rateCmp != 0)
-		{
-			return -rateCmp;
-		}
-
-		int familyCmp = left.IsFamily.CompareTo(right.IsFamily);
-		if (familyCmp != 0)
-		{
-			return -familyCmp;
-		}
-
-		if (left.IsFamily)
-		{
-			return string.CompareOrdinal(left.IdentityKey, right.IdentityKey);
-		}
-
-		int playCmp = left.PlayFromHandCount.CompareTo(right.PlayFromHandCount);
-		if (playCmp != 0)
-		{
-			return -playCmp;
-		}
-
-		return string.CompareOrdinal(left.IdentityKey, right.IdentityKey);
-	}
-
-	private readonly record struct RankedDeckCard(
-		CardModel Card,
-		bool IsFamily,
-		int PlayFromHandCount,
-		int HandEntryCount,
-		string IdentityKey);
-
 	private readonly record struct RankedDrawCard(
 		CardModel Card,
 		bool IsFamily,
@@ -1056,11 +901,155 @@ public static class CardDrawPlayRateTracker
 		public List<CombatSnapshot> Recent { get; set; } = [];
 
 		public CombatSnapshot Current { get; set; } = new();
+
+		public Dictionary<CardModel, bool> CelebrateMourningExhaustResults { get; } =
+			new(ReferenceEqualityComparer.Instance);
+
+		public HashSet<CardModel> CelebrateMourningCards { get; } =
+			new(ReferenceEqualityComparer.Instance);
 	}
 
+	[JsonConverter(typeof(PlayerSaveStateJsonConverter))]
 	public sealed class PlayerSaveState
 	{
 		public List<CombatSnapshot> RecentCombats { get; set; } = [];
+	}
+
+	/// <summary>
+	/// Stores each stable card identity only once and transposes its per-combat
+	/// play/entry counts into a compact integer array. The reader also accepts the
+	/// original v4 object graph, so an existing run keeps all of its history and is
+	/// rewritten compactly after the next completed combat.
+	/// </summary>
+	public sealed class PlayerSaveStateJsonConverter : JsonConverter<PlayerSaveState>
+	{
+		private const string CombatCountProperty = "n";
+
+		private const string HistoriesProperty = "h";
+
+		private const string LegacyRecentCombatsProperty = "RecentCombats";
+
+		public override PlayerSaveState Read(
+			ref Utf8JsonReader reader,
+			Type typeToConvert,
+			JsonSerializerOptions options)
+		{
+			using JsonDocument document = JsonDocument.ParseValue(ref reader);
+			JsonElement root = document.RootElement;
+			if (root.ValueKind != JsonValueKind.Object)
+			{
+				return new PlayerSaveState();
+			}
+
+			if (root.TryGetProperty(HistoriesProperty, out JsonElement historiesElement))
+			{
+				return ReadCompact(root, historiesElement);
+			}
+
+			if (root.TryGetProperty(LegacyRecentCombatsProperty, out JsonElement legacyElement))
+			{
+				List<CombatSnapshot>? legacy = JsonSerializer.Deserialize<List<CombatSnapshot>>(
+					legacyElement.GetRawText(),
+					options);
+				return new PlayerSaveState
+				{
+					RecentCombats = CloneCombatList((legacy ?? []).TakeLast(MaxStoredCombats)),
+				};
+			}
+
+			return new PlayerSaveState();
+		}
+
+		public override void Write(
+			Utf8JsonWriter writer,
+			PlayerSaveState value,
+			JsonSerializerOptions options)
+		{
+			List<CombatSnapshot> recent = value.RecentCombats
+				.TakeLast(MaxStoredCombats)
+				.ToList();
+			string[] keys = recent
+				.SelectMany(snapshot => snapshot.Cards.Keys)
+				.Distinct(StringComparer.Ordinal)
+				.OrderBy(key => key, StringComparer.Ordinal)
+				.ToArray();
+
+			writer.WriteStartObject();
+			writer.WriteNumber(CombatCountProperty, recent.Count);
+			writer.WritePropertyName(HistoriesProperty);
+			writer.WriteStartObject();
+			foreach (string key in keys)
+			{
+				writer.WritePropertyName(key);
+				writer.WriteStartArray();
+				foreach (CombatSnapshot snapshot in recent)
+				{
+					if (snapshot.Cards.TryGetValue(key, out CardCombatStats? stats))
+					{
+						writer.WriteNumberValue(stats.PlayFromHandCount);
+						writer.WriteNumberValue(stats.HandEntryCount);
+					}
+					else
+					{
+						writer.WriteNumberValue(0);
+						writer.WriteNumberValue(0);
+					}
+				}
+				writer.WriteEndArray();
+			}
+			writer.WriteEndObject();
+			writer.WriteEndObject();
+		}
+
+		private static PlayerSaveState ReadCompact(JsonElement root, JsonElement historiesElement)
+		{
+			if (historiesElement.ValueKind != JsonValueKind.Object)
+			{
+				return new PlayerSaveState();
+			}
+
+			int serializedCombatCount = root.TryGetProperty(CombatCountProperty, out JsonElement countElement)
+				&& countElement.TryGetInt32(out int parsedCount)
+					? Math.Max(0, parsedCount)
+					: 0;
+			int retainedCombatCount = Math.Min(serializedCombatCount, MaxStoredCombats);
+			int skippedCombatCount = serializedCombatCount - retainedCombatCount;
+			var recent = Enumerable.Range(0, retainedCombatCount)
+				.Select(_ => new CombatSnapshot())
+				.ToList();
+
+			foreach (JsonProperty history in historiesElement.EnumerateObject())
+			{
+				if (history.Value.ValueKind != JsonValueKind.Array)
+				{
+					continue;
+				}
+
+				int[] counts = history.Value
+					.EnumerateArray()
+					.Select(element => element.TryGetInt32(out int count) ? count : 0)
+					.ToArray();
+				for (int retainedIndex = 0; retainedIndex < retainedCombatCount; retainedIndex++)
+				{
+					int serializedIndex = skippedCombatCount + retainedIndex;
+					int countIndex = serializedIndex * 2;
+					int plays = countIndex < counts.Length ? counts[countIndex] : 0;
+					int entries = countIndex + 1 < counts.Length ? counts[countIndex + 1] : 0;
+					if (plays == 0 && entries == 0)
+					{
+						continue;
+					}
+
+					recent[retainedIndex].Cards[history.Name] = new CardCombatStats
+					{
+						PlayFromHandCount = plays,
+						HandEntryCount = entries,
+					};
+				}
+			}
+
+			return new PlayerSaveState { RecentCombats = recent };
+		}
 	}
 
 	public sealed class CombatSnapshot

@@ -10,6 +10,7 @@ using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using Squ;
 using Squ.Audio;
 using Squ.Character;
+using Squ.Combat;
 using Squ.Powers;
 using Squ.Script;
 using STS2RitsuLib.Interop.AutoRegistration;
@@ -35,7 +36,7 @@ public sealed class ExecutionCommanderScript : ScriptCardTemplate
 
 	protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
 	[
-		..HoverTipFactory.FromCardWithCardHoverTips<SalvoStrike>(IsUpgraded),
+		..SquCardHoverTipFactory.FromCardWithCardHoverTips<SalvoStrike>(this, IsUpgraded),
 		HoverTipFactory.FromKeyword(SquKeywords.StackableScript),
 		HoverTipFactory.FromKeyword(SquKeywords.MultiTarget),
 	];
@@ -50,7 +51,7 @@ public sealed class ExecutionCommanderScript : ScriptCardTemplate
 		PortraitPath: "res://images/cards/ExecutionCommanderScript.png");
 
 	public ExecutionCommanderScript()
-		: base(1, CardType.Skill, CardRarity.Common, TargetType.Self, false)
+		: base(0, CardType.Skill, CardRarity.Common, TargetType.Self, false)
 	{
 	}
 

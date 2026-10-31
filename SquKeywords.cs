@@ -1,4 +1,5 @@
 using MegaCrit.Sts2.Core.Entities.Cards;
+using Squ.Interop;
 using MegaCrit.Sts2.Core.Helpers;
 using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Localization;
@@ -129,6 +130,7 @@ public static class SquKeywords
 	{
 		LocString effect = new("cards", effectLocKey);
 		effect.Add("energyPrefix", EnergyIconHelper.GetPrefix(card));
+		NewsanguoDrunkenMightEffect.AddOrText(effect);
 		effect.Add(new IfUpgradedVar(card.IsUpgraded ? UpgradeDisplay.Upgraded : UpgradeDisplay.Normal));
 
 		LocString wrapper = new("card_keywords", "SUNQIAN_UNIVERSE_KEYWORD_CHARGE.cardDescription");

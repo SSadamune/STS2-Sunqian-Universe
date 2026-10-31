@@ -1,4 +1,5 @@
 <Project Sdk="Microsoft.NET.Sdk">
+  <Import Project="..\TestTheSpire.107\SharedLogReader.targets" />
   <PropertyGroup>
     <TargetFramework>net9.0</TargetFramework>
     <AssemblyName>sunqian-universe.Tests</AssemblyName>
@@ -21,14 +22,34 @@
     <GodotProjectDir>$(MSBuildProjectDirectory)\..\..</GodotProjectDir>
   </PropertyGroup>
 
+  <PropertyGroup Condition="'$(Sts2JointModTests)' == 'true'">
+    <Sts2RequiredModIds>STS2-RitsuLib;Yjcm;newsanguo</Sts2RequiredModIds>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Sts2DefenseAwareDebuffPreviewTests)' == 'true'">
+    <Sts2RequiredModIds>STS2-RitsuLib;DefenseAwareDebuffPreview</Sts2RequiredModIds>
+  </PropertyGroup>
+
+  <ItemGroup Condition="'$(Sts2JointModTests)' == 'true' Or '$(Sts2DefenseAwareDebuffPreviewTests)' == 'true'">
+    <Compile Remove="Degrade\**\*.cs" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(Sts2JointModTests)' != 'true'">
+    <Compile Remove="JointMods\**\*.cs" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(Sts2DefenseAwareDebuffPreviewTests)' != 'true'">
+    <Compile Remove="DefenseAwareDebuffPreview\**\*.cs" />
+  </ItemGroup>
+
   <ItemGroup>
     <CompilerVisibleProperty Include="GodotProjectDir" />
     <Reference Include="sts2">
-      <HintPath>..\..\lib\sts2.dll</HintPath>
+      <HintPath>..\..\lib\public\sts2.dll</HintPath>
       <Private>false</Private>
     </Reference>
     <Reference Include="0Harmony">
-      <HintPath>..\..\lib\0Harmony.dll</HintPath>
+      <HintPath>..\..\lib\public\0Harmony.dll</HintPath>
       <Private>false</Private>
     </Reference>
     <ProjectReference Include="..\..\sunqian-universe.csproj" />
@@ -48,5 +69,8 @@
     </PropertyGroup>
     <Error Condition="!Exists('$(_TestTheSpire107Dll)')" Text="107-compatible TestTheSpire.dll was not built at $(_TestTheSpire107Dll)." />
     <Copy SourceFiles="$(_TestTheSpire107Dll)" DestinationFiles="$(TestTheSpirePayloadDir)\TestTheSpire.dll" />
+  </Target>
+  <Target Name="ConfigureActualTestModIds" AfterTargets="ConfigureSts2TestSettings" Condition="'$(Sts2DisableOtherMods)' == 'true'">
+    <Exec Command="powershell.exe -NoProfile -ExecutionPolicy Bypass -File &quot;$(MSBuildThisFileDirectory)..\configure-test-mods.ps1&quot; -SettingsPath &quot;$(Sts2SettingsPath)&quot; -ModsDir &quot;$(Sts2ModsDir)&quot; -EnabledModIds &quot;$(Sts2XunitAssertModId);$(TestTheSpireModId);$(Sts2RequiredModIds);$(Sts2MainModId);$(Sts2TestModId)&quot;" />
   </Target>
 </Project>

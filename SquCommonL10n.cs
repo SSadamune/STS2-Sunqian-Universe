@@ -18,10 +18,32 @@ public static class SquCommonL10n
 		"SUNQIAN_UNIVERSE_COMMON.NEWSANGUO_VIGOR_SWAP.combatNote";
 	public const string NewsanguoCombatPowerNoteKey =
 		"SUNQIAN_UNIVERSE_COMMON.NEWSANGUO_VIGOR_SWAP.combatPowerNote";
+	public const string NewsanguoVigorInlineTextKey =
+		"SUNQIAN_UNIVERSE_COMMON.NEWSANGUO_VIGOR_SWAP.vigorInlineText";
+	public const string NewsanguoDrunkenMightInlineTextKey =
+		"SUNQIAN_UNIVERSE_COMMON.NEWSANGUO_VIGOR_SWAP.drunkenMightInlineText";
+	public const string NewsanguoDrunkenMightEffectHoverKey =
+		"SUNQIAN_UNIVERSE_COMMON.NEWSANGUO_DRUNKEN_MIGHT_EFFECT.hover";
+	public const string NewsanguoDrunkenMightOrTextKey =
+		"SUNQIAN_UNIVERSE_COMMON.NEWSANGUO_DRUNKEN_MIGHT_EFFECT.orText";
+	public const string YjcmGoodFireHoverTitleKey =
+		"SUNQIAN_UNIVERSE_COMMON.YJCM_GOOD_FIRE.hoverTitle";
+	public const string YjcmGoodFireLibraryHoverKey =
+		"SUNQIAN_UNIVERSE_COMMON.YJCM_GOOD_FIRE.libraryHover";
+	public const string YjcmGoodFireCombatNoteKey =
+		"SUNQIAN_UNIVERSE_COMMON.YJCM_GOOD_FIRE.combatNote";
+	public const string YjcmGoodFireInlineTextKey =
+		"SUNQIAN_UNIVERSE_COMMON.YJCM_GOOD_FIRE.inlineText";
+	public const string YjcmTinderInlineTextKey =
+		"SUNQIAN_UNIVERSE_COMMON.YJCM_TINDER.inlineText";
+	public const string YjcmTinderLibraryHoverKey =
+		"SUNQIAN_UNIVERSE_COMMON.YJCM_TINDER.libraryHover";
 	public const string ScrySelectionPromptWithSourceKey =
 		"SUNQIAN_UNIVERSE_COMMON.SCRY.selectionPromptWithSource";
 	public const string NeutralCardAddedAnnotationKey =
 		"SUNQIAN_UNIVERSE_COMMON.NEUTRAL_CARD_ADDED.annotation";
+	public const string NeutralRelicAddedAnnotationKey =
+		"SUNQIAN_UNIVERSE_COMMON.NEUTRAL_RELIC_ADDED.annotation";
 	public const string NeutralPotionModifiedAnnotationKey =
 		"SUNQIAN_UNIVERSE_COMMON.NEUTRAL_POTION_MODIFIED.annotation";
 	public const string PlayRateTitleKey =
@@ -46,11 +68,44 @@ public static class SquCommonL10n
 	public static LocString NewsanguoCombatPowerNote() =>
 		new(Table, NewsanguoCombatPowerNoteKey);
 
+	public static LocString NewsanguoVigorInlineText() =>
+		new(Table, NewsanguoVigorInlineTextKey);
+
+	public static LocString NewsanguoDrunkenMightInlineText() =>
+		new(Table, NewsanguoDrunkenMightInlineTextKey);
+
+	public static LocString NewsanguoDrunkenMightEffectHover() =>
+		new(Table, NewsanguoDrunkenMightEffectHoverKey);
+
+	public static LocString NewsanguoDrunkenMightOrText() =>
+		new(Table, NewsanguoDrunkenMightOrTextKey);
+
+	public static LocString YjcmGoodFireHoverTitle() =>
+		new(Table, YjcmGoodFireHoverTitleKey);
+
+	public static LocString YjcmGoodFireLibraryHover() =>
+		new(Table, YjcmGoodFireLibraryHoverKey);
+
+	public static LocString YjcmGoodFireCombatNote() =>
+		new(Table, YjcmGoodFireCombatNoteKey);
+
+	public static LocString YjcmGoodFireInlineText() =>
+		new(Table, YjcmGoodFireInlineTextKey);
+
+	public static LocString YjcmTinderInlineText() =>
+		new(Table, YjcmTinderInlineTextKey);
+
+	public static LocString YjcmTinderLibraryHover() =>
+		new(Table, YjcmTinderLibraryHoverKey);
+
 	public static LocString ScrySelectionPromptWithSource() =>
 		new(Table, ScrySelectionPromptWithSourceKey);
 
 	public static LocString NeutralCardAddedAnnotation() =>
 		new(Table, NeutralCardAddedAnnotationKey);
+
+	public static LocString NeutralRelicAddedAnnotation() =>
+		new(Table, NeutralRelicAddedAnnotationKey);
 
 	public static LocString NeutralPotionModifiedAnnotation() =>
 		new(Table, NeutralPotionModifiedAnnotationKey);

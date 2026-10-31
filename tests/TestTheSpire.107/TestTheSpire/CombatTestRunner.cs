@@ -369,7 +369,9 @@ internal sealed class CombatTestRunner
 		}
 		if (!string.IsNullOrWhiteSpace(nameFilter))
 		{
-			list = list.Where((DiscoveredTestCase test) => test.DisplayName.Contains(nameFilter, StringComparison.OrdinalIgnoreCase)).ToList();
+			list = list.Where((DiscoveredTestCase test) =>
+				test.DisplayName.Contains(nameFilter, StringComparison.OrdinalIgnoreCase)
+				|| (test.SuiteType.FullName?.Contains(nameFilter, StringComparison.OrdinalIgnoreCase) ?? false)).ToList();
 		}
 		return list;
 	}

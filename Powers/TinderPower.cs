@@ -7,8 +7,10 @@ using MegaCrit.Sts2.Core.Entities.Creatures;
 using MegaCrit.Sts2.Core.Entities.Powers;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.HoverTips;
+using MegaCrit.Sts2.Core.Localization;
 using MegaCrit.Sts2.Core.Models;
 using Squ;
+using Squ.Interop;
 using STS2RitsuLib.Interop.AutoRegistration;
 using STS2RitsuLib.Scaffolding.Content;
 
@@ -43,7 +45,18 @@ public sealed class TinderPower : ModPowerTemplate
 	protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
 	[
 		HoverTipFactory.FromPower<BurningPower>(),
+		..YjcmTinderInterop.HuoGongHoverTips(this),
 	];
+
+	public override LocString Description
+	{
+		get
+		{
+			LocString description = base.Description;
+			YjcmTinderInterop.AddCombatDescriptionArgs(description, this);
+			return description;
+		}
+	}
 
 	public override decimal ModifyPowerAmountGivenAdditive(
 		PowerModel power,
@@ -52,8 +65,12 @@ public sealed class TinderPower : ModPowerTemplate
 		Creature? target,
 		CardModel? cardSource)
 	{
-		if (giver != Owner || power is not BurningPower || Amount <= 0
-			|| cardSource == null || !SquCardTags.AppliesBurning(cardSource)
+		bool enhancesBurning = power is BurningPower
+			&& cardSource is not null
+			&& SquCardTags.AppliesBurning(cardSource);
+		bool enhancesHuoGong = YjcmTinderInterop.EnhancesHuoGong(power);
+		if (giver != Owner || (!enhancesBurning && !enhancesHuoGong) || Amount <= 0
+			|| cardSource == null
 			|| cardSource.Owner?.Creature != Owner)
 		{
 			return 0m;

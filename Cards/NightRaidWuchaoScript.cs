@@ -11,6 +11,7 @@ using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using Squ;
 using Squ.Audio;
 using Squ.Character;
+using Squ.Combat;
 using Squ.Powers;
 using Squ.Script;
 using STS2RitsuLib.Interop.AutoRegistration;
@@ -45,7 +46,7 @@ public sealed class NightRaidWuchaoScript : ScriptCardTemplate
 
 	protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
 	[
-		..HoverTipFactory.FromCardWithCardHoverTips<StarryNightStrike>(IsUpgraded),
+		..SquCardHoverTipFactory.FromCardWithCardHoverTips<StarryNightStrike>(this, IsUpgraded),
 		HoverTipFactory.FromKeyword(SquKeywords.StackableScript),
 		HoverTipFactory.FromPower<BurningPower>(),
 		HoverTipFactory.FromKeyword(CardKeyword.Exhaust),

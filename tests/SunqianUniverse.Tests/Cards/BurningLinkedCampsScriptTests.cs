@@ -17,6 +17,7 @@ public sealed class BurningLinkedCampsScriptTests : SunqianCombatTestSuite
     [Fact]
     public async Task Replacing_upgraded_script_generates_burn_and_upgraded_shangfanggu_sigh()
     {
+        var previousTop = await AddToDrawPileTop<Wound>();
         await Play(Upgrade(await AddToHand<BurningLinkedCampsScript>()));
         CardTestAssertions.AssertPowerAmount<TinderPower>(
             Player.Creature,
@@ -25,9 +26,10 @@ public sealed class BurningLinkedCampsScriptTests : SunqianCombatTestSuite
         await Play(await AddToHand<ServantScript>());
 
         Assert.Contains(PileType.Hand.GetPile(Player).Cards, card => card is Burn);
-        Assert.Contains(
-            PileType.Draw.GetPile(Player).Cards,
-            card => card is ShangfangguSigh { IsUpgraded: true });
+        CardPile drawPile = PileType.Draw.GetPile(Player);
+        var generated = Assert.IsType<ShangfangguSigh>(drawPile.Cards[0]);
+        Assert.True(generated.IsUpgraded);
+        Assert.Same(previousTop, drawPile.Cards[1]);
         AssertOnlyScript<ScriptServantPower>();
     }
 

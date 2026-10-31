@@ -5,6 +5,17 @@
 
 ## 运行
 
+`release/version-public` 面向游戏 **0.107.1**，使用 .NET 9 和
+`STS2.RitsuLib.Compat.0.107.1`。正式版引用保存在 `lib/public/`，
+测试版引用保存在 `lib/beta/`，均不受 Git 管理。当前 main 仍使用旧路径
+`lib/sts2.dll`，该路径保留测试版引用；本分支全部项目只引用 `lib/public/`。
+切换分支不需要覆盖引用。更新游戏后可执行
+`./devtools/cache-game-references.ps1 -Channel public` 或 `-Channel beta`
+刷新对应缓存（脚本会核对游戏版本，且不会覆盖另一套缓存）。
+
+正式版测试使用仓库内的 `TestTheSpire.107` runner，并按清单里的实际 `id`
+配置隔离测试存档，避免 `mod_manifest.json` 文件名导致外部模组漏禁用。
+
 在仓库根目录执行：
 
 ```powershell
@@ -22,6 +33,16 @@
 ```powershell
 .\tests\run-tests.ps1 -Filter FlameStrike
 ```
+
+加载 `DefenseAwareDebuffPreview` 的独立互操作测试模式：
+
+```powershell
+.\tests\run-tests.ps1 -DefenseAwareDebuffPreviewTests -Filter DefenseAwareDebuffPreview
+```
+
+该模式要求游戏的 `mods/DefenseAwareDebuffPreview` 中已安装 v0.1.1，
+并通过 `Sts2RequiredModIds` 将它真正加入 TestTheSpire 载荷。普通模式不会加载它，
+因此两种模式分别覆盖可选模组缺失时的基础色块和存在时的防御感知色块。
 
 脚本会构建并安装当前模组，把完整的 Workshop RitsuLib 同步到游戏的
 `mods/STS2-RitsuLib`，再由 TestTheSpire 安装 runner、xUnit 断言程序集和测试模组。

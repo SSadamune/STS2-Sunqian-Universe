@@ -10,6 +10,7 @@ using MegaCrit.Sts2.Core.Localization;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.CardPools;
 using Squ.Audio;
+using Squ.Combat;
 using STS2RitsuLib.Interop.AutoRegistration;
 using STS2RitsuLib.Scaffolding.Content;
 
@@ -21,7 +22,7 @@ namespace Squ.Cards;
 /// 镜头预拍：从抽牌堆随机获得一张剧本牌；升级后改为由玩家选择。
 /// </summary>
 [RegisterCard(typeof(TokenCardPool), StableEntryStem = "lens_pre_shoot")]
-public sealed class LensPreShoot : ModCardTemplate
+public sealed class LensPreShoot : SlightRevisionDerivedCardTemplate
 {
 	private static readonly LocString SelectionPrompt =
 		new("cards", "SUNQIAN_UNIVERSE_CARD_LENS_PRE_SHOOT.selectionScreenPrompt");
@@ -38,7 +39,7 @@ public sealed class LensPreShoot : ModCardTemplate
 		PileType.Draw.GetPile(Owner).Cards.Any(IsScriptCard);
 
 	public LensPreShoot()
-		: base(1, CardType.Skill, CardRarity.Token, TargetType.Self)
+		: base(1, CardType.Skill, TargetType.Self)
 	{
 	}
 

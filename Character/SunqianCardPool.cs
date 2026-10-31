@@ -1,11 +1,12 @@
 #nullable enable
 using Godot;
+using STS2RitsuLib.Scaffolding.Characters;
 using STS2RitsuLib.Scaffolding.Content;
 using STS2RitsuLib.Utils;
 
 namespace Squ.Character;
 
-public sealed class SunqianCardPool : TypeListCardPoolModel
+public sealed class SunqianCardPool : TypeListCardPoolModel, IModColorfulPhilosophersCardPool
 {
 	public override string Title => "sunqian";
 	public override string EnergyColorName => "sunqian";

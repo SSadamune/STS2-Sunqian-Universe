@@ -22,7 +22,7 @@ namespace Squ.Cards;
 
 /// <summary>焚城：消耗。分两轮给予所有敌人灼烧。</summary>
 [RegisterCard(typeof(TokenCardPool), StableEntryStem = "burn_city")]
-public sealed class BurnCity : ModCardTemplate
+public sealed class BurnCity : SlightRevisionDerivedCardTemplate
 {
 	public const int BaseBurning = 5;
 	public const int BaseRepeatCount = 2;
@@ -49,7 +49,7 @@ public sealed class BurnCity : ModCardTemplate
 		PortraitPath: "res://images/cards/BurnCity.png");
 
 	public BurnCity()
-		: base(1, CardType.Skill, CardRarity.Token, TargetType.AllEnemies)
+		: base(1, CardType.Skill, TargetType.AllEnemies)
 	{
 	}
 

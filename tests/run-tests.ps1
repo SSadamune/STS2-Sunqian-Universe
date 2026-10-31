@@ -6,7 +6,9 @@ param(
     [string]$Filter = "",
     [int]$TimeoutSeconds = 180,
     [switch]$ListOnly,
-    [switch]$SkipModInstall
+    [switch]$SkipModInstall,
+    [switch]$JointModTests,
+    [switch]$DefenseAwareDebuffPreviewTests
 )
 
 $ErrorActionPreference = "Stop"
@@ -29,12 +31,15 @@ if (-not (Test-Path -LiteralPath $TestProject -PathType Leaf)) {
 if ($TimeoutSeconds -le 0) {
     throw "TimeoutSeconds must be greater than zero."
 }
+if ($JointModTests -and $DefenseAwareDebuffPreviewTests) {
+    throw "JointModTests and DefenseAwareDebuffPreviewTests are separate test modes."
+}
 
 $RitsuManifestPath = Join-Path $RitsuLibDir "mod_manifest.json"
 if (-not (Test-Path -LiteralPath $RitsuManifestPath -PathType Leaf)) {
     throw "RitsuLib manifest was not found: $RitsuManifestPath"
 }
-$RitsuManifest = Get-Content -LiteralPath $RitsuManifestPath -Raw | ConvertFrom-Json
+$RitsuManifest = Get-Content -LiteralPath $RitsuManifestPath -Raw -Encoding UTF8 | ConvertFrom-Json
 if ($RitsuManifest.id -ne "STS2-RitsuLib") {
     throw "Unexpected RitsuLib mod id '$($RitsuManifest.id)' in $RitsuManifestPath"
 }
@@ -72,6 +77,12 @@ $MsBuildArgs = @(
 )
 if (-not [string]::IsNullOrWhiteSpace($Filter)) {
     $MsBuildArgs += "-p:Sts2TestArgs=--sts2-test-filter=$Filter"
+}
+if ($JointModTests) {
+    $MsBuildArgs += "-p:Sts2JointModTests=true"
+}
+if ($DefenseAwareDebuffPreviewTests) {
+    $MsBuildArgs += "-p:Sts2DefenseAwareDebuffPreviewTests=true"
 }
 
 Write-Host "$Target via TestTheSpire..." -ForegroundColor Cyan

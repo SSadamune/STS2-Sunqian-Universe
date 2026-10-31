@@ -1,0 +1,57 @@
+<Project>
+    <!-- Override the package log reader to allow inherited Windows output handles. -->
+    <UsingTask TaskName="FilterTestTheSpireLog" Override="true"
+               TaskFactory="RoslynCodeTaskFactory"
+               AssemblyFile="$(MSBuildToolsPath)/Microsoft.Build.Tasks.Core.dll">
+        <ParameterGroup>
+            <LogPath ParameterType="System.String" Required="true"/>
+            <StartMarker ParameterType="System.String" Required="true"/>
+            <SummaryMarker ParameterType="System.String" Required="true"/>
+            <SummaryLines ParameterType="Microsoft.Build.Framework.ITaskItem[]" Output="true"/>
+            <PassingSummaryLines ParameterType="Microsoft.Build.Framework.ITaskItem[]" Output="true"/>
+            <FoundStart ParameterType="System.Boolean" Output="true"/>
+        </ParameterGroup>
+        <Task>
+            <Using Namespace="System"/>
+            <Using Namespace="System.Collections.Generic"/>
+            <Using Namespace="System.IO"/>
+            <Using Namespace="Microsoft.Build.Framework"/>
+            <Using Namespace="Microsoft.Build.Utilities"/>
+            <Code Type="Fragment" Language="cs"><![CDATA[
+var summaries = new List<ITaskItem>();
+var passingSummaries = new List<ITaskItem>();
+FoundStart = false;
+
+if (!File.Exists(LogPath))
+{
+    Log.LogMessage(MessageImportance.High, "TestTheSpire full log was not created: {0}", LogPath);
+}
+else
+{
+    // Windows child processes may still hold an inherited writable log handle.
+    using var stream = new FileStream(LogPath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite | FileShare.Delete);
+    using var reader = new StreamReader(stream);
+    string line;
+    while ((line = reader.ReadLine()) != null)
+    {
+        if (!FoundStart && line.IndexOf(StartMarker, StringComparison.Ordinal) >= 0)
+            FoundStart = true;
+
+        if (line.IndexOf(SummaryMarker, StringComparison.Ordinal) >= 0)
+        {
+            summaries.Add(new TaskItem(line));
+            if (line.IndexOf(" failed=0 ", StringComparison.Ordinal) >= 0)
+                passingSummaries.Add(new TaskItem(line));
+        }
+
+        if (FoundStart)
+            Log.LogMessage(MessageImportance.High, line);
+    }
+}
+
+SummaryLines = summaries.ToArray();
+PassingSummaryLines = passingSummaries.ToArray();
+            ]]></Code>
+        </Task>
+    </UsingTask>
+</Project>

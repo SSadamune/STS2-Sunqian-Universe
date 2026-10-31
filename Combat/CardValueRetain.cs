@@ -1,3 +1,10 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
+using HarmonyLib;
+using MegaCrit.Sts2.Core.Commands.Builders;
+using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.Models;
 
 #nullable enable
@@ -10,6 +17,12 @@ namespace Squ.Combat;
 /// </summary>
 public static class CardValueRetain
 {
+	private static readonly FieldInfo? AttackDamagePerHitField =
+		AccessTools.Field(typeof(AttackCommand), "_damagePerHit");
+
+	private static readonly FieldInfo? AttackCalculatedDamageVarField =
+		AccessTools.Field(typeof(AttackCommand), "_calculatedDamageVar");
+
 	public static bool TryAddBaseDamage(CardModel card, decimal amount)
 	{
 		if (amount <= 0)
@@ -49,5 +62,72 @@ public static class CardValueRetain
 
 		card.DynamicVars[dynamicVarName].BaseValue += amount;
 		return true;
+	}
+
+	/// <summary>
+	/// Finds the damage variable that supplied an attack command. Later commands may already carry
+	/// a snapshotted additive bonus in their raw amount, so callers provide those possible offsets.
+	/// </summary>
+	public static string? ResolveDamageVarName(
+		CardModel card,
+		AttackCommand command,
+		params decimal[] possibleAdditiveOffsets)
+	{
+		List<KeyValuePair<string, DynamicVar>> damageVars = card.DynamicVars
+			.Where(pair => pair.Value is DamageVar or CalculatedDamageVar)
+			.ToList();
+		if (damageVars.Count == 0)
+		{
+			return null;
+		}
+
+		if (damageVars.Count == 1)
+		{
+			return damageVars[0].Key;
+		}
+
+		if (AttackCalculatedDamageVarField?.GetValue(command) is CalculatedDamageVar calculated)
+		{
+			foreach (KeyValuePair<string, DynamicVar> pair in damageVars)
+			{
+				if (ReferenceEquals(pair.Value, calculated))
+				{
+					return pair.Key;
+				}
+			}
+		}
+
+		if (TryGetRawAttackDamage(command, out decimal rawDamage))
+		{
+			IEnumerable<decimal> offsets = possibleAdditiveOffsets
+				.Append(0m)
+				.Where(offset => offset >= 0m)
+				.Distinct();
+			foreach (decimal offset in offsets)
+			{
+				List<KeyValuePair<string, DynamicVar>> matches = damageVars
+					.Where(pair => pair.Value.BaseValue == rawDamage - offset)
+					.ToList();
+				if (matches.Count == 1)
+				{
+					return matches[0].Key;
+				}
+			}
+		}
+
+		return damageVars.FirstOrDefault(pair => pair.Key == "Damage").Key
+			?? damageVars[0].Key;
+	}
+
+	public static bool TryGetRawAttackDamage(AttackCommand command, out decimal damage)
+	{
+		if (AttackDamagePerHitField?.GetValue(command) is decimal rawDamage)
+		{
+			damage = rawDamage;
+			return true;
+		}
+
+		damage = 0m;
+		return false;
 	}
 }

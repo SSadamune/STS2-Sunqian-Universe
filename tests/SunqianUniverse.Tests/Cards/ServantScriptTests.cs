@@ -1,5 +1,7 @@
+using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.Models.Characters;
 using MegaCrit.Sts2.Core.Models.Monsters;
+using MegaCrit.Sts2.Core.Models.Powers;
 using Squ.Cards;
 using Squ.Powers;
 using TestTheSpire;
@@ -26,5 +28,34 @@ public sealed class ServantScriptTests : SunqianCombatTestSuite
 
         Assert.Equal(ServantScript.BaseBlock, Player.Creature.Block);
         AssertOnlyScript<ScriptServantPower>();
+    }
+
+    [Fact]
+    public async Task ThrowHimOut_grants_block_and_vigor_then_exhausts()
+    {
+        var card = await AddToHand<ThrowHimOut>();
+
+        Assert.Contains(CardKeyword.Exhaust, card.Keywords);
+        await Play(card);
+
+        Assert.Equal(ThrowHimOut.BaseBlock, Player.Creature.Block);
+        CardTestAssertions.AssertPowerAmount<VigorPower>(
+            Player.Creature,
+            ThrowHimOut.BaseVigor);
+        AssertInPile(card, PileType.Exhaust);
+    }
+
+    [Fact]
+    public async Task Upgraded_ThrowHimOut_grants_five_block_and_three_vigor()
+    {
+        var card = Upgrade(await AddToHand<ThrowHimOut>());
+
+        await Play(card);
+
+        Assert.Equal(ThrowHimOut.UpgradedBlock, Player.Creature.Block);
+        CardTestAssertions.AssertPowerAmount<VigorPower>(
+            Player.Creature,
+            ThrowHimOut.UpgradedVigor);
+        AssertInPile(card, PileType.Exhaust);
     }
 }

@@ -7,6 +7,8 @@
 .builds/
 .decompile/
 lib/sts2.dll
+lib/public/
+lib/beta/
 .export/
 tools/
 .sts2probe/

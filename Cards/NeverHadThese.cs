@@ -8,18 +8,18 @@ using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.Powers;
-using Squ.Audio;
-using Squ.Character;
+// using Squ.Character;
 using Squ.Powers;
 using Squ.Script;
-using STS2RitsuLib.Interop.AutoRegistration;
+// using STS2RitsuLib.Interop.AutoRegistration;
 using STS2RitsuLib.Scaffolding.Content;
 
 #nullable enable
 
 namespace Squ.Cards;
 
-[RegisterCard(typeof(SunqianCardPool), StableEntryStem = "never_had_these")]
+// Temporarily retired from the card pool. Restore this attribute to revive it.
+// [RegisterCard(typeof(SunqianCardPool), StableEntryStem = "never_had_these")]
 public sealed class NeverHadThese : ModCardTemplate
 {
 	public const int EnergyGain = 1;
@@ -48,8 +48,6 @@ public sealed class NeverHadThese : ModCardTemplate
 
 	protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
 	{
-		SquSfx.Play(SquSfx.NeverHadThesePlayEvent);
-
 		if (CombatState is not { } combatState)
 		{
 			return;

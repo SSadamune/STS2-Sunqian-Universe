@@ -117,6 +117,12 @@ public static class SlightRevisionSystem
 		..target.HoverTips,
 	];
 
+	public static IEnumerable<IHoverTip> GetHoverTips(
+		CardModel source,
+		CardModel target,
+		bool targetUpgraded) =>
+		SquCardHoverTipFactory.FromCardWithCardHoverTips(source, target, targetUpgraded);
+
 	public static async Task TransformAsync(CardModel original, CardModel target, bool targetUpgraded)
 	{
 		if (original.CardScope is not { } scope) return;

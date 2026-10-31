@@ -43,7 +43,7 @@ public sealed class BurnAfterReadingPower : ModPowerTemplate
 	protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
 	[
 		HoverTipFactory.FromKeyword(CardKeyword.Exhaust),
-		HoverTipFactory.FromPower<TinderPower>(),
+		..HoverTipFactory.FromPowerWithPowerHoverTips<TinderPower>(),
 		HoverTipFactory.FromPower<BurningPower>(),
 	];
 

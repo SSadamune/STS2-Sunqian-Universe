@@ -10,11 +10,11 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="sts2">
-      <HintPath>lib\sts2.dll</HintPath>
+      <HintPath>lib\public\sts2.dll</HintPath>
       <Private>false</Private>
     </Reference>
     <Reference Include="0Harmony">
-      <HintPath>lib\0Harmony.dll</HintPath>
+      <HintPath>lib\public\0Harmony.dll</HintPath>
       <Private>false</Private>
     </Reference>
   </ItemGroup>

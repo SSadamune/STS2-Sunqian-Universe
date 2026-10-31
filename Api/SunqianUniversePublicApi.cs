@@ -48,6 +48,22 @@ public static class SunqianUniversePublicApi
 	public static bool IsCharacterMechanicBound(CardModel? card) =>
 		SquCardTags.IsCharacterMechanicBound(card);
 
+	/// <summary>
+	/// 「灼烧」卡牌标签的稳定限定 ID。
+	/// 带有该标签的牌会被火种等效果识别为灼烧牌。
+	/// </summary>
+	public static string BurningCardTagId => SquCardTags.BurningId;
+
+	/// <summary>
+	/// 「灼烧」卡牌标签。外部卡牌可将它加入自己的 CanonicalTags，
+	/// 从而被火种等效果视为灼烧牌。
+	/// </summary>
+	public static CardTag BurningCardTag => SquCardTags.Burning;
+
+	/// <summary>判断卡牌是否带有「灼烧」卡牌标签。</summary>
+	public static bool IsBurningCard(CardModel? card) =>
+		SquCardTags.IsBurningCard(card);
+
 	/// <summary>判断角色是否为本模组的「龙套演员」。</summary>
 	public static bool IsSupportingActorCharacter(CharacterModel? character) =>
 		character is SunqianCharacter;
@@ -85,6 +101,46 @@ public static class SunqianUniversePublicApi
 			applier,
 			cardSource,
 			silent);
+
+	/// <summary>
+	/// 使用默认熄灭规则立即触发目标身上的一次“灼烧”。
+	/// 保留此三参数重载以兼容已发布的调用方。
+	/// </summary>
+	public static Task<bool> TriggerBurning(
+		PlayerChoiceContext choiceContext,
+		Creature target,
+		CardModel? cardSource) =>
+		TriggerBurning(
+			choiceContext,
+			target,
+			shouldCheckExtinguish: true,
+			clearChanceIncrement: BurningPower.ClearChanceIncrement,
+			cardSource: cardSource);
+
+	/// <summary>
+	/// 立即触发目标身上的一次“灼烧”，包括伤害、熄灭判定及熄灭概率递增。
+	/// 目标没有灼烧时返回 <see langword="false"/>。
+	/// <paramref name="shouldCheckExtinguish"/> 为 <see langword="false"/> 时不进行熄灭判定，
+	/// 也不会消耗“不熄”；未熄灭时，概率按 <paramref name="clearChanceIncrement"/> 调整。
+	/// 调整量可为负数，最终概率限制在 0–1 范围内。
+	/// </summary>
+	public static async Task<bool> TriggerBurning(
+		PlayerChoiceContext choiceContext,
+		Creature target,
+		bool shouldCheckExtinguish = true,
+		float clearChanceIncrement = BurningPower.ClearChanceIncrement,
+		CardModel? cardSource = null)
+	{
+		ArgumentNullException.ThrowIfNull(choiceContext);
+		ArgumentNullException.ThrowIfNull(target);
+
+		return target.GetPower<BurningPower>() is { } burning
+			&& await burning.TriggerAsync(
+				choiceContext,
+				shouldCheckExtinguish,
+				clearChanceIncrement,
+				cardSource);
+	}
 
 	/// <summary>判断能力是否属于本模组的「剧本」机制。</summary>
 	public static bool IsScriptPower(PowerModel? power) => power is ScriptPowerTemplate;

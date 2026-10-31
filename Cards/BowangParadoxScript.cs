@@ -36,7 +36,7 @@ public sealed class BowangParadoxScript : ScriptCardTemplate
 	protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
 	[
 		HoverTipFactory.FromPower<VigorPower>(),
-		HoverTipFactory.FromPower<TinderPower>(),
+		..HoverTipFactory.FromPowerWithPowerHoverTips<TinderPower>(),
 		HoverTipFactory.FromPower<BurningPower>(),
 		HoverTipFactory.FromKeyword(CardKeyword.Retain),
 	];

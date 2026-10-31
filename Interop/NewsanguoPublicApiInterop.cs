@@ -38,4 +38,14 @@ public static class NewsanguoPublicApiInterop
 	public static IHoverTip CreateDrunkenMightHoverTip() => null!;
 
 	public static int GetDrunkenMight(Player? player) => 0;
+
+	public static Task AddHeavensForce(
+		PlayerChoiceContext choiceContext,
+		Player? player,
+		int delta,
+		AbstractModel? source = null) => Task.CompletedTask;
+
+	public static int GetHeavensForce(Player? player) => 0;
+
+	public static IHoverTip CreateHeavensForceHoverTip() => null!;
 }

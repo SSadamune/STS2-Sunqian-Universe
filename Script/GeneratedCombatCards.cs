@@ -50,7 +50,8 @@ public static class GeneratedCombatCards
 		int count,
 		bool upgraded,
 		Player? creator = null,
-		Action<CardModel>? customize = null)
+		Action<CardModel>? customize = null,
+		CardPilePosition position = CardPilePosition.Random)
 		where T : CardModel
 	{
 		CardPile drawPile = PileType.Draw.GetPile(player);
@@ -62,7 +63,7 @@ public static class GeneratedCombatCards
 				card,
 				PileType.Draw,
 				creator ?? player,
-				CardPilePosition.Random);
+				position);
 
 			// 生成牌入抽牌堆（oldPile == null）时原版不会触发 CardAddFinished，抽牌堆按钮计数不刷新。
 			if (result.success)

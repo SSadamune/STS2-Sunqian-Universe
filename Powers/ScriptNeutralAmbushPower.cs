@@ -33,7 +33,9 @@ public sealed class ScriptNeutralAmbushPower : ScriptPowerTemplate
 		CardModel card,
 		bool fromHandDraw)
 	{
-		if (Owner.IsDead || card.Owner != Owner.Player || !IsAmbushCard(card))
+		if (Owner.IsDead
+			|| card.Owner != Owner.Player
+			|| !IsAmbushCard(card))
 		{
 			return;
 		}

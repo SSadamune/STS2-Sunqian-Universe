@@ -9,6 +9,7 @@ using MegaCrit.Sts2.Core.ValueProps;
 using Squ;
 using Squ.Audio;
 using Squ.Character;
+using Squ.Combat;
 using Squ.Powers;
 using STS2RitsuLib.Interop.AutoRegistration;
 using STS2RitsuLib.Scaffolding.Content;
@@ -33,7 +34,7 @@ public sealed class ServantScript : ScriptCardTemplate
 	// 对齐 BEGONE：悬停预览实际生成的卡牌（含升级态）。
 	protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
 	[
-		HoverTipFactory.FromCard<ThrowHimOut>(IsUpgraded),
+		SquCardHoverTipFactory.FromCard<ThrowHimOut>(this, IsUpgraded),
 	];
 
 	public override IEnumerable<CardKeyword> CanonicalKeywords =>

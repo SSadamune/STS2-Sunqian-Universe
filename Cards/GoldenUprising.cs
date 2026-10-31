@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using MegaCrit.Sts2.Core.CardSelection;
 using MegaCrit.Sts2.Core.Commands;
@@ -28,6 +29,7 @@ public sealed class GoldenUprising : ModCardTemplate
 	public const int BaseGoldCost = 18;
 	public const int BaseCardPickCount = 2;
 	public const int UpgradedCardPickCount = 3;
+	public const int MaxCandidateCount = 18;
 
 	private static readonly LocString SelectionPrompt =
 		new("cards", "SUNQIAN_UNIVERSE_CARD_GOLDEN_UPRISING.selectionScreenPrompt");
@@ -69,9 +71,12 @@ public sealed class GoldenUprising : ModCardTemplate
 		int goldCost = DynamicVars.Gold.IntValue;
 		await PlayerCmd.LoseGold(goldCost, Owner, GoldLossType.Spent);
 
-		IEnumerable<CardModel> selected = await CardSelectCmd.FromCombatPile(
+		List<CardModel> candidates =
+			PileType.Draw.GetPile(Owner).Cards.TakeLast(MaxCandidateCount).ToList();
+
+		IEnumerable<CardModel> selected = await CardSelectCmd.FromSimpleGrid(
 			choiceContext,
-			PileType.Draw.GetPile(Owner),
+			candidates,
 			Owner,
 			new CardSelectorPrefs(SelectionPrompt, pickCount));
 
