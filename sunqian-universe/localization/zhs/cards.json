@@ -22,7 +22,7 @@
   "SUNQIAN_UNIVERSE_CARD_SUNQIAN_SCRIPT.title": "孙乾剧本",
   "SUNQIAN_UNIVERSE_CARD_SUNQIAN_SCRIPT.description": "{ScriptUnlockText}",
   "SUNQIAN_UNIVERSE_CARD_GRUNT_SCRIPT.title": "杂兵剧本",
-  "SUNQIAN_UNIVERSE_CARD_GRUNT_SCRIPT.description": "造成{Damage:diff()}点伤害，返还此牌消耗的[gold]活力[/gold]。\n{ScriptUnlockText}",
+  "SUNQIAN_UNIVERSE_CARD_GRUNT_SCRIPT.description": "造成{Damage:diff()}点伤害，恢复此牌消耗的[gold]活力[/gold]。\n{ScriptUnlockText}",
   "SUNQIAN_UNIVERSE_CARD_THE_GRIEVING_PREVAIL.title": "哀兵必胜",
   "SUNQIAN_UNIVERSE_CARD_THE_GRIEVING_PREVAIL.description": "令一名生物获得{StrengthPower:diff()}点[gold]力量[/gold]和{RitualPower:diff()}层[gold]仪式[/gold]。",
   "SUNQIAN_UNIVERSE_CARD_THE_ARROGANT_FALL.title": "骄兵必败",
