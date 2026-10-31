@@ -1,8 +1,11 @@
 using MegaCrit.Sts2.Core.Entities.Cards;
+using MegaCrit.Sts2.Core.HoverTips;
+using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.Cards;
 using MegaCrit.Sts2.Core.Models.Characters;
 using MegaCrit.Sts2.Core.Models.Monsters;
 using Squ.Cards;
+using Squ.Character;
 using TestTheSpire;
 using Xunit;
 
@@ -42,5 +45,18 @@ public sealed class SaidNotAfraidOfAcidTests : SunqianCombatTestSuite
 
         Assert.Equal(hp - SaidNotAfraidOfAcid.UpgradedDamage, enemy.CurrentHp);
         Assert.Empty(PileType.Hand.GetPile(Player).Cards.OfType<Wine>());
+    }
+
+    [Fact]
+    public void Hover_preview_is_wine_with_exhaust_and_does_not_change_the_real_card()
+    {
+        var card = Combat.CreateCard<SaidNotAfraidOfAcid>(Player);
+        CardModel preview = Assert.Single(
+            card.HoverTips.OfType<CardHoverTip>()
+                .Where(tip => tip.Card is SaidNotAfraidOfAcidWinePreview)).Card;
+
+        Assert.Contains(CardKeyword.Exhaust, preview.Keywords);
+        Assert.DoesNotContain(CardKeyword.Exhaust, ModelDb.Card<Wine>().Keywords);
+        Assert.Same(ModelDb.CardPool<SunqianCardPool>(), preview.VisualCardPool);
     }
 }

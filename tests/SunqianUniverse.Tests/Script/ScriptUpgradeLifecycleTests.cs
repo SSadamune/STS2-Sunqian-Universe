@@ -87,11 +87,12 @@ public sealed class ScriptUpgradeLifecycleTests : SunqianCombatTestSuite
         var context = new BlockingPlayerChoiceContext();
         var normal = await AddToHand<PartTimeGeneralScript>();
         var upgraded = Upgrade(await AddToHand<PartTimeGeneralScript>());
-        await PlayerCmd.SetEnergy(1, Player);
+        // A single recorded card is confirmed automatically and never reaches the scripted selector.
+        await PlayerCmd.SetEnergy(2, Player);
         await Play(normal, EnemyAt(0));
         var record = ScriptSystem.ScriptCollectionPile.GetPile(Player).Cards.OfType<PartTimeGeneralScriptRecord>().Single();
         var oldIds = record.RecordedCards.Select(card => CardModel.FromSerializable(card).Id).ToArray();
-        Assert.NotEmpty(oldIds);
+        Assert.True(oldIds.Length > 1);
         var selector = new ScriptedCardSelector().ThenSelect(options =>
         {
             Assert.Null(Player.Creature.GetPower<ScriptPartTimeGeneralPower>());

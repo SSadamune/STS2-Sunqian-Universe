@@ -23,6 +23,8 @@ namespace Squ.Cards;
 [RegisterCard(typeof(SunqianCardPool), StableEntryStem = "headsman_script")]
 public sealed class HeadsmanScript : ScriptCardTemplate<HeadsmanScriptRecord>
 {
+	protected override bool UsesRowKeywordTemplate => false;
+
 	public const int BaseVigor = 3;
 	public const int UpgradedVigor = 4;
 

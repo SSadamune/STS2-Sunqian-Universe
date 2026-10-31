@@ -23,6 +23,8 @@ namespace Squ.Cards;
 [RegisterCard(typeof(SunqianCardPool), StableEntryStem = "execution_commander_script")]
 public sealed class ExecutionCommanderScript : ScriptCardTemplate<ExecutionCommanderScriptRecord>
 {
+	protected override bool UsesRowKeywordTemplate => false;
+
 	public const int GeneratedStrikeCount = 2;
 	public const int BaseBonusPercent = 50;
 	public const int UpgradedBonusPercent = 75;

@@ -33,7 +33,7 @@ public sealed class DrinkingTableCulture : ModCardTemplate
 	protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
 	[
 		HoverTipFactory.FromKeyword(SquKeywords.Enthralled),
-		HoverTipFactory.FromCard<Wine>(true),
+		HoverTipFactory.FromCard<DrinkingTableCultureWinePreview>(true),
 	];
 
 	public override CardAssetProfile AssetProfile => new(

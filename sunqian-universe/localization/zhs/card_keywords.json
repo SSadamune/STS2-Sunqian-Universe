@@ -20,9 +20,9 @@
   "SUNQIAN_UNIVERSE_KEYWORD_COUNTS_AS_PLAYED.title": "视为打出",
   "SUNQIAN_UNIVERSE_KEYWORD_COUNTS_AS_PLAYED.description": "打出一张不存在的牌，正常结算其效果。",
   "SUNQIAN_UNIVERSE_KEYWORD_VARIOUS_STRIKE_CARDS.title": "各种打击牌",
-  "SUNQIAN_UNIVERSE_KEYWORD_VARIOUS_STRIKE_CARDS.description": "牌名中包含「打击」的攻击牌，均被称为[gold]各种打击牌[/gold]。",
+  "SUNQIAN_UNIVERSE_KEYWORD_VARIOUS_STRIKE_CARDS.description": "牌名中包含「打击」的牌，均被称为[gold]各种打击牌[/gold]。",
   "SUNQIAN_UNIVERSE_KEYWORD_VARIOUS_DEFEND_CARDS.title": "各种防御牌",
-  "SUNQIAN_UNIVERSE_KEYWORD_VARIOUS_DEFEND_CARDS.description": "牌名中包含「防御」的技能牌，均被称为[gold]各种防御牌[/gold]。",
+  "SUNQIAN_UNIVERSE_KEYWORD_VARIOUS_DEFEND_CARDS.description": "牌名中包含「防御」的牌，均被称为[gold]各种防御牌[/gold]。",
   "SUNQIAN_UNIVERSE_KEYWORD_FIT.title": "契合",
   "SUNQIAN_UNIVERSE_KEYWORD_FIT.description": "每当这张牌要被洗入抽牌堆时，将其放在抽牌堆顶。",
   "SUNQIAN_UNIVERSE_KEYWORD_WAR_FEEDS_WAR.title": "以战养战",
@@ -50,6 +50,6 @@
   "SUNQIAN_UNIVERSE_KEYWORD_FAMILY.title": "家人",
   "SUNQIAN_UNIVERSE_KEYWORD_FAMILY.description": "当需要计算[gold]打出率[/gold]时，这张牌的[gold]打出率[/gold]视为[blue]100%[/blue]。",
   "SUNQIAN_UNIVERSE_KEYWORD_MATERIAL_REUSE.title": "素材复用",
-  "SUNQIAN_UNIVERSE_KEYWORD_MATERIAL_REUSE.description": "如果[gold]剧本集[/gold]中已有此剧本，当你再次打出能激活此剧本的牌时，会将此剧本[gold]升级[/gold]：未升级的牌升1级，升级过的牌升2级。",
-  "SUNQIAN_UNIVERSE_KEYWORD_MATERIAL_REUSE.cardHover": "如果[gold]剧本集[/gold]中已有此剧本，当你再次打出[gold]{SourceCardName}[/gold]时，会将此剧本[gold]升级[/gold]：未升级的牌升1级，升级过的牌升2级。"
+  "SUNQIAN_UNIVERSE_KEYWORD_MATERIAL_REUSE.description": "如果[gold]剧本集[/gold]中已有此剧本，当你再次打出能激活此剧本的牌时，会将此剧本[gold]升级[/gold]。",
+  "SUNQIAN_UNIVERSE_KEYWORD_MATERIAL_REUSE.cardHover": "如果[gold]剧本集[/gold]中已有此剧本，当你再次打出[gold]{SourceCardName}[/gold]时，会将此剧本[gold]升级[/gold]。"
 }

@@ -164,7 +164,7 @@ public sealed class AllScriptCardsTests : SunqianCombatTestSuite
             HoverTipFactory.FromKeyword(SquKeywords.VariousStrikeCards));
         Assert.Equal("各种打击牌", expectedTip.Title);
         Assert.Equal(
-            "牌名中包含「打击」的攻击牌，均被称为[gold]各种打击牌[/gold]。",
+            "牌名中包含「打击」的牌，均被称为[gold]各种打击牌[/gold]。",
             expectedTip.Description);
 
         var choiceContext = new BlockingPlayerChoiceContext();

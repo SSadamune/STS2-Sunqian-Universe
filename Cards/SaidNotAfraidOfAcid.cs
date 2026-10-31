@@ -38,7 +38,7 @@ public sealed class SaidNotAfraidOfAcid : SlightRevisionDerivedCardTemplate
 	[
 		HoverTipFactory.FromKeyword(CardKeyword.Exhaust),
 		HoverTipFactory.FromKeyword(CardKeyword.Unplayable),
-		SquCardHoverTipFactory.FromCard<Wine>(this, IsUpgraded),
+		SquCardHoverTipFactory.FromCard<SaidNotAfraidOfAcidWinePreview>(this, IsUpgraded),
 	];
 
 	public override CardAssetProfile AssetProfile => new(

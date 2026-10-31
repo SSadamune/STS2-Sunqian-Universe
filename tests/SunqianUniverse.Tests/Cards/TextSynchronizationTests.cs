@@ -73,10 +73,18 @@ public sealed class TextSynchronizationTests : SunqianCombatTestSuite
                 ? "取决于资源和战况，会出现不同的备选牌。"
                 : "Different card choices appear depending on your resources and the combat situation.",
             Card("METAMORPHOSIS.potentiallyUsefulDescription"));
+        Assert.False(cards.RootElement.TryGetProperty(
+            "SUNQIAN_UNIVERSE_CARD_SCRIPT_ACTIVATE_REINFORCE", out _));
+        Assert.False(cards.RootElement.TryGetProperty(
+            "SUNQIAN_UNIVERSE_CARD_SCRIPT_ACTIVATE_REINFORCE_UPGRADABLE", out _));
         Assert.Equal(language == "zhs"
-                ? "激活此[gold]剧本[/gold]，若激活过则还会将数值叠加。"
-                : "Activate this [gold]Script[/gold]; if it has been activated before, also stack its values.",
-            Card("SCRIPT_ACTIVATE_REINFORCE"));
+                ? "激活此[gold]剧本[/gold]。"
+                : "Activate this [gold]Script[/gold].",
+            Card("SCRIPT_ACTIVATE"));
+        Assert.Equal(language == "zhs"
+                ? "激活此[gold]{IfUpgraded:show:剧本+|剧本}[/gold]。"
+                : "Activate this [gold]{IfUpgraded:show:Script+|Script}[/gold].",
+            Card("SCRIPT_ACTIVATE_UPGRADABLE"));
         Assert.Contains(language == "zhs" ? "你的牌被[gold]消耗[/gold]后" : "After one of your cards is [gold]Exhausted[/gold]",
             Card("RUTHLESS_STRIKE.chargeEffect"));
         Assert.Contains("{ChargeForge:diff()}", Card("SHARPEN_SWORD_FOR_DECADES.chargeEffect"));

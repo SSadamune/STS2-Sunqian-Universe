@@ -151,6 +151,5 @@ public sealed class PartTimeGeneralScript : ScriptCardTemplate<PartTimeGeneralSc
 	}
 
 	private static bool IsEligibleStrike(CardModel card) =>
-		card.Type == CardType.Attack
-		&& card.Tags.Contains(CardTag.Strike);
+		card.Tags.Contains(CardTag.Strike);
 }
