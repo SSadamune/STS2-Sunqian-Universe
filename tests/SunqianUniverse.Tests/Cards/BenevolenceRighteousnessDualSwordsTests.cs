@@ -1,4 +1,5 @@
 using MegaCrit.Sts2.Core.Models.Cards;
+using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.Models.Characters;
 using MegaCrit.Sts2.Core.Models.Monsters;
 using Squ.Cards;
@@ -14,9 +15,13 @@ public sealed class BenevolenceRighteousnessDualSwordsTests : SunqianCombatTestS
         battle.Player<Ironclad>().AddEnemy<BigDummy>().WithSeed("dual-swords");
 
     [Fact]
-    public async Task Strike_cards_resolve_one_extra_time_and_upgrade_reduces_cost()
+    public async Task Strike_cards_resolve_one_extra_time_and_upgrade_reduces_cost_and_keeps_ethereal()
     {
-        var powerCard = Upgrade(await AddToHand<BenevolenceRighteousnessDualSwords>());
+        var powerCard = await AddToHand<BenevolenceRighteousnessDualSwords>();
+        Assert.Contains(CardKeyword.Ethereal, powerCard.Keywords);
+        Assert.Equal(2, powerCard.EnergyCost.GetResolved());
+        Upgrade(powerCard);
+        Assert.Contains(CardKeyword.Ethereal, powerCard.Keywords);
         Assert.Equal(1, powerCard.EnergyCost.GetResolved());
         await Play(powerCard);
         CardTestAssertions.AssertPowerAmount<BenevolenceRighteousnessDualSwordsPower>(

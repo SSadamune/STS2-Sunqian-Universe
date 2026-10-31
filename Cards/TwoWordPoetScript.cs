@@ -42,7 +42,7 @@ public sealed class TwoWordPoetScript : ScriptCardTemplate<TwoWordPoetScriptReco
 	public override CardAssetProfile AssetProfile => new(
 		PortraitPath: "res://images/cards/TwoWordPoetScript.png");
 
-	public override TargetType TargetType => TargetType.AnyEnemy;
+	public override TargetType TargetType => IsUpgraded ? TargetType.AllEnemies : TargetType.AnyEnemy;
 
 	public TwoWordPoetScript()
 		: base(1, CardType.Attack, CardRarity.Uncommon, TargetType.AnyEnemy, true)
@@ -56,8 +56,16 @@ public sealed class TwoWordPoetScript : ScriptCardTemplate<TwoWordPoetScriptReco
 		int drunkenMightToStore = NewsanguoDrunkenMightEffect.ConsumedByAttack(Owner.Creature);
 		int enchantedVigorToStore = GetVigorousEnchantmentAmount();
 		var attack = DamageCmd.Attack(DynamicVars.Damage.BaseValue).WithHitCount(CanonicalHits).FromCard(this, cardPlay);
-		ArgumentNullException.ThrowIfNull(cardPlay.Target);
-		await attack.Targeting(cardPlay.Target).Execute(choiceContext);
+		if (IsUpgraded)
+		{
+			ArgumentNullException.ThrowIfNull(CombatState);
+			await attack.TargetingAllOpponents(CombatState).Execute(choiceContext);
+		}
+		else
+		{
+			ArgumentNullException.ThrowIfNull(cardPlay.Target);
+			await attack.Targeting(cardPlay.Target).Execute(choiceContext);
+		}
 
 		await UnlockScriptAsync(
 			choiceContext,

@@ -5,7 +5,6 @@
   "SUNQIAN_UNIVERSE_RELIC_BOX_LUNCH.flavor": "No box lunch, what to eat?",
   "SUNQIAN_UNIVERSE_RELIC_ABUNDANT_BOX_LUNCH.title": "Abundant Box Lunch",
   "SUNQIAN_UNIVERSE_RELIC_ABUNDANT_BOX_LUNCH.description": "At the start of each turn, gain {energyPrefix:energyIcons(1)}.\nOnce per turn, you may spend {energyPrefix:energyIcons(1)} to reactivate [gold]Scripts[/gold] from your [gold]Script Collection[/gold].",
-  "SUNQIAN_UNIVERSE_RELIC_ABUNDANT_BOX_LUNCH.orobasHoverPreview": "[green]At the start of each turn, gain {energyPrefix:energyIcons(1)}.[/green]\n[green]Each turn, you may reselect Scripts from your [gold]Script Collection[/gold] twice. Each reselection costs {energyPrefix:energyIcons(1)}.[/green]",
   "SUNQIAN_UNIVERSE_RELIC_ABUNDANT_BOX_LUNCH.flavor": "Naturally, the more roles I play, the better.",
   "SUNQIAN_UNIVERSE_RELIC_MENGDE_NEW_BOOK.title": "Mengde's New Book",
   "SUNQIAN_UNIVERSE_RELIC_MENGDE_NEW_BOOK.description": "For each [gold]Buff[/gold] an enemy has, damage dealt to you is reduced by [blue]10%[/blue], up to [blue]50%[/blue].\nFor each [gold]Debuff[/gold] you have, damage you deal is increased by [blue]10%[/blue], up to [blue]50%[/blue].",

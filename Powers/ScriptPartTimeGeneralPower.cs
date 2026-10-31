@@ -11,6 +11,7 @@ using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.Localization;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.Models;
+using MegaCrit.Sts2.Core.Models.Enchantments;
 using MegaCrit.Sts2.Core.Nodes.Combat;
 using Squ.Audio;
 using Squ.Cards;
@@ -23,13 +24,23 @@ using STS2RitsuLib.Scaffolding.Content;
 namespace Squ.Powers;
 
 /// <summary>
-/// 剧本：兼职将军。记录卡牌打出时生成的 Strike；剧本失效后让持有者移去一项
-/// 记录，并将同升级状态、可免费打出一次的新副本加入手牌。
+/// 剧本：兼职将军。失效时从打出记录创建带随机附魔的新副本供选择，保留原记录。
 /// </summary>
 [RegisterPower]
 public sealed class ScriptPartTimeGeneralPower : ScriptPowerTemplate
 {
 	public const string RecordedCardsVarName = "RecordedCards";
+
+	// 每项等概率；同种附魔的不同数值是独立选项。Momentum 沿用人体炼成的 5。
+	private static readonly (System.Type Type, int Amount)[] EnchantmentPool =
+	[
+		(typeof(Vigorous), 6), (typeof(Vigorous), 8),
+		(typeof(Swift), 2), (typeof(Swift), 3),
+		(typeof(Sown), 1), (typeof(Sown), 2),
+		(typeof(Glam), 0), (typeof(Momentum), 5),
+		(typeof(Sharp), 4), (typeof(Sharp), 6),
+		(typeof(Corrupted), 0),
+	];
 
 	private sealed class Data
 	{
@@ -104,6 +115,10 @@ public sealed class ScriptPartTimeGeneralPower : ScriptPowerTemplate
 				option.FinalizeUpgradeInternal();
 			}
 
+			var spec = player.RunState.Rng.CombatCardGeneration.NextItem(EnchantmentPool);
+			EnchantmentModel enchantment = ModelDb.GetById<EnchantmentModel>(
+				ModelDb.GetId(spec.Type)).ToMutable();
+			CardCmd.Enchant(enchantment, option, spec.Amount);
 			options.Add(option);
 		}
 
@@ -117,9 +132,6 @@ public sealed class ScriptPartTimeGeneralPower : ScriptPowerTemplate
 			player,
 			prefs)).FirstOrDefault();
 		selected ??= options[0];
-		int selectedIndex = options.IndexOf(selected);
-		record.RemoveRecordedCardAt(selectedIndex);
-		selected.EnergyCost.SetUntilPlayed(0);
 
 		await CardPileCmd.AddGeneratedCardToCombat(
 			selected,

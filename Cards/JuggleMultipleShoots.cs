@@ -276,6 +276,9 @@ public sealed class JuggleMultipleShoots : ModCardTemplate
 	private static bool IsEligiblePower(CardModel card, int maxCost) =>
 		card.Type == CardType.Power
 		&& !card.EnergyCost.CostsX
+		// 龙套演员没有常规辉星来源；能量预算也不包含辉星费用。
+		&& !card.HasStarCostX
+		&& card.CanonicalStarCost <= 0
 		&& GetCanonicalEnergyCost(card) <= maxCost
 		&& !SquCardTags.IsCharacterMechanicBound(card)
 		&& !ExcludedOtherCharacterPowers.Contains(card.GetType());

@@ -513,17 +513,6 @@ public sealed class PartTimeGeneralScriptRecord : ScriptRecordCardTemplate<Scrip
 	protected override void ConfigurePower(ScriptPartTimeGeneralPower power, PartTimeGeneralScript source, Player player) =>
 		power.AttachRecord(this);
 
-	internal void RemoveRecordedCardAt(int index)
-	{
-		if ((uint)index >= (uint)RecordedCards.Count)
-		{
-			return;
-		}
-
-		RecordedCards.RemoveAt(index);
-		SyncDisplayVars();
-	}
-
 	protected override void SyncDisplayVars()
 	{
 		string names = string.Join("、", RecordedCards.Select(card => CardModel.FromSerializable(card).Title));

@@ -41,6 +41,7 @@ public sealed class PartTimeGeneralScriptTests : SunqianCombatTestSuite
             .ThenSelect(options =>
             {
                 selected = options[0];
+                Assert.All(options, option => Assert.NotNull(option.Enchantment));
                 return [selected];
             });
 
@@ -53,8 +54,9 @@ public sealed class PartTimeGeneralScriptTests : SunqianCombatTestSuite
         CardModel chosen = Assert.IsAssignableFrom<CardModel>(selected);
         AssertInPile(chosen, PileType.Hand);
         Assert.True(chosen.IsUpgraded);
-        Assert.Equal(0, chosen.EnergyCost.GetResolved());
-        Assert.Equal(recordsBeforeExpiration - 1, record.RecordedCards.Count);
+        Assert.Equal(chosen.EnergyCost.Canonical, chosen.EnergyCost.GetResolved());
+        Assert.NotNull(chosen.Enchantment);
+        Assert.Equal(recordsBeforeExpiration, record.RecordedCards.Count);
         AssertOnlyScript<ScriptServantPower>();
     }
 
@@ -133,7 +135,7 @@ public sealed class PartTimeGeneralScriptTests : SunqianCombatTestSuite
     }
 
     [Fact]
-    public async Task Repeated_plays_merge_duplicate_records_and_expiration_removes_only_one()
+    public async Task Repeated_plays_keep_duplicate_records_and_each_selection_rerolls_enchantments()
     {
         MethodInfo chooseStrikes = AccessTools.DeclaredMethod(
                 typeof(PartTimeGeneralScript),
@@ -172,6 +174,7 @@ public sealed class PartTimeGeneralScriptTests : SunqianCombatTestSuite
             .ThenSelect(options =>
             {
                 Assert.Equal(2, options.Count);
+                Assert.All(options, option => Assert.NotNull(option.Enchantment));
                 selected = options[0];
                 return [selected];
             });
@@ -182,10 +185,41 @@ public sealed class PartTimeGeneralScriptTests : SunqianCombatTestSuite
         }
 
         AssertAllSelectionsConsumed(selector);
-        Assert.Single(record.RecordedCards);
+        Assert.Equal(2, record.RecordedCards.Count);
         CardModel returned = Assert.IsAssignableFrom<CardModel>(selected);
         AssertInPile(returned, PileType.Hand);
-        Assert.Equal(0, returned.EnergyCost.GetResolved());
+        Assert.Equal(returned.EnergyCost.Canonical, returned.EnergyCost.GetResolved());
+
+        // Reopen the same record repeatedly: previous choices remain available,
+        // each screen owns fresh copies, and random enchantments never enter the record.
+        var observed = new HashSet<string>();
+        var power = (ScriptPartTimeGeneralPower)ModelDb.Power<ScriptPartTimeGeneralPower>().ToMutable();
+        power.AttachRecord(record);
+        MethodInfo choose = AccessTools.DeclaredMethod(typeof(ScriptPartTimeGeneralPower), "ChooseRecordedCard")!;
+        for (int i = 0; i < 12; i++)
+        {
+            var repeatSelector = new ScriptedCardSelector().ThenSelect(options =>
+            {
+                Assert.Equal(2, options.Count);
+                Assert.All(options, option =>
+                {
+                    Assert.Equal(returned.Id, option.Id);
+                    Assert.NotSame(returned, option);
+                    Assert.NotSame(returned.Enchantment, option.Enchantment);
+                    Assert.NotNull(option.Enchantment);
+                    observed.Add($"{option.Enchantment.GetType().Name}:{option.Enchantment.Amount}");
+                });
+                return [options[0]];
+            });
+            using (UseCardSelector(repeatSelector))
+            {
+                await (Task)choose.Invoke(power, [Player.Creature.CombatState!, Player])!;
+            }
+            AssertAllSelectionsConsumed(repeatSelector);
+        }
+        Assert.True(observed.Count > 1);
+        Assert.Equal(2, record.RecordedCards.Count);
+        Assert.All(record.RecordedCards, saved => Assert.Null(CardModel.FromSerializable(saved).Enchantment));
     }
 
     private static bool ForcePommelStrike(int count, ref List<CardModel> __result)

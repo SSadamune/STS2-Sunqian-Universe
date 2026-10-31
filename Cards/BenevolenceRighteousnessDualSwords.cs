@@ -19,6 +19,8 @@ public sealed class BenevolenceRighteousnessDualSwords : ModCardTemplate
 {
 	public const int ExtraPlaysPerCard = 1;
 
+	public override IEnumerable<CardKeyword> CanonicalKeywords => [CardKeyword.Ethereal];
+
 	public override CardAssetProfile AssetProfile => new(
 		PortraitPath: "res://images/cards/BenevolenceRighteousnessDualSwords.png");
 

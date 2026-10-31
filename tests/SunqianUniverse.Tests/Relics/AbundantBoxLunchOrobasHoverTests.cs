@@ -31,7 +31,10 @@ public sealed class AbundantBoxLunchOrobasHoverTests : SunqianCombatTestSuite
 
 		HoverTip abundant = Assert.Single(tips, tip => tip.CanonicalModel is AbundantBoxLunchRelic);
 		Assert.Contains("[green]每回合开始时，你获得", abundant.Description);
-		Assert.Contains("[green]你每回合可以从", abundant.Description);
+		Assert.Contains("[green]每回合限一次", abundant.Description);
+
+		Assert.Equal(ModelDb.Relic<AbundantBoxLunchRelic>().HoverTip.Description,
+			abundant.Description.Replace("[green]", "").Replace("[/green]", ""));
 
 		Assert.DoesNotContain("[green]", ModelDb.Relic<AbundantBoxLunchRelic>().HoverTip.Description);
 	}

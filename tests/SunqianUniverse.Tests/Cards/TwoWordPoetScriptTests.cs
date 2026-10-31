@@ -26,11 +26,11 @@ public sealed class TwoWordPoetScriptTests : SunqianCombatTestSuite
         await ApplyPower<VigorPower>(Player.Creature, 3);
         var first = await AddToHand<TwoWordPoetScript>();
         if (upgradedFirst) Upgrade(first);
-        await Play(first, EnemyAt(0));
+        await Play(first, first.IsUpgraded ? null : EnemyAt(0));
         await ApplyPower<VigorPower>(Player.Creature, 4);
         var second = await AddToHand<TwoWordPoetScript>();
         if (!upgradedFirst) Upgrade(second);
-        await Play(second, EnemyAt(0));
+        await Play(second, second.IsUpgraded ? null : EnemyAt(0));
         var record = Assert.Single(ScriptSystem.ScriptCollectionPile.GetPile(Player).Cards.OfType<TwoWordPoetScriptRecord>());
         Assert.Equal(9, record.StoredAmount);
         Assert.True(record.IsUpgraded);
@@ -67,13 +67,13 @@ public sealed class TwoWordPoetScriptTests : SunqianCombatTestSuite
         const int vigor = 3;
         await ApplyPower<StrengthPower>(Player.Creature, strength);
         await ApplyPower<VigorPower>(Player.Creature, vigor);
-        await PlayAndActivateScript(Upgrade(await AddToHand<TwoWordPoetScript>()), EnemyAt(0));
+        await PlayAndActivateScript(Upgrade(await AddToHand<TwoWordPoetScript>()));
 
         int storedDamage = TwoWordPoetScript.CanonicalDamage + vigor;
         int damagePerHit = storedDamage + strength;
         int dealt = damagePerHit * TwoWordPoetScript.CanonicalHits;
         Assert.Equal(firstHp - dealt, first.CurrentHp);
-        Assert.Equal(secondHp, second.CurrentHp);
+        Assert.Equal(secondHp - dealt, second.CurrentHp);
         CardTestAssertions.AssertPowerAmount<ScriptTwoWordPoetPower>(Player.Creature, storedDamage);
         Assert.Null(Player.Creature.GetPower<VigorPower>());
     }
@@ -157,12 +157,12 @@ public sealed class TwoWordPoetScriptTests : SunqianCombatTestSuite
         await ApplyPower<VulnerablePower>(first, 1, Player.Creature);
         await ApplyPower<VulnerablePower>(second, 1, Player.Creature);
 
-        await PlayAndActivateScript(Upgrade(await AddToHand<TwoWordPoetScript>()), EnemyAt(0));
+        await PlayAndActivateScript(Upgrade(await AddToHand<TwoWordPoetScript>()));
 
         const int vulnerableDamagePerHit = 3;
         int dealt = vulnerableDamagePerHit * TwoWordPoetScript.CanonicalHits;
         Assert.Equal(firstHp - dealt, first.CurrentHp);
-        Assert.Equal(secondHp, second.CurrentHp);
+        Assert.Equal(secondHp - dealt, second.CurrentHp);
     }
 
     [Fact]

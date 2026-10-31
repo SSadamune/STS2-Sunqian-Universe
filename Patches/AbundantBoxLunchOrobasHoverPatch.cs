@@ -1,9 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using HarmonyLib;
-using MegaCrit.Sts2.Core.Helpers;
 using MegaCrit.Sts2.Core.HoverTips;
-using MegaCrit.Sts2.Core.Localization;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.Relics;
 using Squ.Relics;
@@ -19,8 +17,6 @@ namespace Squ.Patches;
 [HarmonyPatch(typeof(TouchOfOrobas), "get_ExtraHoverTips")]
 internal static class AbundantBoxLunchOrobasHoverPatch
 {
-	private const string PreviewSuffix = ".orobasHoverPreview";
-
 	private static void Postfix(TouchOfOrobas __instance, ref IEnumerable<IHoverTip> __result)
 	{
 		if (__instance.UpgradedRelic != ModelDb.Relic<AbundantBoxLunchRelic>().Id)
@@ -60,9 +56,8 @@ internal static class AbundantBoxLunchOrobasHoverPatch
 	private static HoverTip CreateRelicPreview(HoverTip original)
 	{
 		RelicModel relic = ModelDb.Relic<AbundantBoxLunchRelic>();
-		LocString description = new("relics", relic.Id.Entry + PreviewSuffix);
-		description.Add("energyPrefix", EnergyIconHelper.GetPrefix(relic));
-		HoverTip preview = new(relic.Title, description.GetFormattedText(), original.Icon);
+		string description = "[green]" + original.Description.Replace("\n", "[/green]\n[green]") + "[/green]";
+		HoverTip preview = new(relic.Title, description, original.Icon);
 		if (original.CanonicalModel is not null)
 		{
 			preview.SetCanonicalModel(original.CanonicalModel);

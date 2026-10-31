@@ -10,7 +10,7 @@
   "SUNQIAN_UNIVERSE_KEYWORD_DOOM_KILL_THRESHOLD.title": "灾厄斩杀线",
   "SUNQIAN_UNIVERSE_KEYWORD_DOOM_KILL_THRESHOLD.description": "表示该敌人再失去多少生命值后将死于[gold]灾厄[/gold]。\n即，其当前生命值减去[gold]中毒[/gold]、[gold]灼烧[/gold]与[gold]灾厄[/gold]层数后的剩余值。",
   "SUNQIAN_UNIVERSE_KEYWORD_MULTI_TARGET.title": "群体目标",
-  "SUNQIAN_UNIVERSE_KEYWORD_MULTI_TARGET.description": "以「[gold]所有[/gold]敌人」为目标或以「随机[gold]多名[/gold]敌人」为目标的牌，即[gold]群体目标[/gold]牌。",
+  "SUNQIAN_UNIVERSE_KEYWORD_MULTI_TARGET.description": "以「[gold]所有[/gold]敌人」或「[gold]所有[/gold]玩家」为目标，或以「随机[gold]多名[/gold]敌人」为目标的牌，即[gold]群体目标[/gold]牌。",
   "SUNQIAN_UNIVERSE_KEYWORD_ENVIRONMENTAL.title": "环境伤害",
   "SUNQIAN_UNIVERSE_KEYWORD_ENVIRONMENTAL.description": "此伤害没有来源且伤害值固定。",
   "SUNQIAN_UNIVERSE_KEYWORD_PIERCING_DAMAGE.title": "穿透伤害",
