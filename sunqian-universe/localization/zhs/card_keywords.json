@@ -50,6 +50,6 @@
   "SUNQIAN_UNIVERSE_KEYWORD_FAMILY.title": "家人",
   "SUNQIAN_UNIVERSE_KEYWORD_FAMILY.description": "当需要计算[gold]打出率[/gold]时，这张牌的[gold]打出率[/gold]视为[blue]100%[/blue]。",
   "SUNQIAN_UNIVERSE_KEYWORD_MATERIAL_REUSE.title": "素材复用",
-  "SUNQIAN_UNIVERSE_KEYWORD_MATERIAL_REUSE.description": "如果[gold]剧本集[/gold]中已有此剧本，当你再次打出能激活此剧本的牌时，会将此剧本[gold]升级[/gold]。",
-  "SUNQIAN_UNIVERSE_KEYWORD_MATERIAL_REUSE.cardHover": "如果[gold]剧本集[/gold]中已有此剧本，当你再次打出[gold]{SourceCardName}[/gold]时，会将此剧本[gold]升级[/gold]。"
+  "SUNQIAN_UNIVERSE_KEYWORD_MATERIAL_REUSE.description": "如果[gold]剧本集[/gold]中已有此剧本，当你再次打出能激活此剧本的牌时，会将此剧本[gold]升级[/gold]：未升级的牌升1级，升级过的牌升2级。",
+  "SUNQIAN_UNIVERSE_KEYWORD_MATERIAL_REUSE.cardHover": "如果[gold]剧本集[/gold]中已有此剧本，当你再次打出[gold]{SourceCardName}[/gold]时，会将此剧本[gold]升级[/gold]：未升级的牌升1级，升级过的牌升2级。"
 }

@@ -295,7 +295,6 @@
   "SUNQIAN_UNIVERSE_CARD_GIFT_FOUR_WHEELED_CART.title": "Gift a Four-Wheeled Cart",
   "SUNQIAN_UNIVERSE_CARD_GIFT_FOUR_WHEELED_CART.description": "Give a random creature 2 [gold]Strength[/gold] and 2 [gold]Dexterity[/gold]: after it takes unblocked damage, the damage source gains this effect and {energyPrefix:energyIcons(1)}.",
   "SUNQIAN_UNIVERSE_CARD_SCRIPT_ACTIVATE": "Activate this [gold]Script[/gold].",
-  "SUNQIAN_UNIVERSE_CARD_SCRIPT_ACTIVATE_REINFORCE": "Activate this [gold]Script[/gold]; if it has been activated before, also stack its values.",
   "SUNQIAN_UNIVERSE_CARD_SCRIPT_RECORD_NEUTRAL_AMBUSH.title": "Neutral Ambush",
   "SUNQIAN_UNIVERSE_CARD_SCRIPT_RECORD_NEUTRAL_AMBUSH.description": "When you draw [gold]Giant Rock[/gold] or [gold]Salvo Strike[/gold], play it on a random target.",
   "SUNQIAN_UNIVERSE_CARD_SCRIPT_RECORD_SERVANT.title": "Servant",
@@ -333,7 +332,6 @@
   "SUNQIAN_UNIVERSE_CARD_SCRIPT_RECORD_PART_TIME_GENERAL.emptyDescription": "When [gold]deactivated[/gold], obtain 1 card played this way with a random [gold]Enchantment[/gold].",
   "SUNQIAN_UNIVERSE_CARD_SCRIPT_RECORD_PART_TIME_GENERAL.smartDescription": "When deactivated, obtain 1 of the following cards with a random [gold]Enchantment[/gold]:\n{RecordedCards}.",
   "SUNQIAN_UNIVERSE_CARD_SCRIPT_ACTIVATE_UPGRADABLE": "Activate this [gold]{IfUpgraded:show:Script+|Script}[/gold].",
-  "SUNQIAN_UNIVERSE_CARD_SCRIPT_ACTIVATE_REINFORCE_UPGRADABLE": "Activate this [gold]{IfUpgraded:show:Script+|Script}[/gold]; if it has been activated before, also stack its values.",
   "SUNQIAN_UNIVERSE_CARD_GUAN_YU_CIVIL_VER.annotation": "[red]Cannot[/red] be active at the same time as [gold]Guan Yu Martial ver[/gold].",
   "SUNQIAN_UNIVERSE_CARD_GUAN_YU_MARTIAL_VER.annotation": "[red]Cannot[/red] be active at the same time as [gold]Guan Yu Civil ver[/gold]."
 }

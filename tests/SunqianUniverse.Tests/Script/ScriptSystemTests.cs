@@ -181,7 +181,7 @@ public sealed class ScriptSystemTests : SunqianCombatTestSuite
     }
 
     [Fact]
-    public async Task Playing_a_reinforceable_script_again_strengthens_one_existing_record()
+    public async Task Replaying_a_material_reuse_script_upgrades_one_record_and_expires_the_old_power()
     {
         await PlayScript<ExecutionCommanderScript>();
         var firstPower = Assert.IsType<ScriptExecutionCommanderPower>(
@@ -197,7 +197,7 @@ public sealed class ScriptSystemTests : SunqianCombatTestSuite
             Player.Creature.GetPower<ScriptExecutionCommanderPower>());
         Assert.NotSame(firstPower, reinforcedPower);
         Assert.Equal(record.StoredAmount, reinforcedPower.Amount);
-        Assert.Equal(0, ScriptSystem.GetScriptLiftsThisTurn(Player));
+        Assert.Equal(1, ScriptSystem.GetScriptLiftsThisTurn(Player));
     }
 
     [Theory]
@@ -447,7 +447,7 @@ public sealed class ScriptSystemTests : SunqianCombatTestSuite
     }
 
     [Fact]
-    public async Task Box_lunch_reactivates_the_same_reinforceable_script_without_stacking_its_values()
+    public async Task Box_lunch_reactivates_the_same_material_reuse_script_without_stacking_its_values()
     {
         var relic = (BoxLunchRelic)ModelDb.Relic<BoxLunchRelic>().ToMutable();
         Player.AddRelicInternal(relic, silent: true);
@@ -726,9 +726,9 @@ public sealed class ScriptSystemTests : SunqianCombatTestSuite
     {
         await ApplyPower<GuanDiFormPower>(Player.Creature, 2);
         var context = new BlockingPlayerChoiceContext();
-        await ScriptSystem.UnlockOrReinforceAsync<NeutralAmbushScriptRecord>(
+        await ScriptSystem.UnlockOrUpgradeAsync<NeutralAmbushScriptRecord>(
             context, await AddToHand<NeutralAmbushScript>(), 1, activate: false);
-        await ScriptSystem.UnlockOrReinforceAsync<ServantScriptRecord>(
+        await ScriptSystem.UnlockOrUpgradeAsync<ServantScriptRecord>(
             context, await AddToHand<ServantScript>(), 1, activate: false);
         await PlayScript<ExecutionCommanderScript>();
         Assert.Equal(3, ScriptSystem.GetActivationLimit(Player));

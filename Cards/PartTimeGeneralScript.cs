@@ -34,7 +34,6 @@ public sealed class PartTimeGeneralScript : ScriptCardTemplate<PartTimeGeneralSc
 {
 	protected override bool HasEnergyCostX => true;
 
-	protected override bool UsesReinforceActivationText => false;
 
 	protected override bool MergeScriptActivationKeywords => true;
 

@@ -42,21 +42,20 @@ internal static class RowKeywordsCardPatch
 		}
 
 		List<string> lines = __result.Split('\n').ToList();
-		MoveKeywordsBelowRules(__instance, lines);
+		// Cache only within this render: keywords, temporary Retain and language
+		// can all change between previews of the same card.
+		HashSet<string> belowRules = GetKeywordsBelowRulesMarkers(__instance);
+		HashSet<string> trailing = GetTrailingKeywordMarkers(__instance);
+		MoveKeywordsBelowRules(__instance, lines, belowRules, trailing);
 		MergeLeadingKeywords(__instance, lines);
-		MergeTrailingKeywords(__instance, lines);
+		MergeTrailingKeywords(__instance, lines, belowRules, trailing);
 		__result = string.Join("\n", lines);
 		return null;
 	}
 
-	private static void MoveKeywordsBelowRules(CardModel card, List<string> lines)
+	private static void MoveKeywordsBelowRules(
+		CardModel card, List<string> lines, HashSet<string> markers, HashSet<string> trailing)
 	{
-		if (card is not IRowKeywordsCard rowCard)
-		{
-			return;
-		}
-
-		HashSet<string> markers = GetKeywordMarkers(card, rowCard.KeywordsBelowRules);
 		if (markers.Count == 0)
 		{
 			return;
@@ -85,7 +84,7 @@ internal static class RowKeywordsCardPatch
 		int chargeLine = IndexOfChargeLine(card, lines);
 		int insertAt = chargeLine >= 0
 			? chargeLine
-			: lines.Count - CountTrailingKeywordLines(card, lines);
+			: lines.Count - CountTrailingKeywordLines(lines, trailing);
 		lines.InsertRange(insertAt, moved);
 		MergeRange(lines, insertAt, moved.Count + (chargeLine >= 0 ? 1 : 0));
 	}
@@ -133,29 +132,18 @@ internal static class RowKeywordsCardPatch
 		MergeRange(lines, 0, count);
 	}
 
-	private static void MergeTrailingKeywords(CardModel card, List<string> lines)
+	private static void MergeTrailingKeywords(
+		CardModel card, List<string> lines, HashSet<string> belowRules, HashSet<string> keywordMarkers)
 	{
-		HashSet<string> keywordMarkers = GetModKeywordMarkers(
-			card,
-			ModKeywordCardDescriptionPlacement.AfterCardDescription);
-
-		foreach (CardKeyword keyword in CardKeywordOrder.afterDescription.Where(card.Keywords.Contains))
-		{
-			keywordMarkers.Add(GetKeywordMarker(keyword));
-		}
-
 		int count = CountTrailingKeywordLines(lines, keywordMarkers);
 		if (count > 0 && count < lines.Count
 			&& card is IRowKeywordsCard { MergeTrailingKeywordsWithLastRule: true }
-			&& !StartsWithKeyword(lines[^(count + 1)], GetKeywordsBelowRulesMarkers(card)))
+			&& !StartsWithKeyword(lines[^(count + 1)], belowRules))
 		{
 			count++;
 		}
 		MergeRange(lines, lines.Count - count, count);
 	}
-
-	private static int CountTrailingKeywordLines(CardModel card, List<string> lines) =>
-		CountTrailingKeywordLines(lines, GetTrailingKeywordMarkers(card));
 
 	private static int CountTrailingKeywordLines(
 		List<string> lines,

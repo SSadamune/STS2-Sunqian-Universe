@@ -87,8 +87,7 @@ public sealed class TwoWordPoetScript : ScriptCardTemplate<TwoWordPoetScriptReco
 
 	private void StoreConsumedVigor(TwoWordPoetScriptRecord record, int amount)
 	{
-		record.AddConsumedVigor(this, amount);
-		Owner.Creature.GetPower<ScriptTwoWordPoetPower>()?.SyncStoredDamage(record.StoredAmount);
+		record.AddConsumedVigor(amount);
 	}
 
 	internal override int GetScriptPowerAmountForPreview() => CanonicalDamage;

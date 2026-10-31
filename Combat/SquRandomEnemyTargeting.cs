@@ -81,9 +81,13 @@ public static class SquRandomEnemyTargeting
 		Creature? includedTarget = requiredTarget != null && alive.Contains(requiredTarget)
 			? requiredTarget
 			: null;
-		List<Creature> pool = alive
-			.Where(creature => creature != includedTarget)
-			.ToList();
+		// Keep the original ordering and full shuffle: changing either also changes
+		// subsequent CombatTargets RNG results, even when every enemy is selected.
+		List<Creature> pool = alive;
+		if (includedTarget != null)
+		{
+			pool.RemoveAll(creature => creature == includedTarget);
+		}
 
 		for (int i = pool.Count - 1; i > 0; i--)
 		{

@@ -30,10 +30,10 @@ public sealed class GuanDiFormTests : SunqianCombatTestSuite
         if (existingRecords)
         {
             var context = new BlockingPlayerChoiceContext();
-            await Squ.Script.ScriptSystem.UnlockOrReinforceAsync<GuanYuCivilVer>(context, form, 2, activate: false);
-            await Squ.Script.ScriptSystem.UnlockOrReinforceAsync<GuanYuMartialVer>(context, form, 2, activate: false);
+            await Squ.Script.ScriptSystem.UnlockOrUpgradeAsync<GuanYuCivilVer>(context, form, 2, activate: false);
+            await Squ.Script.ScriptSystem.UnlockOrUpgradeAsync<GuanYuMartialVer>(context, form, 2, activate: false);
             var servant = await AddToHand<ServantScript>();
-            await Squ.Script.ScriptSystem.UnlockOrReinforceAsync<ServantScriptRecord>(context, servant, 1, activate: false);
+            await Squ.Script.ScriptSystem.UnlockOrUpgradeAsync<ServantScriptRecord>(context, servant, 1, activate: false);
         }
         using (CardSelectCmd.PushSelector(new VakuuCardSelector()))
             await CardCmd.AutoPlay(new BlockingPlayerChoiceContext(), form, null).WaitAsync(TimeSpan.FromSeconds(5));

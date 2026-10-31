@@ -55,21 +55,21 @@ public sealed class PartTimeGeneralScriptTests : SunqianCombatTestSuite
     }
 
     [Fact]
-    public async Task Upgraded_source_bonus_survives_normal_reinforcement_and_serialization_without_upgrading_record_ui()
+    public async Task Upgraded_record_survives_normal_replay_and_serialization()
     {
         var source = await AddToHand<PartTimeGeneralScript>();
         var upgraded = Upgrade(await AddToHand<PartTimeGeneralScript>());
         var record = (PartTimeGeneralScriptRecord)ModelDb.Card<PartTimeGeneralScriptRecord>().ToMutable();
         record.InitializeFrom(source, 1);
         Assert.False(record.SourceUpgraded);
-        record.ReinforceFrom(upgraded, 1);
-        record.ReinforceFrom(source, 1);
+        record.UpgradeFrom(upgraded);
+        record.UpgradeFrom(source);
         Assert.True(record.SourceUpgraded);
-        Assert.False(record.IsUpgraded);
-        Assert.False(record.HasUpgradedVersion);
+        Assert.True(record.IsUpgraded);
+        Assert.True(record.CanUpgradeScript);
         var restored = Assert.IsType<PartTimeGeneralScriptRecord>(CardModel.FromSerializable(record.ToSerializable()));
         Assert.True(restored.SourceUpgraded);
-        Assert.False(restored.IsUpgraded);
+        Assert.True(restored.IsUpgraded);
     }
 
     [Fact]

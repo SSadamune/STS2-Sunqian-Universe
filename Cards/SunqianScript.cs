@@ -53,7 +53,7 @@ public sealed class SunqianScript : ScriptCardTemplate<SunqianScriptRecord>
 	}
 
 	protected override Task PlayScriptAsync(PlayerChoiceContext choiceContext, CardPlay cardPlay) =>
-		UnlockScriptAsync(choiceContext, configureRecord: record => record.UpdateFrom(this));
+		UnlockScriptAsync(choiceContext);
 
 	protected override void OnUpgrade() => DynamicVars.Cards.UpgradeValueBy(UpgradedDraw - BaseDraw);
 }

@@ -8,19 +8,11 @@ using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.Entities.Players;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.HoverTips;
-using MegaCrit.Sts2.Core.Localization;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.Models;
-using MegaCrit.Sts2.Core.Models.Cards;
-using MegaCrit.Sts2.Core.Models.CardPools;
-using MegaCrit.Sts2.Core.Models.Powers;
 using MegaCrit.Sts2.Core.Saves.Runs;
-using MegaCrit.Sts2.Core.ValueProps;
 using Squ.Character;
-using Squ.Combat;
-using Squ.Interop;
 using Squ.Powers;
-using STS2RitsuLib.Interop.AutoRegistration;
 using STS2RitsuLib.Scaffolding.Content;
 
 #nullable enable
@@ -40,7 +32,7 @@ public abstract class ScriptRecordCardTemplate : ModCardTemplate
 
 	public abstract string SourceCardTitle { get; }
 
-	public virtual bool CanBeReinforced => false;
+	/// <summary>Material reuse permits repeated level upgrades when the source is played again.</summary>
 	public virtual bool UsesMaterialReuse => false;
 	protected virtual IEnumerable<IHoverTip> DirectOnlyHoverTips => [];
 	internal IEnumerable<IHoverTip> NestedHoverTips => HoverTips.ExceptBy(
@@ -48,15 +40,17 @@ public abstract class ScriptRecordCardTemplate : ModCardTemplate
 	protected override IEnumerable<IHoverTip> AdditionalHoverTips => UsesMaterialReuse
 		? [..DirectOnlyHoverTips, SquKeywords.CreateMaterialReuseHoverTip(SourceCardTitle),
 			HoverTipFactory.FromKeyword(SquKeywords.ScriptCollection)] : DirectOnlyHoverTips;
-	public override int MaxUpgradeLevel => UsesMaterialReuse ? int.MaxValue : base.MaxUpgradeLevel;
+	public override int MaxUpgradeLevel => CanUpgradeScript ? (UsesMaterialReuse ? int.MaxValue : 1) : 0;
 
 	public virtual bool CountsTowardActivationLimit => true;
 
 	public virtual string? MutuallyExclusiveGroup => null;
 
-	internal virtual bool HasUpgradedVersion => false;
+	/// <summary>The record itself has an upgraded effect; source-card upgrades alone
+	/// do not imply this (they may only change the source's immediate play effect).</summary>
+	public virtual bool CanUpgradeScript => false;
 
-	public sealed override string Title => HasUpgradedVersion
+	public sealed override string Title => CanUpgradeScript
 		? base.Title
 		: TitleLocString.GetFormattedText();
 
@@ -83,28 +77,23 @@ public abstract class ScriptRecordCardTemplate : ModCardTemplate
 		OnInitializedFrom(source);
 	}
 
-	internal void ReinforceFrom(ScriptCardTemplate source, decimal amount)
+	internal void UpgradeFrom(ScriptCardTemplate source)
 	{
+		if (!CanUpgradeScript) return;
 		if (UsesMaterialReuse)
 		{
-			for (int i = 0; i < (source.IsUpgraded ? 2 : 1); i++)
+			for (int i = 0; i < (source.IsUpgraded ? 2 : 1) && IsUpgradable; i++)
 			{
 				UpgradeInternal();
 				FinalizeUpgradeInternal();
 			}
 			SourceUpgraded |= source.IsUpgraded;
-			SyncDisplayVars();
-			return;
 		}
-		if (!CanBeReinforced)
+		else
 		{
-			return;
+			MergeSourceUpgrade(source);
 		}
-
-		StoredAmount += Math.Max(1, (int)amount);
-		MergeSourceUpgrade(source);
 		SyncDisplayVars();
-		OnReinforcedFrom(source);
 	}
 
 	internal void PreviewFrom(ScriptCardTemplate source)
@@ -119,10 +108,6 @@ public abstract class ScriptRecordCardTemplate : ModCardTemplate
 	internal abstract Task ActivateAsync(PlayerChoiceContext choiceContext, Player player);
 
 	protected virtual void OnInitializedFrom(ScriptCardTemplate source)
-	{
-	}
-
-	protected virtual void OnReinforcedFrom(ScriptCardTemplate source)
 	{
 	}
 
@@ -144,7 +129,7 @@ public abstract class ScriptRecordCardTemplate : ModCardTemplate
 
 	private void ApplyStoredUpgrade()
 	{
-		if (!HasUpgradedVersion || !SourceUpgraded || IsUpgraded || !IsUpgradable)
+		if (!CanUpgradeScript || !SourceUpgraded || IsUpgraded || !IsUpgradable)
 		{
 			return;
 		}
@@ -168,6 +153,11 @@ public abstract class ScriptRecordCardTemplate<TPower, TSource> : ScriptRecordCa
 	where TPower : ScriptPowerTemplate
 	where TSource : ScriptCardTemplate
 {
+	private static readonly PileType[] SourceSearchPiles =
+	[
+		PileType.Play, PileType.Exhaust, PileType.Hand, PileType.Discard, PileType.Draw,
+	];
+
 	public sealed override Type PowerType => typeof(TPower);
 	public sealed override string SourceCardTitle => ModelDb.Card<TSource>().Title;
 
@@ -192,14 +182,7 @@ public abstract class ScriptRecordCardTemplate<TPower, TSource> : ScriptRecordCa
 
 	private TSource ResolveSourceCard(Player player)
 	{
-		foreach (PileType pileType in new[]
-			{
-				PileType.Play,
-				PileType.Exhaust,
-				PileType.Hand,
-				PileType.Discard,
-				PileType.Draw,
-			})
+		foreach (PileType pileType in SourceSearchPiles)
 		{
 			TSource? existing = pileType.GetPile(player).Cards
 				.OfType<TSource>()
@@ -223,29 +206,13 @@ public abstract class ScriptRecordCardTemplate<TPower, TSource> : ScriptRecordCa
 	}
 }
 
-public abstract class ReinforceableScriptRecordCardTemplate<TPower, TSource>
+public abstract class MaterialReuseScriptRecordCardTemplate<TPower, TSource>
 	: ScriptRecordCardTemplate<TPower, TSource>
 	where TPower : ScriptPowerTemplate
 	where TSource : ScriptCardTemplate
 {
-	public sealed override bool CanBeReinforced => true;
-
-	protected override IEnumerable<DynamicVar> CanonicalVars =>
-	[
-		new DynamicVar("ScriptAmount", 1),
-	];
-
-	protected override void SyncDisplayVars() =>
-		DynamicVars["ScriptAmount"].BaseValue = StoredAmount;
-}
-
-public abstract class MaterialReuseScriptRecordCardTemplate<TPower, TSource>
-	: ReinforceableScriptRecordCardTemplate<TPower, TSource>
-	where TPower : ScriptPowerTemplate
-	where TSource : ScriptCardTemplate
-{
 	public sealed override bool UsesMaterialReuse => true;
-	internal sealed override bool HasUpgradedVersion => true;
+	public sealed override bool CanUpgradeScript => true;
 	protected abstract int InitialAmount { get; }
 	protected abstract int AmountPerUpgrade { get; }
 	protected virtual string AmountVarName => "ScriptAmount";
@@ -260,277 +227,5 @@ public abstract class MaterialReuseScriptRecordCardTemplate<TPower, TSource>
 		DynamicVars[AmountVarName].UpgradeValueBy(AmountPerUpgrade);
 		// Save restoration applies upgrades after AfterDeserialized.
 		StoredAmount = InitialAmount + CurrentUpgradeLevel * AmountPerUpgrade;
-	}
-}
-
-[RegisterCard(typeof(TokenCardPool), StableEntryStem = "script_record_grunt")]
-public sealed class GruntScriptRecord
-	: ScriptRecordCardTemplate<ScriptGruntPower, GruntScript>
-{
-	internal override bool HasUpgradedVersion => true;
-
-	protected override IEnumerable<DynamicVar> CanonicalVars =>
-	[
-		new DynamicVar("BonusDamage", ScriptGruntPower.BaseBonusDamage),
-	];
-
-	public override CardAssetProfile AssetProfile => new(
-		PortraitPath: "res://images/cards/GruntScript.png");
-
-	protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
-	[
-		HoverTipFactory.FromKeyword(SquKeywords.VariousStrikeCards),
-	];
-
-	protected override void SyncDisplayVars() =>
-		DynamicVars["BonusDamage"].BaseValue = SourceUpgraded
-			? ScriptGruntPower.UpgradedBonusDamage
-			: ScriptGruntPower.BaseBonusDamage;
-
-	protected override void OnUpgrade() =>
-		DynamicVars["BonusDamage"].UpgradeValueBy(
-			ScriptGruntPower.UpgradedBonusDamage
-			- ScriptGruntPower.BaseBonusDamage);
-}
-
-[RegisterCard(typeof(TokenCardPool), StableEntryStem = "script_record_neutral_ambush")]
-public sealed class NeutralAmbushScriptRecord : ScriptRecordCardTemplate<ScriptNeutralAmbushPower, NeutralAmbushScript>
-{
-	public override CardAssetProfile AssetProfile => new(PortraitPath: "res://images/cards/NeutralAmbushScript.png");
-
-	protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
-	[
-		..SquCardHoverTipFactory.FromCardWithCardHoverTips<GiantRock>(this, SourceUpgraded),
-		..SquCardHoverTipFactory.FromCardWithCardHoverTips<SalvoStrike>(this, SourceUpgraded),
-	];
-}
-
-[RegisterCard(typeof(TokenCardPool), StableEntryStem = "script_record_servant")]
-public sealed class ServantScriptRecord : ScriptRecordCardTemplate<ScriptServantPower, ServantScript>
-{
-	internal override bool HasUpgradedVersion => true;
-
-	public override CardAssetProfile AssetProfile => new(PortraitPath: "res://images/cards/ServantScript.png");
-
-	protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
-	[
-		SquCardHoverTipFactory.FromCard<ThrowHimOut>(this, SourceUpgraded),
-	];
-}
-
-[RegisterCard(typeof(TokenCardPool), StableEntryStem = "script_record_two_word_poet")]
-public sealed class TwoWordPoetScriptRecord : ScriptRecordCardTemplate<ScriptTwoWordPoetPower, TwoWordPoetScript>
-{
-	internal override bool HasUpgradedVersion => true;
-
-	protected override IEnumerable<DynamicVar> CanonicalVars =>
-	[
-		new DamageVar(
-			ScriptTwoWordPoetPower.ScriptDamageVarName,
-			TwoWordPoetScript.CanonicalDamage,
-			ValueProp.Move),
-		new RepeatVar(TwoWordPoetScript.CanonicalHits),
-	];
-
-	public override CardAssetProfile AssetProfile => new(PortraitPath: "res://images/cards/TwoWordPoetScript.png");
-
-	internal void AddConsumedVigor(TwoWordPoetScript source, int amount)
-	{
-		StoredAmount += Math.Max(0, amount);
-		MergeSourceUpgrade(source);
-		SyncDisplayVars();
-	}
-
-	protected override void SyncDisplayVars()
-	{
-		DynamicVars[ScriptTwoWordPoetPower.ScriptDamageVarName].BaseValue = StoredAmount;
-		DynamicVars.Repeat.BaseValue = TwoWordPoetScript.CanonicalHits;
-	}
-}
-
-[RegisterCard(typeof(TokenCardPool), StableEntryStem = "script_record_sunqian")]
-public sealed class SunqianScriptRecord : ScriptRecordCardTemplate<ScriptSunqianPower, SunqianScript>
-{
-	internal override bool HasUpgradedVersion => true;
-	internal void UpdateFrom(SunqianScript source)
-	{
-		MergeSourceUpgrade(source);
-		SyncDisplayVars();
-	}
-
-	protected override IEnumerable<DynamicVar> CanonicalVars =>
-		[new DynamicVar("Dexterity", SunqianScript.BaseDexterity), new CardsVar(SunqianScript.BaseDraw)];
-	public override CardAssetProfile AssetProfile => new(PortraitPath: "res://images/cards/SunqianScript.png");
-	protected override void SyncDisplayVars() => DynamicVars.Cards.BaseValue =
-		SourceUpgraded ? SunqianScript.UpgradedDraw : SunqianScript.BaseDraw;
-	protected override void OnUpgrade() => DynamicVars.Cards.UpgradeValueBy(1);
-
-}
-
-[RegisterCard(typeof(TokenCardPool), StableEntryStem = "script_record_burning_linked_camps")]
-public sealed class BurningLinkedCampsScriptRecord : ScriptRecordCardTemplate<ScriptBurningLinkedCampsPower, BurningLinkedCampsScript>
-{
-	protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
-		[HoverTipFactory.FromPower<BurningPower>()];
-	public override CardAssetProfile AssetProfile => new(PortraitPath: "res://images/cards/BurningLinkedCampsScript.png");
-}
-
-[RegisterCard(typeof(TokenCardPool), StableEntryStem = "script_record_one_man_one_city")]
-public sealed class OneManOneCityScriptRecord : ScriptRecordCardTemplate<ScriptOneManOneCityPower, OneManOneCity>
-{
-	public override CardAssetProfile AssetProfile => new(PortraitPath: "res://images/cards/OneManOneCity.png");
-}
-
-[RegisterCard(typeof(TokenCardPool), StableEntryStem = "script_record_chicken_foot_cheese")]
-public sealed class ChickenFootCheeseScriptRecord : ScriptRecordCardTemplate<ScriptChickenFootCheesePower, ChickenFootCheeseScript>
-{
-	internal override bool HasUpgradedVersion => true;
-
-	protected override IEnumerable<DynamicVar> CanonicalVars => [new DynamicVar("FollowUpDamage", ScriptChickenFootCheesePower.BaseFollowUpDamage)];
-
-	public override CardAssetProfile AssetProfile => new(PortraitPath: "res://images/cards/ChickenFootCheeseScript.png");
-
-	protected override void SyncDisplayVars() =>
-		DynamicVars["FollowUpDamage"].BaseValue = SourceUpgraded
-			? ScriptChickenFootCheesePower.UpgradedFollowUpDamage
-			: ScriptChickenFootCheesePower.BaseFollowUpDamage;
-
-	protected override void OnUpgrade() =>
-		DynamicVars["FollowUpDamage"].UpgradeValueBy(
-			ScriptChickenFootCheesePower.UpgradedFollowUpDamage
-			- ScriptChickenFootCheesePower.BaseFollowUpDamage);
-
-	protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
-	[
-		..SquCardHoverTipFactory.FromCardWithCardHoverTips<ChickenFootCheeseScriptStrikePreview>(
-			this,
-			SourceUpgraded),
-	];
-}
-
-[RegisterCard(typeof(TokenCardPool), StableEntryStem = "script_record_execution_commander")]
-public sealed class ExecutionCommanderScriptRecord : MaterialReuseScriptRecordCardTemplate<ScriptExecutionCommanderPower, ExecutionCommanderScript>
-{
-	protected override int InitialAmount => ExecutionCommanderScript.BaseBonusPercent;
-	protected override int AmountPerUpgrade => 25;
-	public override CardAssetProfile AssetProfile => new(PortraitPath: "res://images/cards/ExecutionCommanderScript.png");
-}
-
-[RegisterCard(typeof(TokenCardPool), StableEntryStem = "script_record_headsman")]
-public sealed class HeadsmanScriptRecord : MaterialReuseScriptRecordCardTemplate<ScriptHeadsmanPower, HeadsmanScript>
-{
-	protected override int InitialAmount => HeadsmanScript.BaseVigor;
-	protected override int AmountPerUpgrade => 1;
-	protected override string AmountVarName => nameof(VigorPower);
-	protected override IEnumerable<DynamicVar> CanonicalVars => [new PowerVar<VigorPower>(HeadsmanScript.BaseVigor)];
-	public override CardAssetProfile AssetProfile => new(PortraitPath: "res://images/cards/HeadsmanScript.png");
-
-	protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
-	[
-		..base.AdditionalHoverTips,
-		..NewsanguoDrunkenMightEffect.HoverTips(),
-	];
-
-	protected override void AddExtraArgsToDescription(LocString description)
-	{
-		base.AddExtraArgsToDescription(description);
-		NewsanguoDrunkenMightEffect.AddOrText(description);
-	}
-}
-
-[RegisterCard(typeof(TokenCardPool), StableEntryStem = "script_record_xiliang_savage")]
-public sealed class XiliangSavageScriptRecord : ScriptRecordCardTemplate<ScriptXiliangSavagePower, XiliangSavageScript>
-{
-	public override CardAssetProfile AssetProfile => new(PortraitPath: "res://images/cards/XiliangSavageScript.png");
-
-	protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
-	[
-		..NewsanguoDrunkenMightEffect.HoverTips(),
-	];
-
-	protected override void AddExtraArgsToDescription(LocString description)
-	{
-		base.AddExtraArgsToDescription(description);
-		NewsanguoDrunkenMightEffect.AddOrText(description);
-	}
-}
-
-[RegisterCard(typeof(TokenCardPool), StableEntryStem = "script_record_bombard_chibi")]
-public sealed class BombardChibiScriptRecord : ScriptRecordCardTemplate<ScriptBombardChibiPower, BombardChibiScript>
-{
-	public override CardAssetProfile AssetProfile => new(PortraitPath: "res://images/cards/BombardChibiScript.png");
-}
-
-[RegisterCard(typeof(TokenCardPool), StableEntryStem = "script_record_night_raid_wuchao")]
-public sealed class NightRaidWuchaoScriptRecord : MaterialReuseScriptRecordCardTemplate<ScriptNightRaidWuchaoPower, NightRaidWuchaoScript>
-{
-	protected override int InitialAmount => NightRaidWuchaoScript.BaseBurning;
-	protected override int AmountPerUpgrade => 2;
-
-	protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
-	[
-		..base.AdditionalHoverTips,
-		..SquCardHoverTipFactory.FromCardWithCardHoverTips<NightRaidWuchaoScriptStarryNightStrikePreview>(
-			this,
-			SourceUpgraded),
-		HoverTipFactory.FromKeyword(SquKeywords.VariousStrikeCards),
-	];
-
-	public override CardAssetProfile AssetProfile => new(PortraitPath: "res://images/cards/NightRaidWuchaoScript.png");
-
-}
-
-[RegisterCard(typeof(TokenCardPool), StableEntryStem = "script_record_eunuch")]
-public sealed class EunuchScriptRecord : ScriptRecordCardTemplate<ScriptEunuchPower, EunuchScript>
-{
-	public override CardAssetProfile AssetProfile => new(PortraitPath: "res://images/cards/EunuchScript.png");
-
-	protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
-	[
-		HoverTipFactory.FromKeyword(CardKeyword.Ethereal),
-		HoverTipFactory.FromKeyword(CardKeyword.Retain),
-	];
-}
-
-[RegisterCard(typeof(TokenCardPool), StableEntryStem = "script_record_part_time_general")]
-public sealed class PartTimeGeneralScriptRecord : ScriptRecordCardTemplate<ScriptPartTimeGeneralPower, PartTimeGeneralScript>
-{
-	[SavedProperty]
-	public List<SerializableCard> RecordedCards { get; set; } = [];
-
-	public override bool CanBeReinforced => true;
-
-	protected override IEnumerable<DynamicVar> CanonicalVars => [new StringVar("RecordedCards", string.Empty)];
-
-	public override CardAssetProfile AssetProfile => new(PortraitPath: "res://images/cards/PartTimeGeneralScript.png");
-
-	internal void RecordPlayedCards(IEnumerable<CardModel> cards)
-	{
-		RecordedCards.AddRange(cards.Select(card => card.ToSerializable()));
-		SyncDisplayVars();
-	}
-
-	protected override void ConfigurePower(ScriptPartTimeGeneralPower power, PartTimeGeneralScript source, Player player) =>
-		power.AttachRecord(this);
-
-	protected override void SyncDisplayVars()
-	{
-		string names = string.Join("、", RecordedCards.Select(card => CardModel.FromSerializable(card).Title));
-		((StringVar)DynamicVars["RecordedCards"]).StringValue = string.IsNullOrEmpty(names) ? "—" : names;
-	}
-
-	protected override void AddExtraArgsToDescription(LocString description)
-	{
-		base.AddExtraArgsToDescription(description);
-		bool hasRecords = IsMutable && CombatManager.Instance.IsInProgress && RecordedCards.Count > 0;
-		LocString text = new("cards", Id.Entry + (hasRecords ? ".smartDescription" : ".emptyDescription"));
-		text.Add("RecordedCards", DynamicVars["RecordedCards"].ToString());
-		description.Add("RecordDescription", text.GetFormattedText());
-	}
-
-	protected override void DeepCloneFields()
-	{
-		base.DeepCloneFields();
-		RecordedCards = [..RecordedCards];
 	}
 }

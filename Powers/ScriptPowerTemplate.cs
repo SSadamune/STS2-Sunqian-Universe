@@ -14,7 +14,8 @@ using STS2RitsuLib.Scaffolding.Content;
 namespace Squ.Powers;
 
 /// <summary>
-/// 剧本能力基类：获得新的剧本能力时，先前的剧本能力会失效。
+/// 剧本能力基类：由 ScriptSystem 按激活上限与互斥组协调共存、替换和失效。
+/// 替换时先完整结算旧剧本失效，再更新记录并激活新剧本。
 /// </summary>
 public abstract class ScriptPowerTemplate : ModPowerTemplate
 {
@@ -54,7 +55,8 @@ public abstract class ScriptPowerTemplate : ModPowerTemplate
 	}
 
 	/// <summary>
-	/// Initializes script-specific state before the outgoing script is lifted.
+	/// Initializes script-specific state when the new power is applied, after
+	/// ScriptSystem has removed any conflicting or replaced powers.
 	/// </summary>
 	protected virtual Task OnScriptApplied(Creature? applier, CardModel? cardSource) =>
 		Task.CompletedTask;

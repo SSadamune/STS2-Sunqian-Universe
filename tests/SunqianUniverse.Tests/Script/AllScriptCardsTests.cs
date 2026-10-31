@@ -20,7 +20,7 @@ public sealed class AllScriptCardsTests : SunqianCombatTestSuite
         Type CardType,
         Type RecordType,
         Type PowerType,
-        bool CanBeReinforced);
+        bool CanUpgradeScript);
 
     private static readonly ScriptCase[] Cases =
     [
@@ -28,7 +28,7 @@ public sealed class AllScriptCardsTests : SunqianCombatTestSuite
         new(typeof(BowangParadoxScript), typeof(BowangParadoxAdvanceScriptRecord), typeof(ScriptBowangParadoxAdvancePower), true),
         new(typeof(GuanDiForm), typeof(GuanYuCivilVer), typeof(GuanYuCivilVerPower), true),
         new(typeof(BurningLinkedCampsScript), typeof(BurningLinkedCampsScriptRecord), typeof(ScriptBurningLinkedCampsPower), false),
-        new(typeof(ChickenFootCheeseScript), typeof(ChickenFootCheeseScriptRecord), typeof(ScriptChickenFootCheesePower), false),
+        new(typeof(ChickenFootCheeseScript), typeof(ChickenFootCheeseScriptRecord), typeof(ScriptChickenFootCheesePower), true),
         new(typeof(EunuchScript), typeof(EunuchScriptRecord), typeof(ScriptEunuchPower), false),
         new(typeof(ExecutionCommanderScript), typeof(ExecutionCommanderScriptRecord), typeof(ScriptExecutionCommanderPower), true),
         new(typeof(HeadsmanScript), typeof(HeadsmanScriptRecord), typeof(ScriptHeadsmanPower), true),
@@ -36,10 +36,10 @@ public sealed class AllScriptCardsTests : SunqianCombatTestSuite
         new(typeof(NightRaidWuchaoScript), typeof(NightRaidWuchaoScriptRecord), typeof(ScriptNightRaidWuchaoPower), true),
         new(typeof(OneManOneCity), typeof(OneManOneCityScriptRecord), typeof(ScriptOneManOneCityPower), false),
         new(typeof(PartTimeGeneralScript), typeof(PartTimeGeneralScriptRecord), typeof(ScriptPartTimeGeneralPower), true),
-        new(typeof(GruntScript), typeof(GruntScriptRecord), typeof(ScriptGruntPower), false),
-        new(typeof(ServantScript), typeof(ServantScriptRecord), typeof(ScriptServantPower), false),
-        new(typeof(SunqianScript), typeof(SunqianScriptRecord), typeof(ScriptSunqianPower), false),
-        new(typeof(TwoWordPoetScript), typeof(TwoWordPoetScriptRecord), typeof(ScriptTwoWordPoetPower), false),
+        new(typeof(GruntScript), typeof(GruntScriptRecord), typeof(ScriptGruntPower), true),
+        new(typeof(ServantScript), typeof(ServantScriptRecord), typeof(ScriptServantPower), true),
+        new(typeof(SunqianScript), typeof(SunqianScriptRecord), typeof(ScriptSunqianPower), true),
+        new(typeof(TwoWordPoetScript), typeof(TwoWordPoetScriptRecord), typeof(ScriptTwoWordPoetPower), true),
         new(typeof(XiliangSavageScript), typeof(XiliangSavageScriptRecord), typeof(ScriptXiliangSavagePower), false),
     ];
 
@@ -139,15 +139,7 @@ public sealed class AllScriptCardsTests : SunqianCombatTestSuite
                     Assert.Contains(activation + "。" + exhaust, activationLine);
                 }
 
-                if (testCase.CanBeReinforced && !canonical.CreateScriptRecordPreview().UsesMaterialReuse
-                    && testCase.CardType != typeof(PartTimeGeneralScript))
-                {
-                    Assert.Contains(activation + "，若激活过则还会将数值叠加。", description);
-                }
-                else
-                {
-                    Assert.DoesNotContain("若激活过则还会将数值叠加", description);
-                }
+                Assert.DoesNotContain("若激活过则还会将数值叠加", description);
             }
         }
     }
@@ -211,7 +203,7 @@ public sealed class AllScriptCardsTests : SunqianCombatTestSuite
     [InlineData(typeof(BowangParadoxScript), typeof(BowangParadoxAdvanceScriptRecord), typeof(ScriptBowangParadoxAdvancePower), true)]
     [InlineData(typeof(GuanDiForm), typeof(GuanYuCivilVer), typeof(GuanYuCivilVerPower), true)]
     [InlineData(typeof(BurningLinkedCampsScript), typeof(BurningLinkedCampsScriptRecord), typeof(ScriptBurningLinkedCampsPower), false)]
-    [InlineData(typeof(ChickenFootCheeseScript), typeof(ChickenFootCheeseScriptRecord), typeof(ScriptChickenFootCheesePower), false)]
+    [InlineData(typeof(ChickenFootCheeseScript), typeof(ChickenFootCheeseScriptRecord), typeof(ScriptChickenFootCheesePower), true)]
     [InlineData(typeof(EunuchScript), typeof(EunuchScriptRecord), typeof(ScriptEunuchPower), false)]
     [InlineData(typeof(ExecutionCommanderScript), typeof(ExecutionCommanderScriptRecord), typeof(ScriptExecutionCommanderPower), true)]
     [InlineData(typeof(HeadsmanScript), typeof(HeadsmanScriptRecord), typeof(ScriptHeadsmanPower), true)]
@@ -219,16 +211,16 @@ public sealed class AllScriptCardsTests : SunqianCombatTestSuite
     [InlineData(typeof(NightRaidWuchaoScript), typeof(NightRaidWuchaoScriptRecord), typeof(ScriptNightRaidWuchaoPower), true)]
     [InlineData(typeof(OneManOneCity), typeof(OneManOneCityScriptRecord), typeof(ScriptOneManOneCityPower), false)]
     [InlineData(typeof(PartTimeGeneralScript), typeof(PartTimeGeneralScriptRecord), typeof(ScriptPartTimeGeneralPower), true)]
-    [InlineData(typeof(GruntScript), typeof(GruntScriptRecord), typeof(ScriptGruntPower), false)]
-    [InlineData(typeof(ServantScript), typeof(ServantScriptRecord), typeof(ScriptServantPower), false)]
-    [InlineData(typeof(SunqianScript), typeof(SunqianScriptRecord), typeof(ScriptSunqianPower), false)]
-    [InlineData(typeof(TwoWordPoetScript), typeof(TwoWordPoetScriptRecord), typeof(ScriptTwoWordPoetPower), false)]
+    [InlineData(typeof(GruntScript), typeof(GruntScriptRecord), typeof(ScriptGruntPower), true)]
+    [InlineData(typeof(ServantScript), typeof(ServantScriptRecord), typeof(ScriptServantPower), true)]
+    [InlineData(typeof(SunqianScript), typeof(SunqianScriptRecord), typeof(ScriptSunqianPower), true)]
+    [InlineData(typeof(TwoWordPoetScript), typeof(TwoWordPoetScriptRecord), typeof(ScriptTwoWordPoetPower), true)]
     [InlineData(typeof(XiliangSavageScript), typeof(XiliangSavageScriptRecord), typeof(ScriptXiliangSavagePower), false)]
     public async Task Playing_script_unlocks_matching_record_and_activates_matching_power(
         Type cardType,
         Type recordType,
         Type powerType,
-        bool canBeReinforced)
+        bool canUpgradeScript)
     {
         CardModel card = await AddToHand(ModelDb.GetId(cardType));
         Assert.IsAssignableFrom<ScriptCardTemplate>(card);
@@ -277,7 +269,7 @@ public sealed class AllScriptCardsTests : SunqianCombatTestSuite
                 Squ.Script.ScriptSystem.ScriptCollectionPile.GetPile(Player).Cards,
                 candidate => candidate.GetType() == recordType));
         Assert.Equal(powerType, record.PowerType);
-        Assert.Equal(canBeReinforced, record.CanBeReinforced);
+        Assert.Equal(canUpgradeScript, record.CanUpgradeScript);
         Assert.False(record.SourceUpgraded);
         Assert.Equal(CardType.Skill, record.Type);
         Assert.False(record.ShouldShowInCardLibrary);

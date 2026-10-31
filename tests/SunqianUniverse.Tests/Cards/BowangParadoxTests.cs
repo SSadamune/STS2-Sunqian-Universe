@@ -28,8 +28,8 @@ public sealed class BowangParadoxTests : SunqianCombatTestSuite
         Assert.Equal(2, records.Count);
         Assert.Equal(BowangParadoxScript.BaseVigor, advance.StoredAmount);
         Assert.Equal(BowangParadoxScript.BaseTinderStacks, arson.StoredAmount);
-        Assert.True(advance.CanBeReinforced);
-        Assert.True(arson.CanBeReinforced);
+        Assert.True(advance.CanUpgradeScript);
+        Assert.True(arson.CanUpgradeScript);
         Assert.True(advance.ShouldGlowGold);
         Assert.False(arson.ShouldGlowGold);
         AssertOnlyScript<ScriptBowangParadoxAdvancePower>();

@@ -57,11 +57,7 @@ public abstract class ScriptCardTemplate : ModCardTemplate, IRowKeywordsCard
 
 	internal virtual int GetScriptPowerAmountForPreview() => 1;
 
-	internal abstract bool IsReinforceableScript { get; }
-
 	internal abstract bool HasUpgradedScriptEffect { get; }
-
-	protected virtual bool UsesReinforceActivationText => IsReinforceableScript;
 
 	protected virtual bool MergeScriptActivationKeywords => true;
 
@@ -88,14 +84,8 @@ public abstract class ScriptCardTemplate<TRecord> : ScriptCardTemplate
 	{
 	}
 
-	internal sealed override bool IsReinforceableScript =>
-		ModelDb.Card<TRecord>().CanBeReinforced;
-
-	protected override bool UsesReinforceActivationText =>
-		IsReinforceableScript && !ModelDb.Card<TRecord>().UsesMaterialReuse;
-
 	internal sealed override bool HasUpgradedScriptEffect =>
-		ModelDb.Card<TRecord>().HasUpgradedVersion;
+		ModelDb.Card<TRecord>().CanUpgradeScript;
 
 	internal sealed override ScriptRecordCardTemplate CreateScriptRecordPreview()
 	{
@@ -109,7 +99,7 @@ public abstract class ScriptCardTemplate<TRecord> : ScriptCardTemplate
 		decimal amount = 1m,
 		System.Action<TRecord>? configureRecord = null,
 		System.Action<TRecord>? afterActivation = null) =>
-		ScriptSystem.UnlockOrReinforceAsync(
+		ScriptSystem.UnlockOrUpgradeAsync(
 			choiceContext,
 			this,
 			amount,
@@ -119,9 +109,7 @@ public abstract class ScriptCardTemplate<TRecord> : ScriptCardTemplate
 	protected override void AddExtraArgsToDescription(LocString description)
 	{
 		base.AddExtraArgsToDescription(description);
-		string key = UsesReinforceActivationText
-			? "SUNQIAN_UNIVERSE_CARD_SCRIPT_ACTIVATE_REINFORCE"
-			: "SUNQIAN_UNIVERSE_CARD_SCRIPT_ACTIVATE";
+		string key = "SUNQIAN_UNIVERSE_CARD_SCRIPT_ACTIVATE";
 		if (HasUpgradedScriptEffect)
 		{
 			key += "_UPGRADABLE";

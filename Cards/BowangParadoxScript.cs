@@ -58,11 +58,15 @@ public sealed class BowangParadoxScript : ScriptCardTemplate<BowangParadoxAdvanc
 	protected override async Task PlayScriptAsync(PlayerChoiceContext choiceContext, CardPlay cardPlay)
 	{
 		SquSfx.Play(SquSfx.BowangParadoxPlayEvent);
-		await ScriptSystem.UnlockOrReinforceAsync<BowangParadoxAdvanceScriptRecord>(
-			choiceContext, this, DynamicVars[nameof(VigorPower)].BaseValue, activate: false);
-		await ScriptSystem.UnlockOrReinforceAsync<BowangParadoxArsonScriptRecord>(
-			choiceContext, this, DynamicVars[nameof(TinderPower)].BaseValue, activate: false);
-		await BowangParadoxChoice.OfferAsync(choiceContext, Owner);
+		var advance = await ScriptSystem.PrepareScriptUpdateAsync<BowangParadoxAdvanceScriptRecord>(
+			this, DynamicVars[nameof(VigorPower)].BaseValue);
+		var arson = await ScriptSystem.PrepareScriptUpdateAsync<BowangParadoxArsonScriptRecord>(
+			this, DynamicVars[nameof(TinderPower)].BaseValue);
+		await BowangParadoxChoice.OfferAsync(choiceContext, Owner, async () =>
+		{
+			await advance.CommitAsync();
+			await arson.CommitAsync();
+		});
 	}
 
 	internal override IEnumerable<ScriptRecordCardTemplate> CreateScriptRecordPreviews()

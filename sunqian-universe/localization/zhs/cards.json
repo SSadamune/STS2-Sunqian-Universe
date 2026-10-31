@@ -295,7 +295,6 @@
   "SUNQIAN_UNIVERSE_CARD_GIFT_FOUR_WHEELED_CART.title": "赠予四轮车",
   "SUNQIAN_UNIVERSE_CARD_GIFT_FOUR_WHEELED_CART.description": "令随机生物获得2点[gold]力量[/gold]和[gold]敏捷[/gold]：其受到未被格挡的伤害后，伤害来源获得此效果和{energyPrefix:energyIcons(1)}。",
   "SUNQIAN_UNIVERSE_CARD_SCRIPT_ACTIVATE": "激活此[gold]剧本[/gold]。",
-  "SUNQIAN_UNIVERSE_CARD_SCRIPT_ACTIVATE_REINFORCE": "激活此[gold]剧本[/gold]，若激活过则还会将数值叠加。",
   "SUNQIAN_UNIVERSE_CARD_SCRIPT_RECORD_NEUTRAL_AMBUSH.title": "中立伏兵",
   "SUNQIAN_UNIVERSE_CARD_SCRIPT_RECORD_NEUTRAL_AMBUSH.description": "当你抽到[gold]巨石[/gold]或[gold]箭幕打击[/gold]时，对随机目标打出。",
   "SUNQIAN_UNIVERSE_CARD_SCRIPT_RECORD_SERVANT.title": "家丁",
@@ -333,7 +332,6 @@
   "SUNQIAN_UNIVERSE_CARD_SCRIPT_RECORD_PART_TIME_GENERAL.emptyDescription": "[gold]失效[/gold]时，从以此法被打出过的牌（具有随机[gold]附魔[/gold]）中获得一张。",
   "SUNQIAN_UNIVERSE_CARD_SCRIPT_RECORD_PART_TIME_GENERAL.smartDescription": "失效时，从以下牌（具有随机[gold]附魔[/gold]）中获得一张：\n{RecordedCards}。",
   "SUNQIAN_UNIVERSE_CARD_SCRIPT_ACTIVATE_UPGRADABLE": "激活此[gold]{IfUpgraded:show:剧本+|剧本}[/gold]。",
-  "SUNQIAN_UNIVERSE_CARD_SCRIPT_ACTIVATE_REINFORCE_UPGRADABLE": "激活此[gold]{IfUpgraded:show:剧本+|剧本}[/gold]，若激活过则还会将数值叠加。",
   "SUNQIAN_UNIVERSE_CARD_GUAN_YU_CIVIL_VER.annotation": "[red]不能[/red]与[gold]武关羽[/gold]同时激活。",
   "SUNQIAN_UNIVERSE_CARD_GUAN_YU_MARTIAL_VER.annotation": "[red]不能[/red]与[gold]文关羽[/gold]同时激活。"
 }

@@ -38,18 +38,20 @@ public sealed class SunqianUniverseTests : SunqianCombatTestSuite
         Assert.All(expected, drawn => AssertInPile(drawn, PileType.Draw));
         var sentinel = await AddToDrawPileTop<Wound>();
         await Play(await AddToHand<ExecutionCommanderScript>());
-        AssertInPile(sentinel, PileType.Draw);
+        AssertInPile(sentinel, PileType.Hand);
+        var secondSentinel = await AddToDrawPileTop<Wound>();
         var record = ScriptSystem.ScriptCollectionPile.GetPile(Player).Cards.OfType<ExecutionCommanderScriptRecord>().Single();
         await ScriptSystem.ActivatePlayedScriptAsync(new BlockingPlayerChoiceContext(), Player, record);
-        AssertInPile(sentinel, PileType.Draw);
+        AssertInPile(secondSentinel, PileType.Hand);
+        var thirdSentinel = await AddToDrawPileTop<Wound>();
         await ScriptSystem.RemoveScriptPowerAsync(Player.Creature.GetPower<ScriptExecutionCommanderPower>()!);
-        AssertInPile(sentinel, PileType.Hand);
+        AssertInPile(thirdSentinel, PileType.Hand);
     }
 
     [Theory]
     [InlineData(false, 2)]
     [InlineData(true, 2)]
-    public async Task Adding_or_reinforcing_two_records_does_not_trigger_universe(bool upgraded, int draw)
+    public async Task Adding_or_upgrading_inactive_records_does_not_trigger_universe(bool upgraded, int draw)
     {
         await PlayerCmd.SetEnergy(20, Player);
         var card = await AddToHand<SunqianUniverse>();
@@ -103,8 +105,8 @@ public sealed class SunqianUniverseTests : SunqianCombatTestSuite
     private async Task AddFormRecords(GuanDiForm source)
     {
         var context = new BlockingPlayerChoiceContext();
-        await ScriptSystem.UnlockOrReinforceAsync<GuanYuCivilVer>(context, source, 2, activate: false);
-        await ScriptSystem.UnlockOrReinforceAsync<GuanYuMartialVer>(context, source, 2, activate: false);
+        await ScriptSystem.UnlockOrUpgradeAsync<GuanYuCivilVer>(context, source, 2, activate: false);
+        await ScriptSystem.UnlockOrUpgradeAsync<GuanYuMartialVer>(context, source, 2, activate: false);
     }
 
     private async Task ClearHand()

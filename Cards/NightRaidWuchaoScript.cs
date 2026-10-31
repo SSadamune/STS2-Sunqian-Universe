@@ -30,7 +30,6 @@ public sealed class NightRaidWuchaoScript : ScriptCardTemplate<NightRaidWuchaoSc
 	public const int GeneratedStrikeCount = 2;
 	public const int BaseBurning = 3;
 	public const int UpgradedBurning = 5;
-	protected override bool UsesReinforceActivationText => false;
 
 	protected override IEnumerable<DynamicVar> CanonicalVars =>
 	[

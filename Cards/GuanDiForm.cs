@@ -39,11 +39,16 @@ public sealed class GuanDiForm : ScriptCardTemplate<GuanYuCivilVer>
 
     protected override async Task PlayScriptAsync(PlayerChoiceContext choiceContext, CardPlay cardPlay)
     {
-        await ScriptSystem.UnlockOrReinforceAsync<GuanYuCivilVer>(
-            choiceContext, this, GetScriptPowerAmountForPreview(), activate: false);
-        await ScriptSystem.UnlockOrReinforceAsync<GuanYuMartialVer>(
-            choiceContext, this, GetScriptPowerAmountForPreview(), activate: false);
+        var civil = await ScriptSystem.PrepareScriptUpdateAsync<GuanYuCivilVer>(
+            this, GetScriptPowerAmountForPreview());
+        var martial = await ScriptSystem.PrepareScriptUpdateAsync<GuanYuMartialVer>(
+            this, GetScriptPowerAmountForPreview());
         await PowerCmd.Apply<GuanDiFormPower>(choiceContext, Owner.Creature, 1, Owner.Creature, this);
-        await ScriptSystem.ChooseActiveScriptsAsync(choiceContext, Owner, cancelable: false, requireManualSelection: true);
+        await ScriptSystem.ChooseActiveScriptsAsync(choiceContext, Owner, cancelable: false,
+            requireManualSelection: true, beforeActivation: async () =>
+            {
+                await civil.CommitAsync();
+                await martial.CommitAsync();
+            });
     }
 }

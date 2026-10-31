@@ -99,8 +99,8 @@ public sealed class ScriptInteractionTests : SunqianCombatTestSuite
         await ApplyPower<GuanDiFormPower>(Player.Creature, 1);
         var sunqian = await AddToHand<SunqianScript>();
         var headsman = await AddToHand<HeadsmanScript>();
-        await ScriptSystem.UnlockOrReinforceAsync<SunqianScriptRecord>(new BlockingPlayerChoiceContext(), sunqian, 1, activate: false);
-        await ScriptSystem.UnlockOrReinforceAsync<HeadsmanScriptRecord>(new BlockingPlayerChoiceContext(), headsman, 1, activate: false);
+        await ScriptSystem.UnlockOrUpgradeAsync<SunqianScriptRecord>(new BlockingPlayerChoiceContext(), sunqian, 1, activate: false);
+        await ScriptSystem.UnlockOrUpgradeAsync<HeadsmanScriptRecord>(new BlockingPlayerChoiceContext(), headsman, 1, activate: false);
         var records = ScriptSystem.ScriptCollectionPile.GetPile(Player).Cards;
         var first = records.OfType<SunqianScriptRecord>().Single();
         var second = records.OfType<HeadsmanScriptRecord>().Single();

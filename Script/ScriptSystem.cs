@@ -162,7 +162,53 @@ public static class ScriptSystem
 		return Math.Max(1, 1 + intrinsic + additional);
 	}
 
-	public static async Task UnlockOrReinforceAsync<TRecord>(
+	// Existing records remain untouched until every outgoing script has finished expiring.
+	internal sealed class PendingScriptUpdate(ScriptRecordCardTemplate record, Func<Task> commit)
+	{
+		internal ScriptRecordCardTemplate Record { get; } = record;
+		private bool _committed;
+		internal async Task CommitAsync()
+		{
+			if (_committed) throw new InvalidOperationException("Script update already committed.");
+			_committed = true;
+			await commit();
+		}
+	}
+
+	internal static async Task<PendingScriptUpdate> PrepareScriptUpdateAsync<TRecord>(
+		ScriptCardTemplate source, decimal amount = 1, Action<TRecord>? configureRecord = null)
+		where TRecord : ScriptRecordCardTemplate
+	{
+		Player player = source.Owner;
+		TRecord? record = ScriptCollectionPile.GetPile(player).Cards.OfType<TRecord>().FirstOrDefault();
+		bool wasNewUnlock = record is null;
+		if (record is null)
+		{
+			ICombatState combatState = player.Creature.CombatState
+				?? throw new InvalidOperationException("Scripts can only be unlocked during combat.");
+			record = combatState.CreateCard<TRecord>(player);
+			record.InitializeFrom(source, amount);
+			// Include new records in selection and activation-limit calculations.
+			await CardPileCmd.AddGeneratedCardToCombat(record, ScriptCollectionPile, player);
+		}
+		return new PendingScriptUpdate(record, async () =>
+		{
+			if (!wasNewUnlock) record.UpgradeFrom(source);
+			configureRecord?.Invoke(record);
+			if (wasNewUnlock)
+			{
+				foreach (IAfterScriptUnlocked handler in EnumeratePlayerModels(player).OfType<IAfterScriptUnlocked>())
+					await handler.AfterScriptUnlockedAsync(player, record);
+			}
+			foreach (IAfterScriptCardPlayed handler in EnumeratePlayerModels(player).OfType<IAfterScriptCardPlayed>())
+				await handler.AfterScriptCardPlayedAsync(player, record, wasNewUnlock);
+			// A multi-record card may upgrade an active record that was not replaced.
+			player.Creature.Powers.OfType<ScriptPowerTemplate>()
+				.FirstOrDefault(power => power.GetType() == record.PowerType)?.SetAmount(record.StoredAmount);
+		});
+	}
+
+	public static async Task UnlockOrUpgradeAsync<TRecord>(
 		PlayerChoiceContext choiceContext,
 		ScriptCardTemplate source,
 		decimal amount,
@@ -171,96 +217,40 @@ public static class ScriptSystem
 		bool activate = true)
 		where TRecord : ScriptRecordCardTemplate
 	{
-		Player player = source.Owner;
-		CardPile pile = ScriptCollectionPile.GetPile(player);
-		TRecord? record = pile.Cards.OfType<TRecord>().FirstOrDefault();
-		bool wasNewUnlock = record is null;
-
-		if (record is null)
-		{
-			ICombatState combatState = player.Creature.CombatState
-				?? throw new InvalidOperationException("Scripts can only be unlocked during combat.");
-			record = combatState.CreateCard<TRecord>(player);
-			record.InitializeFrom(source, amount);
-			configureRecord?.Invoke(record);
-			await CardPileCmd.AddGeneratedCardToCombat(record, ScriptCollectionPile, player);
-			foreach (IAfterScriptUnlocked handler in EnumeratePlayerModels(player).OfType<IAfterScriptUnlocked>())
-			{
-				await handler.AfterScriptUnlockedAsync(player, record);
-			}
-		}
-		else
-		{
-			if (record.CanBeReinforced)
-			{
-				record.ReinforceFrom(source, amount);
-			}
-			configureRecord?.Invoke(record);
-		}
-
-		foreach (IAfterScriptCardPlayed handler in EnumeratePlayerModels(player).OfType<IAfterScriptCardPlayed>())
-		{
-			await handler.AfterScriptCardPlayedAsync(player, record, wasNewUnlock);
-		}
-
+		PendingScriptUpdate update = await PrepareScriptUpdateAsync(source, amount, configureRecord);
 		if (!activate)
 		{
-			ScriptPowerTemplate? active = player.Creature.Powers.OfType<ScriptPowerTemplate>()
-				.FirstOrDefault(power => power.GetType() == record.PowerType);
-			active?.SetAmount(record.StoredAmount);
+			await update.CommitAsync();
 			return;
 		}
-
-		await ActivatePlayedScriptAsync(
-			choiceContext,
-			player,
-			record);
-		afterActivation?.Invoke(record);
+		await ActivatePlayedScriptAsync(choiceContext, source.Owner, update.Record, update.CommitAsync);
+		afterActivation?.Invoke((TRecord)update.Record);
 	}
 
 	internal static async Task ActivatePlayedScriptAsync(
 		PlayerChoiceContext choiceContext,
 		Player player,
-		ScriptRecordCardTemplate record)
+		ScriptRecordCardTemplate record,
+		Func<Task>? beforeActivation = null)
 	{
-		foreach (ScriptPowerTemplate conflict in player.Creature.Powers.OfType<ScriptPowerTemplate>()
-			.Where(power => record.MutuallyExclusiveGroup is not null
-				&& power.MutuallyExclusiveGroup == record.MutuallyExclusiveGroup
-				&& power.GetType() != record.PowerType).ToList())
-		{
-			await RemoveScriptPowerAsync(conflict);
-		}
-		List<ScriptPowerTemplate> activeScripts = player.Creature.Powers
-			.OfType<ScriptPowerTemplate>()
-			.ToList();
-		ScriptPowerTemplate? sameType = activeScripts
-			.FirstOrDefault(power => power.GetType() == record.PowerType);
-		if (sameType is not null)
-		{
-			await RemoveForReactivationAsync(sameType, record);
-			await record.ActivateAsync(choiceContext, player);
-			return;
-		}
-
-		activeScripts = activeScripts.Where(power => power.CountsTowardActivationLimit).ToList();
-		int removalCount = record.CountsTowardActivationLimit ? Math.Max(
-			0,
-			activeScripts.Count - GetActivationLimit(player) + 1) : 0;
+		List<ScriptPowerTemplate> active = player.Creature.Powers.OfType<ScriptPowerTemplate>().ToList();
+		List<ScriptPowerTemplate> outgoing = active.Where(power => power.GetType() == record.PowerType
+			|| (record.MutuallyExclusiveGroup is not null
+				&& power.MutuallyExclusiveGroup == record.MutuallyExclusiveGroup)).ToList();
+		List<ScriptPowerTemplate> candidates = active.Except(outgoing)
+			.Where(power => power.CountsTowardActivationLimit).ToList();
+		int removalCount = record.CountsTowardActivationLimit
+			? Math.Max(0, candidates.Count - GetActivationLimit(player) + 1) : 0;
 		if (removalCount > 0)
 		{
-			IReadOnlyList<ScriptPowerTemplate> scriptsToRemove = activeScripts.Count > 1
-				? await ChooseScriptsToInvalidateAsync(
-					choiceContext,
-					player,
-					activeScripts,
-					removalCount)
-				: activeScripts.Take(removalCount).ToList();
-			foreach (ScriptPowerTemplate active in scriptsToRemove)
-			{
-				await RemoveScriptPowerAsync(active);
-			}
+			outgoing.AddRange(candidates.Count > 1
+				? await ChooseScriptsToInvalidateAsync(choiceContext, player, candidates, removalCount)
+				: candidates.Take(removalCount));
 		}
-
+		// Finish selection before any expiration; finish all expirations before any record mutation.
+		foreach (ScriptPowerTemplate power in outgoing)
+			await RemoveScriptPowerAsync(power);
+		if (beforeActivation is not null) await beforeActivation();
 		await record.ActivateAsync(choiceContext, player);
 	}
 
@@ -308,7 +298,8 @@ public static class ScriptSystem
 		PlayerChoiceContext choiceContext,
 		Player player,
 		bool cancelable,
-		bool requireManualSelection = false)
+		bool requireManualSelection = false,
+		Func<Task>? beforeActivation = null)
 	{
 		IReadOnlyList<ScriptRecordCardTemplate>? selected =
 			await ChooseActiveScriptRecordsAsync(
@@ -321,7 +312,7 @@ public static class ScriptSystem
 			return false;
 		}
 
-		await ApplySelectedScriptsAsync(choiceContext, player, selected);
+		await ApplySelectedScriptsAsync(choiceContext, player, selected, beforeActivation);
 		return true;
 	}
 
@@ -554,42 +545,16 @@ public static class ScriptSystem
 	private static async Task ApplySelectedScriptsAsync(
 		PlayerChoiceContext choiceContext,
 		Player player,
-		IReadOnlyList<ScriptRecordCardTemplate> selected)
+		IReadOnlyList<ScriptRecordCardTemplate> selected,
+		Func<Task>? beforeActivation = null)
 	{
-		HashSet<Type> selectedTypes = selected.Select(record => record.PowerType).ToHashSet();
-		foreach (ScriptPowerTemplate active in player.Creature.Powers
-			.OfType<ScriptPowerTemplate>()
-			.Where(power => !selectedTypes.Contains(power.GetType()))
-			.ToList())
-		{
+		// Reselection replaces even same-name scripts. No new power may observe a half-expired set.
+		foreach (ScriptPowerTemplate active in player.Creature.Powers.OfType<ScriptPowerTemplate>().ToList())
 			await RemoveScriptPowerAsync(active);
-		}
-
+		if (beforeActivation is not null) await beforeActivation();
 		foreach (ScriptRecordCardTemplate record in selected)
-		{
-			ScriptPowerTemplate? active = player.Creature.Powers
-				.OfType<ScriptPowerTemplate>()
-				.FirstOrDefault(power => power.GetType() == record.PowerType);
-			if (active is not null)
-			{
-				// 确认重选是一次真正的失效与激活，不能按同名牌强化的静默刷新处理。
-				await RemoveScriptPowerAsync(active);
-				active = null;
-			}
-
-			if (active is null)
-			{
-				await record.ActivateAsync(choiceContext, player);
-			}
-		}
+			await record.ActivateAsync(choiceContext, player);
 	}
-
-	private static Task RemoveForReactivationAsync(
-		ScriptPowerTemplate active,
-		ScriptRecordCardTemplate record) =>
-		record.CanBeReinforced
-			? RemoveScriptPowerAsync(active, notifyLift: false, resolveEndEffects: false)
-			: RemoveScriptPowerAsync(active);
 
 	public static async Task ApplyExternalScriptPowerAsync(
 		PlayerChoiceContext choiceContext,
@@ -605,7 +570,7 @@ public static class ScriptSystem
 			.FirstOrDefault(active => active.GetType() == power.GetType());
 		if (sameType is not null)
 		{
-			await RemoveScriptPowerAsync(sameType, notifyLift: false, resolveEndEffects: false);
+			await RemoveScriptPowerAsync(sameType);
 		}
 
 		foreach (ScriptPowerTemplate conflict in target.Powers.OfType<ScriptPowerTemplate>()

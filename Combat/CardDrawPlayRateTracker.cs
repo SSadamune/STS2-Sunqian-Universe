@@ -18,10 +18,10 @@ namespace Squ.Combat;
 
 /// <summary>
 /// 按卡牌稳定身份跟踪打出率，并保留最近若干场已结束战斗的快照。
-/// 身份由 Entry、升级次数、获得楼层、附魔决定，host/client 对同一张逻辑牌看到同一套数字。
+/// 永久牌组中的每张实体牌持有独立保存的短整数身份；升级和附魔不改变身份。
 /// 打出率 = PlayFromHandCount / HandEntryCount：
 /// HandEntryCount = 进入手牌次数（抽牌、从其它区域移入、打出后回手如 Particle Wall）；
-/// PlayFromHandCount = 从手牌进入打出区的次数（抽牌堆自动打出不计；重放不会再次从手牌出发）。
+/// PlayFromHandCount = 非自动打出时从手牌进入打出区的次数（包括手牌代打在内的自动打出不计；重放不会再次从手牌出发）。
 /// 当前仍留在手牌、尚未打出的停留计入分母、不计入分子。
 /// </summary>
 public static class CardDrawPlayRateTracker
@@ -30,6 +30,7 @@ public static class CardDrawPlayRateTracker
 
 	public const int MaxStoredCombats = 10;
 
+	// Keep the slot name so existing runs can migrate grouped history in place.
 	private const string SaveKey = "card_play_rate_v4";
 
 	private const string CelebrateMourningEntrySuffix = "CELEBRATE_MOURNING";
@@ -71,6 +72,7 @@ public static class CardDrawPlayRateTracker
 		}
 
 		_initialized = true;
+		CardPlayRateIdentity.Initialize();
 		RitsuLibFramework.SubscribeLifecycle<CardMovedBetweenPilesEvent>(OnCardMovedBetweenPiles);
 		RitsuLibFramework.SubscribeLifecycle<CombatStartingEvent>(OnCombatStarting);
 		RitsuLibFramework.SubscribeLifecycle<CombatEndedEvent>(OnCombatEnded);
@@ -96,16 +98,17 @@ public static class CardDrawPlayRateTracker
 		}
 
 		List<RankedDrawCard> ranked = [];
+		var statsCache = new Dictionary<string, (int PlayCount, int Denominator)>(StringComparer.Ordinal);
+		PlayerRuntime runtime = GetOrCreateRuntime(player);
 		int drawIndex = 0;
 		foreach (CardModel card in PileType.Draw.GetPile(player).Cards)
 		{
-			TryGetStats(
-				player,
+			(int playFromHandCount, int handEntryCount) = GetCachedStats(
+				runtime,
 				card,
 				windowSize,
 				includeCurrentCombat,
-				out int playFromHandCount,
-				out int handEntryCount);
+				statsCache);
 			CardModel identity = ResolveIdentityCard(card) ?? card;
 			ranked.Add(new RankedDrawCard(
 				card,
@@ -114,7 +117,7 @@ public static class CardDrawPlayRateTracker
 				handEntryCount,
 				identity.FloorAddedToDeck ?? int.MaxValue,
 				identity.Id.Entry,
-				GetIdentityKey(identity),
+				GetLegacyIdentityKey(identity),
 				drawIndex));
 			drawIndex++;
 		}
@@ -158,7 +161,8 @@ public static class CardDrawPlayRateTracker
 		bool includeCurrentCombat = false,
 		Func<CardModel, bool>? exclude = null)
 	{
-		List<(CardModel Card, int PlayCount, int Denominator)> ranked = [];
+		HashSet<CardModel> highest = [];
+		(bool IsFamily, int PlayCount, int Denominator) best = default;
 		var statsCache = new Dictionary<string, (int PlayCount, int Denominator)>(StringComparer.Ordinal);
 		PlayerRuntime runtime = GetOrCreateRuntime(player);
 		foreach (CardModel card in candidates)
@@ -174,39 +178,26 @@ public static class CardDrawPlayRateTracker
 				windowSize,
 				includeCurrentCombat,
 				statsCache);
-			ranked.Add((card, playFromHandCount, handEntryCount));
-		}
-
-		if (ranked.Count == 0)
-		{
-			return [];
-		}
-
-		(CardModel Card, int PlayCount, int Denominator) best = ranked[0];
-		foreach ((CardModel Card, int PlayCount, int Denominator) entry in ranked)
-		{
-			if (CompareEffectiveRate(
-					entry.Card.HasFamily(),
-					entry.PlayCount,
-					entry.Denominator,
-					best.Card.HasFamily(),
+			bool isFamily = card.HasFamily();
+			int comparison = highest.Count == 0 ? 1 : CompareEffectiveRate(
+					isFamily,
+					playFromHandCount,
+					handEntryCount,
+					best.IsFamily,
 					best.PlayCount,
-					best.Denominator) > 0)
+					best.Denominator);
+			if (comparison > 0)
 			{
-				best = entry;
+				best = (isFamily, playFromHandCount, handEntryCount);
+				highest.Clear();
+			}
+			if (comparison >= 0)
+			{
+				highest.Add(card);
 			}
 		}
 
-		return ranked
-			.Where(entry => CompareEffectiveRate(
-				entry.Card.HasFamily(),
-				entry.PlayCount,
-				entry.Denominator,
-				best.Card.HasFamily(),
-				best.PlayCount,
-				best.Denominator) == 0)
-			.Select(entry => entry.Card)
-			.ToHashSet();
+		return highest;
 	}
 
 	/// <summary>
@@ -447,6 +438,11 @@ public static class CardDrawPlayRateTracker
 		}
 
 		PlayerRuntime runtime = GetOrCreateRuntime(player);
+		if (card.Pile?.Type == PileType.Deck)
+		{
+			LoadSavedState(player);
+			EnsureDeckIdentities(player, runtime);
+		}
 		if (IsCelebrateMourningCard(card))
 		{
 			runtime.CelebrateMourningCards.Add(card);
@@ -492,6 +488,7 @@ public static class CardDrawPlayRateTracker
 		{
 			LoadSavedState(player);
 			PlayerRuntime runtime = GetOrCreateRuntime(player);
+			EnsureDeckIdentities(player, runtime);
 			runtime.Current = new CombatSnapshot();
 			runtime.CelebrateMourningExhaustResults.Clear();
 			runtime.CelebrateMourningCards.Clear();
@@ -551,6 +548,12 @@ public static class CardDrawPlayRateTracker
 
 		PlayerSaveState saved = SavedData.Get(player);
 		runtime.Recent = CloneCombatList(saved.RecentCombats.TakeLast(MaxStoredCombats));
+		runtime.NextCardId = Math.Max(1, saved.NextCardId);
+		runtime.NextCardId = CardPlayRateIdentity.EnsureDeck(player, runtime.NextCardId);
+		if (saved.NextCardId == 0)
+		{
+			MigrateLegacyHistory(PileType.Deck.GetPile(player).Cards, runtime.Recent);
+		}
 		runtime.Current = new CombatSnapshot();
 		runtime.CelebrateMourningExhaustResults.Clear();
 		runtime.CelebrateMourningCards.Clear();
@@ -559,6 +562,37 @@ public static class CardDrawPlayRateTracker
 			CaptureCelebrateMourningCards(player, runtime);
 		}
 		runtime.SavedStateLoaded = true;
+		Persist(player);
+	}
+
+	private static void EnsureDeckIdentities(Player player, PlayerRuntime runtime)
+	{
+		long next = CardPlayRateIdentity.EnsureDeck(player, runtime.NextCardId);
+		if (next == runtime.NextCardId) return;
+		runtime.NextCardId = next;
+		if (player.RunState is RunState)
+			SavedData.Modify(player, saved => saved.NextCardId = next);
+	}
+
+	/// <summary>Old grouped history cannot be split retrospectively. Each matching
+	/// entity inherits the group's baseline once, then accumulates independently.</summary>
+	internal static void MigrateLegacyHistory(IEnumerable<CardModel> deck, List<CombatSnapshot> history)
+	{
+		var identities = deck.Select(card => (Legacy: GetLegacyIdentityKey(card), Key: GetIdentityKey(card))).ToArray();
+		foreach (CombatSnapshot snapshot in history)
+		{
+			var migrated = new Dictionary<string, CardCombatStats>(StringComparer.Ordinal);
+			foreach (var identity in identities)
+			{
+				if (!snapshot.Cards.TryGetValue(identity.Legacy, out CardCombatStats? stats)) continue;
+				migrated[identity.Key] = new CardCombatStats
+				{
+					PlayFromHandCount = stats.PlayFromHandCount,
+					HandEntryCount = stats.HandEntryCount,
+				};
+			}
+			snapshot.Cards = migrated;
+		}
 	}
 
 	private static List<CardModel> CaptureCelebrateMourningCandidates(Player player)
@@ -675,8 +709,7 @@ public static class CardDrawPlayRateTracker
 			return false;
 		}
 
-		statsKey = GetIdentityKey(identity);
-		return true;
+		return CardPlayRateIdentity.TryGetKey(identity, out statsKey);
 	}
 
 	private static CardModel? ResolveIdentityCard(CardModel card)
@@ -690,9 +723,12 @@ public static class CardDrawPlayRateTracker
 	}
 
 	/// <summary>
-	/// 可从复制状态推导的稳定统计键。同名、同升级、同楼层、同附魔的牌共享打出率。
+	/// 实体身份用于统计。未追踪的生成牌只使用旧属性键作确定性排序，不创建统计身份。
 	/// </summary>
-	private static string GetIdentityKey(CardModel card)
+	private static string GetIdentityKey(CardModel card) =>
+		CardPlayRateIdentity.TryGetKey(card, out string key) ? key : GetLegacyIdentityKey(card);
+
+	private static string GetLegacyIdentityKey(CardModel card)
 	{
 		string floor = card.FloorAddedToDeck?.ToString() ?? "none";
 		string enchantment = card.Enchantment == null
@@ -755,6 +791,7 @@ public static class CardDrawPlayRateTracker
 		SavedData.Modify(player, saved =>
 		{
 			saved.RecentCombats = CloneCombatList(runtime.Recent.TakeLast(MaxStoredCombats));
+			saved.NextCardId = runtime.NextCardId;
 		});
 	}
 
@@ -896,6 +933,8 @@ public static class CardDrawPlayRateTracker
 
 	private sealed class PlayerRuntime
 	{
+		public long NextCardId = 1;
+
 		public bool SavedStateLoaded;
 
 		public List<CombatSnapshot> Recent { get; set; } = [];
@@ -912,14 +951,17 @@ public static class CardDrawPlayRateTracker
 	[JsonConverter(typeof(PlayerSaveStateJsonConverter))]
 	public sealed class PlayerSaveState
 	{
+		/// <summary>Monotonic per-player allocator; zero marks pre-entity-identity saves.</summary>
+		public long NextCardId { get; set; }
+
 		public List<CombatSnapshot> RecentCombats { get; set; } = [];
 	}
 
 	/// <summary>
 	/// Stores each stable card identity only once and transposes its per-combat
 	/// play/entry counts into a compact integer array. The reader also accepts the
-	/// original v4 object graph, so an existing run keeps all of its history and is
-	/// rewritten compactly after the next completed combat.
+	/// original v4 object graph. LoadSavedState separately migrates grouped keys
+	/// to the identities of matching deck entities when the allocator is absent.
 	/// </summary>
 	public sealed class PlayerSaveStateJsonConverter : JsonConverter<PlayerSaveState>
 	{
@@ -975,6 +1017,7 @@ public static class CardDrawPlayRateTracker
 				.ToArray();
 
 			writer.WriteStartObject();
+			if (value.NextCardId > 0) writer.WriteNumber("next", value.NextCardId);
 			writer.WriteNumber(CombatCountProperty, recent.Count);
 			writer.WritePropertyName(HistoriesProperty);
 			writer.WriteStartObject();
@@ -1009,6 +1052,7 @@ public static class CardDrawPlayRateTracker
 			}
 
 			int serializedCombatCount = root.TryGetProperty(CombatCountProperty, out JsonElement countElement)
+				&& countElement.ValueKind == JsonValueKind.Number
 				&& countElement.TryGetInt32(out int parsedCount)
 					? Math.Max(0, parsedCount)
 					: 0;
@@ -1025,16 +1069,15 @@ public static class CardDrawPlayRateTracker
 					continue;
 				}
 
-				int[] counts = history.Value
-					.EnumerateArray()
-					.Select(element => element.TryGetInt32(out int count) ? count : 0)
-					.ToArray();
+				// Only inspect the retained window. Avoid allocating the entire history
+				// and use a wide index so malformed counts cannot wrap below zero.
+				JsonElement counts = history.Value;
 				for (int retainedIndex = 0; retainedIndex < retainedCombatCount; retainedIndex++)
 				{
 					int serializedIndex = skippedCombatCount + retainedIndex;
-					int countIndex = serializedIndex * 2;
-					int plays = countIndex < counts.Length ? counts[countIndex] : 0;
-					int entries = countIndex + 1 < counts.Length ? counts[countIndex + 1] : 0;
+					long countIndex = (long)serializedIndex * 2;
+					int plays = ReadCount(counts, countIndex);
+					int entries = ReadCount(counts, countIndex + 1);
 					if (plays == 0 && entries == 0)
 					{
 						continue;
@@ -1048,7 +1091,21 @@ public static class CardDrawPlayRateTracker
 				}
 			}
 
-			return new PlayerSaveState { RecentCombats = recent };
+			long nextId = root.TryGetProperty("next", out JsonElement nextElement)
+				&& nextElement.ValueKind == JsonValueKind.Number
+				&& nextElement.TryGetInt64(out long parsedNext) ? Math.Max(0, parsedNext) : 0;
+			return new PlayerSaveState { RecentCombats = recent, NextCardId = nextId };
+		}
+
+		private static int ReadCount(JsonElement counts, long index)
+		{
+			if (index >= counts.GetArrayLength())
+			{
+				return 0;
+			}
+			JsonElement element = counts[(int)index];
+			return element.ValueKind == JsonValueKind.Number && element.TryGetInt32(out int count)
+				? count : 0;
 		}
 	}
 
@@ -1089,7 +1146,7 @@ public static class CardDrawPlayRateTracker
 
 	public sealed class CardCombatStats
 	{
-		/// <summary>从手牌进入打出区的次数。</summary>
+		/// <summary>非自动打出时从手牌进入打出区的次数。</summary>
 		public int PlayFromHandCount { get; set; }
 
 		/// <summary>进入手牌的次数。</summary>

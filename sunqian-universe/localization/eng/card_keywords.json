@@ -50,6 +50,6 @@
   "SUNQIAN_UNIVERSE_KEYWORD_FAMILY.title": "Family",
   "SUNQIAN_UNIVERSE_KEYWORD_FAMILY.description": "When its [gold]play rate[/gold] is needed, this card's [gold]play rate[/gold] is treated as [blue]100%[/blue].",
   "SUNQIAN_UNIVERSE_KEYWORD_MATERIAL_REUSE.title": "Material Reuse",
-  "SUNQIAN_UNIVERSE_KEYWORD_MATERIAL_REUSE.description": "If this Script is already in your [gold]Script Collection[/gold], playing its corresponding Script card again upgrades this Script.",
-  "SUNQIAN_UNIVERSE_KEYWORD_MATERIAL_REUSE.cardHover": "If this Script is already in your [gold]Script Collection[/gold], playing [gold]{SourceCardName}[/gold] again [gold]upgrades[/gold] this Script."
+  "SUNQIAN_UNIVERSE_KEYWORD_MATERIAL_REUSE.description": "If this Script is already in your [gold]Script Collection[/gold], playing its corresponding Script card again upgrades this Script by 1 level, or 2 levels if the played card is upgraded.",
+  "SUNQIAN_UNIVERSE_KEYWORD_MATERIAL_REUSE.cardHover": "If this Script is already in your [gold]Script Collection[/gold], playing [gold]{SourceCardName}[/gold] again [gold]upgrades[/gold] this Script by 1 level, or 2 levels if the played card is upgraded."
 }

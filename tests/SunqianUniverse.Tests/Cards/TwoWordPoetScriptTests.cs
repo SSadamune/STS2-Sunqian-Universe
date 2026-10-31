@@ -88,7 +88,8 @@ public sealed class TwoWordPoetScriptTests : SunqianCombatTestSuite
 
         TwoWordPoetScriptRecord record = Assert.Single(
             ScriptSystem.ScriptCollectionPile.GetPile(Player).Cards.OfType<TwoWordPoetScriptRecord>());
-        Assert.False(record.CanBeReinforced);
+        Assert.True(record.CanUpgradeScript);
+        Assert.False(record.UsesMaterialReuse);
         Assert.Equal(TwoWordPoetScript.CanonicalDamage + firstVigor, record.StoredAmount);
 
         await ApplyPower<VigorPower>(Player.Creature, secondVigor);

@@ -102,7 +102,7 @@ public sealed class HoverCardUpgradePreviewTests : SunqianCombatTestSuite
         AssertScriptRecordHasNoUpgradedVersion<EunuchScript, EunuchScriptRecord>();
         AssertScriptRecordHasNoUpgradedVersion<NeutralAmbushScript, NeutralAmbushScriptRecord>();
         AssertScriptRecordHasNoUpgradedVersion<OneManOneCity, OneManOneCityScriptRecord>();
-        AssertScriptRecordHasNoUpgradedVersion<PartTimeGeneralScript, PartTimeGeneralScriptRecord>();
+
     }
 
     [Fact]
@@ -154,7 +154,7 @@ public sealed class HoverCardUpgradePreviewTests : SunqianCombatTestSuite
 
         Assert.True(record.IsUpgraded);
         Assert.True(record.SourceUpgraded);
-        Assert.True(record.HasUpgradedVersion);
+        Assert.True(record.CanUpgradeScript);
         Assert.NotEqual(CardUpgradePreviewType.None, record.UpgradePreviewType);
         Assert.EndsWith(record.MaxUpgradeLevel > 1 ? "+1" : "+", record.Title);
         string description = record.GetDescriptionForUpgradePreview();
@@ -179,7 +179,7 @@ public sealed class HoverCardUpgradePreviewTests : SunqianCombatTestSuite
 
         Assert.True(source.IsUpgraded);
         Assert.True(record.SourceUpgraded);
-        Assert.False(record.HasUpgradedVersion);
+        Assert.False(record.CanUpgradeScript);
         Assert.False(record.IsUpgraded);
 		Assert.False(record.Title.EndsWith("+", StringComparison.Ordinal));
         Assert.NotEqual(CardUpgradePreviewType.None, record.UpgradePreviewType);
