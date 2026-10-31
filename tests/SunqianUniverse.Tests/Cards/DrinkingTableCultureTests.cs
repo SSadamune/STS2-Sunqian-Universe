@@ -39,11 +39,15 @@ public sealed class DrinkingTableCultureTests : SunqianCombatTestSuite
         var card = Combat.CreateCard<DrinkingTableCulture>(Player);
         CardModel preview = Assert.Single(
             card.HoverTips.OfType<CardHoverTip>()
-                .Where(tip => tip.Card is DrinkingTableCultureWinePreview)).Card;
+                .Where(tip => tip.Card is Wine)).Card;
 
         Assert.True(preview.IsUpgraded);
         Assert.Contains(SquKeywords.Enthralled, preview.Keywords);
         Assert.DoesNotContain(SquKeywords.Enthralled, ModelDb.Card<Wine>().Keywords);
         Assert.Same(ModelDb.CardPool<SunqianCardPool>(), preview.VisualCardPool);
+        var realWine = (Wine)ModelDb.Card<Wine>().ToMutable();
+        Upgrade(realWine);
+        Assert.Equal(realWine.Title, preview.Title);
+        Assert.Contains(realWine.GetDescriptionForPile(PileType.Hand), preview.GetDescriptionForPile(PileType.Hand));
     }
 }

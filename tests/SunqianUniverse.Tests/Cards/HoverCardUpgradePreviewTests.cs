@@ -33,7 +33,7 @@ public sealed class HoverCardUpgradePreviewTests : SunqianCombatTestSuite
         AssertUpgradePreviewIsGreen<OpenDefecation, Splash>();
         // Wine upgrades an energy-icons argument. The icon count changes, but there is no
         // textual span for the game's upgrade renderer to color green.
-        AssertUpgradePreviewIsGreen<SaidNotAfraidOfAcid, SaidNotAfraidOfAcidWinePreview>(
+        AssertUpgradePreviewIsGreen<SaidNotAfraidOfAcid, Wine>(
             expectDescriptionHighlight: false);
         AssertUpgradePreviewIsGreen<ServantScript, ThrowHimOut>();
         AssertUpgradePreviewIsGreen<TooKindToBeTrue, UltimateDefend>();
@@ -130,7 +130,7 @@ public sealed class HoverCardUpgradePreviewTests : SunqianCombatTestSuite
         Assert.True(target.IsUpgraded);
         Assert.NotEqual(CardUpgradePreviewType.None, target.UpgradePreviewType);
         if (target is ShangfangguSigh or NightRaidWuchaoScriptStarryNightStrikePreview
-            or SaidNotAfraidOfAcidWinePreview)
+            or Wine)
         {
             Assert.Same(ModelDb.CardPool<SunqianCardPool>(), target.VisualCardPool);
         }

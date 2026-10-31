@@ -22,7 +22,7 @@ using STS2RitsuLib.Scaffolding.Content;
 namespace Squ.Cards;
 
 [RegisterCard(typeof(SunqianCardPool), StableEntryStem = "wine")]
-public class Wine : ModCardTemplate
+public sealed class Wine : ModCardTemplate
 {
 	public const int BaseVigor = 3;
 	public const int BaseEnergy = 1;
