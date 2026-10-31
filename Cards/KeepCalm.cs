@@ -27,7 +27,7 @@ namespace Squ.Cards;
 /// 并按损失的能量加入等量未升级愤怒。
 /// </summary>
 [RegisterCard(typeof(SunqianCardPool), StableEntryStem = "keep_calm")]
-public sealed class KeepCalm : ChargeCardTemplate
+public sealed class KeepCalm : ChargeCardTemplate, IRowKeywordsCard
 {
 	public const string RetainBonusVarName = "RetainBonus";
 
@@ -48,6 +48,8 @@ public sealed class KeepCalm : ChargeCardTemplate
 		CardKeyword.Retain,
 		.. base.CanonicalKeywords,
 	];
+
+	IEnumerable<CardKeyword> IRowKeywordsCard.KeywordsBelowRules => [CardKeyword.Retain];
 
 	protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
 	[

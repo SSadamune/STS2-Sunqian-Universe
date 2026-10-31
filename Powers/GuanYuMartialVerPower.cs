@@ -2,11 +2,13 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
+using MegaCrit.Sts2.Core.Entities.Creatures;
+using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.Powers;
+using MegaCrit.Sts2.Core.ValueProps;
 using Squ.Cards;
-using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using STS2RitsuLib.Interop.AutoRegistration;
 using STS2RitsuLib.Scaffolding.Content;
 
@@ -14,36 +16,75 @@ using STS2RitsuLib.Scaffolding.Content;
 
 namespace Squ.Powers;
 
+/// <summary>
+/// 武关羽：获得力量直到剧本失效；打出的攻击牌每消耗 1 点能量，获得等量于力量的格挡。
+/// </summary>
 [RegisterPower]
 public sealed class GuanYuMartialVerPower : ScriptPowerTemplate
 {
+    private decimal _grantedStrength;
+
     public override string MutuallyExclusiveGroup => GuanYuCivilVer.FormGroup;
-    private sealed class Data
-    {
-        public Dictionary<CardModel, int> PendingEnergySpent { get; } = [];
-    }
-    protected override object InitInternalData() => new Data();
-    public override Task AfterEnergySpent(CardModel card, int energySpent)
-    {
-        if (card.Owner?.Creature == Owner && energySpent > 0)
-            GetInternalData<Data>().PendingEnergySpent[card] = energySpent;
-        return Task.CompletedTask;
-    }
-    public override async Task AfterCardPlayedLate(PlayerChoiceContext choiceContext, CardPlay cardPlay)
-    {
-        if (!cardPlay.IsLastInSeries || cardPlay.Card.Owner.Creature != Owner) return;
-        GetInternalData<Data>().PendingEnergySpent.Remove(cardPlay.Card, out int energySpent);
-        if (!Owner.IsDead && energySpent > 0)
-        {
-            Flash();
-            // One grant for the entire payment, including X-cost cards.
-            // Conversion effects such as Buddy Hu therefore run only once.
-            await PowerCmd.Apply<VigorPower>(choiceContext, Owner, Amount * energySpent, Owner, cardPlay.Card);
-        }
-    }
+
     public override PowerAssetProfile AssetProfile => new(
         IconPath: "res://images/powers/GuanYuMartialVerPower.png",
         BigIconPath: "res://images/powers/GuanYuMartialVerPowerBig.png");
+
     protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
-        [HoverTipFactory.FromPower<VigorPower>(), HoverTipFactory.ForEnergy(this)];
+    [
+        HoverTipFactory.FromPower<StrengthPower>(),
+        HoverTipFactory.Static(StaticHoverTip.Block),
+    ];
+
+    protected override async Task OnScriptApplied(Creature? applier, CardModel? cardSource)
+    {
+        if (Amount <= 0m)
+        {
+            return;
+        }
+
+        _grantedStrength = Amount;
+        await PowerCmd.Apply<StrengthPower>(
+            ActivationChoiceContext,
+            Owner,
+            Amount,
+            Owner,
+            cardSource);
+    }
+
+    public override async Task AfterCardPlayed(PlayerChoiceContext choiceContext, CardPlay cardPlay)
+    {
+        if (Owner.Player is not { } player
+            || Owner.IsDead
+            || cardPlay.Card.Type != CardType.Attack
+            || cardPlay.Card.Owner != player)
+        {
+            return;
+        }
+
+        int energy = cardPlay.Resources.EnergySpent;
+        decimal strength = Owner.GetPower<StrengthPower>()?.Amount ?? 0m;
+        if (energy <= 0 || strength <= 0m)
+        {
+            return;
+        }
+
+        Flash();
+        await CreatureCmd.GainBlock(Owner, strength * energy, ValueProp.Unpowered, cardPlay);
+    }
+
+    public override async Task AfterRemoved(Creature oldOwner)
+    {
+        if (_grantedStrength > 0m && !oldOwner.IsDead)
+        {
+            await PowerCmd.Apply<StrengthPower>(
+                new ThrowingPlayerChoiceContext(),
+                oldOwner,
+                -_grantedStrength,
+                oldOwner,
+                null);
+        }
+
+        await base.AfterRemoved(oldOwner);
+    }
 }

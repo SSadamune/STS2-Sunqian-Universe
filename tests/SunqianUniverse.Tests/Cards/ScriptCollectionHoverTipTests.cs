@@ -68,6 +68,31 @@ public sealed class ScriptCollectionHoverTipTests : SunqianCombatTestSuite
     }
 
     [Fact]
+    public void Parent_scripts_omit_keyword_tips_that_belong_only_to_their_records()
+    {
+        AssertTipsHidden<BowangParadoxScript>("活力", "火种", "灼烧", "保留");
+        Assert.Contains(ModelDb.Card<BowangParadoxAdvanceScriptRecord>().HoverTips.OfType<HoverTip>(), tip => tip.Title == "活力");
+        Assert.Contains(ModelDb.Card<BowangParadoxAdvanceScriptRecord>().HoverTips.OfType<HoverTip>(), tip => tip.Title == "保留");
+        Assert.Contains(ModelDb.Card<BowangParadoxArsonScriptRecord>().HoverTips.OfType<HoverTip>(), tip => tip.Title == "火种");
+        Assert.Contains(ModelDb.Card<BowangParadoxArsonScriptRecord>().HoverTips.OfType<HoverTip>(), tip => tip.Title == "灼烧");
+        Assert.Contains(ModelDb.Card<BowangParadoxArsonScriptRecord>().HoverTips.OfType<HoverTip>(), tip => tip.Title == "保留");
+
+        AssertTipsHidden<GuanDiForm>("敏捷", "格挡", "活力", "能量", "力量");
+        Assert.Contains(ModelDb.Card<GuanDiForm>().HoverTips.OfType<HoverTip>(), tip => tip.Title == "剧本");
+        Assert.Contains(ModelDb.Card<GuanYuCivilVer>().HoverTips.OfType<HoverTip>(), tip => tip.Title == "敏捷");
+        Assert.Contains(ModelDb.Card<GuanYuCivilVer>().HoverTips.OfType<HoverTip>(), tip => tip.Title == "格挡");
+        Assert.DoesNotContain(ModelDb.Card<GuanYuCivilVer>().HoverTips.OfType<HoverTip>(), tip => tip.Title == "活力");
+        Assert.Contains(ModelDb.Card<GuanYuMartialVer>().HoverTips.OfType<HoverTip>(), tip => tip.Title == "力量");
+        Assert.Contains(ModelDb.Card<GuanYuMartialVer>().HoverTips.OfType<HoverTip>(), tip => tip.Title == "格挡");
+    }
+
+    private static void AssertTipsHidden<TCard>(params string[] titles) where TCard : CardModel
+    {
+        var shown = ModelDb.Card<TCard>().HoverTips.OfType<HoverTip>().Select(tip => tip.Title).ToHashSet();
+        Assert.DoesNotContain(shown, title => titles.Contains(title));
+    }
+
+    [Fact]
     public void Unrelated_card_and_power_do_not_gain_a_collection_tip()
     {
         string expectedId = HoverTipFactory.FromKeyword(SquKeywords.ScriptCollectionId.GetModCardKeyword()).Id;

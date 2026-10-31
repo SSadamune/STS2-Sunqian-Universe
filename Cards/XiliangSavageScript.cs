@@ -23,8 +23,6 @@ namespace Squ.Cards;
 [RegisterCard(typeof(SunqianCardPool), StableEntryStem = "xiliang_savage_script")]
 public sealed class XiliangSavageScript : ScriptCardTemplate<XiliangSavageScriptRecord>
 {
-	protected override bool UsesRowKeywordTemplate => false;
-
 	public const int BaseBlock = 16;
 	public const int UpgradedBlock = 21;
 	public const int BaseVigor = 5;

@@ -1,5 +1,5 @@
 {
   "SUNQIAN_UNIVERSE_CARDPILE_SCRIPT_COLLECTION.title": "剧本集",
-  "SUNQIAN_UNIVERSE_CARDPILE_SCRIPT_COLLECTION.description": "点击查看本场战斗中激活过、以及正在激活的剧本。\n若剧本集中有至少四种剧本，则你的[gold]激活上限[/gold]+1。",
+  "SUNQIAN_UNIVERSE_CARDPILE_SCRIPT_COLLECTION.description": "点击查看本场战斗中激活过、以及正在激活的剧本。\n若剧本集有至少四种剧本，则你的[gold]激活上限[/gold]+1。",
   "SUNQIAN_UNIVERSE_CARDPILE_SCRIPT_COLLECTION.empty": "剧本集还是空的。"
 }

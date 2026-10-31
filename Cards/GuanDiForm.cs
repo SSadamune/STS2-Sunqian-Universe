@@ -6,6 +6,7 @@ using MegaCrit.Sts2.Core.HoverTips;
 using Squ.Powers;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.Models;
+using Squ;
 using Squ.Character;
 using Squ.Script;
 using STS2RitsuLib.Interop.AutoRegistration;
@@ -18,11 +19,15 @@ public sealed class GuanDiForm : ScriptCardTemplate<GuanYuCivilVer>
 {
     protected override HashSet<CardTag> CanonicalTags => [];
     public override IEnumerable<CardKeyword> CanonicalKeywords => [];
-    protected override IEnumerable<IHoverTip> AdditionalScriptHoverTips => [HoverTipFactory.FromKeyword(SquKeywords.ScriptCollection)];
+    protected override IEnumerable<IHoverTip> AdditionalScriptHoverTips =>
+    [
+        HoverTipFactory.FromKeyword(SquKeywords.Script),
+        HoverTipFactory.FromKeyword(SquKeywords.ScriptCollection),
+    ];
     public GuanDiForm() : base(3, CardType.Power, CardRarity.Rare, TargetType.Self, true) { }
 
     public override CardAssetProfile AssetProfile => new(PortraitPath: "res://images/cards/GuanDiForm.png");
-    internal override int GetScriptPowerAmountForPreview() => IsUpgraded ? 3 : 2;
+    internal override int GetScriptPowerAmountForPreview() => IsUpgraded ? 4 : 2;
     internal override IEnumerable<ScriptRecordCardTemplate> CreateScriptRecordPreviews()
     {
         var civil = (GuanYuCivilVer)ModelDb.Card<GuanYuCivilVer>().ToMutable();

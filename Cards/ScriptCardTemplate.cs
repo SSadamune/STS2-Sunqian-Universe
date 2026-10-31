@@ -63,7 +63,7 @@ public abstract class ScriptCardTemplate : ModCardTemplate, IRowKeywordsCard
 
 	protected virtual bool UsesReinforceActivationText => IsReinforceableScript;
 
-	protected virtual bool MergeScriptActivationKeywords => !IsReinforceableScript;
+	protected virtual bool MergeScriptActivationKeywords => true;
 
 	protected virtual bool UsesRowKeywordTemplate => true;
 	bool IRowKeywordsCard.MergeKeywordRows => UsesRowKeywordTemplate;

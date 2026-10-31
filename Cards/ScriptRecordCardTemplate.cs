@@ -27,7 +27,7 @@ using STS2RitsuLib.Scaffolding.Content;
 
 namespace Squ.Cards;
 
-/// <summary>剧本集中展示并保存战斗内剧本能力的衍生牌。</summary>
+/// <summary>剧本集展示并保存战斗内剧本能力的衍生牌。</summary>
 public abstract class ScriptRecordCardTemplate : ModCardTemplate
 {
 	[SavedProperty]
@@ -522,17 +522,10 @@ public sealed class PartTimeGeneralScriptRecord : ScriptRecordCardTemplate<Scrip
 	protected override void AddExtraArgsToDescription(LocString description)
 	{
 		base.AddExtraArgsToDescription(description);
-		string recordDetails = string.Empty;
-		if (IsMutable
-			&& CombatManager.Instance.IsInProgress
-			&& RecordedCards.Count > 0)
-		{
-			LocString details = new("cards", Id.Entry + ".recordDetails");
-			details.Add("RecordedCards", DynamicVars["RecordedCards"].ToString());
-			recordDetails = details.GetFormattedText();
-		}
-
-		description.Add("RecordDetails", recordDetails);
+		bool hasRecords = IsMutable && CombatManager.Instance.IsInProgress && RecordedCards.Count > 0;
+		LocString text = new("cards", Id.Entry + (hasRecords ? ".smartDescription" : ".emptyDescription"));
+		text.Add("RecordedCards", DynamicVars["RecordedCards"].ToString());
+		description.Add("RecordDescription", text.GetFormattedText());
 	}
 
 	protected override void DeepCloneFields()

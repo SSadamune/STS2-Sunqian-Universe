@@ -68,8 +68,8 @@ public sealed class HoverCardUpgradePreviewTests : SunqianCombatTestSuite
         AssertScriptRecordUpgradePreviewIsGreen<BowangParadoxScript, BowangParadoxAdvanceScriptRecord>("9");
         AssertScriptRecordUpgradePreviewIsGreen<BowangParadoxScript, BowangParadoxArsonScriptRecord>("9");
         AssertScriptRecordUpgradePreviewIsGreen<GruntScript, GruntScriptRecord>("4");
-        AssertScriptRecordUpgradePreviewIsGreen<GuanDiForm, GuanYuCivilVer>("3");
-        AssertScriptRecordUpgradePreviewIsGreen<GuanDiForm, GuanYuMartialVer>("3");
+        AssertScriptRecordUpgradePreviewIsGreen<GuanDiForm, GuanYuCivilVer>("4");
+        AssertScriptRecordUpgradePreviewIsGreen<GuanDiForm, GuanYuMartialVer>("4");
     }
 
     [Fact]

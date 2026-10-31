@@ -27,8 +27,6 @@ namespace Squ.Cards;
 [RegisterCard(typeof(SunqianCardPool), StableEntryStem = "neutral_ambush_script")]
 public sealed class NeutralAmbushScript : ScriptCardTemplate<NeutralAmbushScriptRecord>
 {
-	protected override bool UsesRowKeywordTemplate => false;
-
 	public const int BoulderCount = 1;
 	public const int SalvoStrikeCount = 2;
 

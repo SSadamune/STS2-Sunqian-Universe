@@ -7,6 +7,7 @@ using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.Models;
+using Squ;
 using Squ.Cards;
 using STS2RitsuLib.Keywords;
 
@@ -41,10 +42,65 @@ internal static class RowKeywordsCardPatch
 		}
 
 		List<string> lines = __result.Split('\n').ToList();
+		MoveKeywordsBelowRules(__instance, lines);
 		MergeLeadingKeywords(__instance, lines);
 		MergeTrailingKeywords(__instance, lines);
 		__result = string.Join("\n", lines);
 		return null;
+	}
+
+	private static void MoveKeywordsBelowRules(CardModel card, List<string> lines)
+	{
+		if (card is not IRowKeywordsCard rowCard)
+		{
+			return;
+		}
+
+		HashSet<string> markers = GetKeywordMarkers(card, rowCard.KeywordsBelowRules);
+		if (markers.Count == 0)
+		{
+			return;
+		}
+
+		var moved = new List<string>();
+		for (int i = 0; i < lines.Count;)
+		{
+			if (!StartsWithKeyword(lines[i], markers))
+			{
+				i++;
+				continue;
+			}
+
+			moved.Add(lines[i]);
+			lines.RemoveAt(i);
+		}
+
+		if (moved.Count == 0)
+		{
+			return;
+		}
+
+		// 蓄能整句写在正文里，但仍是后缀块。移下来的关键词接在这一行前面，
+		// 这样「保留」位于正文之后、蓄能之前，并与「蓄能」二字同一行。
+		int chargeLine = IndexOfChargeLine(card, lines);
+		int insertAt = chargeLine >= 0
+			? chargeLine
+			: lines.Count - CountTrailingKeywordLines(card, lines);
+		lines.InsertRange(insertAt, moved);
+		MergeRange(lines, insertAt, moved.Count + (chargeLine >= 0 ? 1 : 0));
+	}
+
+	private static int IndexOfChargeLine(CardModel card, List<string> lines)
+	{
+		if (!card.Keywords.Contains(SquKeywords.Charge))
+		{
+			return -1;
+		}
+
+		string marker = GetKeywordMarker(SquKeywords.Charge);
+		return marker.Length == 0
+			? -1
+			: lines.FindIndex(line => line.StartsWith(marker, StringComparison.Ordinal));
 	}
 
 	private static void MergeLeadingKeywords(CardModel card, List<string> lines)
@@ -88,19 +144,82 @@ internal static class RowKeywordsCardPatch
 			keywordMarkers.Add(GetKeywordMarker(keyword));
 		}
 
+		int count = CountTrailingKeywordLines(lines, keywordMarkers);
+		if (count > 0 && count < lines.Count
+			&& card is IRowKeywordsCard { MergeTrailingKeywordsWithLastRule: true }
+			&& !StartsWithKeyword(lines[^(count + 1)], GetKeywordsBelowRulesMarkers(card)))
+		{
+			count++;
+		}
+		MergeRange(lines, lines.Count - count, count);
+	}
+
+	private static int CountTrailingKeywordLines(CardModel card, List<string> lines) =>
+		CountTrailingKeywordLines(lines, GetTrailingKeywordMarkers(card));
+
+	private static int CountTrailingKeywordLines(
+		List<string> lines,
+		HashSet<string> keywordMarkers)
+	{
 		int count = 0;
 		while (count < lines.Count && StartsWithKeyword(lines[^(count + 1)], keywordMarkers))
 		{
 			count++;
 		}
 
-		if (count > 0 && count < lines.Count
-			&& card is IRowKeywordsCard { MergeTrailingKeywordsWithLastRule: true })
-		{
-			count++;
-		}
-		MergeRange(lines, lines.Count - count, count);
+		return count;
 	}
+
+	private static HashSet<string> GetTrailingKeywordMarkers(CardModel card)
+	{
+		HashSet<string> keywordMarkers = GetModKeywordMarkers(
+			card,
+			ModKeywordCardDescriptionPlacement.AfterCardDescription);
+		foreach (CardKeyword keyword in CardKeywordOrder.afterDescription.Where(card.Keywords.Contains))
+		{
+			keywordMarkers.Add(GetKeywordMarker(keyword));
+		}
+
+		return keywordMarkers;
+	}
+
+	private static HashSet<string> GetKeywordsBelowRulesMarkers(CardModel card)
+	{
+		if (card is not IRowKeywordsCard rowCard)
+		{
+			return [];
+		}
+
+		return GetKeywordMarkers(card, rowCard.KeywordsBelowRules);
+	}
+
+	private static HashSet<string> GetKeywordMarkers(CardModel card, IEnumerable<CardKeyword> keywords)
+	{
+		var markers = new HashSet<string>(StringComparer.Ordinal);
+		foreach (CardKeyword keyword in keywords)
+		{
+			if (!CardShowsKeyword(card, keyword))
+			{
+				continue;
+			}
+
+			string marker = GetKeywordMarker(keyword);
+			if (marker.Length > 0)
+			{
+				markers.Add(marker);
+			}
+		}
+
+		return markers;
+	}
+
+	private static bool CardShowsKeyword(CardModel card, CardKeyword keyword) =>
+		card.Keywords.Contains(keyword) || keyword switch
+		{
+			CardKeyword.Sly => card.IsSlyThisTurn,
+			CardKeyword.Retain => card.ShouldRetainThisTurn,
+			_ => false,
+		};
 
 	private static HashSet<string> GetModKeywordMarkers(
 		CardModel card,

@@ -43,7 +43,7 @@ public sealed class ScriptSystemTests : SunqianCombatTestSuite
         var expected = Assert.IsType<HoverTip>(HoverTipFactory.FromKeyword(
             SquKeywords.ScriptCollectionId.GetModCardKeyword()));
         Assert.Equal("剧本集", expected.Title);
-        Assert.Equal("当前战斗中，被激活过的所有剧本将记录在[gold]剧本集[/gold]。\n若剧本集中有至少四种剧本，则你的[gold]激活上限[/gold]+1。", expected.Description);
+        Assert.Equal("当前战斗中，被激活过的所有剧本将记录在[gold]剧本集[/gold]。\n若剧本集有至少四种剧本，则你的[gold]激活上限[/gold]+1。", expected.Description);
         foreach (var relic in new MegaCrit.Sts2.Core.Models.RelicModel[]
             { ModelDb.Relic<BoxLunchRelic>(), ModelDb.Relic<AbundantBoxLunchRelic>() })
         {
@@ -51,7 +51,7 @@ public sealed class ScriptSystemTests : SunqianCombatTestSuite
                 tip.Title == expected.Title && tip.Description == expected.Description);
         }
         var script = Assert.IsType<HoverTip>(HoverTipFactory.FromKeyword(SquKeywords.Script));
-        Assert.Equal("一种特殊的能力。剧本的[gold]激活上限[/gold]默认为1，因此激活新的剧本会导致旧的剧本失效。", script.Description);
+        Assert.Equal("一种特殊的能力。剧本的[gold]激活上限[/gold]默认为1，因此激活新的剧本会导致旧的剧本[red]失效[/red]。", script.Description);
     }
 
     [Fact]
@@ -154,7 +154,7 @@ public sealed class ScriptSystemTests : SunqianCombatTestSuite
             "SUNQIAN_UNIVERSE_CARDPILE_SCRIPT_COLLECTION.description").GetFormattedText();
         Assert.Contains(description, new[]
         {
-            "点击查看本场战斗中激活过、以及正在激活的剧本。\n若剧本集中有至少四种剧本，则你的[gold]激活上限[/gold]+1。",
+            "点击查看本场战斗中激活过、以及正在激活的剧本。\n若剧本集有至少四种剧本，则你的[gold]激活上限[/gold]+1。",
             "Click to view Scripts previously activated during this combat and those currently active.\nIf the Script Collection contains at least four kinds of Script, your [gold]activation limit[/gold] +1.",
         });
     }
@@ -467,7 +467,7 @@ public sealed class ScriptSystemTests : SunqianCombatTestSuite
             Player.Creature.GetPower<ScriptExecutionCommanderPower>());
         Assert.NotSame(active, reactivated);
         Assert.Equal(active.Amount, reactivated.Amount);
-        Assert.Equal(0, ScriptSystem.GetScriptLiftsThisTurn(Player));
+        Assert.Equal(1, ScriptSystem.GetScriptLiftsThisTurn(Player));
         Assert.False(relic.CanReselectFromScriptCollection());
     }
 

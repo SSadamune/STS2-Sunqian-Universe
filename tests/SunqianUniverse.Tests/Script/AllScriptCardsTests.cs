@@ -129,8 +129,7 @@ public sealed class AllScriptCardsTests : SunqianCombatTestSuite
                 {
                     Assert.DoesNotContain(exhaust, description);
                 }
-                else if ((testCase.CanBeReinforced && card is not PartTimeGeneralScript)
-                    || card is IRowKeywordsCard { MergeKeywordRows: false })
+                else if (card is IRowKeywordsCard { MergeKeywordRows: false })
                 {
                     Assert.DoesNotContain(exhaust, activationLine);
                     Assert.Contains("\n" + exhaust, description);

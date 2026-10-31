@@ -1,47 +1,20 @@
-using HarmonyLib;
 using MegaCrit.Sts2.Core.Combat;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.Commands;
-using MegaCrit.Sts2.Core.Entities.Creatures;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
-using MegaCrit.Sts2.Core.Hooks;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.Cards;
 using MegaCrit.Sts2.Core.Models.Characters;
 using MegaCrit.Sts2.Core.Models.Monsters;
 using MegaCrit.Sts2.Core.Models.Powers;
 using MegaCrit.Sts2.Core.Models.Relics;
+using MegaCrit.Sts2.Core.ValueProps;
 using Squ.Cards;
 using Squ.Powers;
 using TestTheSpire;
 using Xunit;
 
 namespace Squ.Tests.Cards;
-
-internal static class TestGuanYuCivilBlockOrder
-{
-    public static Creature? Target { get; set; }
-
-    public static List<decimal> Amounts { get; } = [];
-
-    public static void Reset()
-    {
-        Target = null;
-        Amounts.Clear();
-    }
-}
-
-[HarmonyPatch(typeof(Creature), "GainBlockInternal")]
-internal static class TestGuanYuCivilBlockOrderPatch
-{
-    private static void Prefix(Creature __instance, decimal amount)
-    {
-        if (ReferenceEquals(__instance, TestGuanYuCivilBlockOrder.Target))
-        {
-            TestGuanYuCivilBlockOrder.Amounts.Add(amount);
-        }
-    }
-}
 
 public sealed class GuanDiFormTests : SunqianCombatTestSuite
 {
@@ -95,8 +68,8 @@ public sealed class GuanDiFormTests : SunqianCombatTestSuite
         Assert.True(martial.CountsTowardActivationLimit);
         Assert.False(civil.ShouldShowInCardLibrary);
         Assert.False(martial.ShouldShowInCardLibrary);
-        Assert.Equal(upgraded ? 3 : 2, civil.StoredAmount);
-        Assert.Equal(upgraded ? 3 : 2, martial.StoredAmount);
+        Assert.Equal(upgraded ? 4 : 2, civil.StoredAmount);
+        Assert.Equal(upgraded ? 4 : 2, martial.StoredAmount);
         Assert.Equal(2, Squ.Script.ScriptSystem.GetActivationLimit(Player));
         AssertOnlyScript<GuanYuCivilVerPower>();
         AssertInPile(sunqian, PileType.Draw);
@@ -127,68 +100,68 @@ public sealed class GuanDiFormTests : SunqianCombatTestSuite
         Assert.Equal(3, Player.Creature.Powers.OfType<ScriptPowerTemplate>().Count());
     }
 
-    [Fact]
-    public async Task Civil_counts_energy_spent_before_activation_and_applies_dexterity_once()
-    {
-        await PlayerCmd.SetEnergy(10, Player);
-        await PlayForm(await AddToHand<GuanDiForm>());
-        await Play(await AddToHand<StrikeIronclad>(), EnemyAt(0));
-        await ApplyPower<DexterityPower>(Player.Creature, 3);
-        await Activate<GuanYuCivilVer>();
-        var form = Player.Creature.GetPower<GuanYuCivilVerPower>()!;
-        var description = form.SmartDescription;
-        description.Add("Amount", form.Amount);
-        description.Add("energyPrefix", "");
-        form.DynamicVars.AddTo(description);
-        Assert.Contains("[blue]11[/blue]", description.GetFormattedText());
-        await form.BeforeSideTurnEndEarly(new BlockingPlayerChoiceContext(), CombatSide.Enemy, [EnemyAt(0)]);
-        Assert.Equal(0, Player.Creature.Block);
-        await form.BeforeSideTurnEndEarly(new BlockingPlayerChoiceContext(), CombatSide.Player, [Player.Creature]);
-        Assert.Equal(11, Player.Creature.Block);
-        await form.BeforeSideTurnEndEarly(new BlockingPlayerChoiceContext(), CombatSide.Player, [Player.Creature]);
-        Assert.Equal(11, Player.Creature.Block);
-    }
-
-    [Theory]
-    [InlineData(true)]
-    [InlineData(false)]
-    public async Task Civil_and_plating_trigger_in_the_order_the_powers_were_gained(bool platingFirst)
-    {
-        await Play(await AddToHand<StrikeIronclad>(), EnemyAt(0));
-        if (platingFirst) await ApplyPower<PlatingPower>(Player.Creature, 5);
-        await ApplyPower<GuanYuCivilVerPower>(Player.Creature, 2);
-        if (!platingFirst) await ApplyPower<PlatingPower>(Player.Creature, 5);
-        TestGuanYuCivilBlockOrder.Target = Player.Creature;
-        try
-        {
-            await Hook.BeforeSideTurnEnd(Combat, CombatSide.Player, [Player.Creature]);
-            Assert.Equal(platingFirst ? new decimal[] { 5, 2 } : new decimal[] { 2, 5 }, TestGuanYuCivilBlockOrder.Amounts);
-        }
-        finally { TestGuanYuCivilBlockOrder.Reset(); }
-    }
-
     [Theory]
     [InlineData(false, 2)]
-    [InlineData(true, 3)]
-    public async Task Martial_gains_vigor_after_card_resolution_for_actual_energy(bool upgraded, int vigor)
+    [InlineData(true, 4)]
+    public async Task Civil_gains_temporary_dexterity_and_deals_lost_block_to_all_enemies(bool upgraded, int amount)
     {
         await PlayerCmd.SetEnergy(10, Player);
         var card = await AddToHand<GuanDiForm>();
         if (upgraded) Upgrade(card);
         await PlayForm(card);
-        await Activate<GuanYuMartialVer>();
-        Assert.Null(Player.Creature.GetPower<VigorPower>());
-        await Play(await AddToHand<DefendIronclad>());
-        Assert.Equal(vigor, Player.Creature.GetPower<VigorPower>()!.Amount);
+        Assert.Null(Player.Creature.GetPower<TempDexPower>());
+        CardTestAssertions.AssertPowerAmount<DexterityPower>(Player.Creature, amount);
+        await CreatureCmd.GainBlock(Player.Creature, 7, ValueProp.Unpowered, null);
+        var form = Player.Creature.GetPower<GuanYuCivilVerPower>()!;
         int hp = EnemyAt(0).CurrentHp;
-        await Play(await AddToHand<StrikeIronclad>(), EnemyAt(0));
-        Assert.Equal(hp - 6 - vigor, EnemyAt(0).CurrentHp);
-        Assert.Equal(vigor, Player.Creature.GetPower<VigorPower>()!.Amount);
-        var free = await AddToHand<DefendIronclad>();
-        free.EnergyCost.SetUntilPlayed(0);
-        await Play(free);
-        Assert.Equal(vigor, Player.Creature.GetPower<VigorPower>()!.Amount);
-        Assert.Null(Player.Creature.GetPower<VigorAmplificationPower>());
+        await form.BeforeSideTurnStart(
+            new BlockingPlayerChoiceContext(), CombatSide.Enemy, [EnemyAt(0)], Combat);
+        Player.Creature.LoseBlockInternal(7);
+        await form.AfterBlockCleared(Player.Creature);
+        Assert.Equal(hp, EnemyAt(0).CurrentHp);
+
+        await CreatureCmd.GainBlock(Player.Creature, 7, ValueProp.Unpowered, null);
+        await form.BeforeSideTurnStart(
+            new BlockingPlayerChoiceContext(), CombatSide.Player, [Player.Creature], Combat);
+        await form.AfterBlockCleared(Player.Creature);
+        Assert.Equal(7, Player.Creature.Block);
+        Assert.Equal(hp, EnemyAt(0).CurrentHp);
+
+        await form.BeforeSideTurnStart(
+            new BlockingPlayerChoiceContext(), CombatSide.Player, [Player.Creature], Combat);
+        Player.Creature.LoseBlockInternal(7);
+        await form.AfterBlockCleared(Player.Creature);
+        Assert.Equal(0, Player.Creature.Block);
+        Assert.Equal(hp - 7, EnemyAt(0).CurrentHp);
+        Assert.Null(Player.Creature.GetPower<VigorPower>());
+        await Squ.Script.ScriptSystem.InvalidateScriptsAsync(Player.Creature);
+        Assert.Null(Player.Creature.GetPower<DexterityPower>());
+    }
+
+    [Theory]
+    [InlineData(2)]
+    [InlineData(4)]
+    public async Task Martial_grants_strength_until_deactivation_and_block_equal_to_strength_on_attacks(int amount)
+    {
+        await PlayerCmd.SetEnergy(10, Player);
+        await ApplyPower<GuanYuMartialVerPower>(Player.Creature, amount);
+        CardTestAssertions.AssertPowerAmount<StrengthPower>(Player.Creature, amount);
+        int defendBlock = ModelDb.Card<DefendIronclad>().DynamicVars.Block.IntValue;
+        await Play(await AddToHand<DefendIronclad>());
+        Assert.Equal(defendBlock, Player.Creature.Block);
+        var strike = await AddToHand<StrikeIronclad>();
+        int strikeEnergy = strike.EnergyCost.GetResolved();
+        await Play(strike, EnemyAt(0));
+        Assert.Equal(defendBlock + strikeEnergy * amount, Player.Creature.Block);
+        var bash = await AddToHand<Bash>();
+        int bashEnergy = bash.EnergyCost.GetResolved();
+        Assert.True(bashEnergy > strikeEnergy);
+        int blockBeforeBash = Player.Creature.Block;
+        await Play(bash, EnemyAt(0));
+        Assert.Equal(blockBeforeBash + bashEnergy * amount, Player.Creature.Block);
+        await Squ.Script.ScriptSystem.InvalidateScriptsAsync(Player.Creature);
+        Assert.Null(Player.Creature.GetPower<GuanYuMartialVerPower>());
+        Assert.Null(Player.Creature.GetPower<StrengthPower>());
     }
 
     [Fact]
@@ -234,32 +207,6 @@ public sealed class GuanDiFormTests : SunqianCombatTestSuite
         Assert.NotNull(Player.Creature.GetPower<GuanYuCivilVerPower>());
         Assert.NotNull(Player.Creature.GetPower<ScriptServantPower>());
         Assert.Null(Player.Creature.GetPower<GuanYuMartialVerPower>());
-    }
-
-    [Theory]
-    [InlineData(false, false)]
-    [InlineData(false, true)]
-    [InlineData(true, false)]
-    [InlineData(true, true)]
-    public async Task Martial_grants_total_vigor_once_so_buddy_hu_converts_only_once(bool upgraded, bool xCost)
-    {
-        await PlayerCmd.SetEnergy(10, Player);
-        var form = await AddToHand<GuanDiForm>();
-        if (upgraded) Upgrade(form);
-        await PlayForm(form);
-        await Activate<GuanYuMartialVer>();
-        await ApplyPower<BuddyHuPower>(Player.Creature, 1);
-        await PlayerCmd.SetEnergy(3, Player);
-        if (xCost)
-            await Play(await AddToHand<Whirlwind>());
-        else
-        {
-            var card = await AddToHand<DefendIronclad>();
-            card.EnergyCost.SetUntilPlayed(3);
-            await Play(card);
-        }
-        Assert.Equal((upgraded ? 3 : 2) * 3 - 1, Player.Creature.GetPower<VigorPower>()!.Amount);
-        Assert.Equal(1, Player.Creature.GetPower<StrengthPower>()!.Amount);
     }
 
     private async Task PlayForm(GuanDiForm card)

@@ -18,8 +18,8 @@ public sealed class MaterialReuseTests : SunqianCombatTestSuite
 
     [Theory]
     [InlineData(typeof(ExecutionCommanderScript), typeof(ExecutionCommanderScriptRecord), 50, 25)]
-    [InlineData(typeof(GuanDiForm), typeof(GuanYuCivilVer), 2, 1)]
-    [InlineData(typeof(GuanDiForm), typeof(GuanYuMartialVer), 2, 1)]
+    [InlineData(typeof(GuanDiForm), typeof(GuanYuCivilVer), 2, 2)]
+    [InlineData(typeof(GuanDiForm), typeof(GuanYuMartialVer), 2, 2)]
     [InlineData(typeof(HeadsmanScript), typeof(HeadsmanScriptRecord), 3, 1)]
     [InlineData(typeof(BowangParadoxScript), typeof(BowangParadoxAdvanceScriptRecord), 7, 2)]
     [InlineData(typeof(BowangParadoxScript), typeof(BowangParadoxArsonScriptRecord), 7, 2)]

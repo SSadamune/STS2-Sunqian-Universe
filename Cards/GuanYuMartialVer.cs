@@ -3,7 +3,6 @@ using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Localization;
 using MegaCrit.Sts2.Core.Models.CardPools;
 using MegaCrit.Sts2.Core.Models.Powers;
-using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using Squ.Powers;
 using STS2RitsuLib.Interop.AutoRegistration;
 using STS2RitsuLib.Scaffolding.Content;
@@ -15,12 +14,13 @@ public sealed class GuanYuMartialVer : MaterialReuseScriptRecordCardTemplate<Gua
 {
     public override bool CanBeGeneratedInCombat => false;
     protected override int InitialAmount => 2;
-    protected override int AmountPerUpgrade => 1;
+    protected override int AmountPerUpgrade => 2;
     public override string MutuallyExclusiveGroup => GuanYuCivilVer.FormGroup;
     protected override IEnumerable<IHoverTip> DirectOnlyHoverTips =>
-        [new HoverTip(SquCommonL10n.AnnotationTitle(), new LocString("cards", Id.Entry + ".annotation"))];
-    protected override IEnumerable<DynamicVar> CanonicalVars => [new DynamicVar("ScriptAmount", 2)];
-    protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
-        [..base.AdditionalHoverTips, HoverTipFactory.FromPower<VigorPower>(), HoverTipFactory.ForEnergy(this)];
+    [
+        new HoverTip(SquCommonL10n.AnnotationTitle(), new LocString("cards", Id.Entry + ".annotation")),
+        HoverTipFactory.FromPower<StrengthPower>(),
+        HoverTipFactory.Static(StaticHoverTip.Block),
+    ];
     public override CardAssetProfile AssetProfile => new(PortraitPath: "res://images/cards/GuanDiForm.png");
 }

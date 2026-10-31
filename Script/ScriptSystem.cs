@@ -572,7 +572,8 @@ public static class ScriptSystem
 				.FirstOrDefault(power => power.GetType() == record.PowerType);
 			if (active is not null)
 			{
-				await RemoveForReactivationAsync(active, record);
+				// 确认重选是一次真正的失效与激活，不能按同名牌强化的静默刷新处理。
+				await RemoveScriptPowerAsync(active);
 				active = null;
 			}
 

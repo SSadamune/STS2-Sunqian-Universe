@@ -308,7 +308,7 @@ internal static class ScriptRecordCardVisualPatch
 	}
 }
 
-/// <summary>履历牌只作为剧本集中的标记卡，不显示任何能量费用元素。</summary>
+/// <summary>履历牌只作为剧本集的标记卡，不显示任何能量费用元素。</summary>
 [HarmonyPatch(typeof(NCard), "UpdateEnergyCostVisuals")]
 internal static class ScriptRecordCardEnergyVisualPatch
 {

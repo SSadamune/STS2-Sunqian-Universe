@@ -24,16 +24,21 @@ public abstract class BowangParadoxScriptRecordTemplate<TPower>
 public sealed class BowangParadoxAdvanceScriptRecord
     : BowangParadoxScriptRecordTemplate<ScriptBowangParadoxAdvancePower>
 {
-    protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
-        [..base.AdditionalHoverTips, HoverTipFactory.FromPower<VigorPower>(), HoverTipFactory.FromKeyword(MegaCrit.Sts2.Core.Entities.Cards.CardKeyword.Retain)];
+    protected override IEnumerable<IHoverTip> DirectOnlyHoverTips =>
+    [
+        HoverTipFactory.FromPower<VigorPower>(),
+        HoverTipFactory.FromKeyword(MegaCrit.Sts2.Core.Entities.Cards.CardKeyword.Retain),
+    ];
 }
 
 [RegisterCard(typeof(TokenCardPool), StableEntryStem = "script_record_bowang_paradox_arson")]
 public sealed class BowangParadoxArsonScriptRecord
     : BowangParadoxScriptRecordTemplate<ScriptBowangParadoxArsonPower>
 {
-    protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
-        [..base.AdditionalHoverTips, ..HoverTipFactory.FromPowerWithPowerHoverTips<TinderPower>(),
-            HoverTipFactory.FromPower<BurningPower>(),
-            HoverTipFactory.FromKeyword(MegaCrit.Sts2.Core.Entities.Cards.CardKeyword.Retain)];
+    protected override IEnumerable<IHoverTip> DirectOnlyHoverTips =>
+    [
+        ..HoverTipFactory.FromPowerWithPowerHoverTips<TinderPower>(),
+        HoverTipFactory.FromPower<BurningPower>(),
+        HoverTipFactory.FromKeyword(MegaCrit.Sts2.Core.Entities.Cards.CardKeyword.Retain),
+    ];
 }

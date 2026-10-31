@@ -24,8 +24,8 @@ namespace Squ.Cards;
 [RegisterCard(typeof(SunqianCardPool), StableEntryStem = "bombard_chibi_script")]
 public sealed class BombardChibiScript : ScriptCardTemplate<BombardChibiScriptRecord>
 {
-	public const int BaseBurning = 8;
-	public const int UpgradedBurning = 11;
+	public const int BaseBurning = 7;
+	public const int UpgradedBurning = 9;
 	public const string StrengthLossVarName = "StrengthLoss";
 
 	protected override IEnumerable<DynamicVar> CanonicalVars =>
