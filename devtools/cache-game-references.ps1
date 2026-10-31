@@ -31,5 +31,6 @@ Copy-Item -LiteralPath $ReleaseInfoPath -Destination $Destination -Force
 if ($Channel -eq 'beta') {
     # main still uses this historical path. Public builds use lib/public directly.
     Copy-Item -LiteralPath (Join-Path $Destination 'sts2.dll') -Destination (Join-Path $ProjectRoot 'lib\sts2.dll') -Force
+    Copy-Item -LiteralPath (Join-Path $Destination '0Harmony.dll') -Destination (Join-Path $ProjectRoot 'lib\0Harmony.dll') -Force
 }
 Write-Host "Cached game $GameVersion references in $Destination"

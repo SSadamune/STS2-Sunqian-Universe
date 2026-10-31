@@ -1,4 +1,5 @@
 using MegaCrit.Sts2.Core.Entities.Cards;
+using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Models.Cards;
 using MegaCrit.Sts2.Core.Models.Characters;
 using MegaCrit.Sts2.Core.Models.Monsters;
@@ -12,6 +13,25 @@ public sealed class SharpenSwordForDecadesTests : SunqianCombatTestSuite
 {
     protected override void ConfigureBattle(CombatTestBattleBuilder battle) =>
         battle.Player<Ironclad>().AddEnemy<BigDummy>().WithSeed("sharpen-sword");
+
+    [Fact]
+    public async Task Retain_and_forge_render_on_one_leading_line()
+    {
+        var card = await AddToHand<SharpenSwordForDecades>();
+        Assert.IsAssignableFrom<IRowKeywordsCard>(card);
+
+        string[] lines = card.GetDescriptionForPile(PileType.Hand).Split('\n');
+        HoverTip retainTip = Assert.IsType<HoverTip>(HoverTipFactory.FromKeyword(CardKeyword.Retain));
+        HoverTip forgeTip = Assert.IsType<HoverTip>(HoverTipFactory.Static(StaticHoverTip.Forge));
+        string retainMarker = $"[gold]{retainTip.Title}[/gold]";
+        string forgeMarker = $"[gold]{forgeTip.Title}[/gold]";
+        string keywordLine = Assert.Single(lines.Where(line =>
+            line.Contains(retainMarker, StringComparison.Ordinal)));
+
+        Assert.Equal(keywordLine, lines[0]);
+        Assert.Contains(retainMarker, keywordLine, StringComparison.Ordinal);
+        Assert.Contains(forgeMarker, keywordLine, StringComparison.Ordinal);
+    }
 
     [Fact]
     public async Task Upgraded_retention_charges_four_forge_then_play_forges_and_clears_charge()

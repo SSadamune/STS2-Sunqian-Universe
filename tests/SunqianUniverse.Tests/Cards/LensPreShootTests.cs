@@ -18,10 +18,14 @@ public sealed class LensPreShootTests : SunqianCombatTestSuite
         var unselected = await AddToDrawPileTop<SunqianScript>();
         var selected = await AddToDrawPileTop<XiliangSavageScript>();
         var selector = new ScriptedCardSelector().ThenSelect(selected);
+        var source = await AddToHand<LensPreShoot>();
+        Assert.Contains("随机获得", source.GetDescriptionForPile(PileType.Hand));
+        Upgrade(source);
+        Assert.Contains("选择获得", source.GetDescriptionForPile(PileType.Hand));
 
         using (UseCardSelector(selector))
         {
-            await Play(Upgrade(await AddToHand<LensPreShoot>()));
+            await Play(source);
         }
 
         AssertAllSelectionsConsumed(selector);

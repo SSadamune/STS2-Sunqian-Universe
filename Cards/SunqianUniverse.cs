@@ -12,6 +12,7 @@ using Squ.Character;
 using Squ.Powers;
 using STS2RitsuLib.Interop.AutoRegistration;
 using STS2RitsuLib.Scaffolding.Content;
+using STS2RitsuLib.Keywords;
 
 #nullable enable
 
@@ -21,9 +22,10 @@ namespace Squ.Cards;
 public sealed class SunqianUniverse : ModCardTemplate
 {
 	public const int BaseDexterity = 2;
-	public const int UpgradedDexterity = 3;
-	public const int BaseDraw = 1;
+	public const int UpgradedDexterity = 2;
+	public const int BaseDraw = 2;
 	public const int UpgradedDraw = 2;
+
 
 	protected override IEnumerable<DynamicVar> CanonicalVars =>
 	[
@@ -33,7 +35,7 @@ public sealed class SunqianUniverse : ModCardTemplate
 
 	protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
 	[
-		HoverTipFactory.FromKeyword(SquKeywords.Script),
+		HoverTipFactory.FromKeyword(SquKeywords.ScriptId.GetModCardKeyword()),
 		HoverTipFactory.FromPower<DexterityPower>(),
 	];
 
@@ -47,7 +49,7 @@ public sealed class SunqianUniverse : ModCardTemplate
 
 	protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
 	{
-		SquSfx.Play(SquSfx.SunqianUniverseManyFormsEvent);
+		SquSfx.Play(SquSfx.SunqianUniverseEnterCourtEvent);
 		await PowerCmd.Apply<DexterityPower>(
 			choiceContext,
 			Owner.Creature,
@@ -65,8 +67,6 @@ public sealed class SunqianUniverse : ModCardTemplate
 
 	protected override void OnUpgrade()
 	{
-		DynamicVars[nameof(DexterityPower)]
-			.UpgradeValueBy(UpgradedDexterity - BaseDexterity);
-		DynamicVars.Cards.UpgradeValueBy(UpgradedDraw - BaseDraw);
+		AddKeyword(CardKeyword.Innate);
 	}
 }

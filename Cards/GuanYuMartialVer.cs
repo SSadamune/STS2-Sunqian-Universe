@@ -1,77 +1,26 @@
 using System.Collections.Generic;
-using System.Threading.Tasks;
-using MegaCrit.Sts2.Core.Entities.Cards;
-using MegaCrit.Sts2.Core.GameActions.Multiplayer;
-using MegaCrit.Sts2.Core.Helpers;
 using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Localization;
-using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.Models.CardPools;
 using MegaCrit.Sts2.Core.Models.Powers;
-using Squ.Interop;
 using Squ.Powers;
 using STS2RitsuLib.Interop.AutoRegistration;
 using STS2RitsuLib.Scaffolding.Content;
 
-#nullable enable
-
 namespace Squ.Cards;
 
-/// <summary>关帝形态的武关羽选项。只出现在二选一界面，不会进入牌组。</summary>
 [RegisterCard(typeof(TokenCardPool), StableEntryStem = "guan_yu_martial_ver")]
-public sealed class GuanYuMartialVer : ModCardTemplate
+public sealed class GuanYuMartialVer : MaterialReuseScriptRecordCardTemplate<GuanYuMartialVerPower, GuanDiForm>
 {
-	public const int BaseVigorPerEnergy = 2;
-
-	public const int UpgradedVigorPerEnergy = 3;
-
-	public override bool CanBeGeneratedInCombat => false;
-
-	protected override IEnumerable<DynamicVar> CanonicalVars =>
-	[
-		new PowerVar<VigorPower>(BaseVigorPerEnergy),
-		new PowerVar<VigorAmplificationPower>(VigorAmplificationPower.BonusStacksPerForm),
-	];
-
-	protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
-	[
-		HoverTipFactory.FromPower<VigorPower>(),
-		CreateEnergyTimingHoverTip(),
-		..NewsanguoDrunkenMightEffect.HoverTips(),
-	];
-
-	protected override void AddExtraArgsToDescription(LocString description)
-	{
-		base.AddExtraArgsToDescription(description);
-		NewsanguoDrunkenMightEffect.AddOrText(description);
-	}
-
-	public override CardAssetProfile AssetProfile => new(
-		PortraitPath: "res://images/cards/GuanDiForm.png");
-
-	public GuanYuMartialVer()
-		: base(-1, CardType.Power, CardRarity.Token, TargetType.Self)
-	{
-	}
-
-	private IHoverTip CreateEnergyTimingHoverTip()
-	{
-		LocString description = new("cards", Id.Entry + ".energyTimingDescription");
-		description.Add("energyPrefix", EnergyIconHelper.GetPrefix(this));
-		return new HoverTip(SquCommonL10n.AnnotationTitle(), description);
-	}
-
-	public void SetFormTotals(int vigorPerEnergy, int vigorBonusMultiplier)
-	{
-		DynamicVars[nameof(VigorPower)].BaseValue = vigorPerEnergy;
-		DynamicVars[nameof(VigorAmplificationPower)].BaseValue = vigorBonusMultiplier;
-	}
-
-	protected override Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay) =>
-		Task.CompletedTask;
-
-	protected override void OnUpgrade()
-	{
-		DynamicVars[nameof(VigorPower)].UpgradeValueBy(UpgradedVigorPerEnergy - BaseVigorPerEnergy);
-	}
+    public override bool CanBeGeneratedInCombat => false;
+    protected override int InitialAmount => 2;
+    protected override int AmountPerUpgrade => 2;
+    public override string MutuallyExclusiveGroup => GuanYuCivilVer.FormGroup;
+    protected override IEnumerable<IHoverTip> DirectOnlyHoverTips =>
+    [
+        new HoverTip(SquCommonL10n.AnnotationTitle(), new LocString("cards", Id.Entry + ".annotation")),
+        HoverTipFactory.FromPower<StrengthPower>(),
+        HoverTipFactory.Static(StaticHoverTip.Block),
+    ];
+    public override CardAssetProfile AssetProfile => new(PortraitPath: "res://images/cards/GuanDiForm.png");
 }

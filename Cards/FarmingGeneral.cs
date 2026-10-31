@@ -25,8 +25,11 @@ public sealed class FarmingGeneral : SlightRevisionDerivedCardTemplate
 	public const int BaseMaxCards = 2;
 	public const int UpgradedMaxCards = 3;
 
+	internal const string SelectionPromptKey =
+		"SUNQIAN_UNIVERSE_CARD_FARMING_GENERAL.selectionScreenPrompt";
+
 	private static readonly LocString SelectionPrompt =
-		new("cards", "SUNQIAN_UNIVERSE_CARD_FARMING_GENERAL.selectionScreenPrompt");
+		new("cards", SelectionPromptKey);
 
 	protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
 	[

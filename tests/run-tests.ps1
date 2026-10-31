@@ -112,6 +112,72 @@ $StartInfo.EnvironmentVariables["XDG_DATA_HOME"] = $TestUserDataDir
 
 $DotnetProcess = [System.Diagnostics.Process]::new()
 $DotnetProcess.StartInfo = $StartInfo
+$LogName = if ($ListOnly) { "list.log" } else { "run.log" }
+$LogPath = Join-Path $TestUserDataDir "logs\$LogName"
+# Never count results left over from the previous run.
+if (Test-Path -LiteralPath $LogPath -PathType Leaf) {
+    Remove-Item -LiteralPath $LogPath -Force
+}
+$ProgressState = @{
+    Reader = $null
+    Pending = ""
+    Total = 0
+    Completed = 0
+    Failed = 0
+    LastCompleted = -1
+    LastPrinted = [datetime]::MinValue
+    Inline = -not [Console]::IsOutputRedirected
+    Printed = $false
+}
+
+function Update-TestProgress {
+    param([switch]$Final)
+
+    if ($ListOnly) { return }
+    if ($null -eq $ProgressState.Reader) {
+        if (-not (Test-Path -LiteralPath $LogPath -PathType Leaf)) { return }
+        $stream = [IO.File]::Open($LogPath, [IO.FileMode]::Open,
+            [IO.FileAccess]::Read, ([IO.FileShare]::ReadWrite -bor [IO.FileShare]::Delete))
+        $ProgressState.Reader = [IO.StreamReader]::new($stream)
+    }
+
+    # Keep an unfinished line until the writer finishes it; read only new bytes.
+    $text = $ProgressState.Pending + $ProgressState.Reader.ReadToEnd()
+    if ($Final -and $text.Length -gt 0) { $text += "`n" }
+    $lines = $text.Split([char]10)
+    $ProgressState.Pending = $lines[-1]
+    for ($i = 0; $i -lt $lines.Length - 1; $i++) {
+        $line = $lines[$i]
+        if ($line -match '\[sunqian-universe\.Tests\] START mode=run total=(\d+)') {
+            $ProgressState.Total = [int]$Matches[1]
+        }
+        elseif ($line -match '\[sunqian-universe\.Tests\] (PASSED|FAILED|SKIP)\b') {
+            $ProgressState.Completed++
+            if ($Matches[1] -eq 'FAILED') { $ProgressState.Failed++ }
+        }
+    }
+
+    $now = Get-Date
+    if ($ProgressState.Total -gt 0 -and
+        $ProgressState.Completed -ne $ProgressState.LastCompleted -and
+        ($Final -or ($now - $ProgressState.LastPrinted).TotalSeconds -ge 1)) {
+        $message = "Tests ($($ProgressState.Completed)/$($ProgressState.Total)) | failed: $($ProgressState.Failed)"
+        if ($ProgressState.Inline) {
+            Write-Host "`r$message" -NoNewline
+        }
+        else {
+            Write-Host $message
+        }
+        $ProgressState.Printed = $true
+        $ProgressState.LastCompleted = $ProgressState.Completed
+        $ProgressState.LastPrinted = $now
+    }
+    if ($Final -and $ProgressState.Inline -and $ProgressState.Printed) {
+        Write-Host ""
+        $ProgressState.Printed = $false
+    }
+}
+
 try {
     if (-not $DotnetProcess.Start()) {
         throw "Failed to start dotnet for $Target."
@@ -120,11 +186,11 @@ try {
     $StandardErrorTask = $DotnetProcess.StandardError.ReadToEndAsync()
     $Deadline = (Get-Date).AddSeconds($TimeoutSeconds)
     while (-not $DotnetProcess.HasExited) {
+        Update-TestProgress
         if ((Get-Date) -gt $Deadline) {
             & taskkill.exe /PID $DotnetProcess.Id /T /F | Out-Null
-            $LogName = if ($ListOnly) { "list.log" } else { "run.log" }
-            $LogPath = Join-Path $TestUserDataDir "logs\$LogName"
             $DotnetProcess.WaitForExit()
+            Update-TestProgress -Final
             Write-Host $StandardOutputTask.Result
             Write-Host $StandardErrorTask.Result -ForegroundColor DarkYellow
             throw "$Target timed out after $TimeoutSeconds seconds. Full log: $LogPath"
@@ -134,6 +200,7 @@ try {
 
     # Populate ExitCode reliably after asynchronous Start-Process completion.
     $DotnetProcess.WaitForExit()
+    Update-TestProgress -Final
     $DotnetProcess.Refresh()
     $DotnetExitCode = $DotnetProcess.ExitCode
     if ($DotnetExitCode -ne 0) {
@@ -142,15 +209,14 @@ try {
         throw "$Target failed with exit code $DotnetExitCode"
     }
 
-    $LogName = if ($ListOnly) { "list.log" } else { "run.log" }
-    $LogPath = Join-Path $TestUserDataDir "logs\$LogName"
     Write-Host "Full STS2 log: $LogPath" -ForegroundColor DarkGray
     if (Test-Path -LiteralPath $LogPath -PathType Leaf) {
         Select-String -LiteralPath $LogPath `
-            -Pattern '\[sunqian-universe\.Tests\] (START|PASSED|FAILED|SKIP|SUMMARY)' |
+            -Pattern '\[sunqian-universe\.Tests\] (FAILED|SKIP|SUMMARY)' |
             ForEach-Object { Write-Host $_.Line }
     }
 }
 finally {
+    if ($null -ne $ProgressState.Reader) { $ProgressState.Reader.Dispose() }
     $DotnetProcess.Dispose()
 }

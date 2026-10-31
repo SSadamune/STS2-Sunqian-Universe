@@ -14,8 +14,10 @@ using Squ.Powers;
 namespace Squ.Interop;
 
 /// <summary>
-/// Optional UI-only bridge to DefenseAwareDebuffPreview v0.1.1's public API.
+/// Optional UI-only bridge to DefenseAwareDebuffPreview v0.1.2's public API.
 /// Reflection keeps the other mod optional and prevents its assembly from being bundled here.
+/// v0.1.1 does not expose <c>AfterNextSideTurnStart</c>, so an older assembly fails
+/// resolution and the caller keeps its basic forecast.
 /// </summary>
 internal static class DefenseAwareDebuffPreviewInterop
 {
@@ -30,7 +32,7 @@ internal static class DefenseAwareDebuffPreviewInterop
 	private enum PreviewBlockTiming
 	{
 		Current,
-		AfterAutomaticClear,
+		AfterNextSideTurnStart,
 	}
 
 	private sealed record ApiBinding(
@@ -39,18 +41,35 @@ internal static class DefenseAwareDebuffPreviewInterop
 		MethodInfo TryCalculateBySource,
 		MethodInfo GetHpLoss,
 		object CurrentBlockTiming,
-		object AfterAutomaticClearBlockTiming);
+		object AfterNextSideTurnStartBlockTiming);
 
 	private static readonly object BindingLock = new();
 	private static Assembly? _resolvedAssembly;
 	private static ApiBinding? _binding;
 	private static bool _resolutionFailed;
 	private static bool _invocationFailureLogged;
+	private static bool _assemblyLookupNeeded = true;
+
+	static DefenseAwareDebuffPreviewInterop()
+	{
+		// Also cache absence: health-bar refreshes must not enumerate all loaded
+		// assemblies every time. A late optional-mod load invalidates that result.
+		AppDomain.CurrentDomain.AssemblyLoad += (_, args) =>
+		{
+			if (string.Equals(args.LoadedAssembly.GetName().Name, AssemblyName,
+				StringComparison.OrdinalIgnoreCase))
+			{
+				lock (BindingLock)
+					_assemblyLookupNeeded = true;
+			}
+		};
+	}
 
 	/// <summary>
 	/// Calculates UI-only HP loss for the requested debuff. Enemy Poison and Burning
-	/// share one ordered turn-start batch. Player and pet Poison run at turn start,
-	/// while their Burning runs at player turn end, so those batches stay separate.
+	/// share one ordered batch at the start of the target's next side turn.
+	/// Player and pet Poison use that same next-turn timing, while their Burning
+	/// runs at the end of the current turn and keeps the current defenses.
 	/// </summary>
 	public static bool TryGetPreviewHpLoss(
 		Creature target,
@@ -67,8 +86,8 @@ internal static class DefenseAwareDebuffPreviewInterop
 		try
 		{
 			Array apiSources = CreateApiSources(binding, sources);
-			object blockTiming = timing == PreviewBlockTiming.AfterAutomaticClear
-				? binding.AfterAutomaticClearBlockTiming
+			object blockTiming = timing == PreviewBlockTiming.AfterNextSideTurnStart
+				? binding.AfterNextSideTurnStartBlockTiming
 				: binding.CurrentBlockTiming;
 			object?[] arguments =
 			[
@@ -113,7 +132,7 @@ internal static class DefenseAwareDebuffPreviewInterop
 		bool sharedEnemyTurnStart = target.IsEnemy && !target.IsPet;
 		if (sharedEnemyTurnStart)
 		{
-			blockTiming = PreviewBlockTiming.AfterAutomaticClear;
+			blockTiming = PreviewBlockTiming.AfterNextSideTurnStart;
 			foreach (PowerModel power in target.Powers)
 			{
 				TryAddSource(target, power, sources);
@@ -121,7 +140,7 @@ internal static class DefenseAwareDebuffPreviewInterop
 		}
 		else if (requestedSource is PoisonPower)
 		{
-			blockTiming = PreviewBlockTiming.AfterAutomaticClear;
+			blockTiming = PreviewBlockTiming.AfterNextSideTurnStart;
 			TryAddSource(target, requestedSource, sources);
 		}
 		else if (requestedSource is BurningPower)
@@ -194,19 +213,23 @@ internal static class DefenseAwareDebuffPreviewInterop
 
 	private static bool TryGetBinding(out ApiBinding binding)
 	{
-		Assembly? assembly = AppDomain.CurrentDomain.GetAssemblies()
-			.FirstOrDefault(static candidate => string.Equals(
-				candidate.GetName().Name,
-				AssemblyName,
-				StringComparison.OrdinalIgnoreCase));
-		if (assembly is null)
-		{
-			binding = null!;
-			return false;
-		}
-
 		lock (BindingLock)
 		{
+			if (!_assemblyLookupNeeded)
+			{
+				binding = _binding!;
+				return _binding is not null && !_resolutionFailed;
+			}
+			_assemblyLookupNeeded = false;
+			Assembly? assembly = AppDomain.CurrentDomain.GetAssemblies()
+				.FirstOrDefault(static candidate => string.Equals(
+					candidate.GetName().Name, AssemblyName, StringComparison.OrdinalIgnoreCase));
+			if (assembly is null)
+			{
+				binding = null!;
+				return false;
+			}
+
 			if (ReferenceEquals(assembly, _resolvedAssembly))
 			{
 				binding = _binding!;
@@ -261,8 +284,8 @@ internal static class DefenseAwareDebuffPreviewInterop
 			.MakeGenericMethod(typeof(PowerModel));
 		Type blockTimingType = tryCalculate.GetParameters()[3].ParameterType;
 		object currentBlockTiming = Enum.Parse(blockTimingType, "Current");
-		object afterAutomaticClearBlockTiming =
-			Enum.Parse(blockTimingType, "AfterAutomaticClear");
+		object afterNextSideTurnStartBlockTiming =
+			Enum.Parse(blockTimingType, "AfterNextSideTurnStart");
 		MethodInfo getHpLoss = resultType.GetMethod(
 			"GetHpLoss",
 			BindingFlags.Public | BindingFlags.Instance,
@@ -277,6 +300,6 @@ internal static class DefenseAwareDebuffPreviewInterop
 			tryCalculate,
 			getHpLoss,
 			currentBlockTiming,
-			afterAutomaticClearBlockTiming);
+			afterNextSideTurnStartBlockTiming);
 	}
 }

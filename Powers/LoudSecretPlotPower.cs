@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Godot;
 using MegaCrit.Sts2.Core.Combat;
@@ -17,7 +18,7 @@ using STS2RitsuLib.Scaffolding.Content;
 namespace Squ.Powers;
 
 /// <summary>
-/// 大声密谋：持有者打出以全体敌人或随机多名敌人为目标的攻击/技能牌，且场上仅有一名可为目标的敌人时，
+/// 大声密谋：持有者打出群体目标攻击/技能牌，且实际合法目标数不大于一时，
 /// 该牌额外结算等同于层数的次数（<see cref="ModifyCardPlayCount"/>）。
 /// </summary>
 [RegisterPower]
@@ -68,7 +69,15 @@ public sealed class LoudSecretPlotPower : ModPowerTemplate
 		}
 
 		ICombatState? combatState = CombatState;
-		return combatState != null && combatState.HittableEnemies.Count == 1;
+		if (combatState is null)
+		{
+			return false;
+		}
+
+		int targetCount = card.TargetType == TargetType.AllAllies
+			? combatState.GetTeammatesOf(card.Owner.Creature).Count(creature => creature.IsAlive && creature.IsPlayer)
+			: combatState.HittableEnemies.Count;
+		return targetCount <= 1;
 	}
 
 	private static bool IsQualifyingCardType(CardModel card) =>

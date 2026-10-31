@@ -33,7 +33,7 @@ public sealed class NewsanguoHeadsmanJointModTests : SunqianCombatTestSuite
 	[Fact]
 	public async Task Headsman_restores_spent_vigor_and_drunken_might_after_a_kill()
 	{
-		await Play(await AddToHand<HeadsmanScript>(), EnemyAt(0));
+		await PlayAndActivateScript(await AddToHand<HeadsmanScript>(), EnemyAt(0));
 		await ApplyDrunkenMight(4);
 		await CreatureCmd.SetCurrentHp(EnemyAt(0), 1);
 
@@ -46,7 +46,7 @@ public sealed class NewsanguoHeadsmanJointModTests : SunqianCombatTestSuite
 	[Fact]
 	public async Task Headsman_restores_at_most_the_opening_resources_after_a_nested_attack_kills()
 	{
-		await Play(await AddToHand<HeadsmanScript>(), EnemyAt(1));
+		await PlayAndActivateScript(await AddToHand<HeadsmanScript>(), EnemyAt(1));
 		await PlayerCmd.GainEnergy(1, Player);
 		await CardPileCmd.Add(PileType.Hand.GetPile(Player).Cards.ToArray(), PileType.Exhaust);
 		await CardPileCmd.Add(PileType.Draw.GetPile(Player).Cards.ToArray(), PileType.Exhaust);

@@ -1,4 +1,6 @@
 using System.Reflection;
+using System.Threading;
+using HarmonyLib;
 using MegaCrit.Sts2.Core.Combat;
 using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
@@ -9,6 +11,7 @@ using MegaCrit.Sts2.Core.Models.Characters;
 using MegaCrit.Sts2.Core.Models.Monsters;
 using MegaCrit.Sts2.Core.Models.Powers;
 using MegaCrit.Sts2.Core.Runs;
+using Squ.Audio;
 using Squ.Cards;
 using Squ.Powers;
 using Squ.Relics;
@@ -16,6 +19,29 @@ using TestTheSpire;
 using Xunit;
 
 namespace Squ.Tests.Relics;
+
+[HarmonyPatch(typeof(SquSfx), nameof(SquSfx.Play))]
+internal static class TestSquSfxPlayPatch
+{
+    private static readonly AsyncLocal<List<string>?> RecordedEvents = new();
+
+    public static IReadOnlyList<string> Events => RecordedEvents.Value ?? [];
+
+    public static void BeginCapture() => RecordedEvents.Value = [];
+
+    public static void EndCapture() => RecordedEvents.Value = null;
+
+    private static bool Prefix(string eventPath)
+    {
+        if (RecordedEvents.Value is not { } events)
+        {
+            return true;
+        }
+
+        events.Add(eventPath);
+        return false;
+    }
+}
 
 public sealed class NeverHadTheseRelicTests : SunqianCombatTestSuite
 {
@@ -42,6 +68,31 @@ public sealed class NeverHadTheseRelicTests : SunqianCombatTestSuite
         Assert.Equal(0, relic.RemovedNextOfKin);
         Assert.True(relic.ShowCounter);
         Assert.Equal(1, relic.DisplayAmount);
+    }
+
+    [Fact]
+    public async Task Removing_family_cards_plays_their_exhaust_sounds()
+    {
+        NeverHadTheseRelic relic = CreateRelic();
+        TestSquSfxPlayPatch.BeginCapture();
+        try
+        {
+            await relic.BeforeCardRemoved(Player.RunState.CreateCard<CutePet>(Player));
+            await relic.BeforeCardRemoved(Player.RunState.CreateCard<BelovedPartner>(Player));
+            await relic.BeforeCardRemoved(Player.RunState.CreateCard<NextOfKin>(Player));
+
+            Assert.Equal(
+                [
+                    SquSfx.NeverHadTheseCutePetExhaustEvent,
+                    SquSfx.NeverHadTheseBelovedPartnerExhaustEvent,
+                    SquSfx.NeverHadTheseNextOfKinExhaustEvent,
+                ],
+                TestSquSfxPlayPatch.Events);
+        }
+        finally
+        {
+            TestSquSfxPlayPatch.EndCapture();
+        }
     }
 
     [Fact]

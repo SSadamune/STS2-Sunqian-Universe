@@ -178,7 +178,8 @@ public sealed class NewsanguoJointModTests : SunqianCombatTestSuite
     [Fact]
     public async Task Xiliang_savage_keeps_vigor_and_drunken_might_on_the_card()
     {
-        await Play(await AddToHand<XiliangSavageScript>());
+        await PlayerCmd.SetEnergy(4, Player);
+        await PlayAndActivateScript(await AddToHand<XiliangSavageScript>());
         await ApplyDrunkenMight(4);
         var strike = await AddToHand<StrikeIronclad>();
 
@@ -190,7 +191,8 @@ public sealed class NewsanguoJointModTests : SunqianCombatTestSuite
     [Fact]
     public async Task Xiliang_savage_retains_scaled_vigor_and_drunken_might_bonuses()
     {
-        await Play(await AddToHand<XiliangSavageScript>());
+        await PlayerCmd.SetEnergy(4, Player);
+        await PlayAndActivateScript(await AddToHand<XiliangSavageScript>());
         await ApplyPower<CrossTheRiverPower>(Player.Creature, 1);
         await ApplyPower<VigorAmplificationPower>(Player.Creature, 1);
         await ApplyDrunkenMight(4);
@@ -261,7 +263,7 @@ public sealed class NewsanguoJointModTests : SunqianCombatTestSuite
 		await ApplyPower<VigorPower>(Player.Creature, 4);
 		await ApplyDrunkenMight(4);
 
-		await Play(await AddToHand<PartTimeGeneralScript>(), EnemyAt(0));
+		await PlayAndActivateScript(await AddToHand<PartTimeGeneralScript>(), EnemyAt(0));
 
 		Assert.Equal(4, (int)(Player.Creature.GetPower<VigorPower>()?.Amount ?? 0));
 		Assert.Equal(4, NewsanguoPublicApiInterop.GetDrunkenMight(Player));
@@ -275,7 +277,7 @@ public sealed class NewsanguoJointModTests : SunqianCombatTestSuite
 		await ApplyPower<VigorAmplificationPower>(Player.Creature, 1);
 		await ApplyDrunkenMight(4);
 
-		await Play(await AddToHand<PartTimeGeneralScript>(), EnemyAt(0));
+		await PlayAndActivateScript(await AddToHand<PartTimeGeneralScript>(), EnemyAt(0));
 
 		Assert.Equal(2, NewsanguoPublicApiInterop.GetDrunkenMight(Player));
 		Assert.Null(Player.Creature.GetPower<VigorAmplificationPower>());

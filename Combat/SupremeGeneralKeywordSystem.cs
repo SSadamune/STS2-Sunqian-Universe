@@ -24,8 +24,8 @@ namespace Squ.Combat;
 
 /// <summary>
 /// Implements the Supreme General keyword. The outermost manually played card owns the window;
-/// nested auto-plays can receive its spent Vigor and Vigorous enchantment bonus, but cannot
-/// replace or amplify that window.
+/// nested auto-plays receive its spent Vigor and Vigorous enchantment bonus. Nested Supreme
+/// Generals also pass their own consumed Vigor to descendants, without counting inheritance twice.
 /// </summary>
 [RegisterSingleton]
 public sealed class SupremeGeneralKeywordSystem : HookedSingletonModel
@@ -42,6 +42,16 @@ public sealed class SupremeGeneralKeywordSystem : HookedSingletonModel
 
 		public decimal VigorousEnchantmentBonus { get; init; }
 
+		public Dictionary<AttackCommand, decimal> VigorBeforeAttack { get; } = [];
+
+		public List<NestedVigorWindow> NestedVigorWindows { get; } = [];
+	}
+
+	private sealed class NestedVigorWindow
+	{
+		public required CardPlay Play { get; init; }
+		public decimal ConsumedVigor { get; set; }
+		public decimal VigorousEnchantmentBonus { get; init; }
 		public Dictionary<AttackCommand, decimal> VigorBeforeAttack { get; } = [];
 	}
 
@@ -60,12 +70,24 @@ public sealed class SupremeGeneralKeywordSystem : HookedSingletonModel
 
 	public override Task BeforeCardPlayed(CardPlay cardPlay)
 	{
-		if (cardPlay.IsAutoPlay
-			|| !CardResolutionTracker.IsOutermostCardPlay(cardPlay)
-			|| !cardPlay.Card.HasModKeyword(SquKeywords.SupremeGeneral))
+		if (!cardPlay.Card.HasModKeyword(SquKeywords.SupremeGeneral))
 		{
 			return Task.CompletedTask;
 		}
+		if (cardPlay.IsAutoPlay)
+		{
+			if (TryGetSupremeGeneralChildWindow(cardPlay.Card, cardPlay, out ResolutionWindow parent))
+			{
+				parent.NestedVigorWindows.Add(new NestedVigorWindow
+				{
+					Play = cardPlay,
+					VigorousEnchantmentBonus = GetVigorousEnchantmentBonus(cardPlay.Card),
+				});
+			}
+			return Task.CompletedTask;
+		}
+		if (!CardResolutionTracker.IsOutermostCardPlay(cardPlay))
+			return Task.CompletedTask;
 
 		ulong playerId = cardPlay.Card.Owner.NetId;
 		if (!WindowsByPlayer.TryGetValue(playerId, out List<ResolutionWindow>? windows))
@@ -87,24 +109,24 @@ public sealed class SupremeGeneralKeywordSystem : HookedSingletonModel
 
 	public override Task BeforeAttack(AttackCommand command)
 	{
-		if (command.Attacker?.Player is not { } player
+		if (command.Attacker is not { } attacker
+			|| attacker.Player is null
 			|| !command.DamageProps.IsPoweredAttack()
-			|| !TryGetOutermostWindow(player.NetId, out ResolutionWindow window)
-			|| !ReferenceEquals(command.ModelSource, window.RootCard))
+			|| !TryGetResourceWindow(command.ModelSource as CardModel, out ResolutionWindow window, out NestedVigorWindow? nested))
 		{
 			return Task.CompletedTask;
 		}
 
-		window.VigorBeforeAttack[command] = GetVigorAmount(command.Attacker);
+		(nested?.VigorBeforeAttack ?? window.VigorBeforeAttack)[command] = GetVigorAmount(attacker);
 		return Task.CompletedTask;
 	}
 
 	public override Task AfterAttack(PlayerChoiceContext choiceContext, AttackCommand command)
 	{
 		if (command.Attacker is not { } attacker
-			|| attacker.Player is not { } player
-			|| !TryGetOutermostWindow(player.NetId, out ResolutionWindow window)
-			|| !window.VigorBeforeAttack.Remove(command, out decimal vigorBefore))
+			|| attacker.Player is null
+			|| !TryGetResourceWindow(command.ModelSource as CardModel, out ResolutionWindow window, out NestedVigorWindow? nested)
+			|| !(nested?.VigorBeforeAttack ?? window.VigorBeforeAttack).Remove(command, out decimal vigorBefore))
 		{
 			return Task.CompletedTask;
 		}
@@ -112,7 +134,8 @@ public sealed class SupremeGeneralKeywordSystem : HookedSingletonModel
 		decimal consumed = vigorBefore - GetVigorAmount(attacker);
 		if (consumed > 0m)
 		{
-			window.ConsumedVigor += consumed;
+			if (nested is not null) nested.ConsumedVigor += consumed;
+			else window.ConsumedVigor += consumed;
 		}
 
 		return Task.CompletedTask;
@@ -148,8 +171,7 @@ public sealed class SupremeGeneralKeywordSystem : HookedSingletonModel
 		out decimal inheritedVigor)
 	{
 		inheritedVigor = 0m;
-		if (!TryGetSupremeGeneralChildWindow(card, cardPlay, out ResolutionWindow window)
-			|| (window.ConsumedVigor <= 0m && window.VigorousEnchantmentBonus <= 0m))
+		if (!TryGetSupremeGeneralChildWindow(card, cardPlay, out ResolutionWindow window))
 		{
 			return false;
 		}
@@ -163,7 +185,14 @@ public sealed class SupremeGeneralKeywordSystem : HookedSingletonModel
 		}
 
 		inheritedVigor += window.VigorousEnchantmentBonus;
-		return true;
+		foreach (NestedVigorWindow nested in window.NestedVigorWindows)
+		{
+			if (ReferenceEquals(nested.Play.Card, card)) continue;
+			inheritedVigor += SquVigorSnapshot.ApplyBonusPercentage(
+				nested.Play.Card.Owner.Creature, nested.Play.Card, nested.ConsumedVigor);
+			inheritedVigor += nested.VigorousEnchantmentBonus;
+		}
+		return inheritedVigor > 0m;
 	}
 
 	/// <summary>
@@ -207,8 +236,8 @@ public sealed class SupremeGeneralKeywordSystem : HookedSingletonModel
 		PlayerChoiceContext choiceContext,
 		CardPlay cardPlay)
 	{
-		if (!TryGetOutermostWindow(cardPlay.Card.Owner.NetId, out ResolutionWindow window)
-			|| !ReferenceEquals(window.RootPlay, cardPlay))
+		if (!TryGetResourceWindow(cardPlay, out ResolutionWindow window, out NestedVigorWindow? nested)
+			|| (nested is not null && cardPlay.Card.Owner == window.RootPlay.Card.Owner))
 		{
 			return;
 		}
@@ -219,7 +248,8 @@ public sealed class SupremeGeneralKeywordSystem : HookedSingletonModel
 		decimal consumed = vigorBefore - GetVigorAmount(owner);
 		if (consumed > 0m)
 		{
-			window.ConsumedVigor += consumed;
+			if (nested is not null) nested.ConsumedVigor += consumed;
+			else window.ConsumedVigor += consumed;
 		}
 
 		await NewsanguoDrunkenMightEffect.SpendForAttack(
@@ -295,6 +325,7 @@ public sealed class SupremeGeneralKeywordSystem : HookedSingletonModel
 
 	public override Task AfterCardPlayed(PlayerChoiceContext choiceContext, CardPlay cardPlay)
 	{
+		RemoveNestedVigorWindow(cardPlay.Card);
 		if (!cardPlay.IsAutoPlay)
 		{
 			CloseWindow(cardPlay);
@@ -361,6 +392,7 @@ public sealed class SupremeGeneralKeywordSystem : HookedSingletonModel
 
 	private static void CloseAbandonedWindow(CardModel card)
 	{
+		RemoveNestedVigorWindow(card);
 		ulong playerId = card.Owner.NetId;
 		if (!WindowsByPlayer.TryGetValue(playerId, out List<ResolutionWindow>? windows))
 		{
@@ -394,9 +426,54 @@ public sealed class SupremeGeneralKeywordSystem : HookedSingletonModel
 		}
 	}
 
+	private static bool TryGetResourceWindow(
+		CardModel? card, out ResolutionWindow window, out NestedVigorWindow? nested)
+	{
+		// Public 0.107.1 attacks carry only their source card. The innermost
+		// live resource window for that card is the corresponding play.
+		foreach (List<ResolutionWindow> windows in WindowsByPlayer.Values)
+		for (int i = windows.Count - 1; i >= 0; i--)
+		{
+			ResolutionWindow candidate = windows[i];
+			nested = candidate.NestedVigorWindows.FindLast(child => ReferenceEquals(child.Play.Card, card));
+			if (nested is not null || ReferenceEquals(candidate.RootCard, card))
+			{
+				window = candidate;
+				return true;
+			}
+		}
+		window = null!;
+		nested = null;
+		return false;
+	}
+
+	private static bool TryGetResourceWindow(
+		CardPlay? play, out ResolutionWindow window, out NestedVigorWindow? nested)
+	{
+		foreach (List<ResolutionWindow> windows in WindowsByPlayer.Values)
+		foreach (ResolutionWindow candidate in windows)
+		{
+			window = candidate;
+			nested = null;
+			if (ReferenceEquals(candidate.RootPlay, play)) return true;
+			nested = candidate.NestedVigorWindows.FindLast(child => ReferenceEquals(child.Play, play));
+			if (nested is not null) return true;
+		}
+		window = null!;
+		nested = null;
+		return false;
+	}
+
+	private static void RemoveNestedVigorWindow(CardModel card)
+	{
+		foreach (List<ResolutionWindow> windows in WindowsByPlayer.Values)
+		foreach (ResolutionWindow window in windows)
+			window.NestedVigorWindows.RemoveAll(child => ReferenceEquals(child.Play.Card, card));
+	}
+
 	/// <summary>
-	/// AfterCardPlayed closes normal windows. This wrapper is the exception-safe fallback for a
-	/// failed manual play, because vanilla does not invoke AfterCardPlayed when OnPlay throws.
+	/// AfterCardPlayed closes completed windows. This wrapper also clears nested contributions
+	/// when a Supreme General play fails before vanilla invokes AfterCardPlayed.
 	/// </summary>
 	[HarmonyPatch(typeof(CardModel), nameof(CardModel.OnPlayWrapper))]
 	private static class OnPlayWrapperPatch
@@ -406,7 +483,7 @@ public sealed class SupremeGeneralKeywordSystem : HookedSingletonModel
 			bool isAutoPlay,
 			ref Task __result)
 		{
-			if (!isAutoPlay)
+			if (!isAutoPlay || __instance.HasModKeyword(SquKeywords.SupremeGeneral))
 			{
 				__result = CloseWindowAfterPlay(__result, __instance);
 			}

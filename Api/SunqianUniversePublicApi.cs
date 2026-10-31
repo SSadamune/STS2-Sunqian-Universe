@@ -177,11 +177,11 @@ public static class SunqianUniversePublicApi
 				nameof(scriptPower));
 		}
 
-		PowerModel instance = scriptPower.IsCanonical
+		var instance = (ScriptPowerTemplate)(scriptPower.IsCanonical
 			? scriptPower.ToMutable()
-			: (PowerModel)scriptPower.MutableClone();
+			: scriptPower.MutableClone());
 
-		await PowerCmd.Apply(
+		await ScriptSystem.ApplyExternalScriptPowerAsync(
 			choiceContext,
 			instance,
 			target,

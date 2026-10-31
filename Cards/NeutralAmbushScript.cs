@@ -25,16 +25,10 @@ namespace Squ.Cards;
 /// 并在剧本存续期间每次抽到二者之一时自动对随机目标打出。
 /// </summary>
 [RegisterCard(typeof(SunqianCardPool), StableEntryStem = "neutral_ambush_script")]
-public sealed class NeutralAmbushScript : ScriptCardTemplate
+public sealed class NeutralAmbushScript : ScriptCardTemplate<NeutralAmbushScriptRecord>
 {
 	public const int BoulderCount = 1;
 	public const int SalvoStrikeCount = 2;
-
-	protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
-	[
-		..SquCardHoverTipFactory.FromCardWithCardHoverTips<GiantRock>(this, IsUpgraded),
-		..SquCardHoverTipFactory.FromCardWithCardHoverTips<SalvoStrike>(this, IsUpgraded),
-	];
 
 	public override IEnumerable<CardKeyword> CanonicalKeywords =>
 	[
@@ -71,11 +65,6 @@ public sealed class NeutralAmbushScript : ScriptCardTemplate
 			IsUpgraded,
 			player);
 
-		await PowerCmd.Apply<ScriptNeutralAmbushPower>(
-			choiceContext,
-			player.Creature,
-			1m,
-			player.Creature,
-			this);
+		await UnlockScriptAsync(choiceContext);
 	}
 }

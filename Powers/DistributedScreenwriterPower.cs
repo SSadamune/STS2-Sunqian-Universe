@@ -27,7 +27,7 @@ namespace Squ.Powers;
 [RegisterPower]
 public sealed class DistributedScreenwriterPower : ModPowerTemplate
 {
-	public const string DrawCardsVarName = "DrawCards";
+	public const string UpgradedCardsVarName = "UpgradedCards";
 
 	public override PowerType Type => PowerType.Buff;
 
@@ -41,12 +41,13 @@ public sealed class DistributedScreenwriterPower : ModPowerTemplate
 
 	protected override IEnumerable<DynamicVar> CanonicalVars =>
 	[
-		new DynamicVar(DrawCardsVarName, 0m),
+		new DynamicVar(UpgradedCardsVarName, 0m),
 	];
 
 	protected override string SmartDescriptionLocKey =>
-		DynamicVars[DrawCardsVarName].BaseValue > 0m
-			? Id.Entry + ".smartDescriptionWithDraw"
+		DynamicVars[UpgradedCardsVarName].BaseValue > 0m
+			? Id.Entry + (DynamicVars[UpgradedCardsVarName].BaseValue >= Amount
+				? ".smartDescriptionUpgraded" : ".smartDescriptionMixed")
 			: base.SmartDescriptionLocKey;
 
 	protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
@@ -57,7 +58,7 @@ public sealed class DistributedScreenwriterPower : ModPowerTemplate
 
 	public void RecordUpgradedPlay()
 	{
-		DynamicVars[DrawCardsVarName].BaseValue++;
+		DynamicVars[UpgradedCardsVarName].BaseValue++;
 	}
 
 	public override async Task AfterPlayerTurnStart(
@@ -70,12 +71,6 @@ public sealed class DistributedScreenwriterPower : ModPowerTemplate
 		}
 
 		Flash();
-		int drawCards = DynamicVars[DrawCardsVarName].IntValue;
-		if (drawCards > 0)
-		{
-			await CardPileCmd.Draw(choiceContext, drawCards, player);
-		}
-
 		CardSelectorPrefs prefs = new(CardSelectorPrefs.TransformSelectionPrompt, Amount);
 		List<CardModel> selectedCards = (await CardSelectCmd.FromHand(
 			choiceContext,
@@ -84,6 +79,7 @@ public sealed class DistributedScreenwriterPower : ModPowerTemplate
 			null,
 			this)).ToList();
 
+		int upgradesRemaining = DynamicVars[UpgradedCardsVarName].IntValue;
 		foreach (CardModel selectedCard in selectedCards)
 		{
 			CardModel? scriptCard = CreateRandomScriptCard(player);
@@ -92,6 +88,15 @@ public sealed class DistributedScreenwriterPower : ModPowerTemplate
 				break;
 			}
 
+			if (upgradesRemaining > 0)
+			{
+				if (scriptCard.IsUpgradable)
+				{
+					scriptCard.UpgradeInternal();
+					scriptCard.FinalizeUpgradeInternal();
+				}
+				upgradesRemaining--;
+			}
 			await CardCmd.Transform(selectedCard, scriptCard);
 		}
 	}

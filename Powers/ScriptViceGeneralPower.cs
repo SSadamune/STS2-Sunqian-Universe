@@ -1,6 +1,8 @@
+using System.Collections.Generic;
 using System.Linq;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.Entities.Creatures;
+using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.ValueProps;
 using STS2RitsuLib.Interop.AutoRegistration;
@@ -23,6 +25,12 @@ public sealed class ScriptViceGeneralPower : ScriptPowerTemplate
 	public override PowerAssetProfile AssetProfile => new(
 		IconPath: "res://images/powers/ScriptViceGeneralPower.png",
 		BigIconPath: "res://images/powers/ScriptViceGeneralPowerBig.png");
+
+	protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
+	[
+		HoverTipFactory.FromKeyword(SquKeywords.VariousStrikeCards),
+		HoverTipFactory.FromKeyword(SquKeywords.VariousDefendCards),
+	];
 
 	public override decimal ModifyDamageAdditive(
 		Creature? target,

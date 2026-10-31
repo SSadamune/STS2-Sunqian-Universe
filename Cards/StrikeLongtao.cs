@@ -17,7 +17,7 @@ using STS2RitsuLib.Scaffolding.Content;
 namespace Squ.Cards;
 
 [RegisterCard(typeof(SunqianCardPool), StableEntryStem = "strike")]
-[RegisterCharacterStarterCard(typeof(SunqianCharacter), 4)]
+[RegisterCharacterStarterCard(typeof(SunqianCharacter), 5)]
 public sealed class StrikeLongtao : ModCardTemplate
 {
 	public const int BaseDamage = 6;

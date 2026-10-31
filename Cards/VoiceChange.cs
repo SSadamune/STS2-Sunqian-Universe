@@ -71,11 +71,6 @@ public sealed class VoiceChange : ModCardTemplate
 		CardModel? scriptCard = selected.FirstOrDefault();
 		if (scriptCard?.Pile?.Type == PileType.Exhaust)
 		{
-			if (scriptCard.IsUpgradable)
-			{
-				CardCmd.Upgrade(scriptCard);
-			}
-
 			if (IsUpgraded)
 			{
 				await CardPileCmd.Add(scriptCard, PileType.Hand);
@@ -83,6 +78,11 @@ public sealed class VoiceChange : ModCardTemplate
 			else
 			{
 				await CardPileCmd.Add(scriptCard, PileType.Draw, CardPilePosition.Top);
+			}
+
+			if (scriptCard.IsUpgradable)
+			{
+				CardCmd.Upgrade(scriptCard);
 			}
 		}
 	}

@@ -2,11 +2,12 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Threading.Tasks;
 using HarmonyLib;
+using MegaCrit.Sts2.Core.Combat;
+using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
-using MegaCrit.Sts2.Core.Entities.Creatures;
 using MegaCrit.Sts2.Core.HoverTips;
-using MegaCrit.Sts2.Core.Localization;
 using MegaCrit.Sts2.Core.Models;
 using Squ;
 using Squ.Powers;
@@ -17,14 +18,14 @@ using STS2RitsuLib;
 namespace Squ.Patches;
 
 /// <summary>
-/// 「小黄门的口信」视为保留，但不在卡面上写出原版「保留」词条。
+/// 《剧本：小黄门》激活期间，手牌中的虚无视为保留。
 /// </summary>
 [HarmonyPatch(typeof(CardModel), "get_ShouldRetainThisTurn")]
 internal static class EunuchMessageRetainPatch
 {
 	private static void Postfix(CardModel __instance, ref bool __result)
 	{
-		if (!__result && __instance.HasEunuchMessage())
+		if (!__result && ScriptEunuchPower.TreatsEtherealAsRetain(__instance))
 		{
 			__result = true;
 		}
@@ -32,94 +33,118 @@ internal static class EunuchMessageRetainPatch
 }
 
 /// <summary>
-/// 口信会使 <see cref="CardModel.ShouldRetainThisTurn"/> 为真，原版会因此在卡面插入「保留」。
-/// 牌本身没有保留词条时，从描述里去掉这行。打在实际拼卡面的三参数方法上，
-/// 以便在注入「小黄门的口信」之前先清掉误加的保留。
+/// 《剧本：小黄门》只在规则层把虚无视为保留；卡面仍应显示真实的“虚无”，
+/// 而不应因为 <see cref="CardModel.ShouldRetainThisTurn"/> 被改写而额外显示“保留”。
+/// 卡牌本来就具有的保留不在此处移除。
 /// </summary>
 [HarmonyPatch]
-internal static class EunuchMessageHideVanillaRetainTextPatch
+internal static class EunuchVirtualRetainDescriptionPatch
 {
-	private static MethodBase TargetMethod()
-	{
-		Type previewType = typeof(CardModel).GetNestedType("DescriptionPreviewType", BindingFlags.NonPublic)
-			?? throw new MissingMemberException(typeof(CardModel).FullName, "DescriptionPreviewType");
-		return AccessTools.Method(
-			typeof(CardModel),
-			"GetDescriptionForPile",
-			[typeof(PileType), previewType, typeof(Creature)])
-			?? throw new MissingMethodException(typeof(CardModel).FullName, "GetDescriptionForPile");
-	}
+	private static MethodBase TargetMethod() =>
+		AccessTools.GetDeclaredMethods(typeof(CardModel)).Single(method =>
+			method.Name == "GetDescriptionForPile"
+			&& method.GetParameters().Length == 3);
 
 	[HarmonyPostfix]
-	[HarmonyPriority(Priority.First)]
+	[HarmonyPriority(Priority.Last)]
 	private static void Postfix(CardModel __instance, ref string __result)
 	{
 		if (string.IsNullOrEmpty(__result)
-			|| !__instance.HasEunuchMessage()
-			|| __instance.Keywords.Contains(CardKeyword.Retain))
+			|| __instance.Keywords.Contains(CardKeyword.Retain)
+			|| !ScriptEunuchPower.TreatsEtherealAsRetain(__instance))
 		{
 			return;
 		}
 
-		string retainTitle = new LocString("card_keywords", "RETAIN.title").GetFormattedText() ?? "";
-		if (retainTitle.Length == 0)
+		HoverTip retainTip = (HoverTip)HoverTipFactory.FromKeyword(CardKeyword.Retain);
+		string marker = $"[gold]{retainTip.Title}[/gold]";
+		List<string> lines = __result.Split('\n').ToList();
+		int virtualRetainLine = lines.FindIndex(line =>
+			line.StartsWith(marker, StringComparison.Ordinal));
+		if (virtualRetainLine >= 0)
 		{
-			return;
+			lines.RemoveAt(virtualRetainLine);
+			__result = string.Join('\n', lines);
 		}
-
-		string retainMarker = "[gold]" + retainTitle + "[/gold]";
-		string[] kept = __result.Split('\n')
-			.Where(line => !line.StartsWith(retainMarker, StringComparison.Ordinal))
-			.ToArray();
-		__result = string.Join('\n', kept);
 	}
 }
 
 /// <summary>
-/// 离开手牌之前清掉口信：先移除词条，再把牌移出手里。
-/// 这样打出该牌后若剧本在结算中失效，正在结算的牌不会被消耗。
+/// 小黄门赋予的虚无持续到该牌实际开始结算；普通移区不会清除它。
+/// 只移除带内部标记的虚无，避免误删卡牌原本具有的虚无。
 /// </summary>
-[HarmonyPatch(typeof(CardModel), nameof(CardModel.RemoveFromCurrentPile))]
-internal static class EunuchMessageClearBeforeLeaveHandPatch
+[HarmonyPatch(typeof(CardModel), nameof(CardModel.OnPlayWrapper))]
+internal static class EunuchMessageClearWhenPlayedPatch
 {
 	private static void Prefix(CardModel __instance)
 	{
-		if (__instance.Pile?.Type == PileType.Hand)
-		{
-			ScriptEunuchPower.ClearMarkIfPresent(__instance);
-		}
+		ScriptEunuchPower.ClearTemporaryEtherealIfPresent(__instance);
 	}
 }
 
 /// <summary>
-/// <see cref="CardModel.RemoveFromCurrentPile"/> 会被 0.107.1 的 JIT 内联进
-/// <c>CardPileCmd.Add</c> 的状态机，上面的前缀因此覆盖不到消耗、弃牌等移堆。
-/// 移堆事件在内联之后仍然会发出，离开手牌时在这里再清一次口信。
+/// 带有独立回合末效果的牌（例如《灼伤》）会走官方的特殊移区流程，绕开普通虚无与保留判断。
+/// 保留其回合末效果，但暂时拿掉虚无，结算后将牌放回手中，再恢复虚无；随后官方手牌清理
+/// 仍会把它计入 retainedCards，因此“被保留时”钩子也会正常触发。
 /// </summary>
-internal static class EunuchMessageClearOnLeaveHand
+[HarmonyPatch(typeof(CardModel), nameof(CardModel.OnTurnEndInHandWrapper))]
+internal static class EunuchEtherealTurnEndEffectPatch
 {
-	private static bool _initialized;
-
-	public static void Initialize()
+	private static void Prefix(CardModel __instance, out bool __state)
 	{
-		if (_initialized)
+		CardModel card = __instance;
+		__state = card.HasTurnEndInHandEffect
+			&& card.Keywords.Contains(CardKeyword.Ethereal)
+			&& card.Owner?.Creature.GetPower<ScriptEunuchPower>() is not null;
+		if (__state)
+		{
+			CardCmd.RemoveKeyword(card, CardKeyword.Ethereal);
+		}
+	}
+
+	private static void Postfix(
+		CardModel __instance,
+		bool __state,
+		ref Task __result)
+	{
+		if (__state)
+		{
+			__result = RestoreEtherealAndReturnToHandAsync(__result, __instance);
+		}
+	}
+
+	private static async Task RestoreEtherealAndReturnToHandAsync(
+		Task resolution,
+		CardModel card)
+	{
+		try
+		{
+			await resolution;
+		}
+		finally
+		{
+			if (!card.Keywords.Contains(CardKeyword.Ethereal))
+			{
+				CardCmd.ApplyKeyword(card, CardKeyword.Ethereal);
+			}
+		}
+
+		if (card.Pile?.Type == PileType.Hand)
 		{
 			return;
 		}
 
-		_initialized = true;
-		RitsuLibFramework.SubscribeLifecycle<CardMovedBetweenPilesEvent>(evt =>
-		{
-			if (evt.PreviousPile == PileType.Hand)
-			{
-				ScriptEunuchPower.ClearMarkIfPresent(evt.Card);
-			}
-		});
+		await CardPileCmd.Add(
+			card,
+			PileType.Hand,
+			CardPilePosition.Bottom,
+			clonedBy: null,
+			skipVisuals: true);
 	}
 }
 
 /// <summary>
-/// 口信描述提到保留：悬停口信后再跟一条原版保留提示（同虚无→消耗），卡面仍不写保留。
+/// 隐藏内部标记的提示；虚无被视为保留时，展示保留提示而非误导性的虚无/消耗提示。
 /// </summary>
 [HarmonyPatch(typeof(CardModel), "get_HoverTips")]
 [HarmonyPriority(int.MinValue)]
@@ -127,27 +152,23 @@ internal static class EunuchMessageRetainHoverTipPatch
 {
 	private static void Postfix(CardModel __instance, ref IEnumerable<IHoverTip> __result)
 	{
-		if (!__instance.HasEunuchMessage())
-		{
-			return;
-		}
-
-		IHoverTip retainTip = HoverTipFactory.FromKeyword(CardKeyword.Retain);
 		List<IHoverTip> tips = __result.ToList();
-		if (tips.Contains(retainTip))
+		if (__instance.HasEunuchMessage())
 		{
-			return;
+			IHoverTip genericMessageTip = HoverTipFactory.FromKeyword(SquKeywords.EunuchMessage);
+			tips.RemoveAll(tip => tip.Id == genericMessageTip.Id);
+			tips.Add(SquKeywords.CreateEunuchMessageHoverTip(__instance));
 		}
 
-		IHoverTip messageTip = HoverTipFactory.FromKeyword(SquKeywords.EunuchMessage);
-		int messageIndex = tips.IndexOf(messageTip);
-		if (messageIndex >= 0)
+		if (ScriptEunuchPower.TreatsEtherealAsRetain(__instance))
 		{
-			tips.Insert(messageIndex + 1, retainTip);
-		}
-		else
-		{
-			tips.Add(retainTip);
+			tips.Remove(HoverTipFactory.FromKeyword(CardKeyword.Ethereal));
+			tips.Remove(HoverTipFactory.FromKeyword(CardKeyword.Exhaust));
+			IHoverTip retainTip = HoverTipFactory.FromKeyword(CardKeyword.Retain);
+			if (!tips.Contains(retainTip))
+			{
+				tips.Add(retainTip);
+			}
 		}
 
 		__result = tips;

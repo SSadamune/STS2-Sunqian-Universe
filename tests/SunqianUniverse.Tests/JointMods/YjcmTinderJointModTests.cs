@@ -114,9 +114,8 @@ public sealed class YjcmTinderPartyJointModTests : YjcmTinderJointModTestSuite
 		CardModel[] cards =
 		[
 			Combat.CreateCard<BelovedPartner>(Player),
-			Combat.CreateCard<BowangParadoxScript>(Player),
+			Combat.CreateCard<BowangParadoxArsonScriptRecord>(Player),
 			Combat.CreateCard<BurnAfterReading>(Player),
-			Combat.CreateCard<BurningLinkedCampsScript>(Player),
 			Combat.CreateCard<DigRaid>(Player),
 			Combat.CreateCard<RelocateCapital>(Player),
 		];

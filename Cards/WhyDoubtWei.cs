@@ -25,10 +25,10 @@ namespace Squ.Cards;
 [RegisterCard(typeof(SunqianCardPool), StableEntryStem = "why_doubt_wei")]
 public sealed class WhyDoubtWei : ModCardTemplate
 {
-	public const int BaseDamage = 14;
+	public const int BaseDamage = 13;
 	public const int UpgradedDamage = 17;
-	public const int BaseBlock = 14;
-	public const int UpgradedBlock = 17;
+	public const int BaseBlock = 12;
+	public const int UpgradedBlock = BaseBlock;
 	public const int BaseStrength = 2;
 	public const int UpgradedStrength = 3;
 	public const int BaseWeak = 2;
@@ -125,7 +125,6 @@ public sealed class WhyDoubtWei : ModCardTemplate
 	protected override void OnUpgrade()
 	{
 		DynamicVars.Damage.UpgradeValueBy(UpgradedDamage - BaseDamage);
-		DynamicVars.Block.UpgradeValueBy(UpgradedBlock - BaseBlock);
 		DynamicVars[nameof(StrengthPower)].UpgradeValueBy(UpgradedStrength - BaseStrength);
 		DynamicVars[nameof(WeakPower)].UpgradeValueBy(UpgradedWeak - BaseWeak);
 	}

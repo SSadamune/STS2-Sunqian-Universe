@@ -2,6 +2,8 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Relics;
+using MegaCrit.Sts2.Core.Entities.Cards;
+using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.Helpers;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
@@ -16,16 +18,16 @@ using STS2RitsuLib.Scaffolding.Content;
 namespace Squ.Relics;
 
 /// <summary>
-/// 提词器：每有 3 次剧本失效，抽两张牌。
+/// 提词器：每将 3 张牌加入剧本集，抽两张牌。
 /// </summary>
 [RegisterRelic(typeof(SunqianRelicPool), StableEntryStem = "teleprompter")]
-public sealed class TeleprompterRelic : ScriptRelicTemplate, IScriptLiftHandler
+public sealed class TeleprompterRelic : ScriptRelicTemplate
 {
 	private const string ScriptAmountKey = "ScriptAmount";
 
 	private bool _isActivating;
 
-	private int _scriptsExhausted;
+	private int _scriptsAdded;
 
 	public override string FlashSfx => "event:/sfx/ui/relic_activate_draw";
 
@@ -39,7 +41,7 @@ public sealed class TeleprompterRelic : ScriptRelicTemplate, IScriptLiftHandler
 		{
 			if (!IsActivating)
 			{
-				return ScriptsExhausted;
+				return ScriptsAdded;
 			}
 
 			return DynamicVars[ScriptAmountKey].IntValue;
@@ -58,14 +60,14 @@ public sealed class TeleprompterRelic : ScriptRelicTemplate, IScriptLiftHandler
 	}
 
 	[SavedProperty(SerializationCondition.SaveIfNotTypeDefault)]
-	public int ScriptsExhausted
+	public int ScriptsAdded
 	{
-		get => _scriptsExhausted;
+		get => _scriptsAdded;
 		set
 		{
 			AssertMutable();
-			_scriptsExhausted = value;
-			Status = _scriptsExhausted == DynamicVars[ScriptAmountKey].IntValue - 1
+			_scriptsAdded = value;
+			Status = _scriptsAdded == DynamicVars[ScriptAmountKey].IntValue - 1
 				? RelicStatus.Active
 				: RelicStatus.Normal;
 			InvokeDisplayAmountChanged();
@@ -83,24 +85,26 @@ public sealed class TeleprompterRelic : ScriptRelicTemplate, IScriptLiftHandler
 		IconOutlinePath: "res://images/relics/TeleprompterRelicOutline.png",
 		BigIconPath: "res://images/relics/TeleprompterRelicBig.png");
 
-	public async Task OnScriptLiftAsync(ScriptLiftContext context)
+	public override async Task AfterCardChangedPiles(CardModel card, PileType oldPileType, AbstractModel? clonedBy)
 	{
-		ScriptsExhausted++;
-		await DrawIfThresholdMet(context.ChoiceContext);
+		if (card.Owner != Owner || oldPileType == ScriptSystem.ScriptCollectionPile
+			|| card.Pile?.Type != ScriptSystem.ScriptCollectionPile) return;
+		ScriptsAdded++;
+		await DrawIfThresholdMet(new BlockingPlayerChoiceContext());
 	}
 
 	private async Task DrawIfThresholdMet(PlayerChoiceContext choiceContext)
 	{
 		int threshold = DynamicVars[ScriptAmountKey].IntValue;
-		if (ScriptsExhausted < threshold)
+		if (ScriptsAdded < threshold)
 		{
 			return;
 		}
 
 		_ = TaskHelper.RunSafely(DoActivateVisuals());
-		int drawCount = ScriptsExhausted / threshold * DynamicVars.Cards.IntValue;
+		int drawCount = ScriptsAdded / threshold * DynamicVars.Cards.IntValue;
+		ScriptsAdded %= threshold;
 		await CardPileCmd.Draw(choiceContext, drawCount, Owner);
-		ScriptsExhausted %= threshold;
 	}
 
 	private async Task DoActivateVisuals()

@@ -1,18 +1,14 @@
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
-using Godot;
-using MegaCrit.Sts2.Core.Combat;
 using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.Entities.Creatures;
-using MegaCrit.Sts2.Core.Entities.Powers;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.HoverTips;
-using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.Powers;
-using Squ.Combat;
+using MegaCrit.Sts2.Core.ValueProps;
+using Squ.Cards;
 using STS2RitsuLib.Interop.AutoRegistration;
 using STS2RitsuLib.Scaffolding.Content;
 
@@ -21,107 +17,74 @@ using STS2RitsuLib.Scaffolding.Content;
 namespace Squ.Powers;
 
 /// <summary>
-/// 武关羽：记录一张牌实际支付的能量，并在整张牌结算后按比例给予活力。
+/// 武关羽：获得力量直到剧本失效；打出的攻击牌每消耗 1 点能量，获得等量于力量的格挡。
 /// </summary>
 [RegisterPower]
-public sealed class GuanYuMartialVerPower : ModPowerTemplate
+public sealed class GuanYuMartialVerPower : ScriptPowerTemplate
 {
-	public const string NormalFormsVarName = "NormalForms";
+    private decimal _grantedStrength;
 
-	public const string UpgradedFormsVarName = "UpgradedForms";
+    public override string MutuallyExclusiveGroup => GuanYuCivilVer.FormGroup;
 
-	private sealed class Data
-	{
-		public Dictionary<CardModel, int> PendingEnergySpent { get; } = [];
-	}
+    public override PowerAssetProfile AssetProfile => new(
+        IconPath: "res://images/powers/GuanYuMartialVerPower.png",
+        BigIconPath: "res://images/powers/GuanYuMartialVerPowerBig.png");
 
-	public override PowerType Type => PowerType.Buff;
+    protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
+    [
+        HoverTipFactory.FromPower<StrengthPower>(),
+        HoverTipFactory.Static(StaticHoverTip.Block),
+    ];
 
-	public override PowerStackType StackType => PowerStackType.Counter;
+    protected override async Task OnScriptApplied(Creature? applier, CardModel? cardSource)
+    {
+        if (Amount <= 0m)
+        {
+            return;
+        }
 
-	public override Color AmountLabelColor => PowerModel._normalAmountLabelColor;
+        _grantedStrength = Amount;
+        await PowerCmd.Apply<StrengthPower>(
+            ActivationChoiceContext,
+            Owner,
+            Amount,
+            Owner,
+            cardSource);
+    }
 
-	protected override IEnumerable<DynamicVar> CanonicalVars =>
-	[
-		new DynamicVar(NormalFormsVarName, 0),
-		new DynamicVar(UpgradedFormsVarName, 0),
-	];
+    public override async Task AfterCardPlayed(PlayerChoiceContext choiceContext, CardPlay cardPlay)
+    {
+        if (Owner.Player is not { } player
+            || Owner.IsDead
+            || cardPlay.Card.Type != CardType.Attack
+            || cardPlay.Card.Owner != player)
+        {
+            return;
+        }
 
-	public int NormalFormCount => DynamicVars[NormalFormsVarName].IntValue;
+        int energy = cardPlay.Resources.EnergySpent;
+        decimal strength = Owner.GetPower<StrengthPower>()?.Amount ?? 0m;
+        if (energy <= 0 || strength <= 0m)
+        {
+            return;
+        }
 
-	public int UpgradedFormCount => DynamicVars[UpgradedFormsVarName].IntValue;
+        Flash();
+        await CreatureCmd.GainBlock(Owner, strength * energy, ValueProp.Unpowered, cardPlay);
+    }
 
-	public int FormCount => NormalFormCount + UpgradedFormCount;
+    public override async Task AfterRemoved(Creature oldOwner)
+    {
+        if (_grantedStrength > 0m && !oldOwner.IsDead)
+        {
+            await PowerCmd.Apply<StrengthPower>(
+                new ThrowingPlayerChoiceContext(),
+                oldOwner,
+                -_grantedStrength,
+                oldOwner,
+                null);
+        }
 
-	public bool FormUpgraded => UpgradedFormCount > 0;
-
-	public override PowerAssetProfile AssetProfile => new(
-		IconPath: "res://images/powers/GuanYuMartialVerPower.png",
-		BigIconPath: "res://images/powers/GuanYuMartialVerPowerBig.png");
-
-	protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
-	[
-		HoverTipFactory.FromPower<VigorPower>(),
-		HoverTipFactory.ForEnergy(this),
-	];
-
-	public void SetFormCounts(int normalForms, int upgradedForms)
-	{
-		DynamicVars[NormalFormsVarName].BaseValue = normalForms;
-		DynamicVars[UpgradedFormsVarName].BaseValue = upgradedForms;
-	}
-
-	protected override object InitInternalData() => new Data();
-
-	public override async Task AfterCardPlayedLate(PlayerChoiceContext choiceContext, CardPlay cardPlay)
-	{
-		if (!cardPlay.IsLastInSeries || cardPlay.Card.Owner.Creature != Owner)
-		{
-			return;
-		}
-
-		Data data = GetInternalData<Data>();
-		data.PendingEnergySpent.Remove(cardPlay.Card, out int energySpent);
-		if (!Owner.IsDead && Amount > 0 && energySpent > 0)
-		{
-			Flash();
-			await PowerCmd.Apply<VigorPower>(
-				choiceContext,
-				Owner,
-				Amount * energySpent,
-				Owner,
-				cardPlay.Card);
-		}
-	}
-
-	public override Task AfterEnergySpent(CardModel card, int energySpent)
-	{
-		TrackEnergySpent(card, energySpent);
-		return Task.CompletedTask;
-	}
-
-	public void TrackEnergySpent(CardModel card, int energySpent)
-	{
-		if (!Owner.IsDead
-			&& Amount > 0
-			&& energySpent > 0
-			&& card.Owner?.Creature == Owner)
-		{
-			GetInternalData<Data>().PendingEnergySpent[card] = energySpent;
-		}
-	}
-
-	public override async Task AfterSideTurnStart(
-		CombatSide side,
-		IReadOnlyList<Creature> participants,
-		ICombatState combatState)
-	{
-		if (side != Owner.Side || !participants.Contains(Owner) || Owner.IsDead)
-		{
-			return;
-		}
-
-		GetInternalData<Data>().PendingEnergySpent.Clear();
-		await GuanDiFormChoice.OfferRechoiceAsync(this, combatState);
-	}
+        await base.AfterRemoved(oldOwner);
+    }
 }
