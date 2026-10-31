@@ -25,6 +25,7 @@ public sealed class NeutralAmbushScriptTests : SunqianCombatTestSuite
         var salvos = PileType.Draw.GetPile(Player).Cards.OfType<SalvoStrike>().ToArray();
         Assert.Equal(NeutralAmbushScript.BoulderCount, rocks.Length);
         Assert.Equal(NeutralAmbushScript.SalvoStrikeCount, salvos.Length);
+        Assert.All(salvos, salvo => Assert.Equal(1, salvo.EnergyCost.Canonical));
         Assert.All(rocks.Cast<CardModel>().Concat(salvos.Cast<CardModel>()), card => Assert.True(card.IsUpgraded));
         AssertOnlyScript<ScriptNeutralAmbushPower>();
     }

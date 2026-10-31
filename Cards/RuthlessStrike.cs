@@ -23,32 +23,33 @@ using STS2RitsuLib.Scaffolding.Content;
 namespace Squ.Cards;
 
 /// <summary>
-/// 无情打击：造成穿透伤害。蓄能：手牌中每有一张己方牌被消耗，额外造成 1 次伤害。
+/// 无情打击：造成无视格挡的伤害，升级后改为穿透伤害。
+/// 蓄能：手牌中每有一张己方牌被消耗，额外造成 1 次伤害。
 /// </summary>
 [RegisterCard(typeof(SunqianCardPool), StableEntryStem = "ruthless_strike")]
 public sealed class RuthlessStrike : ChargeCardTemplate, IPenetratingDamageCard
 {
-	public const int CanonicalDamage = 8;
+	public const int CanonicalDamage = 9;
+	public const int UpgradedDamage = 11;
 	public const int BaseHits = 1;
-	public const int UpgradedHits = 2;
 
 	private static readonly ValueProp DamageProps = ValueProp.Move | ValueProp.Unblockable;
 
-	public bool DealsPenetratingDamage => true;
+	public bool DealsPenetratingDamage => IsUpgraded;
 
 	protected override IEnumerable<DynamicVar> CanonicalVars =>
 	[
 		new DamageVar(CanonicalDamage, DamageProps),
-		new ChargedRepeatVar(
-			BaseHits,
-			card => GetCanonicalHits(card)),
+		new ChargedRepeatVar(BaseHits, _ => BaseHits),
 	];
 
 	protected override HashSet<CardTag> CanonicalTags => [CardTag.Strike];
 
 	protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
 	[
-		HoverTipFactory.FromKeyword(SquKeywords.PiercingDamage),
+		DealsPenetratingDamage
+			? HoverTipFactory.FromKeyword(SquKeywords.PiercingDamage)
+			: HoverTipFactory.Static(StaticHoverTip.Block),
 		HoverTipFactory.FromKeyword(CardKeyword.Exhaust),
 	];
 
@@ -95,7 +96,7 @@ public sealed class RuthlessStrike : ChargeCardTemplate, IPenetratingDamageCard
 
 	protected override void OnUpgrade()
 	{
-		DynamicVars.Repeat.UpgradeValueBy(UpgradedHits - BaseHits);
+		DynamicVars.Damage.UpgradeValueBy(UpgradedDamage - CanonicalDamage);
 	}
 
 	public override Task AfterCardExhausted(
@@ -157,8 +158,5 @@ public sealed class RuthlessStrike : ChargeCardTemplate, IPenetratingDamageCard
 		RefreshCardVisuals();
 	}
 
-	private int CanonicalHits => GetCanonicalHits(this);
-
-	private static int GetCanonicalHits(CardModel card) =>
-		card.IsUpgraded ? UpgradedHits : BaseHits;
+	private int CanonicalHits => BaseHits;
 }

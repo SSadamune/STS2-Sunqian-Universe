@@ -22,10 +22,10 @@ using STS2RitsuLib.Scaffolding.Content;
 namespace Squ.Cards;
 
 [RegisterCard(typeof(SunqianCardPool), StableEntryStem = "bombard_chibi_script")]
-public sealed class BombardChibiScript : ScriptCardTemplate
+public sealed class BombardChibiScript : ScriptCardTemplate<BombardChibiScriptRecord>
 {
-	public const int BaseBurning = 8;
-	public const int UpgradedBurning = 11;
+	public const int BaseBurning = 7;
+	public const int UpgradedBurning = 9;
 	public const string StrengthLossVarName = "StrengthLoss";
 
 	protected override IEnumerable<DynamicVar> CanonicalVars =>
@@ -36,7 +36,7 @@ public sealed class BombardChibiScript : ScriptCardTemplate
 
 	protected override HashSet<CardTag> CanonicalTags => [SquCardTags.Script, SquCardTags.Burning];
 
-	protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
+	protected override IEnumerable<IHoverTip> AdditionalScriptHoverTips =>
 	[
 		HoverTipFactory.FromPower<BurningPower>(),
 		HoverTipFactory.FromPower<StrengthPower>(),
@@ -88,12 +88,7 @@ public sealed class BombardChibiScript : ScriptCardTemplate
 				this);
 		}
 
-		await PowerCmd.Apply<ScriptBombardChibiPower>(
-			choiceContext,
-			Owner.Creature,
-			1m,
-			Owner.Creature,
-			this);
+		await UnlockScriptAsync(choiceContext);
 	}
 
 	protected override void OnUpgrade()

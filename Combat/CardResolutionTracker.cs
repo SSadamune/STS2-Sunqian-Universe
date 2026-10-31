@@ -142,9 +142,11 @@ public static class CardResolutionTracker
 		try
 		{
 			await playTask;
+			await HeadsmanRewardTracker.ResolveAfterCardAsync(scope.Card);
 		}
 		finally
 		{
+			HeadsmanRewardTracker.Discard(scope.Card);
 			EndScope(scope);
 		}
 	}

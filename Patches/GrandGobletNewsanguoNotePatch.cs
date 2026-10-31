@@ -27,6 +27,7 @@ internal static class InteropPowerDescriptionPatch
 			case KeepVigorPower:
 			case CrossTheRiverPower:
 			case VigorAmplificationPower:
+			case GuanYuMartialVerPower:
 			case ScriptHeadsmanPower:
 			case ScriptXiliangSavagePower:
 				NewsanguoDrunkenMightEffect.AddOrText(__result);

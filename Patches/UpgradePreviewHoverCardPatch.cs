@@ -19,7 +19,8 @@ internal static class UpgradePreviewHoverCardPatch
 	[HarmonyPostfix]
 	private static void Postfix(NHoverTipCardContainer __instance, CardHoverTip cardTip)
 	{
-		if (cardTip.Card.UpgradePreviewType == CardUpgradePreviewType.None
+		if (!cardTip.Card.IsUpgraded
+			|| cardTip.Card.UpgradePreviewType == CardUpgradePreviewType.None
 			|| __instance.GetChildCount() == 0)
 		{
 			return;

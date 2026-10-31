@@ -129,6 +129,11 @@ public sealed class NeverHadTheseRelic : ModRelicTemplate
 	{
 		if (card.Owner == Owner && card.HasFamily())
 		{
+			if (card is FamilyCardTemplate familyCard)
+			{
+				familyCard.PlayExhaustSfx();
+			}
+
 			RemovedFamilyCards++;
 			switch (card)
 			{

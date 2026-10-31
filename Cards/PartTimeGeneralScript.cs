@@ -30,9 +30,12 @@ namespace Squ.Cards;
 /// 非初始 Strike 牌，作为不存在的牌对指定目标自动打出。
 /// </summary>
 [RegisterCard(typeof(SunqianCardPool), StableEntryStem = "part_time_general_script")]
-public sealed class PartTimeGeneralScript : ScriptCardTemplate
+public sealed class PartTimeGeneralScript : ScriptCardTemplate<PartTimeGeneralScriptRecord>
 {
 	protected override bool HasEnergyCostX => true;
+
+
+	protected override bool MergeScriptActivationKeywords => true;
 
 	public override IEnumerable<CardKeyword> CanonicalKeywords =>
 	[
@@ -41,9 +44,10 @@ public sealed class PartTimeGeneralScript : ScriptCardTemplate
 		CardKeyword.Exhaust,
 	];
 
-	protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
+	protected override IEnumerable<IHoverTip> AdditionalScriptHoverTips =>
 	[
 		HoverTipFactory.FromKeyword(SquKeywords.CountsAsPlayed),
+		HoverTipFactory.FromKeyword(SquKeywords.VariousStrikeCards),
 	];
 
 	public override CardAssetProfile AssetProfile => new(
@@ -117,17 +121,9 @@ public sealed class PartTimeGeneralScript : ScriptCardTemplate
 			finale?.PlayOutro();
 		}
 
-		var scriptPower = (ScriptPartTimeGeneralPower)ModelDb
-			.Power<ScriptPartTimeGeneralPower>()
-			.ToMutable();
-		scriptPower.RecordPlayedCards(playedCards);
-		await PowerCmd.Apply(
+		await UnlockScriptAsync(
 			choiceContext,
-			scriptPower,
-			Owner.Creature,
-			1m,
-			Owner.Creature,
-			this);
+			configureRecord: record => record.RecordPlayedCards(playedCards));
 	}
 
 	private static async Task PlayStrikeShakeAsync()
@@ -155,6 +151,5 @@ public sealed class PartTimeGeneralScript : ScriptCardTemplate
 	}
 
 	private static bool IsEligibleStrike(CardModel card) =>
-		card.Type == CardType.Attack
-		&& card.Tags.Contains(CardTag.Strike);
+		card.Tags.Contains(CardTag.Strike);
 }

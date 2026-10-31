@@ -18,13 +18,13 @@ using STS2RitsuLib.Scaffolding.Content;
 
 namespace Squ.Cards;
 
-/// <summary>诸葛孔明的忧虑：升级后可在敌人均无攻击意图时保留格挡至下一回合。</summary>
+/// <summary>诸葛孔明的忧虑：升级后在下两个回合开始时保留格挡。</summary>
 [RegisterCard(typeof(SunqianCardPool), StableEntryStem = "worry_without_worry")]
 public sealed class WorryWithoutWorry : ModCardTemplate
 {
 	public const int ImmediateBlock = 3;
 	public const int NextTurnBlock = 12;
-	public const int BlurAmount = 1;
+	public const int BlurAmount = 2;
 
 	private const string NextTurnBlockVar = "BlockNextTurn";
 

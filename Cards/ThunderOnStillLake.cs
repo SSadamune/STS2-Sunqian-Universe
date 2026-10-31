@@ -26,7 +26,7 @@ namespace Squ.Cards;
 /// 蓄能：被攻击时降费；消耗活力后增加等量伤害。打出后解除。
 /// </summary>
 [RegisterCard(typeof(SunqianCardPool), StableEntryStem = "thunder_on_still_lake")]
-public sealed class ThunderOnStillLake : ChargeCardTemplate
+public sealed class ThunderOnStillLake : ChargeCardTemplate, IRowKeywordsCard
 {
 	public const int CanonicalDamage = 1;
 
@@ -58,6 +58,8 @@ public sealed class ThunderOnStillLake : ChargeCardTemplate
 		CardKeyword.Retain,
 		.. base.CanonicalKeywords,
 	];
+
+	IEnumerable<CardKeyword> IRowKeywordsCard.KeywordsBelowRules => [CardKeyword.Retain];
 
 	protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
 	[

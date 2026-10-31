@@ -203,9 +203,9 @@ internal static class SquSfx
 	public const string TooKindToBeTrueFaultIsMineEvent = "event:/sunqian_universe/sfx/长厚似伪-错在于我，连累三军";
 	public const string TooKindToBeTrueNothingToDoWithYouEvent = "event:/sunqian_universe/sfx/长厚似伪-与列位断然无关";
 	public const string TooKindToBeTrueTriggerEvent = "event:/sunqian_universe/sfx/长厚似伪-为何老替他说话";
-	public const string SunqianScriptFrequentAppearanceEvent = "event:/sunqian_universe/sfx/孙乾剧本-每一集基本都有登场";
-	public const string SunqianScriptRareTrueFormEvent = "event:/sunqian_universe/sfx/孙乾剧本-难得以本体形态登场";
-	public const string SunqianScriptRemovedEvent = "event:/sunqian_universe/sfx/孙乾剧本-好生侍候先生";
+	public const string SunqianScriptActivatedEvent = "event:/sunqian_universe/sfx/孙乾剧本-好生侍候先生";
+	public const string GruntScriptActivatedEvent = "event:/sunqian_universe/sfx/杂兵-尔等何人";
+	public const string KillingIntentPerceptionPlayEvent = "event:/sunqian_universe/sfx/杀意感知-你听，是什么声音";
 	public const string WrapUp155Event = "event:/sunqian_universe/sfx/收工-差不多就到这里了155";
 	public const string WrapUp269Event = "event:/sunqian_universe/sfx/收工-差不多就到这里了269";
 	public const string WrapUp47Event = "event:/sunqian_universe/sfx/收工-差不多就到这里了47";
@@ -253,7 +253,8 @@ internal static class SquSfx
 	public const string ChickenFootCheeseScriptWangPingEvent = "event:/sunqian_universe/sfx/鸡脚芝士-王平";
 	public const string SlightRevisionEvent = "event:/sunqian_universe/sfx/稍作修改-好方略，不过我想稍作修改";
 	public const string SunqianHurtEvent = "event:/sunqian_universe/sfx/孙乾-受击";
-	public const string SunqianUniverseManyFormsEvent = "event:/sunqian_universe/sfx/孙乾宇宙-孙乾变化万千，以各种形态登场";
+	public const string SunqianUniverseEnterCourtEvent = "event:/sunqian_universe/sfx/孙乾-孙乾上堂";
+	public const string MetamorphosisPlayEvent = "event:/sunqian_universe/sfx/孙乾宇宙-孙乾变化万千，以各种形态登场";
 	public const string LittleThirdBigFourthEvent = "event:/sunqian_universe/sfx/三叔四伯-三叔四伯，不必多礼";
 	public const string TheBackupsBackupJianYongPlaysSunqianEvent = "event:/sunqian_universe/sfx/龙套的替身-孙乾由简雍来演";
 	public const string TheBackupsBackupSunqianPlaysHeadsmanEvent = "event:/sunqian_universe/sfx/龙套的替身-让简雍来演孙乾，孙乾演刀斧手";

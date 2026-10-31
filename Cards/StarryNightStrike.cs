@@ -21,7 +21,7 @@ namespace Squ.Cards;
 /// <see cref="CardModel.AfterAutoPostPlayPhaseEntered" /> + <see cref="CardCmd.AutoPlay" /> 模式）。
 /// </summary>
 [RegisterCard(typeof(SunqianCardPool), StableEntryStem = "starry_night_strike")]
-public sealed class StarryNightStrike : ModCardTemplate
+public class StarryNightStrike : ModCardTemplate
 {
 	public const int BaseDamage = 7;
 	public const int UpgradedDamage = 10;

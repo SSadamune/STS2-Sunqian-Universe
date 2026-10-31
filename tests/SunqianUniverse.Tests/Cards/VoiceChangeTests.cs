@@ -2,6 +2,7 @@ using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.Models.Characters;
 using MegaCrit.Sts2.Core.Models.Monsters;
 using Squ.Cards;
+using Squ.Powers;
 using TestTheSpire;
 using Xunit;
 
@@ -20,6 +21,7 @@ public sealed class VoiceChangeTests : SunqianCombatTestSuite
     [Fact]
     public async Task Upgraded_voice_change_returns_only_the_selected_exhausted_script_to_hand()
     {
+        await Play(await AddToHand<ServantScript>());
         var first = await AddCardToPile<SunqianScript>(PileType.Exhaust);
         var selected = await AddCardToPile<XiliangSavageScript>(PileType.Exhaust);
         var selector = new ScriptedCardSelector().ThenSelect(selected);
@@ -33,10 +35,11 @@ public sealed class VoiceChangeTests : SunqianCombatTestSuite
         AssertInPile(selected, PileType.Hand);
         Assert.True(selected.IsUpgraded);
         AssertInPile(first, PileType.Exhaust);
+        Assert.NotNull(Player.Creature.GetPower<ScriptServantPower>());
     }
 
     [Fact]
-    public async Task VoiceChange_upgrades_and_returns_the_only_exhausted_script_to_draw_top()
+    public async Task VoiceChange_returns_the_only_exhausted_script_and_upgrades_it()
     {
         var exhaustedScript = await AddCardToPile<SunqianScript>(PileType.Exhaust);
         var voiceChange = await AddToHand<VoiceChange>();

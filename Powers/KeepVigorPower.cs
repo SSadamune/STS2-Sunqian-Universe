@@ -148,7 +148,8 @@ public class KeepVigorPower : ModPowerTemplate
 			return;
 		}
 
-		decimal vigorToRestore = resourceSpend.GetRestorableVigor();
+		// Each refund effect restores its own recorded debit, independently of other refunds.
+		decimal vigorToRestore = resourceSpend.VigorSpent;
 		if (vigorToRestore > 0m)
 		{
 			await PowerCmd.Apply<VigorPower>(

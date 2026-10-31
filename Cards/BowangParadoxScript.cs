@@ -12,6 +12,8 @@ using Squ;
 using Squ.Audio;
 using Squ.Character;
 using Squ.Powers;
+using Squ.Script;
+using Squ.Combat;
 using STS2RitsuLib.Interop.AutoRegistration;
 using STS2RitsuLib.Scaffolding.Content;
 
@@ -20,11 +22,12 @@ using STS2RitsuLib.Scaffolding.Content;
 namespace Squ.Cards;
 
 [RegisterCard(typeof(SunqianCardPool), StableEntryStem = "bowang_paradox_script")]
-public sealed class BowangParadoxScript : ScriptCardTemplate
+public sealed class BowangParadoxScript : ScriptCardTemplate<BowangParadoxAdvanceScriptRecord>
 {
-	public const int BaseVigor = 6;
+	protected override bool MergeScriptActivationKeywords => false;
+	public const int BaseVigor = 7;
 	public const int UpgradedVigor = 9;
-	public const int BaseTinderStacks = 6;
+	public const int BaseTinderStacks = 7;
 	public const int UpgradedTinderStacks = 9;
 
 	protected override IEnumerable<DynamicVar> CanonicalVars =>
@@ -33,12 +36,9 @@ public sealed class BowangParadoxScript : ScriptCardTemplate
 		new PowerVar<TinderPower>(BaseTinderStacks),
 	];
 
-	protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
+	protected override IEnumerable<IHoverTip> AdditionalScriptHoverTips =>
 	[
-		HoverTipFactory.FromPower<VigorPower>(),
-		..HoverTipFactory.FromPowerWithPowerHoverTips<TinderPower>(),
-		HoverTipFactory.FromPower<BurningPower>(),
-		HoverTipFactory.FromKeyword(CardKeyword.Retain),
+		HoverTipFactory.FromKeyword(SquKeywords.ScriptCollection),
 	];
 
 	public override IEnumerable<CardKeyword> CanonicalKeywords =>
@@ -58,28 +58,28 @@ public sealed class BowangParadoxScript : ScriptCardTemplate
 	protected override async Task PlayScriptAsync(PlayerChoiceContext choiceContext, CardPlay cardPlay)
 	{
 		SquSfx.Play(SquSfx.BowangParadoxPlayEvent);
-		await PowerCmd.Apply<VigorPower>(
-			choiceContext,
-			Owner.Creature,
-			DynamicVars[nameof(VigorPower)].BaseValue,
-			Owner.Creature,
-			this);
-
-		List<CardModel> attackCards = PileType.Hand.GetPile(Owner).Cards
-			.Where(card => card.Type == CardType.Attack && !card.ShouldRetainThisTurn)
-			.ToList();
-		if (attackCards.Count > 0)
+		var advance = await ScriptSystem.PrepareScriptUpdateAsync<BowangParadoxAdvanceScriptRecord>(
+			this, DynamicVars[nameof(VigorPower)].BaseValue);
+		var arson = await ScriptSystem.PrepareScriptUpdateAsync<BowangParadoxArsonScriptRecord>(
+			this, DynamicVars[nameof(TinderPower)].BaseValue);
+		await BowangParadoxChoice.OfferAsync(choiceContext, Owner, async () =>
 		{
-			await CardCmd.DiscardAndDraw(choiceContext, attackCards, 0);
-		}
-
-		await PowerCmd.Apply<ScriptBowangParadoxPower>(
-			choiceContext,
-			Owner.Creature,
-			1m,
-			Owner.Creature,
-			this);
+			await advance.CommitAsync();
+			await arson.CommitAsync();
+		});
 	}
+
+	internal override IEnumerable<ScriptRecordCardTemplate> CreateScriptRecordPreviews()
+	{
+		var advance = (BowangParadoxAdvanceScriptRecord)ModelDb.Card<BowangParadoxAdvanceScriptRecord>().ToMutable();
+		var arson = (BowangParadoxArsonScriptRecord)ModelDb.Card<BowangParadoxArsonScriptRecord>().ToMutable();
+		advance.PreviewFrom(this);
+		arson.PreviewFrom(this);
+		return [advance, arson];
+	}
+
+	internal override int GetScriptPowerAmountForPreview() =>
+		(int)DynamicVars[nameof(VigorPower)].BaseValue;
 
 	protected override void OnUpgrade()
 	{

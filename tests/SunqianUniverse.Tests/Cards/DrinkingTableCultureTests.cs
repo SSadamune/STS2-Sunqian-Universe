@@ -1,7 +1,11 @@
 using MegaCrit.Sts2.Core.Entities.Cards;
+using MegaCrit.Sts2.Core.HoverTips;
+using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.Characters;
 using MegaCrit.Sts2.Core.Models.Monsters;
+using Squ;
 using Squ.Cards;
+using Squ.Character;
 using TestTheSpire;
 using Xunit;
 
@@ -27,5 +31,23 @@ public sealed class DrinkingTableCultureTests : SunqianCombatTestSuite
     {
         var card = Upgrade(await AddToHand<DrinkingTableCulture>());
         Assert.DoesNotContain(CardKeyword.Exhaust, card.Keywords);
+    }
+
+    [Fact]
+    public void Hover_preview_is_upgraded_wine_with_enthralled_and_does_not_change_the_real_card()
+    {
+        var card = Combat.CreateCard<DrinkingTableCulture>(Player);
+        CardModel preview = Assert.Single(
+            card.HoverTips.OfType<CardHoverTip>()
+                .Where(tip => tip.Card is Wine)).Card;
+
+        Assert.True(preview.IsUpgraded);
+        Assert.Contains(SquKeywords.Enthralled, preview.Keywords);
+        Assert.DoesNotContain(SquKeywords.Enthralled, ModelDb.Card<Wine>().Keywords);
+        Assert.Same(ModelDb.CardPool<SunqianCardPool>(), preview.VisualCardPool);
+        var realWine = (Wine)ModelDb.Card<Wine>().ToMutable();
+        Upgrade(realWine);
+        Assert.Equal(realWine.Title, preview.Title);
+        Assert.Contains(realWine.GetDescriptionForPile(PileType.Hand), preview.GetDescriptionForPile(PileType.Hand));
     }
 }

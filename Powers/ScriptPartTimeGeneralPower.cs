@@ -11,8 +11,12 @@ using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.Localization;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.Models;
+using MegaCrit.Sts2.Core.Models.Enchantments;
 using MegaCrit.Sts2.Core.Nodes.Combat;
 using Squ.Audio;
+using Squ.Cards;
+using Squ.Combat;
+using Squ.Script;
 using STS2RitsuLib.Interop.AutoRegistration;
 using STS2RitsuLib.Scaffolding.Content;
 
@@ -21,19 +25,16 @@ using STS2RitsuLib.Scaffolding.Content;
 namespace Squ.Powers;
 
 /// <summary>
-/// 剧本：兼职将军。记录卡牌打出时生成的 Strike；剧本失效后让持有者从记录中
-/// 选择一种，并将同升级状态的新副本加入手牌。
+/// 剧本：兼职将军。失效时从打出记录创建带随机附魔的新副本供选择，保留原记录。
 /// </summary>
 [RegisterPower]
 public sealed class ScriptPartTimeGeneralPower : ScriptPowerTemplate
 {
 	public const string RecordedCardsVarName = "RecordedCards";
 
-	private sealed record RecordedCard(ModelId Id, bool Upgraded);
-
 	private sealed class Data
 	{
-		public List<RecordedCard> PlayedCards { get; } = [];
+		public PartTimeGeneralScriptRecord? Record;
 	}
 
 	private static readonly LocString SelectionPrompt =
@@ -49,32 +50,24 @@ public sealed class ScriptPartTimeGeneralPower : ScriptPowerTemplate
 	];
 
 	protected override string SmartDescriptionLocKey =>
-		IsMutable && GetInternalData<Data>().PlayedCards.Count > 0
+		IsMutable && GetInternalData<Data>().Record?.RecordedCards.Count > 0
 			? Id.Entry + ".smartDescription"
 			: Id.Entry + ".smartDescriptionEmpty";
 
 	protected override object InitInternalData() => new Data();
 
-	internal void RecordPlayedCards(IEnumerable<CardModel> cards)
+	internal void AttachRecord(PartTimeGeneralScriptRecord record)
 	{
-		List<CardModel> cardList = cards.ToList();
 		Data data = GetInternalData<Data>();
-		foreach (CardModel card in cardList)
-		{
-			data.PlayedCards.Add(new RecordedCard(card.Id, card.IsUpgraded));
-		}
-
-		string separator = new LocString(
-			"powers",
-			Id.Entry + ".cardSeparator").GetFormattedText() ?? ", ";
-		((StringVar)DynamicVars[RecordedCardsVarName]).StringValue = string.Join(
-			separator,
-			cardList.Select(card => $"[gold]{card.Title}[/gold]"));
+		data.Record = record;
+		((StringVar)DynamicVars[RecordedCardsVarName]).StringValue =
+			record.DynamicVars[RecordedCardsVarName].ToString();
 	}
 
 	public override async Task AfterRemoved(Creature oldOwner)
 	{
-		if (oldOwner is { IsAlive: true, Player: { } player, CombatState: { } combatState }
+		if (!SuppressScriptEndEffects
+			&& oldOwner is { IsAlive: true, Player: { } player, CombatState: { } combatState }
 			&& !CombatManager.Instance.IsOverOrEnding)
 		{
 			SquSfx.Play(SquSfx.PartTimeGeneralBothSidesEvent);
@@ -84,10 +77,33 @@ public sealed class ScriptPartTimeGeneralPower : ScriptPowerTemplate
 		await base.AfterRemoved(oldOwner);
 	}
 
+	internal static int GetEnchantmentTier(int roll, bool upgraded) => upgraded
+		? (roll < 10 ? 1 : roll < 70 ? 2 : 3)
+		: (roll < 40 ? 1 : roll < 80 ? 2 : 3);
+
+	internal static AttackEnchantmentPool.EnchantmentSpec RollEnchantment(
+		CardModel card, bool upgraded, MegaCrit.Sts2.Core.Random.Rng rng)
+	{
+		if (!card.EnergyCost.CostsX && card.EnergyCost.Canonical >= 3 && rng.NextInt(100) < 30)
+		{
+			return AttackEnchantmentPool.SlitherSpec;
+		}
+
+		int tier = GetEnchantmentTier(rng.NextInt(100), upgraded);
+		return rng.NextItem(AttackEnchantmentPool.GetTierPool(tier)
+			.Concat(AttackEnchantmentPool.GetUniversalPool(tier)));
+	}
+
 	private async Task ChooseRecordedCard(ICombatState combatState, Player player)
 	{
-		List<RecordedCard> recordedCards = GetInternalData<Data>().PlayedCards
-			.Distinct()
+		PartTimeGeneralScriptRecord? record = GetInternalData<Data>().Record;
+		if (record is null)
+		{
+			return;
+		}
+
+		List<CardModel> recordedCards = record.RecordedCards
+			.Select(CardModel.FromSerializable)
 			.ToList();
 		if (recordedCards.Count == 0)
 		{
@@ -95,23 +111,24 @@ public sealed class ScriptPartTimeGeneralPower : ScriptPowerTemplate
 		}
 
 		List<CardModel> options = [];
-		foreach (RecordedCard recorded in recordedCards)
+		foreach (CardModel recorded in recordedCards)
 		{
 			CardModel option = combatState.CreateCard(
 				ModelDb.GetById<CardModel>(recorded.Id),
 				player);
-			if (recorded.Upgraded && option.IsUpgradable)
+			if (recorded.IsUpgraded && option.IsUpgradable)
 			{
 				option.UpgradeInternal();
 				option.FinalizeUpgradeInternal();
 			}
 
+			var spec = RollEnchantment(option, record.SourceUpgraded, player.RunState.Rng.CombatCardGeneration);
+			AttackEnchantmentPool.ApplySpec(option, spec);
 			options.Add(option);
 		}
 
 		var prefs = new CardSelectorPrefs(SelectionPrompt, 1)
 		{
-			RequireManualConfirmation = true,
 			PretendCardsCanBePlayed = true,
 		};
 		CardModel? selected = (await CardSelectCmd.FromSimpleGrid(

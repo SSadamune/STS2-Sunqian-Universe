@@ -22,14 +22,14 @@ using STS2RitsuLib.Scaffolding.Content;
 namespace Squ.Cards;
 
 /// <summary>
-/// 夜袭乌巢剧本：将两张附带消耗的星夜打击加入手牌；可叠层剧本使「打击」名卡牌额外给予灼烧。
+/// 夜袭乌巢剧本：将两张附带消耗的星夜打击加入手牌；已解锁时强化剧本，使「打击」名卡牌额外给予更多灼烧。
 /// </summary>
 [RegisterCard(typeof(SunqianCardPool), StableEntryStem = "night_raid_wuchao_script")]
-public sealed class NightRaidWuchaoScript : ScriptCardTemplate
+public sealed class NightRaidWuchaoScript : ScriptCardTemplate<NightRaidWuchaoScriptRecord>
 {
 	public const int GeneratedStrikeCount = 2;
 	public const int BaseBurning = 3;
-	public const int UpgradedBurning = 4;
+	public const int UpgradedBurning = 5;
 
 	protected override IEnumerable<DynamicVar> CanonicalVars =>
 	[
@@ -44,10 +44,8 @@ public sealed class NightRaidWuchaoScript : ScriptCardTemplate
 		CardKeyword.Exhaust,
 	];
 
-	protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
+	protected override IEnumerable<IHoverTip> AdditionalScriptHoverTips =>
 	[
-		..SquCardHoverTipFactory.FromCardWithCardHoverTips<StarryNightStrike>(this, IsUpgraded),
-		HoverTipFactory.FromKeyword(SquKeywords.StackableScript),
 		HoverTipFactory.FromPower<BurningPower>(),
 		HoverTipFactory.FromKeyword(CardKeyword.Exhaust),
 	];
@@ -78,13 +76,11 @@ public sealed class NightRaidWuchaoScript : ScriptCardTemplate
 		}
 
 		decimal burningAmount = DynamicVars[nameof(BurningPower)].BaseValue;
-		await PowerCmd.Apply<ScriptNightRaidWuchaoPower>(
-			choiceContext,
-			player.Creature,
-			burningAmount,
-			player.Creature,
-			this);
+		await UnlockScriptAsync(choiceContext, burningAmount);
 	}
+
+	internal override int GetScriptPowerAmountForPreview() =>
+		(int)DynamicVars[nameof(BurningPower)].BaseValue;
 
 	protected override void OnUpgrade()
 	{

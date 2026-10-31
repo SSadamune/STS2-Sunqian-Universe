@@ -62,10 +62,10 @@ public sealed class DefenseAwareDebuffPreviewInteropTests : SunqianCombatTestSui
         AssertPowerOrder(enemy, poison, burning);
 
         int hpBefore = enemy.CurrentHp;
-        HealthBarForecastSegment? poisonSegment = GetOrderedPoisonPreviews(poison)
-            .SingleOrDefault();
+        // HealthBarForecastSegment is a struct: SingleOrDefault returns a zero
+        // struct for an empty sequence, not a nullable with no value.
+        Assert.Empty(GetOrderedPoisonPreviews(poison));
         HealthBarForecastSegment burningSegment = GetBurningPreview(burning);
-        Assert.Null(poisonSegment);
         Assert.Equal(4, burningSegment.Amount);
         Assert.Equal(1, burningSegment.Order);
         Assert.Equal(hpBefore, enemy.CurrentHp);
@@ -87,6 +87,65 @@ public sealed class DefenseAwareDebuffPreviewInteropTests : SunqianCombatTestSui
         Assert.Equal(hpBefore, enemy.CurrentHp);
         Assert.Equal(1, enemy.GetPower<BufferPower>()?.Amount);
         Assert.Equal(3, poison.Amount);
+    }
+
+    [Fact]
+    public async Task Enemy_turn_start_Burning_and_Poison_reset_defenses_before_they_share_them()
+    {
+        Creature enemy = EnemyAt(0);
+        await ApplyPower<HardenedShellPower>(enemy, 20);
+        await CreatureCmd.Damage(
+            new ThrowingPlayerChoiceContext(),
+            enemy,
+            12m,
+            ValueProp.Unblockable | ValueProp.Unpowered,
+            null,
+            null);
+        await CreatureCmd.GainBlock(enemy, 6m, ValueProp.Unpowered, null);
+        BurningPower burning = await ApplyAndGet<BurningPower>(enemy, 10);
+        PoisonPower poison = await ApplyAndGet<PoisonPower>(enemy, 15);
+        AssertPowerOrder(enemy, burning, poison);
+        HardenedShellPower shell = Assert.IsType<HardenedShellPower>(
+            enemy.GetPower<HardenedShellPower>());
+        Assert.Equal(8, shell.DisplayAmount);
+
+        int hpBefore = enemy.CurrentHp;
+        HealthBarForecastSegment burningSegment = GetBurningPreview(burning);
+        HealthBarForecastSegment poisonSegment = GetOrderedPoisonPreview(poison);
+
+        Assert.Equal(10, burningSegment.Amount);
+        Assert.Equal(10, poisonSegment.Amount);
+        Assert.True(burningSegment.Order < poisonSegment.Order);
+        Assert.Equal(6, enemy.Block);
+        Assert.Equal(8, shell.DisplayAmount);
+        Assert.Equal(hpBefore, enemy.CurrentHp);
+    }
+
+    [Fact]
+    public async Task Player_turn_end_Burning_keeps_current_defenses_while_Poison_uses_the_next_turn()
+    {
+        Creature player = Player.Creature;
+        await ApplyPower<HardenedShellPower>(player, 20);
+        await CreatureCmd.Damage(
+            new ThrowingPlayerChoiceContext(),
+            player,
+            12m,
+            ValueProp.Unblockable | ValueProp.Unpowered,
+            null,
+            null);
+        await CreatureCmd.GainBlock(player, 6m, ValueProp.Unpowered, null);
+        BurningPower burning = await ApplyAndGet<BurningPower>(player, 10);
+        PoisonPower poison = await ApplyAndGet<PoisonPower>(player, 15);
+        HardenedShellPower shell = Assert.IsType<HardenedShellPower>(
+            player.GetPower<HardenedShellPower>());
+        Assert.Equal(8, shell.DisplayAmount);
+
+        int hpBefore = player.CurrentHp;
+        Assert.Equal(4, CalculateBurningPreview(burning));
+        Assert.Equal(15, CalculatePoisonUiPreview(poison));
+        Assert.Equal(6, player.Block);
+        Assert.Equal(8, shell.DisplayAmount);
+        Assert.Equal(hpBefore, player.CurrentHp);
     }
 
     [Fact]
@@ -176,8 +235,13 @@ public sealed class DefenseAwareDebuffPreviewInteropTests : SunqianCombatTestSui
         return Assert.IsType<TPower>(target.GetPower<TPower>());
     }
 
-    private static int CalculateBurningPreview(BurningPower burning) =>
-        GetBurningPreview(burning).Amount;
+    private static int CalculateBurningPreview(BurningPower burning)
+    {
+        var segments = burning.GetHealthBarForecastSegments(new(burning.Owner)).ToArray();
+        Assert.InRange(segments.Length, 0, 1);
+        // Zero predicted HP loss intentionally has no visible health-bar segment.
+        return segments.Sum(segment => segment.Amount);
+    }
 
     private static HealthBarForecastSegment GetBurningPreview(BurningPower burning) =>
         Assert.Single(burning.GetHealthBarForecastSegments(new(burning.Owner)));

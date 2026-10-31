@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
@@ -6,7 +7,6 @@ using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.Models.CardPools;
-using MegaCrit.Sts2.Core.Models.Powers;
 using MegaCrit.Sts2.Core.ValueProps;
 using Squ.Audio;
 using Squ.Character;
@@ -20,20 +20,12 @@ namespace Squ.Cards;
 [RegisterCard(typeof(TokenCardPool), StableEntryStem = "throw_him_out")]
 public sealed class ThrowHimOut : ModCardTemplate
 {
-	public const int BaseBlock = 4;
-	public const int UpgradedBlock = 5;
-	public const int BaseVigor = 2;
-	public const int UpgradedVigor = 3;
+	public const int BaseDamage = 4;
+	public const int UpgradedDamage = 6;
 
 	protected override IEnumerable<DynamicVar> CanonicalVars =>
 	[
-		new BlockVar(BaseBlock, ValueProp.Move),
-		new PowerVar<VigorPower>(BaseVigor),
-	];
-
-	protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
-	[
-		HoverTipFactory.FromPower<VigorPower>(),
+		new DamageVar(BaseDamage, ValueProp.Move),
 	];
 
 	public override bool GainsBlock => true;
@@ -47,25 +39,27 @@ public sealed class ThrowHimOut : ModCardTemplate
 	];
 
 	public ThrowHimOut()
-		: base(0, CardType.Skill, CardRarity.Token, TargetType.Self)
+		: base(0, CardType.Attack, CardRarity.Token, TargetType.AnyEnemy)
 	{
 	}
 
 	protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
 	{
+		System.ArgumentNullException.ThrowIfNull(cardPlay.Target, nameof(cardPlay.Target));
 		SquSfx.PlayRandom(RunState, SquSfx.ForkOutGetUpEvent, SquSfx.ForkOutWalkEvent);
-		await CreatureCmd.GainBlock(Owner.Creature, DynamicVars.Block, cardPlay);
-		await PowerCmd.Apply<VigorPower>(
-			choiceContext,
-			Owner.Creature,
-			DynamicVars[nameof(VigorPower)].BaseValue,
-			Owner.Creature,
-			this);
+		var attack = await DamageCmd.Attack(DynamicVars.Damage.BaseValue)
+			.FromCard(this, cardPlay)
+			.Targeting(cardPlay.Target)
+			.WithHitFx("vfx/vfx_attack_slash")
+			.Execute(choiceContext);
+		int damageDealt = attack.Results
+			.SelectMany(results => results)
+			.Sum(result => result.TotalDamage + result.OverkillDamage);
+		await CreatureCmd.GainBlock(Owner.Creature, damageDealt, ValueProp.Move, cardPlay);
 	}
 
 	protected override void OnUpgrade()
 	{
-		DynamicVars.Block.UpgradeValueBy(UpgradedBlock - BaseBlock);
-		DynamicVars[nameof(VigorPower)].UpgradeValueBy(UpgradedVigor - BaseVigor);
+		DynamicVars.Damage.UpgradeValueBy(UpgradedDamage - BaseDamage);
 	}
 }

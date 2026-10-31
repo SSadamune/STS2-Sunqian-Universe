@@ -4,6 +4,7 @@ using MegaCrit.Sts2.Core.Models.CardPools;
 using MegaCrit.Sts2.Core.Models.Cards;
 using MegaCrit.Sts2.Core.Models.Characters;
 using MegaCrit.Sts2.Core.Models.Monsters;
+using MegaCrit.Sts2.Core.HoverTips;
 using Squ.Cards;
 using Squ.Powers;
 using TestTheSpire;
@@ -22,6 +23,24 @@ public sealed class MetamorphosisTests : SunqianCombatTestSuite
 
     protected override void ConfigureBattle(CombatTestBattleBuilder battle) =>
         battle.Player<Ironclad>().AddEnemy<BigDummy>().WithSeed("metamorphosis");
+
+    [Fact]
+    public void Potentially_useful_is_gold_and_has_a_resource_and_combat_hover_tip()
+    {
+        var card = ModelDb.Card<Squ.Cards.Metamorphosis>();
+        AssertTip(card);
+        var upgraded = (Squ.Cards.Metamorphosis)card.ToMutable();
+        upgraded.UpgradeInternal();
+        AssertTip(upgraded);
+
+        static void AssertTip(CardModel card)
+        {
+            Assert.Contains("[gold]可能有用[/gold]", card.GetDescriptionForPile(PileType.Deck));
+            HoverTip tip = Assert.Single(card.HoverTips.OfType<HoverTip>()
+                .Where(tip => tip.Title == "可能有用"));
+            Assert.Equal("取决于资源和战况，会出现不同的备选牌。", tip.Description);
+        }
+    }
 
     [Fact]
     public async Task Upgrade_adds_selected_upgraded_card_and_records_its_character_pool()

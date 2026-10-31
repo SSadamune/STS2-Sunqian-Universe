@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
+using MegaCrit.Sts2.Core.HoverTips;
 using Squ.Audio;
 using Squ.Character;
 using Squ.Powers;
@@ -18,8 +19,15 @@ public sealed class BenevolenceRighteousnessDualSwords : ModCardTemplate
 {
 	public const int ExtraPlaysPerCard = 1;
 
+	public override IEnumerable<CardKeyword> CanonicalKeywords => [CardKeyword.Ethereal];
+
 	public override CardAssetProfile AssetProfile => new(
 		PortraitPath: "res://images/cards/BenevolenceRighteousnessDualSwords.png");
+
+	protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
+	[
+		HoverTipFactory.FromKeyword(SquKeywords.VariousStrikeCards),
+	];
 
 	public BenevolenceRighteousnessDualSwords()
 		: base(2, CardType.Power, CardRarity.Rare, TargetType.Self)

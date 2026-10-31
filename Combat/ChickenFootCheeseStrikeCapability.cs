@@ -22,7 +22,8 @@ public sealed class ChickenFootCheeseStrikeCapability : CardCapability, ICardDes
 
 	public IEnumerable<CardDescriptionFragment> GetDescriptionFragments(CardDescriptionContext context)
 	{
-		if (!ScriptChickenFootCheesePower.ShouldDisplayRedirectedBasicStrike(context.Card))
+		if (context.PileType is not (PileType.Hand or PileType.Play)
+			|| !ScriptChickenFootCheesePower.ShouldDisplayRedirectedBasicStrike(context.Card))
 		{
 			yield break;
 		}
@@ -41,9 +42,19 @@ public sealed class ChickenFootCheeseStrikeCapability : CardCapability, ICardDes
 			MegaCrit.Sts2.Core.Entities.Creatures.Creature? target,
 			bool runGlobalHooks)
 		{
-			BaseValue = card.Owner?.Creature?.GetPower<ScriptChickenFootCheesePower>()?.FollowUpDamage
-				?? ScriptChickenFootCheesePower.BaseFollowUpDamage;
-			base.UpdateCardPreview(card, previewMode, target, runGlobalHooks);
+			if (!ScriptChickenFootCheesePower.ShouldDisplayRedirectedBasicStrike(card))
+			{
+				ResetToBase();
+				return;
+			}
+
+			decimal followUp = card.Owner.Creature.GetPower<ScriptChickenFootCheesePower>()!.FollowUpDamage;
+			// Capability BaseValue is saved and checksummed. Local UI previews must
+			// only copy display fields, including the baseline for damage highlighting.
+			var preview = new DamageVar(Name, followUp, Props);
+			preview.UpdateCardPreview(card, previewMode, target, runGlobalHooks);
+			EnchantedValue = preview.EnchantedValue;
+			PreviewValue = preview.PreviewValue;
 		}
 	}
 }

@@ -6,7 +6,7 @@
 /android/
 .builds/
 .decompile/
-lib/sts2.dll
+lib/*.dll
 .export/
 tools/
 .sts2probe/
@@ -14,11 +14,36 @@ tools/
 # .NET test/build outputs
 **/bin/
 **/obj/
+**/TestResults/
+/tests/TestTheSpire.*/
+*.binlog
+
+# Local IDE settings
+.vs/
+.idea/
+.vscode/
+*.user
+*.suo
+*.sln.docstates
+
+# Local backups and temporary files
+*.old
+*.bak
+*.tmp
+*.temp
+*.log
+*~
+/tmp/
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# Godot export credentials
+.godot/export_credentials.cfg
 
 # Python bytecode caches
 **/__pycache__/
 **/*.pyc
 
-# Godot auto-generated metadata (recreated by editor on import)
-**/*.cs.uid
-**/*.import
+# Keep source-side .uid and .import metadata in Git: these preserve resource
+# identities and import settings. Generated import caches live in .godot/.

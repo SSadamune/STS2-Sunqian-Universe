@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using Godot;
 using MegaCrit.Sts2.Core.Entities.Creatures;
@@ -15,11 +14,17 @@ using STS2RitsuLib.Scaffolding.Content;
 namespace Squ.Powers;
 
 /// <summary>
-/// 剧本能力基类：获得新的剧本能力时，先前的剧本能力会失效。
+/// 剧本能力基类：由 ScriptSystem 按激活上限与互斥组协调共存、替换和失效。
+/// 替换时先完整结算旧剧本失效，再更新记录并激活新剧本。
 /// </summary>
 public abstract class ScriptPowerTemplate : ModPowerTemplate
 {
-	private List<ScriptPowerTemplate>? _scriptsToReplace;
+	public virtual bool CountsTowardActivationLimit => true;
+
+	public virtual string? MutuallyExclusiveGroup => null;
+	private int _suppressLiftDepth;
+	private int _suppressEndEffectsDepth;
+	private PlayerChoiceContext? _activationChoiceContext;
 
 	public override PowerType Type => PowerType.Buff;
 
@@ -31,53 +36,65 @@ public abstract class ScriptPowerTemplate : ModPowerTemplate
 
 	protected override IEnumerable<string> RegisteredKeywordIds => [SquKeywords.ScriptId];
 
-	public sealed override async Task BeforeApplied(
-		Creature target,
-		decimal amount,
-		Creature? applier,
-		CardModel? cardSource)
-	{
-		// Keep the outgoing script alive until this power has been initialized and
-		// attached. Its lift effects can draw or auto-play cards, which the incoming
-		// script must be able to observe.
-		_scriptsToReplace = target.Powers
-			.OfType<ScriptPowerTemplate>()
-			.Where(ShouldReplaceActiveScript)
-			.ToList();
-		await base.BeforeApplied(target, amount, applier, cardSource);
-	}
+	internal bool SuppressScriptEndEffects => _suppressEndEffectsDepth > 0;
+
+	protected PlayerChoiceContext ActivationChoiceContext =>
+		_activationChoiceContext ?? new BlockingPlayerChoiceContext();
 
 	public sealed override async Task AfterApplied(Creature? applier, CardModel? cardSource)
 	{
-		await base.AfterApplied(applier, cardSource);
-		await OnScriptApplied(applier, cardSource);
-
-		List<ScriptPowerTemplate> scriptsToReplace = _scriptsToReplace ?? [];
-		_scriptsToReplace = null;
-		foreach (ScriptPowerTemplate active in scriptsToReplace)
+		try
 		{
-			if (Owner.Powers.Contains(active))
-			{
-				await ScriptSystem.RemoveScriptPowerAsync(active);
-			}
+			await base.AfterApplied(applier, cardSource);
+			await OnScriptApplied(applier, cardSource);
+		}
+		finally
+		{
+			_activationChoiceContext = null;
 		}
 	}
 
-	protected virtual bool ShouldReplaceActiveScript(ScriptPowerTemplate active) => true;
-
 	/// <summary>
-	/// Initializes script-specific state before the outgoing script is lifted.
+	/// Initializes script-specific state when the new power is applied, after
+	/// ScriptSystem has removed any conflicting or replaced powers.
 	/// </summary>
 	protected virtual Task OnScriptApplied(Creature? applier, CardModel? cardSource) =>
 		Task.CompletedTask;
+
+	internal void SetActivationChoiceContext(PlayerChoiceContext choiceContext) =>
+		_activationChoiceContext = choiceContext;
 
 	public override async Task AfterRemoved(Creature oldOwner)
 	{
 		await base.AfterRemoved(oldOwner);
 
-		if (!ScriptSystem.SuppressLiftNotification)
+		if (_suppressLiftDepth == 0)
 		{
 			await ScriptSystem.NotifyScriptLiftedAsync(oldOwner, new ThrowingPlayerChoiceContext());
+		}
+	}
+
+	internal void BeginRemoval(bool notifyLift, bool resolveEndEffects)
+	{
+		if (!notifyLift)
+		{
+			_suppressLiftDepth++;
+		}
+		if (!resolveEndEffects)
+		{
+			_suppressEndEffectsDepth++;
+		}
+	}
+
+	internal void EndRemoval(bool notifyLift, bool resolveEndEffects)
+	{
+		if (!resolveEndEffects)
+		{
+			_suppressEndEffectsDepth--;
+		}
+		if (!notifyLift)
+		{
+			_suppressLiftDepth--;
 		}
 	}
 }

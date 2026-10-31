@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
@@ -11,6 +11,7 @@ using Squ.Audio;
 using Squ.Character;
 using Squ.Combat;
 using Squ.Powers;
+using Squ.Script;
 using STS2RitsuLib.Interop.AutoRegistration;
 using STS2RitsuLib.Scaffolding.Content;
 
@@ -19,21 +20,10 @@ using STS2RitsuLib.Scaffolding.Content;
 namespace Squ.Cards;
 
 [RegisterCard(typeof(SunqianCardPool), StableEntryStem = "burning_linked_camps_script")]
-public sealed class BurningLinkedCampsScript : ScriptCardTemplate
+public sealed class BurningLinkedCampsScript : ScriptCardTemplate<BurningLinkedCampsScriptRecord>
 {
-	public const int TinderStacks = 5;
-
-	public const int UpgradedTinderStacks = 8;
-
-	protected override IEnumerable<DynamicVar> CanonicalVars =>
+	protected override IEnumerable<IHoverTip> AdditionalScriptHoverTips =>
 	[
-		new PowerVar<TinderPower>(TinderStacks),
-	];
-
-	protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
-	[
-		..HoverTipFactory.FromPowerWithPowerHoverTips<TinderPower>(
-			(int)DynamicVars[nameof(TinderPower)].BaseValue),
 		HoverTipFactory.FromCard<Burn>(),
 		SquCardHoverTipFactory.FromCard<ShangfangguSigh>(this, IsUpgraded),
 	];
@@ -55,24 +45,20 @@ public sealed class BurningLinkedCampsScript : ScriptCardTemplate
 	protected override async Task PlayScriptAsync(PlayerChoiceContext choiceContext, CardPlay cardPlay)
 	{
 		SquSfx.Play(SquSfx.EmperorKnowsNoWarEvent);
-		decimal tinderStacks = DynamicVars[nameof(TinderPower)].BaseValue;
-		await PowerCmd.Apply<TinderPower>(
-			choiceContext,
-			Owner.Creature,
-			tinderStacks,
-			Owner.Creature,
-			this);
+		var combatState = Owner.Creature.CombatState
+			?? throw new System.InvalidOperationException("BurningLinkedCampsScript requires an active combat.");
+		await GeneratedCombatCards.AddToHandInCombat<Burn>(
+			combatState,
+			Owner,
+			upgraded: false,
+			Owner);
+		await GeneratedCombatCards.AddToDrawPileInCombat<ShangfangguSigh>(
+			combatState,
+			Owner,
+			1,
+			IsUpgraded,
+			Owner);
 
-		await PowerCmd.Apply<ScriptBurningLinkedCampsPower>(
-			choiceContext,
-			Owner.Creature,
-			1m,
-			Owner.Creature,
-			this);
-	}
-
-	protected override void OnUpgrade()
-	{
-		DynamicVars[nameof(TinderPower)].UpgradeValueBy(UpgradedTinderStacks - TinderStacks);
+		await UnlockScriptAsync(choiceContext);
 	}
 }

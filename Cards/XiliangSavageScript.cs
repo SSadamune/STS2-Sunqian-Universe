@@ -21,12 +21,12 @@ using STS2RitsuLib.Scaffolding.Content;
 namespace Squ.Cards;
 
 [RegisterCard(typeof(SunqianCardPool), StableEntryStem = "xiliang_savage_script")]
-public sealed class XiliangSavageScript : ScriptCardTemplate
+public sealed class XiliangSavageScript : ScriptCardTemplate<XiliangSavageScriptRecord>
 {
-	public const int BaseBlock = 11;
-	public const int UpgradedBlock = 16;
-	public const int BaseVigor = 4;
-	public const int UpgradedVigor = 6;
+	public const int BaseBlock = 16;
+	public const int UpgradedBlock = 21;
+	public const int BaseVigor = 5;
+	public const int UpgradedVigor = 8;
 
 	protected override IEnumerable<DynamicVar> CanonicalVars =>
 	[
@@ -36,7 +36,7 @@ public sealed class XiliangSavageScript : ScriptCardTemplate
 
 	public override bool GainsBlock => true;
 
-	protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
+	protected override IEnumerable<IHoverTip> AdditionalScriptHoverTips =>
 	[
 		HoverTipFactory.FromPower<VigorPower>(),
 		..NewsanguoDrunkenMightEffect.HoverTips(),
@@ -58,7 +58,7 @@ public sealed class XiliangSavageScript : ScriptCardTemplate
 		PortraitPath: "res://images/cards/XiliangSavageScript.png");
 
 	public XiliangSavageScript()
-		: base(2, CardType.Skill, CardRarity.Uncommon, TargetType.Self, true)
+		: base(3, CardType.Skill, CardRarity.Uncommon, TargetType.Self, true)
 	{
 	}
 
@@ -66,20 +66,10 @@ public sealed class XiliangSavageScript : ScriptCardTemplate
 	{
 		SquSfx.Play(SquSfx.XiliangSavageEvent);
 		await CreatureCmd.GainBlock(Owner.Creature, DynamicVars.Block, cardPlay);
+		await PowerCmd.Apply<VigorPower>(choiceContext, Owner.Creature,
+			DynamicVars[nameof(VigorPower)].BaseValue, Owner.Creature, this);
 
-		await PowerCmd.Apply<VigorPower>(
-			choiceContext,
-			Owner.Creature,
-			DynamicVars[nameof(VigorPower)].BaseValue,
-			Owner.Creature,
-			this);
-
-		await PowerCmd.Apply<ScriptXiliangSavagePower>(
-			choiceContext,
-			Owner.Creature,
-			1m,
-			Owner.Creature,
-			this);
+		await UnlockScriptAsync(choiceContext);
 	}
 
 	protected override void OnUpgrade()

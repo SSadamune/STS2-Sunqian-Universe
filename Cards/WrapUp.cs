@@ -22,16 +22,11 @@ namespace Squ.Cards;
 public sealed class WrapUp : ModCardTemplate
 {
 	public const int BaseVigor = 3;
-	public const int UpgradedVigor = 4;
-	public const int BaseWrapVigor = 2;
-	public const int UpgradedWrapVigor = 4;
-
-	private const string WrapVigorVarName = "WrapVigor";
+	public const int UpgradedVigor = 5;
 
 	protected override IEnumerable<DynamicVar> CanonicalVars =>
 	[
 		new PowerVar<VigorPower>(BaseVigor),
-		new DynamicVar(WrapVigorVarName, BaseWrapVigor),
 	];
 
 	public override IEnumerable<CardKeyword> CanonicalKeywords =>
@@ -59,18 +54,17 @@ public sealed class WrapUp : ModCardTemplate
 	protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
 	{
 		SquSfx.PlayRandom(RunState, SquSfx.WrapUpEvents);
-		bool wrap = await ScriptSystem.TryConsumeWrapAsync(Owner.Creature);
+		bool wrap = await ScriptSystem.TryConsumeWrapAsync(choiceContext, Owner.Creature);
 		await ApplyVigor(choiceContext, DynamicVars[nameof(VigorPower)].BaseValue);
 		if (wrap)
 		{
-			await ApplyVigor(choiceContext, DynamicVars[WrapVigorVarName].BaseValue);
+			await PlayerCmd.GainEnergy(1m, Owner);
 		}
 	}
 
 	protected override void OnUpgrade()
 	{
 		DynamicVars[nameof(VigorPower)].UpgradeValueBy(UpgradedVigor - BaseVigor);
-		DynamicVars[WrapVigorVarName].UpgradeValueBy(UpgradedWrapVigor - BaseWrapVigor);
 	}
 
 	private Task ApplyVigor(PlayerChoiceContext choiceContext, decimal amount) =>

@@ -13,9 +13,19 @@ namespace Squ.Combat;
 /// </summary>
 public static class SquCardHoverTipFactory
 {
-	public static IHoverTip FromCard<TTarget>(CardModel source, bool targetUpgraded)
+	public static IHoverTip FromCard<TTarget>(
+		CardModel source, bool targetUpgraded, params CardKeyword[] additionalKeywords)
+		where TTarget : CardModel
+	{
+		CardModel preview = CreatePreview(source, ModelDb.Card<TTarget>(), targetUpgraded);
+		foreach (CardKeyword keyword in additionalKeywords) preview.AddKeyword(keyword);
+		return new CardHoverTip(preview);
+	}
+
+	/// <summary>A fixed generated-card preview, independent of the source's upgrade preview.</summary>
+	public static IHoverTip FromCard<TTarget>(bool targetUpgraded, params CardKeyword[] additionalKeywords)
 		where TTarget : CardModel =>
-		new CardHoverTip(CreatePreview(source, ModelDb.Card<TTarget>(), targetUpgraded));
+		FromCard<TTarget>(ModelDb.Card<TTarget>(), targetUpgraded, additionalKeywords);
 
 	public static IHoverTip FromCard(
 		CardModel source,

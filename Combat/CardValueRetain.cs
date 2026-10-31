@@ -105,12 +105,23 @@ public static class CardValueRetain
 				.Distinct();
 			foreach (decimal offset in offsets)
 			{
-				List<KeyValuePair<string, DynamicVar>> matches = damageVars
-					.Where(pair => pair.Value.BaseValue == rawDamage - offset)
-					.ToList();
-				if (matches.Count == 1)
+				string? match = null;
+				foreach (KeyValuePair<string, DynamicVar> pair in damageVars)
 				{
-					return matches[0].Key;
+					if (pair.Value.BaseValue != rawDamage - offset)
+					{
+						continue;
+					}
+					if (match is not null)
+					{
+						match = null;
+						break; // Ambiguous offset: try the next one, preserving its priority.
+					}
+					match = pair.Key;
+				}
+				if (match is not null)
+				{
+					return match;
 				}
 			}
 		}

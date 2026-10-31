@@ -2,6 +2,7 @@ using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.Characters;
 using MegaCrit.Sts2.Core.Models.Events;
 using MegaCrit.Sts2.Core.Models.Monsters;
+using Squ.Cards;
 using Squ.Character;
 using STS2RitsuLib.Scaffolding.Characters;
 using TestTheSpire;
@@ -23,6 +24,19 @@ public sealed class SunqianCardPoolTests : SunqianCombatTestSuite
 
         Assert.IsAssignableFrom<IModColorfulPhilosophersCardPool>(cardPool);
         Assert.Equal("sunqian", cardPool.EnergyColorName);
+    }
+
+    [Fact]
+    public void Starting_deck_contains_twelve_cards_with_two_basic_scripts()
+    {
+        var deck = ModelDb.Character<SunqianCharacter>().StartingDeck;
+
+        Assert.Equal(12, deck.Count());
+        Assert.Equal(5, deck.OfType<StrikeLongtao>().Count());
+        Assert.Equal(4, deck.OfType<DefendLongtao>().Count());
+        Assert.Single(deck.OfType<GruntScript>());
+        Assert.Single(deck.OfType<SunqianScript>());
+        Assert.Single(deck.OfType<WrapUp>());
     }
 
     [Fact]

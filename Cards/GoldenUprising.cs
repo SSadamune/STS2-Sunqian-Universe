@@ -31,8 +31,11 @@ public sealed class GoldenUprising : ModCardTemplate
 	public const int UpgradedCardPickCount = 3;
 	public const int MaxCandidateCount = 18;
 
+	internal const string SelectionPromptKey =
+		"SUNQIAN_UNIVERSE_CARD_GOLDEN_UPRISING.selectionScreenPrompt";
+
 	private static readonly LocString SelectionPrompt =
-		new("cards", "SUNQIAN_UNIVERSE_CARD_GOLDEN_UPRISING.selectionScreenPrompt");
+		new("cards", SelectionPromptKey);
 
 	protected override IEnumerable<DynamicVar> CanonicalVars =>
 	[
@@ -78,7 +81,10 @@ public sealed class GoldenUprising : ModCardTemplate
 			choiceContext,
 			candidates,
 			Owner,
-			new CardSelectorPrefs(SelectionPrompt, pickCount));
+			new CardSelectorPrefs(SelectionPrompt, pickCount)
+			{
+				RequireManualConfirmation = true,
+			});
 
 		foreach (CardModel card in selected)
 		{

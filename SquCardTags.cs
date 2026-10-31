@@ -43,17 +43,6 @@ public static class SquCardTags
 	public static bool IsBurningCard(CardModel? card) =>
 		card?.Tags.Contains(Burning) == true;
 
-	/// <summary>
-	/// 能造成 <see cref="BurningPower"/> 的卡牌。
-	/// 夜袭乌巢生效时，其持有者的 <see cref="CardTag.Strike"/> 攻击牌也视为灼烧牌，
-	/// 但不会修改卡牌的实际标签集合。
-	/// </summary>
-	public static bool AppliesBurning(CardModel card) =>
-		IsBurningCard(card) || HasNightRaidBurning(card);
-
-	private static bool HasNightRaidBurning(CardModel card) =>
-		card.IsMutable
-		&& card.Type == CardType.Attack
-		&& card.Tags.Contains(CardTag.Strike)
-		&& card.Owner?.Creature?.GetPower<ScriptNightRaidWuchaoPower>() is { Amount: > 0 };
+	/// <summary>能直接给予灼烧的卡牌；剧本在伤害后追加的灼烧不属于牌本身的效果。</summary>
+	public static bool AppliesBurning(CardModel card) => IsBurningCard(card);
 }

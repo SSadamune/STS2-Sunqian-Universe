@@ -104,7 +104,7 @@ public sealed class JuggleMultipleShoots : ModCardTemplate
 
 	protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
 	{
-		bool wrap = await ScriptSystem.TryConsumeWrapAsync(Owner.Creature);
+		bool wrap = await ScriptSystem.TryConsumeWrapAsync(choiceContext, Owner.Creature);
 
 		int remainingEnergy = Owner.PlayerCombatState?.Energy ?? 0;
 		int energyBudget = remainingEnergy + (wrap ? 1 : 0);
@@ -276,6 +276,9 @@ public sealed class JuggleMultipleShoots : ModCardTemplate
 	private static bool IsEligiblePower(CardModel card, int maxCost) =>
 		card.Type == CardType.Power
 		&& !card.EnergyCost.CostsX
+		// 龙套演员没有常规辉星来源；能量预算也不包含辉星费用。
+		&& !card.HasStarCostX
+		&& card.CanonicalStarCost <= 0
 		&& GetCanonicalEnergyCost(card) <= maxCost
 		&& !SquCardTags.IsCharacterMechanicBound(card)
 		&& !ExcludedOtherCharacterPowers.Contains(card.GetType());

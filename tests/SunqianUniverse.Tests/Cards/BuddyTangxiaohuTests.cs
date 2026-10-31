@@ -15,7 +15,13 @@ public sealed class BuddyTangxiaohuTests : SunqianCombatTestSuite
     public async Task Script_card_triggers_unpowered_block()
     {
         await Play(Upgrade(await AddToHand<BuddyTangxiaohu>()));
-        await Play(await AddToHand<BowangParadoxScript>());
+        var selector = new ScriptedCardSelector()
+            .ThenSelectWhere(card => card is BowangParadoxAdvanceScriptRecord);
+        using (UseCardSelector(selector))
+        {
+            await PlayAndActivateScript(await AddToHand<BowangParadoxScript>());
+        }
+        AssertAllSelectionsConsumed(selector);
 
         Assert.Equal(BuddyTangxiaohu.UpgradedBlock, Player.Creature.Block);
         CardTestAssertions.AssertPowerAmount<BuddyTangxiaohuPower>(Player.Creature, BuddyTangxiaohu.UpgradedBlock);

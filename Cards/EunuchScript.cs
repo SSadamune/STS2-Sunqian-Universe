@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
@@ -19,23 +18,19 @@ using STS2RitsuLib.Scaffolding.Content;
 namespace Squ.Cards;
 
 [RegisterCard(typeof(SunqianCardPool), StableEntryStem = "eunuch_script")]
-public sealed class EunuchScript : ScriptCardTemplate
+public sealed class EunuchScript : ScriptCardTemplate<EunuchScriptRecord>
 {
 	public const int BaseDraw = 2;
 	public const int UpgradedDraw = 3;
-
-	private List<CardModel>? _drawnCardsForCurrentPlay;
-
-	internal IReadOnlyList<CardModel> DrawnCardsForCurrentPlay =>
-		_drawnCardsForCurrentPlay ?? [];
 
 	protected override IEnumerable<DynamicVar> CanonicalVars =>
 	[
 		new CardsVar(BaseDraw),
 	];
 
-	protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
+	protected override IEnumerable<IHoverTip> AdditionalScriptHoverTips =>
 	[
+		HoverTipFactory.FromKeyword(CardKeyword.Ethereal),
 		HoverTipFactory.FromKeyword(CardKeyword.Retain),
 		HoverTipFactory.FromKeyword(CardKeyword.Exhaust),
 	];
@@ -57,25 +52,16 @@ public sealed class EunuchScript : ScriptCardTemplate
 	protected override async Task PlayScriptAsync(PlayerChoiceContext choiceContext, CardPlay cardPlay)
 	{
 		SquSfx.Play(SquSfx.EunuchScriptEvent);
-		List<CardModel> drawn = (await CardPileCmd.Draw(
+		IEnumerable<CardModel> drawn = await CardPileCmd.Draw(
 			choiceContext,
-			DynamicVars.Cards.BaseValue,
-			Owner)).ToList();
+			DynamicVars.Cards.IntValue,
+			Owner);
+		foreach (CardModel card in drawn)
+		{
+			ScriptEunuchPower.ApplyTemporaryEthereal(card);
+		}
 
-		try
-		{
-			_drawnCardsForCurrentPlay = drawn;
-			await PowerCmd.Apply<ScriptEunuchPower>(
-				choiceContext,
-				Owner.Creature,
-				1m,
-				Owner.Creature,
-				this);
-		}
-		finally
-		{
-			_drawnCardsForCurrentPlay = null;
-		}
+		await UnlockScriptAsync(choiceContext);
 	}
 
 	protected override void OnUpgrade()

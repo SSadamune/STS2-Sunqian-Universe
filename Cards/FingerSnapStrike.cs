@@ -24,7 +24,7 @@ namespace Squ.Cards;
 /// <see cref="CardEnergyCost.SetThisCombat"/> + 随机耗能动画）。打出后解除。
 /// </summary>
 [RegisterCard(typeof(SunqianCardPool), StableEntryStem = "finger_snap_strike")]
-public sealed class FingerSnapStrike : ChargeCardTemplate
+public sealed class FingerSnapStrike : ChargeCardTemplate, IRowKeywordsCard
 {
 	public const int BaseDamage = 13;
 	public const int UpgradedDamage = 18;
@@ -48,6 +48,8 @@ public sealed class FingerSnapStrike : ChargeCardTemplate
 		CardKeyword.Retain,
 		.. base.CanonicalKeywords,
 	];
+
+	IEnumerable<CardKeyword> IRowKeywordsCard.KeywordsBelowRules => [CardKeyword.Retain];
 
 	protected override string ChargeEffectLocKey => Id.Entry + ".chargeEffect";
 

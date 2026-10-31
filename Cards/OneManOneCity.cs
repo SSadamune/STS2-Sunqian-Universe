@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
@@ -18,7 +18,7 @@ using STS2RitsuLib.Scaffolding.Content;
 namespace Squ.Cards;
 
 [RegisterCard(typeof(SunqianCardPool), StableEntryStem = "one_man_one_city")]
-public sealed class OneManOneCity : ScriptCardTemplate
+public sealed class OneManOneCity : ScriptCardTemplate<OneManOneCityScriptRecord>
 {
 	public const int PlatingStacks = 6;
 
@@ -29,7 +29,7 @@ public sealed class OneManOneCity : ScriptCardTemplate
 		new PowerVar<PlatingPower>(PlatingStacks),
 	];
 
-	protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
+	protected override IEnumerable<IHoverTip> AdditionalScriptHoverTips =>
 	[
 		..HoverTipFactory.FromPowerWithPowerHoverTips<PlatingPower>(
 			(int)DynamicVars[nameof(PlatingPower)].BaseValue),
@@ -58,12 +58,7 @@ public sealed class OneManOneCity : ScriptCardTemplate
 			Owner.Creature,
 			this);
 
-		await PowerCmd.Apply<ScriptOneManOneCityPower>(
-			choiceContext,
-			Owner.Creature,
-			1m,
-			Owner.Creature,
-			this);
+		await UnlockScriptAsync(choiceContext);
 	}
 
 	protected override void OnUpgrade()

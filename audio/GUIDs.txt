@@ -117,6 +117,7 @@
 {49c3296f-398d-4545-993f-34d485f8fdc1} event:/sunqian_universe/sfx/好哥们唐小虎-主子爷，小的叫人给打了
 {5f87023b-60a9-433b-ba74-757bed0bbe25} event:/sunqian_universe/sfx/好哥们胡兄-胡兄是哪位
 {9444a2c9-fa64-40e9-9882-800b762303d3} event:/sunqian_universe/sfx/孙乾-受击
+{18e0a7be-177c-43be-aba1-9e9c8fc00d2b} event:/sunqian_universe/sfx/孙乾-孙乾上堂
 {37163d3e-14e2-4e6d-b1bb-c35391e3f025} event:/sunqian_universe/sfx/孙乾剧本-好生侍候先生
 {8a9b9ac9-3c76-4590-b9a3-a888f7e2d1ae} event:/sunqian_universe/sfx/孙乾剧本-每一集基本都有登场
 {93c44f10-5781-46a4-952a-96c8e615eaf2} event:/sunqian_universe/sfx/孙乾剧本-难得以本体形态登场
@@ -173,6 +174,8 @@
 {5fc21be5-ab07-46b0-82b6-ff3d16ef2d50} event:/sunqian_universe/sfx/星夜打击-星夜驰援于你
 {b68c8b92-2549-43f1-9695-0994e1ebfe34} event:/sunqian_universe/sfx/星夜打击-星夜驰援于我
 {277d450e-51b3-416a-a78f-4b1b4c02aa8e} event:/sunqian_universe/sfx/朕不知兵
+{1855df3b-07e8-4099-a44e-6ce8e74dcab0} event:/sunqian_universe/sfx/杀意感知-你听，是什么声音
+{5b7e1fb5-7650-4479-be9f-f60ed632cbc9} event:/sunqian_universe/sfx/杂兵-尔等何人
 {a036961c-fabb-450f-803c-4f8d760fca58} event:/sunqian_universe/sfx/来者不善-刘什么，关什么，没听说过，袁将军请你们了吗
 {a8267ac1-9784-49ad-b4eb-d3be28e7be2b} event:/sunqian_universe/sfx/来者不善-来者何人？快去叫袁绍出来接驾，我大哥前来会盟啦
 {f86a81fc-a4d1-447f-874b-881b56fac957} event:/sunqian_universe/sfx/来者不善-（突然一拳）打你个不长眼的！给我拿下

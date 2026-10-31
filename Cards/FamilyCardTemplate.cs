@@ -7,6 +7,7 @@ using MegaCrit.Sts2.Core.Entities.Creatures;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.Models;
 using Squ.Audio;
+using Squ.Combat;
 using STS2RitsuLib.Scaffolding.Content;
 
 #nullable enable
@@ -87,12 +88,17 @@ public abstract class FamilyCardTemplate : ModCardTemplate
 			return;
 		}
 
+		PlayExhaustSfx();
+
+		await ResolveAdditionalExhaust(choiceContext, causedByEthereal);
+	}
+
+	internal void PlayExhaustSfx()
+	{
 		if (ExhaustSfxEvent is { } eventPath)
 		{
 			SquSfx.Play(eventPath);
 		}
-
-		await ResolveAdditionalExhaust(choiceContext, causedByEthereal);
 	}
 
 	public override async Task AfterSideTurnEnd(
@@ -100,7 +106,8 @@ public abstract class FamilyCardTemplate : ModCardTemplate
 		CombatSide side,
 		IEnumerable<Creature> participants)
 	{
-		if (CombatState is not { } combatState)
+		if (CombatState is not { } combatState
+			|| TurnEndCardCoordinator.HasEarlierPileCard<FamilyCardTemplate>(this))
 		{
 			return;
 		}

@@ -17,20 +17,24 @@ namespace Squ;
 /// </summary>
 public static class SquKeywords
 {
+	public static readonly string MaterialReuseId = ModContentRegistry
+		.GetQualifiedKeywordId(SquMod.ModId, "material_reuse");
+	public static readonly CardKeyword MaterialReuse = MaterialReuseId.GetModCardKeyword();
+
 	public static readonly string ScriptId = ModContentRegistry
 		.GetQualifiedKeywordId(SquMod.ModId, "script");
 
 	public static readonly CardKeyword Script = ScriptId.GetModCardKeyword();
 
+	public static readonly string ScriptCollectionId = ModContentRegistry
+		.GetQualifiedKeywordId(SquMod.ModId, "script_collection");
+
+	public static readonly CardKeyword ScriptCollection = ScriptCollectionId.GetModCardKeyword();
+
 	public static readonly string DoomKillThresholdId = ModContentRegistry
 		.GetQualifiedKeywordId(SquMod.ModId, "doom_kill_threshold");
 
 	public static readonly CardKeyword DoomKillThreshold = DoomKillThresholdId.GetModCardKeyword();
-
-	public static readonly string StackableScriptId = ModContentRegistry
-		.GetQualifiedKeywordId(SquMod.ModId, "stackable_script");
-
-	public static readonly CardKeyword StackableScript = StackableScriptId.GetModCardKeyword();
 
 	public static readonly string MultiTargetId = ModContentRegistry
 		.GetQualifiedKeywordId(SquMod.ModId, "multi_target");
@@ -61,6 +65,16 @@ public static class SquKeywords
 		.GetQualifiedKeywordId(SquMod.ModId, "counts_as_played");
 
 	public static readonly CardKeyword CountsAsPlayed = CountsAsPlayedId.GetModCardKeyword();
+
+	public static readonly string VariousStrikeCardsId = ModContentRegistry
+		.GetQualifiedKeywordId(SquMod.ModId, "various_strike_cards");
+
+	public static readonly CardKeyword VariousStrikeCards = VariousStrikeCardsId.GetModCardKeyword();
+
+	public static readonly string VariousDefendCardsId = ModContentRegistry
+		.GetQualifiedKeywordId(SquMod.ModId, "various_defend_cards");
+
+	public static readonly CardKeyword VariousDefendCards = VariousDefendCardsId.GetModCardKeyword();
 
 	public static readonly string EunuchMessageId = ModContentRegistry
 		.GetQualifiedKeywordId(SquMod.ModId, "eunuch_message");
@@ -108,12 +122,39 @@ public static class SquKeywords
 
 	public static readonly CardKeyword SupremeGeneral = SupremeGeneralId.GetModCardKeyword();
 
+	public static IHoverTip CreateMaterialReuseHoverTip(string sourceCardTitle)
+	{
+		LocString description = new("card_keywords", "SUNQIAN_UNIVERSE_KEYWORD_MATERIAL_REUSE.cardHover");
+		description.Add("SourceCardName", sourceCardTitle);
+		return new HoverTip(ModKeywordRegistry.GetTitle(MaterialReuseId), description, icon: null);
+	}
+
 	public static IHoverTip CreateWarFeedsWarHoverTip(CardModel card)
 	{
 		LocString title = ModKeywordRegistry.GetTitle(WarFeedsWarId);
 		LocString description = new("card_keywords", "SUNQIAN_UNIVERSE_KEYWORD_WAR_FEEDS_WAR.cardHover");
 		description.Add("CardName", card.Title);
 		return new HoverTip(title, description, icon: null);
+	}
+
+	public static IHoverTip CreateEunuchMessageHoverTip(CardModel card)
+	{
+		CardKeyword displayedKeyword = card.Owner?.Creature
+			.GetPower<global::Squ.Powers.ScriptEunuchPower>() is not null
+			? CardKeyword.Retain
+			: CardKeyword.Ethereal;
+		HoverTip displayedKeywordTip = (HoverTip)HoverTipFactory.FromKeyword(displayedKeyword);
+		LocString description = new(
+			"card_keywords",
+			"SUNQIAN_UNIVERSE_KEYWORD_EUNUCH_MESSAGE.cardHover");
+		description.Add("DisplayedKeyword", displayedKeywordTip.Title ?? string.Empty);
+
+		HoverTip result = new(
+			ModKeywordRegistry.GetTitle(EunuchMessageId),
+			description,
+			icon: null);
+		result.Id = HoverTipFactory.FromKeyword(EunuchMessage).Id;
+		return result;
 	}
 
 	/// <summary>
