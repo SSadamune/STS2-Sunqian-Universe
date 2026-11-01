@@ -337,5 +337,9 @@
   "SUNQIAN_UNIVERSE_CARD_SCRIPT_RECORD_PART_TIME_GENERAL.smartDescription": "失效时，从以下牌（具有随机[gold]附魔[/gold]）中获得一张：\n{RecordedCards}。",
   "SUNQIAN_UNIVERSE_CARD_SCRIPT_ACTIVATE_UPGRADABLE": "激活此[gold]{IfUpgraded:show:剧本+|剧本}[/gold]。",
   "SUNQIAN_UNIVERSE_CARD_GUAN_YU_CIVIL_VER.annotation": "[red]不能[/red]与[gold]武关羽[/gold]同时激活。",
-  "SUNQIAN_UNIVERSE_CARD_GUAN_YU_MARTIAL_VER.annotation": "[red]不能[/red]与[gold]文关羽[/gold]同时激活。"
+  "SUNQIAN_UNIVERSE_CARD_GUAN_YU_MARTIAL_VER.annotation": "[red]不能[/red]与[gold]文关羽[/gold]同时激活。",
+  "SUNQIAN_UNIVERSE_CARD_I_HAVE_A_FAMOUS_QUOTE_TOO.title": "我也有名言",
+  "SUNQIAN_UNIVERSE_CARD_I_HAVE_A_FAMOUS_QUOTE_TOO.description": "与一名生命值小于你的盟友平分生命值。",
+  "SUNQIAN_UNIVERSE_CARD_STAND_BY_RIGHTEOUSNESS.title": "仁义立身",
+  "SUNQIAN_UNIVERSE_CARD_STAND_BY_RIGHTEOUSNESS.description": "失去{HpLoss:diff()}点生命。\n[gold]仁义[/gold]{Righteousness:diff()}。\n获得{Block:diff()}点[gold]格挡[/gold]。"
 }

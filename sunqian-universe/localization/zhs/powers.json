@@ -147,5 +147,11 @@
   "SUNQIAN_UNIVERSE_POWER_FOUR_WHEELED_CART_POWER.smartDescriptionMulti": "每层提高2点[gold]力量[/gold]和2点[gold]敏捷[/gold]（共计[blue]{GrantedStrength}[/blue]力量[blue]{GrantedDexterity}[/blue]敏捷）。\n如果此生物受到未被格挡的攻击伤害，（在结算后）转移一层[gold]四轮车[/gold]给伤害来源，如果来源为玩家，还会获得{energyPrefix:energyIcons(1)}。",
   "SUNQIAN_UNIVERSE_POWER_GUAN_DI_FORM_POWER.title": "关帝形态",
   "SUNQIAN_UNIVERSE_POWER_GUAN_DI_FORM_POWER.description": "你的[gold]激活上限[/gold]+{Amount}。",
-  "SUNQIAN_UNIVERSE_POWER_GUAN_DI_FORM_POWER.smartDescription": "你的[gold]激活上限[/gold]+{Amount}。"
+  "SUNQIAN_UNIVERSE_POWER_GUAN_DI_FORM_POWER.smartDescription": "你的[gold]激活上限[/gold]+{Amount}。",
+  "SUNQIAN_UNIVERSE_POWER_TEMPORARY_HEALTH_POWER.title": "临时生命",
+  "SUNQIAN_UNIVERSE_POWER_TEMPORARY_HEALTH_POWER.description": "获得时增加当前生命值，允许超过生命上限。未被格挡的伤害和失去生命优先扣除临时生命。每个自身回合开始时失去6点临时生命（受减伤影响，不扣除真实生命）。损失临时生命也会触发失去生命后的效果。战斗结束时移除。",
+  "SUNQIAN_UNIVERSE_POWER_TEMPORARY_HEALTH_POWER.smartDescription": "拥有[blue]{Amount}[/blue]点额外生命，允许超过生命上限。未被格挡的伤害和失去生命优先扣除此生命。每个自身回合开始时失去[blue]6[/blue]点临时生命（受减伤影响，不扣除真实生命）。损失临时生命也会触发失去生命后的效果。战斗结束时移除。",
+  "SUNQIAN_UNIVERSE_POWER_RIGHTEOUSNESS_POWER.title": "仁义",
+  "SUNQIAN_UNIVERSE_POWER_RIGHTEOUSNESS_POWER.description": "当你打出[gold]各种打击牌[/gold]时，你每有10层[gold]仁义[/gold]，就消耗2层[gold]仁义[/gold]并额外打出1次。\n[gold]仁义[/gold]不会在战斗结束时清零。",
+  "SUNQIAN_UNIVERSE_POWER_RIGHTEOUSNESS_POWER.smartDescription": "当你打出[gold]各种打击牌[/gold]时，你每有10层[gold]仁义[/gold]，就消耗2层[gold]仁义[/gold]并额外打出1次。\n[gold]仁义[/gold]不会在战斗结束时清零。"
 }

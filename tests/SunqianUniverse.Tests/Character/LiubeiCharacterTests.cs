@@ -33,7 +33,8 @@ public sealed class LiubeiCharacterTests : SunqianCombatTestSuite
         Assert.IsType<LiubeiCardPool>(Player.Character.CardPool);
         Assert.Equal(4, Player.Deck.Cards.Count(card => card is StrikeLiubei));
         Assert.Equal(4, Player.Deck.Cards.Count(card => card is DefendLiubei));
-        Assert.Equal(8, Player.Deck.Cards.Count);
+        Assert.Single(Player.Deck.Cards.OfType<StandByRighteousness>());
+        Assert.Equal(9, Player.Deck.Cards.Count);
         Assert.IsType<DeathDeniedRelic>(Assert.Single(Player.Character.StartingRelics));
         Assert.Contains(
             "res://images/scenes/LiubeiCharacterSelectIcon.png",

@@ -109,6 +109,7 @@ public static class SquMod
 		ContentSettingsRunData.Initialize();
 		RunReloadCount.Initialize();
 		DailyWageRunData.Initialize();
+		RighteousnessRunData.Initialize();
 		SelfDecapitationReviveData.Initialize();
 		ScriptSystem.Initialize();
 		SlightRevisionSystem.Initialize();

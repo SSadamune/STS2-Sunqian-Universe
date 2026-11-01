@@ -22,6 +22,8 @@ public static class SquTargetTypes
 
 	public static TargetType AnyOtherPlayer { get; private set; }
 
+	public static TargetType LowerHpAlly { get; private set; }
+
 	public static TargetType AnyCreature { get; private set; }
 
 	public static TargetType AnyRealEnemy { get; private set; }
@@ -53,6 +55,15 @@ public static class SquTargetTypes
 			"any_other_player",
 			static (Creature creature, Player player) =>
 				creature.IsAlive && creature.IsPlayer && creature != player.Creature);
+
+		LowerHpAlly = CustomTargetType.RegisterSingleTargetType(
+			SquMod.ModId,
+			"lower_hp_ally",
+			static (Creature creature, Player player) =>
+				creature.IsAlive && creature.IsPlayer
+				&& creature != player.Creature
+				&& creature.Side == player.Creature.Side
+				&& creature.CurrentHp < player.Creature.CurrentHp);
 
 		AnyCreature = CustomTargetType.RegisterSingleTargetType(
 			SquMod.ModId,

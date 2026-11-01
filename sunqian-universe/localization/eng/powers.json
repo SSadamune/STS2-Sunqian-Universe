@@ -147,5 +147,11 @@
   "SUNQIAN_UNIVERSE_POWER_FOUR_WHEELED_CART_POWER.smartDescriptionMulti": "Each stack increases [gold]Strength[/gold] and [gold]Dexterity[/gold] by 2 ([blue]{GrantedStrength}[/blue] Strength and [blue]{GrantedDexterity}[/blue] Dexterity total).\nIf this creature takes unblocked Attack damage, transfer 1 stack of [gold]Four-Wheeled Cart[/gold] to the damage source (after resolution). If the source is a player, they also gain {energyPrefix:energyIcons(1)}.",
   "SUNQIAN_UNIVERSE_POWER_GUAN_DI_FORM_POWER.title": "Guan Di Form",
   "SUNQIAN_UNIVERSE_POWER_GUAN_DI_FORM_POWER.description": "Your [gold]activation limit[/gold] increases by {Amount}.",
-  "SUNQIAN_UNIVERSE_POWER_GUAN_DI_FORM_POWER.smartDescription": "Your [gold]activation limit[/gold] increases by {Amount}."
+  "SUNQIAN_UNIVERSE_POWER_GUAN_DI_FORM_POWER.smartDescription": "Your [gold]activation limit[/gold] increases by {Amount}.",
+  "SUNQIAN_UNIVERSE_POWER_TEMPORARY_HEALTH_POWER.title": "Temporary HP",
+  "SUNQIAN_UNIVERSE_POWER_TEMPORARY_HEALTH_POWER.description": "Gain additional current HP, which can exceed Max HP. Unblocked damage and HP loss consume Temporary HP first. At the start of each of this creature's turns, lose 6 Temporary HP, subject to damage prevention, without losing real HP. Losing Temporary HP triggers HP-loss effects. Removed at the end of combat.",
+  "SUNQIAN_UNIVERSE_POWER_TEMPORARY_HEALTH_POWER.smartDescription": "[blue]{Amount}[/blue] additional HP, which can exceed Max HP. Unblocked damage and HP loss consume this HP first. At the start of each of this creature's turns, lose [blue]6[/blue] Temporary HP, subject to damage prevention, without losing real HP. Losing Temporary HP triggers HP-loss effects. Removed at the end of combat.",
+  "SUNQIAN_UNIVERSE_POWER_RIGHTEOUSNESS_POWER.title": "Righteousness",
+  "SUNQIAN_UNIVERSE_POWER_RIGHTEOUSNESS_POWER.description": "When you play a [gold]Strike Card[/gold], for every 10 [gold]Righteousness[/gold] you have, spend 2 [gold]Righteousness[/gold] and play it 1 additional time.\n[gold]Righteousness[/gold] persists between combats.",
+  "SUNQIAN_UNIVERSE_POWER_RIGHTEOUSNESS_POWER.smartDescription": "When you play a [gold]Strike Card[/gold], for every 10 [gold]Righteousness[/gold] you have, spend 2 [gold]Righteousness[/gold] and play it 1 additional time.\n[gold]Righteousness[/gold] persists between combats."
 }
