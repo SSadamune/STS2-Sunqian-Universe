@@ -18,6 +18,19 @@ namespace Squ.Tests.Powers;
 
 public sealed class TemporaryHealthPowerTests : SunqianCombatTestSuite
 {
+    [Theory]
+    [InlineData(1, 1)]
+    [InlineData(9, 1)]
+    [InlineData(9, 40)]
+    public async Task Less_than_ten_temporary_hp_never_becomes_negative_or_spills_into_real_hp(int temporary, int realHp)
+    {
+        await CreatureCmd.SetCurrentHp(Player.Creature, realHp);
+        await Gain(Player.Creature, temporary);
+        await Decay(Player.Creature);
+        Assert.Equal(realHp, Player.Creature.CurrentHp);
+        Assert.Null(Player.Creature.GetPower<TemporaryHealthPower>());
+        Assert.True(Player.Creature.IsAlive);
+    }
     protected override void ConfigureBattle(CombatTestBattleBuilder battle) =>
         battle.Player<LiubeiCharacter>().AddEnemy<BigDummy>().AddEnemy<BigDummy>()
             .WithSeed("temporary-health");
@@ -75,12 +88,12 @@ public sealed class TemporaryHealthPowerTests : SunqianCombatTestSuite
         await Damage(owner, 6);
         Assert.Equal(15, owner.GetPower<TemporaryHealthPower>()!.Amount);
         await Decay(owner);
-        Assert.Equal(10, owner.GetPower<TemporaryHealthPower>()!.Amount);
-        Assert.Equal(real + 10, owner.CurrentHp);
+        Assert.Equal(6, owner.GetPower<TemporaryHealthPower>()!.Amount);
+        Assert.Equal(real + 6, owner.CurrentHp);
     }
 
     [Theory]
-    [InlineData(false, 14)]
+    [InlineData(false, 10)]
     [InlineData(true, 19)]
     public async Task Intangible_also_reduces_decay(bool intangible, int remaining)
     {
@@ -127,7 +140,7 @@ public sealed class TemporaryHealthPowerTests : SunqianCombatTestSuite
         await power.BeforeSideTurnStart(new BlockingPlayerChoiceContext(), CombatSide.Player, [], Combat);
         Assert.Equal(20, power.Amount);
         await Decay(owner);
-        Assert.Equal(14, power.Amount);
+        Assert.Equal(10, power.Amount);
     }
 
     [Fact]
@@ -138,11 +151,11 @@ public sealed class TemporaryHealthPowerTests : SunqianCombatTestSuite
         await Gain(enemy, 10);
         Assert.Equal(hp + 10, enemy.CurrentHp);
         await Decay(enemy);
-        Assert.Equal(hp + 4, enemy.CurrentHp);
-        Assert.Equal(4, enemy.GetPower<TemporaryHealthPower>()!.Amount);
+        Assert.Equal(hp, enemy.CurrentHp);
+        Assert.Null(enemy.GetPower<TemporaryHealthPower>());
         await Damage(enemy, 8);
         Assert.Null(enemy.GetPower<TemporaryHealthPower>());
-        Assert.Equal(hp - 4, enemy.CurrentHp);
+        Assert.Equal(hp - 8, enemy.CurrentHp);
     }
 
     [Fact]
@@ -190,9 +203,9 @@ public sealed class TemporaryHealthPowerTests : SunqianCombatTestSuite
         Assert.Equal(4, relic.HpLostThisCombat);
         Assert.Equal(2, owner.GetPower<StrengthPower>()!.Amount);
         await Decay(owner);
-        Assert.Equal(10, relic.HpLostThisCombat);
+        Assert.Equal(14, relic.HpLostThisCombat);
         Assert.Equal(4, owner.GetPower<StrengthPower>()!.Amount);
-        Assert.Equal(real + 10, owner.CurrentHp);
+        Assert.Equal(real + 6, owner.CurrentHp);
     }
 
     [Fact]

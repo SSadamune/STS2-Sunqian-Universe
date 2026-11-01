@@ -18,6 +18,21 @@ public sealed class DeathDeniedRelicTests : SunqianCombatTestSuite
             .WithSeed("death-denied-relic");
 
     [Fact]
+    public async Task Combat_description_shows_current_recorded_hp_loss_and_updates_with_damage()
+    {
+        var relic = await AddRelic();
+        Assert.EndsWith(".combatDescription", relic.DynamicDescription.LocEntryKey);
+        Assert.Contains("0", relic.DynamicDescription.GetFormattedText().Split('\n').Last());
+        ((CombatState)Combat).CurrentSide = CombatSide.Player;
+        await DamagePlayer(13);
+        Assert.Contains("13", relic.DynamicDescription.GetFormattedText().Split('\n').Last());
+        ((CombatState)Combat).CurrentSide = CombatSide.Enemy;
+        await DamagePlayer(7);
+        Assert.Contains("13", relic.DynamicDescription.GetFormattedText().Split('\n').Last());
+        Assert.EndsWith(".description", ModelDb.Relic<DeathDeniedRelic>().DynamicDescription.LocEntryKey);
+    }
+
+    [Fact]
     public async Task Victory_heals_half_of_only_the_hp_lost_during_player_turns()
     {
         DeathDeniedRelic relic = await AddRelic();

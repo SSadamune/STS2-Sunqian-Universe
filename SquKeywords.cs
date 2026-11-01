@@ -17,6 +17,15 @@ namespace Squ;
 /// </summary>
 public static class SquKeywords
 {
+	public static IHoverTip CreateSelfHarmHoverTip(DynamicVar amount)
+	{
+		LocString title = new("card_keywords", "SUNQIAN_UNIVERSE_SELF_HARM.title");
+		LocString description = new("card_keywords", "SUNQIAN_UNIVERSE_SELF_HARM.description");
+		title.AddObj("SelfHarm", amount);
+		description.AddObj("SelfHarm", amount);
+		return new HoverTip(title, description);
+	}
+
 	public static IHoverTip CreateRighteousnessHoverTip(DynamicVar amount)
 	{
 		LocString title = new("card_keywords", "SUNQIAN_UNIVERSE_KEYWORD_RIGHTEOUSNESS.dynamicTitle");

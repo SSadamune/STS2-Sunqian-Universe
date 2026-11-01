@@ -1,5 +1,11 @@
 # Repository instructions
 
+## Player-facing text
+
+- Keep card, power, and keyword descriptions concise and focused on gameplay.
+- Omit implementation details that do not affect player decisions or understanding. Keep technical explanations in developer documentation.
+- Preserve user-provided wording and formatting exactly when specified; do not add unsolicited caveats or explanations.
+
 ## Git commits
 
 - Write commit subjects and bodies in concise English and follow the existing commit style.

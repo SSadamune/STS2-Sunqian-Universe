@@ -25,7 +25,7 @@ public sealed class TemporaryHealthPower : ModPowerTemplate
 {
 	private bool _changingStacks;
 	private bool _limitNextLoss;
-	public const int TurnStartLoss = 6;
+	public const int TurnStartLoss = 10;
 	public override PowerType Type => PowerType.Buff;
 	public override PowerStackType StackType => PowerStackType.Counter;
 

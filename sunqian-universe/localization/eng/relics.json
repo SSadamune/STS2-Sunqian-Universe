@@ -47,5 +47,6 @@
   "SUNQIAN_UNIVERSE_RELIC_NEVER_HAD_THESE.cutePetEffect": "\nSummon {Summon}.",
   "SUNQIAN_UNIVERSE_RELIC_NEVER_HAD_THESE.belovedPartnerEffect": "\nGain {Regen} [gold]Regen[/gold] and {Tinder} [gold]Tinder[/gold].",
   "SUNQIAN_UNIVERSE_RELIC_NEVER_HAD_THESE.nextOfKinEffect": "\nDraw {Cards} {Cards:plural:card|cards}.",
-  "SUNQIAN_UNIVERSE_RELIC_NEVER_HAD_THESE.flavor": "I never had these!"
+  "SUNQIAN_UNIVERSE_RELIC_NEVER_HAD_THESE.flavor": "I never had these!",
+  "SUNQIAN_UNIVERSE_RELIC_DEATH_DENIED.combatDescription": "{BaseDescription}\nHP lost this combat: {HpLost}."
 }

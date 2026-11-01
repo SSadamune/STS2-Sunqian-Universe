@@ -149,9 +149,13 @@
   "SUNQIAN_UNIVERSE_POWER_GUAN_DI_FORM_POWER.description": "Your [gold]activation limit[/gold] increases by {Amount}.",
   "SUNQIAN_UNIVERSE_POWER_GUAN_DI_FORM_POWER.smartDescription": "Your [gold]activation limit[/gold] increases by {Amount}.",
   "SUNQIAN_UNIVERSE_POWER_TEMPORARY_HEALTH_POWER.title": "Temporary HP",
-  "SUNQIAN_UNIVERSE_POWER_TEMPORARY_HEALTH_POWER.description": "Gain additional current HP, which can exceed Max HP. Unblocked damage and HP loss consume Temporary HP first. At the start of each of this creature's turns, lose 6 Temporary HP, subject to damage prevention, without losing real HP. Losing Temporary HP triggers HP-loss effects. Removed at the end of combat.",
-  "SUNQIAN_UNIVERSE_POWER_TEMPORARY_HEALTH_POWER.smartDescription": "[blue]{Amount}[/blue] additional HP, which can exceed Max HP. Unblocked damage and HP loss consume this HP first. At the start of each of this creature's turns, lose [blue]6[/blue] Temporary HP, subject to damage prevention, without losing real HP. Losing Temporary HP triggers HP-loss effects. Removed at the end of combat.",
+  "SUNQIAN_UNIVERSE_POWER_TEMPORARY_HEALTH_POWER.description": "Unblocked damage consumes [gold]Temporary HP[/gold] first.\nLose 10 Temporary HP at the start of each turn.",
+  "SUNQIAN_UNIVERSE_POWER_TEMPORARY_HEALTH_POWER.smartDescription": "Unblocked damage consumes [gold]Temporary HP[/gold] first.\nLose 10 Temporary HP at the start of each turn.",
   "SUNQIAN_UNIVERSE_POWER_RIGHTEOUSNESS_POWER.title": "Righteousness",
-  "SUNQIAN_UNIVERSE_POWER_RIGHTEOUSNESS_POWER.description": "When you play a [gold]Strike Card[/gold], for every 10 [gold]Righteousness[/gold] you have, spend 2 [gold]Righteousness[/gold] and play it 1 additional time.\n[gold]Righteousness[/gold] persists between combats.",
-  "SUNQIAN_UNIVERSE_POWER_RIGHTEOUSNESS_POWER.smartDescription": "When you play a [gold]Strike Card[/gold], for every 10 [gold]Righteousness[/gold] you have, spend 2 [gold]Righteousness[/gold] and play it 1 additional time.\n[gold]Righteousness[/gold] persists between combats."
+  "SUNQIAN_UNIVERSE_POWER_RIGHTEOUSNESS_POWER.description": "When you play a [gold]Strike Card[/gold], for every 10 [gold]Righteousness[/gold] you have, spend 2 Righteousness and play it 1 additional time.\n[gold]Righteousness[/gold] persists between combats.",
+  "SUNQIAN_UNIVERSE_POWER_RIGHTEOUSNESS_POWER.smartDescription": "When you play a [gold]Strike Card[/gold], for every 10 [gold]Righteousness[/gold] you have, spend 2 Righteousness and play it 1 additional time.\n[gold]Righteousness[/gold] persists between combats.",
+  "SUNQIAN_UNIVERSE_POWER_LIFE_CONTRACT_POWER.title": "Life Contract",
+  "SUNQIAN_UNIVERSE_POWER_LIFE_CONTRACT_POWER.description": "At the end of combat, if Second Brother is alive, heal its owner for the HP lost on its behalf.",
+  "SUNQIAN_UNIVERSE_POWER_LIFE_CONTRACT_POWER.smartDescription": "At the end of combat, if Second Brother is alive, heal its owner for the HP lost on its behalf.",
+  "SUNQIAN_UNIVERSE_POWER_LIFE_CONTRACT_POWER.combatSmartDescription": "At the end of combat, if Second Brother is alive, heal its owner for the HP lost on its behalf.\nWill restore [blue]{Healing}[/blue] HP."
 }
