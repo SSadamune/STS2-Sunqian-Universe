@@ -15,6 +15,7 @@ using Squ.RunData;
 using Squ.Script;
 using Squ.Settings;
 using STS2RitsuLib;
+using STS2RitsuLib.Content;
 using STS2RitsuLib.Interop;
 using STS2RitsuLib.Keywords;
 using STS2RitsuLib.Models.Capabilities;
@@ -51,6 +52,14 @@ public static class SquMod
 
 		RitsuLibFramework.CreateContentPack(ModId)
 			.CharacterStarterRelic<SunqianCharacter, BoxLunchRelic>(1)
+			.Card<LiubeiCardPool, WatchFireFromShore>(ModelPublicEntryOptions.FromStem("watch_fire_from_shore"))
+			.Card<LiubeiCardPool, WorkLifeBalance>(ModelPublicEntryOptions.FromStem("work_life_balance"))
+			.Card<LiubeiCardPool, ThunderOnStillLake>(ModelPublicEntryOptions.FromStem("thunder_on_still_lake"))
+			.Card<LiubeiCardPool, KeepPlayingKeepDancing>(ModelPublicEntryOptions.FromStem("keep_playing_keep_dancing"))
+			.Card<LiubeiCardPool, BlockFirefighting>(ModelPublicEntryOptions.FromStem("block_firefighting"))
+			.Card<LiubeiCardPool, RuthlessStrike>(ModelPublicEntryOptions.FromStem("ruthless_strike"))
+			.Card<LiubeiCardPool, SelfDecapitationAscension>(ModelPublicEntryOptions.FromStem("self_decapitation_ascension"))
+			.Card<LiubeiCardPool, BurningLinkedCampsScript>(ModelPublicEntryOptions.FromStem("burning_linked_camps_script"))
 			.CardKeywordOwnedByLocNamespace("script")
 			.CardKeywordOwnedByLocNamespace("script_collection")
 			.CardKeywordOwnedByLocNamespace(

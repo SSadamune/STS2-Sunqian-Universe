@@ -1,5 +1,6 @@
 using Godot;
 using HarmonyLib;
+using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.Monsters;
 using MegaCrit.Sts2.Core.Nodes.CommonUi;
@@ -17,6 +18,29 @@ namespace Squ.Tests.Character;
 
 public sealed class LiubeiCharacterTests : SunqianCombatTestSuite
 {
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public void Shared_actor_cards_are_registered_once_in_both_pools_with_original_mode_constraints(bool multiplayer)
+    {
+        Type[] shared =
+        [
+            typeof(WatchFireFromShore), typeof(WorkLifeBalance), typeof(ThunderOnStillLake),
+            typeof(KeepPlayingKeepDancing), typeof(BlockFirefighting), typeof(RuthlessStrike),
+            typeof(SelfDecapitationAscension), typeof(BurningLinkedCampsScript),
+        ];
+        var constraint = multiplayer ? CardMultiplayerConstraint.MultiplayerOnly : CardMultiplayerConstraint.SingleplayerOnly;
+        foreach (var pool in new CardPoolModel[] { ModelDb.CardPool<SunqianCardPool>(), ModelDb.CardPool<LiubeiCardPool>() })
+        {
+            var cards = pool.GetUnlockedCards(Player.UnlockState, constraint).ToArray();
+            foreach (Type type in shared)
+            {
+                int expected = type == typeof(SelfDecapitationAscension) && !multiplayer ? 0 : 1;
+                Assert.Equal(expected, cards.Count(card => card.GetType() == type));
+            }
+        }
+    }
+
     protected override void ConfigureBattle(CombatTestBattleBuilder battle) =>
         battle.Player<LiubeiCharacter>()
             .AddEnemy<BigDummy>()

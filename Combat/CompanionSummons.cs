@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
+using Godot;
 using MegaCrit.Sts2.Core.CardSelection;
 using MegaCrit.Sts2.Core.Combat;
 using MegaCrit.Sts2.Core.Commands;
@@ -163,30 +164,47 @@ public static class CompanionSummons
 		}
 		amount = Hook.ModifySummonAmount(combat, player, amount, source);
 		if (amount <= 0) return new SummonResult(pet, 0);
+		if (CombatManager.Instance.IsInProgress)
+			SfxCmd.Play("event:/sfx/characters/necrobinder/necrobinder_summon");
 		if (pet?.IsAlive == true)
 		{
 			await CreatureCmd.GainMaxHp(pet, amount);
 		}
 		else
 		{
+			bool isReviving = pet != null;
 			if (pet == null)
 			{
 				pet = await definition.Create(player);
+				var newNode = NCombatRoom.Instance?.GetCreatureNode(pet);
+				if (newNode != null && source is CardModel)
+				{
+					newNode.Modulate = Colors.Transparent;
+					newNode.CreateTween().TweenProperty(newNode, "modulate", Colors.White, 0.35).SetDelay(0.1);
+					newNode.StartReviveAnim();
+				}
+				await PowerCmd.Apply<DieForYouPower>(context, pet, 1, null, null);
+				newNode?.TrackBlockStatus(player.Creature);
 			}
 			else
 			{
 				player.PlayerCombatState!.AddPetInternal(pet);
 			}
 			await CreatureCmd.SetMaxHp(pet, amount);
-			await CreatureCmd.Heal(pet, amount, playAnim: false);
+			await CreatureCmd.Heal(pet, amount, isReviving);
 			if (!pet.HasPower<DieForYouPower>())
 			{
 				await PowerCmd.Apply<DieForYouPower>(context, pet, 1, null, null);
 			}
-			NCombatRoom.Instance?.GetCreatureNode(pet)?.TrackBlockStatus(player.Creature);
 		}
 		if (id == SecondBrotherId && !pet.HasPower<LifeContractPower>())
 			await PowerCmd.Apply<LifeContractPower>(context, pet, 1, null, null);
+		if (id == SecondBrotherId)
+		{
+			var node = NCombatRoom.Instance?.GetCreatureNode(pet);
+			node?.OstyScaleToSize(pet.MaxHp, 0.75);
+			node?.ToggleIsInteractable(pet.IsAlive);
+		}
 		CombatManager.Instance.History.Summoned(combat, (int)amount, player);
 		await Hook.AfterSummon(combat, context, player, amount);
 		return new SummonResult(pet, amount);

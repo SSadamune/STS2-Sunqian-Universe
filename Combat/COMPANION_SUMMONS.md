@@ -47,7 +47,8 @@ Custom summons run `ModifySummonAmount` once and retain native summon history an
 dead pets are revived at the new summon amount instead of duplicated. Zero or
 prevented summons do not discover candidates or emit successful-summon hooks.
 
-Second Brother currently uses placeholder visuals and native `DieForYouPower` to
+Second Brother uses vanilla Osty's visuals, animator, size scaling, pet layout,
+health bar and status display, and native `DieForYouPower` to
 absorb its owner's unblocked powered attacks. It has no automatic attack. Methods
 which explicitly command `Player.Osty` to attack remain Osty-specific; this system
 redirects summoning, not every Osty-specific card effect or animation.

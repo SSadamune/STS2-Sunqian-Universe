@@ -83,6 +83,8 @@ public sealed class DeathDeniedRelic : ModRelicTemplate
 	internal int RecoverableHealth =>
 		HpLostThisCombat * DynamicVars[RecoveryPercentKey].IntValue / 100;
 
+	// AfterCombatEnd runs before victory healing. Keep the total and death-
+	// prevention flag until victory, and reset them when the next fight starts.
 	public override Task BeforeCombatStart()
 	{
 		HpLostThisCombat = 0;
@@ -140,12 +142,5 @@ public sealed class DeathDeniedRelic : ModRelicTemplate
 		Flash();
 		await CreatureCmd.Heal(creature, amount);
 		HpLostThisCombat = 0;
-	}
-
-	public override Task AfterCombatEnd(CombatRoom _)
-	{
-		HpLostThisCombat = 0;
-		DisabledThisCombat = false;
-		return Task.CompletedTask;
 	}
 }

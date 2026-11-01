@@ -46,7 +46,7 @@ public sealed class AwakenSecondBrother : SelfHarmCardTemplate
 		if (summoned.Creature is not { IsAlive: true } pet) return;
 		await DamageCmd.Attack(DynamicVars["CompanionDamage"].BaseValue)
 			.FromCompanion(pet, this, play).Targeting(play.Target)
-			.WithHitFx("vfx/vfx_attack_slash").Execute(context);
+			.WithHitFx("vfx/vfx_attack_blunt", tmpSfx: "blunt_attack.mp3").Execute(context);
 	}
 	protected override void AddExtraSelfHarmArgs(LocString description) =>
 		SquKeywords.AddNestedLoc(description, "SummonText",

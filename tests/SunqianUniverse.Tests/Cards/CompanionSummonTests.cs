@@ -1,5 +1,10 @@
 using HarmonyLib;
 using Godot;
+using MegaCrit.Sts2.Core.Assets;
+using MegaCrit.Sts2.Core.Nodes;
+using MegaCrit.Sts2.Core.Nodes.Combat;
+using MegaCrit.Sts2.Core.Nodes.Rooms;
+using Squ.Patches;
 using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Creatures;
 using MegaCrit.Sts2.Core.Entities.Players;
@@ -35,15 +40,63 @@ public sealed class CompanionSummonTests : SunqianCombatTestSuite
             .AddEnemy<BigDummy>().WithSeed("companion-summons");
 
     [Fact]
-    public async Task Second_brother_visuals_load_real_portrait_instead_of_error_fallback()
+    public async Task Second_brother_uses_native_osty_visuals_and_animator()
     {
         var result = await OstyCmd.Summon(ChoiceContext(), Player, 6, null);
         using var visuals = result.Creature!.Monster!.CreateVisuals();
-        var sprite = Assert.IsType<Sprite2D>(visuals.GetNodeOrNull<Sprite2D>("Visuals"));
-        Assert.NotNull(sprite.Texture);
-        Assert.Equal("res://images/powers/GuanYuMartialVerPowerBig.png", sprite.Texture.ResourcePath);
-        Assert.NotNull(visuals.GetNodeOrNull<Control>("Bounds"));
-        Assert.NotNull(visuals.GetNodeOrNull<Marker2D>("CenterPos"));
+        Assert.EndsWith("/osty.tscn", visuals.SceneFilePath);
+        visuals._Ready();
+        Assert.True(visuals.HasSpineAnimation);
+        Assert.NotNull(visuals.SpineBody);
+        var animator = result.Creature.Monster.GenerateAnimator(visuals.SpineBody);
+        Assert.True(animator.HasTrigger("Attack"));
+        Assert.True(animator.HasTrigger("Dead"));
+        Assert.True(animator.HasTrigger("Revive"));
+    }
+
+    [Fact]
+    public async Task Native_creature_widget_displays_second_brother_health_and_both_power_icons()
+    {
+        var pet = (await OstyCmd.Summon(ChoiceContext(), Player, 6, null)).Creature!;
+        var node = PreloadManager.Cache.GetScene("res://scenes/combat/creature.tscn").Instantiate<NCreature>();
+        Traverse.Create(node).Property(nameof(NCreature.Entity)).SetValue(pet);
+        Traverse.Create(node).Property(nameof(NCreature.Visuals)).SetValue(pet.Monster!.CreateVisuals());
+        try
+        {
+            ((SceneTree)Engine.GetMainLoop()).Root.AddChild(node);
+            Assert.True(node.IsNodeReady());
+            var display = Traverse.Create(node).Field<NCreatureStateDisplay>("_stateDisplay").Value;
+            Assert.True(display.Visible);
+            Assert.True(node.IsInteractable);
+            var powers = Traverse.Create(display).Field<NPowerContainer>("_powerContainer").Value;
+            Assert.Contains(powers.GetChildren().OfType<NPower>(), power => power.Model is DieForYouPower);
+            Assert.Contains(powers.GetChildren().OfType<NPower>(), power => power.Model is Squ.Powers.LifeContractPower);
+            Assert.NotNull(Traverse.Create(display).Field<NHealthBar>("_healthBar").Value);
+            Assert.Same(pet.Monster, SecondBrotherPresentationPatches.AsOstyPresentation(pet.Monster));
+            Assert.Contains(Harmony.GetPatchInfo(AccessTools.Method(typeof(NCombatRoom), "AddCreature")).Transpilers,
+                patch => patch.PatchMethod.DeclaringType == typeof(SecondBrotherPresentationPatches));
+        }
+        finally
+        {
+            node.GetParent()?.RemoveChild(node);
+            node.QueueFree();
+        }
+    }
+
+    [Fact]
+    public async Task Companion_power_descriptions_name_second_brother_without_changing_osty()
+    {
+        var pet = (await OstyCmd.Summon(ChoiceContext(), Player, 6, null)).Creature!;
+        var guard = pet.GetPower<DieForYouPower>()!;
+        Assert.Equal("SUNQIAN_UNIVERSE_POWER_SECOND_BROTHER_DIE_FOR_YOU.description", guard.Description.LocEntryKey);
+        Assert.Equal(guard.Description.LocEntryKey, guard.SmartDescription.LocEntryKey);
+        Assert.Contains("[gold]", guard.SmartDescription.GetFormattedText());
+        var contract = pet.GetPower<Squ.Powers.LifeContractPower>()!;
+        var contractText = contract.SmartDescription;
+        contract.DynamicVars.AddTo(contractText);
+        Assert.Contains("[gold]", contractText.GetFormattedText());
+        var osty = (await CompanionSummons.SummonSpecific(ChoiceContext(), Player, CompanionSummons.OstyId, 6, null)).Creature!;
+        Assert.NotEqual(guard.Description.LocEntryKey, osty.GetPower<DieForYouPower>()!.Description.LocEntryKey);
     }
 
     [Fact]

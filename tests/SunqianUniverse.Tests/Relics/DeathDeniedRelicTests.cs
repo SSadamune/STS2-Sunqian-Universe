@@ -68,8 +68,35 @@ public sealed class DeathDeniedRelicTests : SunqianCombatTestSuite
         Assert.True(relic.ShouldDieLate(Player.Creature));
 
         int hp = Player.Creature.CurrentHp;
+        await relic.AfterCombatEnd(null!);
+        Assert.True(relic.DisabledThisCombat);
         await relic.AfterCombatVictoryEarly(null!);
         Assert.Equal(hp, Player.Creature.CurrentHp);
+    }
+
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public async Task End_hooks_preserve_recovery_until_victory_with_or_without_chosen_cheese(bool withCheese)
+    {
+        var relic = await AddRelic();
+        if (withCheese)
+            Player.AddRelicInternal(ModelDb.Relic<MegaCrit.Sts2.Core.Models.Relics.ChosenCheese>().ToMutable(), silent: true);
+        ((CombatState)Combat).CurrentSide = CombatSide.Player;
+        await DamagePlayer(20);
+        int before = Player.Creature.CurrentHp;
+        // CombatManager dispatches AfterCombatEnd before AfterCombatVictoryEarly.
+        await relic.AfterCombatEnd(null!);
+        if (withCheese)
+            await Player.Relics.OfType<MegaCrit.Sts2.Core.Models.Relics.ChosenCheese>().Single().AfterCombatEnd(null!);
+        Assert.Equal(20, relic.HpLostThisCombat);
+        int afterEnd = Player.Creature.CurrentHp;
+        Assert.Equal(before + (withCheese ? 1 : 0), afterEnd);
+        await relic.AfterCombatVictoryEarly(null!);
+        Assert.Equal(afterEnd + 10, Player.Creature.CurrentHp);
+        Assert.Equal(0, relic.HpLostThisCombat);
+        await relic.BeforeCombatStart();
+        Assert.False(relic.DisabledThisCombat);
     }
 
     private Task DamagePlayer(decimal amount) =>

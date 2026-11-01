@@ -155,7 +155,8 @@
   "SUNQIAN_UNIVERSE_POWER_RIGHTEOUSNESS_POWER.description": "当你打出[gold]各种打击牌[/gold]时，你每有10层[gold]仁义[/gold]，就消耗2层仁义并额外打出1次。\n[gold]仁义[/gold]不会在战斗结束时清零。",
   "SUNQIAN_UNIVERSE_POWER_RIGHTEOUSNESS_POWER.smartDescription": "当你打出[gold]各种打击牌[/gold]时，你每有10层[gold]仁义[/gold]，就消耗2层仁义并额外打出1次。\n[gold]仁义[/gold]不会在战斗结束时清零。",
   "SUNQIAN_UNIVERSE_POWER_LIFE_CONTRACT_POWER.title": "生命契约",
-  "SUNQIAN_UNIVERSE_POWER_LIFE_CONTRACT_POWER.description": "战斗结束时，若二弟存活，为你恢复等量于你为二弟失去过的生命。",
-  "SUNQIAN_UNIVERSE_POWER_LIFE_CONTRACT_POWER.smartDescription": "战斗结束时，若二弟存活，为你恢复等量于你为二弟失去过的生命。",
-  "SUNQIAN_UNIVERSE_POWER_LIFE_CONTRACT_POWER.combatSmartDescription": "战斗结束时，若二弟存活，为你恢复等量于你为二弟失去过的生命。\n将恢复[blue]{Healing}[/blue]点生命。"
+  "SUNQIAN_UNIVERSE_POWER_LIFE_CONTRACT_POWER.description": "战斗结束时，若[gold]二弟[/gold]存活，为你恢复等量于你为[gold]二弟[/gold]失去过的生命。",
+  "SUNQIAN_UNIVERSE_POWER_LIFE_CONTRACT_POWER.smartDescription": "战斗结束时，若[gold]二弟[/gold]存活，为你恢复等量于你为[gold]二弟[/gold]失去过的生命。",
+  "SUNQIAN_UNIVERSE_POWER_LIFE_CONTRACT_POWER.combatSmartDescription": "战斗结束时，若[gold]二弟[/gold]存活，为你恢复等量于你为[gold]二弟[/gold]失去过的生命。\n将恢复[blue]{Healing}[/blue]点生命。",
+  "SUNQIAN_UNIVERSE_POWER_SECOND_BROTHER_DIE_FOR_YOU.description": "[gold]二弟[/gold]会吸收所有未被格挡的攻击伤害。"
 }

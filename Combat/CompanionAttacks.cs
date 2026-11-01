@@ -7,6 +7,7 @@ using MegaCrit.Sts2.Core.Entities.Creatures;
 using MegaCrit.Sts2.Core.Hooks;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.Models;
+using MegaCrit.Sts2.Core.Models.Monsters;
 using MegaCrit.Sts2.Core.ValueProps;
 
 namespace Squ.Combat;
@@ -23,7 +24,8 @@ public static class CompanionAttacks
 	{
 		attack.FromCard(card, play);
 		SetAttacker(attack, pet);
-		return attack.WithAttackerAnim("Attack", 0, pet);
+		return attack.WithAttackerAnim("Attack", Osty.attackerAnimDelay, pet)
+			.WithAttackerFx(sfx: Osty.ostyAttackSfx);
 	}
 }
 
