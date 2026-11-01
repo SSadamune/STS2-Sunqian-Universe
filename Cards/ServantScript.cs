@@ -9,6 +9,7 @@ using MegaCrit.Sts2.Core.ValueProps;
 using Squ;
 using Squ.Audio;
 using Squ.Character;
+using Squ.Combat;
 using Squ.Powers;
 using STS2RitsuLib.Interop.AutoRegistration;
 using STS2RitsuLib.Scaffolding.Content;
@@ -18,10 +19,12 @@ using STS2RitsuLib.Scaffolding.Content;
 namespace Squ.Cards;
 
 [RegisterCard(typeof(SunqianCardPool), StableEntryStem = "servant_script")]
-public sealed class ServantScript : ScriptCardTemplate
+public sealed class ServantScript : ScriptCardTemplate<ServantScriptRecord>
 {
-	public const int BaseBlock = 12;
-	public const int UpgradedBlock = 16;
+	protected override bool UsesRowKeywordTemplate => false;
+
+	public const int BaseBlock = 10;
+	public const int UpgradedBlock = 12;
 
 	protected override IEnumerable<DynamicVar> CanonicalVars =>
 	[
@@ -29,12 +32,6 @@ public sealed class ServantScript : ScriptCardTemplate
 	];
 
 	public override bool GainsBlock => true;
-
-	// 对齐 BEGONE：悬停预览实际生成的卡牌（含升级态）。
-	protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
-	[
-		HoverTipFactory.FromCard<ThrowHimOut>(IsUpgraded),
-	];
 
 	public override IEnumerable<CardKeyword> CanonicalKeywords =>
 	[
@@ -55,12 +52,7 @@ public sealed class ServantScript : ScriptCardTemplate
 		SquSfx.Play(SquSfx.HouseServantsComeEvent);
 		await CreatureCmd.GainBlock(Owner.Creature, DynamicVars.Block, cardPlay);
 
-		await PowerCmd.Apply<ScriptServantPower>(
-			choiceContext,
-			Owner.Creature,
-			1m,
-			Owner.Creature,
-			this);
+		await UnlockScriptAsync(choiceContext);
 	}
 
 	protected override void OnUpgrade()

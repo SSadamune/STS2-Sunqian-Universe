@@ -10,3 +10,4 @@ When the user asks to create a git commit:
 - Write the **subject and body in English**, using clear and appropriate wording.
 - Keep messages **concise** — state the why/purpose in 1–2 sentences; avoid long or overly detailed explanations.
 - Follow the repository's existing commit message style when present.
+- Every commit created or amended by Codex, including merge commits, must include `Co-authored-by: Codex <codex@openai.com>` after a blank line. Preserve existing authors and co-author trailers, avoid duplicates, and verify the final message with `git log -1 --format=%B`.

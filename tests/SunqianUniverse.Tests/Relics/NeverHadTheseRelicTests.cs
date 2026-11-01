@@ -1,4 +1,6 @@
 using System.Reflection;
+using System.Threading;
+using HarmonyLib;
 using MegaCrit.Sts2.Core.Combat;
 using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
@@ -9,6 +11,7 @@ using MegaCrit.Sts2.Core.Models.Characters;
 using MegaCrit.Sts2.Core.Models.Monsters;
 using MegaCrit.Sts2.Core.Models.Powers;
 using MegaCrit.Sts2.Core.Runs;
+using Squ.Audio;
 using Squ.Cards;
 using Squ.Powers;
 using Squ.Relics;
@@ -16,6 +19,29 @@ using TestTheSpire;
 using Xunit;
 
 namespace Squ.Tests.Relics;
+
+[HarmonyPatch(typeof(SquSfx), nameof(SquSfx.Play))]
+internal static class TestSquSfxPlayPatch
+{
+    private static readonly AsyncLocal<List<string>?> RecordedEvents = new();
+
+    public static IReadOnlyList<string> Events => RecordedEvents.Value ?? [];
+
+    public static void BeginCapture() => RecordedEvents.Value = [];
+
+    public static void EndCapture() => RecordedEvents.Value = null;
+
+    private static bool Prefix(string eventPath)
+    {
+        if (RecordedEvents.Value is not { } events)
+        {
+            return true;
+        }
+
+        events.Add(eventPath);
+        return false;
+    }
+}
 
 public sealed class NeverHadTheseRelicTests : SunqianCombatTestSuite
 {
@@ -45,6 +71,31 @@ public sealed class NeverHadTheseRelicTests : SunqianCombatTestSuite
     }
 
     [Fact]
+    public async Task Removing_family_cards_plays_their_exhaust_sounds()
+    {
+        NeverHadTheseRelic relic = CreateRelic();
+        TestSquSfxPlayPatch.BeginCapture();
+        try
+        {
+            await relic.BeforeCardRemoved(Player.RunState.CreateCard<CutePet>(Player));
+            await relic.BeforeCardRemoved(Player.RunState.CreateCard<BelovedPartner>(Player));
+            await relic.BeforeCardRemoved(Player.RunState.CreateCard<NextOfKin>(Player));
+
+            Assert.Equal(
+                [
+                    SquSfx.NeverHadTheseCutePetExhaustEvent,
+                    SquSfx.NeverHadTheseBelovedPartnerExhaustEvent,
+                    SquSfx.NeverHadTheseNextOfKinExhaustEvent,
+                ],
+                TestSquSfxPlayPatch.Events);
+        }
+        finally
+        {
+            TestSquSfxPlayPatch.EndCapture();
+        }
+    }
+
+    [Fact]
     public async Task First_player_turn_grants_energy_and_triggers_each_removed_family_effect()
     {
         NeverHadTheseRelic relic = CreateRelic();
@@ -71,6 +122,35 @@ public sealed class NeverHadTheseRelicTests : SunqianCombatTestSuite
             Player.Creature,
             BelovedPartner.TinderAmount * 2);
         Assert.Null(Player.Creature.GetPower<DexterityPower>());
+    }
+
+    [Fact]
+    public async Task Upgraded_family_cards_keep_their_stronger_effects_after_deck_removal()
+    {
+        NeverHadTheseRelic relic = CreateRelic();
+        await relic.BeforeCardRemoved(Upgrade(Player.RunState.CreateCard<CutePet>(Player)));
+        await relic.BeforeCardRemoved(Upgrade(Player.RunState.CreateCard<BelovedPartner>(Player)));
+        await relic.BeforeCardRemoved(Upgrade(Player.RunState.CreateCard<NextOfKin>(Player)));
+        int energyBefore = Player.PlayerCombatState!.Energy;
+        int drawBefore = PileType.Draw.GetPile(Player).Cards.Count;
+        int petsBefore = Combat.Creatures.Count(creature => creature.IsPet);
+
+        await relic.AfterSideTurnStart(CombatSide.Player, [Player.Creature], Combat);
+
+        Assert.Equal(3, relic.RemovedFamilyCards);
+        Assert.Equal(1, relic.RemovedUpgradedCutePets);
+        Assert.Equal(1, relic.RemovedUpgradedBelovedPartners);
+        Assert.Equal(1, relic.RemovedUpgradedNextOfKin);
+        Assert.Equal(energyBefore + 3, Player.PlayerCombatState.Energy);
+        Assert.Equal(
+            drawBefore - NextOfKin.UpgradedDrawAmount,
+            PileType.Draw.GetPile(Player).Cards.Count);
+        var pet = Assert.Single(Combat.Creatures.Where(creature => creature.IsPet).Skip(petsBefore));
+        Assert.Equal(CutePet.UpgradedSummonAmount, pet.MaxHp);
+        CardTestAssertions.AssertPowerAmount<RegenPower>(
+            Player.Creature,
+            BelovedPartner.UpgradedRegenAmount);
+        CardTestAssertions.AssertPowerAmount<TinderPower>(Player.Creature, BelovedPartner.TinderAmount);
     }
 
     [Fact]
@@ -137,7 +217,9 @@ public sealed class NeverHadTheseRelicTests : SunqianCombatTestSuite
 
         Assert.Contains("[green]包括[/green]", description);
         Assert.Equal(1, description.Split("召唤[/gold]8").Length - 1);
-        Assert.Contains("获得4层[gold]再生[/gold]和6层[gold]火种[/gold]", description);
+        Assert.Contains(
+            $"获得{BelovedPartner.RegenAmount * 2}层[gold]再生[/gold]和{BelovedPartner.TinderAmount * 2}层[gold]火种[/gold]",
+            description);
         Assert.Contains("抽6张牌", description);
     }
 

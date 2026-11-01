@@ -12,6 +12,7 @@ using Squ;
 using Squ.Cards;
 using Squ.Character;
 using Squ.Powers;
+using Squ.Script;
 using TestTheSpire;
 using Xunit;
 
@@ -144,5 +145,32 @@ public sealed class MultiplayerAsyncRegressionTests : SunqianCombatTestSuite
             allyScripts + 1,
             PileType.Hand.GetPile(ally).Cards.Count(card =>
                 card.Tags.Contains(SquCardTags.Script) && card.Owner == ally));
+    }
+
+    [Fact]
+    public async Task Overlapping_script_removals_do_not_cross_suppress_other_players()
+    {
+        var ally = Players.Single(player => player != Player);
+        await ApplyPower<ScriptExecutionCommanderPower>(Player.Creature, 1);
+        await ApplyPower<ScriptBombardChibiPower>(ally.Creature, 1);
+        await PlayerCmd.SetEnergy(0, ally);
+        var ownerScript = Assert.IsType<ScriptExecutionCommanderPower>(
+            Player.Creature.GetPower<ScriptExecutionCommanderPower>());
+        var allyScript = Assert.IsType<ScriptBombardChibiPower>(
+            ally.Creature.GetPower<ScriptBombardChibiPower>());
+
+        ownerScript.BeginRemoval(notifyLift: false, resolveEndEffects: false);
+        try
+        {
+            await ScriptSystem.RemoveScriptPowerAsync(allyScript);
+        }
+        finally
+        {
+            ownerScript.EndRemoval(notifyLift: false, resolveEndEffects: false);
+        }
+
+        Assert.Equal(1, ally.PlayerCombatState!.Energy);
+        Assert.Equal(1, ScriptSystem.GetScriptLiftsThisTurn(ally));
+        Assert.Equal(0, ScriptSystem.GetScriptLiftsThisTurn(Player));
     }
 }

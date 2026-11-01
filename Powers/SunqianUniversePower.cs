@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using Godot;
 using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Creatures;
+using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.Entities.Players;
 using MegaCrit.Sts2.Core.Entities.Powers;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
@@ -10,6 +11,8 @@ using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Models;
 using Squ;
 using Squ.Script;
+using Squ.Cards;
+using STS2RitsuLib.Keywords;
 using STS2RitsuLib.Interop.AutoRegistration;
 using STS2RitsuLib.Scaffolding.Content;
 
@@ -32,19 +35,13 @@ public sealed class SunqianUniversePower : ModPowerTemplate, IScriptLiftHandler
 
 	protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
 	[
-		HoverTipFactory.FromKeyword(SquKeywords.Script),
+		HoverTipFactory.FromKeyword(SquKeywords.ScriptId.GetModCardKeyword()),
 	];
 
 	public async Task OnScriptLiftAsync(ScriptLiftContext context)
 	{
-		int drawCount = Amount;
-		Player? player = Owner.Player;
-		if (drawCount <= 0 || player is null)
-		{
-			return;
-		}
-
+		if (Amount <= 0 || Owner.Player is not { } player || context.Owner != Owner) return;
 		Flash();
-		await CardPileCmd.Draw(context.ChoiceContext, drawCount, player);
+		await CardPileCmd.Draw(context.ChoiceContext, Amount, player);
 	}
 }

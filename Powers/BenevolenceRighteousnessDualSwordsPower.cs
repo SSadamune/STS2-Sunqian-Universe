@@ -1,9 +1,11 @@
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Godot;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.Entities.Creatures;
 using MegaCrit.Sts2.Core.Entities.Powers;
+using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Models;
 using Squ.Audio;
 using STS2RitsuLib.Interop.AutoRegistration;
@@ -28,6 +30,11 @@ public sealed class BenevolenceRighteousnessDualSwordsPower : ModPowerTemplate
 	public override PowerAssetProfile AssetProfile => new(
 		IconPath: "res://images/powers/BenevolenceRighteousnessDualSwordsPower.png",
 		BigIconPath: "res://images/powers/BenevolenceRighteousnessDualSwordsPowerBig.png");
+
+	protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
+	[
+		HoverTipFactory.FromKeyword(SquKeywords.VariousStrikeCards),
+	];
 
 	public override int ModifyCardPlayCount(CardModel card, Creature? target, int playCount)
 	{

@@ -7,6 +7,7 @@ using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.Powers;
 using MegaCrit.Sts2.Core.ValueProps;
 using Squ.Cards;
+using Squ.Combat;
 
 #nullable enable
 
@@ -37,12 +38,10 @@ internal static class ChaosHarmedYouLethalityPatch
 			return false;
 		}
 
-		int attacksThisTurn = CombatManager.Instance.History.CardPlaysStarted.Count(entry =>
-			entry.HappenedThisTurn(__instance.CombatState)
-			&& entry.CardPlay.Card.Type == CardType.Attack
-			&& entry.CardPlay.Card is not ChaosHarmedYou
-			&& entry.CardPlay.Player == __instance.Owner.Player);
 		int currentPlayOffset = pile is { Type: PileType.Play } ? 1 : 0;
+		int attacksThisTurn = __instance.CombatState is { } state
+			? TurnCardHistory.Get(state).CountAttacks(cardSource.Owner, currentPlayOffset + 1)
+			: 0;
 		if (attacksThisTurn > currentPlayOffset)
 		{
 			__result = 1m;

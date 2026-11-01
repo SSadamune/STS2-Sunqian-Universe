@@ -500,6 +500,31 @@ public sealed class CelebrateMourningTests : SunqianCombatTestSuite
         Assert.DoesNotContain("RecentCombats", JsonSerializer.Serialize(migrated));
     }
 
+    [Theory]
+    [InlineData("{\"n\":\"bad\",\"h\":{\"A\":[1,2]}}", 0)]
+    [InlineData("{\"n\":2147483647,\"h\":{\"A\":[1,2]}}", 10)]
+    [InlineData("{\"n\":-1,\"h\":{\"A\":[1,2]}}", 0)]
+    [InlineData("{\"n\":1,\"h\":{\"A\":[null,\"bad\"]}}", 1)]
+    public void Malformed_compact_history_is_bounded_and_does_not_break_loading(string json, int count)
+    {
+        var state = JsonSerializer.Deserialize<CardDrawPlayRateTracker.PlayerSaveState>(json)!;
+        Assert.Equal(count, state.RecentCombats.Count);
+        Assert.All(state.RecentCombats, combat => Assert.Empty(combat.Cards));
+    }
+
+    [Fact]
+    public void Compact_history_retains_latest_ten_combats_and_accepts_truncated_pairs()
+    {
+        const string json = "{\"n\":11,\"h\":{\"A\":[99,99,1,2,3]}}";
+        var state = JsonSerializer.Deserialize<CardDrawPlayRateTracker.PlayerSaveState>(json)!;
+        Assert.Equal(10, state.RecentCombats.Count);
+        Assert.Equal(1, state.RecentCombats[0].Cards["A"].PlayFromHandCount);
+        Assert.Equal(2, state.RecentCombats[0].Cards["A"].HandEntryCount);
+        Assert.Equal(3, state.RecentCombats[1].Cards["A"].PlayFromHandCount);
+        Assert.Equal(0, state.RecentCombats[1].Cards["A"].HandEntryCount);
+        Assert.All(state.RecentCombats.Skip(2), combat => Assert.Empty(combat.Cards));
+    }
+
     [Fact]
     public async Task Exhausting_a_family_card_created_by_never_had_these_returns_celebrate_mourning()
     {

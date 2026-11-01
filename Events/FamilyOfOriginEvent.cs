@@ -6,9 +6,11 @@ using MegaCrit.Sts2.Core.Events;
 using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.Acts;
+using MegaCrit.Sts2.Core.Runs;
 using Squ.Audio;
 using Squ.Cards;
 using Squ.Relics;
+using Squ.Settings;
 using STS2RitsuLib.Interop.AutoRegistration;
 using STS2RitsuLib.Scaffolding.Content;
 
@@ -21,6 +23,8 @@ namespace Squ.Events;
 [RegisterActEvent(typeof(Hive))]
 public sealed class FamilyOfOrigin : ModEventTemplate
 {
+	public const int FirstRejectMaxHpGain = 7;
+
 	// 正文是上一章的阅读结果，本页选项才是下一章。
 	// 爱宠 → 蛐蛐罐；至亲 → 神奇生物；伴侣 → 正妻斟酒。
 	private const string CutePetPage = "CUTE_PET";
@@ -31,6 +35,9 @@ public sealed class FamilyOfOrigin : ModEventTemplate
 
 	public override EventAssetProfile AssetProfile => new(
 		InitialPortraitPath: "res://images/events/NeverHadThese.png");
+
+	public override bool IsAllowed(IRunState runState) =>
+		EventRegistrationPolicy.ShouldInclude(runState);
 
 	protected override IReadOnlyList<EventOption> GenerateInitialOptions() =>
 	[
@@ -87,6 +94,7 @@ public sealed class FamilyOfOrigin : ModEventTemplate
 	private async Task RejectAtFirstStage()
 	{
 		await AddCardToDeck<NormalThinking>();
+		await CreatureCmd.GainMaxHp(Owner!.Creature, FirstRejectMaxHpGain);
 		SetEventFinished(PageDescription(FirstRejectedPage));
 	}
 
@@ -106,9 +114,19 @@ public sealed class FamilyOfOrigin : ModEventTemplate
 	private static IEnumerable<IHoverTip> ReadOptionHoverTips<T>()
 		where T : CardModel
 	{
+		HashSet<string> suppressedTipIds =
+		[
+			HoverTipFactory.FromKeyword(CardKeyword.Exhaust).Id,
+			HoverTipFactory.FromKeyword(CardKeyword.Unplayable).Id,
+			HoverTipFactory.FromKeyword(SquKeywords.Family).Id,
+		];
+
 		foreach (IHoverTip tip in HoverTipFactory.FromCardWithCardHoverTips<T>())
 		{
-			yield return tip;
+			if (!suppressedTipIds.Contains(tip.Id))
+			{
+				yield return tip;
+			}
 		}
 
 		// 只悬停遗物本身。能量和敏捷的说明仍留在遗物自己的悬停里。

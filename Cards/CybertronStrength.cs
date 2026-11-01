@@ -66,7 +66,8 @@ public sealed class CybertronStrength : ModCardTemplate
 		int blockGains = 1 + GetTotalEnemyBurning(combatState) / BurningPerExtraBlock;
 		for (int i = 0; i < blockGains; i++)
 		{
-			await CreatureCmd.GainBlock(Owner.Creature, DynamicVars.Block, cardPlay);
+			// Keep every gain and its hooks, but avoid replaying the full pause per stack.
+			await CreatureCmd.GainBlock(Owner.Creature, DynamicVars.Block, cardPlay, fast: i > 0);
 		}
 	}
 

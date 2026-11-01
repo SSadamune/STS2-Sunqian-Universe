@@ -1,14 +1,31 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json;
 using System.Threading.Tasks;
+using Godot;
+using MegaCrit.Sts2.Core.CardSelection;
 using MegaCrit.Sts2.Core.Combat;
 using MegaCrit.Sts2.Core.Commands;
+using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.Entities.Creatures;
+using MegaCrit.Sts2.Core.Entities.Multiplayer;
 using MegaCrit.Sts2.Core.Entities.Players;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
+using MegaCrit.Sts2.Core.Helpers;
+using MegaCrit.Sts2.Core.Localization;
 using MegaCrit.Sts2.Core.Models;
+using MegaCrit.Sts2.Core.Models.Relics;
+using MegaCrit.Sts2.Core.Nodes.Combat;
+using MegaCrit.Sts2.Core.Nodes.Screens.CardSelection;
+using MegaCrit.Sts2.Core.Nodes.Screens.Overlays;
+using MegaCrit.Sts2.Core.Runs;
+using Squ.Cards;
 using Squ.Powers;
+using Squ.Relics;
 using STS2RitsuLib;
+using STS2RitsuLib.CardPiles;
+using STS2RitsuLib.Networking.ManagedActions;
 
 #nullable enable
 
@@ -16,9 +33,94 @@ namespace Squ.Script;
 
 public static class ScriptSystem
 {
-	private static bool _initialized;
+	private readonly record struct BoxLunchReselectionPayload(
+		int TurnNumber,
+		string[] SelectedRecordIds,
+		int SwitchesUsed,
+		int EnergyCost);
 
-	internal static bool SuppressLiftNotification { get; set; }
+	private const string ScriptCollectionStem = "script_collection";
+	public const int ScriptsRequiredForSecondActivationSlot = 4;
+
+	internal const string SelectionPromptKey =
+		"SUNQIAN_UNIVERSE_COMMON.SCRIPT.selectionPrompt";
+	internal const string ReselectionPromptKey =
+		"SUNQIAN_UNIVERSE_COMMON.SCRIPT.reselectionPrompt";
+	internal const string ViewPromptKey =
+		"SUNQIAN_UNIVERSE_COMMON.SCRIPT.viewPrompt";
+	internal const string WrapSelectionPromptKey = "SUNQIAN_UNIVERSE_COMMON.SCRIPT.wrapSelectionPrompt";
+	internal static CardSelectorPrefs CreateWrapSelectionPrefs() => new(
+		new LocString(SquCommonL10n.Table, WrapSelectionPromptKey), 1)
+	{
+		Cancelable = false,
+		RequireManualConfirmation = false,
+		PretendCardsCanBePlayed = true,
+	};
+
+	internal static LocString CreateReselectionPrompt() => CreateSelectionPrompt(ReselectionPromptKey);
+
+	private static LocString CreateSelectionPrompt(string key)
+	{
+		var prompt = new LocString(SquCommonL10n.Table, key);
+		prompt.Add("ActivationStatus", string.Empty);
+		return prompt;
+	}
+
+	internal static LocString CreateActivationSelectionPrompt(Player player, LocString? prompt = null)
+	{
+		prompt ??= SelectionPrompt;
+		var result = new LocString(prompt.LocTable, prompt.LocEntryKey);
+		result.AddVariablesFrom(prompt);
+		var status = new LocString(SquCommonL10n.Table, "SUNQIAN_UNIVERSE_COMMON.SCRIPT.activationStatus");
+		status.Add("ActiveCount", player.Creature.Powers.OfType<ScriptPowerTemplate>()
+			.Count(power => power.CountsTowardActivationLimit));
+		status.Add("ActivationLimit", GetActivationLimit(player));
+		result.Add("ActivationStatus", status.GetFormattedText());
+		return result;
+	}
+
+	private static readonly LocString SelectionPrompt =
+		CreateSelectionPrompt(SelectionPromptKey);
+	private static readonly LocString InvalidationPrompt =
+		new(SquCommonL10n.Table, "SUNQIAN_UNIVERSE_COMMON.SCRIPT.invalidationPrompt");
+
+	private static bool _initialized;
+	private static readonly RitsuLibManagedNetActionDescriptor<BoxLunchReselectionPayload>
+		BoxLunchReselectionAction = new(
+			SquMod.ModId,
+			"box_lunch_script_reselection",
+			static payload => JsonSerializer.SerializeToUtf8Bytes(payload),
+			static bytes => JsonSerializer.Deserialize<BoxLunchReselectionPayload>(bytes),
+			ExecuteSyncedBoxLunchReselectionAsync,
+			GameActionType.CombatPlayPhaseOnly);
+
+	public static PileType ScriptCollectionPile { get; private set; }
+
+	public static void RegisterPile()
+	{
+		ScriptCollectionPile = ModCardPileRegistry.For(SquMod.ModId)
+			.RegisterOwned(ScriptCollectionStem, new ModCardPileSpec
+			{
+				Scope = ModCardPileScope.CombatOnly,
+				Style = ModCardPileUiStyle.BottomRight,
+				Anchor = new ModCardPileAnchor(
+					ModCardPileAnchorKind.BottomRightPrimary,
+					new Vector2(100f, -105f)),
+				IconPath = "res://images/ui/ScriptCollectionPile.png",
+				OnOpen = context =>
+				{
+					if (context.Player.GetRelic<BoxLunchRelic>() is { } boxLunch
+						&& boxLunch.CanReselectFromScriptCollection())
+					{
+						_ = TaskHelper.RunSafely(boxLunch.ReselectFromScriptCollectionAsync());
+						return;
+					}
+
+					context.ShowDefaultPileScreen();
+				},
+				VisibleWhen = context => context.Pile?.Cards.Count > 0,
+			}).PileType;
+	}
 
 	public static void Initialize()
 	{
@@ -28,38 +130,487 @@ public static class ScriptSystem
 		}
 
 		_initialized = true;
+		RitsuLibManagedNetActions.Register(BoxLunchReselectionAction);
 		RitsuLibFramework.SubscribeLifecycle<CombatStartingEvent>(
 			_ => PlayerScriptLiftTracker.ClearCombat());
 		RitsuLibFramework.SubscribeLifecycle<CombatEndedEvent>(
 			_ => PlayerScriptLiftTracker.ClearCombat());
 	}
 
-	/// <summary>
-	/// 本回合该玩家已记录的剧本失效次数。
-	/// </summary>
 	public static int GetScriptLiftsThisTurn(Player player) =>
 		PlayerScriptLiftTracker.GetLiftsThisTurn(player);
 
 	public static bool HasActiveScript(Creature creature) =>
 		creature.Powers.OfType<ScriptPowerTemplate>().Any();
 
-	/// <summary>
-	/// 「卸妆」：若当前有剧本则令其失效，并返回是否触发了卸妆效果。
-	/// </summary>
-	public static async Task<bool> TryConsumeWrapAsync(Creature creature)
+	public static IReadOnlyList<ScriptPowerTemplate> GetActiveScripts(Creature creature) =>
+		creature.Powers.OfType<ScriptPowerTemplate>().ToList();
+
+	public static bool IsUnlocked<TRecord>(Player player)
+		where TRecord : ScriptRecordCardTemplate =>
+		ScriptCollectionPile.GetPile(player).Cards.OfType<TRecord>().Any();
+
+	public static int GetActivationLimit(Player player)
 	{
-		if (!HasActiveScript(creature))
+		int unlockedCount = ScriptCollectionPile.GetPile(player).Cards
+			.OfType<ScriptRecordCardTemplate>()
+			.Count();
+		int intrinsic = unlockedCount >= ScriptsRequiredForSecondActivationSlot ? 1 : 0;
+		int additional = EnumeratePlayerModels(player).Concat(player.Creature.Powers)
+			.OfType<IScriptActivationLimitProvider>()
+			.Sum(provider => Math.Max(0, provider.GetAdditionalScriptActivationSlots(player, unlockedCount)));
+		return Math.Max(1, 1 + intrinsic + additional);
+	}
+
+	// Existing records remain untouched until every outgoing script has finished expiring.
+	internal sealed class PendingScriptUpdate(ScriptRecordCardTemplate record, Func<Task> commit)
+	{
+		internal ScriptRecordCardTemplate Record { get; } = record;
+		private bool _committed;
+		internal async Task CommitAsync()
+		{
+			if (_committed) throw new InvalidOperationException("Script update already committed.");
+			_committed = true;
+			await commit();
+		}
+	}
+
+	internal static async Task<PendingScriptUpdate> PrepareScriptUpdateAsync<TRecord>(
+		ScriptCardTemplate source, decimal amount = 1, Action<TRecord>? configureRecord = null)
+		where TRecord : ScriptRecordCardTemplate
+	{
+		Player player = source.Owner;
+		TRecord? record = ScriptCollectionPile.GetPile(player).Cards.OfType<TRecord>().FirstOrDefault();
+		bool wasNewUnlock = record is null;
+		if (record is null)
+		{
+			ICombatState combatState = player.Creature.CombatState
+				?? throw new InvalidOperationException("Scripts can only be unlocked during combat.");
+			record = combatState.CreateCard<TRecord>(player);
+			record.InitializeFrom(source, amount);
+			// Include new records in selection and activation-limit calculations.
+			await CardPileCmd.AddGeneratedCardToCombat(record, ScriptCollectionPile, player);
+		}
+		return new PendingScriptUpdate(record, async () =>
+		{
+			if (!wasNewUnlock) record.UpgradeFrom(source);
+			configureRecord?.Invoke(record);
+			if (wasNewUnlock)
+			{
+				foreach (IAfterScriptUnlocked handler in EnumeratePlayerModels(player).OfType<IAfterScriptUnlocked>())
+					await handler.AfterScriptUnlockedAsync(player, record);
+			}
+			foreach (IAfterScriptCardPlayed handler in EnumeratePlayerModels(player).OfType<IAfterScriptCardPlayed>())
+				await handler.AfterScriptCardPlayedAsync(player, record, wasNewUnlock);
+			// A multi-record card may upgrade an active record that was not replaced.
+			player.Creature.Powers.OfType<ScriptPowerTemplate>()
+				.FirstOrDefault(power => power.GetType() == record.PowerType)?.SetAmount(record.StoredAmount);
+		});
+	}
+
+	public static async Task UnlockOrUpgradeAsync<TRecord>(
+		PlayerChoiceContext choiceContext,
+		ScriptCardTemplate source,
+		decimal amount,
+		Action<TRecord>? configureRecord = null,
+		Action<TRecord>? afterActivation = null,
+		bool activate = true)
+		where TRecord : ScriptRecordCardTemplate
+	{
+		PendingScriptUpdate update = await PrepareScriptUpdateAsync(source, amount, configureRecord);
+		if (!activate)
+		{
+			await update.CommitAsync();
+			return;
+		}
+		await ActivatePlayedScriptAsync(choiceContext, source.Owner, update.Record, update.CommitAsync);
+		afterActivation?.Invoke((TRecord)update.Record);
+	}
+
+	internal static async Task ActivatePlayedScriptAsync(
+		PlayerChoiceContext choiceContext,
+		Player player,
+		ScriptRecordCardTemplate record,
+		Func<Task>? beforeActivation = null)
+	{
+		List<ScriptPowerTemplate> active = player.Creature.Powers.OfType<ScriptPowerTemplate>().ToList();
+		List<ScriptPowerTemplate> outgoing = active.Where(power => power.GetType() == record.PowerType
+			|| (record.MutuallyExclusiveGroup is not null
+				&& power.MutuallyExclusiveGroup == record.MutuallyExclusiveGroup)).ToList();
+		List<ScriptPowerTemplate> candidates = active.Except(outgoing)
+			.Where(power => power.CountsTowardActivationLimit).ToList();
+		int removalCount = record.CountsTowardActivationLimit
+			? Math.Max(0, candidates.Count - GetActivationLimit(player) + 1) : 0;
+		if (removalCount > 0)
+		{
+			outgoing.AddRange(candidates.Count > 1
+				? await ChooseScriptsToInvalidateAsync(choiceContext, player, candidates, removalCount)
+				: candidates.Take(removalCount));
+		}
+		// Finish selection before any expiration; finish all expirations before any record mutation.
+		foreach (ScriptPowerTemplate power in outgoing)
+			await RemoveScriptPowerAsync(power);
+		if (beforeActivation is not null) await beforeActivation();
+		await record.ActivateAsync(choiceContext, player);
+	}
+
+	private static async Task<IReadOnlyList<ScriptPowerTemplate>> ChooseScriptsToInvalidateAsync(
+		PlayerChoiceContext choiceContext,
+		Player player,
+		IReadOnlyList<ScriptPowerTemplate> activeScripts,
+		int selectCount,
+		bool forWrap = false)
+	{
+		HashSet<Type> activeTypes = activeScripts
+			.Select(power => power.GetType())
+			.ToHashSet();
+		var prefs = forWrap ? CreateWrapSelectionPrefs() : new CardSelectorPrefs(InvalidationPrompt, selectCount)
+		{
+			Cancelable = false,
+			PretendCardsCanBePlayed = true,
+		};
+		List<Type> selectedTypes = (await CardSelectCmd.FromCombatPile(
+			choiceContext,
+			ScriptCollectionPile.GetPile(player),
+			player,
+			prefs,
+			card => card is ScriptRecordCardTemplate record
+				&& activeTypes.Contains(record.PowerType)))
+			.OfType<ScriptRecordCardTemplate>()
+			.Select(record => record.PowerType)
+			.ToList();
+
+		List<ScriptPowerTemplate> selected = activeScripts
+			.Where(power => selectedTypes.Contains(power.GetType()))
+			.Take(selectCount)
+			.ToList();
+		if (selected.Count < selectCount)
+		{
+			selected.AddRange(activeScripts
+				.Where(power => !selected.Contains(power))
+				.Take(selectCount - selected.Count));
+		}
+
+		return selected;
+	}
+
+	public static async Task<bool> ChooseActiveScriptsAsync(
+		PlayerChoiceContext choiceContext,
+		Player player,
+		bool cancelable,
+		bool requireManualSelection = false,
+		Func<Task>? beforeActivation = null)
+	{
+		IReadOnlyList<ScriptRecordCardTemplate>? selected =
+			await ChooseActiveScriptRecordsAsync(
+				choiceContext,
+				player,
+				cancelable,
+				requireManualSelection);
+		if (selected is null)
 		{
 			return false;
 		}
 
-		await InvalidateScriptsAsync(creature);
+		await ApplySelectedScriptsAsync(choiceContext, player, selected, beforeActivation);
 		return true;
 	}
 
-	/// <summary>
-	/// 移除生物身上所有剧本能力（例如事件强制结束剧本）。
-	/// </summary>
+	internal static async Task<IReadOnlyList<ScriptRecordCardTemplate>?>
+		ChooseActiveScriptRecordsAsync(
+			PlayerChoiceContext choiceContext,
+			Player player,
+			bool cancelable,
+			bool requireManualSelection,
+			LocString? prompt = null,
+			bool localOnly = false)
+	{
+		CardPile pile = ScriptCollectionPile.GetPile(player);
+		List<ScriptRecordCardTemplate> records = pile.Cards
+			.OfType<ScriptRecordCardTemplate>()
+			.ToList();
+		if (records.Count == 0 || player.Creature.IsDead)
+		{
+			return null;
+		}
+		if (CardSelectCmd.Selector is VakuuCardSelector)
+		{
+			// Vakuu takes the first MaxSelect cards without checking exclusivity.
+			// Choose a legal subset directly instead of recursively reopening selection.
+			var automatic = new List<ScriptRecordCardTemplate>();
+			var groups = new HashSet<string>();
+			int regularCount = 0;
+			foreach (var record in records)
+			{
+				if (record.MutuallyExclusiveGroup is { } group && groups.Contains(group)) continue;
+				if (record.CountsTowardActivationLimit && regularCount >= GetActivationLimit(player)) continue;
+				automatic.Add(record);
+				if (record.CountsTowardActivationLimit) regularCount++;
+				if (record.MutuallyExclusiveGroup is { } selectedGroup) groups.Add(selectedGroup);
+			}
+			return automatic;
+		}
+		if (records.Count == 1 && !requireManualSelection)
+		{
+			return records;
+		}
+
+		(int minSelect, int maxSelect) = GetSelectionBounds(player, records);
+		var prefs = new CardSelectorPrefs(CreateActivationSelectionPrompt(player, prompt), minSelect, maxSelect)
+		{
+			Cancelable = cancelable,
+			RequireManualConfirmation = true,
+			PretendCardsCanBePlayed = true,
+		};
+
+		IEnumerable<CardModel> selection = localOnly
+			? await SelectLocalScriptRecordsAsync(pile, prefs)
+			: await CardSelectCmd.FromCombatPile(
+				choiceContext, pile, player, prefs, card => card is ScriptRecordCardTemplate);
+		List<ScriptRecordCardTemplate> selected = selection
+			.OfType<ScriptRecordCardTemplate>()
+			.ToList();
+		if (selected.Count == 0)
+		{
+			return null;
+		}
+		return IsValidActiveSelection(player, selected)
+			? selected
+			: await ChooseActiveScriptRecordsAsync(choiceContext, player, cancelable, true, prompt, localOnly);
+	}
+
+	private static async Task<IEnumerable<CardModel>> SelectLocalScriptRecordsAsync(
+		CardPile pile, CardSelectorPrefs prefs)
+	{
+		// Box Lunch broadcasts its confirmed selection as a managed action. Opening
+		// or canceling its local UI must not reserve or send a synchronized choice.
+		if ((CardSelectCmd.Selector ?? CardSelectCmd.LocalSelector) is { } selector)
+		{
+			return await selector.GetSelectedCards(
+				pile.Cards.OfType<ScriptRecordCardTemplate>(), prefs.MinSelect, prefs.MaxSelect);
+		}
+
+		NPlayerHand.Instance?.CancelAllCardPlay();
+		var screen = NCombatPileCardSelectScreen.Create(
+			pile, prefs, card => card is ScriptRecordCardTemplate);
+		NOverlayStack.Instance!.Push(screen);
+		return await screen.CardsSelected();
+	}
+
+	internal static (int Min, int Max) GetSelectionBounds(
+		Player player, IReadOnlyList<ScriptRecordCardTemplate> records)
+	{
+		int limit = GetActivationLimit(player);
+		int regular = records.Where(record => record.CountsTowardActivationLimit)
+			.GroupBy(record => record.MutuallyExclusiveGroup ?? record.Id.ToString()).Count();
+		int free = records.Where(record => !record.CountsTowardActivationLimit)
+			.GroupBy(record => record.MutuallyExclusiveGroup ?? record.Id.ToString()).Count();
+		int max = Math.Min(limit, regular) + free;
+		return (Math.Min(1, max), max);
+	}
+
+	internal static bool IsValidActiveSelection(Player player, IReadOnlyList<ScriptRecordCardTemplate> selected) =>
+		selected.Count > 0
+		&& selected.Count(record => record.CountsTowardActivationLimit) <= GetActivationLimit(player)
+		&& selected.Where(record => record.MutuallyExclusiveGroup is not null)
+			.GroupBy(record => record.MutuallyExclusiveGroup).All(group => group.Count() == 1);
+
+	internal static bool IsSameActiveSelection(
+		Player player,
+		IReadOnlyList<ScriptRecordCardTemplate> selected)
+	{
+		HashSet<Type> activeTypes = player.Creature.Powers
+			.OfType<ScriptPowerTemplate>()
+			.Select(power => power.GetType())
+			.ToHashSet();
+		return activeTypes.Count == selected.Count
+			&& selected.All(record => activeTypes.Contains(record.PowerType));
+	}
+
+	internal static bool RequestBoxLunchReselection(
+		Player player,
+		IReadOnlyList<ScriptRecordCardTemplate> selected,
+		int switchesUsed,
+		int energyCost)
+	{
+		if (player.PlayerCombatState?.TurnNumber is not int turnNumber
+			|| selected.Count == 0)
+		{
+			return false;
+		}
+
+		BoxLunchReselectionPayload payload = new(
+			turnNumber,
+			selected.Select(record => record.Id.ToString()).ToArray(),
+			switchesUsed,
+			energyCost);
+		return RitsuLibManagedNetActions.Request(
+			RunManager.Instance,
+			BoxLunchReselectionAction,
+			payload,
+			player.NetId);
+	}
+
+	private static async Task ExecuteSyncedBoxLunchReselectionAsync(
+		RitsuLibManagedNetActionContext<BoxLunchReselectionPayload> context)
+	{
+		BoxLunchReselectionPayload payload = context.Message;
+		Player player = context.Player;
+		if (player.GetRelic<BoxLunchRelic>() is not { } boxLunch)
+		{
+			return;
+		}
+
+		if (player.PlayerCombatState?.TurnNumber != payload.TurnNumber
+			|| !CombatManager.Instance.IsPartOfPlayerTurn(player)
+			|| player.Creature.IsDead
+			|| !TryResolveReselection(player, payload, out List<ScriptRecordCardTemplate>? selected))
+		{
+			boxLunch.ReleaseEnergyCost(payload.EnergyCost);
+			return;
+		}
+
+		if (selected is not List<ScriptRecordCardTemplate> chosen
+			|| payload.SwitchesUsed < 1
+			|| payload.SwitchesUsed > boxLunch.SwitchesPerTurn
+			|| payload.EnergyCost != boxLunch.EnergyCostPerSwitch)
+		{
+			boxLunch.ReleaseEnergyCost(payload.EnergyCost);
+			return;
+		}
+
+		int energy = player.PlayerCombatState?.Energy ?? 0;
+		if (energy < payload.EnergyCost)
+		{
+			boxLunch.ReleaseEnergyCost(payload.EnergyCost);
+			return;
+		}
+
+		if (!boxLunch.TryCommitReselection(payload.TurnNumber, payload.SwitchesUsed))
+		{
+			boxLunch.ReleaseEnergyCost(payload.EnergyCost);
+			return;
+		}
+		if (payload.EnergyCost > 0)
+		{
+			await PlayerCmd.LoseEnergy(payload.EnergyCost, player);
+		}
+
+		boxLunch.ReleaseEnergyCost(payload.EnergyCost);
+		await ApplySelectedScriptsAsync(
+			context.PlayerChoiceContext,
+			player,
+			chosen);
+	}
+
+	private static bool TryResolveReselection(
+		Player player,
+		BoxLunchReselectionPayload payload,
+		out List<ScriptRecordCardTemplate>? selected)
+	{
+		selected = null;
+		List<ScriptRecordCardTemplate> records = ScriptCollectionPile.GetPile(player).Cards
+			.OfType<ScriptRecordCardTemplate>()
+			.ToList();
+		(int minSelect, int maxSelect) = GetSelectionBounds(player, records);
+		if (payload.SelectedRecordIds.Length < minSelect
+			|| payload.SelectedRecordIds.Length > maxSelect
+			|| payload.SelectedRecordIds.Distinct(StringComparer.Ordinal).Count()
+				!= payload.SelectedRecordIds.Length)
+		{
+			return false;
+		}
+
+		Dictionary<string, ScriptRecordCardTemplate> byId = records
+			.ToDictionary(record => record.Id.ToString(), StringComparer.Ordinal);
+		List<ScriptRecordCardTemplate> resolved = [];
+		foreach (string id in payload.SelectedRecordIds)
+		{
+			if (!byId.TryGetValue(id, out ScriptRecordCardTemplate? record))
+			{
+				return false;
+			}
+
+			resolved.Add(record);
+		}
+
+		if (!IsValidActiveSelection(player, resolved))
+		{
+			return false;
+		}
+		selected = resolved;
+		return true;
+	}
+
+	private static async Task ApplySelectedScriptsAsync(
+		PlayerChoiceContext choiceContext,
+		Player player,
+		IReadOnlyList<ScriptRecordCardTemplate> selected,
+		Func<Task>? beforeActivation = null)
+	{
+		// Reselection replaces even same-name scripts. No new power may observe a half-expired set.
+		foreach (ScriptPowerTemplate active in player.Creature.Powers.OfType<ScriptPowerTemplate>().ToList())
+			await RemoveScriptPowerAsync(active);
+		if (beforeActivation is not null) await beforeActivation();
+		foreach (ScriptRecordCardTemplate record in selected)
+			await record.ActivateAsync(choiceContext, player);
+	}
+
+	public static async Task ApplyExternalScriptPowerAsync(
+		PlayerChoiceContext choiceContext,
+		ScriptPowerTemplate power,
+		Creature target,
+		decimal amount,
+		Creature? applier,
+		CardModel? cardSource,
+		bool silent)
+	{
+		ScriptPowerTemplate? sameType = target.Powers
+			.OfType<ScriptPowerTemplate>()
+			.FirstOrDefault(active => active.GetType() == power.GetType());
+		if (sameType is not null)
+		{
+			await RemoveScriptPowerAsync(sameType);
+		}
+
+		foreach (ScriptPowerTemplate conflict in target.Powers.OfType<ScriptPowerTemplate>()
+			.Where(active => power.MutuallyExclusiveGroup is not null
+				&& active.MutuallyExclusiveGroup == power.MutuallyExclusiveGroup).ToList())
+		{
+			await RemoveScriptPowerAsync(conflict);
+		}
+		int limit = target.Player is { } player ? GetActivationLimit(player) : 1;
+		while (power.CountsTowardActivationLimit
+			&& target.Powers.OfType<ScriptPowerTemplate>().Count(active => active.CountsTowardActivationLimit) >= limit)
+		{
+			await RemoveScriptPowerAsync(target.Powers.OfType<ScriptPowerTemplate>().First(active => active.CountsTowardActivationLimit));
+		}
+
+		power.SetActivationChoiceContext(choiceContext);
+		await PowerCmd.Apply(choiceContext, power, target, amount, applier, cardSource, silent);
+	}
+
+	public static async Task<bool> TryConsumeWrapAsync(
+		PlayerChoiceContext choiceContext,
+		Creature creature)
+	{
+		List<ScriptPowerTemplate> activeScripts = creature.Powers
+			.OfType<ScriptPowerTemplate>()
+			.ToList();
+		if (activeScripts.Count == 0)
+		{
+			return false;
+		}
+
+		ScriptPowerTemplate selected = activeScripts[0];
+		if (activeScripts.Count > 1 && creature.Player is { } player)
+		{
+			selected = (await ChooseScriptsToInvalidateAsync(choiceContext, player, activeScripts, 1, forWrap: true))[0];
+		}
+		await RemoveScriptPowerAsync(selected);
+		return true;
+	}
+
 	public static async Task InvalidateScriptsAsync(Creature creature)
 	{
 		foreach (ScriptPowerTemplate active in creature.Powers.OfType<ScriptPowerTemplate>().ToList())
@@ -68,11 +619,21 @@ public static class ScriptSystem
 		}
 	}
 
-	public static async Task RemoveScriptPowerAsync(ScriptPowerTemplate power, bool notifyLift = true)
+	public static async Task RemoveScriptPowerAsync(
+		ScriptPowerTemplate power,
+		bool notifyLift = true,
+		bool resolveEndEffects = true)
 	{
-		SuppressLiftNotification = !notifyLift;
-		await PowerCmd.Remove(power);
-		SuppressLiftNotification = false;
+		power.BeginRemoval(notifyLift, resolveEndEffects);
+
+		try
+		{
+			await PowerCmd.Remove(power);
+		}
+		finally
+		{
+			power.EndRemoval(notifyLift, resolveEndEffects);
+		}
 	}
 
 	internal static async Task NotifyScriptLiftedAsync(Creature creature, PlayerChoiceContext choiceContext)
@@ -91,28 +652,19 @@ public static class ScriptSystem
 			LiftsThisTurn = liftsThisTurn,
 		};
 
-		foreach (IScriptLiftHandler handler in EnumerateScriptLiftHandlers(player, creature))
+		foreach (IScriptLiftHandler handler in EnumeratePlayerModels(player)
+			.Concat(creature.Powers)
+			.OfType<IScriptLiftHandler>())
 		{
 			await handler.OnScriptLiftAsync(context);
 		}
 	}
 
-	private static IEnumerable<IScriptLiftHandler> EnumerateScriptLiftHandlers(Player player, Creature creature)
+	private static IEnumerable<AbstractModel> EnumeratePlayerModels(Player player)
 	{
-		foreach (AbstractModel model in player.Relics)
+		foreach (AbstractModel relic in player.Relics)
 		{
-			if (model is IScriptLiftHandler handler)
-			{
-				yield return handler;
-			}
-		}
-
-		foreach (PowerModel power in creature.Powers)
-		{
-			if (power is IScriptLiftHandler handler)
-			{
-				yield return handler;
-			}
+			yield return relic;
 		}
 	}
 }

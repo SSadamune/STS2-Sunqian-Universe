@@ -5,11 +5,13 @@ using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.HoverTips;
+using MegaCrit.Sts2.Core.Localization;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.Models.Powers;
 using Squ;
 using Squ.Audio;
 using Squ.Character;
+using Squ.Interop;
 using Squ.Powers;
 using STS2RitsuLib.Interop.AutoRegistration;
 using STS2RitsuLib.Scaffolding.Content;
@@ -19,10 +21,12 @@ using STS2RitsuLib.Scaffolding.Content;
 namespace Squ.Cards;
 
 [RegisterCard(typeof(SunqianCardPool), StableEntryStem = "headsman_script")]
-public sealed class HeadsmanScript : ScriptCardTemplate
+public sealed class HeadsmanScript : ScriptCardTemplate<HeadsmanScriptRecord>
 {
+	protected override bool UsesRowKeywordTemplate => false;
+
 	public const int BaseVigor = 3;
-	public const int UpgradedVigor = 5;
+	public const int UpgradedVigor = 4;
 
 	public const int VulnerableAmount = 2;
 
@@ -34,11 +38,18 @@ public sealed class HeadsmanScript : ScriptCardTemplate
 		new PowerVar<VulnerablePower>(VulnerableAmount),
 	];
 
-	protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
+	protected override IEnumerable<IHoverTip> AdditionalScriptHoverTips =>
 	[
 		HoverTipFactory.FromPower<VigorPower>(),
 		HoverTipFactory.FromPower<VulnerablePower>(),
+		..NewsanguoDrunkenMightEffect.HoverTips(),
 	];
+
+	protected override void AddExtraArgsToDescription(LocString description)
+	{
+		base.AddExtraArgsToDescription(description);
+		NewsanguoDrunkenMightEffect.AddOrText(description);
+	}
 
 	public override IEnumerable<CardKeyword> CanonicalKeywords =>
 	[
@@ -59,13 +70,6 @@ public sealed class HeadsmanScript : ScriptCardTemplate
 		ArgumentNullException.ThrowIfNull(cardPlay.Target, nameof(cardPlay.Target));
 		SquSfx.Play(SquSfx.HeadsmanScriptEvent);
 
-		await PowerCmd.Apply<VigorPower>(
-			choiceContext,
-			Owner.Creature,
-			DynamicVars[nameof(VigorPower)].BaseValue,
-			Owner.Creature,
-			this);
-
 		await PowerCmd.Apply<VulnerablePower>(
 			choiceContext,
 			cardPlay.Target,
@@ -73,12 +77,7 @@ public sealed class HeadsmanScript : ScriptCardTemplate
 			Owner.Creature,
 			this);
 
-		await PowerCmd.Apply<ScriptHeadsmanPower>(
-			choiceContext,
-			Owner.Creature,
-			1m,
-			Owner.Creature,
-			this);
+		await UnlockScriptAsync(choiceContext);
 	}
 
 	protected override void OnUpgrade()

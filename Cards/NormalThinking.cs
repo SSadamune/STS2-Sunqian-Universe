@@ -24,6 +24,8 @@ public sealed class NormalThinking : ModCardTemplate
 
 	public override int MaxUpgradeLevel => 0;
 
+	public override CardPoolModel VisualCardPool => ModelDb.CardPool<CurseCardPool>();
+
 	public override IEnumerable<CardKeyword> CanonicalKeywords =>
 	[
 		CardKeyword.Innate,

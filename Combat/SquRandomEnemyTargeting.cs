@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Godot;
+using HarmonyLib;
 using MegaCrit.Sts2.Core.Combat;
 using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Commands.Builders;
@@ -23,10 +24,45 @@ namespace Squ.Combat;
 /// </summary>
 public static class SquRandomEnemyTargeting
 {
+	private static readonly Dictionary<CardModel, Stack<Creature>> RequiredTargets = [];
+	internal static IDisposable RequireTarget(CardModel card, Creature target)
+	{
+		if (!RequiredTargets.TryGetValue(card, out var targets)) RequiredTargets[card] = targets = new();
+		targets.Push(target);
+		return new RequiredTargetScope(card);
+	}
+	private sealed class RequiredTargetScope(CardModel card) : IDisposable
+	{
+		public void Dispose()
+		{
+			var targets = RequiredTargets[card];
+			targets.Pop();
+			if (targets.Count == 0) RequiredTargets.Remove(card);
+		}
+	}
+
+	// Native random attacks do not consult CardPlay.Target. Guarantee the first
+	// hit on the required target, then leave the remaining random hits unchanged.
+	[HarmonyPatch(typeof(AttackCommand), "GetPossibleTargets")]
+	private static class RequiredRandomTargetPatch
+	{
+		[HarmonyPostfix, HarmonyPriority(Priority.Last)]
+		private static void Postfix(AttackCommand __instance, ref IReadOnlyList<Creature> __result)
+		{
+			if (!__instance.IsRandomlyTargeted || __instance.ModelSource is not CardModel card
+				|| !RequiredTargets.TryGetValue(card, out var targets)) return;
+			Creature target = targets.Peek();
+			if (target.IsAlive && __result.Contains(target)
+				&& !__instance.Results.SelectMany(hit => hit).Any(result => result.Receiver == target))
+				__result = [target];
+		}
+	}
+
 	public static IEnumerable<Creature> PickRandomEnemiesUnique(
 		ICombatState combatState,
 		int count,
-		Rng rng)
+		Rng rng,
+		Creature? requiredTarget = null)
 	{
 		if (count <= 0)
 		{
@@ -42,12 +78,27 @@ public static class SquRandomEnemyTargeting
 		}
 
 		int pickCount = Math.Min(count, alive.Count);
-		List<Creature> pool = alive.ToList();
+		Creature? includedTarget = requiredTarget != null && alive.Contains(requiredTarget)
+			? requiredTarget
+			: null;
+		// Keep the original ordering and full shuffle: changing either also changes
+		// subsequent CombatTargets RNG results, even when every enemy is selected.
+		List<Creature> pool = alive;
+		if (includedTarget != null)
+		{
+			pool.RemoveAll(creature => creature == includedTarget);
+		}
 
 		for (int i = pool.Count - 1; i > 0; i--)
 		{
 			int swapIndex = rng.NextInt(0, i + 1);
 			(pool[i], pool[swapIndex]) = (pool[swapIndex], pool[i]);
+		}
+
+		if (includedTarget != null)
+		{
+			yield return includedTarget;
+			pickCount--;
 		}
 
 		foreach (Creature creature in pool.Take(pickCount))
@@ -86,13 +137,16 @@ public static class SquRandomEnemyTargeting
 			return CardModelTargetingExtensions.GetTargets(card, selectedTarget);
 		}
 
-		return SelectRandomEnemies(card, GetRandomEnemyTargetCount(card));
+		return SelectRandomEnemies(card, GetRandomEnemyTargetCount(card), selectedTarget);
 	}
 
 	/// <summary>
 	/// 为一项随机多目标效果选择一次目标集合。调用方必须在该效果的后续结算中复用返回的集合。
 	/// </summary>
-	public static List<Creature> SelectRandomEnemies(CardModel card, int requestedTargetCount)
+	public static List<Creature> SelectRandomEnemies(
+		CardModel card,
+		int requestedTargetCount,
+		Creature? requiredTarget = null)
 	{
 		ICombatState? combatState = card.CombatState;
 		if (combatState == null || requestedTargetCount <= 0)
@@ -103,7 +157,8 @@ public static class SquRandomEnemyTargeting
 		return PickRandomEnemiesUnique(
 			combatState,
 			requestedTargetCount,
-			card.Owner.RunState.Rng.CombatTargets).ToList();
+			card.Owner.RunState.Rng.CombatTargets,
+			requiredTarget).ToList();
 	}
 
 	/// <summary>
@@ -122,16 +177,50 @@ public static class SquRandomEnemyTargeting
 		bool spawnHitVfxOnEachCreature = false,
 		Func<IEnumerable<Creature>, Task>? beforeHit = null)
 	{
-		ICombatState? combatState = card.CombatState;
-		if (combatState == null || requestedTargetCount <= 0 || hitCountPerTarget <= 0)
+		if (card.CombatState == null || requestedTargetCount <= 0 || hitCountPerTarget <= 0)
 		{
 			return 0;
 		}
 
-		List<Creature> targets = SelectRandomEnemies(card, requestedTargetCount);
-		if (targets.Count == 0)
+		List<Creature> targets = SelectRandomEnemies(
+			card,
+			requestedTargetCount,
+			cardPlay?.Target);
+		await ExecuteDamageAgainstTargets(
+			card,
+			choiceContext,
+			targets,
+			damagePerHit,
+			hitCountPerTarget,
+			hitFx,
+			cardPlay,
+			hitVfxNode,
+			spawnHitVfxOnEachCreature,
+			beforeHit);
+
+		return targets.Count;
+	}
+
+	/// <summary>
+	/// Uses a previously selected target set so multiple attack commands from one effect
+	/// resolve against the same random enemies.
+	/// </summary>
+	public static async Task ExecuteDamageAgainstTargets(
+		CardModel card,
+		PlayerChoiceContext choiceContext,
+		IReadOnlyCollection<Creature> targets,
+		decimal? damagePerHit = null,
+		int hitCountPerTarget = 1,
+		string? hitFx = "vfx/vfx_attack_slash",
+		CardPlay? cardPlay = null,
+		Func<Creature, Node2D?>? hitVfxNode = null,
+		bool spawnHitVfxOnEachCreature = false,
+		Func<IEnumerable<Creature>, Task>? beforeHit = null)
+	{
+		ICombatState? combatState = card.CombatState;
+		if (combatState == null || targets.Count == 0 || hitCountPerTarget <= 0)
 		{
-			return 0;
+			return;
 		}
 
 		AttackCommand attack = DamageCmd.Attack(damagePerHit ?? card.DynamicVars.Damage.BaseValue)
@@ -160,7 +249,5 @@ public static class SquRandomEnemyTargeting
 		}
 
 		await attack.Execute(choiceContext);
-
-		return targets.Count;
 	}
 }

@@ -16,7 +16,7 @@ using STS2RitsuLib.Scaffolding.Content;
 namespace Squ.Relics;
 
 /// <summary>
-/// 复用素材：拾起时，从牌组中选择至多两张带消耗词条的剧本牌，永久移除其消耗词条。
+/// 重播式剪辑：拾起时，从牌组中选择至多两张带消耗词条的剧本牌，永久移除其消耗词条。
 /// </summary>
 [RegisterRelic(typeof(SunqianRelicPool), StableEntryStem = "reused_props")]
 public sealed class ReusedPropsRelic : ScriptRelicTemplate

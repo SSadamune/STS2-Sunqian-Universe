@@ -48,7 +48,7 @@ public sealed class Audition : ModCardTemplate
 	protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
 	{
 		SquSfx.Play(SquSfx.AuditionEvent);
-		bool wrap = await ScriptSystem.TryConsumeWrapAsync(Owner.Creature);
+		bool wrap = await ScriptSystem.TryConsumeWrapAsync(choiceContext, Owner.Creature);
 
 		List<CardModel> scriptCards = BuildDistinctScriptCards(ScriptCardCount);
 		if (IsUpgraded)

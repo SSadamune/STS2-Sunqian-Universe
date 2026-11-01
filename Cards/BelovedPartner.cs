@@ -22,6 +22,7 @@ namespace Squ.Cards;
 public sealed class BelovedPartner : FamilyCardTemplate, IRowKeywordsCard
 {
 	public const int RegenAmount = 2;
+	public const int UpgradedRegenAmount = 3;
 	public const int TinderAmount = 4;
 
 	public override CardAssetProfile AssetProfile => new(
@@ -37,7 +38,7 @@ public sealed class BelovedPartner : FamilyCardTemplate, IRowKeywordsCard
 	protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
 	[
 		HoverTipFactory.FromPower<RegenPower>(),
-		HoverTipFactory.FromPower<TinderPower>(),
+		..HoverTipFactory.FromPowerWithPowerHoverTips<TinderPower>(),
 	];
 
 	public override IEnumerable<CardKeyword> CanonicalKeywords =>
@@ -85,5 +86,10 @@ public sealed class BelovedPartner : FamilyCardTemplate, IRowKeywordsCard
 			tinderAmount,
 			owner.Creature,
 			source);
+	}
+
+	protected override void OnUpgrade()
+	{
+		DynamicVars[nameof(RegenPower)].UpgradeValueBy(UpgradedRegenAmount - RegenAmount);
 	}
 }

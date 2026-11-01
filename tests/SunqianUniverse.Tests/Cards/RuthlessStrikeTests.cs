@@ -23,15 +23,15 @@ public sealed class RuthlessStrikeTests : SunqianCombatTestSuite
         var card = Upgrade(await AddToHand<RuthlessStrike>());
         var fuel = await AddCardToPile<DefendIronclad>(PileType.Hand);
         await CardCmd.Exhaust(new BlockingPlayerChoiceContext(), fuel);
-        Assert.Equal(3, card.DynamicVars.Repeat.IntValue);
+        Assert.Equal(2, card.DynamicVars.Repeat.IntValue);
         await CreatureCmd.GainBlock(EnemyAt(0), 100, ValueProp.Unpowered, null);
         int hp = EnemyAt(0).CurrentHp;
 
         await Play(card, EnemyAt(0));
 
-        Assert.Equal(hp - RuthlessStrike.CanonicalDamage * 3, EnemyAt(0).CurrentHp);
+        Assert.Equal(hp - RuthlessStrike.UpgradedDamage * 2, EnemyAt(0).CurrentHp);
         Assert.Equal(100, EnemyAt(0).Block);
-        Assert.Equal(RuthlessStrike.UpgradedHits, card.DynamicVars.Repeat.IntValue);
+        Assert.Equal(RuthlessStrike.BaseHits, card.DynamicVars.Repeat.IntValue);
     }
 
     [Fact]

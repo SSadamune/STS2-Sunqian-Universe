@@ -1,60 +1,54 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
-using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.HoverTips;
+using Squ.Powers;
+using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.Models;
+using Squ;
 using Squ.Character;
-using Squ.Combat;
+using Squ.Script;
 using STS2RitsuLib.Interop.AutoRegistration;
 using STS2RitsuLib.Scaffolding.Content;
-
-#nullable enable
 
 namespace Squ.Cards;
 
 [RegisterCard(typeof(SunqianCardPool), StableEntryStem = "guan_di_form")]
-public sealed class GuanDiForm : ModCardTemplate
+public sealed class GuanDiForm : ScriptCardTemplate<GuanYuCivilVer>
 {
-	protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
-	[
-		CreateFormHoverTip<GuanYuCivilVer>(),
-		CreateFormHoverTip<GuanYuMartialVer>(),
-	];
+    protected override HashSet<CardTag> CanonicalTags => [];
+    public override IEnumerable<CardKeyword> CanonicalKeywords => [];
+    protected override IEnumerable<IHoverTip> AdditionalScriptHoverTips =>
+    [
+        HoverTipFactory.FromKeyword(SquKeywords.Script),
+        HoverTipFactory.FromKeyword(SquKeywords.ScriptCollection),
+    ];
+    public GuanDiForm() : base(3, CardType.Power, CardRarity.Rare, TargetType.Self, true) { }
 
-	public override CardAssetProfile AssetProfile => new(
-		PortraitPath: "res://images/cards/GuanDiForm.png");
+    public override CardAssetProfile AssetProfile => new(PortraitPath: "res://images/cards/GuanDiForm.png");
+    internal override int GetScriptPowerAmountForPreview() => IsUpgraded ? 4 : 2;
+    internal override IEnumerable<ScriptRecordCardTemplate> CreateScriptRecordPreviews()
+    {
+        var civil = (GuanYuCivilVer)ModelDb.Card<GuanYuCivilVer>().ToMutable();
+        var martial = (GuanYuMartialVer)ModelDb.Card<GuanYuMartialVer>().ToMutable();
+        civil.PreviewFrom(this);
+        martial.PreviewFrom(this);
+        return [civil, martial];
+    }
 
-	public GuanDiForm()
-		: base(3, CardType.Power, CardRarity.Rare, TargetType.Self)
-	{
-	}
-
-	/// <summary>
-	/// 升级预览保留“刚升级”状态，让两张选项的变化内容显示为绿色。
-	/// 手牌悬停和二选一会完成升级定稿，因此保持普通颜色。
-	/// </summary>
-	private IHoverTip CreateFormHoverTip<T>()
-		where T : CardModel
-	{
-		if (UpgradePreviewType == CardUpgradePreviewType.None)
-		{
-			return HoverTipFactory.FromCard<T>(IsUpgraded);
-		}
-
-		CardModel card = (CardModel)ModelDb.Card<T>().MutableClone();
-		card.UpgradeInternal();
-		return new CardHoverTip(card);
-	}
-
-	protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
-	{
-		await GuanDiFormChoice.OfferAsync(
-			choiceContext,
-			Owner,
-			this,
-			cardPlay.Resources.EnergySpent,
-			IsUpgraded,
-			canSkip: false);
-	}
+    protected override async Task PlayScriptAsync(PlayerChoiceContext choiceContext, CardPlay cardPlay)
+    {
+        var civil = await ScriptSystem.PrepareScriptUpdateAsync<GuanYuCivilVer>(
+            this, GetScriptPowerAmountForPreview());
+        var martial = await ScriptSystem.PrepareScriptUpdateAsync<GuanYuMartialVer>(
+            this, GetScriptPowerAmountForPreview());
+        await PowerCmd.Apply<GuanDiFormPower>(choiceContext, Owner.Creature, 1, Owner.Creature, this);
+        await ScriptSystem.ChooseActiveScriptsAsync(choiceContext, Owner, cancelable: false,
+            requireManualSelection: true, beforeActivation: async () =>
+            {
+                await civil.CommitAsync();
+                await martial.CommitAsync();
+            });
+    }
 }

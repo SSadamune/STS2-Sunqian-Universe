@@ -38,22 +38,30 @@ public static class SquMod
 
 		Logger = RitsuLibFramework.CreateLogger(ModId);
 		RegisterCommonLocalization();
+		ScriptSystem.RegisterPile();
 		SquTargetTypes.Register();
 		RitsuLibFramework.EnsureGodotScriptsRegistered(assembly, Logger);
 		ModTypeDiscoveryHub.RegisterModAssembly(ModId, assembly);
 		SquSfx.Register();
 		SquSettingsPage.Register();
+		OrderedPoisonHealthBarForecastSource.Register();
 
 		RitsuLibFramework.CreateContentPack(ModId)
 			.CharacterStarterRelic<SunqianCharacter, BoxLunchRelic>(1)
 			.CardKeywordOwnedByLocNamespace("script")
+			.CardKeywordOwnedByLocNamespace("script_collection")
+			.CardKeywordOwnedByLocNamespace(
+				"material_reuse", iconPath: null,
+				ModKeywordCardDescriptionPlacement.AfterCardDescription,
+				includeInCardHoverTip: false)
 			.CardKeywordOwnedByLocNamespace("doom_kill_threshold")
-			.CardKeywordOwnedByLocNamespace("stackable_script")
 			.CardKeywordOwnedByLocNamespace("multi_target")
 			.CardKeywordOwnedByLocNamespace("environmental")
 			.CardKeywordOwnedByLocNamespace("piercing_damage")
 			.CardKeywordOwnedByLocNamespace("scry")
 			.CardKeywordOwnedByLocNamespace("counts_as_played")
+			.CardKeywordOwnedByLocNamespace("various_strike_cards")
+			.CardKeywordOwnedByLocNamespace("various_defend_cards")
 			.CardKeywordOwnedByLocNamespace("charge")
 			.CardKeywordOwnedByLocNamespace(
 				"family",
@@ -76,7 +84,7 @@ public static class SquMod
 			.CardKeywordOwnedByLocNamespace(
 				"eunuch_message",
 				iconPath: null,
-				ModKeywordCardDescriptionPlacement.BeforeCardDescription,
+				ModKeywordCardDescriptionPlacement.None,
 				includeInCardHoverTip: true)
 			.CardKeywordOwnedByLocNamespace(
 				"fit",
@@ -94,16 +102,17 @@ public static class SquMod
 
 		CardDrawPlayRateTracker.Initialize();
 		CardResolutionTracker.Initialize();
+		HeadsmanRewardTracker.Initialize();
 		AllInResolutionTracker.Initialize();
 		RitsuLibFramework.RegisterModelCapability<SlightRevisionCapability>(ModId);
-		RitsuLibFramework.RegisterModelCapability<NightRaidWuchaoStrikeCapability>(ModId);
+		RitsuLibFramework.RegisterModelCapability<ChickenFootCheeseStrikeCapability>(ModId);
 		ContentSettingsRunData.Initialize();
 		RunReloadCount.Initialize();
 		DailyWageRunData.Initialize();
 		SelfDecapitationReviveData.Initialize();
 		ScriptSystem.Initialize();
 		SlightRevisionSystem.Initialize();
-		NightRaidWuchaoStrikeSystem.Initialize();
+		ChickenFootCheeseStrikeSystem.Initialize();
 		RitsuLibFramework.SubscribeLifecycle<CombatEndedEvent>(_ => WarFeedsWarResolutionTracker.ClearCombat());
 
 		var harmony = new Harmony($"{ModId}.patches");

@@ -20,25 +20,26 @@ using STS2RitsuLib.Scaffolding.Content;
 namespace Squ.Cards;
 
 [RegisterCard(typeof(SunqianCardPool), StableEntryStem = "chicken_foot_cheese_script")]
-public sealed class ChickenFootCheeseScript : ScriptCardTemplate, IRandomEnemyTargetCount
+public sealed class ChickenFootCheeseScript : ScriptCardTemplate<ChickenFootCheeseScriptRecord>, IRandomEnemyTargetCount
 {
 	public const int BaseDamage = 6;
+	public const int BaseFollowUpDamage = ScriptChickenFootCheesePower.BaseFollowUpDamage;
+	public const int UpgradedFollowUpDamage = ScriptChickenFootCheesePower.UpgradedFollowUpDamage;
 	public const int RandomEnemyTargetCount = 2;
+	public const string FollowUpDamageVarName = "FollowUpDamage";
+	public const string ScriptFollowUpDamageVarName = "ScriptFollowUpDamage";
 
 	protected override IEnumerable<DynamicVar> CanonicalVars =>
 	[
 		new DamageVar(BaseDamage, ValueProp.Move),
+		new DamageVar(FollowUpDamageVarName, BaseFollowUpDamage, ValueProp.Move),
+		new DynamicVar(ScriptFollowUpDamageVarName, BaseFollowUpDamage),
 	];
 
 	public override IEnumerable<CardKeyword> CanonicalKeywords =>
 	[
 		SquKeywords.Script,
 		CardKeyword.Exhaust,
-	];
-
-	protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
-	[
-		..HoverTipFactory.FromCardWithCardHoverTips<ChickenFootCheeseScriptStrikePreview>(IsUpgraded),
 	];
 
 	public override CardAssetProfile AssetProfile => new(
@@ -56,23 +57,38 @@ public sealed class ChickenFootCheeseScript : ScriptCardTemplate, IRandomEnemyTa
 	protected override async Task PlayScriptAsync(PlayerChoiceContext choiceContext, CardPlay cardPlay)
 	{
 		SquSfx.Play(SquSfx.ChickenFootCheeseScriptChenGongEvent);
-		await SquRandomEnemyTargeting.ExecuteDistinctRandomEnemyDamage(
+		List<MegaCrit.Sts2.Core.Entities.Creatures.Creature> targets =
+			SquRandomEnemyTargeting.SelectRandomEnemies(
+				this,
+				RandomEnemyTargetCount,
+				cardPlay.Target);
+		SquVigorSnapshot.AttackSequence damageSequence =
+			SquVigorSnapshot.BeginAttackSequence(Owner.Creature, this);
+		await SquRandomEnemyTargeting.ExecuteDamageAgainstTargets(
 			this,
 			choiceContext,
-			RandomEnemyTargetCount,
-			hitCountPerTarget: IsUpgraded
-				? ScriptChickenFootCheesePower.UpgradedHitCount
-				: ScriptChickenFootCheesePower.BaseHitCount,
+			targets,
+			damageSequence.ResolveNextAttackDamage(),
+			hitFx: null,
+			cardPlay: cardPlay,
+			beforeHit: SquHitVfx.SmallMagicMissiles);
+		await SquRandomEnemyTargeting.ExecuteDamageAgainstTargets(
+			this,
+			choiceContext,
+			targets,
+			damageSequence.ResolveNextAttackDamage(DynamicVars[FollowUpDamageVarName].BaseValue),
 			hitFx: null,
 			cardPlay: cardPlay,
 			beforeHit: SquHitVfx.SmallMagicMissiles);
 
-		await PowerCmd.Apply<ScriptChickenFootCheesePower>(
-			choiceContext,
-			Owner.Creature,
-			1m,
-			Owner.Creature,
-			this);
+		await UnlockScriptAsync(choiceContext);
+	}
+
+	protected override void OnUpgrade()
+	{
+		int increase = UpgradedFollowUpDamage - BaseFollowUpDamage;
+		DynamicVars[FollowUpDamageVarName].UpgradeValueBy(increase);
+		DynamicVars[ScriptFollowUpDamageVarName].UpgradeValueBy(increase);
 	}
 
 }

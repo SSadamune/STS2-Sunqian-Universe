@@ -5,6 +5,7 @@ using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Models;
+using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using Squ.Audio;
 using Squ.Character;
 using Squ.Powers;
@@ -18,14 +19,11 @@ namespace Squ.Cards;
 [RegisterCard(typeof(SunqianCardPool), StableEntryStem = "loud_secret_plot")]
 public sealed class LoudSecretPlot : ModCardTemplate
 {
+	protected override IEnumerable<DynamicVar> CanonicalVars => [new RepeatVar(1)];
+
 	protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
 	[
 		HoverTipFactory.FromKeyword(SquKeywords.MultiTarget),
-	];
-
-	public override IEnumerable<CardKeyword> CanonicalKeywords =>
-	[
-		CardKeyword.Ethereal,
 	];
 
 	public override CardAssetProfile AssetProfile => new(
@@ -42,13 +40,13 @@ public sealed class LoudSecretPlot : ModCardTemplate
 		await PowerCmd.Apply<LoudSecretPlotPower>(
 			choiceContext,
 			Owner.Creature,
-			1m,
+			DynamicVars.Repeat.BaseValue,
 			Owner.Creature,
 			this);
 	}
 
 	protected override void OnUpgrade()
 	{
-		RemoveKeyword(CardKeyword.Ethereal);
+		DynamicVars.Repeat.UpgradeValueBy(1);
 	}
 }

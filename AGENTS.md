@@ -1,0 +1,11 @@
+# Repository instructions
+
+## Git commits
+
+- Write commit subjects and bodies in concise English and follow the existing commit style.
+- Every commit created or amended by Codex, including merge commits, must include this trailer after a blank line:
+
+  Co-authored-by: Codex <codex@openai.com>
+
+- Preserve existing authors and co-author trailers. Do not add the Codex trailer more than once.
+- After committing, inspect the final commit message with `git log -1 --format=%B` and verify the trailer is present before reporting completion.

@@ -8,6 +8,7 @@ using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.Models;
 using Squ.Audio;
 using Squ.Character;
+using Squ.Combat;
 using Squ.Patches;
 using Squ.Script;
 using STS2RitsuLib.Interop.AutoRegistration;
@@ -39,7 +40,7 @@ public sealed class WhatToEat : ModCardTemplate
 			List<IHoverTip> tips = [HoverTipFactory.FromKeyword(CardKeyword.Exhaust)];
 			if (ShouldShowMultiplayerContent)
 			{
-				tips.Add(HoverTipFactory.FromCard<ExactlyWhatToEat>(IsUpgraded));
+				tips.Add(SquCardHoverTipFactory.FromCard<ExactlyWhatToEat>(this, IsUpgraded));
 			}
 
 			return tips;

@@ -18,7 +18,7 @@ public sealed class DistributedScreenwriterTests : SunqianCombatTestSuite
         battle.Player<SunqianCharacter>().AddEnemy<BigDummy>().WithSeed("distributed-screenwriter");
 
     [Fact]
-    public async Task Upgraded_power_draws_then_transforms_the_selected_hand_card_into_a_script()
+    public async Task Upgraded_power_transforms_into_an_upgraded_script_without_drawing()
     {
         await Play(Upgrade(await AddToHand<DistributedScreenwriter>()));
         var selected = await AddCardToPile<StrikeIronclad>(PileType.Hand);
@@ -27,6 +27,8 @@ public sealed class DistributedScreenwriterTests : SunqianCombatTestSuite
         int scriptCount = PileType.Hand.GetPile(Player).Cards.Count(card =>
             card.Tags.Contains(SquCardTags.Script));
         var selector = new ScriptedCardSelector().ThenSelect(selected);
+        int drawCount = PileType.Draw.GetPile(Player).Cards.Count;
+        var previousHand = PileType.Hand.GetPile(Player).Cards.ToHashSet();
 
         using (UseCardSelector(selector))
         {
@@ -40,7 +42,10 @@ public sealed class DistributedScreenwriterTests : SunqianCombatTestSuite
         Assert.Equal(
             scriptCount + 1,
             PileType.Hand.GetPile(Player).Cards.Count(card => card.Tags.Contains(SquCardTags.Script)));
-        Assert.Equal(1, power.DynamicVars[DistributedScreenwriterPower.DrawCardsVarName].IntValue);
+        Assert.Equal(drawCount, PileType.Draw.GetPile(Player).Cards.Count);
+        Assert.Equal(1, power.DynamicVars[DistributedScreenwriterPower.UpgradedCardsVarName].IntValue);
+        var transformed = Assert.Single(PileType.Hand.GetPile(Player).Cards.Where(card => !previousHand.Contains(card)));
+        Assert.True(transformed.IsUpgraded);
     }
 
     [Fact]
@@ -60,7 +65,35 @@ public sealed class DistributedScreenwriterTests : SunqianCombatTestSuite
 
         AssertAllSelectionsConsumed(selector);
         Assert.Equal(drawCount, PileType.Draw.GetPile(Player).Cards.Count);
-        Assert.Equal(0, power.DynamicVars[DistributedScreenwriterPower.DrawCardsVarName].IntValue);
+        Assert.Equal(0, power.DynamicVars[DistributedScreenwriterPower.UpgradedCardsVarName].IntValue);
         Assert.DoesNotContain(PileType.Hand.GetPile(Player).Cards, card => ReferenceEquals(card, selected));
+    }
+
+    [Theory]
+    [InlineData(false, 1)]
+    [InlineData(true, 2)]
+    public async Task Stacked_copies_preserve_the_number_of_upgraded_transformations(bool secondUpgraded, int upgrades)
+    {
+        await MegaCrit.Sts2.Core.Commands.PlayerCmd.SetEnergy(10, Player);
+        await Play(Upgrade(await AddToHand<DistributedScreenwriter>()));
+        var secondPower = await AddToHand<DistributedScreenwriter>();
+        if (secondUpgraded) Upgrade(secondPower);
+        await Play(secondPower);
+        var first = await AddToHand<StrikeIronclad>();
+        var second = await AddToHand<DefendIronclad>();
+        var before = PileType.Hand.GetPile(Player).Cards.ToHashSet();
+        int drawCount = PileType.Draw.GetPile(Player).Cards.Count;
+        var selector = new ScriptedCardSelector().ThenSelect(first, second);
+        var power = Player.Creature.GetPower<DistributedScreenwriterPower>()!;
+        using (UseCardSelector(selector))
+        {
+            await power.AfterPlayerTurnStart(new BlockingPlayerChoiceContext(), Player);
+        }
+        AssertAllSelectionsConsumed(selector);
+        var generated = PileType.Hand.GetPile(Player).Cards.Where(card => !before.Contains(card)).ToArray();
+        Assert.Equal(2, generated.Length);
+        Assert.All(generated, card => Assert.Contains(SquCardTags.Script, card.Tags));
+        Assert.Equal(upgrades, generated.Count(card => card.IsUpgraded));
+        Assert.Equal(drawCount, PileType.Draw.GetPile(Player).Cards.Count);
     }
 }

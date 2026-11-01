@@ -31,6 +31,20 @@ public sealed class WhyDoubtWeiTests : SunqianCombatTestSuite
     }
 
     [Fact]
+    public void Upgrade_preview_highlights_only_values_that_change()
+    {
+        var card = Combat.CreateCard<WhyDoubtWei>(Player);
+        card.UpgradePreviewType = CardUpgradePreviewType.Deck;
+        card.UpgradeInternal();
+        string preview = card.GetDescriptionForUpgradePreview();
+        Assert.Contains("[green]17[/green]", preview);
+        Assert.Contains("[green]3[/green]", preview);
+        Assert.Contains("[green]1[/green]", preview);
+        Assert.Contains("获得12点", preview);
+        Assert.DoesNotContain("[green]12[/green]", preview);
+    }
+
+    [Fact]
     public async Task Playing_upgraded_card_uses_attack_branch_and_grants_strength()
     {
         var enemy = EnemyAt(0);

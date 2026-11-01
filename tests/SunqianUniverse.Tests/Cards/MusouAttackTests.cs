@@ -9,6 +9,17 @@ namespace Squ.Tests.Cards;
 
 public sealed class MusouAttackTests : SunqianCombatTestSuite
 {
+    [Theory]
+    [InlineData(false, 15)]
+    [InlineData(true, 17)]
+    public async Task Printed_base_damage_is_fifteen_or_seventeen(bool upgraded, int damage)
+    {
+        var card = await AddToHand<MusouAttack>();
+        if (upgraded) Upgrade(card);
+        int hp = EnemyAt(0).CurrentHp;
+        await Play(card);
+        Assert.Equal(hp - damage, EnemyAt(0).CurrentHp);
+    }
     protected override void ConfigureBattle(CombatTestBattleBuilder battle) =>
         battle.Player<Ironclad>().AddEnemy<BigDummy>().AddEnemy<BigDummy>()
             .WithSeed("musou-attack");

@@ -203,12 +203,12 @@ public abstract class ChargeCardTemplate : ModCardTemplate
 		IReadOnlyCollection<CardModel> flushedCards,
 		IReadOnlyCollection<CardModel> retainedCards)
 	{
-		if (player != Owner || Charge.OnRetained is null || !retainedCards.Contains(this))
+		if (player != Owner || !retainedCards.Contains(this))
 		{
 			return Task.CompletedTask;
 		}
 
-		return Charge.OnRetained(choiceContext);
+		return Charge.OnRetained?.Invoke(choiceContext) ?? Task.CompletedTask;
 	}
 
 	/// <summary>
@@ -222,8 +222,7 @@ public abstract class ChargeCardTemplate : ModCardTemplate
 		Creature? dealer,
 		CardModel? cardSource)
 	{
-		if (Charge.OnAttacked is null
-			|| Pile?.Type != PileType.Hand
+		if (Pile?.Type != PileType.Hand
 			|| target != Owner.Creature
 			|| dealer is null
 			|| !(props.IsPoweredAttack() || cardSource is Omnislice))
@@ -231,7 +230,7 @@ public abstract class ChargeCardTemplate : ModCardTemplate
 			return Task.CompletedTask;
 		}
 
-		return Charge.OnAttacked(choiceContext);
+		return Charge.OnAttacked?.Invoke(choiceContext) ?? Task.CompletedTask;
 	}
 
 	public override Task AfterPowerAmountChanged(
@@ -241,12 +240,13 @@ public abstract class ChargeCardTemplate : ModCardTemplate
 		Creature? applier,
 		CardModel? cardSource)
 	{
-		if (Pile?.Type != PileType.Hand || Charge.OnPowerAmountChanged is null)
+		if (Pile?.Type != PileType.Hand)
 		{
 			return Task.CompletedTask;
 		}
 
-		return Charge.OnPowerAmountChanged(choiceContext, power, amount, applier, cardSource);
+		return Charge.OnPowerAmountChanged?.Invoke(choiceContext, power, amount, applier, cardSource)
+			?? Task.CompletedTask;
 	}
 
 	public override Task AfterCardPlayedLate(PlayerChoiceContext choiceContext, CardPlay cardPlay)
@@ -261,12 +261,12 @@ public abstract class ChargeCardTemplate : ModCardTemplate
 			return Task.CompletedTask;
 		}
 
-		if (Pile?.Type != PileType.Hand || Charge.OnCardPlayed is null)
+		if (Pile?.Type != PileType.Hand)
 		{
 			return Task.CompletedTask;
 		}
 
-		return Charge.OnCardPlayed(choiceContext, cardPlay);
+		return Charge.OnCardPlayed?.Invoke(choiceContext, cardPlay) ?? Task.CompletedTask;
 	}
 
 	/// <summary>

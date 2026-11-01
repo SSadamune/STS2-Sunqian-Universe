@@ -13,6 +13,7 @@ using MegaCrit.Sts2.Core.ValueProps;
 using Squ;
 using Squ.Audio;
 using Squ.Character;
+using Squ.Interop;
 using STS2RitsuLib.Interop.AutoRegistration;
 using STS2RitsuLib.Scaffolding.Content;
 
@@ -25,7 +26,7 @@ namespace Squ.Cards;
 /// 蓄能：被攻击时降费；消耗活力后增加等量伤害。打出后解除。
 /// </summary>
 [RegisterCard(typeof(SunqianCardPool), StableEntryStem = "thunder_on_still_lake")]
-public sealed class ThunderOnStillLake : ChargeCardTemplate
+public sealed class ThunderOnStillLake : ChargeCardTemplate, IRowKeywordsCard
 {
 	public const int CanonicalDamage = 1;
 
@@ -58,9 +59,12 @@ public sealed class ThunderOnStillLake : ChargeCardTemplate
 		.. base.CanonicalKeywords,
 	];
 
+	IEnumerable<CardKeyword> IRowKeywordsCard.KeywordsBelowRules => [CardKeyword.Retain];
+
 	protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
 	[
 		HoverTipFactory.FromPower<VigorPower>(),
+		..NewsanguoDrunkenMightEffect.HoverTips(),
 	];
 
 	protected override string ChargeEffectLocKey => Id.Entry + ".chargeEffect";
@@ -129,7 +133,7 @@ public sealed class ThunderOnStillLake : ChargeCardTemplate
 		Creature? applier,
 		CardModel? cardSource)
 	{
-		if (power is not VigorPower || power.Owner != Owner.Creature || amount >= 0m)
+		if (!NewsanguoDrunkenMightEffect.IsEffectResource(power, Owner.Creature) || amount >= 0m)
 		{
 			return Task.CompletedTask;
 		}

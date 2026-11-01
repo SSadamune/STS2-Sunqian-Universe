@@ -20,6 +20,7 @@ namespace Squ.Cards;
 public sealed class CutePet : FamilyCardTemplate
 {
 	public const int SummonAmount = 4;
+	public const int UpgradedSummonAmount = 6;
 
 	public override CardAssetProfile AssetProfile => new(
 		PortraitPath: "res://images/cards/CutePet.png");
@@ -60,4 +61,9 @@ public sealed class CutePet : FamilyCardTemplate
 		decimal summonAmount,
 		AbstractModel source) =>
 		OstyCmd.Summon(choiceContext, owner, summonAmount, source);
+
+	protected override void OnUpgrade()
+	{
+		DynamicVars.Summon.UpgradeValueBy(UpgradedSummonAmount - SummonAmount);
+	}
 }

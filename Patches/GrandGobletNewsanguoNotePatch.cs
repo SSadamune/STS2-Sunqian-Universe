@@ -24,6 +24,14 @@ internal static class InteropPowerDescriptionPatch
 			case TinderPower:
 				YjcmTinderInterop.AddCombatDescriptionArgs(__result, __instance);
 				break;
+			case KeepVigorPower:
+			case CrossTheRiverPower:
+			case VigorAmplificationPower:
+			case GuanYuMartialVerPower:
+			case ScriptHeadsmanPower:
+			case ScriptXiliangSavagePower:
+				NewsanguoDrunkenMightEffect.AddOrText(__result);
+				break;
 		}
 	}
 }

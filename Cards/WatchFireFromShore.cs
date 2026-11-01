@@ -67,7 +67,10 @@ public sealed class WatchFireFromShore : ModCardTemplate, IRandomEnemyTargetCoun
 		await CreatureCmd.GainBlock(Owner.Creature, DynamicVars.Block, cardPlay);
 
 		decimal burningStacks = DynamicVars[nameof(BurningPower)].BaseValue;
-		foreach (Creature target in SquRandomEnemyTargeting.SelectRandomEnemies(this, RandomEnemyTargetCount))
+		foreach (Creature target in SquRandomEnemyTargeting.SelectRandomEnemies(
+			this,
+			RandomEnemyTargetCount,
+			cardPlay.Target))
 		{
 			if (!target.IsAlive)
 			{

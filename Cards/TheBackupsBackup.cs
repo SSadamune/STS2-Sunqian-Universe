@@ -174,7 +174,10 @@ public sealed class TheBackupsBackup : ModCardTemplate
 			sourceDeckOwner.RunState.CardMultiplayerConstraint))
 		{
 			CardModel canonical = card.CanonicalInstance;
-			if (!IsDiscoverable(card, allowed) || offered.Contains(canonical) || !pool.TrueForAll(existing => existing.CanonicalInstance != canonical))
+			if (card.Rarity == CardRarity.Ancient
+				|| !IsDiscoverable(card, allowed)
+				|| offered.Contains(canonical)
+				|| !pool.TrueForAll(existing => existing.CanonicalInstance != canonical))
 			{
 				continue;
 			}

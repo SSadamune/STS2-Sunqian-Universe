@@ -21,6 +21,7 @@ using MegaCrit.Sts2.Core.Nodes.Rooms;
 using MegaCrit.Sts2.Core.Nodes.Vfx;
 using MegaCrit.Sts2.Core.Runs;
 using MegaCrit.Sts2.Core.ValueProps;
+using Squ.Audio;
 using Squ.Character;
 using Squ.Combat;
 using STS2RitsuLib.Interop.AutoRegistration;
@@ -31,15 +32,16 @@ using STS2RitsuLib.Scaffolding.Content;
 namespace Squ.Cards;
 
 /// <summary>
-/// 杀意感知：攻击所有敌人后，选择一名盟友；升级前随机、升级后由盟友选择一张攻击牌，
-/// 对随机敌人自动打出。
-/// 上将军会使这些跨玩家自动打出的攻击牌继承本牌实际消耗的活力加成。
+/// 杀意感知：攻击指定敌人，再让一名（升级后所有）盟友各自选择至多一张攻击牌对该敌人打出。
+/// 随机目标攻击必须包含此目标，并继承上将军的活力加成。
 /// </summary>
 [RegisterCard(typeof(SunqianCardPool), StableEntryStem = "killing_intent_perception")]
 public sealed class KillingIntentPerception : ModCardTemplate
 {
 	public const int BaseDamage = 9;
 	public const int UpgradedDamage = 13;
+	public const int BaseAttackCount = 1;
+	public const int UpgradedAttackCount = 1;
 
 	private static readonly LocString SelectionPrompt =
 		new("cards", "SUNQIAN_UNIVERSE_CARD_KILLING_INTENT_PERCEPTION.selectionScreenPrompt");
@@ -61,50 +63,57 @@ public sealed class KillingIntentPerception : ModCardTemplate
 		PortraitPath: "res://images/cards/KillingIntentPerception.png");
 
 	public KillingIntentPerception()
-		: base(1, CardType.Attack, CardRarity.Uncommon, TargetType.AllEnemies)
+		: base(1, CardType.Attack, CardRarity.Uncommon, TargetType.AnyEnemy)
 	{
 	}
 
 	protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
 	{
+		SquSfx.Play(SquSfx.KillingIntentPerceptionPlayEvent);
+
 		ICombatState combatState = CombatState
 			?? throw new InvalidOperationException(
 				"KillingIntentPerception requires an active combat.");
 
+		ArgumentNullException.ThrowIfNull(cardPlay.Target);
+		Creature target = cardPlay.Target;
 		await DamageCmd.Attack(DynamicVars.Damage.BaseValue)
 			.FromCard(this, cardPlay)
-			.TargetingAllOpponents(combatState)
+			.Targeting(target)
 			.WithHitVfxNode(target => NScratchVfx.Create(target, goingRight: true))
 			.Execute(choiceContext);
 
 		if (combatState.PlayerCreatures.Count(creature => creature.IsAlive) <= 1
-			|| !combatState.HittableEnemies.Any(enemy => enemy.IsAlive))
+			|| !target.IsAlive)
 		{
 			return;
 		}
 
-		Player? ally = await ChooseAlly();
-		if (ally is null || ally.Creature.IsDead)
-		{
-			return;
-		}
-
-		CardModel? attack;
+		List<Player> allies;
 		if (IsUpgraded)
 		{
-			attack = await ChooseAttack(choiceContext, ally);
+			allies = combatState.PlayerCreatures.Where(creature => creature.IsAlive && creature.Player != Owner)
+				.Select(creature => creature.Player!).ToList();
 		}
 		else
 		{
-			List<CardModel> playableAttacks = GetPlayableAttacks(ally);
-			attack = playableAttacks.Count > 0
-				? Owner.RunState.Rng.CombatCardSelection.NextItem(playableAttacks)
-				: null;
+			Player? ally = await ChooseAlly();
+			allies = ally is null ? [] : [ally];
 		}
-
-		if (attack is not null)
+		// Keep nested cross-player choices inside the current resolution.
+		var allyChoiceContext = new BlockingPlayerChoiceContext();
+		foreach (Player ally in allies)
 		{
-			await CardCmd.AutoPlay(choiceContext, attack, null);
+			if (!target.IsAlive) break;
+			if (ally.Creature.IsDead) continue;
+			List<CardModel> attacks = await ChooseAttacks(allyChoiceContext, ally);
+			foreach (CardModel attack in attacks)
+			{
+				if (!target.IsAlive) break;
+				if (attack.Pile?.Type != PileType.Hand) continue;
+				using (SquRandomEnemyTargeting.RequireTarget(attack, target))
+					await CardCmd.AutoPlay(allyChoiceContext, attack, target);
+			}
 		}
 	}
 
@@ -121,16 +130,17 @@ public sealed class KillingIntentPerception : ModCardTemplate
 	private static bool IsPlayableAttack(CardModel card) =>
 		card.Type == CardType.Attack && CanAutoPlayForFree(card);
 
-	private async Task<CardModel?> ChooseAttack(
+	private async Task<List<CardModel>> ChooseAttacks(
 		PlayerChoiceContext choiceContext,
 		Player ally)
 	{
 		if (GetPlayableAttacks(ally).Count == 0)
 		{
-			return null;
+			return [];
 		}
 
-		var prefs = new CardSelectorPrefs(SelectionPrompt, minCount: 0, maxCount: 1)
+		int maxCount = IsUpgraded ? UpgradedAttackCount : BaseAttackCount;
+		var prefs = new CardSelectorPrefs(SelectionPrompt, minCount: 0, maxCount)
 		{
 			RequireManualConfirmation = true,
 		};
@@ -139,7 +149,7 @@ public sealed class KillingIntentPerception : ModCardTemplate
 			ally,
 			prefs,
 			IsPlayableAttack,
-			this)).FirstOrDefault();
+			this)).ToList();
 	}
 
 	private async Task<Player?> ChooseAlly()

@@ -101,7 +101,8 @@ public sealed class Stargazing : ModCardTemplate
 		CombatSide side,
 		IEnumerable<Creature> participants)
 	{
-		if (CombatState is not { } combatState)
+		if (CombatState is not { } combatState
+			|| TurnEndCardCoordinator.HasEarlierPileCard(this))
 		{
 			return;
 		}

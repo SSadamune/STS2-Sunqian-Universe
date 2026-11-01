@@ -7,16 +7,16 @@ using Squ.Powers;
 namespace Squ.Combat;
 
 /// <summary>
-/// Matches the remaining green segment on the combat health bar:
-/// current HP minus forecasted poison, burning, and doom.
+/// Combines pending Poison, Burning, and Doom damage for the Doom effect threshold.
 /// </summary>
 public static class SquDoomKillThreshold
 {
 	public static int GetEffectiveGreenHp(Creature creature)
 	{
-		// Deliberately preserve vanilla's original poison forecast for the Doom effect branch.
-		int poison = SquTurnStartDamageForecast.CalculateLegacyPoisonDamage(creature);
-		int burning = creature.GetPower<BurningPower>()?.Amount ?? 0;
+		// Gameplay deliberately uses stable, coarse stack counts. UI-only preview APIs
+		// must never influence CatInTheBox or any other authoritative resolution.
+		int poison = creature.GetPowerAmount<PoisonPower>();
+		int burning = creature.GetPowerAmount<BurningPower>();
 		int doom = creature.GetPowerAmount<DoomPower>();
 
 		return creature.CurrentHp - poison - burning - doom;

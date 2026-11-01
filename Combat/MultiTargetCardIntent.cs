@@ -6,13 +6,13 @@ using MegaCrit.Sts2.Core.Models;
 namespace Squ.Combat;
 
 /// <summary>
-/// Shared checks for cards that target all enemies or multiple random enemies.
+/// Shared checks for cards that target all enemies, all allies, or multiple random enemies.
 /// </summary>
 public static class MultiTargetCardIntent
 {
 	public static bool HasMultiTargetIntent(CardModel card)
 	{
-		if (card.TargetType == TargetType.AllEnemies)
+		if (card.TargetType is TargetType.AllEnemies or TargetType.AllAllies)
 		{
 			return true;
 		}

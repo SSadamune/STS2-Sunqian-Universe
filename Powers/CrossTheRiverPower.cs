@@ -14,7 +14,9 @@ using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.Powers;
 using MegaCrit.Sts2.Core.ValueProps;
+using MegaCrit.Sts2.Core.Localization;
 using Squ.Audio;
+using Squ.Interop;
 using STS2RitsuLib.Interop.AutoRegistration;
 using STS2RitsuLib.Scaffolding.Content;
 
@@ -38,7 +40,18 @@ public sealed class CrossTheRiverPower : ModPowerTemplate
 	[
 		HoverTipFactory.FromPower<VigorPower>(),
 		HoverTipFactory.FromPower<StrengthPower>(),
+		..NewsanguoDrunkenMightEffect.HoverTips(),
 	];
+
+	public override LocString Description
+	{
+		get
+		{
+			LocString description = base.Description;
+			NewsanguoDrunkenMightEffect.AddOrText(description);
+			return description;
+		}
+	}
 
 	public override Task BeforeAttack(AttackCommand command)
 	{
@@ -72,7 +85,7 @@ public sealed class CrossTheRiverPower : ModPowerTemplate
 	}
 
 	private decimal GetDamageModifier() =>
-		GetVigorAmount() + GetStrengthAmount();
+		GetVigorAmount() + GetStrengthAmount() + NewsanguoDrunkenMightEffect.GetAmount(Owner);
 
 	private decimal GetVigorAmount() =>
 		Owner.GetPower<VigorPower>()?.Amount ?? 0m;

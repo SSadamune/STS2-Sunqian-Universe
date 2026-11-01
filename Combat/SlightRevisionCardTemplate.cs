@@ -29,7 +29,10 @@ public abstract class SlightRevisionCardTemplate<TTarget> : ModCardTemplate, ISl
 
 	protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
 		this.Capability<SlightRevisionCapability>() is null
-			? SlightRevisionSystem.GetHoverTips(ModelDb.Card<TTarget>(), IsSlightRevisionTargetUpgraded)
+			? SlightRevisionSystem.GetHoverTips(
+				this,
+				ModelDb.Card<TTarget>(),
+				IsSlightRevisionTargetUpgraded)
 			: [];
 
 	protected override void AddExtraArgsToDescription(LocString description)

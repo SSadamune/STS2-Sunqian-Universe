@@ -19,13 +19,19 @@
     <Sts2TestDependencyPayloadRoot>$(MSBuildProjectDirectory)\obj\Sts2Payload\Dependencies</Sts2TestDependencyPayloadRoot>
 
     <GodotProjectDir>$(MSBuildProjectDirectory)\..\..</GodotProjectDir>
+    <!-- The game hosts this test mod; it does not need a second native Godot entry point. -->
+    <GodotDisabledSourceGenerators>GodotPluginsInitializer</GodotDisabledSourceGenerators>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Sts2JointModTests)' == 'true'">
     <Sts2RequiredModIds>STS2-RitsuLib;Yjcm;newsanguo</Sts2RequiredModIds>
   </PropertyGroup>
 
-  <ItemGroup Condition="'$(Sts2JointModTests)' == 'true'">
+  <PropertyGroup Condition="'$(Sts2DefenseAwareDebuffPreviewTests)' == 'true'">
+    <Sts2RequiredModIds>STS2-RitsuLib;DefenseAwareDebuffPreview</Sts2RequiredModIds>
+  </PropertyGroup>
+
+  <ItemGroup Condition="'$(Sts2JointModTests)' == 'true' Or '$(Sts2DefenseAwareDebuffPreviewTests)' == 'true'">
     <Compile Remove="Degrade\**\*.cs" />
   </ItemGroup>
 
@@ -33,8 +39,13 @@
     <Compile Remove="JointMods\**\*.cs" />
   </ItemGroup>
 
+  <ItemGroup Condition="'$(Sts2DefenseAwareDebuffPreviewTests)' != 'true'">
+    <Compile Remove="DefenseAwareDebuffPreview\**\*.cs" />
+  </ItemGroup>
+
   <ItemGroup>
     <CompilerVisibleProperty Include="GodotProjectDir" />
+    <CompilerVisibleProperty Include="GodotDisabledSourceGenerators" />
     <Reference Include="sts2">
       <HintPath>..\..\lib\sts2.dll</HintPath>
       <Private>false</Private>

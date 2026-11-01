@@ -17,6 +17,7 @@ using MegaCrit.Sts2.Core.Nodes.Vfx;
 using MegaCrit.Sts2.Core.Random;
 using MegaCrit.Sts2.Core.ValueProps;
 using Squ.Combat;
+using Squ.Interop;
 using Squ.Relics;
 using STS2RitsuLib.Combat.HealthBars;
 using STS2RitsuLib.Interop.AutoRegistration;
@@ -162,18 +163,23 @@ public sealed class BurningPower : ModPowerTemplate, IHealthBarForecastSource
 		PlayFiendFireDamageVfx(Owner);
 
 		IronChainPower? ironChain = Owner.GetPower<IronChainPower>();
-		IEnumerable<DamageResult> damageResults = await CreatureCmd.Damage(
+		IEnumerable<DamageResult> damageResults = (await CreatureCmd.Damage(
 			choiceContext,
 			Owner,
 			Amount,
 			ValueProp.Unpowered,
 			cardSource,
-			null);
+			null)).ToList();
 
 		if (ironChain is not null)
 		{
 			int damageDealt = damageResults.Sum(result => result.TotalDamage);
 			await ironChain.AfterBurningDamage(damageDealt);
+		}
+
+		if (Owner.GetPower<ScriptBurningLinkedCampsPower>() is { } linkedCamps)
+		{
+			await linkedCamps.AfterBurningDamage(choiceContext, damageResults, cardSource);
 		}
 
 		if (!Owner.IsAlive)
@@ -234,11 +240,25 @@ public sealed class BurningPower : ModPowerTemplate, IHealthBarForecastSource
 		DynamicVars[ClearChanceVarName].BaseValue = (decimal)Math.Round(clearChance * 100f);
 	}
 
-	public IEnumerable<HealthBarForecastSegment> GetHealthBarForecastSegments(HealthBarForecastContext context) =>
-		HealthBarForecasts.Single(
-			SquTurnStartDamageForecast.Calculate(context.Creature).BurningDamage,
+	public IEnumerable<HealthBarForecastSegment> GetHealthBarForecastSegments(
+		HealthBarForecastContext context)
+	{
+		if (!DefenseAwareDebuffPreviewInterop.TryGetPreviewHpLoss(
+			context.Creature,
+			this,
+			out int hpLoss))
+		{
+			// Match vanilla Poison's basic forecast when the optional defense-aware
+			// calculator is unavailable: show stacks without simulating defenses.
+			hpLoss = Amount;
+		}
+
+		return HealthBarForecasts.Single(
+			hpLoss,
 			BurningLethalColor,
-			HealthBarForecastGrowthDirection.FromRight);
+			HealthBarForecastGrowthDirection.FromRight,
+			OrderedPoisonHealthBarForecastSource.GetTriggerOrder(context.Creature, this));
+	}
 
 	private static void PlayFiendFireDamageVfx(Creature target)
 	{

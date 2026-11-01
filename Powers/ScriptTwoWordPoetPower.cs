@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -8,8 +7,6 @@ using MegaCrit.Sts2.Core.Commands.Builders;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.Entities.Creatures;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
-using MegaCrit.Sts2.Core.Hooks;
-using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.ValueProps;
@@ -24,129 +21,67 @@ using STS2RitsuLib.Scaffolding.Content;
 namespace Squ.Powers;
 
 [RegisterPower]
-public sealed class ScriptTwoWordPoetPower : StackableScriptPowerTemplate
+public sealed class ScriptTwoWordPoetPower : ScriptPowerTemplate
 {
-	public const string SnapshotDamageVarName = "SnapshotDamage";
+	public const string ScriptDamageVarName = "ScriptDamage";
 
 	public const string TargetingDescriptionVarName = "TargetingDescription";
 
-	public const int TurnStartHitCount = 2;
+	public const int ActivationHitCount = 2;
 
 	private sealed class Data
 	{
 		public bool TargetsAllEnemies;
-
-		public CardModel? SourceCard;
 	}
 
 	public override PowerAssetProfile AssetProfile => new(
 		IconPath: "res://images/powers/ScriptTwoWordPoetPower.png",
 		BigIconPath: "res://images/powers/ScriptTwoWordPoetPowerBig.png");
 
-	protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
-	[
-		..base.AdditionalHoverTips,
-		HoverTipFactory.FromKeyword(SquKeywords.Environmental),
-	];
-
 	protected override IEnumerable<DynamicVar> CanonicalVars =>
 	[
-		new DamageVar(SnapshotDamageVarName, 0m, ValueProp.Move),
-		new RepeatVar(TurnStartHitCount),
+		new DamageVar(ScriptDamageVarName, TwoWordPoetScript.CanonicalDamage, ValueProp.Move),
+		new RepeatVar(ActivationHitCount),
 		new StringVar(TargetingDescriptionVarName, "随机对敌人"),
 	];
 
 	protected override object InitInternalData() => new Data();
 
-	public static decimal CalculateSnapshotDamagePerHit(CardModel card, Creature dealer)
+	protected override Task OnScriptApplied(Creature? applier, CardModel? cardSource)
 	{
-		DamageVar damageVar = card.DynamicVars.Damage;
-		using IDisposable suppression = AllInResolutionTracker.SuppressBonus();
-		return Hook.ModifyDamage(
-			card.Owner.RunState,
-			card.CombatState,
-			null,
-			dealer,
-			damageVar.BaseValue,
-			damageVar.Props,
-			card,
-			null,
-			ModifyDamageHookType.All,
-			CardPreviewMode.None,
-			out _);
-	}
-
-	protected override void OnStackedFrom(CardModel? cardSource)
-	{
-		if (cardSource is not TwoWordPoetScript script)
-		{
-			return;
-		}
-
-		Data data = GetInternalData<Data>();
-		MergeUpgradedFlag(ref data.TargetsAllEnemies, script);
-		data.SourceCard = PreferUpgradedSourceCard(data.SourceCard, cardSource);
-		SyncDisplayVars(data);
+		GetInternalData<Data>().TargetsAllEnemies = cardSource is TwoWordPoetScript { IsUpgraded: true };
+		SyncDisplayVars(GetInternalData<Data>());
+		return Task.CompletedTask;
 	}
 
 	public override async Task AfterSideTurnStart(
-		CombatSide side,
-		IReadOnlyList<Creature> participants,
-		ICombatState combatState)
+		CombatSide side, IReadOnlyList<Creature> participants, ICombatState combatState)
 	{
-		if (side != Owner.Side || !participants.Contains(Owner) || Owner.IsDead)
-		{
-			return;
-		}
-
-		Data data = GetInternalData<Data>();
-		if (Amount <= 0m || data.SourceCard is not CardModel sourceCard)
-		{
-			return;
-		}
-
+		if (!participants.Contains(Owner) || Owner.IsDead) return;
 		Flash();
 		SquSfx.PlayRandom(combatState.RunState, SquSfx.TwoWordPoetTriggerEvents);
 		SquHitVfx.SpookyScream(Owner);
-
-		AttackCommand attack = DamageCmd.Attack(Amount)
-			.Unpowered()
-			.WithHitCount(TurnStartHitCount)
-			.FromCard(sourceCard, null);
-		if (data.TargetsAllEnemies)
+		var choiceContext = new ThrowingPlayerChoiceContext();
+		for (int hit = 0; hit < ActivationHitCount; hit++)
 		{
-			attack.BeforeDamage(() =>
-				SquHitVfx.BlackSmallMagicMissiles(combatState.HittableEnemies));
-			await attack.TargetingAllOpponents(combatState)
-				.Execute(new ThrowingPlayerChoiceContext());
-		}
-		else
-		{
-			Creature? hitTarget = null;
-			attack.WithHitVfxNode(target =>
-				{
-					hitTarget = target;
-					return null;
-				})
-				.BeforeDamage(() =>
-				{
-					if (hitTarget is not { IsAlive: true } target)
-					{
-						return Task.CompletedTask;
-					}
-
-					return SquHitVfx.BlackSmallMagicMissile(target);
-				});
-			await attack.TargetingRandomOpponents(combatState)
-				.Execute(new ThrowingPlayerChoiceContext());
+			var enemies = combatState.HittableEnemies.ToList();
+			if (enemies.Count == 0) break;
+			if (!GetInternalData<Data>().TargetsAllEnemies)
+			{
+				var target = enemies[Owner.Player!.RunState.Rng.CombatTargets.NextInt(enemies.Count)];
+				enemies = [target];
+			}
+			await SquHitVfx.BlackSmallMagicMissiles(enemies);
+			await CreatureCmd.Damage(choiceContext, enemies, Amount, ValueProp.Unpowered, Owner);
 		}
 	}
 
 	private void SyncDisplayVars(Data data)
 	{
-		DynamicVars[SnapshotDamageVarName].BaseValue = Amount;
-		DynamicVars.Repeat.BaseValue = TurnStartHitCount;
+		DynamicVars[ScriptDamageVarName].BaseValue = Amount;
+		DynamicVars.Repeat.BaseValue = ActivationHitCount;
 		((StringVar)DynamicVars[TargetingDescriptionVarName]).StringValue =
 			data.TargetsAllEnemies ? "对所有敌人" : "随机对敌人";
 	}
+
 }

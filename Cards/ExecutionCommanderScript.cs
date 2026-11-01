@@ -10,6 +10,7 @@ using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using Squ;
 using Squ.Audio;
 using Squ.Character;
+using Squ.Combat;
 using Squ.Powers;
 using Squ.Script;
 using STS2RitsuLib.Interop.AutoRegistration;
@@ -20,11 +21,13 @@ using STS2RitsuLib.Scaffolding.Content;
 namespace Squ.Cards;
 
 [RegisterCard(typeof(SunqianCardPool), StableEntryStem = "execution_commander_script")]
-public sealed class ExecutionCommanderScript : ScriptCardTemplate
+public sealed class ExecutionCommanderScript : ScriptCardTemplate<ExecutionCommanderScriptRecord>
 {
+	protected override bool UsesRowKeywordTemplate => false;
+
 	public const int GeneratedStrikeCount = 2;
 	public const int BaseBonusPercent = 50;
-	public const int UpgradedBonusPercent = 100;
+	public const int UpgradedBonusPercent = 75;
 
 	private const string BonusPercentVarName = "BonusPercent";
 
@@ -33,10 +36,9 @@ public sealed class ExecutionCommanderScript : ScriptCardTemplate
 		new DynamicVar(BonusPercentVarName, BaseBonusPercent),
 	];
 
-	protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
+	protected override IEnumerable<IHoverTip> AdditionalScriptHoverTips =>
 	[
-		..HoverTipFactory.FromCardWithCardHoverTips<SalvoStrike>(IsUpgraded),
-		HoverTipFactory.FromKeyword(SquKeywords.StackableScript),
+		..SquCardHoverTipFactory.FromCardWithCardHoverTips<SalvoStrike>(this, IsUpgraded),
 		HoverTipFactory.FromKeyword(SquKeywords.MultiTarget),
 	];
 
@@ -50,7 +52,7 @@ public sealed class ExecutionCommanderScript : ScriptCardTemplate
 		PortraitPath: "res://images/cards/ExecutionCommanderScript.png");
 
 	public ExecutionCommanderScript()
-		: base(1, CardType.Skill, CardRarity.Common, TargetType.Self, false)
+		: base(0, CardType.Skill, CardRarity.Common, TargetType.Self, false)
 	{
 	}
 
@@ -70,13 +72,11 @@ public sealed class ExecutionCommanderScript : ScriptCardTemplate
 				player);
 		}
 
-		await PowerCmd.Apply<ScriptExecutionCommanderPower>(
-			choiceContext,
-			player.Creature,
-			DynamicVars[BonusPercentVarName].BaseValue,
-			player.Creature,
-			this);
+		await UnlockScriptAsync(choiceContext, DynamicVars[BonusPercentVarName].BaseValue);
 	}
+
+	internal override int GetScriptPowerAmountForPreview() =>
+		(int)DynamicVars[BonusPercentVarName].BaseValue;
 
 	protected override void OnUpgrade()
 	{

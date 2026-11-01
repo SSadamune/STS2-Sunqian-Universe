@@ -1,7 +1,5 @@
 using System.Collections.Generic;
-using MegaCrit.Sts2.Core.Combat;
 using MegaCrit.Sts2.Core.Entities.Cards;
-using MegaCrit.Sts2.Core.Entities.Creatures;
 using MegaCrit.Sts2.Core.Entities.Players;
 using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Localization;
@@ -27,7 +25,7 @@ internal static class YjcmGoodFireInterop
 
 	public static IEnumerable<IHoverTip> HuoGongHoverTips(CardModel card)
 	{
-		if (ShowsCombatEffect(MutableOwner(card))
+		if (ShowsInlineKeywords()
 			&& YjcmPublicApiInterop.CreateHuoGongHoverTip() is { } huoGongTip)
 		{
 			yield return huoGongTip;
@@ -36,7 +34,7 @@ internal static class YjcmGoodFireInterop
 
 	public static IEnumerable<IHoverTip> HuoGongHoverTips(PowerModel power)
 	{
-		if (ShowsCombatEffect(MutableOwner(power)?.Player)
+		if (ShowsInlineKeywords()
 			&& YjcmPublicApiInterop.CreateHuoGongHoverTip() is { } huoGongTip)
 		{
 			yield return huoGongTip;
@@ -45,7 +43,7 @@ internal static class YjcmGoodFireInterop
 
 	public static IEnumerable<IHoverTip> LibraryHoverTips()
 	{
-		if (!IsModReady || IsCombatInProgress())
+		if (PresentationMode != JointModPresentationMode.HoverOnly)
 		{
 			yield break;
 		}
@@ -58,26 +56,22 @@ internal static class YjcmGoodFireInterop
 	public static void AddCombatCondition(LocString description, CardModel card) =>
 		description.Add(
 			"YjcmHuoGongText",
-			ShowsCombatEffect(MutableOwner(card))
+			ShowsInlineKeywords()
 				? SquCommonL10n.YjcmGoodFireInlineText().GetFormattedText()
 				: string.Empty);
 
 	public static void AddCombatCondition(LocString description, PowerModel power) =>
 		description.Add(
 			"YjcmHuoGongText",
-			ShowsCombatEffect(MutableOwner(power)?.Player)
+			ShowsInlineKeywords()
 				? SquCommonL10n.YjcmGoodFireInlineText().GetFormattedText()
 				: string.Empty);
 
-	private static Player? MutableOwner(CardModel card) =>
-		card.IsMutable ? card.Owner : null;
+	private static JointModPresentationMode PresentationMode =>
+		JointModPresentation.Resolve(
+			IsModReady,
+			YjcmPublicApiInterop.IsYjcmCharacter);
 
-	private static Creature? MutableOwner(PowerModel power) =>
-		power.IsMutable ? power.Owner : null;
-
-	private static bool ShowsCombatEffect(Player? owner) =>
-		IsCombatInProgress() && Affects(owner);
-
-	private static bool IsCombatInProgress() =>
-		CombatManager.Instance is { IsInProgress: true };
+	private static bool ShowsInlineKeywords() =>
+		PresentationMode == JointModPresentationMode.InlineKeywords;
 }

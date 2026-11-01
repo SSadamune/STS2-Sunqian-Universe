@@ -17,7 +17,7 @@ using STS2RitsuLib.Scaffolding.Content;
 namespace Squ.Cards;
 
 [RegisterCard(typeof(SunqianCardPool), StableEntryStem = "strike")]
-[RegisterCharacterStarterCard(typeof(SunqianCharacter), 4)]
+[RegisterCharacterStarterCard(typeof(SunqianCharacter), 5)]
 public sealed class StrikeLongtao : ModCardTemplate
 {
 	public const int BaseDamage = 6;
@@ -42,12 +42,6 @@ public sealed class StrikeLongtao : ModCardTemplate
 	{
 		SquSfx.PlayRandom(RunState, SquSfx.BasicStrikeEvents);
 
-		if (SquBasicStrikeRedirect.ShouldHandleInOnPlay(this))
-		{
-			await SquBasicStrikeRedirect.ExecuteRedirectedBasicStrikeDamage(this, choiceContext);
-			return;
-		}
-
 		ArgumentNullException.ThrowIfNull(cardPlay.Target, nameof(cardPlay.Target));
 
 		await DamageCmd.Attack(DynamicVars.Damage.BaseValue)
@@ -64,19 +58,9 @@ public sealed class StrikeLongtao : ModCardTemplate
 
 	protected override void AddExtraArgsToDescription(LocString description)
 	{
-		string bodyKey = "normalBody";
-		if (Pile?.Type == PileType.Hand
-			&& ScriptChickenFootCheesePower.ShouldRedirectBasicStrike(this))
-		{
-			bodyKey = Owner?.Creature?.GetPower<ScriptChickenFootCheesePower>() is { } power
-				&& power.HitCountPerTarget >= ScriptChickenFootCheesePower.UpgradedHitCount
-				? "chickenFootCheeseScriptUpgradedBody"
-				: "chickenFootCheeseScriptBody";
-		}
-
 		SquKeywords.AddNestedLoc(
 			description,
 			"BodyText",
-			new LocString("cards", Id.Entry + "." + bodyKey));
+			new LocString("cards", Id.Entry + ".normalBody"));
 	}
 }

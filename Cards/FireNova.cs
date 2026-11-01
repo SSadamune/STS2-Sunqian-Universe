@@ -59,7 +59,10 @@ public sealed class FireNova : SlightRevisionCardTemplate<FireMeteorShower>, IRa
 
 	protected override async Task OnPlay(PlayerChoiceContext choiceContext, CardPlay cardPlay)
 	{
-		List<Creature> targets = SquRandomEnemyTargeting.SelectRandomEnemies(this, 1);
+		List<Creature> targets = SquRandomEnemyTargeting.SelectRandomEnemies(
+			this,
+			1,
+			cardPlay.Target);
 		if (targets.Count == 0)
 		{
 			return;

@@ -23,11 +23,11 @@ namespace Squ.Cards;
 
 /// <summary>
 /// 保持冷静：保留。打出获得当前积攒的能量（卡面能量图标随蓄能更新）。
-/// 被保留时能量 +1（升级 +2）。受到未被格挡的攻击伤害时能量变为 0，
+/// 被保留时能量 +1（升级 +2）。受到未被格挡的伤害时能量降至基础值 1，
 /// 并按损失的能量加入等量未升级愤怒。
 /// </summary>
 [RegisterCard(typeof(SunqianCardPool), StableEntryStem = "keep_calm")]
-public sealed class KeepCalm : ChargeCardTemplate
+public sealed class KeepCalm : ChargeCardTemplate, IRowKeywordsCard
 {
 	public const string RetainBonusVarName = "RetainBonus";
 
@@ -48,6 +48,8 @@ public sealed class KeepCalm : ChargeCardTemplate
 		CardKeyword.Retain,
 		.. base.CanonicalKeywords,
 	];
+
+	IEnumerable<CardKeyword> IRowKeywordsCard.KeywordsBelowRules => [CardKeyword.Retain];
 
 	protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
 	[
@@ -99,13 +101,12 @@ public sealed class KeepCalm : ChargeCardTemplate
 		if (_resolvingUnblockedHit
 			|| Pile?.Type != PileType.Hand
 			|| target != Owner.Creature
-			|| !props.IsPoweredAttack()
 			|| result.UnblockedDamage <= 0)
 		{
 			return;
 		}
 
-		int energyLost = DynamicVars.Energy.IntValue;
+		int energyLost = Math.Max(0, DynamicVars.Energy.IntValue - CanonicalEnergy);
 		if (energyLost <= 0)
 		{
 			return;
@@ -114,7 +115,7 @@ public sealed class KeepCalm : ChargeCardTemplate
 		_resolvingUnblockedHit = true;
 		try
 		{
-			DynamicVars.Energy.BaseValue = 0m;
+			DynamicVars.Energy.BaseValue = CanonicalEnergy;
 			RefreshCardVisuals();
 			SquSfx.PlayRandom(
 				RunState,

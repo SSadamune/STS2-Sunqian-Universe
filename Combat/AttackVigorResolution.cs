@@ -51,6 +51,24 @@ public static class AttackVigorResolution
 		AmountWhenAttackStartedField!.SetValue(data, 0);
 	}
 
+	/// <summary>
+	/// Resolves vanilla Vigor's currently bound Attack back to its source card. Vigor amount-change
+	/// events do not provide <c>cardSource</c>, so this binding is the authoritative attribution.
+	/// </summary>
+	public static bool TryGetBoundAttackCard(VigorPower vigor, out CardModel card)
+	{
+		card = null!;
+		if (!TryGetVigorData(vigor, out object? data)
+			|| CommandToModifyField!.GetValue(data) is not AttackCommand command
+			|| command.ModelSource is not CardModel sourceCard)
+		{
+			return false;
+		}
+
+		card = sourceCard;
+		return true;
+	}
+
 	private static bool TrySuppressInheritedVigorConsumption(
 		VigorPower vigor,
 		AttackCommand command)

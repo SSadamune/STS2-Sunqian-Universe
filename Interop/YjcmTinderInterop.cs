@@ -1,7 +1,4 @@
 using System.Collections.Generic;
-using System.Linq;
-using MegaCrit.Sts2.Core.Combat;
-using MegaCrit.Sts2.Core.Entities.Creatures;
 using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Localization;
 using MegaCrit.Sts2.Core.Models;
@@ -23,7 +20,16 @@ internal static class YjcmTinderInterop
 
 	public static IEnumerable<IHoverTip> HuoGongHoverTips(PowerModel power)
 	{
-		if (ShowsCombatUi(power)
+		JointModPresentationMode mode = PresentationMode;
+		if (mode == JointModPresentationMode.HoverOnly)
+		{
+			yield return new HoverTip(
+				SquCommonL10n.YjcmGoodFireHoverTitle(),
+				SquCommonL10n.YjcmTinderLibraryHover());
+			yield break;
+		}
+
+		if (mode == JointModPresentationMode.InlineKeywords
 			&& YjcmPublicApiInterop.CreateHuoGongHoverTip() is { } huoGongTip)
 		{
 			yield return huoGongTip;
@@ -33,23 +39,13 @@ internal static class YjcmTinderInterop
 	public static void AddCombatDescriptionArgs(LocString description, PowerModel power) =>
 		description.Add(
 			"YjcmTinderHuoGongText",
-			ShowsCombatUi(power)
+			PresentationMode == JointModPresentationMode.InlineKeywords
 				? SquCommonL10n.YjcmTinderInlineText().GetFormattedText()
 				: string.Empty);
 
-	private static bool ShowsCombatUi(PowerModel power)
-	{
-		if (!YjcmPublicApiInterop.IsReady
-			|| CombatManager.Instance is not { IsInProgress: true }
-			|| MutableOwner(power) is not { CombatState: { } combatState })
-		{
-			return false;
-		}
+	private static JointModPresentationMode PresentationMode =>
+		JointModPresentation.Resolve(
+			YjcmPublicApiInterop.IsReady,
+			YjcmPublicApiInterop.IsYjcmCharacter);
 
-		return combatState.Players.Any(player =>
-			YjcmPublicApiInterop.IsYjcmCharacter(player.Character));
-	}
-
-	private static Creature? MutableOwner(PowerModel power) =>
-		power.IsMutable ? power.Owner : null;
 }
