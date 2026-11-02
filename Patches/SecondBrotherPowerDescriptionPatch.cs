@@ -6,6 +6,7 @@ using MegaCrit.Sts2.Core.Localization;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.Powers;
 using Squ.Monsters;
+using Squ.Powers;
 
 namespace Squ.Patches;
 
@@ -20,6 +21,8 @@ internal static class SecondBrotherPowerDescriptionPatch
 	private static void Postfix(PowerModel __instance, ref LocString __result)
 	{
 		if (__instance is DieForYouPower { IsMutable: true, Owner.Monster: SecondBrother })
-			__result = new LocString("powers", "SUNQIAN_UNIVERSE_POWER_SECOND_BROTHER_DIE_FOR_YOU.description");
+			__result = new LocString("powers", __instance.Owner.HasPower<BrotherEstrangementPower>()
+				? "SUNQIAN_UNIVERSE_POWER_SECOND_BROTHER_DIE_FOR_YOU.disabledDescription"
+				: "SUNQIAN_UNIVERSE_POWER_SECOND_BROTHER_DIE_FOR_YOU.description");
 	}
 }

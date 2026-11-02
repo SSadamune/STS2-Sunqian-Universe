@@ -158,5 +158,12 @@
   "SUNQIAN_UNIVERSE_POWER_LIFE_CONTRACT_POWER.description": "战斗结束时，若[gold]二弟[/gold]存活，为你恢复等量于你为[gold]二弟[/gold]失去过的生命。",
   "SUNQIAN_UNIVERSE_POWER_LIFE_CONTRACT_POWER.smartDescription": "战斗结束时，若[gold]二弟[/gold]存活，为你恢复等量于你为[gold]二弟[/gold]失去过的生命。",
   "SUNQIAN_UNIVERSE_POWER_LIFE_CONTRACT_POWER.combatSmartDescription": "战斗结束时，若[gold]二弟[/gold]存活，为你恢复等量于你为[gold]二弟[/gold]失去过的生命。\n将恢复[blue]{Healing}[/blue]点生命。",
-  "SUNQIAN_UNIVERSE_POWER_SECOND_BROTHER_DIE_FOR_YOU.description": "[gold]二弟[/gold]会吸收所有未被格挡的攻击伤害。"
+  "SUNQIAN_UNIVERSE_POWER_SECOND_BROTHER_DIE_FOR_YOU.description": "[gold]二弟[/gold]会吸收所有未被格挡的攻击伤害。",
+  "SUNQIAN_UNIVERSE_POWER_STOP_RUNNING_POWER.title": "不跑了",
+  "SUNQIAN_UNIVERSE_POWER_STOP_RUNNING_POWER.description": "敌方的下{Amount}个回合内，当你损失非临时的生命后，获得等量[gold]临时生命[/gold]。",
+  "SUNQIAN_UNIVERSE_POWER_STOP_RUNNING_POWER.smartDescription": "敌方的下{Amount}个回合内，当你损失非临时的生命后，获得等量[gold]临时生命[/gold]。",
+  "SUNQIAN_UNIVERSE_POWER_BROTHER_ESTRANGEMENT_POWER.title": "兄弟失和",
+  "SUNQIAN_UNIVERSE_POWER_BROTHER_ESTRANGEMENT_POWER.description": "[gold]二弟[/gold]的“[gold]为你而死[/gold]”在接下来的{Amount}个敌方回合内失效。",
+  "SUNQIAN_UNIVERSE_POWER_BROTHER_ESTRANGEMENT_POWER.smartDescription": "[gold]二弟[/gold]的“[gold]为你而死[/gold]”在接下来的{Amount}个敌方回合内失效。",
+  "SUNQIAN_UNIVERSE_POWER_SECOND_BROTHER_DIE_FOR_YOU.disabledDescription": "[gold]二弟[/gold]的“[gold]为你而死[/gold]”暂时失效。"
 }

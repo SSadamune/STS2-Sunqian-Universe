@@ -349,5 +349,13 @@
   "SUNQIAN_UNIVERSE_CARD_LEAD_CIVILIANS_ACROSS.title": "Lead the People Across",
   "SUNQIAN_UNIVERSE_CARD_LEAD_CIVILIANS_ACROSS.description": "Lose {HpLoss} HP.\nGain {TemporaryHealthPower:diff()} [gold]Temporary HP[/gold].",
   "SUNQIAN_UNIVERSE_CARD_DEAFEN_MY_EARS.title": "Deafen My Ears",
-  "SUNQIAN_UNIVERSE_CARD_DEAFEN_MY_EARS.description": "Give all cards in your hand without [gold]Self-Harm[/gold] [gold]Self-Harm[/gold] equal to {Multiplier:diff()} times their {energyPrefix:energyIcons(1)} cost."
+  "SUNQIAN_UNIVERSE_CARD_DEAFEN_MY_EARS.description": "Give all cards in your hand without [gold]Self-Harm[/gold] [gold]Self-Harm[/gold] equal to {Multiplier:diff()} times their {energyPrefix:energyIcons(1)} cost.",
+  "SUNQIAN_UNIVERSE_CARD_CAN_I_STOP_RUNNING.title": "Can I Stop Running?",
+  "SUNQIAN_UNIVERSE_CARD_CAN_I_STOP_RUNNING.description": "For the next {StopRunningPower:diff()} enemy turns, whenever you lose non-temporary HP, gain that much [gold]Temporary HP[/gold].",
+  "SUNQIAN_UNIVERSE_CARD_KNOW_WARFARE.title": "Know Warfare",
+  "SUNQIAN_UNIVERSE_CARD_KNOW_WARFARE.description": "Gain {BurningPower:diff()} [gold]Burning[/gold], {Block:diff()} [gold]Block[/gold], {TemporaryHealthPower:diff()} [gold]Temporary HP[/gold] and {VigorPower:diff()} [gold]Vigor[/gold].",
+  "SUNQIAN_UNIVERSE_CARD_FAIR_WEATHER_BROTHERS.title": "Fair-Weather Brothers",
+  "SUNQIAN_UNIVERSE_CARD_FAIR_WEATHER_BROTHERS.description": "[gold]Second Brother[/gold] deals {CompanionDamage:diff()} damage.\nIts [gold]Die for You[/gold] is disabled for 2 turns.",
+  "SUNQIAN_UNIVERSE_CARD_FLYING_SWORD_STRIKE.title": "Flying Sword Strike",
+  "SUNQIAN_UNIVERSE_CARD_FLYING_SWORD_STRIKE.description": "Deal {Damage:diff()} damage.\nDraw {Cards:diff()} card.\n{IfUpgraded:show:For each kind of debuff you have|If you have at least one debuff}, deal +100% damage."
 }

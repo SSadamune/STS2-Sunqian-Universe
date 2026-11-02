@@ -349,5 +349,13 @@
   "SUNQIAN_UNIVERSE_CARD_LEAD_CIVILIANS_ACROSS.title": "挟民渡路",
   "SUNQIAN_UNIVERSE_CARD_LEAD_CIVILIANS_ACROSS.description": "失去{HpLoss}点生命。\n获得{TemporaryHealthPower:diff()}点[gold]临时生命[/gold]。",
   "SUNQIAN_UNIVERSE_CARD_DEAFEN_MY_EARS.title": "扎聋我的耳朵",
-  "SUNQIAN_UNIVERSE_CARD_DEAFEN_MY_EARS.description": "为所有没有[gold]自残[/gold]的手牌添加[gold]自残[/gold]，数值等于对应牌花费{energyPrefix:energyIcons(1)}的{Multiplier:diff()}倍。"
+  "SUNQIAN_UNIVERSE_CARD_DEAFEN_MY_EARS.description": "为所有没有[gold]自残[/gold]的手牌添加[gold]自残[/gold]，数值等于对应牌花费{energyPrefix:energyIcons(1)}的{Multiplier:diff()}倍。",
+  "SUNQIAN_UNIVERSE_CARD_CAN_I_STOP_RUNNING.title": "我能不能不跑了",
+  "SUNQIAN_UNIVERSE_CARD_CAN_I_STOP_RUNNING.description": "敌方的下{StopRunningPower:diff()}个回合内，当你损失非临时的生命后，获得等量[gold]临时生命[/gold]。",
+  "SUNQIAN_UNIVERSE_CARD_KNOW_WARFARE.title": "知兵",
+  "SUNQIAN_UNIVERSE_CARD_KNOW_WARFARE.description": "获得{BurningPower:diff()}层[gold]灼烧[/gold]、{Block:diff()}点[gold]格挡[/gold]、{TemporaryHealthPower:diff()}点[gold]临时生命[/gold]和{VigorPower:diff()}点[gold]活力[/gold]。",
+  "SUNQIAN_UNIVERSE_CARD_FAIR_WEATHER_BROTHERS.title": "表面兄弟",
+  "SUNQIAN_UNIVERSE_CARD_FAIR_WEATHER_BROTHERS.description": "[gold]二弟[/gold]造成{CompanionDamage:diff()}点伤害。\n2回合内，二弟的“[gold]为你而死[/gold]”失效。",
+  "SUNQIAN_UNIVERSE_CARD_FLYING_SWORD_STRIKE.title": "飞剑打击",
+  "SUNQIAN_UNIVERSE_CARD_FLYING_SWORD_STRIKE.description": "造成{Damage:diff()}点伤害。\n抽{Cards:diff()}张牌。\n{IfUpgraded:show:你每有|如果你有至少}一种负面状态，伤害+100%。"
 }
