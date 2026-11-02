@@ -108,6 +108,64 @@ public sealed class DeathDeniedRelicTests : SunqianCombatTestSuite
             null,
             null);
 
+    [Theory]
+    [InlineData(0, 10, 10)]
+    [InlineData(4, 10, 6)]
+    [InlineData(15, 10, 0)]
+    public async Task Own_turn_counts_blocked_damage_plus_hp_loss_once(int block, int damage, int lost)
+    {
+        var relic = await AddRelic();
+        ((CombatState)Combat).CurrentSide = CombatSide.Player;
+        Player.Creature.GainBlockInternal(block);
+        int hp = Player.Creature.CurrentHp;
+        await CreatureCmd.Damage(new BlockingPlayerChoiceContext(), Player.Creature, damage,
+            ValueProp.Unpowered, null, null);
+        Assert.Equal(hp - lost, Player.Creature.CurrentHp);
+        Assert.Equal(damage, relic.HpLostThisCombat);
+        Assert.Equal(damage / 2, relic.DisplayAmount);
+        await DamagePlayer(3);
+        Assert.Equal(damage + 3, relic.HpLostThisCombat);
+    }
+
+    [Fact]
+    public async Task Enemy_turn_blocked_damage_does_not_count()
+    {
+        var relic = await AddRelic();
+        ((CombatState)Combat).CurrentSide = CombatSide.Enemy;
+        Player.Creature.GainBlockInternal(5);
+        await CreatureCmd.Damage(new BlockingPlayerChoiceContext(), Player.Creature, 9,
+            ValueProp.Unpowered, null, null);
+        Assert.Equal(0, relic.HpLostThisCombat);
+    }
+
+    [Fact]
+    public async Task Blocked_damage_counts_but_damage_absorbed_by_second_brother_does_not()
+    {
+        var relic = await AddRelic();
+        var pet = (await OstyCmd.Summon(new BlockingPlayerChoiceContext(), Player, 10, null)).Creature!;
+        ((CombatState)Combat).CurrentSide = CombatSide.Player;
+        Player.Creature.GainBlockInternal(4);
+        await CreatureCmd.Damage(new BlockingPlayerChoiceContext(), Player.Creature, 9,
+            ValueProp.Move, null, null);
+        Assert.Equal(5, pet.CurrentHp);
+        Assert.Equal(4, relic.HpLostThisCombat);
+    }
+
+    [Fact]
+    public async Task Blocked_damage_is_included_before_lethal_recovery()
+    {
+        var relic = await AddRelic();
+        await CreatureCmd.SetCurrentHp(Player.Creature, 6);
+        relic.HpLostThisCombat = 0;
+        ((CombatState)Combat).CurrentSide = CombatSide.Player;
+        Player.Creature.GainBlockInternal(4);
+        await CreatureCmd.Damage(new BlockingPlayerChoiceContext(), Player.Creature, 10,
+            ValueProp.Unpowered, null, null);
+        Assert.True(relic.DisabledThisCombat);
+        Assert.Equal(10, relic.HpLostThisCombat);
+        Assert.Equal(5, Player.Creature.CurrentHp);
+    }
+
     private async Task<DeathDeniedRelic> AddRelic()
     {
         var relic = (DeathDeniedRelic)ModelDb.Relic<DeathDeniedRelic>().ToMutable();

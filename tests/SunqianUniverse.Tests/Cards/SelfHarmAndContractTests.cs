@@ -29,7 +29,7 @@ public sealed class SelfHarmAndContractTests : SunqianCombatTestSuite
         CardModel card = await AddToHand<AwakenSecondBrother>();
         Assert.Contains("[gold]自残[/gold]", card.GetDescriptionForPile(PileType.Hand));
         await Play(card, EnemyAt(0));
-        Assert.True(SelfHarmSystem.HasTriggered(card));
+        Assert.False(SelfHarmSystem.HasSelfHarm(card));
         Assert.DoesNotContain("自残", card.GetDescriptionForPile(PileType.Discard));
         Assert.False(card.GetDescriptionForPile(PileType.Discard).StartsWith("\n"));
         Assert.DoesNotContain(card.HoverTips.OfType<HoverTip>(), tip => tip.Title?.StartsWith("自残") == true);
@@ -104,7 +104,7 @@ public sealed class SelfHarmAndContractTests : SunqianCombatTestSuite
         await CreatureCmd.SetCurrentHp(Player.Creature, 8);
         var card = await AddToHand<AwakenSecondBrother>();
         await Play(card, EnemyAt(0));
-        Assert.False(SelfHarmSystem.HasTriggered(card));
+        Assert.True(SelfHarmSystem.HasSelfHarm(card));
         Assert.Contains("自残", card.GetDescriptionForPile(PileType.Discard));
         await CardPileCmd.Add(card, PileType.Hand);
         await CreatureCmd.SetCurrentHp(Player.Creature, 40);

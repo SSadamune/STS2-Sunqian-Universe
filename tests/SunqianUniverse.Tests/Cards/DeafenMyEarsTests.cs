@@ -31,7 +31,9 @@ public sealed class DeafenMyEarsTests : SunqianCombatTestSuite
         Assert.True(SelfHarmSystem.HasSelfHarm(target));
         Assert.Equal(amount, SelfHarmSystem.GetAmount(target));
         Assert.Contains("自残", target.GetDescriptionForPile(PileType.Hand));
-        Assert.Contains(target.HoverTips.OfType<HoverTip>(), tip => tip.Title?.Contains("自残") == true);
+        var selfHarmTip = Assert.Single(target.HoverTips.OfType<HoverTip>(), tip => tip.Title?.Contains("自残") == true);
+        Assert.DoesNotContain("每场战斗", selfHarmTip.Description);
+        Assert.DoesNotContain("本场战斗", selfHarmTip.Description);
         await PlayerCmd.SetEnergy(0, Player);
         int hp = Player.Creature.CurrentHp;
         await Play(target);
@@ -74,6 +76,16 @@ public sealed class DeafenMyEarsTests : SunqianCombatTestSuite
         await Play(target, EnemyAt(0));
         Assert.Equal(hp - 6, Player.Creature.CurrentHp);
         Assert.Equal(14, LifeContractSystem.GetTotal(Player));
+        await CardPileCmd.Add(target, PileType.Hand);
+        var anotherGrant = await AddToHand<DeafenMyEars>();
+        Upgrade(anotherGrant);
+        await Play(anotherGrant);
+        Assert.True(SelfHarmSystem.HasSelfHarm(target));
+        hp = Player.Creature.CurrentHp;
+        await Play(target, EnemyAt(0));
+        Assert.Equal(hp - 6, Player.Creature.CurrentHp);
+        Assert.Equal(20, LifeContractSystem.GetTotal(Player));
+        Assert.False(SelfHarmSystem.HasSelfHarm(target));
         SelfHarmSystem.ClearCombat(Combat);
         Assert.Equal(8m, SelfHarmSystem.GetAmount(target));
     }

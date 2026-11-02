@@ -62,6 +62,6 @@
   "SUNQIAN_UNIVERSE_SUMMON.anyCardText": "[gold]Summon <Any>[/gold] {Summon:diff()}.",
   "SUNQIAN_UNIVERSE_SUMMON.selectionPrompt": "Choose a companion to summon",
   "SUNQIAN_UNIVERSE_SELF_HARM.title": "Self-Harm {SelfHarm}",
-  "SUNQIAN_UNIVERSE_SELF_HARM.description": "Once per combat, if you have more than {SelfHarm:diff()} HP, playing this card costs no Energy. Instead, lose {SelfHarm:diff()} HP, then this card loses [gold]Self-Harm[/gold] for the rest of combat.",
+  "SUNQIAN_UNIVERSE_SELF_HARM.description": "If you have more than {SelfHarm:diff()} HP, playing this card costs no Energy. Instead, lose {SelfHarm:diff()} HP, then this card loses [gold]Self-Harm[/gold].",
   "SUNQIAN_UNIVERSE_SELF_HARM.cardText": "[gold]Self-Harm[/gold] {SelfHarm:diff()}.\n"
 }

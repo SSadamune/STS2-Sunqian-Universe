@@ -9,7 +9,7 @@ using STS2RitsuLib.Scaffolding.Content;
 
 namespace Squ.Cards;
 
-/// <summary>Resolves the eligible life payment once per combat, even for repeated or auto-played cards.</summary>
+/// <summary>Resolves and removes the current self-harm keyword before the card effects.</summary>
 public abstract class SelfHarmCardTemplate : ModCardTemplate, ISelfHarmCard
 {
 	public decimal SelfHarmAmount => DynamicVars["SelfHarm"].BaseValue;
@@ -24,7 +24,7 @@ public abstract class SelfHarmCardTemplate : ModCardTemplate, ISelfHarmCard
 	protected virtual Task AfterSelfHarmPaid(PlayerChoiceContext context, int amount) => Task.CompletedTask;
 	protected sealed override void AddExtraArgsToDescription(LocString description)
 	{
-		if (SelfHarmSystem.HasTriggered(this))
+		if (!SelfHarmSystem.HasSelfHarm(this))
 			description.Add("SelfHarmText", "");
 		else
 		{

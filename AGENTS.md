@@ -5,6 +5,7 @@
 - Keep card, power, and keyword descriptions concise and focused on gameplay.
 - Omit implementation details that do not affect player decisions or understanding. Keep technical explanations in developer documentation.
 - Preserve user-provided wording and formatting exactly when specified; do not add unsolicited caveats or explanations.
+- Card changes implicitly last for the current combat. Omit that duration from player-facing text; explicitly label exceptions such as permanent or this-turn changes.
 
 ## Git commits
 

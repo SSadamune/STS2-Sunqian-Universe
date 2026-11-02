@@ -6,17 +6,20 @@ using MegaCrit.Sts2.Core.Combat;
 using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Creatures;
 using MegaCrit.Sts2.Core.Entities.Relics;
+using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
+using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Rooms;
 using MegaCrit.Sts2.Core.Saves.Runs;
 using Squ.Character;
+using MegaCrit.Sts2.Core.ValueProps;
 using STS2RitsuLib.Interop.AutoRegistration;
 using STS2RitsuLib.Scaffolding.Content;
 
 namespace Squ.Relics;
 
 /// <summary>
-/// 求死不得：记录持有者在玩家方回合内实际失去的生命，并在胜利或首次致死时回复其中一半。
+/// 求死不得：累计己方回合内的生命损失和格挡伤害，未被格挡的伤害仅通过生命变化计数。
 /// 致死触发后，本场战斗不再记录或结算。
 /// </summary>
 [RegisterRelic(typeof(LiubeiRelicPool), StableEntryStem = "death_denied")]
@@ -104,6 +107,17 @@ public sealed class DeathDeniedRelic : ModRelicTemplate
 		}
 
 		HpLostThisCombat += (int)(-delta);
+		return Task.CompletedTask;
+	}
+
+	public override Task AfterDamageGiven(PlayerChoiceContext context, Creature? dealer,
+		DamageResult result, ValueProp props, Creature target, CardModel? cardSource)
+	{
+		// HP changes already account for the unblocked portion, including temporary HP.
+		if (!DisabledThisCombat && target == Owner.Creature && result.Receiver == Owner.Creature
+			&& CombatManager.Instance.IsInProgress && target.CombatState?.CurrentSide == target.Side
+			&& result.BlockedDamage > 0)
+			HpLostThisCombat += result.BlockedDamage;
 		return Task.CompletedTask;
 	}
 

@@ -21,9 +21,10 @@ public interface ISelfHarmCard
 
 public static class SelfHarmSystem
 {
+	private enum SelfHarmKind { None, Native, Granted }
 	private sealed class State
 	{
-		public bool Triggered;
+		public SelfHarmKind Kind;
 		public bool Prepared;
 		public bool PayHp;
 		public decimal Amount;
@@ -36,36 +37,36 @@ public static class SelfHarmSystem
 	});
 	internal static void ClearCombat(ICombatState combat) => Battles.Remove(combat);
 	private static State? GetState(CardModel card) => !card.IsCanonical && card.CombatState is { } combat
-		? Battles.GetOrCreateValue(combat).GetOrCreateValue(card) : null;
-	public static bool HasTriggered(CardModel card) => !card.IsCanonical
-		&& GetState(card)?.Triggered == true;
+		? Battles.GetOrCreateValue(combat).GetValue(card, current => new State
+			{ Kind = current is ISelfHarmCard ? SelfHarmKind.Native : SelfHarmKind.None }) : null;
 
-	public static decimal GetAmount(CardModel card) => GetState(card)?.GrantedAmount
-        ?? (card is ISelfHarmCard effect ? effect.SelfHarmAmount : 0);
-    public static DynamicVar GetAmountVar(CardModel card) => GetState(card)?.GrantedAmount is { } amount
-        ? new DynamicVar("SelfHarm", amount) : card.DynamicVars["SelfHarm"];
-    public static bool HasSelfHarm(CardModel card) => !card.IsCanonical
-        && !HasTriggered(card) && (GetState(card)?.GrantedAmount != null || card is ISelfHarmCard);
+	public static decimal GetAmount(CardModel card) => GetState(card) is { Kind: SelfHarmKind.Granted } state
+        ? state.GrantedAmount!.Value : card is ISelfHarmCard effect ? effect.SelfHarmAmount : 0;
+    public static DynamicVar GetAmountVar(CardModel card) => GetState(card) is { Kind: SelfHarmKind.Granted } state
+        ? new DynamicVar("SelfHarm", state.GrantedAmount!.Value) : card.DynamicVars["SelfHarm"];
+    public static bool HasSelfHarm(CardModel card) => GetState(card) is { } state
+        ? state.Kind != SelfHarmKind.None : card is ISelfHarmCard;
     public static void Grant(CardModel card, decimal amount)
     {
         if (HasSelfHarm(card) || GetState(card) is not { } state) return;
         state.GrantedAmount = Math.Max(0, amount);
-        state.Triggered = state.Prepared = false;
+        state.Kind = SelfHarmKind.Granted;
+        state.Prepared = false;
         card.InvokeEnergyCostChanged();
     }
 
 	public static bool IsActive(CardModel card)
 	{
-		if (!HasSelfHarm(card) || card.Owner == null
+		if (card.IsCanonical || !HasSelfHarm(card) || card.Owner == null
 			|| !CombatManager.Instance.IsInProgress
-			|| card.Owner.Creature.IsDead || GetState(card) is not { Triggered: false } state)
+			|| card.Owner.Creature.IsDead || GetState(card) is not { } state)
 			return false;
 		return state.Prepared ? state.PayHp : card.Owner.Creature.CurrentHp > GetAmount(card);
 	}
 
 	internal static void PreparePayment(CardModel card)
 	{
-		if (!HasSelfHarm(card) || GetState(card) is not { Triggered: false } state) return;
+		if (!HasSelfHarm(card) || GetState(card) is not { } state) return;
 		state.Prepared = false;
 		state.PayHp = IsActive(card);
 		state.Amount = GetAmount(card);
@@ -75,12 +76,12 @@ public static class SelfHarmSystem
 	/// <summary>Called once at actual resolution, before the card's effects.</summary>
 	public static async Task<int> ResolvePayment(PlayerChoiceContext context, CardModel card, CardPlay play)
 	{
-		if (!HasSelfHarm(card) || GetState(card) is not { Triggered: false } state) return 0;
+		if (!HasSelfHarm(card) || GetState(card) is not { } state) return 0;
 		bool payHp = IsActive(card);
 		decimal amount = state.Prepared ? state.Amount : GetAmount(card);
 		state.Prepared = false;
 		if (!payHp) return 0;
-		state.Triggered = true;
+		state.Kind = SelfHarmKind.None;
 		card.InvokeEnergyCostChanged();
 		var result = await CreatureCmd.Damage(context, card.Owner.Creature, amount,
 			ValueProp.Unblockable | ValueProp.Unpowered, card, play);

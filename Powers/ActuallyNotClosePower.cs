@@ -11,12 +11,12 @@ using STS2RitsuLib.Scaffolding.Content;
 namespace Squ.Powers;
 
 [RegisterPower]
-public sealed class BrotherEstrangementPower : ModPowerTemplate
+public sealed class ActuallyNotClosePower : ModPowerTemplate
 {
 	public override PowerType Type => PowerType.Debuff;
 	public override PowerStackType StackType => PowerStackType.Counter;
 	public override bool ShouldPowerBeRemovedAfterOwnerDeath() => false;
-	public override PowerAssetProfile AssetProfile => new(IconPath: "res://images/powers/LifeContractPower.png", BigIconPath: "res://images/powers/LifeContractPowerBig.png");
+	public override PowerAssetProfile AssetProfile => new(IconPath: "res://images/powers/ActuallyNotClosePower.png", BigIconPath: "res://images/powers/ActuallyNotClosePowerBig.png");
 	public override async Task AfterSideTurnEndLate(PlayerChoiceContext ctx, CombatSide side, IEnumerable<Creature> participants)
 	{
 		if (Owner.PetOwner is { } player && side != player.Creature.Side)

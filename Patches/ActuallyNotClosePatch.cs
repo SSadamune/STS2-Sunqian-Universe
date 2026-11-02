@@ -7,11 +7,11 @@ using Squ.Powers;
 namespace Squ.Patches;
 
 [HarmonyPatch(typeof(DieForYouPower), nameof(DieForYouPower.ModifyUnblockedDamageTarget))]
-internal static class BrotherEstrangementPatch
+internal static class ActuallyNotClosePatch
 {
 	private static bool Prefix(DieForYouPower __instance, Creature target, ref Creature __result)
 	{
-		if (__instance.Owner.Monster is not SecondBrother || !__instance.Owner.HasPower<BrotherEstrangementPower>()) return true;
+		if (__instance.Owner.Monster is not SecondBrother || !__instance.Owner.HasPower<ActuallyNotClosePower>()) return true;
 		__result = target;
 		return false;
 	}

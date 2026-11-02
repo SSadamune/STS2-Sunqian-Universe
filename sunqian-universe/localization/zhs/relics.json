@@ -4,7 +4,7 @@
   "SUNQIAN_UNIVERSE_RELIC_BOX_LUNCH.description": "你可以从[gold]剧本集[/gold]重新激活[gold]剧本[/gold]，然后此遗物会休眠[blue]2[/blue]回合。",
   "SUNQIAN_UNIVERSE_RELIC_BOX_LUNCH.flavor": "没有盒饭我们吃什么？",
   "SUNQIAN_UNIVERSE_RELIC_DEATH_DENIED.title": "求死不得",
-  "SUNQIAN_UNIVERSE_RELIC_DEATH_DENIED.description": "每场战斗限一次，战斗结束时或你死亡时，[green]回复[/green]你在自己的回合累计损失生命的[blue]{RecoveryPercent}[/blue]%。",
+  "SUNQIAN_UNIVERSE_RELIC_DEATH_DENIED.description": "每场战斗限一次，战斗结束时或你死亡时，[green]回复[/green]你在自己的回合累计受到伤害或失去生命的[blue]{RecoveryPercent}[/blue]%。",
   "SUNQIAN_UNIVERSE_RELIC_DEATH_DENIED.flavor": "天意不放，阎王不收。",
   "SUNQIAN_UNIVERSE_RELIC_ABUNDANT_BOX_LUNCH.title": "丰盛盒饭",
   "SUNQIAN_UNIVERSE_RELIC_ABUNDANT_BOX_LUNCH.description": "每回合开始时，你获得{energyPrefix:energyIcons(1)}。\n每回合限一次，你可以花费{energyPrefix:energyIcons(1)}从[gold]剧本集[/gold]重新激活[gold]剧本[/gold]。",
@@ -48,5 +48,5 @@
   "SUNQIAN_UNIVERSE_RELIC_NEVER_HAD_THESE.belovedPartnerEffect": "\n- 获得{Regen}层[gold]再生[/gold]和{Tinder}层[gold]火种[/gold]。",
   "SUNQIAN_UNIVERSE_RELIC_NEVER_HAD_THESE.nextOfKinEffect": "\n- 抽{Cards}张牌。",
   "SUNQIAN_UNIVERSE_RELIC_NEVER_HAD_THESE.flavor": "我从来没有这些！",
-  "SUNQIAN_UNIVERSE_RELIC_DEATH_DENIED.combatDescription": "{BaseDescription}\n本场战斗中已损失生命{HpLost}点。"
+  "SUNQIAN_UNIVERSE_RELIC_DEATH_DENIED.combatDescription": "{BaseDescription}\n本场战斗中已受到伤害或失去生命{HpLost}点。"
 }

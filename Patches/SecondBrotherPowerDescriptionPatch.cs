@@ -21,7 +21,7 @@ internal static class SecondBrotherPowerDescriptionPatch
 	private static void Postfix(PowerModel __instance, ref LocString __result)
 	{
 		if (__instance is DieForYouPower { IsMutable: true, Owner.Monster: SecondBrother })
-			__result = new LocString("powers", __instance.Owner.HasPower<BrotherEstrangementPower>()
+			__result = new LocString("powers", __instance.Owner.HasPower<ActuallyNotClosePower>()
 				? "SUNQIAN_UNIVERSE_POWER_SECOND_BROTHER_DIE_FOR_YOU.disabledDescription"
 				: "SUNQIAN_UNIVERSE_POWER_SECOND_BROTHER_DIE_FOR_YOU.description");
 	}

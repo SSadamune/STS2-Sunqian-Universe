@@ -62,6 +62,6 @@
   "SUNQIAN_UNIVERSE_SUMMON.anyCardText": "[gold]召唤<任意>[/gold]{Summon:diff()}。",
   "SUNQIAN_UNIVERSE_SUMMON.selectionPrompt": "选择一种召唤物",
   "SUNQIAN_UNIVERSE_SELF_HARM.title": "自残{SelfHarm}",
-  "SUNQIAN_UNIVERSE_SELF_HARM.description": "每场战斗限一次：如果你的生命值大于{SelfHarm:diff()}，则打出这张牌不消耗能量，改为失去{SelfHarm:diff()}点生命，然后这张牌本场战斗中失去[gold]自残[/gold]。",
+  "SUNQIAN_UNIVERSE_SELF_HARM.description": "如果你的生命值大于{SelfHarm:diff()}，则打出这张牌不消耗能量，改为失去{SelfHarm:diff()}点生命，然后这张牌失去[gold]自残[/gold]。",
   "SUNQIAN_UNIVERSE_SELF_HARM.cardText": "[gold]自残[/gold]{SelfHarm:diff()}。\n"
 }

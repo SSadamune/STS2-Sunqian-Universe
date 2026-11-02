@@ -354,8 +354,8 @@
   "SUNQIAN_UNIVERSE_CARD_CAN_I_STOP_RUNNING.description": "敌方的下{StopRunningPower:diff()}个回合内，当你损失非临时的生命后，获得等量[gold]临时生命[/gold]。",
   "SUNQIAN_UNIVERSE_CARD_KNOW_WARFARE.title": "知兵",
   "SUNQIAN_UNIVERSE_CARD_KNOW_WARFARE.description": "获得{BurningPower:diff()}层[gold]灼烧[/gold]、{Block:diff()}点[gold]格挡[/gold]、{TemporaryHealthPower:diff()}点[gold]临时生命[/gold]和{VigorPower:diff()}点[gold]活力[/gold]。",
-  "SUNQIAN_UNIVERSE_CARD_FAIR_WEATHER_BROTHERS.title": "表面兄弟",
-  "SUNQIAN_UNIVERSE_CARD_FAIR_WEATHER_BROTHERS.description": "[gold]二弟[/gold]造成{CompanionDamage:diff()}点伤害。\n2回合内，二弟的“[gold]为你而死[/gold]”失效。",
+  "SUNQIAN_UNIVERSE_CARD_NOMINAL_BROTHERS.title": "名义兄弟",
+  "SUNQIAN_UNIVERSE_CARD_NOMINAL_BROTHERS.description": "[gold]二弟[/gold]造成{CompanionDamage:diff()}点伤害。\n2回合内，二弟的“[gold]为你而死[/gold]”失效。",
   "SUNQIAN_UNIVERSE_CARD_FLYING_SWORD_STRIKE.title": "飞剑打击",
   "SUNQIAN_UNIVERSE_CARD_FLYING_SWORD_STRIKE.description": "造成{Damage:diff()}点伤害。\n抽{Cards:diff()}张牌。\n{IfUpgraded:show:你每有|如果你有至少}一种负面状态，伤害+100%。"
 }

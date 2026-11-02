@@ -2,6 +2,7 @@ using MegaCrit.Sts2.Core.Combat;
 using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
+using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.Monsters;
 using MegaCrit.Sts2.Core.Models.Powers;
@@ -38,21 +39,28 @@ public sealed class PrisonerThreeCardsTests : SunqianCombatTestSuite
     }
 
     [Theory]
-    [InlineData(false, 12)]
-    [InlineData(true, 16)]
-    public async Task Fair_weather_brothers_attacks_with_pet_and_disables_only_guard_for_two_enemy_turns(bool upgraded, int damage)
+    [InlineData(false, 13)]
+    [InlineData(true, 17)]
+    public async Task Nominal_brothers_attacks_with_pet_and_disables_only_guard_for_two_enemy_turns(bool upgraded, int damage)
     {
         var pet = (await OstyCmd.Summon(Choice(), Player, 10, null)).Creature!;
         await ApplyPower<StrengthPower>(Player.Creature, 10);
-        var card = await AddToHand<FairWeatherBrothers>();
+        var card = await AddToHand<NominalBrothers>();
         if (upgraded) Upgrade(card);
+        var tip = Assert.Single(card.HoverTips.OfType<HoverTip>());
+        Assert.Equal(ModelDb.Power<DieForYouPower>().Title.GetFormattedText(), tip.Title);
+        Assert.NotNull(tip.Icon);
+        Assert.Contains("[gold]二弟[/gold]", tip.Description);
+        Assert.DoesNotContain("奥斯提", tip.Description);
         int enemyHp = EnemyAt(0).CurrentHp;
         await Play(card, EnemyAt(0));
         Assert.Equal(enemyHp - damage, EnemyAt(0).CurrentHp);
         Assert.True(pet.HasPower<DieForYouPower>());
         Assert.True(pet.HasPower<LifeContractPower>());
         Assert.EndsWith("disabledDescription", pet.GetPower<DieForYouPower>()!.Description.LocEntryKey);
-        var disabled = pet.GetPower<BrotherEstrangementPower>()!;
+        var disabled = pet.GetPower<ActuallyNotClosePower>()!;
+        Assert.Equal("其实不熟", disabled.Title.GetFormattedText());
+        Assert.NotNull(disabled.Icon);
         await disabled.AfterSideTurnEndLate(Choice(), CombatSide.Player, [Player.Creature]);
         Assert.Equal(2, disabled.Amount);
         ((CombatState)Combat).CurrentSide = CombatSide.Enemy;
@@ -64,19 +72,39 @@ public sealed class PrisonerThreeCardsTests : SunqianCombatTestSuite
             Assert.Equal(10, pet.CurrentHp);
             await disabled.AfterSideTurnEndLate(Choice(), CombatSide.Enemy, [EnemyAt(0)]);
         }
-        Assert.Null(pet.GetPower<BrotherEstrangementPower>());
+        Assert.Null(pet.GetPower<ActuallyNotClosePower>());
         await CreatureCmd.Damage(Choice(), Player.Creature, 2, ValueProp.Move, null, null);
         Assert.Equal(hp - 4, Player.Creature.CurrentHp);
         Assert.Equal(8, pet.CurrentHp);
     }
 
     [Fact]
-    public async Task Fair_weather_brothers_does_not_summon_a_missing_pet()
+    public async Task Nominal_brothers_cannot_be_played_without_second_brother_and_spends_no_energy()
     {
         int hp = EnemyAt(0).CurrentHp;
-        await Play(await AddToHand<FairWeatherBrothers>(), EnemyAt(0));
+        var card = await AddToHand<NominalBrothers>();
+        int energy = Player.PlayerCombatState!.Energy;
+        Assert.False(card.CanPlay());
+        Assert.False(card.TryManualPlay(EnemyAt(0)));
+        Assert.Equal(energy, Player.PlayerCombatState.Energy);
+        AssertInPile(card, PileType.Hand);
         Assert.Null(CompanionSummons.GetCompanion(Player, CompanionSummons.SecondBrotherId));
         Assert.Equal(hp, EnemyAt(0).CurrentHp);
+        await CompanionSummons.SummonSpecific(Choice(), Player, CompanionSummons.OstyId, 10, null);
+        Assert.False(card.CanPlay());
+    }
+
+    [Fact]
+    public async Task Nominal_brothers_requires_living_second_brother_and_becomes_playable_after_reviving()
+    {
+        var card = await AddToHand<NominalBrothers>();
+        var pet = (await OstyCmd.Summon(Choice(), Player, 10, null)).Creature!;
+        Assert.True(card.CanPlay());
+        await CreatureCmd.Kill(pet);
+        Assert.False(card.CanPlay());
+        Assert.False(card.TryManualPlay(EnemyAt(0)));
+        await OstyCmd.Summon(Choice(), Player, 10, null);
+        Assert.True(card.CanPlay());
     }
 
     [Theory]
@@ -106,7 +134,19 @@ public sealed class PrisonerThreeCardsTests : SunqianCombatTestSuite
     {
         var pool = ModelDb.CardPool<LiubeiCardPool>().GetUnlockedCards(Player.UnlockState, Player.RunState.CardMultiplayerConstraint);
         Assert.Single(pool.OfType<KnowWarfare>());
-        Assert.Single(pool.OfType<FairWeatherBrothers>());
+        Assert.Single(pool.OfType<NominalBrothers>());
         Assert.Single(pool.OfType<FlyingSwordStrike>());
+    }
+
+    [Fact]
+    public void Renamed_card_and_power_use_new_ids_and_old_save_ids_resolve_to_them()
+    {
+        var card = ModelDb.Card<NominalBrothers>();
+        var power = ModelDb.Power<ActuallyNotClosePower>();
+        Assert.Equal("SUNQIAN_UNIVERSE_CARD_NOMINAL_BROTHERS", card.Id.Entry);
+        Assert.Equal("名义兄弟", card.Title);
+        Assert.Equal("SUNQIAN_UNIVERSE_POWER_ACTUALLY_NOT_CLOSE_POWER", power.Id.Entry);
+        Assert.Same(card, ModelDb.GetById<CardModel>(ModelId.Deserialize("CARD.SUNQIAN_UNIVERSE_CARD_FAIR_WEATHER_BROTHERS")));
+        Assert.Same(power, ModelDb.GetById<PowerModel>(ModelId.Deserialize("POWER.SUNQIAN_UNIVERSE_POWER_BROTHER_ESTRANGEMENT_POWER")));
     }
 }
