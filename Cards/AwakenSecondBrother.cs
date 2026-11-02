@@ -28,7 +28,8 @@ public sealed class AwakenSecondBrother : SelfHarmCardTemplate
 	public override CardAssetProfile AssetProfile => new(PortraitPath: "res://images/cards/GuanDiForm.png");
 	protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
 	[
-		SquKeywords.CreateSelfHarmHoverTip(DynamicVars["SelfHarm"]),
+		..(SelfHarmSystem.HasTriggered(this) ? Array.Empty<IHoverTip>() :
+			new[] { SquKeywords.CreateSelfHarmHoverTip(SelfHarmSystem.GetAmountVar(this)) }),
 		CompanionSummonKeywords.NamedHoverTip(CompanionSummons.SecondBrotherId, DynamicVars.Summon),
 		HoverTipFactory.FromPower<LifeContractPower>(),
 	];

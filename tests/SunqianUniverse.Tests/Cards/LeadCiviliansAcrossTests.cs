@@ -20,7 +20,7 @@ public sealed class LeadCiviliansAcrossTests : SunqianCombatTestSuite
     [Theory]
     [InlineData(false, 12)]
     [InlineData(true, 16)]
-    public async Task First_play_pays_six_hp_and_grants_upgraded_temporary_health(bool upgraded, int amount)
+    public async Task Play_costs_two_energy_loses_six_hp_grants_temporary_health_and_exhausts(bool upgraded, int amount)
     {
         int hp = Player.Creature.CurrentHp;
         var card = await AddToHand<LeadCiviliansAcross>();
@@ -28,40 +28,30 @@ public sealed class LeadCiviliansAcrossTests : SunqianCombatTestSuite
         Assert.Equal(CardRarity.Uncommon, card.Rarity);
         Assert.Equal(CardType.Skill, card.Type);
         Assert.Equal(2, card.EnergyCost.GetWithModifiers(CostModifiers.None));
-        Assert.Equal(6m, card.SelfHarmAmount);
-        await PlayerCmd.SetEnergy(0, Player);
+        Assert.Contains(CardKeyword.Exhaust, card.Keywords);
+        await PlayerCmd.SetEnergy(2, Player);
         await Play(card);
         Assert.Equal(hp - 6 + amount, Player.Creature.CurrentHp);
         Assert.Equal(amount, Player.Creature.GetPower<TemporaryHealthPower>()!.Amount);
         Assert.Equal(0, Player.PlayerCombatState!.Energy);
         Assert.Equal(0, LifeContractSystem.GetTotal(Player));
-        AssertInPile(card, PileType.Discard);
+        AssertInPile(card, PileType.Exhaust);
     }
 
     [Fact]
-    public async Task Subsequent_play_costs_two_energy_and_does_not_pay_hp_again()
+    public async Task Retrieved_card_loses_hp_again_consuming_existing_temporary_health_first()
     {
         int hp = Player.Creature.CurrentHp;
         var card = await AddToHand<LeadCiviliansAcross>();
         await Play(card);
+        await PlayerCmd.SetEnergy(2, Player);
         await CardPileCmd.Add(card, PileType.Hand);
         int energy = Player.PlayerCombatState!.Energy;
         Assert.Equal(2, card.EnergyCost.GetResolved());
         await Play(card);
         Assert.Equal(energy - 2, Player.PlayerCombatState.Energy);
-        Assert.Equal(hp - 6 + 24, Player.Creature.CurrentHp);
-        Assert.Equal(24, Player.Creature.GetPower<TemporaryHealthPower>()!.Amount);
-    }
-
-    [Fact]
-    public async Task At_six_hp_uses_energy_without_self_harm()
-    {
-        await CreatureCmd.SetCurrentHp(Player.Creature, 6);
-        var card = await AddToHand<LeadCiviliansAcross>();
-        Assert.Equal(2, card.EnergyCost.GetResolved());
-        await Play(card);
-        Assert.Equal(18, Player.Creature.CurrentHp);
-        Assert.Equal(12, Player.Creature.GetPower<TemporaryHealthPower>()!.Amount);
+        Assert.Equal(hp - 12 + 24, Player.Creature.CurrentHp);
+        Assert.Equal(18, Player.Creature.GetPower<TemporaryHealthPower>()!.Amount);
     }
 
     [Fact]
@@ -81,7 +71,7 @@ public sealed class LeadCiviliansAcrossTests : SunqianCombatTestSuite
     }
 
     [Fact]
-    public async Task Registered_in_prisoner_pool_and_hover_explains_self_harm_six()
+    public async Task Registered_in_prisoner_pool_without_self_harm()
     {
         var card = await AddToHand<LeadCiviliansAcross>();
         Assert.Contains(ModelDb.CardPool<LiubeiCardPool>()
@@ -90,6 +80,7 @@ public sealed class LeadCiviliansAcrossTests : SunqianCombatTestSuite
         Assert.DoesNotContain(ModelDb.CardPool<SunqianCardPool>()
             .GetUnlockedCards(Player.UnlockState, Player.RunState.CardMultiplayerConstraint),
             entry => entry is LeadCiviliansAcross);
-        Assert.Contains(card.HoverTips.OfType<HoverTip>(), tip => tip.Title?.EndsWith("6") == true);
+        Assert.DoesNotContain(card.HoverTips.OfType<HoverTip>(), tip => tip.Title?.EndsWith("6") == true);
+        Assert.False(typeof(SelfHarmCardTemplate).IsAssignableFrom(card.GetType()));
     }
 }

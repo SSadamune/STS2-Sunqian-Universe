@@ -3,12 +3,13 @@ using System.Threading.Tasks;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.Localization;
+using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using Squ.Combat;
 using STS2RitsuLib.Scaffolding.Content;
 
 namespace Squ.Cards;
 
-/// <summary>Resolves the first-play life payment once, even for repeated or auto-played cards.</summary>
+/// <summary>Resolves the eligible life payment once per combat, even for repeated or auto-played cards.</summary>
 public abstract class SelfHarmCardTemplate : ModCardTemplate, ISelfHarmCard
 {
 	public decimal SelfHarmAmount => DynamicVars["SelfHarm"].BaseValue;
@@ -16,17 +17,21 @@ public abstract class SelfHarmCardTemplate : ModCardTemplate, ISelfHarmCard
 		: base(cost, type, rarity, target) { }
 	protected sealed override async Task OnPlay(PlayerChoiceContext context, CardPlay play)
 	{
-		int paid = await SelfHarmSystem.ResolveFirstPlay(context, this, play);
+		int paid = await SelfHarmSystem.ResolvePayment(context, this, play);
 		if (paid > 0) await AfterSelfHarmPaid(context, paid);
 		if (Owner.Creature.IsAlive) await PlayAfterSelfHarm(context, play);
 	}
 	protected virtual Task AfterSelfHarmPaid(PlayerChoiceContext context, int amount) => Task.CompletedTask;
 	protected sealed override void AddExtraArgsToDescription(LocString description)
 	{
-		LocString clause = new("card_keywords", SelfHarmSystem.HasTriggered(this)
-			? "SUNQIAN_UNIVERSE_SELF_HARM.spentCardText" : "SUNQIAN_UNIVERSE_SELF_HARM.cardText");
-		clause.AddObj("SelfHarm", DynamicVars["SelfHarm"]);
-		SquKeywords.AddNestedLoc(description, "SelfHarmText", clause);
+		if (SelfHarmSystem.HasTriggered(this))
+			description.Add("SelfHarmText", "");
+		else
+		{
+			LocString clause = new("card_keywords", "SUNQIAN_UNIVERSE_SELF_HARM.cardText");
+			clause.AddObj("SelfHarm", SelfHarmSystem.GetAmountVar(this));
+			SquKeywords.AddNestedLoc(description, "SelfHarmText", clause);
+		}
 		AddExtraSelfHarmArgs(description);
 	}
 	protected virtual void AddExtraSelfHarmArgs(LocString description) { }

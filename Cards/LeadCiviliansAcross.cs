@@ -6,6 +6,7 @@ using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
+using MegaCrit.Sts2.Core.ValueProps;
 using Squ.Character;
 using Squ.Powers;
 using STS2RitsuLib.Interop.AutoRegistration;
@@ -14,24 +15,29 @@ using STS2RitsuLib.Scaffolding.Content;
 namespace Squ.Cards;
 
 [RegisterCard(typeof(LiubeiCardPool), StableEntryStem = "lead_civilians_across")]
-public sealed class LeadCiviliansAcross : SelfHarmCardTemplate
+public sealed class LeadCiviliansAcross : ModCardTemplate
 {
 	protected override IEnumerable<DynamicVar> CanonicalVars =>
 	[
-		new DynamicVar("SelfHarm", 6),
+		new DynamicVar("HpLoss", 6),
 		new PowerVar<TemporaryHealthPower>(12),
 	];
 	public override CardAssetProfile AssetProfile => new(
 		PortraitPath: "res://images/cards/RelocateCapital.png");
 	protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
 	[
-		SquKeywords.CreateSelfHarmHoverTip(DynamicVars["SelfHarm"]),
 		HoverTipFactory.FromPower<TemporaryHealthPower>(),
 	];
+	public override IEnumerable<CardKeyword> CanonicalKeywords => [CardKeyword.Exhaust];
 	public LeadCiviliansAcross() : base(2, CardType.Skill, CardRarity.Uncommon, TargetType.Self) { }
-	protected override async Task PlayAfterSelfHarm(PlayerChoiceContext context, CardPlay play) =>
+	protected override async Task OnPlay(PlayerChoiceContext context, CardPlay play)
+	{
+		await CreatureCmd.Damage(context, Owner.Creature, DynamicVars["HpLoss"].BaseValue,
+			ValueProp.Unblockable | ValueProp.Unpowered, this, play);
+		if (Owner.Creature.IsDead) return;
 		await PowerCmd.Apply<TemporaryHealthPower>(context, Owner.Creature,
 			DynamicVars[nameof(TemporaryHealthPower)].BaseValue, Owner.Creature, this);
+	}
 	protected override void OnUpgrade() =>
 		DynamicVars[nameof(TemporaryHealthPower)].UpgradeValueBy(4);
 }

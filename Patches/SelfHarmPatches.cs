@@ -43,7 +43,16 @@ internal static class SelfHarmHpDisplayRefreshPatch
 	{
 		var cards = __instance.Player?.PlayerCombatState?.AllCards;
 		if (cards == null) return;
-		foreach (CardModel card in cards.Where(card => card is ISelfHarmCard).ToArray())
+		foreach (CardModel card in cards.Where(SelfHarmSystem.HasSelfHarm).ToArray())
 			card.InvokeEnergyCostChanged();
 	}
+}
+
+[HarmonyPatch(typeof(CardEnergyCost), nameof(CardEnergyCost.GetAmountToSpend))]
+internal static class SelfHarmEnergyPaymentPatch
+{
+    private static void Postfix(CardModel ____card, ref int __result)
+    {
+        if (SelfHarmSystem.IsActive(____card)) __result = 0;
+    }
 }

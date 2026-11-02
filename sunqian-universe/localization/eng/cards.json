@@ -345,7 +345,9 @@
   "SUNQIAN_UNIVERSE_CARD_COMPANION_SUMMON_CHOICE.title": "Choose a Companion",
   "SUNQIAN_UNIVERSE_CARD_COMPANION_SUMMON_CHOICE.description": "Summon [gold]{SummonName}[/gold] with {Summon:diff()} HP.\nIf already summoned, increase its Max HP by {Summon:diff()} this combat.",
   "SUNQIAN_UNIVERSE_CARD_AWAKEN_SECOND_BROTHER.title": "Awaken Second Brother",
-  "SUNQIAN_UNIVERSE_CARD_AWAKEN_SECOND_BROTHER.description": "{SelfHarmText}\n{SummonText}\n[gold]Second Brother[/gold] deals {CompanionDamage:diff()} damage.",
+  "SUNQIAN_UNIVERSE_CARD_AWAKEN_SECOND_BROTHER.description": "{SelfHarmText}{SummonText}\n[gold]Second Brother[/gold] deals {CompanionDamage:diff()} damage.",
   "SUNQIAN_UNIVERSE_CARD_LEAD_CIVILIANS_ACROSS.title": "Lead the People Across",
-  "SUNQIAN_UNIVERSE_CARD_LEAD_CIVILIANS_ACROSS.description": "{SelfHarmText}\nGain {TemporaryHealthPower:diff()} [gold]Temporary HP[/gold]."
+  "SUNQIAN_UNIVERSE_CARD_LEAD_CIVILIANS_ACROSS.description": "Lose {HpLoss} HP.\nGain {TemporaryHealthPower:diff()} [gold]Temporary HP[/gold].",
+  "SUNQIAN_UNIVERSE_CARD_DEAFEN_MY_EARS.title": "Deafen My Ears",
+  "SUNQIAN_UNIVERSE_CARD_DEAFEN_MY_EARS.description": "Give all cards in your hand without [gold]Self-Harm[/gold] [gold]Self-Harm[/gold] equal to {Multiplier:diff()} times their {energyPrefix:energyIcons(1)} cost."
 }

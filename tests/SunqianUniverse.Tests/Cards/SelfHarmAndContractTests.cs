@@ -23,21 +23,20 @@ namespace Squ.Tests.Cards;
 
 public sealed class SelfHarmAndContractTests : SunqianCombatTestSuite
 {
-    [Theory]
-    [InlineData(false)]
-    [InlineData(true)]
-    public async Task Triggered_self_harm_is_gray_only_for_that_copy_and_resets_next_combat(bool awaken)
+    [Fact]
+    public async Task Triggered_self_harm_disappears_only_for_that_copy_and_returns_next_combat()
     {
-        CardModel card = awaken ? await AddToHand<AwakenSecondBrother>() : await AddToHand<LeadCiviliansAcross>();
-        Assert.DoesNotContain("[color=#888888]", card.GetDescriptionForPile(PileType.Hand));
-        if (awaken) await Play(card, EnemyAt(0));
-        else await Play(card);
+        CardModel card = await AddToHand<AwakenSecondBrother>();
+        Assert.Contains("[gold]自残[/gold]", card.GetDescriptionForPile(PileType.Hand));
+        await Play(card, EnemyAt(0));
         Assert.True(SelfHarmSystem.HasTriggered(card));
-        Assert.Contains("[color=#888888]", card.GetDescriptionForPile(PileType.Discard));
-        CardModel other = awaken ? await AddToHand<AwakenSecondBrother>() : await AddToHand<LeadCiviliansAcross>();
-        Assert.DoesNotContain("[color=#888888]", other.GetDescriptionForPile(PileType.Hand));
+        Assert.DoesNotContain("自残", card.GetDescriptionForPile(PileType.Discard));
+        Assert.False(card.GetDescriptionForPile(PileType.Discard).StartsWith("\n"));
+        Assert.DoesNotContain(card.HoverTips.OfType<HoverTip>(), tip => tip.Title?.StartsWith("自残") == true);
+        CardModel other = await AddToHand<AwakenSecondBrother>();
+        Assert.Contains("[gold]自残[/gold]", other.GetDescriptionForPile(PileType.Hand));
         SelfHarmSystem.ClearCombat(Combat);
-        Assert.DoesNotContain("[color=#888888]", card.GetDescriptionForPile(PileType.Discard));
+        Assert.Contains("[gold]自残[/gold]", card.GetDescriptionForPile(PileType.Discard));
     }
     protected override void ConfigureBattle(CombatTestBattleBuilder battle) =>
         battle.Player<LiubeiCharacter>().AddRemotePlayer<Ironclad>()
@@ -100,19 +99,21 @@ public sealed class SelfHarmAndContractTests : SunqianCombatTestSuite
     }
 
     [Fact]
-    public async Task First_play_below_threshold_uses_up_first_play_even_if_healed_later()
+    public async Task Play_below_threshold_preserves_self_harm_for_a_later_eligible_play()
     {
         await CreatureCmd.SetCurrentHp(Player.Creature, 8);
         var card = await AddToHand<AwakenSecondBrother>();
         await Play(card, EnemyAt(0));
+        Assert.False(SelfHarmSystem.HasTriggered(card));
+        Assert.Contains("自残", card.GetDescriptionForPile(PileType.Discard));
         await CardPileCmd.Add(card, PileType.Hand);
         await CreatureCmd.SetCurrentHp(Player.Creature, 40);
         await PlayerCmd.SetEnergy(3, Player);
-        Assert.Equal(2, card.EnergyCost.GetResolved());
+        Assert.Equal(0, card.EnergyCost.GetResolved());
         await Play(card, EnemyAt(0));
-        Assert.Equal(40, Player.Creature.CurrentHp);
-        Assert.Equal(1, Player.PlayerCombatState!.Energy);
-        Assert.Equal(0, LifeContractSystem.GetTotal(Player));
+        Assert.Equal(32, Player.Creature.CurrentHp);
+        Assert.Equal(3, Player.PlayerCombatState!.Energy);
+        Assert.Equal(8, LifeContractSystem.GetTotal(Player));
     }
 
     [Fact]
@@ -160,7 +161,7 @@ public sealed class SelfHarmAndContractTests : SunqianCombatTestSuite
         Assert.Equal(hp, Player.Creature.CurrentHp);
         Assert.Equal(0, LifeContractSystem.GetTotal(Player));
         Assert.Equal(2, card.EnergyCost.GetResolved());
-        Assert.Contains("[color=#888888]", card.GetDescriptionForPile(PileType.Discard));
+        Assert.DoesNotContain("自残", card.GetDescriptionForPile(PileType.Discard));
     }
 
     [Fact]
