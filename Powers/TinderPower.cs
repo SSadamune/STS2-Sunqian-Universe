@@ -11,6 +11,7 @@ using MegaCrit.Sts2.Core.Localization;
 using MegaCrit.Sts2.Core.Models;
 using Squ;
 using Squ.Interop;
+using Squ.Combat;
 using STS2RitsuLib.Interop.AutoRegistration;
 using STS2RitsuLib.Scaffolding.Content;
 
@@ -69,6 +70,8 @@ public sealed class TinderPower : ModPowerTemplate
 			&& cardSource is not null
 			&& SquCardTags.AppliesBurning(cardSource);
 		bool enhancesHuoGong = YjcmTinderInterop.EnhancesHuoGong(power);
+		if (enhancesBurning && !BurningApplicationTarget.IsEnemyApplication(power, giver, target, cardSource))
+			return 0m;
 		if (giver != Owner || (!enhancesBurning && !enhancesHuoGong) || Amount <= 0
 			|| cardSource == null
 			|| cardSource.Owner?.Creature != Owner)
