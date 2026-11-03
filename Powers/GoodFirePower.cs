@@ -14,7 +14,7 @@ using STS2RitsuLib.Scaffolding.Content;
 namespace Squ.Powers;
 
 /// <summary>
-/// 「好火啊…」：你给予的灼烧层数按 <see cref="Amount"/>% 增加。
+/// 「好火啊…」：你给予敌方的灼烧层数按 <see cref="Amount"/>% 增加。
 /// 图标层数显示为 100、150、200、250…；灼烧层数修改顺序由原版
 /// <c>Hook.ModifyPowerAmountGiven</c> 保证：先加算，再乘算。
 /// </summary>
@@ -54,7 +54,7 @@ public sealed class GoodFirePower : ModPowerTemplate
 		Creature? target,
 		CardModel? cardSource)
 	{
-		if (giver != Owner || Amount <= 0)
+		if (giver != Owner || Amount <= 0 || target is null || target.Side == Owner.Side)
 		{
 			return 1m;
 		}
