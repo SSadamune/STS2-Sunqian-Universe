@@ -238,9 +238,9 @@ public sealed class Denied : ModCardTemplate
 		}
 
 		_returnToHandReady = false;
-		// TODO: 回手专用音效就绪后恢复播放。
-		// SquSfx.Play(SquSfx.DeniedEvent);
 		await CardPileCmd.Add(this, PileType.Hand);
+		if (Pile?.Type == PileType.Hand)
+			SquSfx.Play(SquSfx.DeniedReturnToHandEvent);
 	}
 
 	private static bool CanReturnToHand(PileType? pileType) =>

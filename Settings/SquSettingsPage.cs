@@ -161,7 +161,7 @@ public static class SquSettingsPage
 								new(NeutralContentPermissionMode.WhenModCharacterPresent, Loc("SUNQIAN_UNIVERSE_COMMON.SETTINGS.neutralPotionModification.whenModCharacterPresent", "有本模组角色时允许")),
 								new(NeutralContentPermissionMode.Deny, Loc("SUNQIAN_UNIVERSE_COMMON.SETTINGS.neutralPotionModification.deny", "不允许")),
 							],
-							description: Loc("SUNQIAN_UNIVERSE_COMMON.SETTINGS.neutralRelicRegistrationDescription", "是否允许本模组向中立遗物池添加遗物（例如「七星宝刀」）。"),
+							description: Loc("SUNQIAN_UNIVERSE_COMMON.SETTINGS.neutralRelicRegistrationDescription", "是否允许本模组添加中立遗物（例如「七星宝刀」）。"),
 							presentation: ModSettingsChoicePresentation.Dropdown)
 						.AddChoice(
 							id: "event_registration",

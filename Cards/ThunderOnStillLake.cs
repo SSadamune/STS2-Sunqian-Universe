@@ -121,6 +121,7 @@ public sealed class ThunderOnStillLake : ChargeCardTemplate, IRowKeywordsCard
 	private Task ReduceCostUntilPlayed(PlayerChoiceContext choiceContext)
 	{
 		EnergyCost.AddUntilPlayed(-EnergyReductionPerAttack);
+		SquSfx.Play(SquSfx.ThunderOnStillLakeCostReductionEvent);
 		InvokeEnergyCostChanged();
 		RefreshCardVisuals();
 		return Task.CompletedTask;
@@ -139,6 +140,7 @@ public sealed class ThunderOnStillLake : ChargeCardTemplate, IRowKeywordsCard
 		}
 
 		DynamicVars.Damage.BaseValue += -amount;
+		SquSfx.Play(SquSfx.ThunderOnStillLakeVigorChargeEvent);
 		RefreshCardVisuals();
 		return Task.CompletedTask;
 	}

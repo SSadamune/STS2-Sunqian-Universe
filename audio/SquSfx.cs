@@ -76,6 +76,8 @@ internal static class SquSfx
 	public const string HouseServantsComeEvent = "event:/sunqian_universe/sfx/家丁剧本-来人";
 	public const string ThunderOnStillLakeAsLongAsIBreatheEvent = "event:/sunqian_universe/sfx/平湖惊雷-只要一息尚存";
 	public const string ThunderOnStillLakeChopYourHeadEvent = "event:/sunqian_universe/sfx/平湖惊雷-放肆我砍你的头";
+	public const string ThunderOnStillLakeVigorChargeEvent = "event:/sunqian_universe/sfx/平湖惊雷-连眼皮都没动一下";
+	public const string ThunderOnStillLakeCostReductionEvent = "event:/sunqian_universe/sfx/平湖惊雷-他连眼皮都没眨一下";
 	public const string FingerStrikeRemainingLandEvent = "event:/sunqian_universe/sfx/弹指打击-剩下一小片江山";
 	public const string FingerStrikeDongZhuoHeadEvent = "event:/sunqian_universe/sfx/弹指打击-取董贼首级";
 	public const string FingerStrikeDestroyXiliangArmyEvent = "event:/sunqian_universe/sfx/弹指打击-董卓和西凉军弹指可灭";
@@ -107,6 +109,10 @@ internal static class SquSfx
 	public const string FateUnknownThatsDeathEvent = "event:/sunqian_universe/sfx/生死不明-那就是死了";
 	public const string SilverUprisingEvent = "event:/sunqian_universe/sfx/白银起义";
 	public const string DeniedEvent = "event:/sunqian_universe/sfx/竟然不许";
+	public const string DeniedReturnToHandEvent = "event:/sunqian_universe/sfx/竟然不许-许昌已经回消息了";
+	public const string FenghuangRebirthObtainedEvent = "event:/sunqian_universe/sfx/凤凰涅槃-我最敬仰的图腾";
+	public const string FenghuangRebirthLubuEvent = "event:/sunqian_universe/sfx/凤凰涅槃-吕布";
+	public const string FenghuangRebirthDiaochanEvent = "event:/sunqian_universe/sfx/凤凰涅槃-貂蝉";
 	public const string ArrowCurtainEvent = "event:/sunqian_universe/sfx/箭幕";
 	public const string CelebrateMourningCongratulateLordEvent = "event:/sunqian_universe/sfx/闻丧贺喜-给主公道喜";
 	public const string CelebrateMourningGrieveForLordEvent = "event:/sunqian_universe/sfx/闻丧贺喜-为主公悲伤";
