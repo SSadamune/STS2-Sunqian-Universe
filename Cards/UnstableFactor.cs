@@ -16,7 +16,7 @@ using STS2RitsuLib.Scaffolding.Content;
 namespace Squ.Cards;
 
 [RegisterCard(typeof(LiubeiCardPool), StableEntryStem = "unstable_factor")]
-public sealed class UnstableFactor : ModCardTemplate
+public sealed class UnstableFactor : ModCardTemplate, IRowKeywordsCard
 {
     public UnstableFactor() : base(1, CardType.Power, CardRarity.Uncommon, TargetType.Self) { }
     public override CardAssetProfile AssetProfile => new(PortraitPath: "res://images/cards/PrisonerPlaceholder.png");
@@ -24,8 +24,7 @@ public sealed class UnstableFactor : ModCardTemplate
     protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
     [CompanionSummonKeywords.NamedHoverTip(CompanionSummons.ThirdBrotherId, DynamicVars.Summon),
         new HoverTip(new LocString("powers", "SUNQIAN_UNIVERSE_POWER_HARD_TO_RESTRAIN_POWER.title"),
-            new LocString("powers", "SUNQIAN_UNIVERSE_POWER_HARD_TO_RESTRAIN_POWER.effects")),
-        HoverTipFactory.FromPower<TinderPower>(), HoverTipFactory.FromPower<BurningPower>()];
+            new LocString("powers", "SUNQIAN_UNIVERSE_POWER_HARD_TO_RESTRAIN_POWER.description"))];
     protected override void AddExtraArgsToDescription(LocString description) =>
         SquKeywords.AddNestedLoc(description, "SummonText", CompanionSummonKeywords.NamedCardText(
             CompanionSummons.ThirdBrotherId, DynamicVars.Summon));

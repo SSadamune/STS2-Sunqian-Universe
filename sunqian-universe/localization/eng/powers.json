@@ -180,6 +180,5 @@
   "SUNQIAN_UNIVERSE_POWER_UNSTABLE_FACTOR_POWER.title": "Unstable Factor",
   "SUNQIAN_UNIVERSE_POWER_UNSTABLE_FACTOR_POWER.description": "At the start of each turn, lose {LifeLoss} HP and Summon [Third Brother] {Summon}.",
   "SUNQIAN_UNIVERSE_POWER_HARD_TO_RESTRAIN_POWER.title": "Hard to Restrain",
-  "SUNQIAN_UNIVERSE_POWER_HARD_TO_RESTRAIN_POWER.description": "At the end of each turn, perform a random effect.",
-  "SUNQIAN_UNIVERSE_POWER_HARD_TO_RESTRAIN_POWER.effects": "Play a random Attack from your hand.\nConsume all your Tinder to apply twice as much Burning to a random enemy.\nUnstable Factor no longer makes you lose HP this combat.\nLose all your Block. Third Brother gains that much maximum HP.\nPut a Wine with Enthralled and Exhaust on top of your draw pile."
+  "SUNQIAN_UNIVERSE_POWER_HARD_TO_RESTRAIN_POWER.description": "At the end of each turn, trigger a random [gold]Unexpected Event[/gold]."
 }

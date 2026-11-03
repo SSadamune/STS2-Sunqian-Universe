@@ -20,6 +20,7 @@ public static class CompanionSummonKeywords
 	{
 		LocString result = new("card_keywords", "SUNQIAN_UNIVERSE_SUMMON." + suffix);
 		result.AddObj("Summon", amount);
+		result.Add("SummonNameColor", id is CompanionSummons.SecondBrotherId or CompanionSummons.ThirdBrotherId ? "gold" : "blue");
 		if (id != null) result.Add("SummonName", CompanionSummons.GetName(id));
 		return result;
 	}

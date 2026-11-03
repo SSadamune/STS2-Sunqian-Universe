@@ -17,9 +17,9 @@ using STS2RitsuLib.Scaffolding.Content;
 namespace Squ.Cards;
 
 [RegisterCard(typeof(LiubeiCardPool), StableEntryStem = "green_dragon_crescent_blade")]
-public sealed class GreenDragonCrescentBlade : ModCardTemplate
+public sealed class GreenDragonCrescentBlade : ModCardTemplate, IRowKeywordsCard
 {
-    public GreenDragonCrescentBlade() : base(1, CardType.Attack, CardRarity.Uncommon, TargetType.Self) { }
+    public GreenDragonCrescentBlade() : base(1, CardType.Skill, CardRarity.Uncommon, TargetType.Self) { }
     public override CardAssetProfile AssetProfile => new(PortraitPath: "res://images/cards/PrisonerPlaceholder.png");
     protected override IEnumerable<DynamicVar> CanonicalVars => [new SummonVar(8), new DynamicVar("Strength", 2)];
     protected override IEnumerable<IHoverTip> AdditionalHoverTips =>

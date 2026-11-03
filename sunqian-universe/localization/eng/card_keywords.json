@@ -56,7 +56,7 @@
   "SUNQIAN_UNIVERSE_KEYWORD_RIGHTEOUSNESS.dynamicTitle": "Righteousness {Righteousness}",
   "SUNQIAN_UNIVERSE_SUMMON.namedTitle": "Summon [{SummonName}] {Summon}",
   "SUNQIAN_UNIVERSE_SUMMON.namedDescription": "Summon [gold]{SummonName}[/gold] with {Summon:diff()} HP.\nIf already summoned, increase its Max HP by {Summon:diff()} this combat.",
-  "SUNQIAN_UNIVERSE_SUMMON.namedCardText": "[gold]Summon[/gold] [lb][blue]{SummonName}[/blue]] {Summon:diff()}.",
+  "SUNQIAN_UNIVERSE_SUMMON.namedCardText": "[gold]Summon[/gold] [lb][{SummonNameColor}]{SummonName}[/{SummonNameColor}]] {Summon:diff()}.",
   "SUNQIAN_UNIVERSE_SUMMON.anyTitle": "Summon <Any> {Summon}",
   "SUNQIAN_UNIVERSE_SUMMON.anyDescription": "Choose a companion and summon it with {Summon:diff()} HP. If already summoned, increase its Max HP by {Summon:diff()} this combat.\nChoose from Osty, your character's default companion, and companions you explicitly summoned this combat.",
   "SUNQIAN_UNIVERSE_SUMMON.anyCardText": "[gold]Summon <Any>[/gold] {Summon:diff()}.",

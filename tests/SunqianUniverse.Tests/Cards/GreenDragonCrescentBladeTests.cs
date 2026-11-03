@@ -30,7 +30,11 @@ public sealed class GreenDragonCrescentBladeTests : SunqianCombatTestSuite
     {
         var first = await AddToHand<GreenDragonCrescentBlade>();
         if (firstUpgraded) Upgrade(first);
-        Assert.Equal(CardType.Attack, first.Type);
+        Assert.Equal(CardType.Skill, first.Type);
+        var description = first.GetDescriptionForPile(PileType.Hand);
+        Assert.Equal(2, description.Split('\n').Length);
+        Assert.Contains("[gold]二弟[/gold]获得", description);
+        Assert.Contains("并解锁", description);
         Assert.Contains("解锁", first.GetDescriptionForPile(PileType.Hand));
         await Play(first);
         var pet = CompanionSummons.GetCompanion(Player, CompanionSummons.SecondBrotherId)!;

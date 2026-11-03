@@ -74,6 +74,37 @@ public sealed class BurningValuePreviewTests : SunqianCombatTestSuite
         Assert.False(Player.Creature.HasPower<TinderPower>());
     }
 
+    [Theory]
+    [InlineData(false, true, false)]
+    [InlineData(false, false, true)]
+    [InlineData(false, true, true)]
+    [InlineData(true, true, false)]
+    [InlineData(true, false, true)]
+    [InlineData(true, true, true)]
+    public async Task Know_warfare_self_burning_ignores_tinder_and_sigh_in_preview_and_play(
+        bool upgraded, bool tinder, bool sigh)
+    {
+        await PlayerCmd.SetEnergy(10, Player);
+        if (sigh) await Play(Upgrade(await AddToHand<ShangfangguSigh>()));
+        if (tinder) await ApplyPower<TinderPower>(Player.Creature, 3);
+        var card = await AddToHand<KnowWarfare>();
+        if (upgraded) Upgrade(card);
+        foreach (var pile in new[] { PileType.Hand, PileType.Play })
+        {
+            await CardPileCmd.Add(card, pile);
+            Preview(card);
+            Assert.Equal(2m, card.DynamicVars[nameof(BurningPower)].PreviewValue);
+            card.DynamicVars[nameof(BurningPower)].UpdateCardPreview(card, CardPreviewMode.Normal, Player.Creature, true);
+            Assert.Equal(2m, card.DynamicVars[nameof(BurningPower)].PreviewValue);
+        }
+        await CardPileCmd.Add(card, PileType.Hand);
+        await Play(card);
+        Assert.Equal(2, Player.Creature.GetPower<BurningPower>()!.Amount);
+        Assert.Equal(tinder ? 3 : 0, Player.Creature.GetPower<TinderPower>()?.Amount ?? 0);
+        if (sigh) Assert.Equal(ShangfangguSigh.UpgradedBonusPercent, Player.Creature.GetPower<GoodFirePower>()!.Amount);
+        Assert.All(Combat.HittableEnemies, enemy => Assert.False(enemy.HasPower<BurningPower>()));
+    }
+
     [Fact]
     public async Task Custom_burning_variable_keeps_vigor_then_tinder_then_multiplier_order()
     {

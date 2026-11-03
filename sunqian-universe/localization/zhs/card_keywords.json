@@ -56,7 +56,7 @@
   "SUNQIAN_UNIVERSE_KEYWORD_RIGHTEOUSNESS.dynamicTitle": "仁义{Righteousness}",
   "SUNQIAN_UNIVERSE_SUMMON.namedTitle": "召唤[{SummonName}]{Summon}",
   "SUNQIAN_UNIVERSE_SUMMON.namedDescription": "以{Summon:diff()}点生命值召唤[gold]{SummonName}[/gold]。\n如果已经召唤，则在本场战斗中将其最大生命值提升{Summon:diff()}点。",
-  "SUNQIAN_UNIVERSE_SUMMON.namedCardText": "[gold]召唤[/gold][lb][blue]{SummonName}[/blue]]{Summon:diff()}。",
+  "SUNQIAN_UNIVERSE_SUMMON.namedCardText": "[gold]召唤[/gold][lb][{SummonNameColor}]{SummonName}[/{SummonNameColor}]]{Summon:diff()}。",
   "SUNQIAN_UNIVERSE_SUMMON.anyTitle": "召唤<任意>{Summon}",
   "SUNQIAN_UNIVERSE_SUMMON.anyDescription": "选择一种召唤物，以{Summon:diff()}点生命值召唤；如果已经召唤，则在本场战斗中将其最大生命值提升{Summon:diff()}点。\n可选列表包括奥斯提、角色默认绑定的召唤物，以及你在本场战斗中通过指定召唤召唤过的召唤物。",
   "SUNQIAN_UNIVERSE_SUMMON.anyCardText": "[gold]召唤<任意>[/gold]{Summon:diff()}。",

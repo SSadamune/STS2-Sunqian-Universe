@@ -7,9 +7,7 @@ using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.Entities.Creatures;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
-using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Hooks;
-using MegaCrit.Sts2.Core.Localization;
 using MegaCrit.Sts2.Core.Models;
 using Squ.Cards;
 using Squ.Script;
@@ -24,10 +22,6 @@ public sealed class HardToRestrainPower : CompanionSkillPower
     internal enum Effect { Attack, Burn, StopLifeLoss, ConvertBlock, Wine }
     public override PowerAssetProfile AssetProfile => new(IconPath: "res://images/powers/ActuallyNotClosePower.png",
         BigIconPath: "res://images/powers/ActuallyNotClosePowerBig.png");
-    protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
-    [new HoverTip(new LocString("powers", Id.Entry + ".effects")),
-        HoverTipFactory.FromPower<BurningPower>(), HoverTipFactory.FromKeyword(SquKeywords.Enthralled),
-        HoverTipFactory.FromKeyword(CardKeyword.Exhaust), HoverTipFactory.FromCard<Wine>()];
 
     private List<CardModel> Attacks => Owner.PetOwner!.PlayerCombatState!.Hand.Cards.Where(card =>
     {

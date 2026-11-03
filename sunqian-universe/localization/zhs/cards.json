@@ -355,7 +355,7 @@
   "SUNQIAN_UNIVERSE_CARD_KNOW_WARFARE.title": "知兵",
   "SUNQIAN_UNIVERSE_CARD_KNOW_WARFARE.description": "获得{BurningPower:diff()}层[gold]灼烧[/gold]。\n获得{TemporaryHealthPower:diff()}点[gold]临时生命[/gold]。\n获得{VigorPower:diff()}点[gold]活力[/gold]。",
   "SUNQIAN_UNIVERSE_CARD_NOMINAL_BROTHERS.title": "名义兄弟",
-  "SUNQIAN_UNIVERSE_CARD_NOMINAL_BROTHERS.description": "二弟或三弟造成{CompanionDamage:diff()}点伤害。\n该召唤物的[gold]为你而死[/gold]在2回合内失效。",
+  "SUNQIAN_UNIVERSE_CARD_NOMINAL_BROTHERS.description": "[gold]二弟[/gold]或[gold]三弟[/gold]造成{CompanionDamage:diff()}点伤害。\n该召唤物的[gold]为你而死[/gold]在2回合内失效。",
   "SUNQIAN_UNIVERSE_CARD_FLYING_SWORD_STRIKE.title": "飞剑打击",
   "SUNQIAN_UNIVERSE_CARD_FLYING_SWORD_STRIKE.description": "造成{Damage:diff()}点伤害。\n抽{Cards:diff()}张牌。\n{IfUpgraded:show:你每有|如果你有至少}一种负面状态，此牌伤害+100%。",
   "SUNQIAN_UNIVERSE_CARD_SUMMON_THIRD_BROTHER.title": "召唤三弟",
@@ -364,7 +364,7 @@
   "SUNQIAN_UNIVERSE_CARD_BROTHER_ATTACK_CHOICE.title": "弟弟",
   "SUNQIAN_UNIVERSE_CARD_BROTHER_ATTACK_CHOICE.description": "造成{CompanionDamage:diff()}点伤害。\n[gold]为你而死[/gold]在2回合内失效。",
   "SUNQIAN_UNIVERSE_CARD_GREEN_DRAGON_CRESCENT_BLADE.title": "青龙偃月刀",
-  "SUNQIAN_UNIVERSE_CARD_GREEN_DRAGON_CRESCENT_BLADE.description": "{SummonText}\n二弟获得{Strength:diff()}点[gold]力量[/gold]。\n二弟解锁[gold]不斩老幼[/gold]。",
+  "SUNQIAN_UNIVERSE_CARD_GREEN_DRAGON_CRESCENT_BLADE.description": "{SummonText}\n[gold]二弟[/gold]获得{Strength:diff()}点[gold]力量[/gold]并解锁[gold]不斩老幼[/gold]。",
   "SUNQIAN_UNIVERSE_CARD_UNSTABLE_FACTOR.title": "不稳定因素",
-  "SUNQIAN_UNIVERSE_CARD_UNSTABLE_FACTOR.description": "每回合开始时，你失去2点生命并{SummonText}\n三弟解锁[gold]难以约束[/gold]。"
+  "SUNQIAN_UNIVERSE_CARD_UNSTABLE_FACTOR.description": "每回合开始时，你失去2点生命并{SummonText}\n[gold]三弟[/gold]解锁[gold]难以约束[/gold]。"
 }

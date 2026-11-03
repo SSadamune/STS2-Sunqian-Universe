@@ -10,7 +10,7 @@ using STS2RitsuLib.Scaffolding.Content;
 namespace Squ.Cards;
 
 /// <summary>Resolves and removes the current self-harm keyword before the card effects.</summary>
-public abstract class SelfHarmCardTemplate : ModCardTemplate, ISelfHarmCard
+public abstract class SelfHarmCardTemplate : ModCardTemplate, ISelfHarmCard, IRowKeywordsCard
 {
 	public decimal SelfHarmAmount => DynamicVars["SelfHarm"].BaseValue;
 	protected SelfHarmCardTemplate(int cost, CardType type, CardRarity rarity, TargetType target)

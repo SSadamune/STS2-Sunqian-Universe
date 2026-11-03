@@ -9,6 +9,7 @@ using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.Models;
 using Squ;
 using Squ.Cards;
+using Squ.Combat;
 using STS2RitsuLib.Keywords;
 
 #nullable enable
@@ -35,7 +36,7 @@ internal static class RowKeywordsCardPatch
 		Exception? __exception)
 	{
 		if (__exception is not null
-			|| __instance is not IRowKeywordsCard { MergeKeywordRows: true }
+			|| !(__instance is IRowKeywordsCard row ? row.MergeKeywordRows : SelfHarmSystem.HasSelfHarm(__instance))
 			|| string.IsNullOrEmpty(__result))
 		{
 			return __exception;
@@ -116,12 +117,7 @@ internal static class RowKeywordsCardPatch
 			}
 		}
 
-		if (card.DynamicVars.ContainsKey(ForgeVar.defaultName)
-			&& HoverTipFactory.Static(StaticHoverTip.Forge) is HoverTip forgeTip
-			&& !string.IsNullOrEmpty(forgeTip.Title))
-		{
-			keywordMarkers.Add($"[gold]{forgeTip.Title}[/gold]");
-		}
+		keywordMarkers.UnionWith(ParameterizedKeywordRows.LeadingMarkers(card));
 
 		int count = 0;
 		while (count < lines.Count && StartsWithKeyword(lines[count], keywordMarkers))

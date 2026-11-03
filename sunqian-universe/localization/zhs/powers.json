@@ -180,6 +180,5 @@
   "SUNQIAN_UNIVERSE_POWER_UNSTABLE_FACTOR_POWER.title": "不稳定因素",
   "SUNQIAN_UNIVERSE_POWER_UNSTABLE_FACTOR_POWER.description": "每回合开始时，你失去{LifeLoss}点生命并召唤[三弟]{Summon}。",
   "SUNQIAN_UNIVERSE_POWER_HARD_TO_RESTRAIN_POWER.title": "难以约束",
-  "SUNQIAN_UNIVERSE_POWER_HARD_TO_RESTRAIN_POWER.description": "每回合结束时执行一项随机效果。",
-  "SUNQIAN_UNIVERSE_POWER_HARD_TO_RESTRAIN_POWER.effects": "随机打出你手牌中的一张攻击牌。\n消耗你的所有火种，给予随机敌人两倍的灼烧。\n本场战斗中，不稳定因素不再令你失去生命。\n你失去所有格挡，三弟提升等量生命上限。\n将一张有执迷和消耗的酒放入你牌堆顶。"
+  "SUNQIAN_UNIVERSE_POWER_HARD_TO_RESTRAIN_POWER.description": "每回合结束时，随机触发一项[gold]意外[/gold]。"
 }
