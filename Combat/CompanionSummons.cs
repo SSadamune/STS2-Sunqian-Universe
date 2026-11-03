@@ -207,6 +207,7 @@ public static class CompanionSummons
 			node?.OstyScaleToSize(pet.MaxHp, 0.75);
 			node?.ToggleIsInteractable(pet.IsAlive);
 		}
+		await CompanionSkills.ApplyUnlocks(context, player, id, pet);
 		CombatManager.Instance.History.Summoned(combat, (int)amount, player);
 		await Hook.AfterSummon(combat, context, player, amount);
 		return new SummonResult(pet, amount);

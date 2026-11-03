@@ -94,7 +94,7 @@ public sealed class CompanionSummonTests : SunqianCombatTestSuite
         var contract = pet.GetPower<Squ.Powers.LifeContractPower>()!;
         var contractText = contract.SmartDescription;
         contract.DynamicVars.AddTo(contractText);
-        Assert.Contains("[gold]", contractText.GetFormattedText());
+        Assert.Contains("至多回复0点", contractText.GetFormattedText());
         var osty = (await CompanionSummons.SummonSpecific(ChoiceContext(), Player, CompanionSummons.OstyId, 6, null)).Creature!;
         Assert.NotEqual(guard.Description.LocEntryKey, osty.GetPower<DieForYouPower>()!.Description.LocEntryKey);
     }

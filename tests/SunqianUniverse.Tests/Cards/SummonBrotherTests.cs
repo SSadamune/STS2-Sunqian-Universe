@@ -72,7 +72,7 @@ public sealed class SummonBrotherTests : SunqianCombatTestSuite
         Assert.Equal(hp, Player.Creature.CurrentHp);
         Assert.Equal(7, pet.CurrentHp);
         Assert.Contains("[gold]三弟[/gold]", pet.GetPower<DieForYouPower>()!.Description.GetFormattedText());
-        Assert.Contains("[gold]三弟[/gold]", pet.GetPower<LifeContractPower>()!.Description.GetFormattedText());
+        Assert.Contains("此召唤物", pet.GetPower<LifeContractPower>()!.Description.GetFormattedText());
         using var visuals = pet.Monster!.CreateVisuals();
         Assert.EndsWith("/osty.tscn", visuals.SceneFilePath);
         var node = PreloadManager.Cache.GetScene("res://scenes/combat/creature.tscn").Instantiate<NCreature>();

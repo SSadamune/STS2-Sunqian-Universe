@@ -1,5 +1,6 @@
 #nullable enable
 using System.Collections.Generic;
+using System;
 using System.Threading.Tasks;
 using MegaCrit.Sts2.Core.Combat;
 using MegaCrit.Sts2.Core.Commands;
@@ -23,8 +24,7 @@ public sealed class LifeContractPower : ModPowerTemplate
 	public override PowerStackType StackType => PowerStackType.Single;
 	public override bool ShouldPowerBeRemovedAfterOwnerDeath() => false;
 	public override int DisplayAmount => DynamicVars["Healing"].IntValue;
-	protected override IEnumerable<DynamicVar> CanonicalVars => [new DynamicVar("Healing", 0), new StringVar("CompanionName",
-		new LocString("monsters", "SUNQIAN_UNIVERSE_MONSTER_SECOND_BROTHER.name").GetFormattedText())];
+	protected override IEnumerable<DynamicVar> CanonicalVars => [new DynamicVar("Healing", 0)];
 	protected override string SmartDescriptionLocKey => IsMutable && CombatManager.Instance.IsInProgress
 		? Id.Entry + ".combatSmartDescription" : base.SmartDescriptionLocKey;
 	public override PowerAssetProfile AssetProfile => new(
@@ -38,7 +38,6 @@ public sealed class LifeContractPower : ModPowerTemplate
 	public void Refresh()
 	{
 		DynamicVars["Healing"].BaseValue = Owner.PetOwner is { } player ? LifeContractSystem.GetTotal(player, CompanionId) : 0;
-		((StringVar)DynamicVars["CompanionName"]).StringValue = Owner.Monster!.Title.GetFormattedText();
 		InvokeDisplayAmountChanged();
 	}
 	public override Task AfterApplied(Creature? applier, CardModel? cardSource)
@@ -50,7 +49,7 @@ public sealed class LifeContractPower : ModPowerTemplate
 	{
 		if (Owner.IsAlive && Owner.PetOwner is { Creature.IsAlive: true } player)
 		{
-			int healing = LifeContractSystem.Claim(player, CompanionId);
+			int healing = Math.Min(Owner.CurrentHp, LifeContractSystem.Claim(player, CompanionId));
 			if (healing > 0)
 			{
 				Flash();

@@ -155,9 +155,9 @@
   "SUNQIAN_UNIVERSE_POWER_RIGHTEOUSNESS_POWER.description": "When you play a [gold]Strike Card[/gold], for every 10 [gold]Righteousness[/gold] you have, spend 2 Righteousness and play it 1 additional time.\n[gold]Righteousness[/gold] persists between combats.",
   "SUNQIAN_UNIVERSE_POWER_RIGHTEOUSNESS_POWER.smartDescription": "When you play a [gold]Strike Card[/gold], for every 10 [gold]Righteousness[/gold] you have, spend 2 Righteousness and play it 1 additional time.\n[gold]Righteousness[/gold] persists between combats.",
   "SUNQIAN_UNIVERSE_POWER_LIFE_CONTRACT_POWER.title": "Life Contract",
-  "SUNQIAN_UNIVERSE_POWER_LIFE_CONTRACT_POWER.description": "At the end of combat, if [gold]{CompanionName}[/gold] is alive, heal its owner for the HP lost on its behalf.",
-  "SUNQIAN_UNIVERSE_POWER_LIFE_CONTRACT_POWER.smartDescription": "At the end of combat, if [gold]{CompanionName}[/gold] is alive, heal its owner for the HP lost on its behalf.",
-  "SUNQIAN_UNIVERSE_POWER_LIFE_CONTRACT_POWER.combatSmartDescription": "At the end of combat, if [gold]{CompanionName}[/gold] is alive, heal its owner for the HP lost on its behalf.\nWill restore [blue]{Healing}[/blue] HP.",
+  "SUNQIAN_UNIVERSE_POWER_LIFE_CONTRACT_POWER.description": "At the end of combat, heal for this companion's remaining HP (up to {Healing} HP, equal to the HP you have lost on its behalf).",
+  "SUNQIAN_UNIVERSE_POWER_LIFE_CONTRACT_POWER.smartDescription": "At the end of combat, heal for this companion's remaining HP (up to {Healing} HP, equal to the HP you have lost on its behalf).",
+  "SUNQIAN_UNIVERSE_POWER_LIFE_CONTRACT_POWER.combatSmartDescription": "At the end of combat, heal for this companion's remaining HP (up to {Healing} HP, equal to the HP you have lost on its behalf).",
   "SUNQIAN_UNIVERSE_POWER_SECOND_BROTHER_DIE_FOR_YOU.description": "[gold]Second Brother[/gold] absorbs all unblocked attack damage.",
   "SUNQIAN_UNIVERSE_POWER_STOP_RUNNING_POWER.title": "Stop Fleeing",
   "SUNQIAN_UNIVERSE_POWER_STOP_RUNNING_POWER.description": "During the next enemy turn, whenever you lose non-temporary HP, gain that much [gold]Temporary HP[/gold].",
@@ -172,5 +172,14 @@
   "SUNQIAN_UNIVERSE_POWER_STOP_FLEEING_UNTIL_ENEMY_TURN_END_POWER.title": "Stop Fleeing+",
   "SUNQIAN_UNIVERSE_POWER_STOP_FLEEING_UNTIL_ENEMY_TURN_END_POWER.description": "Until the end of the next enemy turn, whenever you lose non-temporary HP, gain that much [gold]Temporary HP[/gold].",
   "SUNQIAN_UNIVERSE_POWER_STOP_FLEEING_UNTIL_ENEMY_TURN_END_POWER.smartDescription": "Until the end of the next enemy turn, whenever you lose non-temporary HP, gain that much [gold]Temporary HP[/gold].",
-  "SUNQIAN_UNIVERSE_POWER_STOP_FLEEING_UNTIL_ENEMY_TURN_END_POWER.stackedDescription": "Until the end of the next enemy turn, whenever you lose non-temporary HP, gain {Amount} times that much [gold]Temporary HP[/gold]."
+  "SUNQIAN_UNIVERSE_POWER_STOP_FLEEING_UNTIL_ENEMY_TURN_END_POWER.stackedDescription": "Until the end of the next enemy turn, whenever you lose non-temporary HP, gain {Amount} times that much [gold]Temporary HP[/gold].",
+  "SUNQIAN_UNIVERSE_POWER_SPARE_THE_YOUNG_AND_OLD_POWER.title": "Spare the Young and Old",
+  "SUNQIAN_UNIVERSE_POWER_SPARE_THE_YOUNG_AND_OLD_POWER.description": "Deal double damage to enemies above 25% and below 75% HP.",
+  "SUNQIAN_UNIVERSE_POWER_SPARE_THE_YOUNG_AND_OLD_POWER.preview": "Deal double damage to enemies above 25% and below 75% HP.",
+  "SUNQIAN_UNIVERSE_COMPANION_SKILL.rules": "[gold]Companion skills[/gold]: In unlock order, the first skill is always active; subsequent skills require 10, 20, 30… maximum HP.",
+  "SUNQIAN_UNIVERSE_POWER_UNSTABLE_FACTOR_POWER.title": "Unstable Factor",
+  "SUNQIAN_UNIVERSE_POWER_UNSTABLE_FACTOR_POWER.description": "At the start of each turn, lose {LifeLoss} HP and Summon [Third Brother] {Summon}.",
+  "SUNQIAN_UNIVERSE_POWER_HARD_TO_RESTRAIN_POWER.title": "Hard to Restrain",
+  "SUNQIAN_UNIVERSE_POWER_HARD_TO_RESTRAIN_POWER.description": "At the end of each turn, perform a random effect.",
+  "SUNQIAN_UNIVERSE_POWER_HARD_TO_RESTRAIN_POWER.effects": "Play a random Attack from your hand.\nConsume all your Tinder to apply twice as much Burning to a random enemy.\nUnstable Factor no longer makes you lose HP this combat.\nLose all your Block. Third Brother gains that much maximum HP.\nPut a Wine with Enthralled and Exhaust on top of your draw pile."
 }

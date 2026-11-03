@@ -362,5 +362,9 @@
   "SUNQIAN_UNIVERSE_CARD_SUMMON_THIRD_BROTHER.description": "{SelfHarmText}{SummonText}\n[gold]{CompanionName}[/gold] deals {CompanionDamage:diff()} damage.",
   "SUNQIAN_UNIVERSE_CARD_NOMINAL_BROTHERS.selectionPrompt": "Choose a brother to fight",
   "SUNQIAN_UNIVERSE_CARD_BROTHER_ATTACK_CHOICE.title": "Brother",
-  "SUNQIAN_UNIVERSE_CARD_BROTHER_ATTACK_CHOICE.description": "Deal {CompanionDamage:diff()} damage.\n[gold]Die for You[/gold] is disabled for 2 turns."
+  "SUNQIAN_UNIVERSE_CARD_BROTHER_ATTACK_CHOICE.description": "Deal {CompanionDamage:diff()} damage.\n[gold]Die for You[/gold] is disabled for 2 turns.",
+  "SUNQIAN_UNIVERSE_CARD_GREEN_DRAGON_CRESCENT_BLADE.title": "Green Dragon Crescent Blade",
+  "SUNQIAN_UNIVERSE_CARD_GREEN_DRAGON_CRESCENT_BLADE.description": "{SummonText}\nSecond Brother gains {Strength:diff()} [gold]Strength[/gold].\nSecond Brother unlocks [gold]Spare the Young and Old[/gold].",
+  "SUNQIAN_UNIVERSE_CARD_UNSTABLE_FACTOR.title": "Unstable Factor",
+  "SUNQIAN_UNIVERSE_CARD_UNSTABLE_FACTOR.description": "At the start of each turn, lose 2 HP and {SummonText}\nThird Brother unlocks [gold]Hard to Restrain[/gold]."
 }

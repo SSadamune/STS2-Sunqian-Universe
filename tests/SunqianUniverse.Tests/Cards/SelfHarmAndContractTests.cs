@@ -216,7 +216,7 @@ public sealed class SelfHarmAndContractTests : SunqianCombatTestSuite
         await CompanionSummons.SummonSpecific(new BlockingPlayerChoiceContext(), Player,
             CompanionSummons.SecondBrotherId, 3, null);
         await power.AfterCombatEnd(null!);
-        Assert.Equal(hp, Player.Creature.CurrentHp);
+        Assert.Equal(hp - 5, Player.Creature.CurrentHp);
         await CreatureCmd.SetCurrentHp(Player.Creature, hp - 1);
         await power.AfterCombatEnd(null!);
         Assert.Equal(hp - 1, Player.Creature.CurrentHp);

@@ -29,7 +29,7 @@ public abstract class BrotherSummonCard : SelfHarmCardTemplate
 			if (SelfHarmSystem.HasSelfHarm(this)) yield return SquKeywords.CreateSelfHarmHoverTip(SelfHarmSystem.GetAmountVar(this));
 			yield return CompanionSummonKeywords.NamedHoverTip(CompanionId, DynamicVars.Summon);
 			LocString contract = new("powers", ModelDb.Power<LifeContractPower>().Id.Entry + ".description");
-			contract.Add("CompanionName", CompanionSummons.GetName(CompanionId).GetFormattedText());
+			contract.Add("Healing", Owner != null ? LifeContractSystem.GetTotal(Owner, CompanionId) : 0);
 			yield return new HoverTip(ModelDb.Power<LifeContractPower>(), contract.GetFormattedText(), false);
 		}
 	}

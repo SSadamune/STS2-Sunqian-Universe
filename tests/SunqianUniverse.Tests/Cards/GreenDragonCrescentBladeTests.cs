@@ -1,0 +1,151 @@
+using MegaCrit.Sts2.Core.Commands;
+using MegaCrit.Sts2.Core.Entities.Cards;
+using MegaCrit.Sts2.Core.GameActions.Multiplayer;
+using MegaCrit.Sts2.Core.Models.Monsters;
+using MegaCrit.Sts2.Core.Models;
+using MegaCrit.Sts2.Core.Models.Powers;
+using MegaCrit.Sts2.Core.ValueProps;
+using HarmonyLib;
+using Squ.Cards;
+using Squ.Character;
+using Squ.Combat;
+using Squ.Powers;
+using TestTheSpire;
+using Xunit;
+
+namespace Squ.Tests.Cards;
+
+public sealed class GreenDragonCrescentBladeTests : SunqianCombatTestSuite
+{
+    protected override void ConfigureBattle(CombatTestBattleBuilder battle) =>
+        battle.Player<LiubeiCharacter>().AddEnemy<BigDummy>().WithSeed("companion-skills");
+
+    [Theory]
+    [InlineData(false, false, 16, 4)]
+    [InlineData(false, true, 19, 6)]
+    [InlineData(true, false, 19, 6)]
+    [InlineData(true, true, 22, 8)]
+    public async Task Repeated_cards_stack_only_companion_strength(bool firstUpgraded,
+        bool secondUpgraded, int hp, int strength)
+    {
+        var first = await AddToHand<GreenDragonCrescentBlade>();
+        if (firstUpgraded) Upgrade(first);
+        Assert.Equal(CardType.Attack, first.Type);
+        Assert.Contains("解锁", first.GetDescriptionForPile(PileType.Hand));
+        await Play(first);
+        var pet = CompanionSummons.GetCompanion(Player, CompanionSummons.SecondBrotherId)!;
+        Assert.Equal(1, pet.GetPower<SpareTheYoungAndOldPower>()!.Amount);
+        Assert.Equal(firstUpgraded ? 4m : 2m, pet.GetPower<StrengthPower>()!.Amount);
+        var second = await AddToHand<GreenDragonCrescentBlade>();
+        if (secondUpgraded) Upgrade(second);
+        Assert.DoesNotContain("升级", second.GetDescriptionForPile(PileType.Hand));
+        await Play(second);
+        Assert.Equal(hp, pet.MaxHp);
+        Assert.Equal(1, pet.GetPower<SpareTheYoungAndOldPower>()!.Amount);
+        Assert.Equal((decimal)strength, pet.GetPower<StrengthPower>()!.Amount);
+        Assert.False(Player.Creature.HasPower<StrengthPower>());
+    }
+
+    [Theory]
+    [InlineData(25, 1)]
+    [InlineData(26, 2)]
+    [InlineData(74, 2)]
+    [InlineData(75, 1)]
+    public async Task Double_damage_uses_strict_health_boundaries(int hp, int multiplier)
+    {
+        await Play(await AddToHand<GreenDragonCrescentBlade>());
+        var pet = CompanionSummons.GetCompanion(Player, CompanionSummons.SecondBrotherId)!;
+        await CreatureCmd.SetMaxAndCurrentHp(EnemyAt(0), 100);
+        await CreatureCmd.SetCurrentHp(EnemyAt(0), hp);
+        int before = EnemyAt(0).CurrentHp;
+        await CreatureCmd.Damage(new BlockingPlayerChoiceContext(), EnemyAt(0), 5, ValueProp.Move, pet);
+        Assert.Equal(before - 7 * multiplier, EnemyAt(0).CurrentHp);
+    }
+
+    [Fact]
+    public async Task Revival_keeps_skill_but_does_not_restore_card_strength()
+    {
+        await Play(await AddToHand<GreenDragonCrescentBlade>());
+        var pet = CompanionSummons.GetCompanion(Player, CompanionSummons.SecondBrotherId)!;
+        await CreatureCmd.Kill(pet, force: true);
+        await CompanionSummons.SummonSpecific(new BlockingPlayerChoiceContext(), Player,
+            CompanionSummons.SecondBrotherId, 3, null);
+        Assert.Equal(1, pet.GetPower<SpareTheYoungAndOldPower>()!.Amount);
+        Assert.Null(pet.GetPower<StrengthPower>());
+        await CreatureCmd.GainMaxHp(pet, 10);
+        Assert.Null(pet.GetPower<StrengthPower>());
+    }
+
+    [Theory]
+    [InlineData(0, 0)]
+    [InlineData(1, 10)]
+    [InlineData(2, 20)]
+    public void Skill_slots_require_ten_more_max_hp(int slot, int hp) =>
+        Assert.Equal(hp, CompanionSkills.RequiredMaxHp(slot));
+
+    [Fact]
+    public async Task Later_skill_slots_activate_and_suspend_at_max_hp_thresholds()
+    {
+        await Play(await AddToHand<GreenDragonCrescentBlade>());
+        var pet = CompanionSummons.GetCompanion(Player, CompanionSummons.SecondBrotherId)!;
+        // Add independent skill instances to exercise future second/third skills.
+        var second = (SpareTheYoungAndOldPower)ModelDb.Power<SpareTheYoungAndOldPower>().ToMutable();
+        var third = (SpareTheYoungAndOldPower)ModelDb.Power<SpareTheYoungAndOldPower>().ToMutable();
+        foreach (var skill in new[] { second, third })
+        {
+            Traverse.Create(skill).Field("_owner").SetValue(pet);
+            skill.SetAmount(1);
+            Traverse.Create(pet).Field<List<PowerModel>>("_powers").Value.Add(skill);
+        }
+        Assert.Equal(10, second.RequiredMaxHp);
+        Assert.Equal(20, third.RequiredMaxHp);
+        Assert.False(second.IsActive);
+        Assert.False(third.IsActive);
+        Assert.Equal(2, pet.GetPower<StrengthPower>()!.Amount);
+        await CreatureCmd.SetMaxHp(pet, 10);
+        Assert.True(second.IsActive);
+        Assert.Equal(2, pet.GetPower<StrengthPower>()!.Amount);
+        await CreatureCmd.SetMaxHp(pet, 20);
+        Assert.True(third.IsActive);
+        Assert.Equal(2, pet.GetPower<StrengthPower>()!.Amount);
+        await CreatureCmd.SetMaxHp(pet, 9);
+        Assert.False(second.IsActive);
+        Assert.False(third.IsActive);
+        Assert.Equal(2, pet.GetPower<StrengthPower>()!.Amount);
+    }
+    [Theory]
+    [InlineData(false, 100, 15)]
+    [InlineData(true, 100, 17)]
+    [InlineData(false, 50, 30)]
+    [InlineData(true, 50, 34)]
+    public async Task Blade_strength_increases_nominal_brothers_damage(bool upgraded, int enemyHp, int expected)
+    {
+        var blade = await AddToHand<GreenDragonCrescentBlade>();
+        if (upgraded) Upgrade(blade);
+        await Play(blade);
+        var pet = CompanionSummons.GetCompanion(Player, CompanionSummons.SecondBrotherId)!;
+        Assert.Equal(upgraded ? 4 : 2, pet.GetPower<StrengthPower>()!.Amount);
+        Assert.False(Player.Creature.HasPower<StrengthPower>());
+        // Player Strength must not affect an attack dealt by Second Brother.
+        await PowerCmd.Apply<StrengthPower>(new BlockingPlayerChoiceContext(), Player.Creature, 10, Player.Creature, null);
+        await CreatureCmd.SetMaxAndCurrentHp(EnemyAt(0), 100);
+        await CreatureCmd.SetCurrentHp(EnemyAt(0), enemyHp);
+        await Play(await AddToHand<NominalBrothers>(), EnemyAt(0));
+        Assert.Equal(enemyHp - expected, EnemyAt(0).CurrentHp);
+    }
+
+    [Fact]
+    public async Task Unlocking_skill_alone_grants_no_strength_and_never_upgrades()
+    {
+        var ctx = new BlockingPlayerChoiceContext();
+        var pet = (await CompanionSummons.SummonSpecific(ctx, Player, CompanionSummons.SecondBrotherId, 8, null)).Creature!;
+        var source = await AddToHand<GreenDragonCrescentBlade>();
+        Upgrade(source);
+        await CompanionSkills.Unlock<SpareTheYoungAndOldPower>(ctx, pet, source);
+        await CompanionSkills.Unlock<SpareTheYoungAndOldPower>(ctx, pet, source);
+        Assert.Equal(1, pet.GetPower<SpareTheYoungAndOldPower>()!.Amount);
+        Assert.Single(pet.Powers.OfType<SpareTheYoungAndOldPower>());
+        Assert.False(pet.HasPower<StrengthPower>());
+    }
+
+}

@@ -155,9 +155,9 @@
   "SUNQIAN_UNIVERSE_POWER_RIGHTEOUSNESS_POWER.description": "当你打出[gold]各种打击牌[/gold]时，你每有10层[gold]仁义[/gold]，就消耗2层仁义并额外打出1次。\n[gold]仁义[/gold]不会在战斗结束时清零。",
   "SUNQIAN_UNIVERSE_POWER_RIGHTEOUSNESS_POWER.smartDescription": "当你打出[gold]各种打击牌[/gold]时，你每有10层[gold]仁义[/gold]，就消耗2层仁义并额外打出1次。\n[gold]仁义[/gold]不会在战斗结束时清零。",
   "SUNQIAN_UNIVERSE_POWER_LIFE_CONTRACT_POWER.title": "生命契约",
-  "SUNQIAN_UNIVERSE_POWER_LIFE_CONTRACT_POWER.description": "战斗结束时，若[gold]{CompanionName}[/gold]存活，为你恢复等量于你为[gold]{CompanionName}[/gold]失去过的生命。",
-  "SUNQIAN_UNIVERSE_POWER_LIFE_CONTRACT_POWER.smartDescription": "战斗结束时，若[gold]{CompanionName}[/gold]存活，为你恢复等量于你为[gold]{CompanionName}[/gold]失去过的生命。",
-  "SUNQIAN_UNIVERSE_POWER_LIFE_CONTRACT_POWER.combatSmartDescription": "战斗结束时，若[gold]{CompanionName}[/gold]存活，为你恢复等量于你为[gold]{CompanionName}[/gold]失去过的生命。\n将恢复[blue]{Healing}[/blue]点生命。",
+  "SUNQIAN_UNIVERSE_POWER_LIFE_CONTRACT_POWER.description": "战斗结束时，为你回复等量于此召唤物的生命（至多回复{Healing}点，此上限等于你为此召唤物失去过的生命）。",
+  "SUNQIAN_UNIVERSE_POWER_LIFE_CONTRACT_POWER.smartDescription": "战斗结束时，为你回复等量于此召唤物的生命（至多回复{Healing}点，此上限等于你为此召唤物失去过的生命）。",
+  "SUNQIAN_UNIVERSE_POWER_LIFE_CONTRACT_POWER.combatSmartDescription": "战斗结束时，为你回复等量于此召唤物的生命（至多回复{Healing}点，此上限等于你为此召唤物失去过的生命）。",
   "SUNQIAN_UNIVERSE_POWER_SECOND_BROTHER_DIE_FOR_YOU.description": "[gold]二弟[/gold]会吸收所有未被格挡的攻击伤害。",
   "SUNQIAN_UNIVERSE_POWER_STOP_RUNNING_POWER.title": "不逃了",
   "SUNQIAN_UNIVERSE_POWER_STOP_RUNNING_POWER.description": "敌方下个回合内，当你损失非临时的生命后，获得等量[gold]临时生命[/gold]。",
@@ -172,5 +172,14 @@
   "SUNQIAN_UNIVERSE_POWER_STOP_FLEEING_UNTIL_ENEMY_TURN_END_POWER.title": "不逃了+",
   "SUNQIAN_UNIVERSE_POWER_STOP_FLEEING_UNTIL_ENEMY_TURN_END_POWER.description": "敌方下个回合结束前，当你损失非临时的生命后，获得等量[gold]临时生命[/gold]。",
   "SUNQIAN_UNIVERSE_POWER_STOP_FLEEING_UNTIL_ENEMY_TURN_END_POWER.smartDescription": "敌方下个回合结束前，当你损失非临时的生命后，获得等量[gold]临时生命[/gold]。",
-  "SUNQIAN_UNIVERSE_POWER_STOP_FLEEING_UNTIL_ENEMY_TURN_END_POWER.stackedDescription": "敌方下个回合结束前，当你损失非临时的生命后，获得{Amount}倍的[gold]临时生命[/gold]。"
+  "SUNQIAN_UNIVERSE_POWER_STOP_FLEEING_UNTIL_ENEMY_TURN_END_POWER.stackedDescription": "敌方下个回合结束前，当你损失非临时的生命后，获得{Amount}倍的[gold]临时生命[/gold]。",
+  "SUNQIAN_UNIVERSE_POWER_SPARE_THE_YOUNG_AND_OLD_POWER.title": "不斩老幼",
+  "SUNQIAN_UNIVERSE_POWER_SPARE_THE_YOUNG_AND_OLD_POWER.description": "对生命值大于25%且小于75%的敌人造成双倍伤害。",
+  "SUNQIAN_UNIVERSE_POWER_SPARE_THE_YOUNG_AND_OLD_POWER.preview": "对生命值大于25%且小于75%的敌人造成双倍伤害。",
+  "SUNQIAN_UNIVERSE_COMPANION_SKILL.rules": "[gold]召唤物技能[/gold]：按解锁顺序，第一个技能无条件生效，此后每个技能依次需要10、20、30…点最大生命。",
+  "SUNQIAN_UNIVERSE_POWER_UNSTABLE_FACTOR_POWER.title": "不稳定因素",
+  "SUNQIAN_UNIVERSE_POWER_UNSTABLE_FACTOR_POWER.description": "每回合开始时，你失去{LifeLoss}点生命并召唤[三弟]{Summon}。",
+  "SUNQIAN_UNIVERSE_POWER_HARD_TO_RESTRAIN_POWER.title": "难以约束",
+  "SUNQIAN_UNIVERSE_POWER_HARD_TO_RESTRAIN_POWER.description": "每回合结束时执行一项随机效果。",
+  "SUNQIAN_UNIVERSE_POWER_HARD_TO_RESTRAIN_POWER.effects": "随机打出你手牌中的一张攻击牌。\n消耗你的所有火种，给予随机敌人两倍的灼烧。\n本场战斗中，不稳定因素不再令你失去生命。\n你失去所有格挡，三弟提升等量生命上限。\n将一张有执迷和消耗的酒放入你牌堆顶。"
 }
