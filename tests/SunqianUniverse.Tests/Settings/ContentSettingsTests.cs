@@ -8,6 +8,7 @@ using MegaCrit.Sts2.Core.Models.Characters;
 using MegaCrit.Sts2.Core.Models.Monsters;
 using MegaCrit.Sts2.Core.Models.Potions;
 using MegaCrit.Sts2.Core.Models.RelicPools;
+using MegaCrit.Sts2.Core.HoverTips;
 using Squ.Character;
 using Squ.Cards;
 using Squ.Events;
@@ -224,9 +225,12 @@ public sealed class ContentSettingsTests : SunqianCombatTestSuite
             NeutralContentPermissionMode.Allow,
             NeutralContentPermissionMode.Allow,
             NeutralContentPermissionMode.Allow,
-            () => Assert.Contains(
-                typeof(SevenStarDaggerRelic),
-                GetAffectedUnlockedSharedRelics()));
+            () =>
+            {
+                var relics = GetAffectedUnlockedSharedRelics();
+                Assert.Contains(typeof(SevenStarDaggerRelic), relics);
+                Assert.Contains(typeof(FenghuangRebirthRelic), relics);
+            });
 
         WithLocalSettings(
             NeutralContentPermissionMode.Allow,
@@ -234,6 +238,45 @@ public sealed class ContentSettingsTests : SunqianCombatTestSuite
             NeutralContentPermissionMode.Deny,
             NeutralContentPermissionMode.Allow,
             () => Assert.Empty(GetAffectedUnlockedSharedRelics()));
+    }
+
+    [Theory]
+    [InlineData(NeutralContentPermissionMode.Allow, true)]
+    [InlineData(NeutralContentPermissionMode.Deny, false)]
+    [InlineData(NeutralContentPermissionMode.WhenModCharacterPresent, true)]
+    public void Fake_merchant_relic_injection_obeys_neutral_relic_setting(
+        NeutralContentPermissionMode mode, bool allowed)
+    {
+        WithLocalSettings(NeutralContentPermissionMode.Allow, NeutralContentPermissionMode.Allow,
+            mode, NeutralContentPermissionMode.Allow, () =>
+            {
+                var vanilla = ModelDb.RelicPool<SharedRelicPool>().AllRelics.First(relic =>
+                    relic.GetType().Assembly != typeof(SquMod).Assembly);
+                var inject = typeof(FakeSevenStarDaggerRelic).GetMethod("WithFakeSevenStarDagger",
+                    BindingFlags.NonPublic | BindingFlags.Static)!;
+                var result = (RelicModel[])inject.Invoke(null, [new RelicModel[] { vanilla }])!;
+                Assert.Contains(vanilla, result);
+                Assert.Equal(allowed ? 2 : 0, result.Count(relic => relic is FakeSevenStarDaggerRelic));
+            });
+    }
+
+    [Theory]
+    [InlineData(NeutralContentPermissionMode.Allow)]
+    [InlineData(NeutralContentPermissionMode.Deny)]
+    public void Added_neutral_relics_have_one_source_and_settings_tip(NeutralContentPermissionMode mode)
+    {
+        WithLocalSettings(NeutralContentPermissionMode.Allow, NeutralContentPermissionMode.Allow,
+            mode, NeutralContentPermissionMode.Allow, () =>
+            {
+                RelicModel[] relics = [ModelDb.Relic<SevenStarDaggerRelic>(),
+                    ModelDb.Relic<FenghuangRebirthRelic>(), ModelDb.Relic<FakeSevenStarDaggerRelic>()];
+                foreach (var relic in relics)
+                {
+                    var tip = Assert.Single(relic.HoverTips.OfType<HoverTip>().Where(tip =>
+                        tip.Title == SquCommonL10n.AnnotationTitle().GetFormattedText()));
+                    Assert.Equal(SquCommonL10n.NeutralRelicAddedAnnotation().GetFormattedText(), tip.Description);
+                }
+            });
     }
 
     [Fact]
@@ -395,7 +438,7 @@ public sealed class ContentSettingsTests : SunqianCombatTestSuite
     private Type[] GetAffectedUnlockedSharedRelics() =>
         ModelDb.RelicPool<SharedRelicPool>()
             .GetUnlockedRelics(Player.UnlockState)
-            .Where(relic => relic is SevenStarDaggerRelic)
+            .Where(relic => relic is SevenStarDaggerRelic or FenghuangRebirthRelic)
             .Select(relic => relic.GetType())
             .ToArray();
 
@@ -455,6 +498,11 @@ public sealed class ConditionalContentSettingsWithoutSunqianTests : SunqianComba
 
             Assert.False(NeutralCardRegistrationPolicy.ShouldInclude());
             Assert.False(NeutralRelicRegistrationPolicy.ShouldInclude());
+            Assert.DoesNotContain(ModelDb.RelicPool<SharedRelicPool>().GetUnlockedRelics(Player.UnlockState),
+                relic => relic is SevenStarDaggerRelic or FenghuangRebirthRelic);
+            var inject = typeof(FakeSevenStarDaggerRelic).GetMethod("WithFakeSevenStarDagger",
+                BindingFlags.NonPublic | BindingFlags.Static)!;
+            Assert.Empty((RelicModel[])inject.Invoke(null, [Array.Empty<RelicModel>()])!);
             Assert.False(EventRegistrationPolicy.ShouldInclude(Player.RunState));
             Assert.False(NeutralPotionModificationPolicy.ShouldApply(ModelDb.Potion<FirePotion>()));
         }

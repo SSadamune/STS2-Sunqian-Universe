@@ -3,6 +3,8 @@ using MegaCrit.Sts2.Core.Models.Characters;
 using MegaCrit.Sts2.Core.Models.Monsters;
 using MegaCrit.Sts2.Core.Models.Powers;
 using Squ.Cards;
+using Squ.Audio;
+using Squ.Tests.Relics;
 using TestTheSpire;
 using Xunit;
 
@@ -26,9 +28,16 @@ public sealed class DeniedTests : SunqianCombatTestSuite
         var source = await AddToHand<Circus>();
         await ApplyPower<ArtifactPower>(enemy, 1, enemy);
 
-        await ApplyPower<WeakPower>(enemy, 1, Player.Creature, source);
-
-        Assert.Null(enemy.GetPower<WeakPower>());
-        AssertInPile(denied, PileType.Hand);
+        TestSquSfxPlayPatch.BeginCapture();
+        try
+        {
+            await ApplyPower<WeakPower>(enemy, 1, Player.Creature, source);
+            Assert.Null(enemy.GetPower<WeakPower>());
+            AssertInPile(denied, PileType.Hand);
+            Assert.Equal(new[] { SquSfx.DeniedReturnToHandEvent }, TestSquSfxPlayPatch.Events);
+            await Play(denied, enemy);
+            Assert.Equal(new[] { SquSfx.DeniedReturnToHandEvent, SquSfx.DeniedEvent }, TestSquSfxPlayPatch.Events);
+        }
+        finally { TestSquSfxPlayPatch.EndCapture(); }
     }
 }

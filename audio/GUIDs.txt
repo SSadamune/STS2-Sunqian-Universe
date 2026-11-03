@@ -73,6 +73,9 @@
 {b393b56b-e331-438d-8359-16a62d217304} event:/sunqian_universe/sfx/关帝形态-武关羽周仓
 {485200ae-cd5f-40a5-9bc2-a67ae4f451d7} event:/sunqian_universe/sfx/兼职将军-哥们你还会影分身之术
 {9cecfc38-4c95-4eed-b9be-9b21665d39b2} event:/sunqian_universe/sfx/兼职将军-需要在两边同时出场
+{f56c42e1-a966-4dc2-b3c0-012e1bb619b8} event:/sunqian_universe/sfx/凤凰涅槃-吕布
+{1118d2ee-72d2-43b6-b508-4b33dc7618d7} event:/sunqian_universe/sfx/凤凰涅槃-我最敬仰的图腾
+{c5b3cb4b-ec5d-4b1f-8c7c-357c48d9704c} event:/sunqian_universe/sfx/凤凰涅槃-貂蝉
 {ad1078ae-4a94-45d7-8de1-69caed49056b} event:/sunqian_universe/sfx/刀斧手-刀斧手听令
 {cb93a65f-ad3b-4447-b740-12a81b468348} event:/sunqian_universe/sfx/制式基地车-Lets set up shop
 {e1000fff-d8cc-4fba-a6ba-8f5138cfa762} event:/sunqian_universe/sfx/制式基地车-MCV reporting in
@@ -126,8 +129,10 @@
 {0931c89d-1db8-4f2b-acf4-92d114c4f976} event:/sunqian_universe/sfx/尊老爱幼-不斩老幼
 {07376e4f-d455-483a-9c1c-827ed2a7bf87} event:/sunqian_universe/sfx/尊老爱幼-你太老了
 {770047bf-2845-427b-bec2-5b99ccb7c49f} event:/sunqian_universe/sfx/小黄门剧本-小公公，曹大人
+{c167d582-6e22-4523-a8e8-2417cbb6d26a} event:/sunqian_universe/sfx/平湖惊雷-他连眼皮都没眨一下
 {74199e61-287a-4088-bc17-b2804cc64858} event:/sunqian_universe/sfx/平湖惊雷-只要一息尚存
 {bc335cb9-e440-460e-a646-6f057abbc932} event:/sunqian_universe/sfx/平湖惊雷-放肆我砍你的头
+{d0b31202-7219-4247-af7b-a0ae85721b74} event:/sunqian_universe/sfx/平湖惊雷-连眼皮都没动一下
 {07bc4d91-3669-4807-a668-764196686014} event:/sunqian_universe/sfx/弹指打击-剩下一小片江山
 {5423043d-d233-444b-ba63-e15a4e20ea30} event:/sunqian_universe/sfx/弹指打击-取董贼首级
 {2422b842-7aa1-4fc7-8a50-aa89f7e69e07} event:/sunqian_universe/sfx/弹指打击-弹指间取你首级
@@ -195,6 +200,8 @@
 {9c585106-b323-486a-b967-2f694e2dca3c} event:/sunqian_universe/sfx/种地将军-曹操真是老糊涂了
 {f873e3cf-3bfb-4547-a7b8-e0916b1442f9} event:/sunqian_universe/sfx/稍作修改-好方略，不过我想稍作修改
 {1ba1aa01-3f0b-4671-8afb-8ba1c04969de} event:/sunqian_universe/sfx/竟然不许
+{11f51937-bdcc-44ff-82e3-fc1471d26534} event:/sunqian_universe/sfx/竟然不许-故意驳回我的请求
+{ab69d33a-902b-4089-aedc-73df6def186b} event:/sunqian_universe/sfx/竟然不许-许昌已经回消息了
 {639dc942-2347-4014-a068-b9f6142dc7d6} event:/sunqian_universe/sfx/箭幕
 {c1771489-aa3d-48e1-99f3-4b2aa086f5f3} event:/sunqian_universe/sfx/缺草送马-曹操说加不起油
 {0d807892-e033-4aba-b7e5-cd7e73b736af} event:/sunqian_universe/sfx/缺草送马-董卓说送你辆法拉利

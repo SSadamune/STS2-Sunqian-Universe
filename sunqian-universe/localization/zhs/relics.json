@@ -48,5 +48,8 @@
   "SUNQIAN_UNIVERSE_RELIC_NEVER_HAD_THESE.belovedPartnerEffect": "\n- 获得{Regen}层[gold]再生[/gold]和{Tinder}层[gold]火种[/gold]。",
   "SUNQIAN_UNIVERSE_RELIC_NEVER_HAD_THESE.nextOfKinEffect": "\n- 抽{Cards}张牌。",
   "SUNQIAN_UNIVERSE_RELIC_NEVER_HAD_THESE.flavor": "我从来没有这些！",
-  "SUNQIAN_UNIVERSE_RELIC_DEATH_DENIED.combatDescription": "{BaseDescription}\n本场战斗中已受到伤害或失去生命{HpLost}点。"
+  "SUNQIAN_UNIVERSE_RELIC_DEATH_DENIED.combatDescription": "{BaseDescription}\n本场战斗中已受到伤害或失去生命{HpLost}点。",
+  "SUNQIAN_UNIVERSE_RELIC_FENGHUANG_REBIRTH.title": "凤凰涅槃",
+  "SUNQIAN_UNIVERSE_RELIC_FENGHUANG_REBIRTH.description": "在你的回合开始时，失去[blue]1[/blue]点生命并获得[blue]7[/blue]点格挡。",
+  "SUNQIAN_UNIVERSE_RELIC_FENGHUANG_REBIRTH.flavor": "「这是我最敬仰的图腾……」"
 }

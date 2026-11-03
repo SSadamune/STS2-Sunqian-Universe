@@ -39,14 +39,14 @@ public static class NeutralRelicRegistrationPolicy
 	}
 
 	private static bool IsAffectedRelic(RelicModel relic) =>
-		relic is SevenStarDaggerRelic;
+		relic is SevenStarDaggerRelic or FenghuangRebirthRelic or FakeSevenStarDaggerRelic;
 
 	[HarmonyPatch(typeof(RelicModel), "get_HoverTips")]
 	private static class AffectedRelicHoverTipsPatch
 	{
 		private static void Postfix(RelicModel __instance, ref IEnumerable<IHoverTip> __result)
 		{
-			if (!IsAffectedRelic(__instance) || !ShouldInclude())
+			if (!IsAffectedRelic(__instance))
 			{
 				return;
 			}
