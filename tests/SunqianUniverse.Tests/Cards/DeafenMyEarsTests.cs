@@ -50,7 +50,7 @@ public sealed class DeafenMyEarsTests : SunqianCombatTestSuite
     {
         var target = await AddToHand<DefendLiubei>();
         target.EnergyCost.SetUntilPlayed(2);
-        var native = await AddToHand<AwakenSecondBrother>();
+        var native = await AddToHand<SummonSecondBrother>();
         await Play(await AddToHand<DeafenMyEars>());
         Assert.Equal(8m, SelfHarmSystem.GetAmount(target));
         Assert.Equal(8m, SelfHarmSystem.GetAmount(native));
@@ -61,7 +61,7 @@ public sealed class DeafenMyEarsTests : SunqianCombatTestSuite
     [Fact]
     public async Task Spent_native_self_harm_can_be_granted_again_with_a_new_value_and_contract_credit()
     {
-        var target = await AddToHand<AwakenSecondBrother>();
+        var target = await AddToHand<SummonSecondBrother>();
         await Play(target, EnemyAt(0));
         await CardPileCmd.Add(target, PileType.Hand);
         Assert.False(SelfHarmSystem.HasSelfHarm(target));

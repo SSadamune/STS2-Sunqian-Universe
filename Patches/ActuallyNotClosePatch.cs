@@ -11,7 +11,7 @@ internal static class ActuallyNotClosePatch
 {
 	private static bool Prefix(DieForYouPower __instance, Creature target, ref Creature __result)
 	{
-		if (__instance.Owner.Monster is not SecondBrother || !__instance.Owner.HasPower<ActuallyNotClosePower>()) return true;
+		if (__instance.Owner.Monster is not (SecondBrother or ThirdBrother) || !__instance.Owner.HasPower<ActuallyNotClosePower>()) return true;
 		__result = target;
 		return false;
 	}

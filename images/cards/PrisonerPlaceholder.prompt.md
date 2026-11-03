@@ -1,0 +1,3 @@
+Generated using the built-in image generation tool.
+
+Use case: illustration-story. Create one shared placeholder illustration for cards in a Chinese Three Kingdoms themed roguelike mod. Landscape 4:3 composition, no frame and no text. Simple playful hand drawn doodle: a tiny stick figure ancient Chinese warrior with a simple headband, holding a wooden sword, beside a roughly sketched blank card and a small question mark. Black pencil and ink strokes on warm off-white paper, sparse muted green and red accents, deliberately simple sketchbook linework, large clear shapes readable at small size. This is visibly unfinished placeholder art, not a polished painting. Keep main shapes centered and leave breathing room for card art cropping. Opaque background.

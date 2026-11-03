@@ -7,6 +7,10 @@
 - Preserve user-provided wording and formatting exactly when specified; do not add unsolicited caveats or explanations.
 - Card changes implicitly last for the current combat. Omit that duration from player-facing text; explicitly label exceptions such as permanent or this-turn changes.
 
+## Unreleased renames
+
+- Renames introduced on this branch have not shipped. Rename code and localization identifiers directly; do not add old-save compatibility aliases or migration patches for these renames.
+
 ## Git commits
 
 - Write commit subjects and bodies in concise English and follow the existing commit style.

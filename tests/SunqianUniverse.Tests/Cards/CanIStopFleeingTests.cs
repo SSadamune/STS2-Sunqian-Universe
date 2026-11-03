@@ -15,7 +15,7 @@ using Xunit;
 
 namespace Squ.Tests.Cards;
 
-public sealed class CanIStopRunningTests : SunqianCombatTestSuite
+public sealed class CanIStopFleeingTests : SunqianCombatTestSuite
 {
     protected override void ConfigureBattle(CombatTestBattleBuilder battle) =>
         battle.Player<LiubeiCharacter>().AddEnemy<BigDummy>().WithSeed("stop-running");
@@ -23,22 +23,24 @@ public sealed class CanIStopRunningTests : SunqianCombatTestSuite
     private Task Damage(int amount, ValueProp props = ValueProp.Unblockable | ValueProp.Unpowered) =>
         CreatureCmd.Damage(Context(), Player.Creature, amount, props, null, null);
     private int Temporary => Player.Creature.GetPower<TemporaryHealthPower>()?.Amount ?? 0;
-    private async Task<StopRunningPower> PlayBuff(bool upgraded = false)
+    private async Task<StopFleeingPowerBase> PlayBuff(bool upgraded = false)
     {
-        var card = await AddToHand<CanIStopRunning>();
+        var card = await AddToHand<CanIStopFleeing>();
         if (upgraded) Upgrade(card);
         Assert.Equal(CardRarity.Uncommon, card.Rarity);
         Assert.Equal(CardType.Skill, card.Type);
         Assert.Equal(1, card.EnergyCost.GetResolved());
+        await PlayerCmd.SetEnergy(1, Player);
         await Play(card);
-        AssertInPile(card, PileType.Discard);
-        return Player.Creature.GetPower<StopRunningPower>()!;
+        AssertInPile(card, PileType.Exhaust);
+        Assert.Contains(CardKeyword.Exhaust, card.Keywords);
+        return upgraded ? Player.Creature.GetPower<StopFleeingUntilEnemyTurnEndPower>()! : Player.Creature.GetPower<StopRunningPower>()!;
     }
 
     [Theory]
     [InlineData(false, 1)]
-    [InlineData(true, 2)]
-    public async Task Lasts_exactly_one_or_two_enemy_turns(bool upgraded, int turns)
+    [InlineData(true, 1)]
+    public async Task Both_variants_expire_at_the_next_enemy_turn_end(bool upgraded, int turns)
     {
         var power = await PlayBuff(upgraded);
         Assert.Equal(turns, power.Amount);
@@ -56,7 +58,7 @@ public sealed class CanIStopRunningTests : SunqianCombatTestSuite
             await Damage(4);
             Assert.True(Temporary > 0);
             await power.AfterSideTurnEndLate(Context(), CombatSide.Enemy, [EnemyAt(0)]);
-            Assert.Equal(left - 1, Player.Creature.GetPower<StopRunningPower>()?.Amount ?? 0);
+            Assert.Equal(left - 1, (upgraded ? Player.Creature.GetPower<StopFleeingUntilEnemyTurnEndPower>()?.Amount : Player.Creature.GetPower<StopRunningPower>()?.Amount) ?? 0);
         }
         if (Temporary > 0)
             await Player.Creature.GetPower<TemporaryHealthPower>()!.LoseTemporaryHealth(Context(), Temporary);
@@ -84,13 +86,22 @@ public sealed class CanIStopRunningTests : SunqianCombatTestSuite
     }
 
     [Fact]
-    public async Task Player_turn_loss_and_temporary_decay_do_not_trigger()
+    public async Task Upgraded_player_turn_real_loss_triggers_but_temporary_decay_does_not()
     {
-        await PlayBuff();
+        await PlayBuff(true);
         await Damage(5);
-        Assert.Equal(0, Temporary);
+        Assert.Equal(5, Temporary);
         await PowerCmd.Apply<TemporaryHealthPower>(Context(), Player.Creature, 4, Player.Creature, null);
         await Player.Creature.GetPower<TemporaryHealthPower>()!.BeforeSideTurnStart(Context(), CombatSide.Player, [Player.Creature], Combat);
+        Assert.Equal(0, Temporary);
+    }
+
+    [Fact]
+    public async Task Normal_version_does_not_trigger_in_own_turn()
+    {
+        var power = await PlayBuff();
+        Assert.Contains("等量", power.Description.GetFormattedText());
+        await Damage(5);
         Assert.Equal(0, Temporary);
     }
 
@@ -106,10 +117,28 @@ public sealed class CanIStopRunningTests : SunqianCombatTestSuite
     }
 
     [Fact]
-    public async Task Repeated_plays_add_enemy_turn_duration()
+    public async Task Variants_stack_multipliers_independently_and_only_upgrade_triggers_in_own_turn()
     {
         await PlayBuff();
+        await PlayBuff();
         await PlayBuff(true);
-        Assert.Equal(3, Player.Creature.GetPower<StopRunningPower>()!.Amount);
+        await PlayBuff(true);
+        await PlayBuff(true);
+        var normal = Player.Creature.GetPower<StopRunningPower>()!;
+        var upgraded = Player.Creature.GetPower<StopFleeingUntilEnemyTurnEndPower>()!;
+        Assert.Equal(2, normal.Amount);
+        Assert.Equal(3, upgraded.Amount);
+        Assert.Contains("2倍的", normal.Description.GetFormattedText());
+        Assert.Contains("3倍的", upgraded.Description.GetFormattedText());
+        await Damage(2);
+        Assert.Equal(6, Temporary);
+        await Player.Creature.GetPower<TemporaryHealthPower>()!.LoseTemporaryHealth(Context(), Temporary);
+        ((CombatState)Combat).CurrentSide = CombatSide.Enemy;
+        await Damage(2);
+        Assert.Equal(10, Temporary);
+        await normal.AfterSideTurnEndLate(Context(), CombatSide.Enemy, [EnemyAt(0)]);
+        await upgraded.AfterSideTurnEndLate(Context(), CombatSide.Enemy, [EnemyAt(0)]);
+        Assert.Null(Player.Creature.GetPower<StopRunningPower>());
+        Assert.Null(Player.Creature.GetPower<StopFleeingUntilEnemyTurnEndPower>());
     }
 }

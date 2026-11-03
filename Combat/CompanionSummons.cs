@@ -33,6 +33,7 @@ public static class CompanionSummons
 {
 	public const string OstyId = "osty";
 	public const string SecondBrotherId = "second_brother";
+	public const string ThirdBrotherId = "third_brother";
 
 	private sealed record Definition(Type MonsterType, Func<Player, Task<Creature>> Create,
 		Func<LocString> Name, string Portrait);
@@ -51,7 +52,8 @@ public static class CompanionSummons
 		if (_initialized) return;
 		_initialized = true;
 		Register<Osty>(OstyId, "res://images/cards/CutePet.png");
-		Register<SecondBrother>(SecondBrotherId, "res://images/cards/GuanDiForm.png");
+		Register<SecondBrother>(SecondBrotherId, "res://images/cards/PrisonerPlaceholder.png");
+		Register<ThirdBrother>(ThirdBrotherId, "res://images/cards/PrisonerPlaceholder.png");
 		RegisterDefault<LiubeiCharacter>(SecondBrotherId);
 		RitsuLibFramework.SubscribeLifecycle<CombatEndedEvent>(evt =>
 		{
@@ -197,9 +199,9 @@ public static class CompanionSummons
 				await PowerCmd.Apply<DieForYouPower>(context, pet, 1, null, null);
 			}
 		}
-		if (id == SecondBrotherId && !pet.HasPower<LifeContractPower>())
+		if (id is SecondBrotherId or ThirdBrotherId && !pet.HasPower<LifeContractPower>())
 			await PowerCmd.Apply<LifeContractPower>(context, pet, 1, null, null);
-		if (id == SecondBrotherId)
+		if (id is SecondBrotherId or ThirdBrotherId)
 		{
 			var node = NCombatRoom.Instance?.GetCreatureNode(pet);
 			node?.OstyScaleToSize(pet.MaxHp, 0.75);

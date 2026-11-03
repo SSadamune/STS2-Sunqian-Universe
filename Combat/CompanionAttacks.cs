@@ -32,13 +32,18 @@ public static class CompanionAttacks
 public sealed class CompanionDamageVar : DynamicVar
 {
 	private readonly string _companionId;
-	public CompanionDamageVar(string id, decimal amount) : base("CompanionDamage", amount) => _companionId = id;
+	private readonly Func<CardModel, string>? _resolveId;
+	public CompanionDamageVar(string id, decimal amount, Func<CardModel, string>? resolveId = null) : base("CompanionDamage", amount)
+	{
+		_companionId = id;
+		_resolveId = resolveId;
+	}
 	public override void UpdateCardPreview(CardModel card, CardPreviewMode mode,
 		Creature? target, bool runGlobalHooks)
 	{
 		PreviewValue = runGlobalHooks && card.Owner != null
 			? Hook.ModifyDamage(card.Owner.RunState, card.CombatState, target,
-				CompanionSummons.GetCompanion(card.Owner, _companionId), BaseValue, ValueProp.Move,
+				CompanionSummons.GetCompanion(card.Owner, _resolveId?.Invoke(card) ?? _companionId), BaseValue, ValueProp.Move,
 				card, null, ModifyDamageHookType.All, mode, out _)
 			: BaseValue;
 	}

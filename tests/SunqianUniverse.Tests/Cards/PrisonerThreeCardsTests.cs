@@ -22,18 +22,18 @@ public sealed class PrisonerThreeCardsTests : SunqianCombatTestSuite
     private BlockingPlayerChoiceContext Choice() => new();
 
     [Theory]
-    [InlineData(false, 4)]
-    [InlineData(true, 6)]
-    public async Task Know_warfare_gives_fixed_burning_and_temporary_hp_and_upgraded_block_and_vigor(bool upgraded, int amount)
+    [InlineData(false, 6)]
+    [InlineData(true, 8)]
+    public async Task Know_warfare_gives_two_burning_and_upgradable_temporary_hp_and_vigor(bool upgraded, int amount)
     {
         var card = await AddToHand<KnowWarfare>();
         if (upgraded) Upgrade(card);
         int hp = Player.Creature.CurrentHp;
         await Play(card);
-        Assert.Equal(4, Player.Creature.GetPower<BurningPower>()!.Amount);
-        Assert.Equal(4, Player.Creature.GetPower<TemporaryHealthPower>()!.Amount);
-        Assert.Equal(hp + 4, Player.Creature.CurrentHp);
-        Assert.Equal(amount, Player.Creature.Block);
+        Assert.Equal(2, Player.Creature.GetPower<BurningPower>()!.Amount);
+        Assert.Equal(amount, Player.Creature.GetPower<TemporaryHealthPower>()!.Amount);
+        Assert.Equal(hp + amount, Player.Creature.CurrentHp);
+        Assert.Equal(0, Player.Creature.Block);
         Assert.Equal(amount, Player.Creature.GetPower<VigorPower>()!.Amount);
         AssertInPile(card, PileType.Discard);
     }
@@ -50,7 +50,7 @@ public sealed class PrisonerThreeCardsTests : SunqianCombatTestSuite
         var tip = Assert.Single(card.HoverTips.OfType<HoverTip>());
         Assert.Equal(ModelDb.Power<DieForYouPower>().Title.GetFormattedText(), tip.Title);
         Assert.NotNull(tip.Icon);
-        Assert.Contains("[gold]二弟[/gold]", tip.Description);
+        Assert.Contains("此召唤物", tip.Description);
         Assert.DoesNotContain("奥斯提", tip.Description);
         int enemyHp = EnemyAt(0).CurrentHp;
         await Play(card, EnemyAt(0));
@@ -108,6 +108,38 @@ public sealed class PrisonerThreeCardsTests : SunqianCombatTestSuite
     }
 
     [Theory]
+    [InlineData(false, true, false)]
+    [InlineData(true, true, false)]
+    [InlineData(true, false, true)]
+    public async Task Available_brother_fights_and_only_selected_brother_loses_guard(bool both, bool chooseThird, bool upgraded)
+    {
+        var third = (await CompanionSummons.SummonSpecific(Choice(), Player, CompanionSummons.ThirdBrotherId, 20, null)).Creature!;
+        var second = both ? (await OstyCmd.Summon(Choice(), Player, 20, null)).Creature : null;
+        var card = await AddToHand<NominalBrothers>();
+        Assert.True(card.CanPlay());
+        if (upgraded) Upgrade(card);
+        var chosen = chooseThird ? third : second!;
+        var other = chooseThird ? second : third;
+        var selector = new ScriptedCardSelector().ThenSelect(options =>
+            [options.OfType<BrotherAttackChoice>().Single(c => c.CompanionId == (chooseThird ? CompanionSummons.ThirdBrotherId : CompanionSummons.SecondBrotherId))]);
+        int enemyHp = EnemyAt(0).CurrentHp;
+        if (both)
+        {
+            using (UseCardSelector(selector)) await Play(card, EnemyAt(0));
+            AssertAllSelectionsConsumed(selector);
+        }
+        else await Play(card, EnemyAt(0));
+        Assert.Equal(enemyHp - (upgraded ? 17 : 13), EnemyAt(0).CurrentHp);
+        Assert.True(chosen.HasPower<ActuallyNotClosePower>());
+        Assert.False(other?.HasPower<ActuallyNotClosePower>() ?? false);
+        if (other != null) await CreatureCmd.Kill(other);
+        int hp = Player.Creature.CurrentHp;
+        await CreatureCmd.Damage(Choice(), Player.Creature, 2, ValueProp.Move, null, null);
+        Assert.Equal(hp - 2, Player.Creature.CurrentHp);
+        Assert.Equal(20, chosen.CurrentHp);
+    }
+
+    [Theory]
     [InlineData(false, 0, 9)]
     [InlineData(false, 1, 18)]
     [InlineData(false, 2, 18)]
@@ -139,14 +171,12 @@ public sealed class PrisonerThreeCardsTests : SunqianCombatTestSuite
     }
 
     [Fact]
-    public void Renamed_card_and_power_use_new_ids_and_old_save_ids_resolve_to_them()
+    public void Renamed_card_and_power_use_current_ids()
     {
         var card = ModelDb.Card<NominalBrothers>();
         var power = ModelDb.Power<ActuallyNotClosePower>();
         Assert.Equal("SUNQIAN_UNIVERSE_CARD_NOMINAL_BROTHERS", card.Id.Entry);
         Assert.Equal("名义兄弟", card.Title);
         Assert.Equal("SUNQIAN_UNIVERSE_POWER_ACTUALLY_NOT_CLOSE_POWER", power.Id.Entry);
-        Assert.Same(card, ModelDb.GetById<CardModel>(ModelId.Deserialize("CARD.SUNQIAN_UNIVERSE_CARD_FAIR_WEATHER_BROTHERS")));
-        Assert.Same(power, ModelDb.GetById<PowerModel>(ModelId.Deserialize("POWER.SUNQIAN_UNIVERSE_POWER_BROTHER_ESTRANGEMENT_POWER")));
     }
 }

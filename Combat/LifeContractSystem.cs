@@ -13,29 +13,29 @@ namespace Squ.Combat;
 public static class LifeContractSystem
 {
 	private sealed class Account { public int Total; public bool Claimed; }
-	private static readonly ConditionalWeakTable<ICombatState, Dictionary<Player, Account>> Battles = new();
+	private static readonly ConditionalWeakTable<ICombatState, Dictionary<(Player, string), Account>> Battles = new();
 	public static void Initialize() => RitsuLibFramework.SubscribeLifecycle<CombatEndedEvent>(evt =>
 	{
 		if (evt.CombatState != null) Battles.Remove(evt.CombatState);
 	});
-	private static Account? GetAccount(Player player)
+	private static Account? GetAccount(Player player, string companionId)
 	{
 		if (player.Creature.CombatState is not { } combat) return null;
 		var accounts = Battles.GetOrCreateValue(combat);
-		if (!accounts.TryGetValue(player, out Account? account)) accounts.Add(player, account = new());
+		if (!accounts.TryGetValue((player, companionId), out Account? account)) accounts.Add((player, companionId), account = new());
 		return account;
 	}
-	public static int GetTotal(Player player) => GetAccount(player)?.Total ?? 0;
-	public static void AddContribution(Player player, int actualHpLost)
+	public static int GetTotal(Player player, string companionId = CompanionSummons.SecondBrotherId) => GetAccount(player, companionId)?.Total ?? 0;
+	public static void AddContribution(Player player, int actualHpLost, string companionId = CompanionSummons.SecondBrotherId)
 	{
-		if (actualHpLost <= 0 || GetAccount(player) is not { Claimed: false } account) return;
+		if (actualHpLost <= 0 || GetAccount(player, companionId) is not { Claimed: false } account) return;
 		account.Total = (int)Math.Min(999999999L, (long)account.Total + actualHpLost);
-		CompanionSummons.GetCompanion(player, CompanionSummons.SecondBrotherId)
+		CompanionSummons.GetCompanion(player, companionId)
 			?.GetPower<LifeContractPower>()?.Refresh();
 	}
-	internal static int Claim(Player player)
+	internal static int Claim(Player player, string companionId = CompanionSummons.SecondBrotherId)
 	{
-		if (GetAccount(player) is not { Claimed: false } account) return 0;
+		if (GetAccount(player, companionId) is not { Claimed: false } account) return 0;
 		account.Claimed = true;
 		return account.Total;
 	}

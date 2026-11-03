@@ -19,8 +19,8 @@ public sealed class LeadCiviliansAcrossTests : SunqianCombatTestSuite
 
     [Theory]
     [InlineData(false, 12)]
-    [InlineData(true, 16)]
-    public async Task Play_costs_two_energy_loses_six_hp_grants_temporary_health_and_exhausts(bool upgraded, int amount)
+    [InlineData(true, 15)]
+    public async Task Play_costs_two_energy_loses_four_hp_grants_temporary_health_and_exhausts(bool upgraded, int amount)
     {
         int hp = Player.Creature.CurrentHp;
         var card = await AddToHand<LeadCiviliansAcross>();
@@ -31,7 +31,7 @@ public sealed class LeadCiviliansAcrossTests : SunqianCombatTestSuite
         Assert.Contains(CardKeyword.Exhaust, card.Keywords);
         await PlayerCmd.SetEnergy(2, Player);
         await Play(card);
-        Assert.Equal(hp - 6 + amount, Player.Creature.CurrentHp);
+        Assert.Equal(hp - 4 + amount, Player.Creature.CurrentHp);
         Assert.Equal(amount, Player.Creature.GetPower<TemporaryHealthPower>()!.Amount);
         Assert.Equal(0, Player.PlayerCombatState!.Energy);
         Assert.Equal(0, LifeContractSystem.GetTotal(Player));
@@ -50,8 +50,8 @@ public sealed class LeadCiviliansAcrossTests : SunqianCombatTestSuite
         Assert.Equal(2, card.EnergyCost.GetResolved());
         await Play(card);
         Assert.Equal(energy - 2, Player.PlayerCombatState.Energy);
-        Assert.Equal(hp - 12 + 24, Player.Creature.CurrentHp);
-        Assert.Equal(18, Player.Creature.GetPower<TemporaryHealthPower>()!.Amount);
+        Assert.Equal(hp - 8 + 24, Player.Creature.CurrentHp);
+        Assert.Equal(20, Player.Creature.GetPower<TemporaryHealthPower>()!.Amount);
     }
 
     [Fact]
@@ -63,11 +63,11 @@ public sealed class LeadCiviliansAcrossTests : SunqianCombatTestSuite
         await power.BeforeSideTurnStart(new MegaCrit.Sts2.Core.GameActions.Multiplayer.BlockingPlayerChoiceContext(),
             Player.Creature.Side, [Player.Creature], Combat);
         Assert.Equal(2, power.Amount);
-        Assert.Equal(hp - 6 + 2, Player.Creature.CurrentHp);
+        Assert.Equal(hp - 4 + 2, Player.Creature.CurrentHp);
         await power.BeforeSideTurnStart(new MegaCrit.Sts2.Core.GameActions.Multiplayer.BlockingPlayerChoiceContext(),
             Player.Creature.Side, [Player.Creature], Combat);
         Assert.Null(Player.Creature.GetPower<TemporaryHealthPower>());
-        Assert.Equal(hp - 6, Player.Creature.CurrentHp);
+        Assert.Equal(hp - 4, Player.Creature.CurrentHp);
     }
 
     [Fact]

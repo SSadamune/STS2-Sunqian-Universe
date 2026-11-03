@@ -18,7 +18,10 @@ internal static class StopRunningRealHealthLossPatch
 	}
 	private static void Prefix(Creature __instance, out (int Hp, int Temporary) __state) =>
 		__state = (__instance.CurrentHp, __instance.GetPower<TemporaryHealthPower>()?.Amount ?? 0);
-	private static void Postfix(Creature __instance, (int Hp, int Temporary) __state) =>
-		__instance.GetPower<StopRunningPower>()?.RecordRealLoss(
-			Math.Max(0, __state.Hp - __instance.CurrentHp - __state.Temporary));
+	private static void Postfix(Creature __instance, (int Hp, int Temporary) __state)
+	{
+		int loss = Math.Max(0, __state.Hp - __instance.CurrentHp - __state.Temporary);
+		__instance.GetPower<StopRunningPower>()?.RecordRealLoss(loss);
+		__instance.GetPower<StopFleeingUntilEnemyTurnEndPower>()?.RecordRealLoss(loss);
+	}
 }

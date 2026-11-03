@@ -18,7 +18,7 @@ namespace Squ.Patches;
 internal static class SecondBrotherPresentationPatches
 {
 	internal static MonsterModel? AsOstyPresentation(MonsterModel? monster) =>
-		monster is Osty or SecondBrother ? monster : null;
+		monster is Osty or SecondBrother or ThirdBrother ? monster : null;
 	private static IEnumerable<Type> Types(Type type) => new[] { type }
 		.Concat(type.GetNestedTypes(BindingFlags.Public | BindingFlags.NonPublic).SelectMany(Types));
 	private static IEnumerable<MethodBase> TargetMethods()

@@ -18,7 +18,7 @@ public sealed class DeafenMyEars : ModCardTemplate
 {
 	protected override IEnumerable<DynamicVar> CanonicalVars => [new DynamicVar("Multiplier", 4)];
 	public override IEnumerable<CardKeyword> CanonicalKeywords => [CardKeyword.Exhaust];
-	public override CardAssetProfile AssetProfile => new(PortraitPath: "res://images/cards/RelocateCapital.png");
+	public override CardAssetProfile AssetProfile => new(PortraitPath: "res://images/cards/PrisonerPlaceholder.png");
 	public DeafenMyEars() : base(0, CardType.Skill, CardRarity.Rare, TargetType.Self) { }
 	protected override Task OnPlay(PlayerChoiceContext context, CardPlay play)
 	{

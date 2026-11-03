@@ -23,7 +23,7 @@ public sealed class IHaveAFamousQuoteToo : ModCardTemplate
 
 	// Temporary portrait until dedicated card art is available.
 	public override CardAssetProfile AssetProfile => new(
-		PortraitPath: "res://images/cards/DrinkingTableCulture.png");
+		PortraitPath: "res://images/cards/PrisonerPlaceholder.png");
 
 	public IHaveAFamousQuoteToo()
 		: base(1, CardType.Skill, CardRarity.Uncommon, SquTargetTypes.LowerHpAlly)

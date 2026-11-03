@@ -3,7 +3,7 @@
 `CompanionSummons` redirects the shared `OstyCmd.Summon` entry point. Character
 defaults are fixed: Liubei uses `second_brother`; characters without a registered
 default keep vanilla Osty. Explicit summons and any-choice summons never change
-this default. Both pet kinds can coexist.
+this default. Osty, Second Brother and Third Brother can coexist.
 
 ## Card integration
 
@@ -47,8 +47,12 @@ Custom summons run `ModifySummonAmount` once and retain native summon history an
 dead pets are revived at the new summon amount instead of duplicated. Zero or
 prevented summons do not discover candidates or emit successful-summon hooks.
 
-Second Brother uses vanilla Osty's visuals, animator, size scaling, pet layout,
+Second Brother and Third Brother use vanilla Osty's visuals, animator, size scaling, pet layout,
 health bar and status display, and native `DieForYouPower` to
 absorb its owner's unblocked powered attacks. It has no automatic attack. Methods
 which explicitly command `Player.Osty` to attack remain Osty-specific; this system
 redirects summoning, not every Osty-specific card effect or animation.
+
+Third Brother is a separate registered monster with the same current native model,
+guard and Life Contract abilities. Its explicit summons use `ThirdBrotherId` and
+add it to that owner's any-choice list without changing the default binding.

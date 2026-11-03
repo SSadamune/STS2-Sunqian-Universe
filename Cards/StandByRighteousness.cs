@@ -27,7 +27,7 @@ public sealed class StandByRighteousness : ModCardTemplate
 	];
 	public override bool GainsBlock => true;
 	public override CardAssetProfile AssetProfile => new(
-		PortraitPath: "res://images/cards/BenevolenceRighteousnessDualSwords.png");
+		PortraitPath: "res://images/cards/PrisonerPlaceholder.png");
 	protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
 	[
 		SquKeywords.CreateRighteousnessHoverTip(DynamicVars[RighteousnessVar]),

@@ -7,6 +7,8 @@ using MegaCrit.Sts2.Core.Entities.Creatures;
 using MegaCrit.Sts2.Core.Entities.Powers;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.Models;
+using MegaCrit.Sts2.Core.Localization;
+using Squ.Monsters;
 using MegaCrit.Sts2.Core.Rooms;
 using Squ.Combat;
 using STS2RitsuLib.Interop.AutoRegistration;
@@ -21,15 +23,22 @@ public sealed class LifeContractPower : ModPowerTemplate
 	public override PowerStackType StackType => PowerStackType.Single;
 	public override bool ShouldPowerBeRemovedAfterOwnerDeath() => false;
 	public override int DisplayAmount => DynamicVars["Healing"].IntValue;
-	protected override IEnumerable<DynamicVar> CanonicalVars => [new DynamicVar("Healing", 0)];
+	protected override IEnumerable<DynamicVar> CanonicalVars => [new DynamicVar("Healing", 0), new StringVar("CompanionName",
+		new LocString("monsters", "SUNQIAN_UNIVERSE_MONSTER_SECOND_BROTHER.name").GetFormattedText())];
 	protected override string SmartDescriptionLocKey => IsMutable && CombatManager.Instance.IsInProgress
 		? Id.Entry + ".combatSmartDescription" : base.SmartDescriptionLocKey;
 	public override PowerAssetProfile AssetProfile => new(
 		IconPath: "res://images/powers/LifeContractPower.png",
 		BigIconPath: "res://images/powers/LifeContractPowerBig.png");
+	private string CompanionId => Owner.Monster is ThirdBrother ? CompanionSummons.ThirdBrotherId : CompanionSummons.SecondBrotherId;
+	public override LocString Description
+	{
+		get { var text = base.Description; DynamicVars.AddTo(text); return text; }
+	}
 	public void Refresh()
 	{
-		DynamicVars["Healing"].BaseValue = Owner.PetOwner is { } player ? LifeContractSystem.GetTotal(player) : 0;
+		DynamicVars["Healing"].BaseValue = Owner.PetOwner is { } player ? LifeContractSystem.GetTotal(player, CompanionId) : 0;
+		((StringVar)DynamicVars["CompanionName"]).StringValue = Owner.Monster!.Title.GetFormattedText();
 		InvokeDisplayAmountChanged();
 	}
 	public override Task AfterApplied(Creature? applier, CardModel? cardSource)
@@ -41,7 +50,7 @@ public sealed class LifeContractPower : ModPowerTemplate
 	{
 		if (Owner.IsAlive && Owner.PetOwner is { Creature.IsAlive: true } player)
 		{
-			int healing = LifeContractSystem.Claim(player);
+			int healing = LifeContractSystem.Claim(player, CompanionId);
 			if (healing > 0)
 			{
 				Flash();

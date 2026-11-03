@@ -19,11 +19,11 @@ public sealed class LeadCiviliansAcross : ModCardTemplate
 {
 	protected override IEnumerable<DynamicVar> CanonicalVars =>
 	[
-		new DynamicVar("HpLoss", 6),
+		new DynamicVar("HpLoss", 4),
 		new PowerVar<TemporaryHealthPower>(12),
 	];
 	public override CardAssetProfile AssetProfile => new(
-		PortraitPath: "res://images/cards/RelocateCapital.png");
+		PortraitPath: "res://images/cards/PrisonerPlaceholder.png");
 	protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
 	[
 		HoverTipFactory.FromPower<TemporaryHealthPower>(),
@@ -39,5 +39,5 @@ public sealed class LeadCiviliansAcross : ModCardTemplate
 			DynamicVars[nameof(TemporaryHealthPower)].BaseValue, Owner.Creature, this);
 	}
 	protected override void OnUpgrade() =>
-		DynamicVars[nameof(TemporaryHealthPower)].UpgradeValueBy(4);
+		DynamicVars[nameof(TemporaryHealthPower)].UpgradeValueBy(3);
 }

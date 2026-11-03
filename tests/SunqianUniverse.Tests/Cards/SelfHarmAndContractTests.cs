@@ -26,14 +26,15 @@ public sealed class SelfHarmAndContractTests : SunqianCombatTestSuite
     [Fact]
     public async Task Triggered_self_harm_disappears_only_for_that_copy_and_returns_next_combat()
     {
-        CardModel card = await AddToHand<AwakenSecondBrother>();
+        CardModel card = await AddToHand<SummonSecondBrother>();
         Assert.Contains("[gold]自残[/gold]", card.GetDescriptionForPile(PileType.Hand));
         await Play(card, EnemyAt(0));
         Assert.False(SelfHarmSystem.HasSelfHarm(card));
         Assert.DoesNotContain("自残", card.GetDescriptionForPile(PileType.Discard));
         Assert.False(card.GetDescriptionForPile(PileType.Discard).StartsWith("\n"));
-        Assert.DoesNotContain(card.HoverTips.OfType<HoverTip>(), tip => tip.Title?.StartsWith("自残") == true);
-        CardModel other = await AddToHand<AwakenSecondBrother>();
+        // The Slight Revision target preview retains its own self-harm hover.
+        Assert.False(SelfHarmSystem.HasSelfHarm(card));
+        CardModel other = await AddToHand<SummonSecondBrother>();
         Assert.Contains("[gold]自残[/gold]", other.GetDescriptionForPile(PileType.Hand));
         SelfHarmSystem.ClearCombat(Combat);
         Assert.Contains("[gold]自残[/gold]", card.GetDescriptionForPile(PileType.Discard));
@@ -47,7 +48,7 @@ public sealed class SelfHarmAndContractTests : SunqianCombatTestSuite
     [InlineData(true, 11)]
     public async Task First_play_is_green_zero_cost_and_pays_hp_then_summons_and_attacks(bool upgraded, int amount)
     {
-        var card = await AddToHand<AwakenSecondBrother>();
+        var card = await AddToHand<SummonSecondBrother>();
         if (upgraded) Upgrade(card);
         await PlayerCmd.SetEnergy(0, Player);
         int hp = Player.Creature.CurrentHp;
@@ -72,7 +73,7 @@ public sealed class SelfHarmAndContractTests : SunqianCombatTestSuite
     public async Task At_or_below_threshold_card_costs_energy_without_self_harm(int hp)
     {
         await CreatureCmd.SetCurrentHp(Player.Creature, hp);
-        var card = await AddToHand<AwakenSecondBrother>();
+        var card = await AddToHand<SummonSecondBrother>();
         Assert.Equal(2, card.EnergyCost.GetResolved());
         int energy = Player.PlayerCombatState!.Energy;
         await Play(card, EnemyAt(0));
@@ -84,7 +85,7 @@ public sealed class SelfHarmAndContractTests : SunqianCombatTestSuite
     [Fact]
     public async Task Hp_changes_toggle_free_cost_until_first_actual_play()
     {
-        var card = await AddToHand<AwakenSecondBrother>();
+        var card = await AddToHand<SummonSecondBrother>();
         await CreatureCmd.SetCurrentHp(Player.Creature, 9);
         Assert.Equal(0, card.EnergyCost.GetResolved());
         await CreatureCmd.SetCurrentHp(Player.Creature, 8);
@@ -102,7 +103,7 @@ public sealed class SelfHarmAndContractTests : SunqianCombatTestSuite
     public async Task Play_below_threshold_preserves_self_harm_for_a_later_eligible_play()
     {
         await CreatureCmd.SetCurrentHp(Player.Creature, 8);
-        var card = await AddToHand<AwakenSecondBrother>();
+        var card = await AddToHand<SummonSecondBrother>();
         await Play(card, EnemyAt(0));
         Assert.True(SelfHarmSystem.HasSelfHarm(card));
         Assert.Contains("自残", card.GetDescriptionForPile(PileType.Discard));
@@ -120,12 +121,12 @@ public sealed class SelfHarmAndContractTests : SunqianCombatTestSuite
     public async Task Separate_copies_pay_once_each_while_replays_do_not_pay_again()
     {
         int hp = Player.Creature.CurrentHp;
-        var first = await AddToHand<AwakenSecondBrother>();
+        var first = await AddToHand<SummonSecondBrother>();
         first.BaseReplayCount = 1;
         await Play(first, EnemyAt(0));
         Assert.Equal(hp - 8, Player.Creature.CurrentHp);
         Assert.Equal(16, CompanionSummons.GetCompanion(Player, CompanionSummons.SecondBrotherId)!.MaxHp);
-        await Play(await AddToHand<AwakenSecondBrother>(), EnemyAt(0));
+        await Play(await AddToHand<SummonSecondBrother>(), EnemyAt(0));
         Assert.Equal(hp - 16, Player.Creature.CurrentHp);
         Assert.Equal(16, LifeContractSystem.GetTotal(Player));
     }
@@ -133,7 +134,7 @@ public sealed class SelfHarmAndContractTests : SunqianCombatTestSuite
     [Fact]
     public async Task New_combat_restores_first_play_eligibility_for_the_same_card()
     {
-        var card = await AddToHand<AwakenSecondBrother>();
+        var card = await AddToHand<SummonSecondBrother>();
         await Play(card, EnemyAt(0));
         Assert.False(SelfHarmSystem.IsActive(card));
         SelfHarmSystem.ClearCombat(Combat);
@@ -145,7 +146,7 @@ public sealed class SelfHarmAndContractTests : SunqianCombatTestSuite
     {
         AddRelic<TungstenRod>();
         int hp = Player.Creature.CurrentHp;
-        await Play(await AddToHand<AwakenSecondBrother>(), EnemyAt(0));
+        await Play(await AddToHand<SummonSecondBrother>(), EnemyAt(0));
         Assert.Equal(hp - 7, Player.Creature.CurrentHp);
         Assert.Equal(7, LifeContractSystem.GetTotal(Player));
     }
@@ -155,7 +156,7 @@ public sealed class SelfHarmAndContractTests : SunqianCombatTestSuite
     {
         await ApplyPower<BufferPower>(Player.Creature, 1);
         int hp = Player.Creature.CurrentHp;
-        var card = await AddToHand<AwakenSecondBrother>();
+        var card = await AddToHand<SummonSecondBrother>();
         await PlayerCmd.SetEnergy(0, Player);
         await Play(card, EnemyAt(0));
         Assert.Equal(hp, Player.Creature.CurrentHp);
@@ -169,7 +170,7 @@ public sealed class SelfHarmAndContractTests : SunqianCombatTestSuite
     {
         await CreatureCmd.SetCurrentHp(Player.Creature, 20);
         await ApplyPower<TemporaryHealthPower>(Player.Creature, 10);
-        await Play(await AddToHand<AwakenSecondBrother>(), EnemyAt(0));
+        await Play(await AddToHand<SummonSecondBrother>(), EnemyAt(0));
         Assert.Equal(22, Player.Creature.CurrentHp);
         Assert.Equal(2, Player.Creature.GetPower<TemporaryHealthPower>()!.Amount);
         Assert.Equal(8, LifeContractSystem.GetTotal(Player));
@@ -183,7 +184,7 @@ public sealed class SelfHarmAndContractTests : SunqianCombatTestSuite
         await ApplyPower<StrengthPower>(pet, 3);
         await ApplyPower<StrengthPower>(Player.Creature, 10);
         int hp = EnemyAt(0).CurrentHp;
-        var card = await AddToHand<AwakenSecondBrother>();
+        var card = await AddToHand<SummonSecondBrother>();
         await Play(card, EnemyAt(0));
         Assert.Equal(hp - 11, EnemyAt(0).CurrentHp);
     }
@@ -192,7 +193,7 @@ public sealed class SelfHarmAndContractTests : SunqianCombatTestSuite
     public async Task Surviving_pet_heals_owner_at_native_combat_end_once()
     {
         int hp = Player.Creature.CurrentHp;
-        await Play(await AddToHand<AwakenSecondBrother>(), EnemyAt(0));
+        await Play(await AddToHand<SummonSecondBrother>(), EnemyAt(0));
         var power = CompanionSummons.GetCompanion(Player, CompanionSummons.SecondBrotherId)!
             .GetPower<LifeContractPower>()!;
         var tip = Assert.Single(power.HoverTips.OfType<HoverTip>().Where(tip => tip.Title == power.Title.GetFormattedText()));
@@ -206,7 +207,7 @@ public sealed class SelfHarmAndContractTests : SunqianCombatTestSuite
     public async Task Dead_second_brother_does_not_heal_but_revived_second_brother_can_use_accumulated_contract()
     {
         int hp = Player.Creature.CurrentHp;
-        await Play(await AddToHand<AwakenSecondBrother>(), EnemyAt(0));
+        await Play(await AddToHand<SummonSecondBrother>(), EnemyAt(0));
         var pet = CompanionSummons.GetCompanion(Player, CompanionSummons.SecondBrotherId)!;
         await CreatureCmd.Kill(pet, force: true);
         var power = pet.GetPower<LifeContractPower>()!;
@@ -234,7 +235,7 @@ public sealed class SelfHarmAndContractTests : SunqianCombatTestSuite
     public async Task Contract_contributions_are_player_scoped_and_support_future_sources()
     {
         var other = Players.Single(player => player != Player);
-        await Play(await AddToHand<AwakenSecondBrother>(), EnemyAt(0));
+        await Play(await AddToHand<SummonSecondBrother>(), EnemyAt(0));
         LifeContractSystem.AddContribution(other, 5);
         LifeContractSystem.AddContribution(Player, 3);
         Assert.Equal(11, LifeContractSystem.GetTotal(Player));
@@ -244,8 +245,8 @@ public sealed class SelfHarmAndContractTests : SunqianCombatTestSuite
     [Fact]
     public async Task Dynamic_self_harm_title_updates_with_upgrade_and_starter_deck_contains_card()
     {
-        Assert.Single(Player.Deck.Cards.OfType<AwakenSecondBrother>());
-        var card = await AddToHand<AwakenSecondBrother>();
+        Assert.Single(Player.Deck.Cards.OfType<SummonSecondBrother>());
+        var card = await AddToHand<SummonSecondBrother>();
         var tip = (HoverTip)SquKeywords.CreateSelfHarmHoverTip(card.DynamicVars["SelfHarm"]);
         Assert.EndsWith("8", tip.Title);
         Upgrade(card);
