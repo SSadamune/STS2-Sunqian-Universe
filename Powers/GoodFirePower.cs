@@ -6,6 +6,7 @@ using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Localization;
 using MegaCrit.Sts2.Core.Models;
 using Squ.Interop;
+using Squ.Combat;
 using STS2RitsuLib.Interop.AutoRegistration;
 using STS2RitsuLib.Scaffolding.Content;
 
@@ -54,7 +55,7 @@ public sealed class GoodFirePower : ModPowerTemplate
 		Creature? target,
 		CardModel? cardSource)
 	{
-		if (giver != Owner || Amount <= 0 || target is null || target.Side == Owner.Side)
+		if (giver != Owner || Amount <= 0 || !BurningApplicationTarget.IsEnemyApplication(power, giver, target, cardSource))
 		{
 			return 1m;
 		}
