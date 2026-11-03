@@ -27,7 +27,7 @@ public sealed class AllScriptCardsTests : SunqianCombatTestSuite
         new(typeof(BombardChibiScript), typeof(BombardChibiScriptRecord), typeof(ScriptBombardChibiPower), false),
         new(typeof(BowangParadoxScript), typeof(BowangParadoxAdvanceScriptRecord), typeof(ScriptBowangParadoxAdvancePower), true),
         new(typeof(GuanDiForm), typeof(GuanYuCivilVer), typeof(GuanYuCivilVerPower), true),
-        new(typeof(BurningLinkedCampsScript), typeof(BurningLinkedCampsScriptRecord), typeof(ScriptBurningLinkedCampsPower), false),
+        new(typeof(BurningLinkedCampsScript), typeof(BurningLinkedCampsScriptRecord), typeof(ScriptBurningLinkedCampsPower), true),
         new(typeof(ChickenFootCheeseScript), typeof(ChickenFootCheeseScriptRecord), typeof(ScriptChickenFootCheesePower), true),
         new(typeof(EunuchScript), typeof(EunuchScriptRecord), typeof(ScriptEunuchPower), false),
         new(typeof(ExecutionCommanderScript), typeof(ExecutionCommanderScriptRecord), typeof(ScriptExecutionCommanderPower), true),
@@ -202,7 +202,7 @@ public sealed class AllScriptCardsTests : SunqianCombatTestSuite
     [InlineData(typeof(BombardChibiScript), typeof(BombardChibiScriptRecord), typeof(ScriptBombardChibiPower), false)]
     [InlineData(typeof(BowangParadoxScript), typeof(BowangParadoxAdvanceScriptRecord), typeof(ScriptBowangParadoxAdvancePower), true)]
     [InlineData(typeof(GuanDiForm), typeof(GuanYuCivilVer), typeof(GuanYuCivilVerPower), true)]
-    [InlineData(typeof(BurningLinkedCampsScript), typeof(BurningLinkedCampsScriptRecord), typeof(ScriptBurningLinkedCampsPower), false)]
+    [InlineData(typeof(BurningLinkedCampsScript), typeof(BurningLinkedCampsScriptRecord), typeof(ScriptBurningLinkedCampsPower), true)]
     [InlineData(typeof(ChickenFootCheeseScript), typeof(ChickenFootCheeseScriptRecord), typeof(ScriptChickenFootCheesePower), true)]
     [InlineData(typeof(EunuchScript), typeof(EunuchScriptRecord), typeof(ScriptEunuchPower), false)]
     [InlineData(typeof(ExecutionCommanderScript), typeof(ExecutionCommanderScriptRecord), typeof(ScriptExecutionCommanderPower), true)]

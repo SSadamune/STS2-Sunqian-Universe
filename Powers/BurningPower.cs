@@ -35,6 +35,8 @@ namespace Squ.Powers;
 [RegisterPower]
 public sealed class BurningPower : ModPowerTemplate, IHealthBarForecastSource
 {
+	private int _damageResolutionDepth;
+	internal bool IsResolvingDamage => _damageResolutionDepth > 0;
 	private static readonly Color BurningLethalColor = new("FFB733");
 	public const string ClearChanceVarName = "ClearChance";
 
@@ -163,13 +165,14 @@ public sealed class BurningPower : ModPowerTemplate, IHealthBarForecastSource
 		PlayFiendFireDamageVfx(Owner);
 
 		IronChainPower? ironChain = Owner.GetPower<IronChainPower>();
-		IEnumerable<DamageResult> damageResults = (await CreatureCmd.Damage(
-			choiceContext,
-			Owner,
-			Amount,
-			ValueProp.Unpowered,
-			cardSource,
-			null)).ToList();
+		IEnumerable<DamageResult> damageResults;
+		_damageResolutionDepth++;
+		try
+		{
+			damageResults = (await CreatureCmd.Damage(choiceContext, Owner, Amount,
+				ValueProp.Unpowered, cardSource, null)).ToList();
+		}
+		finally { _damageResolutionDepth--; }
 
 		if (ironChain is not null)
 		{

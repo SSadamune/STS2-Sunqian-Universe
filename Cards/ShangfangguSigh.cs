@@ -47,7 +47,7 @@ public sealed class ShangfangguSigh : ModCardTemplate
 	public const int BaseBonusPercent = 100;
 
 	public override CardPoolModel VisualCardPool => ModelDb.CardPool<SunqianCardPool>();
-	public const int UpgradedBonusPercent = 150;
+	public const int UpgradedBonusPercent = 140;
 
 	protected override IEnumerable<DynamicVar> CanonicalVars =>
 	[

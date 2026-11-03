@@ -42,11 +42,11 @@ public sealed class BurningLinkedCampsBonusTests : SunqianCombatTestSuite
 
     [Theory]
     [InlineData(false, 100)]
-    [InlineData(true, 150)]
+    [InlineData(true, 140)]
     public async Task Hidden_bonus_stacks_and_only_the_next_sigh_uses_it_with_green_hand_and_play_previews(
         bool upgraded, int printed)
     {
-        await ApplyPower<ScriptBurningLinkedCampsPower>(Player.Creature, 1);
+        await ApplyPower<ScriptBurningLinkedCampsPower>(Player.Creature, 10);
         await TakeBurnDamage();
         await TakeBurnDamage();
         var pending = Player.Creature.GetPower<PendingGoodFirePower>()!;
@@ -79,7 +79,7 @@ public sealed class BurningLinkedCampsBonusTests : SunqianCombatTestSuite
     [Fact]
     public async Task Existing_good_fire_gains_twenty_percentage_points_per_burn_without_creating_hidden_bonus()
     {
-        await ApplyPower<ScriptBurningLinkedCampsPower>(Player.Creature, 1);
+        await ApplyPower<ScriptBurningLinkedCampsPower>(Player.Creature, 10);
         await ApplyPower<GoodFirePower>(Player.Creature, 100);
         await TakeBurnDamage();
         CardTestAssertions.AssertPowerAmount<GoodFirePower>(Player.Creature, 120);
@@ -92,7 +92,7 @@ public sealed class BurningLinkedCampsBonusTests : SunqianCombatTestSuite
     [Fact]
     public async Task Hidden_bonus_survives_script_ending_and_other_cards_but_only_previews_in_hand_or_play()
     {
-        await ApplyPower<ScriptBurningLinkedCampsPower>(Player.Creature, 1);
+        await ApplyPower<ScriptBurningLinkedCampsPower>(Player.Creature, 10);
         await TakeBurnDamage();
         await Squ.Script.ScriptSystem.InvalidateScriptsAsync(Player.Creature);
         await Play(await AddToHand<DefendIronclad>());
@@ -110,7 +110,7 @@ public sealed class BurningLinkedCampsBonusTests : SunqianCombatTestSuite
     [Fact]
     public async Task Non_burn_damage_does_not_increase_good_fire_or_create_hidden_bonus()
     {
-        await ApplyPower<ScriptBurningLinkedCampsPower>(Player.Creature, 1);
+        await ApplyPower<ScriptBurningLinkedCampsPower>(Player.Creature, 10);
         await CreatureCmd.Damage(new BlockingPlayerChoiceContext(), Player.Creature, 2, ValueProp.Unpowered, null, null);
         Assert.Null(Player.Creature.GetPower<GoodFirePower>());
         Assert.Null(Player.Creature.GetPower<PendingGoodFirePower>());
@@ -123,7 +123,8 @@ public sealed class BurningLinkedCampsBonusTests : SunqianCombatTestSuite
         var record = ModelDb.Card<BurningLinkedCampsScriptRecord>();
         var burning = HoverTipFactory.FromPower<BurningPower>();
         Assert.Contains(record.HoverTips, tip => tip.Id == burning.Id);
-        Assert.Contains("效果增加20%。\n", record.GetDescriptionForPile(PileType.Deck));
+        Assert.Contains("效果增加10%。", record.GetDescriptionForPile(PileType.Deck));
+        Assert.Contains("素材复用", record.GetDescriptionForPile(PileType.Deck));
     }
 
     private async Task TakeBurnDamage() => await CreatureCmd.Damage(
