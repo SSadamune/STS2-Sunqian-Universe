@@ -380,5 +380,15 @@
   "SUNQIAN_UNIVERSE_CARD_COMPANION_SKILL_RECORD.description": "{SkillDescription}",
   "SUNQIAN_UNIVERSE_CARD_COMPANION_SKILL_RECORD.selectionPrompt": "Choose Shared Life to summon an absent companion",
   "SUNQIAN_UNIVERSE_CARD_SERPENT_SPEAR.title": "Serpent Spear",
-  "SUNQIAN_UNIVERSE_CARD_SERPENT_SPEAR.description": "[gold]Third Brother[/gold] deals {CompanionDamage:diff()} damage to a random enemy.\n[gold]Third Brother[/gold] gains {Strength:diff()} [gold]Strength[/gold] and unlocks [gold]Make Holes[/gold]."
+  "SUNQIAN_UNIVERSE_CARD_SERPENT_SPEAR.description": "[gold]Third Brother[/gold] deals {CompanionDamage:diff()} damage to a random enemy.\n[gold]Third Brother[/gold] gains {Strength:diff()} [gold]Strength[/gold] and unlocks [gold]Make Holes[/gold].",
+  "SUNQIAN_UNIVERSE_CARD_WORKPLACE_BULLYING.title": "Workplace Bullying",
+  "SUNQIAN_UNIVERSE_CARD_WORKPLACE_BULLYING.description": "[gold]Summon[/gold] [gold]Second Brother[/gold] and [gold]Third Brother[/gold] {Summon:diff()}.\nEach deals damage equal to their current HP.",
+  "SUNQIAN_UNIVERSE_CARD_DRAGON_EMPEROR_MARCH.title": "Dragon Emperor March",
+  "SUNQIAN_UNIVERSE_CARD_DRAGON_EMPEROR_MARCH.description": "If [gold]Second Brother[/gold] is present, after you play a card with “Dragon” in its name, gain a [gold]{RewardCard}[/gold].",
+  "SUNQIAN_UNIVERSE_CARD_EMPERORS_MARCH.title": "Emperor’s March",
+  "SUNQIAN_UNIVERSE_CARD_EMPERORS_MARCH.description": "[gold]Second Brother[/gold] deals {CompanionDamage:diff()} damage.\nApply that much [gold]Doom[/gold] to the enemy.",
+  "SUNQIAN_UNIVERSE_CARD_ABDUCT_ZILONG.title": "Abduct Zilong",
+  "SUNQIAN_UNIVERSE_CARD_ABDUCT_ZILONG.description": "[gold]Righteousness[/gold] {Righteousness:diff()}.\nChoose 1 of 3 [gold]Strike cards[/gold] from other characters.\nIt has a {EnchantmentQuality} enchantment and will appear in combat rewards.",
+  "SUNQIAN_UNIVERSE_CARD_ABDUCT_ZILONG.randomEnchantment": "random",
+  "SUNQIAN_UNIVERSE_CARD_ABDUCT_ZILONG.strongEnchantment": "powerful"
 }

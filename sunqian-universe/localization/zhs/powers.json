@@ -181,5 +181,9 @@
   "SUNQIAN_UNIVERSE_POWER_SHARED_LIFE_POWER.description": "如果场上没有此召唤物，你可以失去8点生命并召唤8点生命的它。\n战斗结束时，为你恢复等量于此召唤物的生命（至多恢复等量于你为它失去过的生命）。",
   "SUNQIAN_UNIVERSE_POWER_SHARED_LIFE_POWER.unlockedDescription": "如果场上没有[gold]{Companion}[/gold]，你可以失去8点生命并召唤8点生命的[gold]{Companion}[/gold]。\n战斗结束时，为你恢复等量于[gold]{Companion}[/gold]的生命（至多恢复{max}点，此上限为你为[gold]{Companion}[/gold]失去过的生命）。",
   "SUNQIAN_UNIVERSE_POWER_MAKE_HOLES_POWER.title": "制造窟窿",
-  "SUNQIAN_UNIVERSE_POWER_MAKE_HOLES_POWER.description": "你打出的[gold]三弟[/gold]攻击牌会附加随机效果。"
+  "SUNQIAN_UNIVERSE_POWER_MAKE_HOLES_POWER.description": "你打出的[gold]三弟[/gold]攻击牌会附加随机效果。",
+  "SUNQIAN_UNIVERSE_POWER_DRAGON_EMPEROR_MARCH_POWER.title": "龙帝征",
+  "SUNQIAN_UNIVERSE_POWER_DRAGON_EMPEROR_MARCH_POWER.description": "如果[gold]二弟[/gold]在场，你打出名字中包含“龙”的牌后，获得{NormalCount}张[gold]帝王之征[/gold]。",
+  "SUNQIAN_UNIVERSE_POWER_DRAGON_EMPEROR_MARCH_POWER.upgradedDescription": "如果[gold]二弟[/gold]在场，你打出名字中包含“龙”的牌后，获得{UpgradedCount}张[gold]帝王之征+[/gold]。",
+  "SUNQIAN_UNIVERSE_POWER_DRAGON_EMPEROR_MARCH_POWER.mixedDescription": "如果[gold]二弟[/gold]在场，你打出名字中包含“龙”的牌后，获得{NormalCount}张[gold]帝王之征[/gold]和{UpgradedCount}张[gold]帝王之征+[/gold]。"
 }

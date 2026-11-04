@@ -16,6 +16,7 @@ namespace Squ.Cards;
 [RegisterCard(typeof(LiubeiCardPool), StableEntryStem = "deafen_my_ears")]
 public sealed class DeafenMyEars : ModCardTemplate
 {
+    protected override HashSet<CardTag> CanonicalTags => [SquCardTags.Dragon];
 	protected override IEnumerable<DynamicVar> CanonicalVars => [new DynamicVar("Multiplier", 4)];
 	public override IEnumerable<CardKeyword> CanonicalKeywords => [CardKeyword.Exhaust];
 	public override CardAssetProfile AssetProfile => new(PortraitPath: "res://images/cards/PrisonerPlaceholder.png");

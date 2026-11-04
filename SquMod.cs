@@ -43,6 +43,7 @@ public static class SquMod
 		SquTargetTypes.Register();
 		CompanionSummons.Initialize();
 		SharedLifeSystem.Initialize();
+		EnchantedStrikeRewards.Initialize();
 		CompanionSkillCollection.Register();
 		SelfHarmSystem.Initialize();
 		RitsuLibFramework.EnsureGodotScriptsRegistered(assembly, Logger);

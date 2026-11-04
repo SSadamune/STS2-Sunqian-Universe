@@ -380,5 +380,15 @@
   "SUNQIAN_UNIVERSE_CARD_COMPANION_SKILL_RECORD.description": "{SkillDescription}",
   "SUNQIAN_UNIVERSE_CARD_COMPANION_SKILL_RECORD.selectionPrompt": "选择共享生命以召回不在场的召唤物",
   "SUNQIAN_UNIVERSE_CARD_SERPENT_SPEAR.title": "丈八蛇矛",
-  "SUNQIAN_UNIVERSE_CARD_SERPENT_SPEAR.description": "[gold]三弟[/gold]对随机敌人造成{CompanionDamage:diff()}点伤害。\n[gold]三弟[/gold]获得{Strength:diff()}点[gold]力量[/gold]并解锁[gold]制造窟窿[/gold]。"
+  "SUNQIAN_UNIVERSE_CARD_SERPENT_SPEAR.description": "[gold]三弟[/gold]对随机敌人造成{CompanionDamage:diff()}点伤害。\n[gold]三弟[/gold]获得{Strength:diff()}点[gold]力量[/gold]并解锁[gold]制造窟窿[/gold]。",
+  "SUNQIAN_UNIVERSE_CARD_WORKPLACE_BULLYING.title": "职场霸凌",
+  "SUNQIAN_UNIVERSE_CARD_WORKPLACE_BULLYING.description": "[gold]召唤[/gold][lb][gold]二弟[/gold]]和[lb][gold]三弟[/gold]]{Summon:diff()}。\n二者分别造成等于各自生命值的伤害。",
+  "SUNQIAN_UNIVERSE_CARD_DRAGON_EMPEROR_MARCH.title": "龙帝征",
+  "SUNQIAN_UNIVERSE_CARD_DRAGON_EMPEROR_MARCH.description": "如果[gold]二弟[/gold]在场，你打出名字中包含“龙”的牌后，获得一张[gold]{RewardCard}[/gold]。",
+  "SUNQIAN_UNIVERSE_CARD_EMPERORS_MARCH.title": "帝王之征",
+  "SUNQIAN_UNIVERSE_CARD_EMPERORS_MARCH.description": "[gold]二弟[/gold]造成{CompanionDamage:diff()}点伤害。\n根据伤害给予该敌人等量[gold]灾厄[/gold]。",
+  "SUNQIAN_UNIVERSE_CARD_ABDUCT_ZILONG.title": "诱拐子龙",
+  "SUNQIAN_UNIVERSE_CARD_ABDUCT_ZILONG.description": "[gold]仁义[/gold]{Righteousness:diff()}。\n从三张其他角色的[gold]各种打击牌[/gold]中获得一张。\n该牌具有{EnchantmentQuality}附魔且会出现在战斗奖励中。",
+  "SUNQIAN_UNIVERSE_CARD_ABDUCT_ZILONG.randomEnchantment": "随机",
+  "SUNQIAN_UNIVERSE_CARD_ABDUCT_ZILONG.strongEnchantment": "强力"
 }

@@ -19,6 +19,7 @@ namespace Squ.Cards;
 [RegisterCard(typeof(LiubeiCardPool), StableEntryStem = "green_dragon_crescent_blade")]
 public sealed class GreenDragonCrescentBlade : ModCardTemplate, IRowKeywordsCard
 {
+    protected override HashSet<CardTag> CanonicalTags => [SquCardTags.Dragon];
     public GreenDragonCrescentBlade() : base(1, CardType.Attack, CardRarity.Uncommon, TargetType.AllEnemies) { }
     public override CardAssetProfile AssetProfile => new(PortraitPath: "res://images/cards/PrisonerPlaceholder.png");
     protected override IEnumerable<DynamicVar> CanonicalVars => [new CompanionDamageVar(CompanionSummons.SecondBrotherId, 9), new DynamicVar("Strength", 2)];
