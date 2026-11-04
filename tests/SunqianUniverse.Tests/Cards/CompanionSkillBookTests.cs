@@ -14,7 +14,7 @@ using TestTheSpire;
 using Xunit;
 namespace Squ.Tests.Cards;
 
-public sealed class CompanionSkillCollectionTests : SunqianCombatTestSuite
+public sealed class CompanionSkillBookTests : SunqianCombatTestSuite
 {
     protected override void ConfigureBattle(CombatTestBattleBuilder battle) =>
         battle.Player<LiubeiCharacter>().AddEnemy<BigDummy>().WithSeed("companion-skill-collection");
@@ -22,7 +22,7 @@ public sealed class CompanionSkillCollectionTests : SunqianCombatTestSuite
     private async Task ChooseBrother(string id)
     {
         var card = await AddToHand<SoulContract>();
-        var selector = new ScriptedCardSelector().ThenSelectWhere(card => card is CompanionSummonChoice option && option.CompanionId == id);
+        var selector = new ScriptedCardSelector().ThenSelectWhere(card => card is SoulContractRecord option && option.CompanionId == id);
         using (UseCardSelector(selector)) await Play(card);
         AssertAllSelectionsConsumed(selector);
     }
@@ -31,22 +31,22 @@ public sealed class CompanionSkillCollectionTests : SunqianCombatTestSuite
     public async Task Collection_cancel_has_no_effect_and_confirmed_selection_runs_the_managed_action()
     {
         await ChooseBrother(CompanionSummons.SecondBrotherId);
-        var pet = CompanionSummons.GetCompanion(Player, CompanionSummons.SecondBrotherId)!;
-        await CreatureCmd.Kill(pet, force: true);
+        Assert.Null(CompanionSummons.GetCompanion(Player, CompanionSummons.SecondBrotherId));
         int hp = Player.Creature.CurrentHp;
         var cancel = new ScriptedCardSelector().ThenSkip();
-        using (UseCardSelector(cancel)) await CompanionSkillCollection.Open(Player);
+        using (UseCardSelector(cancel)) await CompanionSkillBook.Open(Player);
         AssertAllSelectionsConsumed(cancel);
         Assert.Equal(hp, Player.Creature.CurrentHp);
-        Assert.False(pet.IsAlive);
-        var confirm = new ScriptedCardSelector().ThenSelectFirst();
-        using (UseCardSelector(confirm)) await CompanionSkillCollection.Open(Player);
+        Assert.Null(CompanionSummons.GetCompanion(Player, CompanionSummons.SecondBrotherId));
+        var confirm = new ScriptedCardSelector().ThenSelectWhere(card => card is SoulContractRecord);
+        using (UseCardSelector(confirm)) await CompanionSkillBook.Open(Player);
         AssertAllSelectionsConsumed(confirm);
         await WaitForIdle();
+        var pet = CompanionSummons.GetCompanion(Player, CompanionSummons.SecondBrotherId)!;
         Assert.True(pet.IsAlive);
-        Assert.Equal(8, pet.CurrentHp);
-        Assert.Equal(hp - 8, Player.Creature.CurrentHp);
-        Assert.Equal(8, SharedLifeSystem.GetTotal(Player));
+        Assert.Equal(7, pet.CurrentHp);
+        Assert.Equal(hp - 7, Player.Creature.CurrentHp);
+        Assert.Equal(7, SharedLifeSystem.GetTotal(Player));
     }
 
 }

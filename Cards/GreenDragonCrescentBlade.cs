@@ -6,8 +6,8 @@ using MegaCrit.Sts2.Core.Models.Powers;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.HoverTips;
-using MegaCrit.Sts2.Core.Localization;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
+using Squ;
 using Squ.Character;
 using Squ.Combat;
 using Squ.Powers;
@@ -20,15 +20,14 @@ namespace Squ.Cards;
 public sealed class GreenDragonCrescentBlade : ModCardTemplate, IRowKeywordsCard
 {
     protected override HashSet<CardTag> CanonicalTags => [SquCardTags.Dragon];
-    public GreenDragonCrescentBlade() : base(1, CardType.Attack, CardRarity.Uncommon, TargetType.AllEnemies) { }
+    public GreenDragonCrescentBlade() : base(2, CardType.Attack, CardRarity.Uncommon, TargetType.AllEnemies) { }
     public override CardAssetProfile AssetProfile => new(PortraitPath: "res://images/cards/PrisonerPlaceholder.png");
     protected override IEnumerable<DynamicVar> CanonicalVars => [new CompanionDamageVar(CompanionSummons.SecondBrotherId, 9), new DynamicVar("Strength", 2)];
     protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
     [
         HoverTipFactory.FromPower<StrengthPower>(),
-        new HoverTip(new LocString("powers", "SUNQIAN_UNIVERSE_POWER_SPARE_THE_YOUNG_AND_OLD_POWER.title"),
-            new LocString("powers", "SUNQIAN_UNIVERSE_COMPANION_SKILL.rules").GetFormattedText()
-            + "\n" + new LocString("powers", "SUNQIAN_UNIVERSE_POWER_SPARE_THE_YOUNG_AND_OLD_POWER.preview").GetFormattedText()),
+        HoverTipFactory.FromPower<SpareTheYoungAndOldPower>(),
+        HoverTipFactory.FromKeyword(SquKeywords.CompanionSkill),
     ];
     private bool IsBrotherMissing => Owner == null || CompanionSummons.GetCompanion(Owner, CompanionSummons.SecondBrotherId) is not { IsAlive: true };
     protected override bool IsPlayable => !IsBrotherMissing;

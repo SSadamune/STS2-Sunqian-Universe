@@ -26,7 +26,7 @@ public static class CompanionSkills
         if (!data.TryGetValue((player, id), out var skills)) data[(player, id)] = skills = [];
         var skill = ModelDb.Power<T>();
         if (!skills.Contains(skill)) skills.Add(skill);
-        await CompanionSkillCollection.Record(player, id, skill);
+        await CompanionSkillBook.Record(player, id, skill);
         if (CompanionSummons.GetCompanion(player, id) is { IsAlive: true } pet)
             await ApplyUnlocks(context, player, id, pet);
     }

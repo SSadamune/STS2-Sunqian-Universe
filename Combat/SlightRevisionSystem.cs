@@ -120,8 +120,14 @@ public static class SlightRevisionSystem
 	public static IEnumerable<IHoverTip> GetHoverTips(
 		CardModel source,
 		CardModel target,
-		bool targetUpgraded) =>
-		SquCardHoverTipFactory.FromCardWithCardHoverTips(source, target, targetUpgraded);
+		bool targetUpgraded)
+	{
+		if (source is Squ.Cards.MilkDragonEmerges && target is Squ.Cards.BowangParadoxScript)
+		{
+			target = ModelDb.Card<Squ.Cards.MilkDragonBowangScriptPreview>();
+		}
+		return SquCardHoverTipFactory.FromCardWithCardHoverTips(source, target, targetUpgraded);
+	}
 
 	public static async Task TransformAsync(CardModel original, CardModel target, bool targetUpgraded)
 	{

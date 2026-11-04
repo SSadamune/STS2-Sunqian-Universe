@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using MegaCrit.Sts2.Core.Commands;
+using MegaCrit.Sts2.Core.Combat;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.Entities.Creatures;
 using MegaCrit.Sts2.Core.Entities.Powers;
@@ -50,8 +51,21 @@ public sealed class RighteousnessPower : ModPowerTemplate
 	{
 		if (power == this && Owner.Player is { } player)
 		{
+			int previous = RighteousnessRunData.Get(player);
+            if (Amount < previous) RighteousnessRunData.RecordLoss(player, (long)previous - Amount);
 			RighteousnessRunData.Set(player, Amount);
 		}
 		return Task.CompletedTask;
 	}
+
+    public override Task AfterRemoved(Creature oldOwner)
+    {
+        if (Amount != 0 && oldOwner.Player is { } player && CombatManager.Instance.IsInProgress
+            && !CombatManager.Instance.IsOverOrEnding)
+        {
+            RighteousnessRunData.RecordLoss(player, Math.Max(0, RighteousnessRunData.Get(player)));
+            RighteousnessRunData.Set(player, 0);
+        }
+        return Task.CompletedTask;
+    }
 }

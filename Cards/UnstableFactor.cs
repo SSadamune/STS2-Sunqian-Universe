@@ -7,6 +7,7 @@ using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Localization;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
+using Squ;
 using Squ.Character;
 using Squ.Combat;
 using Squ.Powers;
@@ -23,8 +24,8 @@ public sealed class UnstableFactor : ModCardTemplate, IRowKeywordsCard
     protected override IEnumerable<DynamicVar> CanonicalVars => [new SummonVar(4)];
     protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
     [CompanionSummonKeywords.NamedHoverTip(CompanionSummons.ThirdBrotherId, DynamicVars.Summon),
-        new HoverTip(new LocString("powers", "SUNQIAN_UNIVERSE_POWER_HARD_TO_RESTRAIN_POWER.title"),
-            new LocString("powers", "SUNQIAN_UNIVERSE_POWER_HARD_TO_RESTRAIN_POWER.description"))];
+        HoverTipFactory.FromPower<HardToRestrainPower>(),
+        HoverTipFactory.FromKeyword(SquKeywords.CompanionSkill)];
     protected override void AddExtraArgsToDescription(LocString description) =>
         SquKeywords.AddNestedLoc(description, "SummonText", CompanionSummonKeywords.NamedCardText(
             CompanionSummons.ThirdBrotherId, DynamicVars.Summon));

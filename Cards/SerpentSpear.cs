@@ -5,9 +5,9 @@ using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.HoverTips;
-using MegaCrit.Sts2.Core.Localization;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.Models.Powers;
+using Squ;
 using Squ.Character;
 using Squ.Combat;
 using Squ.Powers;
@@ -27,8 +27,8 @@ public sealed class SerpentSpear : ModCardTemplate
     protected override bool ShouldGlowRedInternal => IsBrotherMissing;
     protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
     [HoverTipFactory.FromPower<StrengthPower>(),
-     new HoverTip(new LocString("powers", "SUNQIAN_UNIVERSE_POWER_MAKE_HOLES_POWER.title"),
-         new LocString("powers", "SUNQIAN_UNIVERSE_POWER_MAKE_HOLES_POWER.description"))];
+     HoverTipFactory.FromPower<MakeHolesPower>(),
+     HoverTipFactory.FromKeyword(SquKeywords.CompanionSkill)];
     protected override async Task OnPlay(PlayerChoiceContext context, CardPlay play)
     {
         var pet = CompanionSummons.GetCompanion(Owner, CompanionSummons.ThirdBrotherId);

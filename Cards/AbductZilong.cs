@@ -19,9 +19,8 @@ namespace Squ.Cards;
 [RegisterCard(typeof(LiubeiCardPool), StableEntryStem = "abduct_zilong")]
 public sealed class AbductZilong : ModCardTemplate
 {
-    public AbductZilong() : base(1, CardType.Skill, CardRarity.Uncommon, TargetType.Self) { }
+    public AbductZilong() : base(1, CardType.Power, CardRarity.Uncommon, TargetType.Self) { }
     protected override HashSet<CardTag> CanonicalTags => [SquCardTags.Dragon];
-    public override IEnumerable<CardKeyword> CanonicalKeywords => [CardKeyword.Exhaust];
     protected override IEnumerable<DynamicVar> CanonicalVars => [new DynamicVar("Righteousness", 3)];
     public override CardAssetProfile AssetProfile => new(PortraitPath: "res://images/cards/PrisonerPlaceholder.png");
     protected override IEnumerable<IHoverTip> AdditionalHoverTips =>

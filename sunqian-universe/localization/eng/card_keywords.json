@@ -23,6 +23,8 @@
   "SUNQIAN_UNIVERSE_KEYWORD_VARIOUS_STRIKE_CARDS.description": "Cards with \"Strike\" in their name are called [gold]Strike Cards[/gold].",
   "SUNQIAN_UNIVERSE_KEYWORD_VARIOUS_DEFEND_CARDS.title": "Defend Cards",
   "SUNQIAN_UNIVERSE_KEYWORD_VARIOUS_DEFEND_CARDS.description": "Cards with \"Defend\" in their name are called [gold]Defend Cards[/gold].",
+  "SUNQIAN_UNIVERSE_KEYWORD_COMPANION_SKILL.title": "Companion Skill",
+  "SUNQIAN_UNIVERSE_KEYWORD_COMPANION_SKILL.description": "Only a companion's first unlocked skill is active. Every 10 Max HP allows one more skill to be active.",
   "SUNQIAN_UNIVERSE_KEYWORD_FIT.title": "Fit",
   "SUNQIAN_UNIVERSE_KEYWORD_FIT.description": "Whenever this would be shuffled into your [gold]Draw Pile[/gold], place it on the top instead.",
   "SUNQIAN_UNIVERSE_KEYWORD_WAR_FEEDS_WAR.title": "War Feeds War",

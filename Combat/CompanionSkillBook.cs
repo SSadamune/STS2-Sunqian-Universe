@@ -25,13 +25,13 @@ using STS2RitsuLib.CardPiles;
 using STS2RitsuLib.Networking.ManagedActions;
 namespace Squ.Combat;
 
-public static class CompanionSkillCollection
+public static class CompanionSkillBook
 {
     public static PileType Pile { get; private set; }
     private sealed record Activation(string CompanionId, int Turn);
     private static readonly HashSet<Player> Selecting = [];
     private static readonly RitsuLibManagedNetActionDescriptor<Activation> ActivateAction = new(
-        SquMod.ModId, "shared_life_summon", value => JsonSerializer.SerializeToUtf8Bytes(value),
+        SquMod.ModId, "soul_contract_summon", value => JsonSerializer.SerializeToUtf8Bytes(value),
         bytes => JsonSerializer.Deserialize<Activation>(bytes)!,
         async context =>
         {
@@ -41,7 +41,7 @@ public static class CompanionSkillCollection
 
     public static void Register()
     {
-        Pile = ModCardPileRegistry.For(SquMod.ModId).RegisterOwned("companion_skills", new ModCardPileSpec
+        Pile = ModCardPileRegistry.For(SquMod.ModId).RegisterOwned("companion_skill_book", new ModCardPileSpec
         {
             Scope = ModCardPileScope.CombatOnly, Style = ModCardPileUiStyle.BottomRight,
             Anchor = new ModCardPileAnchor(ModCardPileAnchorKind.BottomRightPrimary, new Vector2(100, -210)),
@@ -72,24 +72,31 @@ public static class CompanionSkillCollection
         await CardPileCmd.Add(record, Pile);
     }
 
+    internal static async Task RecordContract(Player player, string id)
+    {
+        if (Pile.GetPile(player).Cards.OfType<SoulContractRecord>().Any(card => card.CompanionId == id)) return;
+        var record = player.Creature.CombatState!.CreateCard<SoulContractRecord>(player);
+        record.CompanionId = id;
+        await CardPileCmd.Add(record, Pile);
+    }
+
     private static bool CanOpenActivation(Player player) => !Selecting.Contains(player)
-        && Pile.GetPile(player).Cards.OfType<CompanionSkillRecord>().Any(card => CanActivate(player, card.CompanionId));
+        && Pile.GetPile(player).Cards.OfType<SoulContractRecord>().Any(card => CanActivate(player, card.CompanionId));
 
     internal static bool CanActivate(Player player, string id) => player.Creature.IsAlive
         && CombatManager.Instance.IsInProgress && !CombatManager.Instance.IsOverOrEnding
         && CombatManager.Instance.IsPartOfPlayerTurn(player)
         && CompanionSummons.GetCompanion(player, id) is not { IsAlive: true }
-        && Pile.GetPile(player).Cards.OfType<CompanionSkillRecord>().Any(card => card.CompanionId == id && card.Skill == "SharedLife")
-        && CompanionSummons.GetCompanion(player, id)?.GetPower<SharedLifePower>() is { IsActive: true };
+        && Pile.GetPile(player).Cards.OfType<SoulContractRecord>().Any(card => card.CompanionId == id);
 
     internal static async Task<bool> Activate(PlayerChoiceContext context, Player player, string id)
     {
         if (!CanActivate(player, id)) return false;
-        var hits = await CreatureCmd.Damage(context, player.Creature, 8,
+        var hits = await CreatureCmd.Damage(context, player.Creature, 7,
             ValueProp.Unblockable | ValueProp.Unpowered, null, null);
         SharedLifeSystem.AddContribution(player, hits.Where(hit => hit.Receiver == player.Creature).Sum(hit => hit.UnblockedDamage), id);
         if (player.Creature.IsAlive)
-            await CompanionSummons.SummonSpecific(context, player, id, 8, null);
+            await CompanionSummons.SummonSpecific(context, player, id, 7, null);
         return true;
     }
 
@@ -107,11 +114,11 @@ public static class CompanionSkillCollection
             else
             {
                 NPlayerHand.Instance?.CancelAllCardPlay();
-                var screen = NCombatPileCardSelectScreen.Create(pile, prefs, card => card is CompanionSkillRecord);
+                var screen = NCombatPileCardSelectScreen.Create(pile, prefs, card => card is CompanionSkillRecord or SoulContractRecord);
                 NOverlayStack.Instance!.Push(screen);
                 selected = await screen.CardsSelected();
             }
-            if (selected.OfType<CompanionSkillRecord>().SingleOrDefault() is { Skill: "SharedLife" } record
+            if (selected.OfType<SoulContractRecord>().SingleOrDefault() is { } record
                 && CanActivate(player, record.CompanionId))
                 RitsuLibManagedNetActions.Request(RunManager.Instance, ActivateAction,
                     new Activation(record.CompanionId, player.PlayerCombatState!.TurnNumber), player.NetId);

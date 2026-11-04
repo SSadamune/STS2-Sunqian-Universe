@@ -25,6 +25,9 @@ public static class RighteousnessRunData
 		});
 
 	public static int Get(Player player) => Saved.Get(player).Amount;
+    public static int GetLostAmount(Player player) => Saved.Get(player).LostAmount;
+    internal static void RecordLoss(Player player, long amount) => Saved.Modify(player, state =>
+        state.LostAmount = (int)System.Math.Min(int.MaxValue, (long)state.LostAmount + System.Math.Max(0, amount)));
 
 	internal static void Set(Player player, int amount) =>
 		Saved.Modify(player, state => state.Amount = amount);
@@ -43,5 +46,6 @@ public static class RighteousnessRunData
 	private sealed class State
 	{
 		public int Amount { get; set; }
+        public int LostAmount { get; set; }
 	}
 }

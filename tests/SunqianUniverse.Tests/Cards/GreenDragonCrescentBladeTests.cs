@@ -1,11 +1,13 @@
 using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
+using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.Models.Monsters;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.Powers;
 using MegaCrit.Sts2.Core.ValueProps;
 using HarmonyLib;
+using Squ;
 using Squ.Cards;
 using Squ.Character;
 using Squ.Combat;
@@ -30,7 +32,16 @@ public sealed class GreenDragonCrescentBladeTests : SunqianCombatTestSuite
     {
         var card = await AddToHand<GreenDragonCrescentBlade>();
         if (upgraded) Upgrade(card);
+        Assert.Equal(2, card.EnergyCost.GetResolved());
         Assert.False(card.CanPlay(out _, out _));
+        HoverTip keyword = Assert.IsType<HoverTip>(HoverTipFactory.FromKeyword(SquKeywords.CompanionSkill));
+        Assert.Equal("召唤物技能", keyword.Title);
+        Assert.Equal("召唤物只有第一个被解锁的技能生效，每拥有10点生命上限，可以多生效一个技能。", keyword.Description);
+        Assert.Contains(card.HoverTips, tip => tip.Id == keyword.Id);
+        HoverTip skill = Assert.IsType<HoverTip>(Assert.Single(card.HoverTips, tip => tip is HoverTip hover && hover.Title == "不斩老幼"));
+        Assert.StartsWith("[gold]召唤物技能[/gold]：", skill.Description);
+        Assert.Contains("对生命值大于25%且小于75%的敌人造成双倍伤害。", skill.Description);
+        Assert.DoesNotContain("按解锁顺序", skill.Description);
         Assert.Null(CompanionSummons.GetCompanion(Player, CompanionSummons.SecondBrotherId));
         await SummonSecond();
         var pet = CompanionSummons.GetCompanion(Player, CompanionSummons.SecondBrotherId)!;
@@ -57,6 +68,7 @@ public sealed class GreenDragonCrescentBladeTests : SunqianCombatTestSuite
         bool secondUpgraded, int hp, int strength)
     {
         await SummonSecond();
+        await PlayerCmd.SetEnergy(4, Player);
         var first = await AddToHand<GreenDragonCrescentBlade>();
         if (firstUpgraded) Upgrade(first);
         Assert.Equal(CardType.Attack, first.Type);

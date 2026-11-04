@@ -78,6 +78,7 @@ public sealed class DragonEmperorMarchTests : SunqianCombatTestSuite
     [Fact]
     public async Task Only_a_living_second_brother_enables_generation_and_untagged_cards_do_not_trigger()
     {
+        await PlayerCmd.SetEnergy(4, Player);
         await Play(await AddToHand<DragonEmperorMarch>());
         Assert.Empty(Tokens);
         await CompanionSummons.SummonSpecific(Choice(), Player, CompanionSummons.ThirdBrotherId, 20, null);

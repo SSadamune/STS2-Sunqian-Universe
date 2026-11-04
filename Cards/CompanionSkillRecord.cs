@@ -8,6 +8,7 @@ using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.CardPools;
 using MegaCrit.Sts2.Core.Saves.Runs;
+using Squ;
 using Squ.Character;
 using Squ.Combat;
 using Squ.Powers;
@@ -23,8 +24,7 @@ public sealed class CompanionSkillRecord : ModCardTemplate
     public CompanionSkillRecord() : base(0, CardType.Skill, CardRarity.Token, TargetType.Self, showInCardLibrary: false) { }
     public override int MaxUpgradeLevel => 0;
     protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
-        [new HoverTip(new LocString("cards", "SUNQIAN_UNIVERSE_CARD_COMPANION_SKILL_RECORD.title"),
-            new LocString("powers", "SUNQIAN_UNIVERSE_COMPANION_SKILL.rules"))];
+        [HoverTipFactory.FromKeyword(SquKeywords.CompanionSkill)];
     public override CardPoolModel VisualCardPool => ModelDb.CardPool<LiubeiCardPool>();
     public override CardAssetProfile AssetProfile => new(PortraitPath: CompanionSummons.GetPortraitPath(CompanionId));
     public override string Title => Power.Title.GetFormattedText() + "·" + CompanionSummons.GetName(CompanionId).GetFormattedText();

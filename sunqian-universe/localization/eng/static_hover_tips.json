@@ -2,7 +2,7 @@
   "SUNQIAN_UNIVERSE_CARDPILE_SCRIPT_COLLECTION.title": "Script Collection",
   "SUNQIAN_UNIVERSE_CARDPILE_SCRIPT_COLLECTION.description": "Click to view Scripts previously activated during this combat and those currently active.\nIf the Script Collection contains at least four kinds of Script, your [gold]activation limit[/gold] +1.",
   "SUNQIAN_UNIVERSE_CARDPILE_SCRIPT_COLLECTION.empty": "The Script Collection is empty.",
-  "SUNQIAN_UNIVERSE_CARDPILE_COMPANION_SKILLS.title": "Companion Skills",
-  "SUNQIAN_UNIVERSE_CARDPILE_COMPANION_SKILLS.description": "View unlocked companion skills.\nChoose Shared Life to summon an absent companion.",
-  "SUNQIAN_UNIVERSE_CARDPILE_COMPANION_SKILLS.empty": "No companion skills unlocked."
+  "SUNQIAN_UNIVERSE_CARDPILE_COMPANION_SKILL_BOOK.title": "Companion Skill Book",
+  "SUNQIAN_UNIVERSE_CARDPILE_COMPANION_SKILL_BOOK.description": "View companion skills and Soul Contracts.\nChoose a Soul Contract to summon an absent companion.",
+  "SUNQIAN_UNIVERSE_CARDPILE_COMPANION_SKILL_BOOK.empty": "The Companion Skill Book is empty."
 }

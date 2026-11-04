@@ -28,9 +28,11 @@ public sealed class AbductZilongTests : SunqianCombatTestSuite
         var card = await AddToHand<AbductZilong>();
         if (upgraded) Upgrade(card);
         Assert.Equal(1, card.EnergyCost.GetResolved());
-        Assert.Equal(CardType.Skill, card.Type);
+        Assert.Equal(CardType.Power, card.Type);
+        Assert.DoesNotContain(CardKeyword.Exhaust, card.Keywords);
         Assert.Equal(CardRarity.Uncommon, card.Rarity);
         Assert.Contains(SquCardTags.Dragon, card.Tags);
+        Assert.Contains("获得一张。该牌具有" + (upgraded ? "强力" : "随机") + "附魔", card.GetDescriptionForPile(PileType.Hand));
         CardModel? selected = null;
         var selector = new ScriptedCardSelector().ThenSelect(options =>
         {
@@ -50,8 +52,7 @@ public sealed class AbductZilongTests : SunqianCombatTestSuite
         Assert.NotNull(selected);
         AssertInPile(selected, PileType.Hand);
         Assert.Equal(righteousness, Player.Creature.GetPower<RighteousnessPower>()!.Amount);
-        AssertInPile(card, PileType.Exhaust);
-        Assert.Contains(upgraded ? "强力附魔" : "随机附魔", card.GetDescriptionForPile(PileType.Hand));
+        Assert.Null(card.Pile);
     }
 
     [Fact]

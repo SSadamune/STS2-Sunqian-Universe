@@ -9,6 +9,7 @@ using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Localization;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
+using Squ;
 using Squ.Character;
 using Squ.Combat;
 using Squ.Powers;
@@ -21,26 +22,24 @@ namespace Squ.Cards;
 public sealed class SoulContract : ModCardTemplate
 {
     public SoulContract() : base(1, CardType.Power, CardRarity.Basic, TargetType.Self) { }
+    public override IEnumerable<CardKeyword> CanonicalKeywords => [CardKeyword.Innate];
     public override CardAssetProfile AssetProfile => new(PortraitPath: "res://images/cards/PrisonerPlaceholder.png");
-    protected override IEnumerable<DynamicVar> CanonicalVars => [new SummonVar(6)];
     protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
-    [CompanionSummonKeywords.NamedHoverTip(CompanionSummons.SecondBrotherId, DynamicVars.Summon),
-     CompanionSummonKeywords.NamedHoverTip(CompanionSummons.ThirdBrotherId, DynamicVars.Summon),
-     new HoverTip(new LocString("powers", "SUNQIAN_UNIVERSE_POWER_SHARED_LIFE_POWER.title"), SharedLifePower.CreateDescription())];
+        [HoverTipFactory.FromPower<SharedLifePower>(), HoverTipFactory.FromKeyword(SquKeywords.CompanionSkill)];
     protected override async Task OnPlay(PlayerChoiceContext context, CardPlay play)
     {
         var options = new[] { CompanionSummons.SecondBrotherId, CompanionSummons.ThirdBrotherId }.Select(id =>
         {
-            var option = CombatState!.CreateCard<CompanionSummonChoice>(Owner);
-            option.Configure(id, DynamicVars.Summon.BaseValue);
+            var option = CombatState!.CreateCard<SoulContractRecord>(Owner);
+            option.CompanionId = id;
             return (MegaCrit.Sts2.Core.Models.CardModel)option;
         }).ToArray();
         var prefs = new CardSelectorPrefs(new LocString("cards", Id.Entry + ".selectionPrompt"), 1)
         { Cancelable = false, RequireManualConfirmation = true, PretendCardsCanBePlayed = true, UnpoweredPreviews = true };
-        var choice = (await CardSelectCmd.FromSimpleGrid(context, options, Owner, prefs)).OfType<CompanionSummonChoice>().SingleOrDefault();
+        var choice = (await CardSelectCmd.FromSimpleGrid(context, options, Owner, prefs)).OfType<SoulContractRecord>().SingleOrDefault();
         if (choice == null) return;
         await CompanionSkills.UnlockForCompanion<SharedLifePower>(context, Owner, choice.CompanionId);
-        await CompanionSummons.SummonSpecific(context, Owner, choice.CompanionId, DynamicVars.Summon.BaseValue, this);
+        await CompanionSkillBook.RecordContract(Owner, choice.CompanionId);
     }
-    protected override void OnUpgrade() => AddKeyword(CardKeyword.Innate);
+    protected override void OnUpgrade() => EnergyCost.UpgradeBy(-1);
 }

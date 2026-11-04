@@ -40,7 +40,7 @@ public sealed class SlightRevisionCapability : CardCapability, ICardDescriptionC
 	}
 
 	public IEnumerable<IHoverTip> GetHoverTips(CardModel card) =>
-		SlightRevisionSystem.GetHoverTips(Target, TargetUpgraded);
+		SlightRevisionSystem.GetHoverTips(card, Target, TargetUpgraded);
 
 	protected override JsonNode? SaveAdditionalState() => new JsonObject
 	{

@@ -1,6 +1,9 @@
 #nullable enable
+using System.Collections.Generic;
 using System.Linq;
 using MegaCrit.Sts2.Core.Entities.Powers;
+using MegaCrit.Sts2.Core.HoverTips;
+using Squ;
 using Squ.Combat;
 using STS2RitsuLib.Scaffolding.Content;
 
@@ -14,4 +17,5 @@ public abstract class CompanionSkillPower : ModPowerTemplate
     public int RequiredMaxHp => CompanionSkills.RequiredMaxHp(
         Owner.Powers.OfType<CompanionSkillPower>().TakeWhile(skill => skill != this).Count());
     public bool IsActive => Owner.MaxHp >= RequiredMaxHp;
+    protected override IEnumerable<IHoverTip> AdditionalHoverTips => [HoverTipFactory.FromKeyword(SquKeywords.CompanionSkill)];
 }

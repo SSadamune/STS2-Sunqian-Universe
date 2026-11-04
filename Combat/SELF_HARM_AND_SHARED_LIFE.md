@@ -10,20 +10,23 @@ energy and preserve it. Combat cleanup clears granted self-harm. These payments
 are unrelated to Shared Life unless a source explicitly credits the companion.
 
 `SoulContract` replaces the two brother summon cards in Liu Bei's starting deck.
-It costs one energy, offers a mandatory two-card choice, summons the chosen
-brother for six, and unlocks Shared Life. Its upgrade adds Innate.
+It costs one energy, offers a mandatory two-card choice, unlocks Shared Life
+for the chosen brother, and records a separate Soul Contract.
+It is Innate and its upgrade reduces its energy cost to zero.
 
 `CompanionSkills` keeps per-player, per-companion unlock order and restores
 skills after summons. All unlocks create unique records in the combat-only
-`CompanionSkillCollection` pile. Skills cannot upgrade; their max-HP activation
+`CompanionSkillBook` pile. Skills cannot upgrade; their max-HP activation
 thresholds remain 0, 10, 20, etc. Ordinary summons do not unlock Shared Life.
 
-The skill collection is inspectable at any time. When Shared Life can be used,
+The skill book is inspectable at any time. When a Soul Contract can be used,
 its button opens a cancelable selection screen. Confirmed activation is sent
-through a managed combat action, with turn, ownership, unlock, skill activation,
-and companion absence checked again during execution. Browsing and cancellation
-have no gameplay effects. The activation loses eight HP, records the actual HP
-lost, and summons the absent companion for eight if the player survives.
+through a managed combat action, with turn, ownership, contract unlock, and
+companion absence checked again during execution. Browsing and cancellation
+have no gameplay effects. The contract is independent of companion skill slots
+and activation thresholds.
+The activation loses seven HP, records the actual HP
+lost, and summons the absent companion for seven if the player survives.
 
 `SharedLifeSystem.AddContribution(player, amount, companionId)` records actual
 HP lost for that companion, including Unstable Factor's losses for Third Brother.

@@ -94,6 +94,11 @@ public static class SquKeywords
 
 	public static readonly CardKeyword VariousDefendCards = VariousDefendCardsId.GetModCardKeyword();
 
+	public static readonly string CompanionSkillId = ModContentRegistry
+		.GetQualifiedKeywordId(SquMod.ModId, "companion_skill");
+
+	public static readonly CardKeyword CompanionSkill = CompanionSkillId.GetModCardKeyword();
+
 	public static readonly string EunuchMessageId = ModContentRegistry
 		.GetQualifiedKeywordId(SquMod.ModId, "eunuch_message");
 

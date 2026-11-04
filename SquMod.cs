@@ -44,7 +44,7 @@ public static class SquMod
 		CompanionSummons.Initialize();
 		SharedLifeSystem.Initialize();
 		EnchantedStrikeRewards.Initialize();
-		CompanionSkillCollection.Register();
+		CompanionSkillBook.Register();
 		SelfHarmSystem.Initialize();
 		RitsuLibFramework.EnsureGodotScriptsRegistered(assembly, Logger);
 		ModTypeDiscoveryHub.RegisterModAssembly(ModId, assembly);
@@ -76,6 +76,7 @@ public static class SquMod
 			.CardKeywordOwnedByLocNamespace("counts_as_played")
 			.CardKeywordOwnedByLocNamespace("various_strike_cards")
 			.CardKeywordOwnedByLocNamespace("various_defend_cards")
+			.CardKeywordOwnedByLocNamespace("companion_skill")
 			.CardKeywordOwnedByLocNamespace("charge")
 			.CardKeywordOwnedByLocNamespace(
 				"family",

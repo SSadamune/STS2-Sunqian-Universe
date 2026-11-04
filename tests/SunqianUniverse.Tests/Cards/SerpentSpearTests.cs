@@ -58,9 +58,9 @@ public sealed class SerpentSpearTests : SunqianCombatTestSuite
         Assert.Equal(strength, pet.GetPower<StrengthPower>()!.Amount);
         Assert.True(pet.GetPower<MakeHolesPower>()!.IsActive);
         Assert.False(Player.Creature.HasPower<MakeHolesPower>());
-        Assert.Contains(CompanionSkillCollection.Pile.GetPile(Player).Cards.OfType<CompanionSkillRecord>(), record =>
+        Assert.Contains(CompanionSkillBook.Pile.GetPile(Player).Cards.OfType<CompanionSkillRecord>(), record =>
             record.CompanionId == CompanionSummons.ThirdBrotherId && record.Skill == "MakeHoles");
-        Assert.Equal("你打出的[gold]三弟[/gold]攻击牌会附加随机效果。", pet.GetPower<MakeHolesPower>()!.Description.GetFormattedText());
+        Assert.Equal("[gold]召唤物技能[/gold]：你打出的[gold]三弟[/gold]攻击牌会附加随机效果。", pet.GetPower<MakeHolesPower>()!.Description.GetFormattedText());
     }
 
     [Fact]
