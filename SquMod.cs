@@ -42,7 +42,8 @@ public static class SquMod
 		ScriptSystem.RegisterPile();
 		SquTargetTypes.Register();
 		CompanionSummons.Initialize();
-		LifeContractSystem.Initialize();
+		SharedLifeSystem.Initialize();
+		CompanionSkillCollection.Register();
 		SelfHarmSystem.Initialize();
 		RitsuLibFramework.EnsureGodotScriptsRegistered(assembly, Logger);
 		ModTypeDiscoveryHub.RegisterModAssembly(ModId, assembly);

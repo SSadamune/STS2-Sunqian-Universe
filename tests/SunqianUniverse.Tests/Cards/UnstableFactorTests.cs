@@ -20,6 +20,26 @@ public sealed class UnstableFactorTests : SunqianCombatTestSuite
         battle.Player<Ironclad>().AddEnemy<BigDummy>().WithSeed("unstable-factor");
     private static BlockingPlayerChoiceContext Choice() => new();
 
+    [Fact]
+    public void Every_accident_has_a_distinct_localized_display_card_outside_card_piles()
+    {
+        var cards = Enum.GetValues<HardToRestrainPower.Effect>()
+            .Select(effect => HardToRestrainOutcome.Create(Combat, Player, effect)).ToArray();
+        Assert.Equal(5, cards.Select(card => card.GetType()).Distinct().Count());
+        foreach (var card in cards)
+        {
+            Assert.Null(card.Pile);
+            Assert.Contains("意外", card.Title);
+            Assert.DoesNotContain("SUNQIAN_UNIVERSE", card.GetDescriptionForPile(PileType.Play));
+        }
+        var conversion = cards.OfType<HardToRestrainConvertBlock>().Single();
+        var description = conversion.GetDescriptionForPile(PileType.Play);
+        Assert.Contains("你失去所有", description);
+        Assert.Contains("并获得等量", description);
+        Assert.Contains("\n", description);
+        Assert.Contains("三弟", description);
+    }
+
     private async Task<HardToRestrainPower> SummonSkill()
     {
         await Play(await AddToHand<UnstableFactor>());
@@ -46,9 +66,9 @@ public sealed class UnstableFactorTests : SunqianCombatTestSuite
         Assert.Equal(hp - 2, Player.Creature.CurrentHp);
         var pet = CompanionSummons.GetCompanion(Player, CompanionSummons.ThirdBrotherId)!;
         Assert.Equal(summon, pet.MaxHp);
-        Assert.Equal(2, LifeContractSystem.GetTotal(Player, CompanionSummons.ThirdBrotherId));
-        Assert.Equal(2, pet.GetPower<LifeContractPower>()!.DisplayAmount);
-        Assert.Equal(0, LifeContractSystem.GetTotal(Player, CompanionSummons.SecondBrotherId));
+        Assert.Equal(2, SharedLifeSystem.GetTotal(Player, CompanionSummons.ThirdBrotherId));
+        Assert.False(pet.HasPower<SharedLifePower>());
+        Assert.Equal(0, SharedLifeSystem.GetTotal(Player, CompanionSummons.SecondBrotherId));
         Assert.True(pet.HasPower<HardToRestrainPower>());
         Assert.False(Player.Creature.HasPower<HardToRestrainPower>());
     }
@@ -68,7 +88,7 @@ public sealed class UnstableFactorTests : SunqianCombatTestSuite
         await Player.Creature.GetPower<UnstableFactorPower>()!.AfterSideTurnStart(CombatSide.Player, [Player.Creature], Combat);
         Assert.Equal(hp, Player.Creature.CurrentHp);
         Assert.Equal(8, skill.Owner.MaxHp);
-        Assert.Equal(0, LifeContractSystem.GetTotal(Player, CompanionSummons.ThirdBrotherId));
+        Assert.Equal(0, SharedLifeSystem.GetTotal(Player, CompanionSummons.ThirdBrotherId));
     }
 
     [Fact]
@@ -84,13 +104,17 @@ public sealed class UnstableFactorTests : SunqianCombatTestSuite
     }
 
     [Fact]
-    public async Task Block_is_converted_to_third_brother_max_hp()
+    public async Task Block_is_converted_to_third_brother_max_hp_and_player_temporary_health()
     {
         var skill = await SummonSkill();
         await CreatureCmd.GainBlock(Player.Creature, 9, ValueProp.Unpowered, null);
+        int hp = Player.Creature.CurrentHp;
         await skill.ExecuteEffect(Choice(), HardToRestrainPower.Effect.ConvertBlock);
         Assert.Equal(0, Player.Creature.Block);
         Assert.Equal(13, skill.Owner.MaxHp);
+        Assert.Equal(9, Player.Creature.GetPower<TemporaryHealthPower>()!.Amount);
+        Assert.Equal(hp + 9, Player.Creature.CurrentHp);
+        Assert.False(skill.Owner.HasPower<TemporaryHealthPower>());
         Assert.DoesNotContain(HardToRestrainPower.Effect.ConvertBlock, skill.GetEligibleEffects());
     }
 
@@ -173,7 +197,7 @@ public sealed class UnstableFactorTests : SunqianCombatTestSuite
         Assert.Equal(hp - 4, Player.Creature.CurrentHp);
         var pet = CompanionSummons.GetCompanion(Player, CompanionSummons.ThirdBrotherId)!;
         Assert.Equal(9, pet.MaxHp);
-        Assert.Equal(4, LifeContractSystem.GetTotal(Player, CompanionSummons.ThirdBrotherId));
+        Assert.Equal(4, SharedLifeSystem.GetTotal(Player, CompanionSummons.ThirdBrotherId));
         Assert.Single(pet.Powers.OfType<HardToRestrainPower>());
     }
 
@@ -185,9 +209,9 @@ public sealed class UnstableFactorTests : SunqianCombatTestSuite
         int hp = Player.Creature.CurrentHp;
         await Player.Creature.GetPower<UnstableFactorPower>()!.AfterSideTurnStart(CombatSide.Player, [Player.Creature], Combat);
         Assert.Equal(hp, Player.Creature.CurrentHp);
-        Assert.Equal(0, LifeContractSystem.GetTotal(Player, CompanionSummons.ThirdBrotherId));
+        Assert.Equal(0, SharedLifeSystem.GetTotal(Player, CompanionSummons.ThirdBrotherId));
         var pet = CompanionSummons.GetCompanion(Player, CompanionSummons.ThirdBrotherId)!;
         Assert.Equal(4, pet.MaxHp);
-        Assert.Equal(0, pet.GetPower<LifeContractPower>()!.DisplayAmount);
+        Assert.False(pet.HasPower<SharedLifePower>());
     }
 }

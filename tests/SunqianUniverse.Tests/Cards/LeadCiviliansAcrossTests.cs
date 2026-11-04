@@ -34,7 +34,7 @@ public sealed class LeadCiviliansAcrossTests : SunqianCombatTestSuite
         Assert.Equal(hp - 4 + amount, Player.Creature.CurrentHp);
         Assert.Equal(amount, Player.Creature.GetPower<TemporaryHealthPower>()!.Amount);
         Assert.Equal(0, Player.PlayerCombatState!.Energy);
-        Assert.Equal(0, LifeContractSystem.GetTotal(Player));
+        Assert.Equal(0, SharedLifeSystem.GetTotal(Player));
         AssertInPile(card, PileType.Exhaust);
     }
 

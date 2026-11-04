@@ -154,10 +154,6 @@
   "SUNQIAN_UNIVERSE_POWER_RIGHTEOUSNESS_POWER.title": "Righteousness",
   "SUNQIAN_UNIVERSE_POWER_RIGHTEOUSNESS_POWER.description": "When you play a [gold]Strike Card[/gold], for every 10 [gold]Righteousness[/gold] you have, spend 2 Righteousness and play it 1 additional time.\n[gold]Righteousness[/gold] persists between combats.",
   "SUNQIAN_UNIVERSE_POWER_RIGHTEOUSNESS_POWER.smartDescription": "When you play a [gold]Strike Card[/gold], for every 10 [gold]Righteousness[/gold] you have, spend 2 Righteousness and play it 1 additional time.\n[gold]Righteousness[/gold] persists between combats.",
-  "SUNQIAN_UNIVERSE_POWER_LIFE_CONTRACT_POWER.title": "Life Contract",
-  "SUNQIAN_UNIVERSE_POWER_LIFE_CONTRACT_POWER.description": "At the end of combat, heal for this companion's remaining HP (up to {Healing} HP, equal to the HP you have lost on its behalf).",
-  "SUNQIAN_UNIVERSE_POWER_LIFE_CONTRACT_POWER.smartDescription": "At the end of combat, heal for this companion's remaining HP (up to {Healing} HP, equal to the HP you have lost on its behalf).",
-  "SUNQIAN_UNIVERSE_POWER_LIFE_CONTRACT_POWER.combatSmartDescription": "At the end of combat, heal for this companion's remaining HP (up to {Healing} HP, equal to the HP you have lost on its behalf).",
   "SUNQIAN_UNIVERSE_POWER_SECOND_BROTHER_DIE_FOR_YOU.description": "[gold]Second Brother[/gold] absorbs all unblocked attack damage.",
   "SUNQIAN_UNIVERSE_POWER_STOP_RUNNING_POWER.title": "Stop Fleeing",
   "SUNQIAN_UNIVERSE_POWER_STOP_RUNNING_POWER.description": "During the next enemy turn, whenever you lose non-temporary HP, gain that much [gold]Temporary HP[/gold].",
@@ -180,5 +176,8 @@
   "SUNQIAN_UNIVERSE_POWER_UNSTABLE_FACTOR_POWER.title": "Unstable Factor",
   "SUNQIAN_UNIVERSE_POWER_UNSTABLE_FACTOR_POWER.description": "At the start of each turn, lose {LifeLoss} HP and Summon [Third Brother] {Summon}.",
   "SUNQIAN_UNIVERSE_POWER_HARD_TO_RESTRAIN_POWER.title": "Hard to Restrain",
-  "SUNQIAN_UNIVERSE_POWER_HARD_TO_RESTRAIN_POWER.description": "At the end of each turn, trigger a random [gold]Unexpected Event[/gold]."
+  "SUNQIAN_UNIVERSE_POWER_HARD_TO_RESTRAIN_POWER.description": "At the end of each turn, trigger a random [gold]Unexpected Event[/gold].",
+  "SUNQIAN_UNIVERSE_POWER_SHARED_LIFE_POWER.title": "Shared Life",
+  "SUNQIAN_UNIVERSE_POWER_SHARED_LIFE_POWER.description": "If this companion is absent, you may lose 8 HP to summon it with 8 HP.\nAt the end of combat, heal for its remaining HP (up to the HP you have lost for it).",
+  "SUNQIAN_UNIVERSE_POWER_SHARED_LIFE_POWER.unlockedDescription": "If [gold]{Companion}[/gold] is absent, you may lose 8 HP to summon [gold]{Companion}[/gold] with 8 HP.\nAt the end of combat, heal for the remaining HP of [gold]{Companion}[/gold] (up to {max} HP, the HP you have lost for [gold]{Companion}[/gold])."
 }

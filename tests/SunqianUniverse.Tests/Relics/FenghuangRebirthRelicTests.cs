@@ -65,7 +65,7 @@ public sealed class FenghuangRebirthRelicTests : SunqianCombatTestSuite
         Assert.Equal(hp - 1, Player.Creature.CurrentHp);
         Assert.Equal(12, Player.Creature.Block);
         Assert.Equal(8, pet.CurrentHp);
-        Assert.Equal(0, LifeContractSystem.GetTotal(Player, CompanionSummons.ThirdBrotherId));
+        Assert.Equal(0, SharedLifeSystem.GetTotal(Player, CompanionSummons.ThirdBrotherId));
         await relic.AfterPlayerTurnStart(new BlockingPlayerChoiceContext(), Player);
         Assert.Equal(hp - 2, Player.Creature.CurrentHp);
         Assert.Equal(19, Player.Creature.Block);

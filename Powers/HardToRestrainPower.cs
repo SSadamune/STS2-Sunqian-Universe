@@ -62,6 +62,7 @@ public sealed class HardToRestrainPower : CompanionSkillPower
     internal async Task ExecuteEffect(PlayerChoiceContext context, Effect effect)
     {
         if (!GetEligibleEffects().Contains(effect) || Owner.PetOwner is not { } player) return;
+        await HardToRestrainOutcome.Show(CombatState, player, effect);
         var rng = player.RunState.Rng.CombatTargets;
         switch (effect)
         {
@@ -83,6 +84,7 @@ public sealed class HardToRestrainPower : CompanionSkillPower
             case Effect.ConvertBlock:
                 decimal block = player.Creature.Block;
                 await CreatureCmd.LoseBlock(context, player.Creature, block, Owner);
+                await PowerCmd.Apply<TemporaryHealthPower>(context, player.Creature, block, Owner, null);
                 await CreatureCmd.GainMaxHp(Owner, block);
                 break;
             case Effect.Wine:

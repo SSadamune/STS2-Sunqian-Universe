@@ -20,8 +20,9 @@ public sealed class ParameterizedKeywordRowsTests : SunqianCombatTestSuite
     [InlineData(true)]
     public async Task Self_harm_named_summon_and_retain_merge_without_absorbing_attack_rule(bool upgraded)
     {
-        var card = await AddToHand<SummonSecondBrother>();
+        var card = await AddToHand<GreenDragonCrescentBlade>();
         if (upgraded) Upgrade(card);
+        SelfHarmSystem.Grant(card, 3);
         CardCmd.ApplyKeyword(card, CardKeyword.Retain);
         string[] lines = card.GetDescriptionForPile(PileType.Hand).Split('\n');
         Assert.Contains("[gold]保留[/gold]", lines[0]);
@@ -29,8 +30,8 @@ public sealed class ParameterizedKeywordRowsTests : SunqianCombatTestSuite
         Assert.Contains("[gold]召唤[/gold]", lines[0]);
         Assert.Contains("[gold]二弟[/gold]", lines[0]);
         Assert.DoesNotContain("造成", lines[0]);
-        Assert.Contains("造成", lines[1]);
-        await Play(card, EnemyAt(0));
+        Assert.Contains("获得", lines[1]);
+        await Play(card);
         Assert.DoesNotContain("自残", card.GetDescriptionForPile(PileType.Discard));
         Assert.Contains("[gold]召唤[/gold]", card.GetDescriptionForPile(PileType.Discard));
     }

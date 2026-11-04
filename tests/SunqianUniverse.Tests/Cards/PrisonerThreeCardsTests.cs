@@ -56,7 +56,7 @@ public sealed class PrisonerThreeCardsTests : SunqianCombatTestSuite
         await Play(card, EnemyAt(0));
         Assert.Equal(enemyHp - damage, EnemyAt(0).CurrentHp);
         Assert.True(pet.HasPower<DieForYouPower>());
-        Assert.True(pet.HasPower<LifeContractPower>());
+        Assert.False(pet.HasPower<SharedLifePower>());
         Assert.EndsWith("disabledDescription", pet.GetPower<DieForYouPower>()!.Description.LocEntryKey);
         var disabled = pet.GetPower<ActuallyNotClosePower>()!;
         Assert.Equal("其实不熟", disabled.Title.GetFormattedText());

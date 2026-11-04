@@ -9,7 +9,7 @@ using Xunit;
 
 namespace Squ.Tests.Cards;
 
-public sealed class LifeContractTests : SunqianCombatTestSuite
+public sealed class SharedLifeTests : SunqianCombatTestSuite
 {
     protected override void ConfigureBattle(CombatTestBattleBuilder battle) =>
         battle.Player<Ironclad>().AddEnemy<BigDummy>().WithSeed("life-contract-cap");
@@ -29,11 +29,12 @@ public sealed class LifeContractTests : SunqianCombatTestSuite
         var pet = (await CompanionSummons.SummonSpecific(context, Player, id, 20, null)).Creature!;
         await CreatureCmd.SetCurrentHp(pet, hp);
         await CreatureCmd.SetCurrentHp(Player.Creature, 20);
-        LifeContractSystem.AddContribution(Player, cap, id);
-        var power = pet.GetPower<LifeContractPower>()!;
+        SharedLifeSystem.AddContribution(Player, cap, id);
+        await CompanionSkills.UnlockForCompanion<SharedLifePower>(context, Player, id);
+        var power = pet.GetPower<SharedLifePower>()!;
         Assert.Equal(cap, power.DisplayAmount);
-        Assert.Equal($"战斗结束时，为你回复等量于此召唤物的生命（至多回复{cap}点，此上限等于你为此召唤物失去过的生命）。",
-            power.Description.GetFormattedText());
+        Assert.Contains($"至多恢复{cap}点，此上限为", power.Description.GetFormattedText());
+        Assert.Contains(CompanionSummons.GetName(id).GetFormattedText(), power.Description.GetFormattedText());
         await power.AfterCombatEnd(null!);
         Assert.Equal(20 + expected, Player.Creature.CurrentHp);
         await power.AfterCombatEnd(null!);

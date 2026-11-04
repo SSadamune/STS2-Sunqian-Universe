@@ -52,7 +52,7 @@ public sealed class UnstableFactorPower : ModPowerTemplate
         {
             var hits = await CreatureCmd.Damage(context, Owner, DynamicVars["LifeLoss"].BaseValue,
                 ValueProp.Unblockable | ValueProp.Unpowered, null, null);
-            LifeContractSystem.AddContribution(player, hits.Where(hit => hit.Receiver == Owner)
+            SharedLifeSystem.AddContribution(player, hits.Where(hit => hit.Receiver == Owner)
                 .Sum(hit => hit.UnblockedDamage), CompanionSummons.ThirdBrotherId);
         }
         if (Owner.IsAlive)

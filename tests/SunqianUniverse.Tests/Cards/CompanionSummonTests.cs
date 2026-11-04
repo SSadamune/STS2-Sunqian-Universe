@@ -58,6 +58,7 @@ public sealed class CompanionSummonTests : SunqianCombatTestSuite
     public async Task Native_creature_widget_displays_second_brother_health_and_both_power_icons()
     {
         var pet = (await OstyCmd.Summon(ChoiceContext(), Player, 6, null)).Creature!;
+        await CompanionSkills.UnlockForCompanion<Squ.Powers.SharedLifePower>(ChoiceContext(), Player, CompanionSummons.SecondBrotherId);
         var node = PreloadManager.Cache.GetScene("res://scenes/combat/creature.tscn").Instantiate<NCreature>();
         Traverse.Create(node).Property(nameof(NCreature.Entity)).SetValue(pet);
         Traverse.Create(node).Property(nameof(NCreature.Visuals)).SetValue(pet.Monster!.CreateVisuals());
@@ -70,7 +71,7 @@ public sealed class CompanionSummonTests : SunqianCombatTestSuite
             Assert.True(node.IsInteractable);
             var powers = Traverse.Create(display).Field<NPowerContainer>("_powerContainer").Value;
             Assert.Contains(powers.GetChildren().OfType<NPower>(), power => power.Model is DieForYouPower);
-            Assert.Contains(powers.GetChildren().OfType<NPower>(), power => power.Model is Squ.Powers.LifeContractPower);
+            Assert.Contains(powers.GetChildren().OfType<NPower>(), power => power.Model is Squ.Powers.SharedLifePower);
             Assert.NotNull(Traverse.Create(display).Field<NHealthBar>("_healthBar").Value);
             Assert.Same(pet.Monster, SecondBrotherPresentationPatches.AsOstyPresentation(pet.Monster));
             Assert.Contains(Harmony.GetPatchInfo(AccessTools.Method(typeof(NCombatRoom), "AddCreature")).Transpilers,
@@ -91,10 +92,10 @@ public sealed class CompanionSummonTests : SunqianCombatTestSuite
         Assert.Equal("SUNQIAN_UNIVERSE_POWER_SECOND_BROTHER_DIE_FOR_YOU.description", guard.Description.LocEntryKey);
         Assert.Equal(guard.Description.LocEntryKey, guard.SmartDescription.LocEntryKey);
         Assert.Contains("[gold]", guard.SmartDescription.GetFormattedText());
-        var contract = pet.GetPower<Squ.Powers.LifeContractPower>()!;
+        await CompanionSkills.UnlockForCompanion<Squ.Powers.SharedLifePower>(ChoiceContext(), Player, CompanionSummons.SecondBrotherId);
+        var contract = pet.GetPower<Squ.Powers.SharedLifePower>()!;
         var contractText = contract.SmartDescription;
-        contract.DynamicVars.AddTo(contractText);
-        Assert.Contains("至多回复0点", contractText.GetFormattedText());
+        Assert.Contains("至多恢复0点", contractText.GetFormattedText());
         var osty = (await CompanionSummons.SummonSpecific(ChoiceContext(), Player, CompanionSummons.OstyId, 6, null)).Creature!;
         Assert.NotEqual(guard.Description.LocEntryKey, osty.GetPower<DieForYouPower>()!.Description.LocEntryKey);
     }

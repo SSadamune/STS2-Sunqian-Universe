@@ -26,6 +26,7 @@ public static class CompanionSkills
         if (!data.TryGetValue((player, id), out var skills)) data[(player, id)] = skills = [];
         var skill = ModelDb.Power<T>();
         if (!skills.Contains(skill)) skills.Add(skill);
+        await CompanionSkillCollection.Record(player, id, skill);
         if (CompanionSummons.GetCompanion(player, id) is { IsAlive: true } pet)
             await ApplyUnlocks(context, player, id, pet);
     }
@@ -41,7 +42,8 @@ public static class CompanionSkills
     public static async Task Unlock<T>(PlayerChoiceContext context, Creature pet,
         CardModel source) where T : CompanionSkillPower
     {
-        if (!pet.HasPower<T>())
-            await PowerCmd.Apply<T>(context, pet, 1, pet, source);
+        if (pet.PetOwner is { } player)
+            await UnlockForCompanion<T>(context, player,
+                pet.Monster is Squ.Monsters.ThirdBrother ? CompanionSummons.ThirdBrotherId : CompanionSummons.SecondBrotherId);
     }
 }

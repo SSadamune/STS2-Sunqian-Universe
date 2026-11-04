@@ -50,43 +50,12 @@ public sealed class DeafenMyEarsTests : SunqianCombatTestSuite
     {
         var target = await AddToHand<DefendLiubei>();
         target.EnergyCost.SetUntilPlayed(2);
-        var native = await AddToHand<SummonSecondBrother>();
+        var native = await AddToHand<DefendLiubei>();
+        SelfHarmSystem.Grant(native, 8);
         await Play(await AddToHand<DeafenMyEars>());
         Assert.Equal(8m, SelfHarmSystem.GetAmount(target));
         Assert.Equal(8m, SelfHarmSystem.GetAmount(native));
         await Play(await AddToHand<DeafenMyEars>());
-        Assert.Equal(8m, SelfHarmSystem.GetAmount(target));
-    }
-
-    [Fact]
-    public async Task Spent_native_self_harm_can_be_granted_again_with_a_new_value_and_contract_credit()
-    {
-        var target = await AddToHand<SummonSecondBrother>();
-        await Play(target, EnemyAt(0));
-        await CardPileCmd.Add(target, PileType.Hand);
-        Assert.False(SelfHarmSystem.HasSelfHarm(target));
-        var card = await AddToHand<DeafenMyEars>();
-        Upgrade(card);
-        await Play(card);
-        Assert.True(SelfHarmSystem.HasSelfHarm(target));
-        Assert.Equal(6m, SelfHarmSystem.GetAmount(target));
-        Assert.Contains(target.HoverTips.OfType<HoverTip>(), tip => tip.Title?.EndsWith("6") == true);
-        await PlayerCmd.SetEnergy(0, Player);
-        int hp = Player.Creature.CurrentHp;
-        await Play(target, EnemyAt(0));
-        Assert.Equal(hp - 6, Player.Creature.CurrentHp);
-        Assert.Equal(14, LifeContractSystem.GetTotal(Player));
-        await CardPileCmd.Add(target, PileType.Hand);
-        var anotherGrant = await AddToHand<DeafenMyEars>();
-        Upgrade(anotherGrant);
-        await Play(anotherGrant);
-        Assert.True(SelfHarmSystem.HasSelfHarm(target));
-        hp = Player.Creature.CurrentHp;
-        await Play(target, EnemyAt(0));
-        Assert.Equal(hp - 6, Player.Creature.CurrentHp);
-        Assert.Equal(20, LifeContractSystem.GetTotal(Player));
-        Assert.False(SelfHarmSystem.HasSelfHarm(target));
-        SelfHarmSystem.ClearCombat(Combat);
         Assert.Equal(8m, SelfHarmSystem.GetAmount(target));
     }
 

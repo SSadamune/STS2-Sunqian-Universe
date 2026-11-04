@@ -10,7 +10,7 @@ using STS2RitsuLib;
 namespace Squ.Combat;
 
 /// <summary>Future contributions can use AddContribution; the balance lasts one combat.</summary>
-public static class LifeContractSystem
+public static class SharedLifeSystem
 {
 	private sealed class Account { public int Total; public bool Claimed; }
 	private static readonly ConditionalWeakTable<ICombatState, Dictionary<(Player, string), Account>> Battles = new();
@@ -31,7 +31,7 @@ public static class LifeContractSystem
 		if (actualHpLost <= 0 || GetAccount(player, companionId) is not { Claimed: false } account) return;
 		account.Total = (int)Math.Min(999999999L, (long)account.Total + actualHpLost);
 		CompanionSummons.GetCompanion(player, companionId)
-			?.GetPower<LifeContractPower>()?.Refresh();
+			?.GetPower<SharedLifePower>()?.Refresh();
 	}
 	internal static int Claim(Player player, string companionId = CompanionSummons.SecondBrotherId)
 	{

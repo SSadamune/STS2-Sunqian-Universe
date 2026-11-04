@@ -199,8 +199,6 @@ public static class CompanionSummons
 				await PowerCmd.Apply<DieForYouPower>(context, pet, 1, null, null);
 			}
 		}
-		if (id is SecondBrotherId or ThirdBrotherId && !pet.HasPower<LifeContractPower>())
-			await PowerCmd.Apply<LifeContractPower>(context, pet, 1, null, null);
 		if (id is SecondBrotherId or ThirdBrotherId)
 		{
 			var node = NCombatRoom.Instance?.GetCreatureNode(pet);
