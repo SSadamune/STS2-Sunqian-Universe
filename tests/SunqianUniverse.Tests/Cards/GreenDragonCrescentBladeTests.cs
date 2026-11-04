@@ -18,19 +18,48 @@ namespace Squ.Tests.Cards;
 public sealed class GreenDragonCrescentBladeTests : SunqianCombatTestSuite
 {
     protected override void ConfigureBattle(CombatTestBattleBuilder battle) =>
-        battle.Player<LiubeiCharacter>().AddEnemy<BigDummy>().WithSeed("companion-skills");
+        battle.Player<LiubeiCharacter>().AddEnemy<BigDummy>().AddEnemy<BigDummy>().WithSeed("companion-skills");
+
+    private async Task SummonSecond() => await CompanionSummons.SummonSpecific(
+        new BlockingPlayerChoiceContext(), Player, CompanionSummons.SecondBrotherId, 8, null);
 
     [Theory]
-    [InlineData(false, false, 16, 4)]
-    [InlineData(false, true, 19, 6)]
-    [InlineData(true, false, 19, 6)]
-    [InlineData(true, true, 22, 8)]
+    [InlineData(false, 9, 2)]
+    [InlineData(true, 13, 3)]
+    public async Task Blade_attacks_all_enemies_before_granting_strength_without_summoning(bool upgraded, int damage, int strength)
+    {
+        var card = await AddToHand<GreenDragonCrescentBlade>();
+        if (upgraded) Upgrade(card);
+        Assert.False(card.CanPlay(out _, out _));
+        Assert.Null(CompanionSummons.GetCompanion(Player, CompanionSummons.SecondBrotherId));
+        await SummonSecond();
+        var pet = CompanionSummons.GetCompanion(Player, CompanionSummons.SecondBrotherId)!;
+        await PowerCmd.Apply<StrengthPower>(new BlockingPlayerChoiceContext(), Player.Creature, 20, Player.Creature, null);
+        int[] hp = [EnemyAt(0).CurrentHp, EnemyAt(1).CurrentHp];
+        await Play(card);
+        Assert.Equal(hp[0] - damage, EnemyAt(0).CurrentHp);
+        Assert.Equal(hp[1] - damage, EnemyAt(1).CurrentHp);
+        Assert.Equal(8, pet.MaxHp);
+        Assert.Equal(strength, pet.GetPower<StrengthPower>()!.Amount);
+        Assert.Equal(20, Player.Creature.GetPower<StrengthPower>()!.Amount);
+        Assert.DoesNotContain("召唤", card.GetDescriptionForPile(PileType.Hand));
+        await CreatureCmd.Kill(pet, force: true);
+        var other = await AddToHand<GreenDragonCrescentBlade>();
+        Assert.False(other.CanPlay(out _, out _));
+    }
+
+    [Theory]
+    [InlineData(false, false, 8, 4)]
+    [InlineData(false, true, 8, 5)]
+    [InlineData(true, false, 8, 5)]
+    [InlineData(true, true, 8, 6)]
     public async Task Repeated_cards_stack_only_companion_strength(bool firstUpgraded,
         bool secondUpgraded, int hp, int strength)
     {
+        await SummonSecond();
         var first = await AddToHand<GreenDragonCrescentBlade>();
         if (firstUpgraded) Upgrade(first);
-        Assert.Equal(CardType.Skill, first.Type);
+        Assert.Equal(CardType.Attack, first.Type);
         var description = first.GetDescriptionForPile(PileType.Hand);
         Assert.Equal(2, description.Split('\n').Length);
         Assert.Contains("[gold]二弟[/gold]获得", description);
@@ -39,7 +68,7 @@ public sealed class GreenDragonCrescentBladeTests : SunqianCombatTestSuite
         await Play(first);
         var pet = CompanionSummons.GetCompanion(Player, CompanionSummons.SecondBrotherId)!;
         Assert.Equal(1, pet.GetPower<SpareTheYoungAndOldPower>()!.Amount);
-        Assert.Equal(firstUpgraded ? 4m : 2m, pet.GetPower<StrengthPower>()!.Amount);
+        Assert.Equal(firstUpgraded ? 3m : 2m, pet.GetPower<StrengthPower>()!.Amount);
         var second = await AddToHand<GreenDragonCrescentBlade>();
         if (secondUpgraded) Upgrade(second);
         Assert.DoesNotContain("升级", second.GetDescriptionForPile(PileType.Hand));
@@ -57,6 +86,7 @@ public sealed class GreenDragonCrescentBladeTests : SunqianCombatTestSuite
     [InlineData(75, 1)]
     public async Task Double_damage_uses_strict_health_boundaries(int hp, int multiplier)
     {
+        await SummonSecond();
         await Play(await AddToHand<GreenDragonCrescentBlade>());
         var pet = CompanionSummons.GetCompanion(Player, CompanionSummons.SecondBrotherId)!;
         await CreatureCmd.SetMaxAndCurrentHp(EnemyAt(0), 100);
@@ -69,6 +99,7 @@ public sealed class GreenDragonCrescentBladeTests : SunqianCombatTestSuite
     [Fact]
     public async Task Revival_keeps_skill_but_does_not_restore_card_strength()
     {
+        await SummonSecond();
         await Play(await AddToHand<GreenDragonCrescentBlade>());
         var pet = CompanionSummons.GetCompanion(Player, CompanionSummons.SecondBrotherId)!;
         await CreatureCmd.Kill(pet, force: true);
@@ -90,6 +121,7 @@ public sealed class GreenDragonCrescentBladeTests : SunqianCombatTestSuite
     [Fact]
     public async Task Later_skill_slots_activate_and_suspend_at_max_hp_thresholds()
     {
+        await SummonSecond();
         await Play(await AddToHand<GreenDragonCrescentBlade>());
         var pet = CompanionSummons.GetCompanion(Player, CompanionSummons.SecondBrotherId)!;
         // Add independent skill instances to exercise future second/third skills.
@@ -119,16 +151,17 @@ public sealed class GreenDragonCrescentBladeTests : SunqianCombatTestSuite
     }
     [Theory]
     [InlineData(false, 100, 15)]
-    [InlineData(true, 100, 17)]
+    [InlineData(true, 100, 16)]
     [InlineData(false, 50, 30)]
-    [InlineData(true, 50, 34)]
+    [InlineData(true, 50, 32)]
     public async Task Blade_strength_increases_nominal_brothers_damage(bool upgraded, int enemyHp, int expected)
     {
+        await SummonSecond();
         var blade = await AddToHand<GreenDragonCrescentBlade>();
         if (upgraded) Upgrade(blade);
         await Play(blade);
         var pet = CompanionSummons.GetCompanion(Player, CompanionSummons.SecondBrotherId)!;
-        Assert.Equal(upgraded ? 4 : 2, pet.GetPower<StrengthPower>()!.Amount);
+        Assert.Equal(upgraded ? 3 : 2, pet.GetPower<StrengthPower>()!.Amount);
         Assert.False(Player.Creature.HasPower<StrengthPower>());
         // Player Strength must not affect an attack dealt by Second Brother.
         await PowerCmd.Apply<StrengthPower>(new BlockingPlayerChoiceContext(), Player.Creature, 10, Player.Creature, null);

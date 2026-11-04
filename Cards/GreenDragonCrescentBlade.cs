@@ -19,36 +19,33 @@ namespace Squ.Cards;
 [RegisterCard(typeof(LiubeiCardPool), StableEntryStem = "green_dragon_crescent_blade")]
 public sealed class GreenDragonCrescentBlade : ModCardTemplate, IRowKeywordsCard
 {
-    public GreenDragonCrescentBlade() : base(1, CardType.Skill, CardRarity.Uncommon, TargetType.Self) { }
+    public GreenDragonCrescentBlade() : base(1, CardType.Attack, CardRarity.Uncommon, TargetType.AllEnemies) { }
     public override CardAssetProfile AssetProfile => new(PortraitPath: "res://images/cards/PrisonerPlaceholder.png");
-    protected override IEnumerable<DynamicVar> CanonicalVars => [new SummonVar(8), new DynamicVar("Strength", 2)];
+    protected override IEnumerable<DynamicVar> CanonicalVars => [new CompanionDamageVar(CompanionSummons.SecondBrotherId, 9), new DynamicVar("Strength", 2)];
     protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
     [
-        CompanionSummonKeywords.NamedHoverTip(CompanionSummons.SecondBrotherId, DynamicVars.Summon),
         HoverTipFactory.FromPower<StrengthPower>(),
         new HoverTip(new LocString("powers", "SUNQIAN_UNIVERSE_POWER_SPARE_THE_YOUNG_AND_OLD_POWER.title"),
             new LocString("powers", "SUNQIAN_UNIVERSE_COMPANION_SKILL.rules").GetFormattedText()
             + "\n" + new LocString("powers", "SUNQIAN_UNIVERSE_POWER_SPARE_THE_YOUNG_AND_OLD_POWER.preview").GetFormattedText()),
     ];
-    protected override void AddExtraArgsToDescription(LocString description)
-    {
-        base.AddExtraArgsToDescription(description);
-        SquKeywords.AddNestedLoc(description, "SummonText", CompanionSummonKeywords.NamedCardText(
-            CompanionSummons.SecondBrotherId, DynamicVars.Summon));
-    }
+    private bool IsBrotherMissing => Owner == null || CompanionSummons.GetCompanion(Owner, CompanionSummons.SecondBrotherId) is not { IsAlive: true };
+    protected override bool IsPlayable => !IsBrotherMissing;
+    protected override bool ShouldGlowRedInternal => IsBrotherMissing;
     protected override async Task OnPlay(PlayerChoiceContext context, CardPlay play)
     {
-        var result = await CompanionSummons.SummonSpecific(context, Owner,
-            CompanionSummons.SecondBrotherId, DynamicVars.Summon.BaseValue, this);
-        if (result.Creature is { IsAlive: true } pet)
+        if (CompanionSummons.GetCompanion(Owner, CompanionSummons.SecondBrotherId) is { IsAlive: true } pet)
         {
+            await DamageCmd.Attack(DynamicVars["CompanionDamage"].BaseValue).FromCompanion(pet, this, play)
+                .TargetingAllOpponents(CombatState!).WithHitFx("vfx/vfx_attack_blunt", tmpSfx: "blunt_attack.mp3").Execute(context);
+            if (!pet.IsAlive) return;
             await PowerCmd.Apply<StrengthPower>(context, pet, DynamicVars["Strength"].BaseValue, Owner.Creature, this);
             await CompanionSkills.Unlock<SpareTheYoungAndOldPower>(context, pet, this);
         }
     }
     protected override void OnUpgrade()
     {
-        DynamicVars.Summon.UpgradeValueBy(3);
-        DynamicVars["Strength"].UpgradeValueBy(2);
+        DynamicVars["CompanionDamage"].UpgradeValueBy(4);
+        DynamicVars["Strength"].UpgradeValueBy(1);
     }
 }

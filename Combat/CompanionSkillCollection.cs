@@ -60,6 +60,7 @@ public static class CompanionSkillCollection
     {
         string? skill = power switch
         {
+            MakeHolesPower => "MakeHoles",
             SharedLifePower => "SharedLife", HardToRestrainPower => "HardToRestrain",
             SpareTheYoungAndOldPower => "SpareTheYoungAndOld", _ => null
         };

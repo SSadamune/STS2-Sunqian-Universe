@@ -30,6 +30,7 @@ public sealed class CompanionSkillRecord : ModCardTemplate
     public override string Title => Power.Title.GetFormattedText() + "·" + CompanionSummons.GetName(CompanionId).GetFormattedText();
     internal PowerModel Power => Skill switch
     {
+        "MakeHoles" => ModelDb.Power<MakeHolesPower>(),
         "HardToRestrain" => ModelDb.Power<HardToRestrainPower>(),
         "SpareTheYoungAndOld" => ModelDb.Power<SpareTheYoungAndOldPower>(),
         _ => ModelDb.Power<SharedLifePower>()

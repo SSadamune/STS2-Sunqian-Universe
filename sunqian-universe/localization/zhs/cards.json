@@ -360,7 +360,7 @@
   "SUNQIAN_UNIVERSE_CARD_BROTHER_ATTACK_CHOICE.title": "弟弟",
   "SUNQIAN_UNIVERSE_CARD_BROTHER_ATTACK_CHOICE.description": "造成{CompanionDamage:diff()}点伤害。\n[gold]为你而死[/gold]在2回合内失效。",
   "SUNQIAN_UNIVERSE_CARD_GREEN_DRAGON_CRESCENT_BLADE.title": "青龙偃月刀",
-  "SUNQIAN_UNIVERSE_CARD_GREEN_DRAGON_CRESCENT_BLADE.description": "{SummonText}\n[gold]二弟[/gold]获得{Strength:diff()}点[gold]力量[/gold]并解锁[gold]不斩老幼[/gold]。",
+  "SUNQIAN_UNIVERSE_CARD_GREEN_DRAGON_CRESCENT_BLADE.description": "[gold]二弟[/gold]对所有敌人造成{CompanionDamage:diff()}点伤害。\n[gold]二弟[/gold]获得{Strength:diff()}点[gold]力量[/gold]并解锁[gold]不斩老幼[/gold]。",
   "SUNQIAN_UNIVERSE_CARD_UNSTABLE_FACTOR.title": "不稳定因素",
   "SUNQIAN_UNIVERSE_CARD_UNSTABLE_FACTOR.description": "每回合开始时，你失去2点生命并{SummonText}\n[gold]三弟[/gold]解锁[gold]难以约束[/gold]。",
   "SUNQIAN_UNIVERSE_CARD_HARD_TO_RESTRAIN_ATTACK.title": "意外：出手",
@@ -378,5 +378,7 @@
   "SUNQIAN_UNIVERSE_CARD_SOUL_CONTRACT.selectionPrompt": "选择契约的召唤物",
   "SUNQIAN_UNIVERSE_CARD_COMPANION_SKILL_RECORD.title": "召唤物技能",
   "SUNQIAN_UNIVERSE_CARD_COMPANION_SKILL_RECORD.description": "{SkillDescription}",
-  "SUNQIAN_UNIVERSE_CARD_COMPANION_SKILL_RECORD.selectionPrompt": "选择共享生命以召回不在场的召唤物"
+  "SUNQIAN_UNIVERSE_CARD_COMPANION_SKILL_RECORD.selectionPrompt": "选择共享生命以召回不在场的召唤物",
+  "SUNQIAN_UNIVERSE_CARD_SERPENT_SPEAR.title": "丈八蛇矛",
+  "SUNQIAN_UNIVERSE_CARD_SERPENT_SPEAR.description": "[gold]三弟[/gold]对随机敌人造成{CompanionDamage:diff()}点伤害。\n[gold]三弟[/gold]获得{Strength:diff()}点[gold]力量[/gold]并解锁[gold]制造窟窿[/gold]。"
 }

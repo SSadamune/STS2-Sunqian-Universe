@@ -18,8 +18,9 @@ public sealed class ParameterizedKeywordRowsTests : SunqianCombatTestSuite
     [Theory]
     [InlineData(false)]
     [InlineData(true)]
-    public async Task Self_harm_named_summon_and_retain_merge_without_absorbing_attack_rule(bool upgraded)
+    public async Task Self_harm_and_retain_merge_without_absorbing_companion_attack_rule(bool upgraded)
     {
+        await CompanionSummons.SummonSpecific(new MegaCrit.Sts2.Core.GameActions.Multiplayer.BlockingPlayerChoiceContext(), Player, CompanionSummons.SecondBrotherId, 8, null);
         var card = await AddToHand<GreenDragonCrescentBlade>();
         if (upgraded) Upgrade(card);
         SelfHarmSystem.Grant(card, 3);
@@ -27,13 +28,12 @@ public sealed class ParameterizedKeywordRowsTests : SunqianCombatTestSuite
         string[] lines = card.GetDescriptionForPile(PileType.Hand).Split('\n');
         Assert.Contains("[gold]保留[/gold]", lines[0]);
         Assert.Contains("[gold]自残[/gold]", lines[0]);
-        Assert.Contains("[gold]召唤[/gold]", lines[0]);
-        Assert.Contains("[gold]二弟[/gold]", lines[0]);
+        Assert.DoesNotContain("召唤", lines[0]);
         Assert.DoesNotContain("造成", lines[0]);
-        Assert.Contains("获得", lines[1]);
+        Assert.Contains("造成", lines[1]);
         await Play(card);
         Assert.DoesNotContain("自残", card.GetDescriptionForPile(PileType.Discard));
-        Assert.Contains("[gold]召唤[/gold]", card.GetDescriptionForPile(PileType.Discard));
+        Assert.Contains("[gold]二弟[/gold]", card.GetDescriptionForPile(PileType.Discard));
     }
 
     [Theory]

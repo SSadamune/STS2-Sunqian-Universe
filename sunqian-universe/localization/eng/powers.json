@@ -179,5 +179,7 @@
   "SUNQIAN_UNIVERSE_POWER_HARD_TO_RESTRAIN_POWER.description": "At the end of each turn, trigger a random [gold]Unexpected Event[/gold].",
   "SUNQIAN_UNIVERSE_POWER_SHARED_LIFE_POWER.title": "Shared Life",
   "SUNQIAN_UNIVERSE_POWER_SHARED_LIFE_POWER.description": "If this companion is absent, you may lose 8 HP to summon it with 8 HP.\nAt the end of combat, heal for its remaining HP (up to the HP you have lost for it).",
-  "SUNQIAN_UNIVERSE_POWER_SHARED_LIFE_POWER.unlockedDescription": "If [gold]{Companion}[/gold] is absent, you may lose 8 HP to summon [gold]{Companion}[/gold] with 8 HP.\nAt the end of combat, heal for the remaining HP of [gold]{Companion}[/gold] (up to {max} HP, the HP you have lost for [gold]{Companion}[/gold])."
+  "SUNQIAN_UNIVERSE_POWER_SHARED_LIFE_POWER.unlockedDescription": "If [gold]{Companion}[/gold] is absent, you may lose 8 HP to summon [gold]{Companion}[/gold] with 8 HP.\nAt the end of combat, heal for the remaining HP of [gold]{Companion}[/gold] (up to {max} HP, the HP you have lost for [gold]{Companion}[/gold]).",
+  "SUNQIAN_UNIVERSE_POWER_MAKE_HOLES_POWER.title": "Make Holes",
+  "SUNQIAN_UNIVERSE_POWER_MAKE_HOLES_POWER.description": "Attack cards you play that attack with [gold]Third Brother[/gold] gain a random additional effect."
 }

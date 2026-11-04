@@ -171,6 +171,7 @@ public sealed class SoulContractTests : SunqianCombatTestSuite
     [Fact]
     public async Task Shared_life_in_a_later_slot_obeys_the_max_hp_requirement()
     {
+        await CompanionSummons.SummonSpecific(Choice(), Player, CompanionSummons.SecondBrotherId, 8, null);
         await Play(await AddToHand<GreenDragonCrescentBlade>());
         await ChooseBrother(CompanionSummons.SecondBrotherId);
         var pet = CompanionSummons.GetCompanion(Player, CompanionSummons.SecondBrotherId)!;

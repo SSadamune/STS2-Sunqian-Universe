@@ -360,7 +360,7 @@
   "SUNQIAN_UNIVERSE_CARD_BROTHER_ATTACK_CHOICE.title": "Brother",
   "SUNQIAN_UNIVERSE_CARD_BROTHER_ATTACK_CHOICE.description": "Deal {CompanionDamage:diff()} damage.\n[gold]Die for You[/gold] is disabled for 2 turns.",
   "SUNQIAN_UNIVERSE_CARD_GREEN_DRAGON_CRESCENT_BLADE.title": "Green Dragon Crescent Blade",
-  "SUNQIAN_UNIVERSE_CARD_GREEN_DRAGON_CRESCENT_BLADE.description": "{SummonText}\n[gold]Second Brother[/gold] gains {Strength:diff()} [gold]Strength[/gold] and unlocks [gold]Spare the Young and Old[/gold].",
+  "SUNQIAN_UNIVERSE_CARD_GREEN_DRAGON_CRESCENT_BLADE.description": "[gold]Second Brother[/gold] deals {CompanionDamage:diff()} damage to ALL enemies.\n[gold]Second Brother[/gold] gains {Strength:diff()} [gold]Strength[/gold] and unlocks [gold]Spare the Young and Old[/gold].",
   "SUNQIAN_UNIVERSE_CARD_UNSTABLE_FACTOR.title": "Unstable Factor",
   "SUNQIAN_UNIVERSE_CARD_UNSTABLE_FACTOR.description": "At the start of each turn, lose 2 HP and {SummonText}\n[gold]Third Brother[/gold] unlocks [gold]Hard to Restrain[/gold].",
   "SUNQIAN_UNIVERSE_CARD_HARD_TO_RESTRAIN_ATTACK.title": "Accident: Attack",
@@ -378,5 +378,7 @@
   "SUNQIAN_UNIVERSE_CARD_SOUL_CONTRACT.selectionPrompt": "Choose a companion for the contract",
   "SUNQIAN_UNIVERSE_CARD_COMPANION_SKILL_RECORD.title": "Companion Skill",
   "SUNQIAN_UNIVERSE_CARD_COMPANION_SKILL_RECORD.description": "{SkillDescription}",
-  "SUNQIAN_UNIVERSE_CARD_COMPANION_SKILL_RECORD.selectionPrompt": "Choose Shared Life to summon an absent companion"
+  "SUNQIAN_UNIVERSE_CARD_COMPANION_SKILL_RECORD.selectionPrompt": "Choose Shared Life to summon an absent companion",
+  "SUNQIAN_UNIVERSE_CARD_SERPENT_SPEAR.title": "Serpent Spear",
+  "SUNQIAN_UNIVERSE_CARD_SERPENT_SPEAR.description": "[gold]Third Brother[/gold] deals {CompanionDamage:diff()} damage to a random enemy.\n[gold]Third Brother[/gold] gains {Strength:diff()} [gold]Strength[/gold] and unlocks [gold]Make Holes[/gold]."
 }
