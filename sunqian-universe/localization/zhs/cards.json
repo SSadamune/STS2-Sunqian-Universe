@@ -333,5 +333,13 @@
   "SUNQIAN_UNIVERSE_CARD_SCRIPT_RECORD_PART_TIME_GENERAL.smartDescription": "失效时，从以下牌（具有随机[gold]附魔[/gold]）中获得一张：\n{RecordedCards}。",
   "SUNQIAN_UNIVERSE_CARD_SCRIPT_ACTIVATE_UPGRADABLE": "激活此[gold]{IfUpgraded:show:剧本+|剧本}[/gold]。",
   "SUNQIAN_UNIVERSE_CARD_GUAN_YU_CIVIL_VER.annotation": "[red]不能[/red]与[gold]武关羽[/gold]同时激活。",
-  "SUNQIAN_UNIVERSE_CARD_GUAN_YU_MARTIAL_VER.annotation": "[red]不能[/red]与[gold]文关羽[/gold]同时激活。"
+  "SUNQIAN_UNIVERSE_CARD_GUAN_YU_MARTIAL_VER.annotation": "[red]不能[/red]与[gold]文关羽[/gold]同时激活。",
+  "SUNQIAN_UNIVERSE_CARD_MILK_DRAGON_EMERGES.title": "奶龙出山",
+  "SUNQIAN_UNIVERSE_CARD_MILK_DRAGON_EMERGES.description": "选择一项：获得{VigorPower:diff()}点[gold]活力[/gold]，丢弃所有非[gold]保留[/gold]的[gold]攻击[/gold]牌；或者获得{TinderPower:diff()}层[gold]火种[/gold]，丢弃所有非[gold]保留[/gold]的[gold]灼烧[/gold]牌。{SlightRevisionText}",
+  "SUNQIAN_UNIVERSE_CARD_MILK_DRAGON_ADVANCE.title": "进军",
+  "SUNQIAN_UNIVERSE_CARD_MILK_DRAGON_ADVANCE.description": "获得{Amount:diff()}点[gold]活力[/gold]，丢弃所有非[gold]保留[/gold]的[gold]攻击[/gold]牌。",
+  "SUNQIAN_UNIVERSE_CARD_MILK_DRAGON_ARSON.title": "放火",
+  "SUNQIAN_UNIVERSE_CARD_MILK_DRAGON_ARSON.description": "获得{Amount:diff()}层[gold]火种[/gold]，丢弃所有非[gold]保留[/gold]的[gold]灼烧[/gold]牌。",
+  "SUNQIAN_UNIVERSE_CARD_MILK_DRAGON_BOWANG_SCRIPT_PREVIEW.title": "博望悖论剧本",
+  "SUNQIAN_UNIVERSE_CARD_MILK_DRAGON_BOWANG_SCRIPT_PREVIEW.description": "将[gold]奶龙出山[/gold]的两个选项转化为剧本，并激活其中之一。"
 }

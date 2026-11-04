@@ -333,5 +333,13 @@
   "SUNQIAN_UNIVERSE_CARD_SCRIPT_RECORD_PART_TIME_GENERAL.smartDescription": "When deactivated, obtain 1 of the following cards with a random [gold]Enchantment[/gold]:\n{RecordedCards}.",
   "SUNQIAN_UNIVERSE_CARD_SCRIPT_ACTIVATE_UPGRADABLE": "Activate this [gold]{IfUpgraded:show:Script+|Script}[/gold].",
   "SUNQIAN_UNIVERSE_CARD_GUAN_YU_CIVIL_VER.annotation": "[red]Cannot[/red] be active at the same time as [gold]Guan Yu Martial ver[/gold].",
-  "SUNQIAN_UNIVERSE_CARD_GUAN_YU_MARTIAL_VER.annotation": "[red]Cannot[/red] be active at the same time as [gold]Guan Yu Civil ver[/gold]."
+  "SUNQIAN_UNIVERSE_CARD_GUAN_YU_MARTIAL_VER.annotation": "[red]Cannot[/red] be active at the same time as [gold]Guan Yu Civil ver[/gold].",
+  "SUNQIAN_UNIVERSE_CARD_MILK_DRAGON_EMERGES.title": "Milk Dragon Emerges",
+  "SUNQIAN_UNIVERSE_CARD_MILK_DRAGON_EMERGES.description": "Choose one: Gain {VigorPower:diff()} [gold]Vigor[/gold]. Discard all [gold]Attacks[/gold] without [gold]Retain[/gold]; or gain {TinderPower:diff()} [gold]Tinder[/gold]. Discard all [gold]Burning[/gold] cards without [gold]Retain[/gold].{SlightRevisionText}",
+  "SUNQIAN_UNIVERSE_CARD_MILK_DRAGON_ADVANCE.title": "Advance",
+  "SUNQIAN_UNIVERSE_CARD_MILK_DRAGON_ADVANCE.description": "Gain {Amount:diff()} [gold]Vigor[/gold]. Discard all [gold]Attacks[/gold] without [gold]Retain[/gold].",
+  "SUNQIAN_UNIVERSE_CARD_MILK_DRAGON_ARSON.title": "Arson",
+  "SUNQIAN_UNIVERSE_CARD_MILK_DRAGON_ARSON.description": "Gain {Amount:diff()} [gold]Tinder[/gold]. Discard all [gold]Burning[/gold] cards without [gold]Retain[/gold].",
+  "SUNQIAN_UNIVERSE_CARD_MILK_DRAGON_BOWANG_SCRIPT_PREVIEW.title": "Bowang Paradox Script",
+  "SUNQIAN_UNIVERSE_CARD_MILK_DRAGON_BOWANG_SCRIPT_PREVIEW.description": "Turn the two options of [gold]Milk Dragon Emerges[/gold] into Scripts, then activate one."
 }
