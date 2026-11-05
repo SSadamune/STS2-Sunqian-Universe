@@ -96,6 +96,14 @@
 
 `PickRandomEnemiesUnique` 的洗牌会消耗 `CombatTargets` 随机数。即使最终选中了全部敌人，也不要改成部分洗牌或跳过洗牌，否则后续随机序列会变。
 
+## 欲擒故纵
+
+实现在 `Cards/LureAndRelease.cs` 和 `Powers/LureAndReleasePower.cs`。候选按 `Rng.CombatCardSelection` 从抽牌堆随机选出，随后统一走 `CardCmd.Discard`：先完成全部候选的移动和弃牌 Hook，再逐个自动打出本回合的奇巧牌；等整段插入结算返回后才打开选牌界面。
+
+选牌和延迟获得都直接持有候选的牌实例，并按当前 `Pile` 过滤抽牌堆/弃牌堆，不按牌名、Entry 或牌堆位置重新匹配。因此候选被奇巧、变化或其它插入结算移走后不会被误认成同名的新牌。
+
+选牌时若没有满足区域的候选，跳过选牌且不挂延迟能力。跳过选牌后，下回合 `BeforeHandDraw`（正常抽牌之前）只获得当时仍在抽牌堆/弃牌堆的候选；若一张都没有，直接移除延迟能力，不打开界面。每次跳过选择各挂一个独立实例，重叠的候选由后结算的能力按当前区域过滤，不会重复加入。
+
 ## 灼烧
 
 实现在 `Powers/BurningPower.cs`。它是可叠加的减益，伤害等于层数，数值属性是 `ValueProp.Unpowered`。

@@ -84,14 +84,18 @@ Windows 下脚本会把 `APPDATA`、`LOCALAPPDATA` 和 `XDG_DATA_HOME` 同时重
   以及《灼伤》一类具有独立回合末效果的牌。
 - Common 卡牌遵循“一张牌一个 `*Tests.cs`”的结构，覆盖直接伤害、格挡、状态、
   牌堆、自动打出、蓄能、回收和剧本生成等行为。
-- `CommonCardPoolTests`：从孙乾运行时卡池审计全部 20 张 Common 卡；新增 Common 卡却
+- `LureAndReleaseTests`：覆盖基础/升级随机候选数、候选不足、空抽牌堆、奇巧自动打出完成后再选牌、
+  奇巧移走全部候选时跳过、选择一张、跳过选择后在下回合正常抽牌前获得全部，以及下回合部分/全部
+  候选已离开抽牌堆或弃牌堆时的过滤和无提示跳过。
+- `CommonCardPoolTests`：从孙乾运行时卡池审计全部 21 张 Common 卡；新增 Common 卡却
   未创建测试并更新测试清单时，此审计会直接失败。
 
 Common 覆盖清单：`Audition`、`ChickenFootCheeseScript`、`Circus`、`Denied`、
 `EunuchScript`、`ExecutionCommanderScript`、`FingerSnapStrike`、`FireNova`、
-`HateTheHeavensStrike`、`HeadsmanScript`、`LaserSwordAssassination`、`Portal`、
-`SendHorseWithoutHay`、`ServantScript`、`StarryNightStrike`、`VoiceChange`、
-`WatchFireFromShore`、`Wine`、`WorkLifeBalance`、`WorryWithoutWorry`。
+`HateTheHeavensStrike`、`HeadsmanScript`、`LaserSwordAssassination`、
+`LureAndRelease`、`Portal`、`SendHorseWithoutHay`、`ServantScript`、
+`StarryNightStrike`、`VoiceChange`、`WatchFireFromShore`、`Wine`、
+`WorkLifeBalance`、`WorryWithoutWorry`。
 
 测试类统一继承 `SunqianCombatTestSuite`。新增用例时优先使用其中的牌堆、升级、
 单回合保留和脚本断言辅助方法，避免直接改写游戏内部牌堆。

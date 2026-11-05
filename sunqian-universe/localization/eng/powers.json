@@ -185,5 +185,7 @@
   "SUNQIAN_UNIVERSE_POWER_DRAGON_EMPEROR_MARCH_POWER.upgradedDescription": "If [gold]Second Brother[/gold] is present, after you play a card with “Dragon” in its name, gain {UpgradedCount} [gold]Emperor’s March+[/gold].",
   "SUNQIAN_UNIVERSE_POWER_DRAGON_EMPEROR_MARCH_POWER.mixedDescription": "If [gold]Second Brother[/gold] is present, after you play a card with “Dragon” in its name, gain {NormalCount} [gold]Emperor’s March[/gold] and {UpgradedCount} [gold]Emperor’s March+[/gold].",
   "SUNQIAN_UNIVERSE_POWER_SOVEREIGN_FORM_POWER.title": "Sovereign Form",
-  "SUNQIAN_UNIVERSE_POWER_SOVEREIGN_FORM_POWER.description": "Your [gold]Sovereign Blades[/gold] are renamed [gold]Sovereign Strike[/gold]."
+  "SUNQIAN_UNIVERSE_POWER_SOVEREIGN_FORM_POWER.description": "Your [gold]Sovereign Blades[/gold] are renamed [gold]Sovereign Strike[/gold].",
+  "SUNQIAN_UNIVERSE_POWER_LURE_AND_RELEASE_POWER.title": "Lure and Release",
+  "SUNQIAN_UNIVERSE_POWER_LURE_AND_RELEASE_POWER.description": "At the start of your next turn, put the cards discarded this way that are still in your [gold]Draw Pile[/gold] or [gold]Discard Pile[/gold] into your [gold]Hand[/gold]."
 }

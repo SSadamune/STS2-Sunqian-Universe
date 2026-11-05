@@ -185,5 +185,7 @@
   "SUNQIAN_UNIVERSE_POWER_DRAGON_EMPEROR_MARCH_POWER.upgradedDescription": "如果[gold]二弟[/gold]在场，你打出名字中包含“龙”的牌后，获得{UpgradedCount}张[gold]帝王之征+[/gold]。",
   "SUNQIAN_UNIVERSE_POWER_DRAGON_EMPEROR_MARCH_POWER.mixedDescription": "如果[gold]二弟[/gold]在场，你打出名字中包含“龙”的牌后，获得{NormalCount}张[gold]帝王之征[/gold]和{UpgradedCount}张[gold]帝王之征+[/gold]。",
   "SUNQIAN_UNIVERSE_POWER_SOVEREIGN_FORM_POWER.title": "君王形态",
-  "SUNQIAN_UNIVERSE_POWER_SOVEREIGN_FORM_POWER.description": "你的[gold]君王之剑[/gold]改名为[gold]君王打击[/gold]。"
+  "SUNQIAN_UNIVERSE_POWER_SOVEREIGN_FORM_POWER.description": "你的[gold]君王之剑[/gold]改名为[gold]君王打击[/gold]。",
+  "SUNQIAN_UNIVERSE_POWER_LURE_AND_RELEASE_POWER.title": "欲擒故纵",
+  "SUNQIAN_UNIVERSE_POWER_LURE_AND_RELEASE_POWER.description": "在你的下个回合开始时，将你以此效果丢弃且仍在[gold]抽牌堆[/gold]或[gold]弃牌堆[/gold]的牌放入[gold]手牌[/gold]。"
 }

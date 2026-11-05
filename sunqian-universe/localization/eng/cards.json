@@ -406,5 +406,8 @@
   "SUNQIAN_UNIVERSE_CARD_SWORDSMANSHIP_REVIEW.selectionPrompt": "Choose a Strike to upgrade and put on top",
   "SUNQIAN_UNIVERSE_CARD_SOVEREIGN_FORM.title": "Sovereign Form",
   "SUNQIAN_UNIVERSE_CARD_SOVEREIGN_FORM.description": "[gold]Forge[/gold] {Forge:diff()}, equal to the total [gold]Righteousness[/gold] you have lost this run.\nYour [gold]Sovereign Blades[/gold] are renamed [gold]Sovereign Strike[/gold].",
+  "SUNQIAN_UNIVERSE_CARD_LURE_AND_RELEASE.title": "Lure and Release",
+  "SUNQIAN_UNIVERSE_CARD_LURE_AND_RELEASE.description": "Discard {Cards:diff()} random cards from your [gold]Draw Pile[/gold]. You may put one of them into your [gold]Hand[/gold], or put all of them into your [gold]Hand[/gold] at the start of your next turn.",
+  "SUNQIAN_UNIVERSE_CARD_LURE_AND_RELEASE.selectionScreenPrompt": "Choose one to obtain; otherwise, obtain all of them at the start of your next turn.",
   "SUNQIAN_UNIVERSE_SOVEREIGN_STRIKE.title": "Sovereign Strike"
 }

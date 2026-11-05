@@ -406,5 +406,8 @@
   "SUNQIAN_UNIVERSE_CARD_SWORDSMANSHIP_REVIEW.selectionPrompt": "选择升级并置于牌堆顶的打击牌",
   "SUNQIAN_UNIVERSE_CARD_SOVEREIGN_FORM.title": "君王形态",
   "SUNQIAN_UNIVERSE_CARD_SOVEREIGN_FORM.description": "[gold]锻造[/gold]{Forge:diff()}，此锻造值等同于本局游戏中你失去过的[gold]仁义[/gold]。\n你的[gold]君王之剑[/gold]改名为[gold]君王打击[/gold]。",
+  "SUNQIAN_UNIVERSE_CARD_LURE_AND_RELEASE.title": "欲擒故纵",
+  "SUNQIAN_UNIVERSE_CARD_LURE_AND_RELEASE.description": "丢弃[gold]抽牌堆[/gold]的随机{Cards:diff()}张牌，你可以获得其中一张，或者在下回合开始时获得全部。",
+  "SUNQIAN_UNIVERSE_CARD_LURE_AND_RELEASE.selectionScreenPrompt": "选择一张获得，否则将在下回合开始时获得这些牌。",
   "SUNQIAN_UNIVERSE_SOVEREIGN_STRIKE.title": "君王打击"
 }
