@@ -8,6 +8,7 @@ using MegaCrit.Sts2.Core.Models.Characters;
 using MegaCrit.Sts2.Core.Models.Monsters;
 using MegaCrit.Sts2.Core.Models.Powers;
 using Squ.Cards;
+using Squ.Character;
 using Squ.Powers;
 using TestTheSpire;
 using Xunit;
@@ -18,6 +19,18 @@ public sealed class LureAndReleaseTests : SunqianCombatTestSuite
 {
     protected override void ConfigureBattle(CombatTestBattleBuilder battle) =>
         battle.Player<Ironclad>().AddEnemy<BigDummy>().WithSeed("lure-and-release");
+
+    [Fact]
+    public void Card_is_registered_only_in_the_reincarnation_prisoner_pool()
+    {
+        ModelId id = ModelDb.Card<LureAndRelease>().Id;
+        Assert.Contains(
+            ModelDb.CardPool<LiubeiCardPool>().AllCards,
+            card => card.Id == id);
+        Assert.DoesNotContain(
+            ModelDb.CardPool<SunqianCardPool>().AllCards,
+            card => card.Id == id);
+    }
 
     [Fact]
     public async Task Card_is_a_one_cost_common_skill_and_upgrade_changes_the_candidate_count()

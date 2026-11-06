@@ -7,6 +7,7 @@ using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using MegaCrit.Sts2.Core.Models;
+using MegaCrit.Sts2.Core.Models.CardPools;
 using MegaCrit.Sts2.Core.Models.Powers;
 using Squ;
 using Squ.Audio;
@@ -21,9 +22,10 @@ using STS2RitsuLib.Scaffolding.Content;
 
 namespace Squ.Cards;
 
-[RegisterCard(typeof(SunqianCardPool), StableEntryStem = "bowang_paradox_script")]
+[RegisterCard(typeof(TokenCardPool), StableEntryStem = "bowang_paradox_script")]
 public sealed class BowangParadoxScript : ScriptCardTemplate<BowangParadoxAdvanceScriptRecord>
 {
+	public override CardPoolModel VisualCardPool => ModelDb.CardPool<SunqianCardPool>();
 	protected override bool MergeScriptActivationKeywords => false;
 	public const int BaseVigor = 7;
 	public const int UpgradedVigor = 9;
@@ -51,7 +53,7 @@ public sealed class BowangParadoxScript : ScriptCardTemplate<BowangParadoxAdvanc
 		PortraitPath: "res://images/cards/BowangParadoxScript.png");
 
 	public BowangParadoxScript()
-		: base(1, CardType.Skill, CardRarity.Uncommon, TargetType.Self, true)
+		: base(1, CardType.Skill, CardRarity.Token, TargetType.Self, true)
 	{
 	}
 

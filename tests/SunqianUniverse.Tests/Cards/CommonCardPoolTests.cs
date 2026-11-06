@@ -23,7 +23,6 @@ public sealed class CommonCardPoolTests : SunqianCombatTestSuite
         typeof(HateTheHeavensStrike),
         typeof(HeadsmanScript),
         typeof(LaserSwordAssassination),
-        typeof(LureAndRelease),
         typeof(Portal),
         typeof(SendHorseWithoutHay),
         typeof(ServantScript),

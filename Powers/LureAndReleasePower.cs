@@ -36,8 +36,8 @@ public sealed class LureAndReleasePower : ModPowerTemplate
 	public override PowerStackType StackType => PowerStackType.None;
 
 	public override PowerAssetProfile AssetProfile => new(
-		IconPath: "res://images/powers/LureAndReleasePower.png",
-		BigIconPath: "res://images/powers/LureAndReleasePowerBig.png");
+		IconPath: "res://images/powers/TroubleAgainPower.png",
+		BigIconPath: "res://images/powers/TroubleAgainPowerBig.png");
 
 	protected override object InitInternalData() => new Data();
 

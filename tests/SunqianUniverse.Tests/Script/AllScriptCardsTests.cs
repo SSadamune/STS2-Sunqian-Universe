@@ -54,8 +54,10 @@ public sealed class AllScriptCardsTests : SunqianCombatTestSuite
             .OrderBy(type => type.FullName)
             .ToArray();
         Type[] registered = ModelDb.CardPool<SunqianCardPool>().AllCards
+            .Concat(ModelDb.CardPool<TokenCardPool>().AllCards)
             .OfType<ScriptCardTemplate>()
             .Select(card => card.GetType())
+            .Distinct()
             .OrderBy(type => type.FullName)
             .ToArray();
 

@@ -14,7 +14,6 @@ public sealed class UncommonCardPoolTests : SunqianCombatTestSuite
     [
         typeof(ArmInjuryWindmill),
         typeof(BlockFirefighting),
-        typeof(BowangParadoxScript),
         typeof(BuddyHu),
         typeof(BuddyLongtaodi),
         typeof(BuddyTangxiaohu),
@@ -30,6 +29,7 @@ public sealed class UncommonCardPoolTests : SunqianCombatTestSuite
         typeof(KeepPlayingKeepDancing),
         typeof(KillingIntentPerception),
         typeof(LensReshoot),
+        typeof(MilkDragonEmerges),
         typeof(NeutralAmbushScript),
         typeof(NightRaidWuchaoScript),
         typeof(NotAfraidOfAcid),

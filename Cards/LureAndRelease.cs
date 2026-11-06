@@ -24,7 +24,7 @@ namespace Squ.Cards;
 /// （包括[gold]奇巧[/gold]自动打出）后，选择其中一张获得；跳过选择则在下回合
 /// 正常抽牌前获得仍在抽牌堆或弃牌堆的候选牌。
 /// </summary>
-[RegisterCard(typeof(SunqianCardPool), StableEntryStem = "lure_and_release")]
+[RegisterCard(typeof(LiubeiCardPool), StableEntryStem = "lure_and_release")]
 public sealed class LureAndRelease : ModCardTemplate
 {
 	public const int BaseCandidateCount = 3;
@@ -42,7 +42,7 @@ public sealed class LureAndRelease : ModCardTemplate
 	];
 
 	public override CardAssetProfile AssetProfile => new(
-		PortraitPath: "res://images/cards/LureAndRelease.png");
+		PortraitPath: "res://images/cards/PrisonerPlaceholder.png");
 
 	public LureAndRelease()
 		: base(1, CardType.Skill, CardRarity.Common, TargetType.Self)

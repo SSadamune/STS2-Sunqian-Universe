@@ -392,7 +392,7 @@
   "SUNQIAN_UNIVERSE_CARD_ABDUCT_ZILONG.randomEnchantment": "随机",
   "SUNQIAN_UNIVERSE_CARD_ABDUCT_ZILONG.strongEnchantment": "强力",
   "SUNQIAN_UNIVERSE_CARD_MILK_DRAGON_EMERGES.title": "奶龙出山",
-  "SUNQIAN_UNIVERSE_CARD_MILK_DRAGON_EMERGES.description": "选择一项：获得{VigorPower:diff()}点[gold]活力[/gold]，丢弃所有非[gold]保留[/gold]的[gold]攻击[/gold]牌；或者获得{TinderPower:diff()}层[gold]火种[/gold]，丢弃所有非[gold]保留[/gold]的[gold]灼烧[/gold]牌。{SlightRevisionText}",
+  "SUNQIAN_UNIVERSE_CARD_MILK_DRAGON_EMERGES.description": "获得{VigorPower:diff()}点[gold]活力[/gold]并丢弃所有非[gold]保留[/gold]的[gold]攻击[/gold]牌；或者获得{TinderPower:diff()}层[gold]火种[/gold]并丢弃所有非[gold]保留[/gold]的[gold]灼烧[/gold]牌。{SlightRevisionText}",
   "SUNQIAN_UNIVERSE_CARD_MILK_DRAGON_ADVANCE.title": "进军",
   "SUNQIAN_UNIVERSE_CARD_MILK_DRAGON_ADVANCE.description": "获得{Amount:diff()}点[gold]活力[/gold]，丢弃所有非[gold]保留[/gold]的[gold]攻击[/gold]牌。",
   "SUNQIAN_UNIVERSE_CARD_MILK_DRAGON_ARSON.title": "放火",
@@ -409,5 +409,7 @@
   "SUNQIAN_UNIVERSE_CARD_LURE_AND_RELEASE.title": "欲擒故纵",
   "SUNQIAN_UNIVERSE_CARD_LURE_AND_RELEASE.description": "丢弃[gold]抽牌堆[/gold]的随机{Cards:diff()}张牌，你可以获得其中一张，或者在下回合开始时获得全部。",
   "SUNQIAN_UNIVERSE_CARD_LURE_AND_RELEASE.selectionScreenPrompt": "选择一张获得，否则将在下回合开始时获得这些牌。",
+  "SUNQIAN_UNIVERSE_CARD_REVENGE_STRIKE.title": "复仇打击",
+  "SUNQIAN_UNIVERSE_CARD_REVENGE_STRIKE.description": "造成{Damage:diff()}点伤害。\n根据过去{Turns:diff()}回合内你失去的生命，增加等量伤害{bouns}。",
   "SUNQIAN_UNIVERSE_SOVEREIGN_STRIKE.title": "君王打击"
 }

@@ -1,3 +1,5 @@
+using System.Text.Json;
+using Godot;
 using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.HoverTips;
@@ -17,6 +19,36 @@ public sealed class MilkDragonEmergesTests : SunqianCombatTestSuite
 {
     protected override void ConfigureBattle(CombatTestBattleBuilder battle) => battle.Player<LiubeiCharacter>()
         .AddEnemy<BigDummy>().WithSeed("milk-dragon-emerges");
+
+    [Theory]
+    [InlineData("zhs", "并丢弃所有非[gold]保留[/gold]的[gold]攻击[/gold]牌；或者获得")]
+    [InlineData("eng", "and discard all [gold]Attacks[/gold] without [gold]Retain[/gold]; or gain")]
+    public void Milk_dragon_description_uses_the_discard_and_alternative_wording(string language, string expected)
+    {
+        using JsonDocument table = JsonDocument.Parse(Godot.FileAccess.GetFileAsString(
+            $"res://sunqian-universe/localization/{language}/cards.json"));
+        string text = table.RootElement
+            .GetProperty("SUNQIAN_UNIVERSE_CARD_MILK_DRAGON_EMERGES.description")
+            .GetString()!;
+        Assert.Contains(expected, text);
+        Assert.DoesNotContain(language == "zhs" ? "选择一项：" : "Choose one:", text);
+    }
+
+    [Theory]
+    [InlineData("zhs", "博望悖论剧本", "将[gold]奶龙出山[/gold]的两个选项转化为剧本，并激活其中之一。")]
+    [InlineData("eng", "Bowang Paradox Script", "Turn the two options of [gold]Milk Dragon Emerges[/gold] into Scripts, then activate one.")]
+    public void Milk_dragon_preview_localization_is_consistent_in_both_languages(
+        string language, string title, string description)
+    {
+        using JsonDocument table = JsonDocument.Parse(Godot.FileAccess.GetFileAsString(
+            $"res://sunqian-universe/localization/{language}/cards.json"));
+        Assert.Equal(title, table.RootElement
+            .GetProperty("SUNQIAN_UNIVERSE_CARD_MILK_DRAGON_BOWANG_SCRIPT_PREVIEW.title")
+            .GetString());
+        Assert.Equal(description, table.RootElement
+            .GetProperty("SUNQIAN_UNIVERSE_CARD_MILK_DRAGON_BOWANG_SCRIPT_PREVIEW.description")
+            .GetString());
+    }
 
     [Theory]
     [InlineData(false, false, 7)]
@@ -75,6 +107,8 @@ public sealed class MilkDragonEmergesTests : SunqianCombatTestSuite
         await SlightRevisionSystem.TransformAsync(card, target, targetUpgraded);
         var script = Assert.Single(Player.PlayerCombatState!.Hand.Cards.OfType<BowangParadoxScript>());
         Assert.Equal(upgraded, script.IsUpgraded);
+        Assert.Equal(CardRarity.Token, script.Rarity);
+        Assert.Same(ModelDb.CardPool<SunqianCardPool>(), script.VisualCardPool);
         Assert.Contains(script.HoverTips.OfType<CardHoverTip>(), tip => tip.Card is BowangParadoxAdvanceScriptRecord);
         Assert.Contains(script.HoverTips.OfType<CardHoverTip>(), tip => tip.Card is BowangParadoxArsonScriptRecord);
         var selector = new ScriptedCardSelector().ThenSelectWhere(option => option is BowangParadoxAdvanceScriptRecord);
@@ -94,6 +128,8 @@ public sealed class MilkDragonEmergesTests : SunqianCombatTestSuite
         if (upgraded) Upgrade(milk);
         var preview = Assert.IsType<MilkDragonBowangScriptPreview>(Assert.Single(milk.HoverTips.OfType<CardHoverTip>()).Card);
         Assert.Equal(upgraded, preview.IsUpgraded);
+        Assert.Equal(CardRarity.Token, preview.Rarity);
+        Assert.Same(ModelDb.CardPool<SunqianCardPool>(), preview.VisualCardPool);
         Assert.Equal("博望悖论剧本" + (upgraded ? "+" : ""), preview.Title);
         Assert.False(preview.ShouldShowInCardLibrary);
         Assert.Contains("将[gold]奶龙出山[/gold]的两个选项转化为剧本，并激活其中之一。", preview.GetDescriptionForPile(PileType.Deck));

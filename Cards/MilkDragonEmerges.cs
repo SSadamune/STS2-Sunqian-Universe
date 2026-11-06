@@ -20,7 +20,7 @@ public sealed class MilkDragonEmerges : SlightRevisionCardTemplate<BowangParadox
     protected override HashSet<CardTag> CanonicalTags => [SquCardTags.Dragon];
     protected override IEnumerable<DynamicVar> CanonicalVars =>
         [new PowerVar<VigorPower>(BowangParadoxScript.BaseVigor), new PowerVar<TinderPower>(BowangParadoxScript.BaseTinderStacks)];
-    public override STS2RitsuLib.Scaffolding.Content.CardAssetProfile AssetProfile => new(PortraitPath: "res://images/cards/PrisonerPlaceholder.png");
+    public override STS2RitsuLib.Scaffolding.Content.CardAssetProfile AssetProfile => new(PortraitPath: "res://images/cards/BowangParadoxScript.png");
     protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
     [..base.AdditionalHoverTips, HoverTipFactory.FromPower<VigorPower>(),
      ..HoverTipFactory.FromPowerWithPowerHoverTips<TinderPower>(), HoverTipFactory.FromPower<BurningPower>(),

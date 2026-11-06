@@ -14,7 +14,7 @@ namespace Squ.Cards;
 [RegisterCard(typeof(TokenCardPool), StableEntryStem = "milk_dragon_bowang_script_preview")]
 public sealed class MilkDragonBowangScriptPreview : ModCardTemplate
 {
-    public MilkDragonBowangScriptPreview() : base(1, CardType.Skill, CardRarity.Uncommon,
+    public MilkDragonBowangScriptPreview() : base(1, CardType.Skill, CardRarity.Token,
         TargetType.Self, showInCardLibrary: false) { }
     public override CardPoolModel VisualCardPool => ModelDb.CardPool<SunqianCardPool>();
     protected override HashSet<CardTag> CanonicalTags => [SquCardTags.Script];

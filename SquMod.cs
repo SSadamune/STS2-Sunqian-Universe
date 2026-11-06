@@ -10,6 +10,7 @@ using Squ.Cards;
 using Squ.Character;
 using Squ.Combat;
 using Squ.Interop;
+using Squ.Powers;
 using Squ.Relics;
 using Squ.RunData;
 using Squ.Script;
@@ -62,6 +63,7 @@ public static class SquMod
 			.Card<LiubeiCardPool, RuthlessStrike>(ModelPublicEntryOptions.FromStem("ruthless_strike"))
 			.Card<LiubeiCardPool, SelfDecapitationAscension>(ModelPublicEntryOptions.FromStem("self_decapitation_ascension"))
 			.Card<LiubeiCardPool, BurningLinkedCampsScript>(ModelPublicEntryOptions.FromStem("burning_linked_camps_script"))
+			.Card<SunqianCardPool, MilkDragonEmerges>(ModelPublicEntryOptions.FromStem("milk_dragon_emerges"))
 			.CardKeywordOwnedByLocNamespace("script")
 			.CardKeywordOwnedByLocNamespace("script_collection")
 			.CardKeywordOwnedByLocNamespace(
@@ -125,6 +127,7 @@ public static class SquMod
 		RunReloadCount.Initialize();
 		DailyWageRunData.Initialize();
 		RighteousnessRunData.Initialize();
+		RevengeStrikeTrackerPower.Initialize();
 		SelfDecapitationReviveData.Initialize();
 		ScriptSystem.Initialize();
 		SlightRevisionSystem.Initialize();

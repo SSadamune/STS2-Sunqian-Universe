@@ -1,9 +1,11 @@
 using HarmonyLib;
+using MegaCrit.Sts2.Core.Combat;
 using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.Hooks;
 using MegaCrit.Sts2.Core.HoverTips;
+using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.Cards;
 using MegaCrit.Sts2.Core.Models.Monsters;
 using MegaCrit.Sts2.Core.Models.Powers;
@@ -41,6 +43,32 @@ public sealed class RighteousnessTests : SunqianCombatTestSuite
         Assert.Equal(hp - 6 * plays, EnemyAt(0).CurrentHp);
         Assert.Equal(remaining, RighteousnessRunData.Get(Player));
         Assert.Equal(remaining, Player.Creature.GetPower<RighteousnessPower>()?.Amount ?? 0);
+    }
+
+    [Theory]
+    [InlineData(typeof(StrikeLiubei))]
+    [InlineData(typeof(StrikeLongtao))]
+    [InlineData(typeof(StrikeIronclad))]
+    [InlineData(typeof(FlameStrike))]
+    [InlineData(typeof(FingerSnapStrike))]
+    [InlineData(typeof(RuthlessStrike))]
+    [InlineData(typeof(FlyingSwordStrike))]
+    [InlineData(typeof(StarryNightStrike))]
+    public async Task Replays_are_part_of_one_manual_play_and_never_reenter_righteousness(Type cardType)
+    {
+        await PlayerCmd.SetEnergy(10, Player);
+        await Gain(20);
+        CardModel card = await AddToHand(ModelDb.GetId(cardType));
+        int playsBefore = CombatManager.Instance.History.CardPlaysStarted
+            .Count(entry => ReferenceEquals(entry.CardPlay.Card, card));
+
+        await Play(card, EnemyAt(0));
+
+        int playsAfter = CombatManager.Instance.History.CardPlaysStarted
+            .Count(entry => ReferenceEquals(entry.CardPlay.Card, card));
+        Assert.Equal(3, playsAfter - playsBefore);
+        Assert.Equal(16, RighteousnessRunData.Get(Player));
+        Assert.Equal(16, Player.Creature.GetPower<RighteousnessPower>()!.Amount);
     }
 
     [Fact]

@@ -392,7 +392,7 @@
   "SUNQIAN_UNIVERSE_CARD_ABDUCT_ZILONG.randomEnchantment": "random",
   "SUNQIAN_UNIVERSE_CARD_ABDUCT_ZILONG.strongEnchantment": "powerful",
   "SUNQIAN_UNIVERSE_CARD_MILK_DRAGON_EMERGES.title": "Milk Dragon Emerges",
-  "SUNQIAN_UNIVERSE_CARD_MILK_DRAGON_EMERGES.description": "Choose one: Gain {VigorPower:diff()} [gold]Vigor[/gold]. Discard all [gold]Attacks[/gold] without [gold]Retain[/gold]; or gain {TinderPower:diff()} [gold]Tinder[/gold]. Discard all [gold]Burning[/gold] cards without [gold]Retain[/gold].{SlightRevisionText}",
+  "SUNQIAN_UNIVERSE_CARD_MILK_DRAGON_EMERGES.description": "Gain {VigorPower:diff()} [gold]Vigor[/gold] and discard all [gold]Attacks[/gold] without [gold]Retain[/gold]; or gain {TinderPower:diff()} [gold]Tinder[/gold] and discard all [gold]Burning[/gold] cards without [gold]Retain[/gold].{SlightRevisionText}",
   "SUNQIAN_UNIVERSE_CARD_MILK_DRAGON_ADVANCE.title": "Advance",
   "SUNQIAN_UNIVERSE_CARD_MILK_DRAGON_ADVANCE.description": "Gain {Amount:diff()} [gold]Vigor[/gold]. Discard all [gold]Attacks[/gold] without [gold]Retain[/gold].",
   "SUNQIAN_UNIVERSE_CARD_MILK_DRAGON_ARSON.title": "Arson",
@@ -409,5 +409,7 @@
   "SUNQIAN_UNIVERSE_CARD_LURE_AND_RELEASE.title": "Lure and Release",
   "SUNQIAN_UNIVERSE_CARD_LURE_AND_RELEASE.description": "Discard {Cards:diff()} random cards from your [gold]Draw Pile[/gold]. You may put one of them into your [gold]Hand[/gold], or put all of them into your [gold]Hand[/gold] at the start of your next turn.",
   "SUNQIAN_UNIVERSE_CARD_LURE_AND_RELEASE.selectionScreenPrompt": "Choose one to obtain; otherwise, obtain all of them at the start of your next turn.",
+  "SUNQIAN_UNIVERSE_CARD_REVENGE_STRIKE.title": "Revenge Strike",
+  "SUNQIAN_UNIVERSE_CARD_REVENGE_STRIKE.description": "Deal {Damage:diff()} damage.\nDeal additional damage equal to the HP you lost within the past {Turns:diff()} {Turns:plural:turn|turns} {bouns}.",
   "SUNQIAN_UNIVERSE_SOVEREIGN_STRIKE.title": "Sovereign Strike"
 }

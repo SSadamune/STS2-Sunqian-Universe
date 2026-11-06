@@ -27,7 +27,7 @@ public sealed class LiubeiCharacterTests : SunqianCombatTestSuite
         [
             typeof(WatchFireFromShore), typeof(WorkLifeBalance), typeof(ThunderOnStillLake),
             typeof(KeepPlayingKeepDancing), typeof(BlockFirefighting), typeof(RuthlessStrike),
-            typeof(SelfDecapitationAscension), typeof(BurningLinkedCampsScript),
+            typeof(SelfDecapitationAscension), typeof(BurningLinkedCampsScript), typeof(MilkDragonEmerges),
         ];
         var constraint = multiplayer ? CardMultiplayerConstraint.MultiplayerOnly : CardMultiplayerConstraint.SingleplayerOnly;
         foreach (var pool in new CardPoolModel[] { ModelDb.CardPool<SunqianCardPool>(), ModelDb.CardPool<LiubeiCardPool>() })
@@ -39,6 +39,20 @@ public sealed class LiubeiCharacterTests : SunqianCombatTestSuite
                 Assert.Equal(expected, cards.Count(card => card.GetType() == type));
             }
         }
+    }
+
+    [Theory]
+    [InlineData(typeof(LureAndRelease))]
+    [InlineData(typeof(RevengeStrike))]
+    public void New_cards_belong_only_to_the_reincarnation_prisoner_pool(Type cardType)
+    {
+        ModelId id = ModelDb.GetId(cardType);
+        Assert.Contains(
+            ModelDb.CardPool<LiubeiCardPool>().AllCards,
+            card => card.Id == id);
+        Assert.DoesNotContain(
+            ModelDb.CardPool<SunqianCardPool>().AllCards,
+            card => card.Id == id);
     }
 
     protected override void ConfigureBattle(CombatTestBattleBuilder battle) =>
