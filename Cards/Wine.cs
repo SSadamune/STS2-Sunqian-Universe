@@ -13,6 +13,7 @@ using MegaCrit.Sts2.Core.Models.Powers;
 using Squ.Audio;
 using Squ.Character;
 using Squ.Interop;
+using Squ.Powers;
 using Squ.Script;
 using STS2RitsuLib.Interop.AutoRegistration;
 using STS2RitsuLib.Scaffolding.Content;
@@ -65,12 +66,20 @@ public sealed class Wine : ModCardTemplate
 			Owner.Creature,
 			this);
 
-		await GeneratedCombatCards.AddToDrawPileInCombat<Dazed>(
-			combatState,
-			Owner,
-			1,
-			upgraded: false,
-			Owner);
+		CannotGetDrunkPower? intoxication = Owner.Creature.GetPower<CannotGetDrunkPower>();
+		if (intoxication != null)
+		{
+			await CardPileCmd.Draw(choiceContext, intoxication.GetProtectedDrawCount(), Owner);
+		}
+		else
+		{
+			await GeneratedCombatCards.AddToDrawPileInCombat<Dazed>(
+				combatState,
+				Owner,
+				1,
+				upgraded: false,
+				Owner);
+		}
 	}
 
 	protected override void AddExtraArgsToDescription(LocString description)

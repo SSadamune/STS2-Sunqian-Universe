@@ -38,3 +38,7 @@ These rules apply when the user requests delegation to DeepSeek Harness / DSH or
 
 - On `feature/new-character`, new cards belong to the Reincarnation Prisoner (`轮回囚徒`), implemented as `LiubeiCharacter` / `LiubeiCardPool`, unless a card explicitly specifies another pool.
 - Do not draw new card illustrations on this branch. Use the existing `res://images/cards/PrisonerPlaceholder.png` placeholder unless explicitly told otherwise.
+
+## Card timing wording
+
+- "When played" effects resolve before the card's effects; "after played" effects resolve after the card's effects.

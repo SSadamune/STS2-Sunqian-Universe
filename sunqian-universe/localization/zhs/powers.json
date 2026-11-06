@@ -187,5 +187,9 @@
   "SUNQIAN_UNIVERSE_POWER_SOVEREIGN_FORM_POWER.title": "君王形态",
   "SUNQIAN_UNIVERSE_POWER_SOVEREIGN_FORM_POWER.description": "你的[gold]君王之剑[/gold]改名为[gold]君王打击[/gold]。",
   "SUNQIAN_UNIVERSE_POWER_LURE_AND_RELEASE_POWER.title": "欲擒故纵",
-  "SUNQIAN_UNIVERSE_POWER_LURE_AND_RELEASE_POWER.description": "在你的下个回合开始时，将你以此效果丢弃且仍在[gold]抽牌堆[/gold]或[gold]弃牌堆[/gold]的牌放入[gold]手牌[/gold]。"
+  "SUNQIAN_UNIVERSE_POWER_LURE_AND_RELEASE_POWER.description": "在你的下个回合开始时，将你以此效果丢弃且仍在[gold]抽牌堆[/gold]或[gold]弃牌堆[/gold]的牌放入[gold]手牌[/gold]。",
+  "SUNQIAN_UNIVERSE_POWER_WHEN_FLOAT_ONE_CUP_POWER.title": "当浮一大白",
+  "SUNQIAN_UNIVERSE_POWER_WHEN_FLOAT_ONE_CUP_POWER.description": "你打出的[gold]酒[/gold]会为二弟和三弟提供[blue]{Amount}[/blue]倍活力。",
+  "SUNQIAN_UNIVERSE_POWER_CANNOT_GET_DRUNK_POWER.title": "不可饮酒致醉",
+  "SUNQIAN_UNIVERSE_POWER_CANNOT_GET_DRUNK_POWER.description": "你打出[gold]酒[/gold]时不生成[gold]眩晕[/gold]且抽[blue]{Amount}[/blue]张牌；同一回合再次打出[gold]酒[/gold]时[red]失去[/red]此能力。"
 }

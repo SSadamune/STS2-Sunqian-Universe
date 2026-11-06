@@ -187,5 +187,9 @@
   "SUNQIAN_UNIVERSE_POWER_SOVEREIGN_FORM_POWER.title": "Sovereign Form",
   "SUNQIAN_UNIVERSE_POWER_SOVEREIGN_FORM_POWER.description": "Your [gold]Sovereign Blades[/gold] are renamed [gold]Sovereign Strike[/gold].",
   "SUNQIAN_UNIVERSE_POWER_LURE_AND_RELEASE_POWER.title": "Lure and Release",
-  "SUNQIAN_UNIVERSE_POWER_LURE_AND_RELEASE_POWER.description": "At the start of your next turn, put the cards discarded this way that are still in your [gold]Draw Pile[/gold] or [gold]Discard Pile[/gold] into your [gold]Hand[/gold]."
+  "SUNQIAN_UNIVERSE_POWER_LURE_AND_RELEASE_POWER.description": "At the start of your next turn, put the cards discarded this way that are still in your [gold]Draw Pile[/gold] or [gold]Discard Pile[/gold] into your [gold]Hand[/gold].",
+  "SUNQIAN_UNIVERSE_POWER_WHEN_FLOAT_ONE_CUP_POWER.title": "When Float One Cup",
+  "SUNQIAN_UNIVERSE_POWER_WHEN_FLOAT_ONE_CUP_POWER.description": "Your [gold]Wine[/gold] grants your Second and Third Brothers [blue]{Amount}[/blue] times as much Vigor.",
+  "SUNQIAN_UNIVERSE_POWER_CANNOT_GET_DRUNK_POWER.title": "Cannot Get Drunk",
+  "SUNQIAN_UNIVERSE_POWER_CANNOT_GET_DRUNK_POWER.description": "When you play [gold]Wine[/gold], it does not add [gold]Dazed[/gold] and you draw [blue]{Amount}[/blue] cards. [red]Lose[/red] this power when you play another [gold]Wine[/gold] in the same turn."
 }
