@@ -23,11 +23,11 @@ using STS2RitsuLib.Scaffolding.Content;
 namespace Squ.Cards;
 
 /// <summary>
-/// 招架打击：对敌人造成伤害，或为任意存活玩家（包括自己/队友）提供格挡。
+/// 偏折打击：对敌人造成伤害，或为任意存活玩家（包括自己/队友）提供格挡。
 /// 自动打出没有目标时按攻击牌惯例选择随机敌人，不会把玩家误当敌人。
 /// </summary>
-[RegisterCard(typeof(LiubeiCardPool), StableEntryStem = "parry_strike")]
-public sealed class ParryStrike : ModCardTemplate
+[RegisterCard(typeof(LiubeiCardPool), StableEntryStem = "deflect_strike")]
+public sealed class DeflectStrike : ModCardTemplate
 {
 	public const int BaseDamage = 9;
 	public const int UpgradedDamage = 13;
@@ -58,7 +58,7 @@ public sealed class ParryStrike : ModCardTemplate
 	public override CardAssetProfile AssetProfile => new(
 		PortraitPath: "res://images/cards/PrisonerPlaceholder.png");
 
-	public ParryStrike()
+	public DeflectStrike()
 		: base(1, CardType.Attack, CardRarity.Common, CustomTargetType.Anyone)
 	{
 	}

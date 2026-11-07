@@ -32,7 +32,7 @@ public sealed class NewPrisonerCardsTests : SunqianCombatTestSuite
         {
             (typeof(WhenFloatOneCup), 1, CardType.Power, CardRarity.Uncommon),
             (typeof(CannotGetDrunk), 1, CardType.Power, CardRarity.Uncommon),
-            (typeof(ParryStrike), 1, CardType.Attack, CardRarity.Common),
+            (typeof(DeflectStrike), 1, CardType.Attack, CardRarity.Common),
         })
         {
             CardModel card = ModelDb.GetById<CardModel>(ModelDb.GetId(type));
@@ -43,7 +43,7 @@ public sealed class NewPrisonerCardsTests : SunqianCombatTestSuite
             Assert.DoesNotContain(ModelDb.CardPool<SunqianCardPool>().AllCards, c => c.Id == card.Id);
         }
 
-        Assert.Contains(CardTag.Strike, ModelDb.Card<ParryStrike>().Tags);
+        Assert.Contains(CardTag.Strike, ModelDb.Card<DeflectStrike>().Tags);
     }
 
     [Fact]
@@ -280,18 +280,18 @@ public sealed class NewPrisonerCardsTests : SunqianCombatTestSuite
     }
 
     [Fact]
-    public async Task Parry_strike_righteousness_replays_each_target_branch()
+    public async Task Deflect_strike_righteousness_replays_each_target_branch()
     {
         await PlayerCmd.GainEnergy(10, Player);
         await ApplyPower<RighteousnessPower>(Player.Creature, 10);
         int hp = EnemyAt(0).CurrentHp;
-        await Play(await AddToHand<ParryStrike>(), EnemyAt(0));
+        await Play(await AddToHand<DeflectStrike>(), EnemyAt(0));
         Assert.Equal(hp - 18, EnemyAt(0).CurrentHp);
         Assert.Equal(8, Player.Creature.GetPowerAmount<RighteousnessPower>());
 
         await ApplyPower<RighteousnessPower>(Player.Creature, 2);
         int block = Player.Creature.Block;
-        await Play(await AddToHand<ParryStrike>(), Player.Creature);
+        await Play(await AddToHand<DeflectStrike>(), Player.Creature);
         Assert.Equal(block + 14, Player.Creature.Block);
         Assert.Equal(8, Player.Creature.GetPowerAmount<RighteousnessPower>());
     }
@@ -301,10 +301,10 @@ public sealed class NewPrisonerCardsTests : SunqianCombatTestSuite
     {
         Assert.Equal(
             "造成9点伤害。\n或者给予玩家7点[gold]格挡[/gold]。",
-            ModelDb.Card<ParryStrike>().GetDescriptionForPile(PileType.Hand));
-        var parry = Upgrade(await AddToHand<ParryStrike>());
-        Assert.Contains("造成13点伤害", parry.GetDescriptionForPile(PileType.Hand));
-        Assert.Contains("给予玩家10点[gold]格挡[/gold]", parry.GetDescriptionForPile(PileType.Hand));
+            ModelDb.Card<DeflectStrike>().GetDescriptionForPile(PileType.Hand));
+        var deflect = Upgrade(await AddToHand<DeflectStrike>());
+        Assert.Contains("造成13点伤害", deflect.GetDescriptionForPile(PileType.Hand));
+        Assert.Contains("给予玩家10点[gold]格挡[/gold]", deflect.GetDescriptionForPile(PileType.Hand));
 
         var drunk = await AddToHand<CannotGetDrunk>();
         Assert.Contains("将一张[gold]酒[/gold]放入抽牌堆。", drunk.GetDescriptionForPile(PileType.Hand));
@@ -322,23 +322,23 @@ public sealed class NewPrisonerCardsTests : SunqianCombatTestSuite
     }
 
     [Fact]
-    public async Task Parry_strike_hits_enemy_or_blocks_player_and_respects_upgrade()
+    public async Task Deflect_strike_hits_enemy_or_blocks_player_and_respects_upgrade()
     {
         await PlayerCmd.GainEnergy(10, Player);
         var enemy = EnemyAt(0);
         int hp = enemy.CurrentHp;
-        await Play(await AddToHand<ParryStrike>(), enemy);
+        await Play(await AddToHand<DeflectStrike>(), enemy);
         Assert.Equal(hp - 9, enemy.CurrentHp);
 
-        var blockCard = await AddToHand<ParryStrike>();
+        var blockCard = await AddToHand<DeflectStrike>();
         await Play(blockCard, Player.Creature);
         Assert.True(Player.Creature.Block >= 7);
     }
 
     [Fact]
-    public async Task Parry_strike_upgrade_and_target_branch_use_dynamic_preview_text()
+    public async Task Deflect_strike_upgrade_and_target_branch_use_dynamic_preview_text()
     {
-        var card = await AddToHand<ParryStrike>();
+        var card = await AddToHand<DeflectStrike>();
         Assert.Contains("造成9点伤害", card.GetDescriptionForPile(PileType.Hand));
         Assert.Contains("格挡", card.GetDescriptionForPile(PileType.Hand));
 
@@ -358,10 +358,10 @@ public sealed class NewPrisonerCardsTests : SunqianCombatTestSuite
     }
 
     [Fact]
-    public async Task Parry_strike_self_preview_and_actual_block_use_owner_dexterity()
+    public async Task Deflect_strike_self_preview_and_actual_block_use_owner_dexterity()
     {
         await ApplyPower<DexterityPower>(Player.Creature, 2);
-        var card = await AddToHand<ParryStrike>();
+        var card = await AddToHand<DeflectStrike>();
         card.DynamicVars["TargetKind"].UpdateCardPreview(card, CardPreviewMode.Normal, Player.Creature, true);
         card.DynamicVars.Block.UpdateCardPreview(card, CardPreviewMode.Normal, Player.Creature, true);
         Assert.Contains("[green]9[/green]点[gold]格挡", card.GetDescriptionForPile(PileType.Hand));
@@ -371,12 +371,12 @@ public sealed class NewPrisonerCardsTests : SunqianCombatTestSuite
     }
 
     [Fact]
-    public async Task Parry_strike_damage_preview_and_actual_include_strength_and_vigor()
+    public async Task Deflect_strike_damage_preview_and_actual_include_strength_and_vigor()
     {
         await PlayerCmd.GainEnergy(10, Player);
         await ApplyPower<StrengthPower>(Player.Creature, 2);
         await ApplyPower<VigorPower>(Player.Creature, 3);
-        var card = await AddToHand<ParryStrike>();
+        var card = await AddToHand<DeflectStrike>();
         card.DynamicVars["TargetKind"].UpdateCardPreview(card, CardPreviewMode.Normal, EnemyAt(0), true);
         card.DynamicVars.Damage.UpdateCardPreview(card, CardPreviewMode.Normal, EnemyAt(0), true);
         Assert.Contains("14", card.GetDescriptionForPile(PileType.Hand));
@@ -407,11 +407,11 @@ public sealed class NewPrisonerCardsTests : SunqianCombatTestSuite
     }
 
     [Fact]
-    public async Task Uproar_auto_play_of_parry_uses_the_resolved_target_branch()
+    public async Task Uproar_auto_play_of_deflect_uses_the_resolved_target_branch()
     {
         await PlayerCmd.GainEnergy(10, Player);
         PileType.Draw.GetPile(Player).Clear();
-        await AddToDrawPileTop<ParryStrike>();
+        await AddToDrawPileTop<DeflectStrike>();
         var uproar = await AddToHand<Uproar>();
         int enemyHp = EnemyAt(0).CurrentHp;
         int block = Player.Creature.Block;
@@ -426,12 +426,11 @@ public sealed class NewPrisonerCardsTests : SunqianCombatTestSuite
     }
 
     [Fact]
-    public async Task Parry_strike_is_an_auto_played_attack_that_picks_an_enemy_when_target_is_null()
+    public async Task Deflect_strike_is_an_auto_played_attack_that_picks_an_enemy_when_target_is_null()
     {
-        var card = await AddToHand<ParryStrike>();
+        var card = await AddToHand<DeflectStrike>();
         int hp = EnemyAt(0).CurrentHp;
         await CardCmd.AutoPlay(Choice(), card, null);
         Assert.Equal(hp - 9, EnemyAt(0).CurrentHp);
     }
 }
-

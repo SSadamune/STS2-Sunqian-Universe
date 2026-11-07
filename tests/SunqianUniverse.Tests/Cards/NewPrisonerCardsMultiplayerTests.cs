@@ -25,11 +25,11 @@ public sealed class NewPrisonerCardsMultiplayerTests : SunqianCombatTestSuite
             .WithSeed("new-prisoner-cards-multiplayer");
 
     [Fact]
-    public async Task Parry_strike_blocks_an_ally_with_the_allys_own_block_modifiers()
+    public async Task Deflect_strike_blocks_an_ally_with_the_allys_own_block_modifiers()
     {
         Player ally = Players[1];
         await ApplyPower<DexterityPower>(ally.Creature, 2);
-        var card = await AddToHand<ParryStrike>();
+        var card = await AddToHand<DeflectStrike>();
         card.DynamicVars["TargetKind"].UpdateCardPreview(card, CardPreviewMode.Normal, ally.Creature, true);
         card.DynamicVars.Block.UpdateCardPreview(card, CardPreviewMode.Normal, ally.Creature, true);
         Assert.Contains("7点[gold]格挡", card.GetDescriptionForPile(PileType.Hand));
@@ -56,9 +56,9 @@ public sealed class NewPrisonerCardsMultiplayerTests : SunqianCombatTestSuite
     }
 
     [Fact]
-    public async Task Auto_played_parry_with_explicit_self_target_blocks_the_owner()
+    public async Task Auto_played_deflect_with_explicit_self_target_blocks_the_owner()
     {
-        var card = await AddToHand<ParryStrike>();
+        var card = await AddToHand<DeflectStrike>();
         int hp = EnemyAt(0).CurrentHp;
         await CardCmd.AutoPlay(Choice(), card, Player.Creature);
 
@@ -67,10 +67,10 @@ public sealed class NewPrisonerCardsMultiplayerTests : SunqianCombatTestSuite
     }
 
     [Fact]
-    public async Task Auto_played_parry_with_explicit_ally_target_blocks_the_ally()
+    public async Task Auto_played_deflect_with_explicit_ally_target_blocks_the_ally()
     {
         Player ally = Players[1];
-        var card = await AddToHand<ParryStrike>();
+        var card = await AddToHand<DeflectStrike>();
         int hp = EnemyAt(0).CurrentHp;
         await CardCmd.AutoPlay(Choice(), card, ally.Creature);
 

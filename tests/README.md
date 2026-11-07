@@ -87,7 +87,8 @@ Windows 下脚本会把 `APPDATA`、`LOCALAPPDATA` 和 `XDG_DATA_HOME` 同时重
 - `LureAndReleaseTests`：覆盖轮回囚徒卡池归属、基础/升级随机候选数、候选不足、空抽牌堆、奇巧自动打出完成后再选牌、
   奇巧移走全部候选时跳过、选择一张、跳过选择后在下回合正常抽牌前获得全部，以及下回合部分/全部
   候选已离开抽牌堆或弃牌堆时的过滤和无提示跳过。
-- `NewPrisonerCardsTests` / `NewPrisonerCardsMultiplayerTests`：覆盖《当浮一大白》的酒与兄弟倍率/召唤物真实攻击、《不可饮酒致醉》的抽牌堆酒、叠层抽牌、首次保护与同回合再酒移除、额外回合/自动打出、《招架打击》的双目标分支/预览/仁义/自动打出/队友敏捷。
+- `NewPrisonerCardsTests` / `NewPrisonerCardsMultiplayerTests`：覆盖《当浮一大白》的酒与兄弟倍率/召唤物真实攻击、《不可饮酒致醉》的抽牌堆酒、叠层抽牌、首次保护与同回合再酒移除、额外回合/自动打出、《偏折打击》的双目标分支/预览/仁义/自动打出/队友敏捷。
+- `HeroesSympathyTests` / `HeroesSympathyMultiplayerTests`：覆盖 0 费/Uncommon/消耗升级移除、自己虚弱、攻击/技能触发差异、多敌人/死亡敌人/自动攻击/仁义重播、能力叠层、回合结束与真实额外回合失效、其他玩家攻击隔离。
 - `RevengeStrikeTests` / `RevengeStrikeMultiplayerTests`：覆盖费用/类型/稀有度/轮回囚徒卡池/打击标签、
   7(9)伤害与1(2)回合窗口、第一回合无结束边界、玩家与敌人回合损失、临时生命/格挡/过量伤害、
   自损、回复不抵扣、跨回合过期、其他玩家损失隔离、战斗内实时 smartdescription（包括 `(+0)`）、

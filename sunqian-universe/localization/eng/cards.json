@@ -415,10 +415,12 @@
   "SUNQIAN_UNIVERSE_CARD_WHEN_FLOAT_ONE_CUP.description": "Gain a [gold]Wine[/gold].\nYour [gold]Wine[/gold] grants your Second and Third Brothers {IfUpgraded:show:double|equal} Vigor.",
   "SUNQIAN_UNIVERSE_CARD_CANNOT_GET_DRUNK.title": "Cannot Get Drunk",
   "SUNQIAN_UNIVERSE_CARD_CANNOT_GET_DRUNK.description": "Put a [gold]{IfUpgraded:show:Wine+|Wine}[/gold] into your [gold]Draw Pile[/gold].\nWhen you play [gold]Wine[/gold], it does not add [gold]Dazed[/gold] and you draw a card. Lose this power when you play another [gold]Wine[/gold] in the same turn.",
-  "SUNQIAN_UNIVERSE_CARD_PARRY_STRIKE.title": "Parry Strike",
-  "SUNQIAN_UNIVERSE_CARD_PARRY_STRIKE.description": "{BodyText}",
-  "SUNQIAN_UNIVERSE_CARD_PARRY_STRIKE.bothBody": "Deal {Damage:diff()} damage.\nOr give the player {Block:diff()} [gold]Block[/gold].",
-  "SUNQIAN_UNIVERSE_CARD_PARRY_STRIKE.enemyBody": "Deal {Damage:diff()} damage.",
-  "SUNQIAN_UNIVERSE_CARD_PARRY_STRIKE.playerBody": "Give the player {Block:diff()} [gold]Block[/gold].",
+  "SUNQIAN_UNIVERSE_CARD_DEFLECT_STRIKE.title": "Deflect Strike",
+  "SUNQIAN_UNIVERSE_CARD_DEFLECT_STRIKE.description": "{BodyText}",
+  "SUNQIAN_UNIVERSE_CARD_DEFLECT_STRIKE.bothBody": "Deal {Damage:diff()} damage.\nOr give the player {Block:diff()} [gold]Block[/gold].",
+  "SUNQIAN_UNIVERSE_CARD_DEFLECT_STRIKE.enemyBody": "Deal {Damage:diff()} damage.",
+  "SUNQIAN_UNIVERSE_CARD_DEFLECT_STRIKE.playerBody": "Give the player {Block:diff()} [gold]Block[/gold].",
+  "SUNQIAN_UNIVERSE_CARD_HEROES_SYMPATHY.title": "Heroes' Sympathy",
+  "SUNQIAN_UNIVERSE_CARD_HEROES_SYMPATHY.description": "Gain 1 Weak.\nThis turn, whenever you play an Attack, apply 1 Weak to all enemies.",
   "SUNQIAN_UNIVERSE_SOVEREIGN_STRIKE.title": "Sovereign Strike"
 }

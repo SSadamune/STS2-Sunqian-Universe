@@ -415,10 +415,12 @@
   "SUNQIAN_UNIVERSE_CARD_WHEN_FLOAT_ONE_CUP.description": "获得一张[gold]酒[/gold]。\n你打出的[gold]酒[/gold]会为二弟和三弟提供{IfUpgraded:show:双倍|等量}活力。",
   "SUNQIAN_UNIVERSE_CARD_CANNOT_GET_DRUNK.title": "不可饮酒致醉",
   "SUNQIAN_UNIVERSE_CARD_CANNOT_GET_DRUNK.description": "将一张[gold]{IfUpgraded:show:酒+|酒}[/gold]放入抽牌堆。\n你打出[gold]酒[/gold]时不生成[gold]眩晕[/gold]且抽一张牌，同一回合再次打出[gold]酒[/gold]时失去此能力。",
-  "SUNQIAN_UNIVERSE_CARD_PARRY_STRIKE.title": "招架打击",
-  "SUNQIAN_UNIVERSE_CARD_PARRY_STRIKE.description": "{BodyText}",
-  "SUNQIAN_UNIVERSE_CARD_PARRY_STRIKE.bothBody": "造成{Damage:diff()}点伤害。\n或者给予玩家{Block:diff()}点[gold]格挡[/gold]。",
-  "SUNQIAN_UNIVERSE_CARD_PARRY_STRIKE.enemyBody": "造成{Damage:diff()}点伤害。",
-  "SUNQIAN_UNIVERSE_CARD_PARRY_STRIKE.playerBody": "给予玩家{Block:diff()}点[gold]格挡[/gold]。",
+  "SUNQIAN_UNIVERSE_CARD_DEFLECT_STRIKE.title": "偏折打击",
+  "SUNQIAN_UNIVERSE_CARD_DEFLECT_STRIKE.description": "{BodyText}",
+  "SUNQIAN_UNIVERSE_CARD_DEFLECT_STRIKE.bothBody": "造成{Damage:diff()}点伤害。\n或者给予玩家{Block:diff()}点[gold]格挡[/gold]。",
+  "SUNQIAN_UNIVERSE_CARD_DEFLECT_STRIKE.enemyBody": "造成{Damage:diff()}点伤害。",
+  "SUNQIAN_UNIVERSE_CARD_DEFLECT_STRIKE.playerBody": "给予玩家{Block:diff()}点[gold]格挡[/gold]。",
+  "SUNQIAN_UNIVERSE_CARD_HEROES_SYMPATHY.title": "英雄相惜",
+  "SUNQIAN_UNIVERSE_CARD_HEROES_SYMPATHY.description": "获得1层虚弱。\n本回合你每打出一张攻击牌，给予所有敌人一层虚弱。",
   "SUNQIAN_UNIVERSE_SOVEREIGN_STRIKE.title": "君王打击"
 }

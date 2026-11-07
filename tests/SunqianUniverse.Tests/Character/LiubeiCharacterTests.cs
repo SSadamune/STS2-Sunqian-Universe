@@ -46,7 +46,8 @@ public sealed class LiubeiCharacterTests : SunqianCombatTestSuite
     [InlineData(typeof(RevengeStrike))]
     [InlineData(typeof(WhenFloatOneCup))]
     [InlineData(typeof(CannotGetDrunk))]
-    [InlineData(typeof(ParryStrike))]
+    [InlineData(typeof(DeflectStrike))]
+    [InlineData(typeof(HeroesSympathy))]
     public void New_cards_belong_only_to_the_reincarnation_prisoner_pool(Type cardType)
     {
         ModelId id = ModelDb.GetId(cardType);
