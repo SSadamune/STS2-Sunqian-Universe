@@ -5,11 +5,13 @@ using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.HoverTips;
+using MegaCrit.Sts2.Core.Localization;
 using MegaCrit.Sts2.Core.Models.Powers;
 using Squ;
 using Squ.Character;
 using Squ.Combat;
 using Squ.Powers;
+using Squ.Patches;
 using Squ.Script;
 using STS2RitsuLib.Interop.AutoRegistration;
 using STS2RitsuLib.Scaffolding.Content;
@@ -19,7 +21,7 @@ using STS2RitsuLib.Scaffolding.Content;
 namespace Squ.Cards;
 
 /// <summary>
-/// 当浮一大白：获得一张酒，并让本场战斗后续打出的酒按层数给二弟、三弟提供活力。
+/// 当浮一大白：酒为本人的兄弟提供活力，多人模式也分享给其他玩家。
 /// </summary>
 [RegisterCard(typeof(LiubeiCardPool), StableEntryStem = "when_float_one_cup")]
 public sealed class WhenFloatOneCup : ModCardTemplate
@@ -50,8 +52,13 @@ public sealed class WhenFloatOneCup : ModCardTemplate
 		await PowerCmd.Apply<WhenFloatOneCupPower>(
 			choiceContext,
 			Owner.Creature,
-			IsUpgraded ? 2 : 1,
+			IsUpgraded && Owner.RunState.Players.Count == 1 ? 2 : 1,
 			Owner.Creature,
 			this);
 	}
+
+	protected override void AddExtraArgsToDescription(LocString description) =>
+		description.Add("IsMultiplayer", IsMutable && Owner is { } owner
+			? owner.RunState.Players.Count > 1
+			: CardLibraryMultiplayerPreviewState.ShowMultiplayerCards);
 }

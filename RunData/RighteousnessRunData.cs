@@ -10,12 +10,14 @@ namespace Squ.RunData;
 /// <summary>Per-player, signed run resource; powers are only its combat representation.</summary>
 public static class RighteousnessRunData
 {
+	public const int CombatCarryoverLimit = 10;
 	private static readonly PlayerRunSavedData<State> Saved =
 		RitsuLibFramework.GetRunSavedDataStore(SquMod.ModId).RegisterPerPlayer(
 			"righteousness", () => new State(),
 			new RunSavedDataOptions { WritePolicy = RunSavedDataWritePolicy.WhenNonDefault });
 
-	public static void Initialize() =>
+	public static void Initialize()
+	{
 		RitsuLibFramework.SubscribeLifecycle<CombatStartingEvent>(evt =>
 		{
 			foreach (Player player in evt.RunState.Players)
@@ -23,11 +25,25 @@ public static class RighteousnessRunData
 				RestoreForCombat(player);
 			}
 		});
+		RitsuLibFramework.SubscribeLifecycle<CombatEndedEvent>(evt =>
+		{
+			foreach (Player player in evt.RunState.Players)
+			{
+				// Carryover is bookkeeping, not a power expenditure. Do not fire
+				// amount-change hooks or add discarded stacks to the spent total.
+				if (Get(player) > CombatCarryoverLimit)
+				{
+					Set(player, CombatCarryoverLimit);
+					player.Creature.GetPower<RighteousnessPower>()?.SetAmount(CombatCarryoverLimit);
+				}
+			}
+		});
+	}
 
 	public static int Get(Player player) => Saved.Get(player).Amount;
-    public static int GetLostAmount(Player player) => Saved.Get(player).LostAmount;
-    internal static void RecordLoss(Player player, long amount) => Saved.Modify(player, state =>
-        state.LostAmount = (int)System.Math.Min(int.MaxValue, (long)state.LostAmount + System.Math.Max(0, amount)));
+	public static int GetSpentAmount(Player player) => Saved.Get(player).SpentAmount;
+	internal static void RecordSpent(Player player, long amount) => Saved.Modify(player, state =>
+		state.SpentAmount = (int)System.Math.Min(int.MaxValue, (long)state.SpentAmount + System.Math.Max(0, amount)));
 
 	internal static void Set(Player player, int amount) =>
 		Saved.Modify(player, state => state.Amount = amount);
@@ -46,6 +62,6 @@ public static class RighteousnessRunData
 	private sealed class State
 	{
 		public int Amount { get; set; }
-        public int LostAmount { get; set; }
+		public int SpentAmount { get; set; }
 	}
 }

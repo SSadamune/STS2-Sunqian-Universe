@@ -28,6 +28,34 @@ public sealed class SoulContractTests : SunqianCombatTestSuite
         AssertAllSelectionsConsumed(selector);
     }
 
+    [Fact]
+    public async Task Both_choices_explain_shared_life_first_and_temporary_options_are_removed_after_selection()
+    {
+        var card = await AddToHand<SoulContract>();
+        CardModel[] offered = [];
+        var selector = new ScriptedCardSelector().ThenSelect(options =>
+        {
+            offered = options.ToArray();
+            Assert.Equal(2, offered.Length);
+            Assert.Equal(new[] { CompanionSummons.SecondBrotherId, CompanionSummons.ThirdBrotherId },
+                offered.Cast<SoulContractRecord>().Select(option => option.CompanionId).ToArray());
+            foreach (var option in offered.Cast<SoulContractRecord>())
+            {
+                string name = CompanionSummons.GetName(option.CompanionId).GetFormattedText();
+                Assert.StartsWith($"[gold]{name}[/gold]解锁[gold]共享生命[/gold]。\n",
+                    option.GetDescriptionForPile(PileType.None));
+                Assert.Contains("失去7点生命", option.GetDescriptionForPile(PileType.None));
+            }
+            return [offered[1]];
+        });
+        using (UseCardSelector(selector)) await Play(card);
+        AssertAllSelectionsConsumed(selector);
+        Assert.DoesNotContain(Player.PlayerCombatState!.AllCards,
+            current => offered.Any(option => ReferenceEquals(option, current)));
+        Assert.Equal(CompanionSummons.ThirdBrotherId,
+            Assert.Single(CompanionSkillBook.Pile.GetPile(Player).Cards.OfType<SoulContractRecord>()).CompanionId);
+    }
+
     [Theory]
     [InlineData(CompanionSummons.SecondBrotherId, false)]
     [InlineData(CompanionSummons.SecondBrotherId, true)]
@@ -150,6 +178,7 @@ public sealed class SoulContractTests : SunqianCombatTestSuite
         await ChooseBrother(CompanionSummons.ThirdBrotherId);
         Assert.Equal(2, third.GetPower<SharedLifePower>()!.DisplayAmount);
         Assert.Equal(4, third.MaxHp);
-        Assert.DoesNotContain("召唤", third.GetPower<SharedLifePower>()!.Description.GetFormattedText());
+        Assert.Equal("[gold]召唤物技能[/gold]：战斗结束时，为你恢复等量于[gold]三弟[/gold]的生命（至多恢复2点，此上限为你为[gold]三弟[/gold]失去过的生命）。",
+            third.GetPower<SharedLifePower>()!.Description.GetFormattedText());
     }
 }

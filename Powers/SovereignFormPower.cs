@@ -1,11 +1,13 @@
 #nullable enable
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using HarmonyLib;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.Entities.Creatures;
 using MegaCrit.Sts2.Core.Entities.Powers;
+using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Localization;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.Cards;
@@ -17,6 +19,17 @@ namespace Squ.Powers;
 [RegisterPower]
 public sealed class SovereignFormPower : ModPowerTemplate
 {
+    private static readonly ConditionalWeakTable<CardModel, object> StrikePreviews = new();
+
+    // A detached native-card clone keeps the preview identical to SovereignBlade
+    // without registering a new card or adding anything to the player's piles.
+    internal static CardHoverTip CreateStrikePreview()
+    {
+        var preview = ModelDb.Card<SovereignBlade>().ToMutable();
+        StrikePreviews.Add(preview, new object());
+        return new CardHoverTip(preview);
+    }
+
     public override PowerType Type => PowerType.Buff;
     public override PowerStackType StackType => PowerStackType.Single;
     public override PowerAssetProfile AssetProfile => new(IconPath: "res://images/powers/BenevolenceRighteousnessDualSwordsPower.png",
@@ -29,8 +42,9 @@ public sealed class SovereignFormPower : ModPowerTemplate
     }
     public override Task AfterApplied(Creature? applier, CardModel? source) { Refresh(Owner); return Task.CompletedTask; }
     public override Task AfterRemoved(Creature oldOwner) { Refresh(oldOwner); return Task.CompletedTask; }
-    internal static bool Affects(CardModel card) => card is SovereignBlade && card.IsMutable
-        && card.Owner?.Creature.HasPower<SovereignFormPower>() == true;
+    internal static bool Affects(CardModel card) => StrikePreviews.TryGetValue(card, out _)
+        || (card is SovereignBlade && card.IsMutable
+            && card.Owner?.Creature.HasPower<SovereignFormPower>() == true);
 }
 
 [HarmonyPatch(typeof(CardModel), nameof(CardModel.Title), MethodType.Getter)]

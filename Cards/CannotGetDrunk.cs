@@ -21,14 +21,14 @@ using STS2RitsuLib.Scaffolding.Content;
 namespace Squ.Cards;
 
 /// <summary>
-/// 不可饮酒致醉：获得一张酒+；本回合第一张酒不生成眩晕，第二张酒打出前失去此能力。
+/// 不可饮酒致醉：生成对应升级状态的酒，并赋予饮酒保护能力。
 /// </summary>
 [RegisterCard(typeof(LiubeiCardPool), StableEntryStem = "cannot_get_drunk")]
 public sealed class CannotGetDrunk : ModCardTemplate
 {
 	protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
 	[
-		SquCardHoverTipFactory.FromCard<Wine>(true),
+		SquCardHoverTipFactory.FromCard<Wine>(this, IsUpgraded),
 		HoverTipFactory.FromCard<Dazed>(),
 	];
 

@@ -54,7 +54,7 @@
   "SUNQIAN_UNIVERSE_KEYWORD_MATERIAL_REUSE.title": "素材复用",
   "SUNQIAN_UNIVERSE_KEYWORD_MATERIAL_REUSE.description": "如果[gold]剧本集[/gold]中已有此剧本，当你再次打出能激活此剧本的牌时，会将此剧本[gold]升级[/gold]。",
   "SUNQIAN_UNIVERSE_KEYWORD_MATERIAL_REUSE.cardHover": "如果[gold]剧本集[/gold]中已有此剧本，当你再次打出[gold]{SourceCardName}[/gold]时，会将此剧本[gold]升级[/gold]。",
-  "SUNQIAN_UNIVERSE_KEYWORD_RIGHTEOUSNESS.cardHover": "获得{Righteousness:diff()}层[gold]仁义[/gold]。\n当你打出[gold]各种打击牌[/gold]时，你每有10层[gold]仁义[/gold]，就消耗2层仁义并额外打出1次。\n[gold]仁义[/gold]不会在战斗结束时清零。",
+  "SUNQIAN_UNIVERSE_KEYWORD_RIGHTEOUSNESS.cardHover": "获得{Righteousness:diff()}层[gold]仁义[/gold]。\n当你打出[gold]各种打击牌[/gold]时，你每有10层[gold]仁义[/gold]，就消耗2层仁义并额外打出1次。\n战斗结束时，剩余[gold]仁义[/gold]会保留至多10层到下一场战斗。",
   "SUNQIAN_UNIVERSE_KEYWORD_RIGHTEOUSNESS.dynamicTitle": "仁义{Righteousness}",
   "SUNQIAN_UNIVERSE_SUMMON.namedTitle": "召唤[{SummonName}]{Summon}",
   "SUNQIAN_UNIVERSE_SUMMON.namedDescription": "以{Summon:diff()}点生命值召唤[gold]{SummonName}[/gold]。\n如果已经召唤，则在本场战斗中将其最大生命值提升{Summon:diff()}点。",

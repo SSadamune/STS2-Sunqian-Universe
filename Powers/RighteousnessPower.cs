@@ -52,7 +52,7 @@ public sealed class RighteousnessPower : ModPowerTemplate
 		if (power == this && Owner.Player is { } player)
 		{
 			int previous = RighteousnessRunData.Get(player);
-            if (Amount < previous) RighteousnessRunData.RecordLoss(player, (long)previous - Amount);
+            if (Amount < previous) RighteousnessRunData.RecordSpent(player, (long)previous - Amount);
 			RighteousnessRunData.Set(player, Amount);
 		}
 		return Task.CompletedTask;
@@ -63,7 +63,7 @@ public sealed class RighteousnessPower : ModPowerTemplate
         if (Amount != 0 && oldOwner.Player is { } player && CombatManager.Instance.IsInProgress
             && !CombatManager.Instance.IsOverOrEnding)
         {
-            RighteousnessRunData.RecordLoss(player, Math.Max(0, RighteousnessRunData.Get(player)));
+            RighteousnessRunData.RecordSpent(player, Math.Max(0, RighteousnessRunData.Get(player)));
             RighteousnessRunData.Set(player, 0);
         }
         return Task.CompletedTask;

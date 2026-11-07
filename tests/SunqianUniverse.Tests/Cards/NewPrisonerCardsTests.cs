@@ -3,6 +3,7 @@ using MegaCrit.Sts2.Core.Combat;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.Entities.Creatures;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
+using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Models.Cards;
 using MegaCrit.Sts2.Core.Models.Characters;
@@ -13,6 +14,7 @@ using Squ.Cards;
 using Squ.Character;
 using Squ.Combat;
 using Squ.Powers;
+using Squ.Patches;
 using TestTheSpire;
 using Xunit;
 
@@ -20,6 +22,61 @@ namespace Squ.Tests.Cards;
 
 public sealed class NewPrisonerCardsTests : SunqianCombatTestSuite
 {
+    [Theory]
+    [InlineData(false, false)]
+    [InlineData(false, true)]
+    [InlineData(true, false)]
+    [InlineData(true, true)]
+    public async Task Float_library_preview_switches_with_multiplayer_filter_but_owned_card_uses_its_run(bool multiplayer, bool upgraded)
+    {
+        bool previous = CardLibraryMultiplayerPreviewState.ShowMultiplayerCards;
+        try
+        {
+            CardLibraryMultiplayerPreviewState.ShowMultiplayerCards = multiplayer;
+            var preview = ModelDb.Card<WhenFloatOneCup>().ToMutable();
+            if (upgraded) Upgrade(preview);
+            string text = preview.GetDescriptionForPile(PileType.Deck);
+            if (multiplayer)
+                Assert.EndsWith("你打出的[gold]酒[/gold]会为二弟、三弟和所有盟友提供等量活力。", text);
+            else
+                Assert.EndsWith($"你打出的[gold]酒[/gold]会为二弟和三弟提供{(upgraded ? "双倍" : "等量")}活力。", text);
+            var owned = await AddToHand<WhenFloatOneCup>();
+            if (upgraded) Upgrade(owned);
+            Assert.DoesNotContain("所有盟友", owned.GetDescriptionForPile(PileType.Hand));
+        }
+        finally { CardLibraryMultiplayerPreviewState.ShowMultiplayerCards = previous; }
+    }
+
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public async Task Cannot_get_drunk_wine_hover_matches_the_cards_upgrade_state(bool upgraded)
+    {
+        var card = await AddToHand<CannotGetDrunk>();
+        if (upgraded) Upgrade(card);
+        var wine = Assert.Single(card.HoverTips.OfType<CardHoverTip>()
+            .Where(tip => tip.Card is Wine)).Card;
+        Assert.Equal(upgraded, wine.IsUpgraded);
+        if (upgraded) Assert.EndsWith("+", wine.Title);
+        else Assert.DoesNotContain("+", wine.Title);
+    }
+
+    [Fact]
+    public void Ordinary_strikes_keep_strike_tags_without_the_various_strikes_hover_tip()
+    {
+        string tipId = HoverTipFactory.FromKeyword(SquKeywords.VariousStrikeCards).Id;
+        CardModel[] strikes = [ModelDb.Card<DeflectStrike>(), ModelDb.Card<RevengeStrike>(),
+            ModelDb.Card<StrikeLiubei>(), ModelDb.Card<FlyingSwordStrike>(),
+            ModelDb.Card<StarryNightStrike>(), ModelDb.Card<HateTheHeavensStrike>()];
+        foreach (var card in strikes)
+        {
+            Assert.Contains(CardTag.Strike, card.Tags);
+            Assert.DoesNotContain(card.HoverTips, tip => tip.Id == tipId);
+        }
+        Assert.Contains(ModelDb.Card<SwordsmanshipReview>().HoverTips, tip => tip.Id == tipId);
+        Assert.Contains(ModelDb.Card<StandByRighteousness>().HoverTips, tip => tip.Id == tipId);
+    }
+
     protected override void ConfigureBattle(CombatTestBattleBuilder battle) =>
         battle.Player<LiubeiCharacter>().AddEnemy<BigDummy>().WithSeed("new-prisoner-cards");
 

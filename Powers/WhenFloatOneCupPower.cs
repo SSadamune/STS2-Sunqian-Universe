@@ -12,13 +12,14 @@ using MegaCrit.Sts2.Core.Models.Powers;
 using Squ.Cards;
 using Squ.Combat;
 using Squ.Interop;
+using Squ.Patches;
 using STS2RitsuLib.Interop.AutoRegistration;
 using STS2RitsuLib.Scaffolding.Content;
 
 namespace Squ.Powers;
 
 /// <summary>
-/// 当浮一大白：每层让当前存在的本人二弟、三弟从每张酒获得等量活力的倍率。
+/// 当浮一大白：按层数将酒的活力分享给本人的兄弟，多人模式也分享给其他玩家。
 /// </summary>
 [RegisterPower]
 public sealed class WhenFloatOneCupPower : ModPowerTemplate
@@ -48,6 +49,9 @@ public sealed class WhenFloatOneCupPower : ModPowerTemplate
 		{
 			LocString description = base.Description;
 			description.Add("Amount", Amount);
+			description.Add("IsMultiplayer", IsMutable && Owner?.Player is { } player
+				? player.RunState.Players.Count > 1
+				: CardLibraryMultiplayerPreviewState.ShowMultiplayerCards);
 			return description;
 		}
 	}
@@ -78,6 +82,17 @@ public sealed class WhenFloatOneCupPower : ModPowerTemplate
 				vigor * Amount,
 				Owner,
 				wine);
+		}
+
+		foreach (var ally in player.RunState.Players)
+		{
+			if (ally == player || !ally.Creature.IsAlive
+				|| ally.Creature.CombatState != Owner.CombatState)
+			{
+				continue;
+			}
+			await NewsanguoVigorSwap.ApplyVigorOrDrunkenMight(
+				choiceContext, ally.Creature, vigor * Amount, Owner, wine);
 		}
 	}
 }

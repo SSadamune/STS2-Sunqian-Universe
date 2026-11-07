@@ -434,7 +434,7 @@ public sealed class RevengeStrikeTests : SunqianCombatTestSuite
     }
 
     [Theory]
-    [InlineData("zhs", "造成{Damage:diff()}点伤害。\n根据过去{Turns:diff()}回合内你失去的生命，增加等量伤害{bouns}。")]
+    [InlineData("zhs", "造成{Damage:diff()}点伤害。\n根据过去{Turns:diff()}回合内你损失的生命，增加等量伤害{bouns}。")]
     [InlineData("eng", "Deal {Damage:diff()} damage.\nDeal additional damage equal to the HP you lost within the past {Turns:diff()} {Turns:plural:turn|turns} {bouns}.")]
     public void Localization_preserves_the_requested_text_and_newline(string language, string expected)
     {

@@ -2,13 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using MegaCrit.Sts2.Core.CardSelection;
 using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.HoverTips;
-using MegaCrit.Sts2.Core.Localization;
-using MegaCrit.Sts2.Core.Localization.DynamicVars;
 using Squ;
 using Squ.Character;
 using Squ.Combat;
@@ -34,12 +31,17 @@ public sealed class SoulContract : ModCardTemplate
             option.CompanionId = id;
             return (MegaCrit.Sts2.Core.Models.CardModel)option;
         }).ToArray();
-        var prefs = new CardSelectorPrefs(new LocString("cards", Id.Entry + ".selectionPrompt"), 1)
-        { Cancelable = false, RequireManualConfirmation = true, PretendCardsCanBePlayed = true, UnpoweredPreviews = true };
-        var choice = (await CardSelectCmd.FromSimpleGrid(context, options, Owner, prefs)).OfType<SoulContractRecord>().SingleOrDefault();
-        if (choice == null) return;
-        await CompanionSkills.UnlockForCompanion<SharedLifePower>(context, Owner, choice.CompanionId);
-        await CompanionSkillBook.RecordContract(Owner, choice.CompanionId);
+        try
+        {
+            var choice = await CardSelectCmd.FromChooseACardScreen(context, options, Owner, canSkip: false);
+            if (choice is not SoulContractRecord contract) return;
+            await CompanionSkills.UnlockForCompanion<SharedLifePower>(context, Owner, contract.CompanionId);
+            await CompanionSkillBook.RecordContract(Owner, contract.CompanionId);
+        }
+        finally
+        {
+            foreach (var option in options) option.RemoveFromState();
+        }
     }
     protected override void OnUpgrade() => EnergyCost.UpgradeBy(-1);
 }

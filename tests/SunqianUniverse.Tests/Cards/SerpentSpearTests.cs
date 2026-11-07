@@ -39,7 +39,7 @@ public sealed class SerpentSpearTests : SunqianCombatTestSuite
     [Theory]
     [InlineData(false, 11, 2)]
     [InlineData(true, 15, 3)]
-    public async Task First_spear_attacks_one_random_enemy_then_gives_third_brother_strength_and_skill(bool upgraded, int damage, int strength)
+    public async Task First_spear_attacks_two_distinct_random_enemies_then_gives_third_brother_strength_and_skill(bool upgraded, int damage, int strength)
     {
         var card = await AddToHand<SerpentSpear>();
         if (upgraded) Upgrade(card);
@@ -52,8 +52,11 @@ public sealed class SerpentSpearTests : SunqianCombatTestSuite
         int[] hp = Enumerable.Range(0, 4).Select(i => EnemyAt(i).CurrentHp).ToArray();
         await Play(card);
         int[] lost = Enumerable.Range(0, 4).Select(i => hp[i] - EnemyAt(i).CurrentHp).ToArray();
-        Assert.Single(lost.Where(value => value == damage));
-        Assert.Equal(damage, lost.Sum());
+        Assert.Equal(SquTargetTypes.RandomEnemies, card.TargetType);
+        Assert.Equal(2, card.GetRandomEnemyTargetCount());
+        Assert.Contains("随机两名敌人", card.GetDescriptionForPile(PileType.Hand));
+        Assert.Equal(2, lost.Count(value => value == damage));
+        Assert.Equal(2 * damage, lost.Sum());
         Assert.Equal(20, pet.MaxHp);
         Assert.Equal(strength, pet.GetPower<StrengthPower>()!.Amount);
         Assert.True(pet.GetPower<MakeHolesPower>()!.IsActive);
@@ -61,6 +64,19 @@ public sealed class SerpentSpearTests : SunqianCombatTestSuite
         Assert.Contains(CompanionSkillBook.Pile.GetPile(Player).Cards.OfType<CompanionSkillRecord>(), record =>
             record.CompanionId == CompanionSummons.ThirdBrotherId && record.Skill == "MakeHoles");
         Assert.Equal("[gold]召唤物技能[/gold]：你打出的[gold]三弟[/gold]攻击牌会附加随机效果。", pet.GetPower<MakeHolesPower>()!.Description.GetFormattedText());
+    }
+
+    [Theory]
+    [InlineData(1)]
+    [InlineData(2)]
+    public async Task Spear_hits_each_remaining_enemy_once_when_fewer_than_three_are_alive(int count)
+    {
+        await Third();
+        for (int i = 3; i >= count; i--) await CreatureCmd.Kill(EnemyAt(i), force: true);
+        var card = await AddToHand<SerpentSpear>();
+        int[] hp = Enumerable.Range(0, count).Select(i => EnemyAt(i).CurrentHp).ToArray();
+        await Play(card);
+        for (int i = 0; i < count; i++) Assert.Equal(hp[i] - 11, EnemyAt(i).CurrentHp);
     }
 
     [Fact]

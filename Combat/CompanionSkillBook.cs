@@ -4,7 +4,6 @@ using System.Linq;
 using System.Text.Json;
 using System.Threading.Tasks;
 using Godot;
-using MegaCrit.Sts2.Core.CardSelection;
 using MegaCrit.Sts2.Core.Combat;
 using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
@@ -12,11 +11,9 @@ using MegaCrit.Sts2.Core.Entities.Multiplayer;
 using MegaCrit.Sts2.Core.Entities.Players;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.Helpers;
-using MegaCrit.Sts2.Core.Localization;
 using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Nodes.Combat;
 using MegaCrit.Sts2.Core.Nodes.Screens.CardSelection;
-using MegaCrit.Sts2.Core.Nodes.Screens.Overlays;
 using MegaCrit.Sts2.Core.Runs;
 using MegaCrit.Sts2.Core.ValueProps;
 using Squ.Cards;
@@ -105,17 +102,19 @@ public static class CompanionSkillBook
         if (!Selecting.Add(player)) return;
         try
         {
-            var pile = Pile.GetPile(player);
-            var prefs = new CardSelectorPrefs(new LocString("cards", "SUNQIAN_UNIVERSE_CARD_COMPANION_SKILL_RECORD.selectionPrompt"), 0, 1)
-            { Cancelable = true, RequireManualConfirmation = true, PretendCardsCanBePlayed = true };
+            var options = Pile.GetPile(player).Cards.OfType<SoulContractRecord>()
+                .Where(card => CanActivate(player, card.CompanionId)).Cast<CardModel>().ToArray();
+            if (options.Length == 0) return;
             IEnumerable<CardModel> selected;
             if ((CardSelectCmd.Selector ?? CardSelectCmd.LocalSelector) is { } selector)
-                selected = await selector.GetSelectedCards(pile.Cards, 0, 1);
+                selected = await selector.GetSelectedCards(options, 0, 1);
             else
             {
                 NPlayerHand.Instance?.CancelAllCardPlay();
-                var screen = NCombatPileCardSelectScreen.Create(pile, prefs, card => card is CompanionSkillRecord or SoulContractRecord);
-                NOverlayStack.Instance!.Push(screen);
+                // This menu opens locally, outside a synchronized card action.
+                // Sync only the confirmed activation through ActivateAction.
+                var screen = NChooseACardSelectionScreen.ShowScreen(options, canSkip: true);
+                if (screen is null) return;
                 selected = await screen.CardsSelected();
             }
             if (selected.OfType<SoulContractRecord>().SingleOrDefault() is { } record

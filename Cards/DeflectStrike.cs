@@ -52,7 +52,6 @@ public sealed class DeflectStrike : ModCardTemplate
 	protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
 	[
 		HoverTipFactory.Static(StaticHoverTip.Block),
-		HoverTipFactory.FromKeyword(SquKeywords.VariousStrikeCards),
 	];
 
 	public override CardAssetProfile AssetProfile => new(

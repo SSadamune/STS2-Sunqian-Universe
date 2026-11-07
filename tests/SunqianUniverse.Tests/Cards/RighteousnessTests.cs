@@ -10,6 +10,7 @@ using MegaCrit.Sts2.Core.Models.Cards;
 using MegaCrit.Sts2.Core.Models.Monsters;
 using MegaCrit.Sts2.Core.Models.Powers;
 using MegaCrit.Sts2.Core.Models.Relics;
+using MegaCrit.Sts2.Core.Rooms;
 using MegaCrit.Sts2.Core.ValueProps;
 using Squ.Cards;
 using Squ.Character;
@@ -98,8 +99,8 @@ public sealed class RighteousnessTests : SunqianCombatTestSuite
     }
 
     [Theory]
-    [InlineData(false, 6, 8)]
-    [InlineData(true, 8, 10)]
+    [InlineData(false, 6, 6)]
+    [InlineData(true, 8, 8)]
     public async Task Starter_skill_loses_hp_then_gains_resource_and_block(bool upgraded, int resource, int block)
     {
         int hp = Player.Creature.CurrentHp;
@@ -146,7 +147,7 @@ public sealed class RighteousnessTests : SunqianCombatTestSuite
         Assert.Equal(0, Player.PlayerCombatState!.Energy);
         Assert.True(SelfHarmSystem.HasSelfHarm(card));
         Assert.Equal(6, RighteousnessRunData.Get(Player));
-        Assert.Equal(8, Player.Creature.Block);
+        Assert.Equal(6, Player.Creature.Block);
     }
 
     [Fact]
@@ -168,19 +169,44 @@ public sealed class RighteousnessTests : SunqianCombatTestSuite
     }
 
     [Theory]
-    [InlineData(25)]
-    [InlineData(-13)]
-    public async Task Resource_survives_combat_cleanup_and_restores_on_next_combat(int amount)
+    [InlineData(25, 10)]
+    [InlineData(10, 10)]
+    [InlineData(4, 4)]
+    [InlineData(0, 0)]
+    [InlineData(-13, -13)]
+    public async Task Combat_end_caps_carryover_without_spending_it_and_next_combat_restores_only_the_retained_amount(int amount, int retained)
     {
         await Gain(amount);
+        int spent = RighteousnessRunData.GetSpentAmount(Player);
+        await Hook.AfterCombatEnd(Player.RunState, Combat, new CombatRoom((CombatState)Combat));
+        Assert.Equal(retained, RighteousnessRunData.Get(Player));
+        Assert.Equal(retained, Player.Creature.GetPowerAmount<RighteousnessPower>());
+        Assert.Equal(spent, RighteousnessRunData.GetSpentAmount(Player));
         Player.Creature.Reset();
         Assert.Null(Player.Creature.GetPower<RighteousnessPower>());
-        Assert.Equal(amount, RighteousnessRunData.Get(Player));
+        Assert.Equal(retained, RighteousnessRunData.Get(Player));
         await Hook.BeforeCombatStart(Player.RunState, Combat);
-        Assert.Equal(amount, Player.Creature.GetPower<RighteousnessPower>()!.Amount);
+        Assert.Equal(retained, Player.Creature.GetPowerAmount<RighteousnessPower>());
         // Repeated start/resume events must not double the amount.
         await Hook.BeforeCombatStart(Player.RunState, Combat);
-        Assert.Equal(amount, Player.Creature.GetPower<RighteousnessPower>()!.Amount);
+        Assert.Equal(retained, Player.Creature.GetPowerAmount<RighteousnessPower>());
+        Assert.Equal(spent, RighteousnessRunData.GetSpentAmount(Player));
+    }
+
+    [Fact]
+    public async Task Combat_end_caps_each_players_balance_independently_and_is_idempotent()
+    {
+        var other = Players.Single(player => player != Player);
+        await Gain(27);
+        await PowerCmd.Apply<RighteousnessPower>(new BlockingPlayerChoiceContext(),
+            other.Creature, 6, other.Creature, null);
+        var room = new CombatRoom((CombatState)Combat);
+        await Hook.AfterCombatEnd(Player.RunState, Combat, room);
+        await Hook.AfterCombatEnd(Player.RunState, Combat, room);
+        Assert.Equal(10, RighteousnessRunData.Get(Player));
+        Assert.Equal(6, RighteousnessRunData.Get(other));
+        Assert.Equal(0, RighteousnessRunData.GetSpentAmount(Player));
+        Assert.Equal(0, RighteousnessRunData.GetSpentAmount(other));
     }
 
     [Fact]

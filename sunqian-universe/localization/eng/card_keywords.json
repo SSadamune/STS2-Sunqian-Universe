@@ -54,7 +54,7 @@
   "SUNQIAN_UNIVERSE_KEYWORD_MATERIAL_REUSE.title": "Material Reuse",
   "SUNQIAN_UNIVERSE_KEYWORD_MATERIAL_REUSE.description": "If this Script is already in your [gold]Script Collection[/gold], playing its corresponding Script card again upgrades this Script.",
   "SUNQIAN_UNIVERSE_KEYWORD_MATERIAL_REUSE.cardHover": "If this Script is already in your [gold]Script Collection[/gold], playing [gold]{SourceCardName}[/gold] again [gold]upgrades[/gold] this Script.",
-  "SUNQIAN_UNIVERSE_KEYWORD_RIGHTEOUSNESS.cardHover": "Gain {Righteousness:diff()} [gold]Righteousness[/gold].\nWhen you play a [gold]Strike Card[/gold], for every 10 [gold]Righteousness[/gold] you have, spend 2 Righteousness and play it 1 additional time.\n[gold]Righteousness[/gold] persists between combats.",
+  "SUNQIAN_UNIVERSE_KEYWORD_RIGHTEOUSNESS.cardHover": "Gain {Righteousness:diff()} [gold]Righteousness[/gold].\nWhen you play a [gold]Strike Card[/gold], for every 10 [gold]Righteousness[/gold] you have, spend 2 Righteousness and play it 1 additional time.\nAt the end of combat, retain up to 10 remaining [gold]Righteousness[/gold] for the next combat.",
   "SUNQIAN_UNIVERSE_KEYWORD_RIGHTEOUSNESS.dynamicTitle": "Righteousness {Righteousness}",
   "SUNQIAN_UNIVERSE_SUMMON.namedTitle": "Summon [{SummonName}] {Summon}",
   "SUNQIAN_UNIVERSE_SUMMON.namedDescription": "Summon [gold]{SummonName}[/gold] with {Summon:diff()} HP.\nIf already summoned, increase its Max HP by {Summon:diff()} this combat.",

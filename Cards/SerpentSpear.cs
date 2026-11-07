@@ -11,14 +11,17 @@ using Squ;
 using Squ.Character;
 using Squ.Combat;
 using Squ.Powers;
+using STS2RitsuLib.Combat.CardTargeting;
 using STS2RitsuLib.Interop.AutoRegistration;
 using STS2RitsuLib.Scaffolding.Content;
 namespace Squ.Cards;
 
 [RegisterCard(typeof(LiubeiCardPool), StableEntryStem = "serpent_spear")]
-public sealed class SerpentSpear : ModCardTemplate
+public sealed class SerpentSpear : ModCardTemplate, IRandomEnemyTargetCount
 {
     public SerpentSpear() : base(2, CardType.Attack, CardRarity.Uncommon, TargetType.RandomEnemy) { }
+    public override TargetType TargetType => SquTargetTypes.RandomEnemies;
+    public int GetRandomEnemyTargetCount() => 2;
     public override CardAssetProfile AssetProfile => new(PortraitPath: "res://images/cards/prisoner/SerpentSpear.png");
     protected override IEnumerable<DynamicVar> CanonicalVars =>
         [new CompanionDamageVar(CompanionSummons.ThirdBrotherId, 11), new DynamicVar("Strength", 2)];
@@ -33,10 +36,10 @@ public sealed class SerpentSpear : ModCardTemplate
     {
         var pet = CompanionSummons.GetCompanion(Owner, CompanionSummons.ThirdBrotherId);
         if (pet is not { IsAlive: true } || CombatState!.HittableEnemies.Count == 0) return;
-        var targets = CombatState.HittableEnemies;
-        var target = targets[Owner.RunState.Rng.CombatTargets.NextInt(targets.Count)];
+        var targets = SquRandomEnemyTargeting.SelectRandomEnemies(this, 2, play.Target);
         await DamageCmd.Attack(DynamicVars["CompanionDamage"].BaseValue).FromCompanion(pet, this, play)
-            .Targeting(target).WithHitFx("vfx/vfx_attack_blunt", tmpSfx: "blunt_attack.mp3").Execute(context);
+            .TargetingAllOpponents(CombatState).TargetingFiltered(targets)
+            .WithHitFx("vfx/vfx_attack_blunt", tmpSfx: "blunt_attack.mp3").Execute(context);
         if (!pet.IsAlive) return;
         await PowerCmd.Apply<StrengthPower>(context, pet, DynamicVars["Strength"].BaseValue, Owner.Creature, this);
         await CompanionSkills.Unlock<MakeHolesPower>(context, pet, this);

@@ -24,7 +24,7 @@ public sealed class StandByRighteousness : SelfHarmCardTemplate
 	[
 		new DynamicVar("SelfHarm", 6),
 		new DynamicVar(RighteousnessVar, 6),
-		new BlockVar(8, ValueProp.Move),
+		new BlockVar(6, ValueProp.Move),
 	];
 	public override bool GainsBlock => true;
 	public override CardAssetProfile AssetProfile => new(

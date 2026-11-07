@@ -20,7 +20,8 @@ public sealed class NewPrisonerCardsMultiplayerTests : SunqianCombatTestSuite
 {
     protected override void ConfigureBattle(CombatTestBattleBuilder battle) =>
         battle.Player<LiubeiCharacter>()
-            .AddRemotePlayer<Ironclad>()
+            .AddRemotePlayer<Ironclad>(2)
+            .AddRemotePlayer<Ironclad>(3)
             .AddEnemy<BigDummy>()
             .WithSeed("new-prisoner-cards-multiplayer");
 
@@ -53,6 +54,62 @@ public sealed class NewPrisonerCardsMultiplayerTests : SunqianCombatTestSuite
 
         Assert.Equal(3, localPet.GetPowerAmount<VigorPower>());
         Assert.Equal(0, otherPet.GetPowerAmount<VigorPower>());
+        Assert.Equal(3, other.Creature.GetPowerAmount<VigorPower>());
+    }
+
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public async Task Float_shares_the_wines_current_vigor_with_both_brothers_and_every_other_player(bool upgraded)
+    {
+        var second = (await CompanionSummons.SummonSpecific(
+            Choice(), Player, CompanionSummons.SecondBrotherId, 20, null)).Creature!;
+        var third = (await CompanionSummons.SummonSpecific(
+            Choice(), Player, CompanionSummons.ThirdBrotherId, 20, null)).Creature!;
+        var card = await AddToHand<WhenFloatOneCup>();
+        if (upgraded) Upgrade(card);
+        Assert.EndsWith("你打出的[gold]酒[/gold]会为二弟、三弟和所有盟友提供等量活力。",
+            card.GetDescriptionForPile(PileType.Hand));
+        await Play(card);
+        var power = Player.Creature.GetPower<WhenFloatOneCupPower>()!;
+        Assert.Equal(1, power.Amount);
+        Assert.Contains("二弟、三弟和所有盟友", power.Description.GetFormattedText());
+        var wine = await AddToHand<Wine>();
+        wine.DynamicVars[nameof(VigorPower)].BaseValue = 7;
+        await Play(wine);
+        Assert.Equal(7, second.GetPowerAmount<VigorPower>());
+        Assert.Equal(7, third.GetPowerAmount<VigorPower>());
+        Assert.All(Players, player => Assert.Equal(7, player.Creature.GetPowerAmount<VigorPower>()));
+    }
+
+    [Fact]
+    public async Task Float_only_shares_the_holders_wine_and_auto_play_shares_without_recursion()
+    {
+        await Play(await AddToHand<WhenFloatOneCup>());
+        Player other = Players[1];
+        await CardCmd.AutoPlay(Choice(), await AddToHand<Wine>(other), null);
+        Assert.Equal(0, Player.Creature.GetPowerAmount<VigorPower>());
+        Assert.Equal(3, other.Creature.GetPowerAmount<VigorPower>());
+        Assert.Equal(0, Players[2].Creature.GetPowerAmount<VigorPower>());
+        await PowerCmd.Apply<WhenFloatOneCupPower>(Choice(), other.Creature, 1, other.Creature, null);
+        await CardCmd.AutoPlay(Choice(), await AddToHand<Wine>(), null);
+        Assert.Equal(3, Player.Creature.GetPowerAmount<VigorPower>());
+        Assert.Equal(6, other.Creature.GetPowerAmount<VigorPower>());
+        Assert.Equal(3, Players[2].Creature.GetPowerAmount<VigorPower>());
+    }
+
+    [Fact]
+    public async Task Float_stacks_share_scaled_vigor_and_skip_dead_allies()
+    {
+        await PlayerCmd.GainEnergy(10, Player);
+        await Play(await AddToHand<WhenFloatOneCup>());
+        await Play(Upgrade(await AddToHand<WhenFloatOneCup>()));
+        Players[2].Creature.SetCurrentHpInternal(0);
+        Assert.True(Players[2].Creature.IsDead);
+        await Play(await AddToHand<Wine>());
+        Assert.Equal(3, Player.Creature.GetPowerAmount<VigorPower>());
+        Assert.Equal(6, Players[1].Creature.GetPowerAmount<VigorPower>());
+        Assert.Equal(0, Players[2].Creature.GetPowerAmount<VigorPower>());
     }
 
     [Fact]
