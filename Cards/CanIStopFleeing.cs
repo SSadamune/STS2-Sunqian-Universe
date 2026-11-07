@@ -17,7 +17,7 @@ namespace Squ.Cards;
 public sealed class CanIStopFleeing : ModCardTemplate
 {
 	protected override IEnumerable<DynamicVar> CanonicalVars => [new PowerVar<StopRunningPower>(1)];
-	public override CardAssetProfile AssetProfile => new(PortraitPath: "res://images/cards/PrisonerPlaceholder.png");
+	public override CardAssetProfile AssetProfile => new(PortraitPath: "res://images/cards/prisoner/CanIStopFleeing.png");
 	protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
 		[IsUpgraded ? HoverTipFactory.FromPower<StopFleeingUntilEnemyTurnEndPower>() : HoverTipFactory.FromPower<StopRunningPower>(), HoverTipFactory.FromPower<TemporaryHealthPower>()];
 	public override IEnumerable<CardKeyword> CanonicalKeywords => [CardKeyword.Exhaust];

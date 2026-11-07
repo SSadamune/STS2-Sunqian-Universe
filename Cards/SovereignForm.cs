@@ -21,7 +21,7 @@ public sealed class SovereignForm : ModCardTemplate, IRowKeywordsCard
     public SovereignForm() : base(3, CardType.Power, CardRarity.Rare, TargetType.Self) { }
     protected override IEnumerable<DynamicVar> CanonicalVars => [new ForgeVar(0)];
     protected override IEnumerable<IHoverTip> AdditionalHoverTips => HoverTipFactory.FromForge();
-    public override CardAssetProfile AssetProfile => new(PortraitPath: "res://images/cards/PrisonerPlaceholder.png");
+    public override CardAssetProfile AssetProfile => new(PortraitPath: "res://images/cards/prisoner/SovereignForm.png");
     protected override void AddExtraArgsToDescription(LocString description)
     {
         DynamicVars.Forge.BaseValue = IsMutable && Owner != null && RunManager.Instance.IsInProgress

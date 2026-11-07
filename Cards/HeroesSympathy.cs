@@ -33,7 +33,7 @@ public sealed class HeroesSympathy : ModCardTemplate
 	];
 
 	public override CardAssetProfile AssetProfile => new(
-		PortraitPath: "res://images/cards/PrisonerPlaceholder.png");
+		PortraitPath: "res://images/cards/prisoner/HeroesSympathy.png");
 
 	public HeroesSympathy()
 		: base(0, CardType.Skill, CardRarity.Uncommon, TargetType.Self)

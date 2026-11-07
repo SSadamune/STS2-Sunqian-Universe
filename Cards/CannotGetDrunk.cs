@@ -33,7 +33,7 @@ public sealed class CannotGetDrunk : ModCardTemplate
 	];
 
 	public override CardAssetProfile AssetProfile => new(
-		PortraitPath: "res://images/cards/PrisonerPlaceholder.png");
+		PortraitPath: "res://images/cards/prisoner/CannotGetDrunk.png");
 
 	public CannotGetDrunk()
 		: base(1, CardType.Power, CardRarity.Uncommon, TargetType.Self)

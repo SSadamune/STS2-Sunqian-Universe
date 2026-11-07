@@ -193,5 +193,7 @@
   "SUNQIAN_UNIVERSE_POWER_CANNOT_GET_DRUNK_POWER.title": "Cannot Get Drunk",
   "SUNQIAN_UNIVERSE_POWER_CANNOT_GET_DRUNK_POWER.description": "When you play [gold]Wine[/gold], it does not add [gold]Dazed[/gold] and you draw [blue]{Amount}[/blue] cards. [red]Lose[/red] this power when you play another [gold]Wine[/gold] in the same turn.",
   "SUNQIAN_UNIVERSE_POWER_HEROES_SYMPATHY_POWER.title": "Heroes' Sympathy",
-  "SUNQIAN_UNIVERSE_POWER_HEROES_SYMPATHY_POWER.description": "This turn, whenever you play an Attack, apply [blue]{Amount}[/blue] Weak to all enemies."
+  "SUNQIAN_UNIVERSE_POWER_HEROES_SYMPATHY_POWER.description": "This turn, whenever you play an Attack, apply [blue]{Amount}[/blue] Weak to all enemies.",
+  "SUNQIAN_UNIVERSE_POWER_WAKOKU_STUDENT_POWER.title": "Wakoku Student",
+  "SUNQIAN_UNIVERSE_POWER_WAKOKU_STUDENT_POWER.description": "Every {HpThreshold} HP you lose, gain 1 Dexterity and 1 Strength.\nAfter you suffer lethal HP loss, double the stats gained this way."
 }

@@ -23,7 +23,7 @@ public sealed class SoulContract : ModCardTemplate
 {
     public SoulContract() : base(1, CardType.Power, CardRarity.Basic, TargetType.Self) { }
     public override IEnumerable<CardKeyword> CanonicalKeywords => [CardKeyword.Innate];
-    public override CardAssetProfile AssetProfile => new(PortraitPath: "res://images/cards/PrisonerPlaceholder.png");
+    public override CardAssetProfile AssetProfile => new(PortraitPath: "res://images/cards/prisoner/SoulContract.png");
     protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
         [HoverTipFactory.FromPower<SharedLifePower>(), HoverTipFactory.FromKeyword(SquKeywords.CompanionSkill)];
     protected override async Task OnPlay(PlayerChoiceContext context, CardPlay play)

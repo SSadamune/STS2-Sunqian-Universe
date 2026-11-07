@@ -42,7 +42,7 @@ public sealed class LureAndRelease : ModCardTemplate
 	];
 
 	public override CardAssetProfile AssetProfile => new(
-		PortraitPath: "res://images/cards/PrisonerPlaceholder.png");
+		PortraitPath: "res://images/cards/prisoner/LureAndRelease.png");
 
 	public LureAndRelease()
 		: base(1, CardType.Skill, CardRarity.Common, TargetType.Self)

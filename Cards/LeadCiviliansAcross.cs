@@ -23,7 +23,7 @@ public sealed class LeadCiviliansAcross : ModCardTemplate
 		new PowerVar<TemporaryHealthPower>(12),
 	];
 	public override CardAssetProfile AssetProfile => new(
-		PortraitPath: "res://images/cards/PrisonerPlaceholder.png");
+		PortraitPath: "res://images/cards/prisoner/LeadCiviliansAcross.png");
 	protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
 	[
 		HoverTipFactory.FromPower<TemporaryHealthPower>(),

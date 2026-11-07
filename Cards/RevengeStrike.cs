@@ -42,7 +42,7 @@ public sealed class RevengeStrike : ModCardTemplate
 	protected override HashSet<CardTag> CanonicalTags => [CardTag.Strike];
 
 	public override CardAssetProfile AssetProfile => new(
-		PortraitPath: "res://images/cards/PrisonerPlaceholder.png");
+		PortraitPath: "res://images/cards/prisoner/RevengeStrike.png");
 
 	public RevengeStrike()
 		: base(1, CardType.Attack, CardRarity.Uncommon, TargetType.AnyEnemy)

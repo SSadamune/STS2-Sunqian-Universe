@@ -19,7 +19,7 @@ namespace Squ.Cards;
 public sealed class SerpentSpear : ModCardTemplate
 {
     public SerpentSpear() : base(2, CardType.Attack, CardRarity.Uncommon, TargetType.RandomEnemy) { }
-    public override CardAssetProfile AssetProfile => new(PortraitPath: "res://images/cards/PrisonerPlaceholder.png");
+    public override CardAssetProfile AssetProfile => new(PortraitPath: "res://images/cards/prisoner/SerpentSpear.png");
     protected override IEnumerable<DynamicVar> CanonicalVars =>
         [new CompanionDamageVar(CompanionSummons.ThirdBrotherId, 11), new DynamicVar("Strength", 2)];
     private bool IsBrotherMissing => Owner == null || CompanionSummons.GetCompanion(Owner, CompanionSummons.ThirdBrotherId) is not { IsAlive: true };

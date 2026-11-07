@@ -193,5 +193,7 @@
   "SUNQIAN_UNIVERSE_POWER_CANNOT_GET_DRUNK_POWER.title": "不可饮酒致醉",
   "SUNQIAN_UNIVERSE_POWER_CANNOT_GET_DRUNK_POWER.description": "你打出[gold]酒[/gold]时不生成[gold]眩晕[/gold]且抽[blue]{Amount}[/blue]张牌；同一回合再次打出[gold]酒[/gold]时[red]失去[/red]此能力。",
   "SUNQIAN_UNIVERSE_POWER_HEROES_SYMPATHY_POWER.title": "英雄相惜",
-  "SUNQIAN_UNIVERSE_POWER_HEROES_SYMPATHY_POWER.description": "本回合你每打出一张攻击牌，给予所有敌人[blue]{Amount}[/blue]层[gold]虚弱[/gold]。"
+  "SUNQIAN_UNIVERSE_POWER_HEROES_SYMPATHY_POWER.description": "本回合你每打出一张攻击牌，给予所有敌人[blue]{Amount}[/blue]层[gold]虚弱[/gold]。",
+  "SUNQIAN_UNIVERSE_POWER_WAKOKU_STUDENT_POWER.title": "倭国留学生",
+  "SUNQIAN_UNIVERSE_POWER_WAKOKU_STUDENT_POWER.description": "你每损失{HpThreshold}点生命，获得1点[gold]敏捷[/gold]和1点[gold]力量[/gold]。\n你受到致命的生命损失后，因此积累的属性翻倍。"
 }

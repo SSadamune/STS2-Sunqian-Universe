@@ -21,7 +21,7 @@ public sealed class GreenDragonCrescentBlade : ModCardTemplate, IRowKeywordsCard
 {
     protected override HashSet<CardTag> CanonicalTags => [SquCardTags.Dragon];
     public GreenDragonCrescentBlade() : base(2, CardType.Attack, CardRarity.Uncommon, TargetType.AllEnemies) { }
-    public override CardAssetProfile AssetProfile => new(PortraitPath: "res://images/cards/PrisonerPlaceholder.png");
+    public override CardAssetProfile AssetProfile => new(PortraitPath: "res://images/cards/prisoner/GreenDragonCrescentBlade.png");
     protected override IEnumerable<DynamicVar> CanonicalVars => [new CompanionDamageVar(CompanionSummons.SecondBrotherId, 9), new DynamicVar("Strength", 2)];
     protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
     [

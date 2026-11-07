@@ -56,7 +56,7 @@ public sealed class DeflectStrike : ModCardTemplate
 	];
 
 	public override CardAssetProfile AssetProfile => new(
-		PortraitPath: "res://images/cards/PrisonerPlaceholder.png");
+		PortraitPath: "res://images/cards/prisoner/DeflectStrike.png");
 
 	public DeflectStrike()
 		: base(1, CardType.Attack, CardRarity.Common, CustomTargetType.Anyone)

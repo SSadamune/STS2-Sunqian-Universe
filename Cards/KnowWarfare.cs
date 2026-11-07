@@ -20,7 +20,7 @@ public sealed class KnowWarfare : ModCardTemplate
 	protected override IEnumerable<DynamicVar> CanonicalVars =>
 		[new PowerVar<BurningPower>(2),
 		 new PowerVar<TemporaryHealthPower>(6), new PowerVar<VigorPower>(6)];
-	public override CardAssetProfile AssetProfile => new(PortraitPath: "res://images/cards/PrisonerPlaceholder.png");
+	public override CardAssetProfile AssetProfile => new(PortraitPath: "res://images/cards/prisoner/KnowWarfare.png");
 	protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
 		[HoverTipFactory.FromPower<BurningPower>(), HoverTipFactory.FromPower<TemporaryHealthPower>(), HoverTipFactory.FromPower<VigorPower>()];
 	public KnowWarfare() : base(1, CardType.Skill, CardRarity.Common, TargetType.Self) { }

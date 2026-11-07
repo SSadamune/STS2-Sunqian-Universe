@@ -13,6 +13,7 @@ using MegaCrit.Sts2.Core.Models.Relics;
 using MegaCrit.Sts2.Core.ValueProps;
 using Squ.Cards;
 using Squ.Character;
+using Squ.Combat;
 using Squ.Powers;
 using Squ.RunData;
 using TestTheSpire;
@@ -105,9 +106,13 @@ public sealed class RighteousnessTests : SunqianCombatTestSuite
         var card = await AddToHand<StandByRighteousness>();
         if (upgraded) Upgrade(card);
         Assert.Equal(CardRarity.Basic, card.Rarity);
-        Assert.Equal(1, card.EnergyCost.GetResolved());
+        Assert.Equal(2, card.EnergyCost.Canonical);
+        Assert.Equal(0, card.EnergyCost.GetResolved());
+        Assert.Contains(card.HoverTips.OfType<HoverTip>(), tip => tip.Title == "自残6");
         await Play(card);
-        Assert.Equal(hp - 4, Player.Creature.CurrentHp);
+        Assert.Equal(hp - 6, Player.Creature.CurrentHp);
+        Assert.False(SelfHarmSystem.HasSelfHarm(card));
+        Assert.DoesNotContain(card.HoverTips.OfType<HoverTip>(), tip => tip.Title == "自残6");
         Assert.Equal(resource, RighteousnessRunData.Get(Player));
         Assert.Equal(block, Player.Creature.Block);
         AssertInPile(card, PileType.Discard);
@@ -121,9 +126,45 @@ public sealed class RighteousnessTests : SunqianCombatTestSuite
         Player.AddRelicInternal(rod, silent: true);
         await ApplyPower<TemporaryHealthPower>(Player.Creature, 10);
         await Play(await AddToHand<StandByRighteousness>());
-        Assert.Equal(real + 7, Player.Creature.CurrentHp);
-        Assert.Equal(7, Player.Creature.GetPower<TemporaryHealthPower>()!.Amount);
+        Assert.Equal(real + 5, Player.Creature.CurrentHp);
+        Assert.Equal(5, Player.Creature.GetPower<TemporaryHealthPower>()!.Amount);
         Assert.Equal(6, RighteousnessRunData.Get(Player));
+    }
+
+    [Theory]
+    [InlineData(6)]
+    [InlineData(5)]
+    public async Task Starter_skill_pays_two_energy_at_low_hp_and_preserves_self_harm(int hp)
+    {
+        await CreatureCmd.SetCurrentHp(Player.Creature, hp);
+        var card = await AddToHand<StandByRighteousness>();
+        await PlayerCmd.SetEnergy(2, Player);
+        Assert.Equal(2, card.EnergyCost.GetResolved());
+        Assert.Contains("自残", card.GetDescriptionForPile(PileType.Hand));
+        await Play(card);
+        Assert.Equal(hp, Player.Creature.CurrentHp);
+        Assert.Equal(0, Player.PlayerCombatState!.Energy);
+        Assert.True(SelfHarmSystem.HasSelfHarm(card));
+        Assert.Equal(6, RighteousnessRunData.Get(Player));
+        Assert.Equal(8, Player.Creature.Block);
+    }
+
+    [Fact]
+    public async Task Starter_skill_self_harm_is_paid_once_then_replay_costs_two_energy()
+    {
+        var card = await AddToHand<StandByRighteousness>();
+        await PlayerCmd.SetEnergy(0, Player);
+        int hp = Player.Creature.CurrentHp;
+        await Play(card);
+        Assert.Equal(hp - 6, Player.Creature.CurrentHp);
+        Assert.DoesNotContain("自残", card.GetDescriptionForPile(PileType.Discard));
+        await CardPileCmd.Add(card, PileType.Hand);
+        await PlayerCmd.SetEnergy(2, Player);
+        Assert.Equal(2, card.EnergyCost.GetResolved());
+        await Play(card);
+        Assert.Equal(hp - 6, Player.Creature.CurrentHp);
+        Assert.Equal(0, Player.PlayerCombatState!.Energy);
+        Assert.Equal(12, RighteousnessRunData.Get(Player));
     }
 
     [Theory]

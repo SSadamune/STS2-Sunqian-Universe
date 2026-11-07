@@ -22,7 +22,7 @@ public sealed class SwordsmanshipReview : ModCardTemplate
     protected override IEnumerable<DynamicVar> CanonicalVars => [new BlockVar(7, ValueProp.Move)];
     public override bool GainsBlock => true;
     protected override IEnumerable<IHoverTip> AdditionalHoverTips => [HoverTipFactory.FromKeyword(SquKeywords.VariousStrikeCards)];
-    public override CardAssetProfile AssetProfile => new(PortraitPath: "res://images/cards/PrisonerPlaceholder.png");
+    public override CardAssetProfile AssetProfile => new(PortraitPath: "res://images/cards/prisoner/SwordsmanshipReview.png");
     protected override async Task OnPlay(PlayerChoiceContext context, CardPlay play)
     {
         await CreatureCmd.GainBlock(Owner.Creature, DynamicVars.Block, play);

@@ -336,12 +336,12 @@ public sealed class RevengeStrikeTests : SunqianCombatTestSuite
         ResetPlayerHp();
         await Play(await AddToHand<StandByRighteousness>());
 
-        Assert.Equal(4, RevengeStrikeTrackerPower.GetLostHp(Player, 1));
+        Assert.Equal(6, RevengeStrikeTrackerPower.GetLostHp(Player, 1));
         var card = await AddToHand<RevengeStrike>();
-        Assert.Contains("增加等量伤害(+4)。", card.GetDescriptionForPile(PileType.Hand));
+        Assert.Contains("增加等量伤害(+6)。", card.GetDescriptionForPile(PileType.Hand));
         int hp = EnemyAt(0).CurrentHp;
         await Play(card, EnemyAt(0));
-        Assert.Equal(hp - 11, EnemyAt(0).CurrentHp);
+        Assert.Equal(hp - 13, EnemyAt(0).CurrentHp);
     }
 
     [Fact]

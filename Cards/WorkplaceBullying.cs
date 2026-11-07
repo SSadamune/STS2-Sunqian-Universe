@@ -18,7 +18,7 @@ public sealed class WorkplaceBullying : ModCardTemplate
 {
     private static readonly string[] Brothers = [CompanionSummons.SecondBrotherId, CompanionSummons.ThirdBrotherId];
     public WorkplaceBullying() : base(2, CardType.Attack, CardRarity.Common, TargetType.AnyEnemy) { }
-    public override CardAssetProfile AssetProfile => new(PortraitPath: "res://images/cards/PrisonerPlaceholder.png");
+    public override CardAssetProfile AssetProfile => new(PortraitPath: "res://images/cards/prisoner/WorkplaceBullying.png");
     protected override IEnumerable<DynamicVar> CanonicalVars => [new SummonVar(5)];
     protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
     [CompanionSummonKeywords.NamedHoverTip(CompanionSummons.SecondBrotherId, DynamicVars.Summon),

@@ -19,7 +19,7 @@ public sealed class DragonEmperorMarch : ModCardTemplate
 {
     public DragonEmperorMarch() : base(1, CardType.Power, CardRarity.Rare, TargetType.Self) { }
     protected override HashSet<CardTag> CanonicalTags => [SquCardTags.Dragon];
-    public override CardAssetProfile AssetProfile => new(PortraitPath: "res://images/cards/PrisonerPlaceholder.png");
+    public override CardAssetProfile AssetProfile => new(PortraitPath: "res://images/cards/prisoner/DragonEmperorMarch.png");
     protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
         [SquCardHoverTipFactory.FromCard<EmperorsMarch>(this, IsUpgraded)];
     protected override void AddExtraArgsToDescription(LocString description) =>

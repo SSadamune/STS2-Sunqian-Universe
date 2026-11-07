@@ -22,7 +22,7 @@ public sealed class AbductZilong : ModCardTemplate
     public AbductZilong() : base(1, CardType.Power, CardRarity.Uncommon, TargetType.Self) { }
     protected override HashSet<CardTag> CanonicalTags => [SquCardTags.Dragon];
     protected override IEnumerable<DynamicVar> CanonicalVars => [new DynamicVar("Righteousness", 3)];
-    public override CardAssetProfile AssetProfile => new(PortraitPath: "res://images/cards/PrisonerPlaceholder.png");
+    public override CardAssetProfile AssetProfile => new(PortraitPath: "res://images/cards/prisoner/AbductZilong.png");
     protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
         [SquKeywords.CreateRighteousnessHoverTip(DynamicVars["Righteousness"]), HoverTipFactory.FromKeyword(SquKeywords.VariousStrikeCards)];
     protected override void AddExtraArgsToDescription(LocString description) =>

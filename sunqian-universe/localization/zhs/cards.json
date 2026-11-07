@@ -341,7 +341,7 @@
   "SUNQIAN_UNIVERSE_CARD_I_HAVE_A_FAMOUS_QUOTE_TOO.title": "我也有名言",
   "SUNQIAN_UNIVERSE_CARD_I_HAVE_A_FAMOUS_QUOTE_TOO.description": "与一名生命值小于你的盟友平分生命值。",
   "SUNQIAN_UNIVERSE_CARD_STAND_BY_RIGHTEOUSNESS.title": "仁义立身",
-  "SUNQIAN_UNIVERSE_CARD_STAND_BY_RIGHTEOUSNESS.description": "失去{HpLoss:diff()}点生命。\n[gold]仁义[/gold]{Righteousness:diff()}。\n获得{Block:diff()}点[gold]格挡[/gold]。",
+  "SUNQIAN_UNIVERSE_CARD_STAND_BY_RIGHTEOUSNESS.description": "{SelfHarmText}[gold]仁义[/gold]{Righteousness:diff()}。\n获得{Block:diff()}点[gold]格挡[/gold]。",
   "SUNQIAN_UNIVERSE_CARD_COMPANION_SUMMON_CHOICE.title": "召唤物选择",
   "SUNQIAN_UNIVERSE_CARD_COMPANION_SUMMON_CHOICE.description": "以{Summon:diff()}点生命值召唤[gold]{SummonName}[/gold]。\n如果已经召唤，则在本场战斗中将其最大生命值提升{Summon:diff()}点。",
   "SUNQIAN_UNIVERSE_CARD_LEAD_CIVILIANS_ACROSS.title": "挟民渡路",
@@ -422,5 +422,7 @@
   "SUNQIAN_UNIVERSE_CARD_DEFLECT_STRIKE.playerBody": "给予玩家{Block:diff()}点[gold]格挡[/gold]。",
   "SUNQIAN_UNIVERSE_CARD_HEROES_SYMPATHY.title": "英雄相惜",
   "SUNQIAN_UNIVERSE_CARD_HEROES_SYMPATHY.description": "获得1层虚弱。\n本回合你每打出一张攻击牌，给予所有敌人一层虚弱。",
-  "SUNQIAN_UNIVERSE_SOVEREIGN_STRIKE.title": "君王打击"
+  "SUNQIAN_UNIVERSE_SOVEREIGN_STRIKE.title": "君王打击",
+  "SUNQIAN_UNIVERSE_CARD_WAKOKU_STUDENT.title": "倭国留学生",
+  "SUNQIAN_UNIVERSE_CARD_WAKOKU_STUDENT.description": "你每损失{HpThreshold:diff()}点生命，获得1点[gold]敏捷[/gold]和1点[gold]力量[/gold]。\n你受到致命的生命损失后，因此积累的属性翻倍。"
 }

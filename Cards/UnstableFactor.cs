@@ -20,7 +20,7 @@ namespace Squ.Cards;
 public sealed class UnstableFactor : ModCardTemplate, IRowKeywordsCard
 {
     public UnstableFactor() : base(1, CardType.Power, CardRarity.Uncommon, TargetType.Self) { }
-    public override CardAssetProfile AssetProfile => new(PortraitPath: "res://images/cards/PrisonerPlaceholder.png");
+    public override CardAssetProfile AssetProfile => new(PortraitPath: "res://images/cards/prisoner/UnstableFactor.png");
     protected override IEnumerable<DynamicVar> CanonicalVars => [new SummonVar(4)];
     protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
     [CompanionSummonKeywords.NamedHoverTip(CompanionSummons.ThirdBrotherId, DynamicVars.Summon),

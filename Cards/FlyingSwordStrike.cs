@@ -20,7 +20,7 @@ public sealed class FlyingSwordStrike : ModCardTemplate
 {
 	protected override IEnumerable<DynamicVar> CanonicalVars => [new DamageVar(9, ValueProp.Move), new CardsVar(1)];
 	protected override HashSet<CardTag> CanonicalTags => [CardTag.Strike];
-	public override CardAssetProfile AssetProfile => new(PortraitPath: "res://images/cards/PrisonerPlaceholder.png");
+	public override CardAssetProfile AssetProfile => new(PortraitPath: "res://images/cards/prisoner/FlyingSwordStrike.png");
 	public FlyingSwordStrike() : base(1, CardType.Attack, CardRarity.Uncommon, TargetType.AnyEnemy) { }
 	protected override async Task OnPlay(PlayerChoiceContext ctx, CardPlay play)
 	{

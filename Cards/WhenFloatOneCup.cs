@@ -31,7 +31,7 @@ public sealed class WhenFloatOneCup : ModCardTemplate
 	];
 
 	public override CardAssetProfile AssetProfile => new(
-		PortraitPath: "res://images/cards/PrisonerPlaceholder.png");
+		PortraitPath: "res://images/cards/prisoner/WhenFloatOneCup.png");
 
 	public WhenFloatOneCup()
 		: base(1, CardType.Power, CardRarity.Uncommon, TargetType.Self)

@@ -32,7 +32,7 @@ public sealed class NominalBrothers : ModCardTemplate
 	protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
 		[new HoverTip(ModelDb.Power<DieForYouPower>(),
 			new LocString("powers", "SUNQIAN_UNIVERSE_POWER_COMPANION_DIE_FOR_YOU.description").GetFormattedText(), false)];
-	public override CardAssetProfile AssetProfile => new(PortraitPath: "res://images/cards/PrisonerPlaceholder.png");
+	public override CardAssetProfile AssetProfile => new(PortraitPath: "res://images/cards/prisoner/NominalBrothers.png");
 	public NominalBrothers() : base(1, CardType.Attack, CardRarity.Common, TargetType.AnyEnemy) { }
 	protected override async Task OnPlay(PlayerChoiceContext ctx, CardPlay play)
 	{

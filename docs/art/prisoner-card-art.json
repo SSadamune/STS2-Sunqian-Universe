@@ -1,0 +1,130 @@
+{
+  "generator": "Built-in image_gen",
+  "size": [
+    400,
+    300
+  ],
+  "promptTemplate": "Use case: illustration-story. Single game card illustration, landscape 4:3. Very simple hand-drawn stick-figure doodle on cream paper, rough dark brown pencil outlines, muted red and sage green accents, ancient Chinese setting, no Roman helmets. Minimal readable shapes, ample margin, no text or borders. Scene: ",
+  "images": [
+    {
+      "name": "AbductZilong",
+      "subject": "A green-robed warrior pulls a surprised white-armored spear warrior along by hand.",
+      "file": "images/cards/prisoner/AbductZilong.png"
+    },
+    {
+      "name": "CanIStopFleeing",
+      "subject": "An exhausted green-robed ancient warrior stops running and hides behind a small round green shield; one red arrow bounces away.",
+      "file": "images/cards/prisoner/CanIStopFleeing.png"
+    },
+    {
+      "name": "CannotGetDrunk",
+      "subject": "A cheerful ancient warrior holding a tiny wine cup firmly waves away a spinning dizzy star.",
+      "file": "images/cards/prisoner/CannotGetDrunk.png"
+    },
+    {
+      "name": "DeafenMyEars",
+      "subject": "A little ancient warrior tightly plugs both ears with his fingers, eyes shut, with two red zigzag noise marks.",
+      "file": "images/cards/prisoner/DeafenMyEars.png"
+    },
+    {
+      "name": "DeflectStrike",
+      "subject": "A green-robed stick warrior uses a small tilted sword to redirect one red incoming arrow sideways.",
+      "file": "images/cards/prisoner/DeflectStrike.png"
+    },
+    {
+      "name": "DragonEmperorMarch",
+      "subject": "A tiny green Chinese dragon wearing a simple gold crown marches forward proudly, three little footprints.",
+      "file": "images/cards/prisoner/DragonEmperorMarch.png"
+    },
+    {
+      "name": "FlyingSwordStrike",
+      "subject": "A simple silver sword flies diagonally through the air toward a wooden training dummy, three motion strokes.",
+      "file": "images/cards/prisoner/FlyingSwordStrike.png"
+    },
+    {
+      "name": "GreenDragonCrescentBlade",
+      "subject": "One large crescent-bladed polearm with a green dragon curl on its blade, leaning diagonally; tiny green tassel.",
+      "file": "images/cards/prisoner/GreenDragonCrescentBlade.png"
+    },
+    {
+      "name": "HeroesSympathy",
+      "subject": "Two tired little ancient warriors face each other and clasp hands with a small red heart between them.",
+      "file": "images/cards/prisoner/HeroesSympathy.png"
+    },
+    {
+      "name": "IHaveAFamousQuoteToo",
+      "subject": "A proud little ancient warrior raises a finger and speaks into a large empty speech bubble; another small warrior listens.",
+      "file": "images/cards/prisoner/IHaveAFamousQuoteToo.png"
+    },
+    {
+      "name": "KnowWarfare",
+      "subject": "A little green-robed ancient strategist studies a simple battle map with three red triangular army tokens.",
+      "file": "images/cards/prisoner/KnowWarfare.png"
+    },
+    {
+      "name": "LeadCiviliansAcross",
+      "subject": "A green-robed ancient warrior leads two tiny civilians across a simple blue stream on stepping stones.",
+      "file": "images/cards/prisoner/LeadCiviliansAcross.png"
+    },
+    {
+      "name": "LureAndRelease",
+      "subject": "A little green-robed warrior opens a simple wooden cage and lets a small red bird fly away.",
+      "file": "images/cards/prisoner/LureAndRelease.png"
+    },
+    {
+      "name": "NominalBrothers",
+      "subject": "Two ancient stick-figure warriors stand side by side facing opposite directions, arms folded, a loose red ribbon joining them.",
+      "file": "images/cards/prisoner/NominalBrothers.png"
+    },
+    {
+      "name": "RevengeStrike",
+      "subject": "A determined green-robed warrior with one small bandage swings a wooden sword at a training dummy; simple red motion arc.",
+      "file": "images/cards/prisoner/RevengeStrike.png"
+    },
+    {
+      "name": "SerpentSpear",
+      "subject": "One long spear with a dark wavy serpent-shaped blade and a simple red tassel, diagonally centered.",
+      "file": "images/cards/prisoner/SerpentSpear.png"
+    },
+    {
+      "name": "SoulContract",
+      "subject": "Two small glowing ghost figures touch a parchment contract with a red heart-shaped seal.",
+      "file": "images/cards/prisoner/SoulContract.png"
+    },
+    {
+      "name": "SovereignForm",
+      "subject": "A tiny green-robed ancient warrior stands proudly wearing a simple gold crown and holding a short golden sword.",
+      "file": "images/cards/prisoner/SovereignForm.png"
+    },
+    {
+      "name": "StandByRighteousness",
+      "subject": "A little green-robed ancient warrior stands upright holding a round shield and a small red heart emblem, one small bandage on arm.",
+      "file": "images/cards/prisoner/StandByRighteousness.png"
+    },
+    {
+      "name": "SwordsmanshipReview",
+      "subject": "A little ancient warrior practices a wooden sword stance beside an open book showing a simple sword sketch.",
+      "file": "images/cards/prisoner/SwordsmanshipReview.png"
+    },
+    {
+      "name": "UnstableFactor",
+      "subject": "A wild-haired little ancient warrior in green holds a wine gourd, one foot raised, with a wobbly red spark beside him.",
+      "file": "images/cards/prisoner/UnstableFactor.png"
+    },
+    {
+      "name": "WakokuStudent",
+      "subject": "A small ancient East Asian student with a topknot and simple robe studies an open book beside a wooden practice sword and a small red heart.",
+      "file": "images/cards/prisoner/WakokuStudent.png"
+    },
+    {
+      "name": "WhenFloatOneCup",
+      "subject": "Two little ancient warriors joyfully raise large simple wine cups for a toast; one red splash.",
+      "file": "images/cards/prisoner/WhenFloatOneCup.png"
+    },
+    {
+      "name": "WorkplaceBullying",
+      "subject": "One small green-robed boss points at two exhausted ancient warriors carrying a huge plain wooden crate together.",
+      "file": "images/cards/prisoner/WorkplaceBullying.png"
+    }
+  ]
+}
