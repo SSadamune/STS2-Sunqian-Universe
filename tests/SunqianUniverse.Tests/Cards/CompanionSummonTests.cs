@@ -40,6 +40,27 @@ public sealed class CompanionSummonTests : SunqianCombatTestSuite
             .AddEnemy<BigDummy>().WithSeed("companion-summons");
 
     [Fact]
+    public async Task Summon_hover_handles_canonical_unowned_and_owned_family_cards()
+    {
+        var canonical = ModelDb.Card<CutePet>();
+        var unowned = canonical.ToMutable();
+        var plain = (HoverTip)HoverTipFactory.Static(StaticHoverTip.SummonDynamic,
+            new SummonVar(CutePet.SummonAmount));
+        foreach (var preview in new CardModel[] { canonical, unowned })
+        {
+            var tip = Assert.Single(preview.HoverTips.OfType<HoverTip>(), tip => tip.Id == plain.Id);
+            Assert.Equal(plain.Title, tip.Title);
+            Assert.Equal(plain.Description, tip.Description);
+        }
+        var owned = await AddToHand<CutePet>();
+        var bound = (HoverTip)CompanionSummonKeywords.NamedHoverTip(
+            CompanionSummons.SecondBrotherId, owned.DynamicVars.Summon);
+        var actual = Assert.Single(owned.HoverTips.OfType<HoverTip>(), tip => tip.Id == bound.Id);
+        Assert.Equal(bound.Title, actual.Title);
+        Assert.Equal(bound.Description, actual.Description);
+    }
+
+    [Fact]
     public async Task Second_brother_uses_native_osty_visuals_and_animator()
     {
         var result = await OstyCmd.Summon(ChoiceContext(), Player, 6, null);

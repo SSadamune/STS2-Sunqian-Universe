@@ -4,7 +4,7 @@ param(
     [string]$RitsuLibDir = "C:\Program Files (x86)\Steam\steamapps\workshop\content\2868840\3747602295",
     [string]$GodotExe = "",
     [string]$Filter = "",
-    [int]$TimeoutSeconds = 180,
+    [int]$TimeoutSeconds = 600,
     [switch]$ListOnly,
     [switch]$SkipModInstall,
     [switch]$JointModTests,
@@ -98,6 +98,8 @@ $StartInfo.UseShellExecute = $false
 $StartInfo.CreateNoWindow = $true
 $StartInfo.RedirectStandardOutput = $true
 $StartInfo.RedirectStandardError = $true
+$StartInfo.StandardOutputEncoding = [System.Text.UTF8Encoding]::new($false)
+$StartInfo.StandardErrorEncoding = [System.Text.UTF8Encoding]::new($false)
 $StartInfo.Arguments = ($MsBuildArgs | ForEach-Object {
     if ($_ -match '[\s"]') {
         '"' + ($_ -replace '"', '\"') + '"'

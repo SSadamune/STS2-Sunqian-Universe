@@ -37,7 +37,8 @@ internal static class BoundCompanionSummonHoverPatch
 	{
 		if (__0 != StaticHoverTip.SummonDynamic) return true;
 		DynamicVar? amount = __1.FirstOrDefault();
-		if (amount == null || VarOwner.GetValue(amount) is not CardModel card || card.Owner == null)
+		if (amount == null || VarOwner.GetValue(amount) is not CardModel card
+			|| card.IsCanonical || card.Owner == null)
 			return true;
 		string id = CompanionSummons.GetDefaultId(card.Owner);
 		if (id == CompanionSummons.OstyId) return true;

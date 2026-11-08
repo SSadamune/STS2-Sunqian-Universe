@@ -42,7 +42,7 @@
 测试配置与存档位于 `SunqianUniverse.Tests/obj/Sts2TestData`，不会覆盖正常游戏配置。
 
 Windows 下脚本会把 `APPDATA`、`LOCALAPPDATA` 和 `XDG_DATA_HOME` 同时重定向到
-该测试目录。headless 进程默认超过 180 秒即终止，可通过 `-TimeoutSeconds` 调整。
+该测试目录。完整测试套件默认超过 600 秒即终止，可通过 `-TimeoutSeconds` 调整。
 
 使用 `-SkipModInstall` 可以复用当前已安装的孙乾宇宙 DLL 与 PCK。如果安装位置不同，
 可通过 `-GameDir`、`-RitsuLibDir` 或 `-GodotExe` 覆盖脚本默认值。
