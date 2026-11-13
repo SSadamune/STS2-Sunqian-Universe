@@ -8,6 +8,7 @@ using MegaCrit.Sts2.Core.Models.Characters;
 using MegaCrit.Sts2.Core.Models.Monsters;
 using MegaCrit.Sts2.Core.Models.Powers;
 using MegaCrit.Sts2.Core.Models.Relics;
+using MegaCrit.Sts2.Core.Runs;
 using MegaCrit.Sts2.Core.ValueProps;
 using Squ.Cards;
 using Squ.Powers;
@@ -35,7 +36,7 @@ public sealed class GuanDiFormTests : SunqianCombatTestSuite
             var servant = await AddToHand<ServantScript>();
             await Squ.Script.ScriptSystem.UnlockOrUpgradeAsync<ServantScriptRecord>(context, servant, 1, activate: false);
         }
-        using (CardSelectCmd.PushSelector(new VakuuCardSelector()))
+        using (RunManager.Instance.CardSelectorStack.PushSelector(Player, new VakuuCardSelector()))
             await CardCmd.AutoPlay(new BlockingPlayerChoiceContext(), form, null).WaitAsync(TimeSpan.FromSeconds(5));
         Assert.NotNull(Player.Creature.GetPower<GuanYuCivilVerPower>());
         Assert.Null(Player.Creature.GetPower<GuanYuMartialVerPower>());

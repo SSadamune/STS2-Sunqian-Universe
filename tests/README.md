@@ -3,6 +3,17 @@
 本目录使用 [TestTheSpire](https://github.com/shadowversebydmod/TestTheSpire)
 以 headless 模式启动 Slay the Spire 2，并在真实战斗中执行 xUnit 断言。
 
+## 0.113 适配状态
+
+模组及测试项目已改为引用游戏 0.113.0 和 RitsuLib 0.6.11，选牌辅助迁移至
+`CardSelectorStack`。构建与 `-ListOnly` 启动检查通过，可发现 601 个常规用例，
+模组初始化未报告 Harmony 补丁挂载失败。
+
+当前 NuGet 的 TestTheSpire 0.1.7 仍调用旧签名 `RunState.CreateForTest`。
+在 0.113.0 上执行 `-Filter FlameStrike` 的 3 个用例均因 `MissingMethodException`
+在创建战斗前失败，未验证卡牌断言。需测试框架适配 0.113 后再执行战斗回归；
+`-ListOnly` 仅验证加载和测试发现，不代表测试通过。
+
 ## 运行
 
 在仓库根目录执行：

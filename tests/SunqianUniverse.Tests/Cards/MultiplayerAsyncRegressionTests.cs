@@ -7,6 +7,7 @@ using MegaCrit.Sts2.Core.Models.Cards;
 using MegaCrit.Sts2.Core.Models.Characters;
 using MegaCrit.Sts2.Core.Models.Monsters;
 using MegaCrit.Sts2.Core.Models.Powers;
+using MegaCrit.Sts2.Core.Runs;
 using MegaCrit.Sts2.Core.TestSupport;
 using Squ;
 using Squ.Cards;
@@ -122,7 +123,8 @@ public sealed class MultiplayerAsyncRegressionTests : SunqianCombatTestSuite
             [ally.NetId] = allySelected,
         });
 
-        using (CardSelectCmd.UseSelector(selector))
+        using (RunManager.Instance.CardSelectorStack.PushSelector(Player, selector))
+        using (RunManager.Instance.CardSelectorStack.PushSelector(ally, selector))
         {
             await Task.WhenAll(new Task[]
             {

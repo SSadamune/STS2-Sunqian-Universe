@@ -333,7 +333,7 @@ public static class ScriptSystem
 		{
 			return null;
 		}
-		if (CardSelectCmd.Selector is VakuuCardSelector)
+		if (RunManager.Instance.CardSelectorStack.GetSelector(player) is VakuuCardSelector)
 		{
 			// Vakuu takes the first MaxSelect cards without checking exclusivity.
 			// Choose a legal subset directly instead of recursively reopening selection.
@@ -364,7 +364,7 @@ public static class ScriptSystem
 		};
 
 		IEnumerable<CardModel> selection = localOnly
-			? await SelectLocalScriptRecordsAsync(pile, prefs)
+			? await SelectLocalScriptRecordsAsync(player, pile, prefs)
 			: await CardSelectCmd.FromCombatPile(
 				choiceContext, pile, player, prefs, card => card is ScriptRecordCardTemplate);
 		List<ScriptRecordCardTemplate> selected = selection
@@ -380,11 +380,12 @@ public static class ScriptSystem
 	}
 
 	private static async Task<IEnumerable<CardModel>> SelectLocalScriptRecordsAsync(
-		CardPile pile, CardSelectorPrefs prefs)
+		Player player, CardPile pile, CardSelectorPrefs prefs)
 	{
 		// Box Lunch broadcasts its confirmed selection as a managed action. Opening
 		// or canceling its local UI must not reserve or send a synchronized choice.
-		if ((CardSelectCmd.Selector ?? CardSelectCmd.LocalSelector) is { } selector)
+		CardSelectorStack selectorStack = RunManager.Instance.CardSelectorStack;
+		if ((selectorStack.GetSelector(player) ?? selectorStack.LocalSelector) is { } selector)
 		{
 			return await selector.GetSelectedCards(
 				pile.Cards.OfType<ScriptRecordCardTemplate>(), prefs.MinSelect, prefs.MaxSelect);

@@ -1,3 +1,4 @@
+using MegaCrit.Sts2.Core.CardSelection;
 using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.Entities.Creatures;
@@ -19,7 +20,7 @@ namespace Squ.Tests;
 public abstract class SunqianCombatTestSuite : CombatTestSuite
 {
     protected static IDisposable UseCardSelector(ScriptedCardSelector selector) =>
-        CardSelectCmd.UseSelector(selector);
+        CardSelectorStack.SetTestSelector(selector);
 
     protected static void AssertAllSelectionsConsumed(ScriptedCardSelector selector) =>
         Assert.Equal(0, selector.PendingSteps);

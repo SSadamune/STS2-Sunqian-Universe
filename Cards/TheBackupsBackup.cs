@@ -104,7 +104,7 @@ public sealed class TheBackupsBackup : ModCardTemplate
 				options.Add(card);
 			}
 		}
-		sourceDeckOwner.RunState.Rng.CombatCardGeneration.Shuffle(options);
+		options.UnstableShuffle(sourceDeckOwner.RunState.Rng.CombatCardGeneration);
 		if (options.Count > ChoiceCount)
 		{
 			options.RemoveRange(ChoiceCount, options.Count - ChoiceCount);
@@ -116,7 +116,7 @@ public sealed class TheBackupsBackup : ModCardTemplate
 			recipient,
 			options,
 			allowed);
-		sourceDeckOwner.RunState.Rng.CombatCardGeneration.Shuffle(options);
+		options.UnstableShuffle(sourceDeckOwner.RunState.Rng.CombatCardGeneration);
 
 		if (options.Count == 0)
 		{

@@ -1,5 +1,4 @@
 using HarmonyLib;
-using MegaCrit.Sts2.Core.Models;
 using MegaCrit.Sts2.Core.Nodes.Screens.CharacterSelect;
 using Squ.Character;
 
@@ -24,24 +23,9 @@ internal static class SunqianCharacterSelectBgmPatch
 
 	[HarmonyPostfix]
 	[HarmonyPatch(nameof(NCharacterSelectScreen.SelectCharacter))]
-	private static void SelectCharacterPostfix(
-		NCharacterSelectButton charSelectButton,
-		CharacterModel characterModel)
+	private static void SelectCharacterPostfix(NCharacterSelectButton charSelectButton)
 	{
-		if (!charSelectButton.IsLocked && characterModel is SunqianCharacter)
-		{
-			SunqianSelectBgm.Play();
-			return;
-		}
-
-		SunqianSelectBgm.RestoreMenuIfPlaying();
-	}
-
-	[HarmonyPostfix]
-	[HarmonyPatch("OnLocalCharacterChangedForRandom")]
-	private static void OnLocalCharacterChangedForRandomPostfix(CharacterModel characterModel)
-	{
-		if (characterModel is SunqianCharacter)
+		if (!charSelectButton.IsLocked && charSelectButton.Character is SunqianCharacter)
 		{
 			SunqianSelectBgm.Play();
 			return;

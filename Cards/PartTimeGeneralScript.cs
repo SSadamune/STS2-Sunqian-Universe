@@ -6,6 +6,7 @@ using MegaCrit.Sts2.Core.Combat;
 using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.Entities.Creatures;
+using MegaCrit.Sts2.Core.Extensions;
 using MegaCrit.Sts2.Core.Factories;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.Helpers;
@@ -146,7 +147,7 @@ public sealed class PartTimeGeneralScript : ScriptCardTemplate<PartTimeGeneralSc
 			.Where(IsEligibleStrike)
 			.ToList();
 
-		Owner.RunState.Rng.CombatCardGeneration.Shuffle(candidates);
+		candidates.UnstableShuffle(Owner.RunState.Rng.CombatCardGeneration);
 		return candidates.Take(Math.Min(count, candidates.Count)).ToList();
 	}
 
