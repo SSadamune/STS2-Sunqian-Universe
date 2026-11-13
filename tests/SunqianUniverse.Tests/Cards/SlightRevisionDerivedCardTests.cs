@@ -14,6 +14,7 @@ public sealed class SlightRevisionDerivedCardTests : SunqianCombatTestSuite
     private static readonly Type[] DerivedCardTypes =
     [
         typeof(BurnCity),
+        typeof(BowangParadoxScript),
         typeof(FarmingGeneral),
         typeof(FireMeteorShower),
         typeof(LensPreShoot),
