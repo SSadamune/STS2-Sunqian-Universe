@@ -3,6 +3,8 @@ using MegaCrit.Sts2.Core.Models.Characters;
 using MegaCrit.Sts2.Core.Models.Monsters;
 using MegaCrit.Sts2.Core.Models.Powers;
 using Squ.Cards;
+using Squ.Audio;
+using Squ.Tests.Relics;
 using TestTheSpire;
 using Xunit;
 
@@ -32,6 +34,25 @@ public sealed class ThunderOnStillLakeTests : SunqianCombatTestSuite
             enemy.CurrentHp);
         Assert.Equal(ThunderOnStillLake.UpgradedDamage, thunder.DynamicVars.Damage.IntValue);
         Assert.Equal(ThunderOnStillLake.UpgradedCost, thunder.EnergyCost.GetResolved());
+    }
+
+    [Fact]
+    public async Task Charge_sounds_distinguish_spent_vigor_from_attack_cost_reduction()
+    {
+        var thunder = await AddToHand<ThunderOnStillLake>();
+        TestSquSfxPlayPatch.BeginCapture();
+        try
+        {
+            await ApplyPower<VigorPower>(Player.Creature, 3);
+            Assert.DoesNotContain(SquSfx.ThunderOnStillLakeVigorChargeEvent, TestSquSfxPlayPatch.Events);
+            await Play(await AddToHand<StrikeLongtao>(), EnemyAt(0));
+            Assert.Equal(1, TestSquSfxPlayPatch.Events.Count(path => path == SquSfx.ThunderOnStillLakeVigorChargeEvent));
+            Assert.DoesNotContain(SquSfx.ThunderOnStillLakeCostReductionEvent, TestSquSfxPlayPatch.Events);
+            await DamageCmd.Attack(1).FromMonster(EnemyAt(0).Monster!).WithNoAttackerAnim().Execute(null);
+            Assert.Equal(1, TestSquSfxPlayPatch.Events.Count(path => path == SquSfx.ThunderOnStillLakeCostReductionEvent));
+            Assert.Equal(ThunderOnStillLake.CanonicalCost - 1, thunder.EnergyCost.GetResolved());
+        }
+        finally { TestSquSfxPlayPatch.EndCapture(); }
     }
 
     [Fact]

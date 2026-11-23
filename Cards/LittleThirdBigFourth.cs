@@ -3,6 +3,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using MegaCrit.Sts2.Core.Commands;
 using MegaCrit.Sts2.Core.Entities.Cards;
+using MegaCrit.Sts2.Core.Extensions;
 using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.Helpers;
 using MegaCrit.Sts2.Core.Localization;
@@ -63,7 +64,7 @@ public sealed class LittleThirdBigFourth : ModCardTemplate
 			..PileType.Draw.GetPile(Owner).Cards,
 			..PileType.Discard.GetPile(Owner).Cards,
 		];
-		Owner.RunState.Rng.CombatCardGeneration.Shuffle(pool);
+		pool.UnstableShuffle(Owner.RunState.Rng.CombatCardGeneration);
 
 		List<CardModel> chosen = [];
 		HashSet<int> seenCosts = [];

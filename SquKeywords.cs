@@ -149,11 +149,11 @@ public static class SquKeywords
 			"SUNQIAN_UNIVERSE_KEYWORD_EUNUCH_MESSAGE.cardHover");
 		description.Add("DisplayedKeyword", displayedKeywordTip.Title ?? string.Empty);
 
+		// 0.113 derives the read-only ID from the title and cardHover localization keys.
 		HoverTip result = new(
 			ModKeywordRegistry.GetTitle(EunuchMessageId),
 			description,
 			icon: null);
-		result.Id = HoverTipFactory.FromKeyword(EunuchMessage).Id;
 		return result;
 	}
 

@@ -10,11 +10,14 @@ using STS2RitsuLib.Interop.AutoRegistration;
 
 namespace Squ;
 
+[RegisterOwnedCardTag("dragon")]
 [RegisterOwnedCardTag("script")]
 [RegisterOwnedCardTag("burning")]
 [RegisterOwnedCardTag("character_mechanic_bound")]
 public static class SquCardTags
 {
+	public static readonly CardTag Dragon = "SUNQIAN_UNIVERSE_CARDTAG_DRAGON".GetModCardTag();
+
 	/// <summary>“强绑定角色机制”卡牌标签的稳定限定 ID。</summary>
 	public const string CharacterMechanicBoundId =
 		"SUNQIAN_UNIVERSE_CARDTAG_CHARACTER_MECHANIC_BOUND";

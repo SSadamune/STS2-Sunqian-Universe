@@ -31,22 +31,7 @@ public abstract class ScriptBowangParadoxPowerTemplate : ScriptPowerTemplate
         {
             return;
         }
-        if (IsArson)
-        {
-            await PowerCmd.Apply<TinderPower>(ActivationChoiceContext, Owner, Amount, Owner, cardSource);
-        }
-        else
-        {
-            await PowerCmd.Apply<VigorPower>(ActivationChoiceContext, Owner, Amount, Owner, cardSource);
-        }
-        var discarded = PileType.Hand.GetPile(player).Cards
-            .Where(card => !card.ShouldRetainThisTurn
-                && (IsArson ? SquCardTags.AppliesBurning(card) : card.Type == CardType.Attack))
-            .ToList();
-        if (discarded.Count > 0)
-        {
-            await CardCmd.DiscardAndDraw(ActivationChoiceContext, discarded, 0);
-        }
+        await Squ.Combat.BowangParadoxEffects.Apply(ActivationChoiceContext, player, Amount, IsArson, cardSource);
     }
 }
 

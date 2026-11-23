@@ -1,4 +1,6 @@
 using HarmonyLib;
+using MegaCrit.Sts2.Core.Commands;
+using MegaCrit.Sts2.Core.GameActions.Multiplayer;
 using MegaCrit.Sts2.Core.Entities.Cards;
 using MegaCrit.Sts2.Core.HoverTips;
 using MegaCrit.Sts2.Core.Models;
@@ -69,6 +71,25 @@ public sealed class ShangfangguSighTests : SunqianCombatTestSuite
 {
     protected override void ConfigureBattle(CombatTestBattleBuilder battle) =>
         battle.Player<Ironclad>().AddEnemy<BigDummy>().WithSeed("shangfanggu-sigh");
+
+    [Fact]
+    public async Task Good_fire_amplifies_enemy_burning_but_not_self_or_friendly_pet_burning()
+    {
+        var context = new BlockingPlayerChoiceContext();
+        var card = Upgrade(await AddToHand<ShangfangguSigh>());
+        Assert.Contains("给予敌方", card.GetDescriptionForPile(PileType.Hand));
+        await Play(card);
+        var pet = (await OstyCmd.Summon(context, Player, 5, null)).Creature!;
+        await PowerCmd.Apply<BurningPower>(context, Player.Creature, 3, Player.Creature, null);
+        await PowerCmd.Apply<BurningPower>(context, pet, 3, Player.Creature, null);
+        await PowerCmd.Apply<BurningPower>(context, EnemyAt(0), 3, Player.Creature, null);
+        Assert.Equal(3, Player.Creature.GetPower<BurningPower>()!.Amount);
+        Assert.Equal(3, pet.GetPower<BurningPower>()!.Amount);
+        Assert.Equal(7, EnemyAt(0).GetPower<BurningPower>()!.Amount);
+        Assert.Equal(1m, Player.Creature.GetPower<GoodFirePower>()!.ModifyPowerAmountGivenMultiplicative(
+            ModelDb.Power<BurningPower>(), Player.Creature, 3, null, card));
+        Assert.Equal("夷陵余烬", ModelDb.Power<PendingGoodFirePower>().Title.GetFormattedText());
+    }
 
     [Fact]
     public async Task Good_fire_also_multiplies_yjcm_fire_attack_for_yjcm_characters()

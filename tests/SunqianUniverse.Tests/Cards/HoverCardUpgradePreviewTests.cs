@@ -99,7 +99,6 @@ public sealed class HoverCardUpgradePreviewTests : SunqianCombatTestSuite
     {
         AssertScriptRecordHasNoUpgradedVersion<XiliangSavageScript, XiliangSavageScriptRecord>();
         AssertScriptRecordHasNoUpgradedVersion<BombardChibiScript, BombardChibiScriptRecord>();
-        AssertScriptRecordHasNoUpgradedVersion<BurningLinkedCampsScript, BurningLinkedCampsScriptRecord>();
         AssertScriptRecordHasNoUpgradedVersion<EunuchScript, EunuchScriptRecord>();
         AssertScriptRecordHasNoUpgradedVersion<NeutralAmbushScript, NeutralAmbushScriptRecord>();
         AssertScriptRecordHasNoUpgradedVersion<OneManOneCity, OneManOneCityScriptRecord>();

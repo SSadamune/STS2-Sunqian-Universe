@@ -38,28 +38,18 @@ public sealed class FourWheeledCartPower : ModPowerTemplate
 	private const string GrantedStrengthVarName = "GrantedStrength";
 	private const string GrantedDexterityVarName = "GrantedDexterity";
 
-	private sealed class GrantedStrengthVar()
-		: DynamicVar(GrantedStrengthVarName, 0)
+	private sealed class GrantedStrengthVar(int value)
+		: DynamicVar(GrantedStrengthVarName, value)
 	{
-		private decimal CurrentValue =>
-			_owner is FourWheeledCartPower power ? power.GrantedStrength : 0;
-
-		protected override decimal GetBaseValueForIConvertible() => CurrentValue;
-
 		public override string ToString() =>
-			((int)CurrentValue).ToString(CultureInfo.InvariantCulture);
+			((int)BaseValue).ToString(CultureInfo.InvariantCulture);
 	}
 
-	private sealed class GrantedDexterityVar()
-		: DynamicVar(GrantedDexterityVarName, 0)
+	private sealed class GrantedDexterityVar(int value)
+		: DynamicVar(GrantedDexterityVarName, value)
 	{
-		private decimal CurrentValue =>
-			_owner is FourWheeledCartPower power ? power.GrantedDexterity : 0;
-
-		protected override decimal GetBaseValueForIConvertible() => CurrentValue;
-
 		public override string ToString() =>
-			((int)CurrentValue).ToString(CultureInfo.InvariantCulture);
+			((int)BaseValue).ToString(CultureInfo.InvariantCulture);
 	}
 
 	private sealed record PendingTransfer(Creature Dealer, CardModel? CardSource);
@@ -87,15 +77,20 @@ public sealed class FourWheeledCartPower : ModPowerTemplate
 		IconPath: "res://images/powers/FourWheeledCartPower.png",
 		BigIconPath: "res://images/powers/FourWheeledCartPowerBig.png");
 
-	protected override string SmartDescriptionLocKey =>
-		Amount >= 2
-			? Id.Entry + ".smartDescriptionMulti"
-			: base.SmartDescriptionLocKey;
+	protected override string SmartDescriptionLocKey
+	{
+		get
+		{
+			// Saved properties may be restored after the dynamic variables are cloned.
+			SyncDisplayVars();
+			return Amount >= 2 ? Id.Entry + ".smartDescriptionMulti" : base.SmartDescriptionLocKey;
+		}
+	}
 
 	protected override IEnumerable<DynamicVar> CanonicalVars =>
 	[
-		new GrantedStrengthVar(),
-		new GrantedDexterityVar(),
+		new GrantedStrengthVar(GrantedStrength),
+		new GrantedDexterityVar(GrantedDexterity),
 	];
 
 	protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
@@ -127,6 +122,7 @@ public sealed class FourWheeledCartPower : ModPowerTemplate
 		await RemoveGrantedStat<DexterityPower>(oldOwner, GrantedDexterity);
 		GrantedStrength = 0;
 		GrantedDexterity = 0;
+		SyncDisplayVars();
 	}
 
 	public override Task AfterDamageGiven(
@@ -169,6 +165,18 @@ public sealed class FourWheeledCartPower : ModPowerTemplate
 				: pending.CardSource is null
 					&& ReferenceEquals(pending.Dealer, dealer));
 
+	private void SyncDisplayVars()
+	{
+		if (DynamicVars.TryGetValue(GrantedStrengthVarName, out DynamicVar? strength))
+		{
+			strength.BaseValue = GrantedStrength;
+		}
+		if (DynamicVars.TryGetValue(GrantedDexterityVarName, out DynamicVar? dexterity))
+		{
+			dexterity.BaseValue = GrantedDexterity;
+		}
+	}
+
 	private async Task ApplyLayerStatDelta(
 		int layerDelta,
 		Creature? applier,
@@ -184,6 +192,7 @@ public sealed class FourWheeledCartPower : ModPowerTemplate
 			GiftFourWheeledCart.DexterityAmount * layerDelta,
 			applier,
 			cardSource);
+		SyncDisplayVars();
 	}
 
 	private static async Task RemoveGrantedStat<T>(Creature owner, int grantedAmount)

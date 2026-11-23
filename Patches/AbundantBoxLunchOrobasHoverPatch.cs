@@ -63,7 +63,6 @@ internal static class AbundantBoxLunchOrobasHoverPatch
 			preview.SetCanonicalModel(original.CanonicalModel);
 		}
 
-		preview.Id = original.Id;
 		return preview;
 	}
 }

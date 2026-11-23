@@ -41,7 +41,7 @@ public sealed class EunuchScriptTests : SunqianCombatTestSuite
 		Assert.DoesNotContain("小黄门的口信", playedDescription);
 		HoverTip markerTip = Assert.Single(
 			playedCard.HoverTips.OfType<HoverTip>(),
-			tip => tip.Id == HoverTipFactory.FromKeyword(SquKeywords.EunuchMessage).Id);
+			tip => tip.Id == SquKeywords.CreateEunuchMessageHoverTip(playedCard).Id);
 		Assert.Equal("小黄门的口信", markerTip.Title);
 		Assert.Equal(
 			"因[gold]小黄门[/gold]的效果，这张牌在被打出前具有[gold]保留[/gold]。",
@@ -57,7 +57,7 @@ public sealed class EunuchScriptTests : SunqianCombatTestSuite
         Assert.DoesNotContain(CardKeyword.Ethereal, playedCard.Keywords);
 		Assert.DoesNotContain(
 			playedCard.HoverTips,
-			tip => tip.Id == HoverTipFactory.FromKeyword(SquKeywords.EunuchMessage).Id);
+			tip => tip.Id == SquKeywords.CreateEunuchMessageHoverTip(playedCard).Id);
     }
 
     [Fact]
@@ -134,7 +134,7 @@ public sealed class EunuchScriptTests : SunqianCombatTestSuite
         Assert.False(second.ShouldRetainThisTurn);
 		HoverTip inactiveMessage = Assert.Single(
 			first.HoverTips.OfType<HoverTip>(),
-			tip => tip.Id == HoverTipFactory.FromKeyword(SquKeywords.EunuchMessage).Id);
+			tip => tip.Id == SquKeywords.CreateEunuchMessageHoverTip(first).Id);
 		Assert.Contains("[gold]虚无[/gold]", inactiveMessage.Description);
 
         await EndTurn();
@@ -214,7 +214,7 @@ public sealed class EunuchScriptTests : SunqianCombatTestSuite
         Assert.False(intrinsicRetain.HasEunuchMessage());
         Assert.DoesNotContain(
             intrinsicRetain.HoverTips,
-            tip => tip.Id == HoverTipFactory.FromKeyword(SquKeywords.EunuchMessage).Id);
+            tip => tip.Id == SquKeywords.CreateEunuchMessageHoverTip(intrinsicRetain).Id);
     }
 
     private static void AssertTemporaryEtherealInHand(CardModel card)

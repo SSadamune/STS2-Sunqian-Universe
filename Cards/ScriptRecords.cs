@@ -122,10 +122,12 @@ public sealed class SunqianScriptRecord : ScriptRecordCardTemplate<ScriptSunqian
 }
 
 [RegisterCard(typeof(TokenCardPool), StableEntryStem = "script_record_burning_linked_camps")]
-public sealed class BurningLinkedCampsScriptRecord : ScriptRecordCardTemplate<ScriptBurningLinkedCampsPower, BurningLinkedCampsScript>
+public sealed class BurningLinkedCampsScriptRecord : MaterialReuseScriptRecordCardTemplate<ScriptBurningLinkedCampsPower, BurningLinkedCampsScript>
 {
+	protected override int InitialAmount => ScriptBurningLinkedCampsPower.BurnBonusPercent;
+	protected override int AmountPerUpgrade => 10;
 	protected override IEnumerable<IHoverTip> AdditionalHoverTips =>
-		[HoverTipFactory.FromPower<BurningPower>()];
+		[..base.AdditionalHoverTips, HoverTipFactory.FromPower<BurningPower>(), HoverTipFactory.FromCard<Burn>()];
 	public override CardAssetProfile AssetProfile => new(PortraitPath: "res://images/cards/BurningLinkedCampsScript.png");
 }
 

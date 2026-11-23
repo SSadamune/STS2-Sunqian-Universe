@@ -15,6 +15,7 @@ using MegaCrit.Sts2.Core.Models.Events;
 using MegaCrit.Sts2.Core.Models.RelicPools;
 using MegaCrit.Sts2.Core.Saves.Runs;
 using Squ.Audio;
+using Squ.Settings;
 using STS2RitsuLib.Interactions.RightClick;
 using STS2RitsuLib.Interop.AutoRegistration;
 using STS2RitsuLib.Scaffolding.Content;
@@ -96,6 +97,11 @@ public sealed class FakeSevenStarDaggerRelic : ModRelicTemplate, IModRightClicka
 
 	private static RelicModel[] WithFakeSevenStarDagger(RelicModel[] inventory)
 	{
+		if (!NeutralRelicRegistrationPolicy.ShouldInclude())
+		{
+			return inventory.Where(candidate => candidate is not FakeSevenStarDaggerRelic).ToArray();
+		}
+
 		RelicModel relic = ModelDb.Relic<FakeSevenStarDaggerRelic>();
 		if (inventory.Any(candidate => candidate.Id == relic.Id))
 		{

@@ -44,5 +44,8 @@
   "SUNQIAN_UNIVERSE_RELIC_NEVER_HAD_THESE.cutePetEffect": "\nSummon {Summon}.",
   "SUNQIAN_UNIVERSE_RELIC_NEVER_HAD_THESE.belovedPartnerEffect": "\nGain {Regen} [gold]Regen[/gold] and {Tinder} [gold]Tinder[/gold].",
   "SUNQIAN_UNIVERSE_RELIC_NEVER_HAD_THESE.nextOfKinEffect": "\nDraw {Cards} {Cards:plural:card|cards}.",
-  "SUNQIAN_UNIVERSE_RELIC_NEVER_HAD_THESE.flavor": "I never had these!"
+  "SUNQIAN_UNIVERSE_RELIC_NEVER_HAD_THESE.flavor": "I never had these!",
+  "SUNQIAN_UNIVERSE_RELIC_FENGHUANG_REBIRTH.title": "Fenghuang Rebirth",
+  "SUNQIAN_UNIVERSE_RELIC_FENGHUANG_REBIRTH.description": "At the start of your turn, lose [blue]1[/blue] HP and gain [blue]7[/blue] Block.",
+  "SUNQIAN_UNIVERSE_RELIC_FENGHUANG_REBIRTH.flavor": ""
 }

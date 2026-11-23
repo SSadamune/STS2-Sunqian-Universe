@@ -393,10 +393,10 @@ public sealed class ScriptSystemTests : SunqianCombatTestSuite
 
         // A global test selector bypasses the native command's network bookkeeping.
         // Use only the local selector so this catches the real UI-only choice leak.
-        using (CardSelectCmd.SuspendSelectorForTest())
-        using (CardSelectCmd.PushSelector(selector, localOnly: true))
+        using (CardSelectorStack.SuspendTestSelector())
+        using (RunManager.Instance.CardSelectorStack.UseLocalSelector(selector))
         {
-            Assert.Null(CardSelectCmd.Selector);
+            Assert.Null(RunManager.Instance.CardSelectorStack.GetSelector(Player));
             Assert.Equal(confirm, await relic.ReselectFromScriptCollectionAsync());
         }
 
